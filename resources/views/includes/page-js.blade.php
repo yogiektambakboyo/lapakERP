@@ -1,0 +1,32 @@
+<!-- ================== BEGIN core-js ================== -->
+<script src="/assets/js/vendor.min.js"></script>
+<script src="/assets/js/app.min.js"></script>
+<!-- ================== END core-js ================== -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.26.0/moment.js"></script>
+<script src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.12.1/js/dataTables.bootstrap5.min.js"></script>
+<script src="https://unpkg.com/currency.js@2.0.4/dist/currency.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
+<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
+<script type="text/javascript">
+$(function () {
+    $('#datepicker').datepicker({
+        format : 'yyyy-mm-dd'
+    });
+});
+$(function () {
+    $('#datepicker_2').datepicker({
+        format : 'yyyy-mm-dd'
+    });
+});
+$(".multiple-select2").select2({ placeholder: "Select a branch" });
+$('#branch_id').select2({ placeholder: "Select a branch" });
+if(($("#hide_val").val())!=null){
+    var selectedValues = $("#hide_val").val().split(',');
+    $("#branch_id").val(selectedValues).trigger('change');
+}
+</script>
+@stack('scripts')

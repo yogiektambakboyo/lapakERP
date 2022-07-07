@@ -2,11 +2,22 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Spatie\Permission\Models\Role;
+use App\Models\Branch;
+use App\Models\JobTitle;
+use App\Models\Department;
+use App\Models\UserBranch;
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
+use Spatie\Permission\Models\Permission;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\UsersExport;
+use App\Http\Controllers\Controller;
+use Yajra\Datatables\Datatables;
+use Illuminate\Support\Facades\DB;
 
 class UsersController extends Controller
 {
@@ -15,11 +26,124 @@ class UsersController extends Controller
      * 
      * @return \Illuminate\Http\Response
      */
-    public function index() 
-    {
-        $users = User::latest()->paginate(10);
 
-        return view('users.index', compact('users'));
+    private $data;
+
+    public function __construct()
+    {
+        // Closure as callback
+        $permissions = Permission::join('role_has_permissions',function ($join) {
+            $join->on(function($query){
+                $query->on('role_has_permissions.permission_id', '=', 'permissions.id')
+                ->where('role_has_permissions.role_id','=','1')->where('permissions.name','like','%.index%')->where('permissions.url','!=','null');
+            });
+           })->get(['permissions.name','permissions.url','permissions.remark','permissions.parent']);
+       
+        $this->data = [
+            'menu' => 
+                [
+                    [
+                        'icon' => 'fa fa-user-gear',
+                        'title' => 'User Management',
+                        'url' => 'javascript:;',
+                        'caret' => true,
+                        'sub_menu' => []
+                    ],
+                    [
+                        'icon' => 'fa fa-box',
+                        'title' => 'Product Management',
+                        'url' => 'javascript:;',
+                        'caret' => true,
+                        'sub_menu' => []
+                    ],
+                    [
+                        'icon' => 'fa fa-table',
+                        'title' => 'Transactions',
+                        'url' => 'javascript:;',
+                        'caret' => true,
+                        'sub_menu' => []
+                    ],
+                    [
+                        'icon' => 'fa fa-chart-column',
+                        'title' => 'Reports',
+                        'url' => 'javascript:;',
+                        'caret' => true,
+                        'sub_menu' => []
+                    ],
+                    [
+                        'icon' => 'fa fa-screwdriver-wrench',
+                        'title' => 'Settings',
+                        'url' => 'javascript:;',
+                        'caret' => true,
+                        'sub_menu' => []
+                    ]  
+                ]      
+        ];
+
+        foreach ($permissions as $key => $menu) {
+            if($menu['parent']=='Users'){
+                array_push($this->data['menu'][0]['sub_menu'], array(
+                    'url' => $menu['url'],
+                    'title' => $menu['remark'],
+                    'route-name' => $menu['name']
+                ));
+            }
+            if($menu['parent']=='Products'){
+                array_push($this->data['menu'][1]['sub_menu'], array(
+                    'url' => $menu['url'],
+                    'title' => $menu['remark'],
+                    'route-name' => $menu['name']
+                ));
+            }
+            if($menu['parent']=='Transactions'){
+                array_push($this->data['menu'][2]['sub_menu'], array(
+                    'url' => $menu['url'],
+                    'title' => $menu['remark'],
+                    'route-name' => $menu['name']
+                ));
+            }
+            if($menu['parent']=='Reports'){
+                array_push($this->data['menu'][3]['sub_menu'], array(
+                    'url' => $menu['url'],
+                    'title' => $menu['remark'],
+                    'route-name' => $menu['name']
+                ));
+            }
+            if($menu['parent']=='Settings'){
+                array_push($this->data['menu'][4]['sub_menu'], array(
+                    'url' => $menu['url'],
+                    'title' => $menu['remark'],
+                    'route-name' => $menu['name']
+                ));
+            }
+        }
+    }
+
+    public function index(Request $request) 
+    {
+        $data = $this->data;
+        $keyword = "";
+        $users = User::orderBy('id', 'ASC')->join('job_title as jt','jt.id','=','users.job_id')->where('users.name','!=','Admin')->paginate(10,['users.id','users.employee_id','users.name','jt.remark as job_title','users.join_date' ]);
+        return view('pages.users.index', compact('users','data','keyword'))->with('i', ($request->input('page', 1) - 1) * 5);
+    }
+
+    public function search(Request $request) 
+    {
+        $keyword = $request->search;
+        $data = $this->data;
+
+        if($request->export=='Export Excel'){
+            return Excel::download(new UsersExport($keyword), 'users_'.Carbon::now()->format('YmdHis').'.xlsx');
+        }else{
+            $users = User::orderBy('id', 'ASC')->join('branch as b','b.id','=','users.branch_id')->join('job_title as jt','jt.id','=','users.job_id')->where('users.name','!=','Admin')->where('users.name','LIKE','%'.$keyword.'%')->paginate(10,['users.id','users.employee_id','users.name','jt.remark as job_title','b.remark as branch_name','users.join_date' ]);
+            return view('pages.users.index', compact('users','data','keyword'))->with('i', ($request->input('page', 1) - 1) * 5);
+        }
+    }
+
+    public function export(Request $request) 
+    {
+        $keyword = $request->search;
+        return Excel::download(new UsersExport, 'users_'.Carbon::now()->format('YmdHis').'.xlsx');
     }
 
     /**
@@ -29,7 +153,23 @@ class UsersController extends Controller
      */
     public function create() 
     {
-        return view('users.create');
+        $data = $this->data;
+        $gender = ['Male','Female'];
+        $active = [1,0];
+        $usersReferral = User::get(['users.id','users.name']);
+        return view('pages.users.create',[
+            'roles' => Role::latest()->get(),
+            'branchs' => Branch::latest()->get(),
+            'userBranchs' => Branch::latest()->get()->pluck('remark')->toArray(),
+            'jobTitles' => JobTitle::latest()->get(),
+            'userJobTitles' => JobTitle::latest()->get()->pluck('remark')->toArray(),
+            'departments' => Department::latest()->get(),
+            'userDepartements' => Department::latest()->get()->pluck('remark')->toArray(),
+            'gender' => $gender,
+            'active' => $active,
+            'data' => $data,
+            'usersReferrals' => $usersReferral,
+        ]);
     }
 
     /**
@@ -44,9 +184,64 @@ class UsersController extends Controller
     {
         //For demo purposes only. When creating user or inviting a user
         // you should create a generated random password and email it to the user
-        $user->create(array_merge($request->validated(), [
-            'password' => 'test' 
-        ]));
+
+        if($request->file('photo_netizen_id') == null){
+            $user->create(
+                array_merge(
+                    $request->validated(), 
+                    ['password' => 'test123' ],
+                    ['phone_no' => $request->get('phone_no') ],
+                    ['join_date' => Carbon::parse($request->get('join_date'))->format('d/m/Y') ],
+                    ['gender' => $request->get('gender') ],
+                    ['netizen_id' => $request->get('netizen_id') ],
+                    ['active' => '1' ],
+                    ['city' => $request->get('city') ],
+                    ['employee_id' => $request->get('employee_id') ],
+                    ['job_id' => $request->get('job_id') ],
+                    ['department_id' => $request->get('department_id') ],
+                    ['address' => $request->get('address') ],
+                    ['referral_id' => $request->get('referral_id') ],
+                    ['birth_place' => $request->get('birth_place') ],
+                    ['birth_date' => Carbon::parse($request->get('birth_date'))->format('d/m/Y')  ]
+                )
+            );
+        }else{
+            $file = $request->file('photo_netizen_id');
+            $user->create(
+                array_merge(
+                    $request->validated(), 
+                    ['password' => 'test123' ],
+                    ['phone_no' => $request->get('phone_no') ],
+                    ['join_date' => Carbon::parse($request->get('join_date'))->format('d/m/Y') ],
+                    ['gender' => $request->get('gender') ],
+                    ['netizen_id' => $request->get('netizen_id') ],
+                    ['active' => '1' ],
+                    ['city' => $request->get('city') ],
+                    ['employee_id' => $request->get('employee_id') ],
+                    ['photo_netizen_id' => $file->getClientOriginalName() ],
+                    ['job_id' => $request->get('job_id') ],
+                    ['department_id' => $request->get('department_id') ],
+                    ['address' => $request->get('address') ],
+                    ['referral_id' => $request->get('referral_id') ],
+                    ['birth_place' => $request->get('birth_place') ],
+                    ['birth_date' => Carbon::parse($request->get('birth_date'))->format('d/m/Y')  ]
+                )
+            );
+
+            // upload file
+            $folder_upload = 'images/user-files';
+            $file->move($folder_upload,$file->getClientOriginalName());
+        }
+
+        $arr = $request->get('branch_id');
+        for ($i=0; $i < count($arr); $i++) { 
+            UserBranch::create(
+                array_merge(
+                    ['user_id' => User::orderBy('id', 'desc')->first()->id],
+                    ['branch_id' => (int)$arr[$i]],
+                )
+            );
+        }
 
         return redirect()->route('users.index')
             ->withSuccess(__('User created successfully.'));
@@ -61,9 +256,23 @@ class UsersController extends Controller
      */
     public function show(User $user) 
     {
-        return view('users.show', [
-            'user' => $user
-        ]);
+        $data = $this->data;
+        $usersReferral = User::where('users.id','!=',$user->id)->get(['users.id','users.name']);
+        $users = DB::select("select dt.remark as department,u.id,u.employee_id,u.name,jt.remark as job_title,string_agg(b.remark,',') as branch_name,u.join_date,u.phone_no,u.email,u.username,u.address,u.netizen_id,u.photo_netizen_id,u.photo,u.join_years,u.active,u.referral_id,u.city,u.gender,u.birth_place,u.birth_date 
+                             from users u 
+                             join users_branch ub on ub.user_id=u.id
+                             join branch b on b.id = ub.branch_id
+                             join department dt on dt.id=u.department_id
+                             join job_title jt on jt.id=u.job_id
+                             where u.id = ? and u.name!='Admin' group by dt.remark,u.id,u.employee_id,u.name,jt.remark,u.join_date,u.phone_no,u.email,u.username,u.address,u.netizen_id,u.photo_netizen_id,u.photo,u.join_years,u.active,u.referral_id,u.city,u.gender,u.birth_place,u.birth_date  ; "
+                             , [$user->id]);
+       // $users = User::join('branch as b','b.id','=','users.branch_id')->join('department as dt','dt.id','=','users.department_id')->join('job_title as jt','jt.id','=','users.job_id')->where('users.name','!=','Admin')->where('users.id','=',$user->id)->get(['dt.remark as department','users.id','users.employee_id','users.name','jt.remark as job_title','b.remark as branch_name','users.join_date',"users.phone_no","users.email","users.username","users.address","users.netizen_id","users.photo_netizen_id","users.photo","users.join_years","users.active","users.referral_id","users.city","users.gender","users.birth_place","users.birth_date" ])->first();
+        //return $userss[0];
+        return view('pages.users.show', [
+            'users' => $users[0],
+            'user' => $user,
+            'usersReferrals' => $usersReferral,
+        ],compact('data'));
     }
 
     /**
@@ -75,10 +284,33 @@ class UsersController extends Controller
      */
     public function edit(User $user) 
     {
-        return view('users.edit', [
-            'user' => $user,
+        $data = $this->data;
+        $gender = ['Male','Female'];
+        $active = [1,0];
+        //$users = User::join('branch as b','b.id','=','users.branch_id')->join('department as dt','dt.id','=','users.department_id')->join('job_title as jt','jt.id','=','users.job_id')->where('users.name','!=','Admin')->where('users.id','=',$user->id)->get(['dt.remark as department','users.id','users.employee_id','users.name','jt.remark as job_title','b.remark as branch_name','users.join_date as join_date',"users.phone_no","users.email","users.username","users.address","users.netizen_id","users.photo_netizen_id","users.photo","users.join_years","users.active","users.referral_id","users.city","users.gender","users.birth_place","users.birth_date" ])->first();
+        $users = DB::select("select dt.remark as department,u.id,u.employee_id,u.name,jt.remark as job_title,string_agg(b.id::character varying,',') as branch_name,u.join_date,u.phone_no,u.email,u.username,u.address,u.netizen_id,u.photo_netizen_id,u.photo,u.join_years,u.active,u.referral_id,u.city,u.gender,u.birth_place,u.birth_date 
+                             from users u 
+                             join users_branch ub on ub.user_id=u.id
+                             join branch b on b.id = ub.branch_id
+                             join department dt on dt.id=u.department_id
+                             join job_title jt on jt.id=u.job_id
+                             where u.id = ? and u.name!='Admin' group by dt.remark,u.id,u.employee_id,u.name,jt.remark,u.join_date,u.phone_no,u.email,u.username,u.address,u.netizen_id,u.photo_netizen_id,u.photo,u.join_years,u.active,u.referral_id,u.city,u.gender,u.birth_place,u.birth_date  ; "
+                             , [$user->id]);
+        $usersReferral = User::where('users.id','!=',$user->id)->get(['users.id','users.name']);
+        return view('pages.users.edit', [
+            'user' => $users[0],
             'userRole' => $user->roles->pluck('name')->toArray(),
-            'roles' => Role::latest()->get()
+            'roles' => Role::latest()->get(),
+            'branchs' => Branch::latest()->get(),
+            'userBranchs' => Branch::latest()->get()->pluck('remark')->toArray(),
+            'departments' => Department::latest()->get(),
+            'userDepartements' => Department::latest()->get()->pluck('remark')->toArray(),
+            'jobTitles' => JobTitle::latest()->get(),
+            'userJobTitles' => JobTitle::latest()->get()->pluck('remark')->toArray(),
+            'gender' => $gender,
+            'active' => $active,
+            'data' => $data,
+            'usersReferrals' => $usersReferral,
         ]);
     }
 
@@ -92,10 +324,49 @@ class UsersController extends Controller
      */
     public function update(User $user, UpdateUserRequest $request) 
     {
+
         $user->update($request->validated());
-
         $user->syncRoles($request->get('role'));
+        $user->update( array_merge(
+            $request->validated(), 
+            ['phone_no' => $request->get('phone_no') ],
+            ['join_date' => Carbon::parse($request->get('join_date'))->format('d/m/Y') ],
+            ['gender' => $request->get('gender') ],
+            ['netizen_id' => $request->get('netizen_id') ],
+            ['city' => $request->get('city') ],
+            ['employee_id' => $request->get('employee_id') ],
+            ['job_id' => $request->get('job_id') ],
+            ['department_id' => $request->get('department_id') ],
+            ['address' => $request->get('address') ],
+            ['referral_id' => $request->get('referral_id') ],
+            ['birth_place' => $request->get('birth_place') ],
+            ['birth_date' => Carbon::parse($request->get('birth_date'))->format('d/m/Y')  ]
+        ));
 
+
+        DB::table('users_branch')->where('user_id', $user->id)->delete();
+
+        $arr = $request->get('branch_id');
+        for ($i=0; $i < count($arr); $i++) { 
+            UserBranch::create(
+                array_merge(
+                    ['user_id' => $user->id],
+                    ['branch_id' => (int)$arr[$i]],
+                )
+            );
+        }
+
+        if($request->file('photo_netizen_ids') == null){
+
+        }else{
+            $file = $request->file('photo_netizen_ids');
+            $user->update(['photo_netizen_id'=>$file->getClientOriginalName()]);
+            
+            // upload file
+            $folder_upload = 'images/user-files';
+            $file->move($folder_upload,$file->getClientOriginalName());
+        }
+        
         return redirect()->route('users.index')
             ->withSuccess(__('User updated successfully.'));
     }
