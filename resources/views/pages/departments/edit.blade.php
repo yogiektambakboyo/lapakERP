@@ -4,19 +4,19 @@
 
 @section('content')
     <div class="bg-light p-4 rounded">
-        <h2>Edit branchs</h2>
+        <h2>Edit Department</h2>
         <div class="lead">
-            Editing branchs.
+            Editing Department.
         </div>
 
         <div class="container mt-4">
 
-            <form method="POST" action="{{ route('branchs.update', $branch->id) }}">
+            <form method="POST" action="{{ route('departments.update', $department->id) }}">
                 @method('patch')
                 @csrf
                 <div class="mb-3">
                     <label for="name" class="form-label">Name</label>
-                    <input value="{{ $branch->remark }}" 
+                    <input value="{{ $department->remark }}" 
                         type="text" 
                         class="form-control" 
                         name="remark" 
@@ -26,45 +26,8 @@
                         <span class="text-danger text-left">{{ $errors->first('remark') }}</span>
                     @endif
                 </div>
-                <div class="mb-3">
-                    <label for="address" class="form-label">Address</label>
-                    <input value="{{ $branch->address }}" 
-                        type="text" 
-                        class="form-control" 
-                        name="address" 
-                        placeholder="Address" required>
-
-                    @if ($errors->has('address'))
-                        <span class="text-danger text-left">{{ $errors->first('address') }}</span>
-                    @endif
-                </div>
-                <div class="mb-3">
-                    <label for="city" class="form-label">City</label>
-                    <input value="{{ $branch->city }}" 
-                        type="text" 
-                        class="form-control" 
-                        name="city" 
-                        placeholder="city" required>
-
-                    @if ($errors->has('city'))
-                        <span class="text-danger text-left">{{ $errors->first('city') }}</span>
-                    @endif
-                </div>
-                <div class="mb-3">
-                    <label for="abbr" class="form-label">Abbreviation</label>
-                    <input value="{{ $branch->abbr }}" 
-                        type="text" 
-                        class="form-control" 
-                        name="abbr" 
-                        placeholder="abbr" required>
-
-                    @if ($errors->has('abbr'))
-                        <span class="text-danger text-left">{{ $errors->first('abbr') }}</span>
-                    @endif
-                </div>
-
-                <button type="submit" class="btn btn-primary">Save branch</button>
-                <a href="{{ route('branchs.index') }}" class="btn btn-default">Back</a>
+                <button type="submit" class="btn btn-primary">Save department</button>
+                <a href="{{ route('departments.index') }}" class="btn btn-default">Back</a>
             </form>
         </div>
 

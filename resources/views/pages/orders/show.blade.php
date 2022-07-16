@@ -1,177 +1,150 @@
 @extends('layouts.default', ['appSidebarSearch' => true])
 
-@section('title', 'Profile Users')
+@section('title', 'Show Sales Order')
 
 @section('content')
-    <div class="bg-light p-4 rounded">
-        <div class="row">
-          <div class="col-md-10">
-            <h1>Profile User #{{ $user->id }}</h1>
-          </div>
-          <div class="col-md-2">
-            <div class="mt-4">
-                <a href="{{ route('users.edit', $user->id) }}" class="btn btn-info">Edit</a>
-                <a href="{{ route('users.index') }}" class="btn btn-default">Back</a>
-            </div>
-          </div>
-        </div>
-        <div class="lead">
+<form method="POST" action="{{ route('orders.store') }}"  enctype="multipart/form-data">
+  @csrf
+  <div class="panel text-white">
+    <div class="panel-heading  bg-teal-600">
+      <div class="panel-title"><h4 class="">Sales Order {{ $order->order_no }}</h4></div>
+      <div class="">
+        <a href="{{ route('orders.edit', $order->id) }}" class="btn btn-info">Edit</a>
+        <a href="{{ route('orders.index') }}" class="btn btn-default">Back</a>
+      </div>
+    </div>
+    <div class="panel-body bg-white text-black">
 
-          <div class="row">
-            <div class="col-md-1">
-               <!-- begin widget-img -->
-                <div class="widget-img rounded bg-dark widget-img-xl" style="background-image: url(/assets/img/user/{{ $user->photo }})"></div>
-              <!-- end widget-img -->
-            </div>
-            <div class="col-md-11">
-                <label class="col-md-8"><span class="badge bg-primary">{{ $user->employee_id }}</span></label>
-                <label class="col-md-8"><h1 class="display-4">{{ $user->name }}</h1></label>
-            </div>
-          </div>
-            
-        </div>
-
-
-        <div class="panel text-white">
-          <div class="panel-heading bg-teal-600"><h4>Employee Info</h4></div>
-          <div class="panel-body bg-white text-black">
+        <div class="row mb-3">
+          <div class="col-md-4">
             <div class="row mb-3">
-              <label class="form-label col-form-label col-md-2">Job Title</label>
+              <label class="form-label col-form-label col-md-4">Date (mm/dd/YYYY)</label>
               <div class="col-md-8">
-                <input type="text" class="form-control" value="{{ $user->job_title }}" readonly />
+                <input type="text" 
+                name="order_date"
+                id="order_date"
+                class="form-control" 
+                value="{{ $order->dated }}" readonly/>
+                @if ($errors->has('order_date'))
+                          <span class="text-danger text-left">{{ $errors->first('join_date') }}</span>
+                      @endif
               </div>
-          </div>
-          <div class="row mb-3">
-            <label class="form-label col-form-label col-md-2">Branch</label>
-            <div class="col-md-8">
-              <input type="text" class="form-control" value="{{ $user->branch_name }}" readonly />
             </div>
-          </div>
-          <div class="row mb-3">
-            <label class="form-label col-form-label col-md-2">Department</label>
-            <div class="col-md-8">
-              <input type="text" class="form-control" value="{{ $user->department }}" readonly />
-            </div>
-          </div>
-          <div class="row mb-3">
-            <label class="form-label col-form-label col-md-2">Join Date  (mm/dd/YYYY)</label>
-            <div class="col-md-8">
-              <input type="text" class="form-control" value="{{ \Carbon\Carbon::parse($user->join_date)->format('d/m/Y') }}" readonly />
-            </div>
-          </div>
-          <div class="row mb-3">
-            <label class="form-label col-form-label col-md-2">Join Years</label>
-            <div class="col-md-8">
-              <input type="text" class="form-control" value="{{ $user->join_years }}" readonly />
-            </div>
-          </div>
-          </div>
-        </div>
-
-        <div class="panel text-white">
-          <div class="panel-heading bg-teal-600"><h4>Personal Info</h4></div>
-          <div class="panel-body bg-white text-black">
             <div class="row mb-3">
-              <label class="form-label col-form-label col-md-2">Netizen ID</label>
+              <label class="form-label col-form-label col-md-4">Remark</label>
               <div class="col-md-8">
-                <input type="text" class="form-control" value="{{ $user->netizen_id }}" readonly />
+                <input type="text" 
+                name="remark"
+                id="remark"
+                class="form-control" 
+                value="{{ $order->remark }}" readonly/>
                 </div>
             </div>
-            <div class="row mb-3">
-                <label class="form-label col-form-label col-md-2">Netizen ID Photo</label>
-                <div class="col-md-8">
-                  <a href="/images/user-files/{{ $user->photo_netizen_id }}" target="_blank"><img src="/images/user-files/{{ $user->photo_netizen_id }}" width="200" height="100" class="rounded float-start"></a>
-                </div>
-            </div>  
-            <div class="row mb-3">
-              <label class="form-label col-form-label col-md-2">Gender</label>
-              <div class="col-md-8">
-                <input type="text" class="form-control" value="{{ $user->gender }}" readonly />
-              </div>
-            </div>
-            <div class="row mb-3">
-              <label class="form-label col-form-label col-md-2">Birth Place</label>
-              <div class="col-md-8">
-                <input type="text" class="form-control" value="{{ $user->birth_place }}" readonly />
-              </div>
-            </div>
-            <div class="row mb-3">
-              <label class="form-label col-form-label col-md-2">Birth Date</label>
-              <div class="col-md-8">
-                <input type="text" class="form-control" value="{{ $user->birth_date }}" readonly />
-              </div>
-            </div>    
           </div>
-        </div>
 
-        <div class="panel text-white">
-          <div class="panel-heading bg-teal-600"><h4>Contact</h4></div>
-          <div class="panel-body bg-white text-black">
+          <div class="col-md-8">
             <div class="row mb-3">
-              <label class="form-label col-form-label col-md-2">Address</label>
-              <div class="col-md-8">
-                <input type="text" class="form-control" value="{{ $user->address }}" readonly />
-              </div>
-          </div>
-          <div class="row mb-3">
-            <label class="form-label col-form-label col-md-2">City</label>
-            <div class="col-md-8">
-              <input type="text" class="form-control" value="{{ $user->city }}" readonly />
-            </div>
-          </div>
-          <div class="row mb-3">
-            <label class="form-label col-form-label col-md-2">Phone No</label>
-            <div class="col-md-8">
-              <input type="text" class="form-control" value="{{ $user->phone_no }}" readonly />
-            </div>
-          </div>
-          <div class="row mb-3">
-            <label class="form-label col-form-label col-md-2">Email</label>
-            <div class="col-md-8">
-              <input type="text" class="form-control" value="{{ $user->email }}" readonly />
-            </div>
-          </div>
-            <div class="row mb-3">
-              <label class="form-label col-form-label col-md-2">Referral ID</label>
-              <div class="col-md-8">
-                  <select class="form-control" 
-                        name="referral_id" readonly>
-                        <option value="">Select Referral</option>
-                        @foreach($usersReferrals as $usersreferral)
-                            <option value="{{ $usersreferral->id }}" {{ ($user->referral_id==$usersreferral->id) 
-                              ? 'selected'
-                              : '' }} >{{  $usersreferral->name }}</option>
-                        @endforeach
-                    </select>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="panel text-white">
-          <div class="panel-heading bg-teal-600"><h4>Account</h4></div>
-          <div class="panel-body bg-white text-black">
-            <div class="row mb-3">
-              <label class="form-label col-form-label col-md-2">User Name</label>
-              <div class="col-md-8">
-                <input type="text" class="form-control" value="{{ $user->username }}" readonly />
-              </div>
-            </div>
-            <div class="row mb-3">
-                <label class="form-label col-form-label col-md-2">App Accesss</label>
-                <div class="col-md-8">
-                    @foreach($user->roles as $role)
-                        <span class="badge bg-primary">{{ $role->name }}</span>
+              <label class="form-label col-form-label col-md-2">Customer</label>
+              <div class="col-md-4">
+                <select class="form-control" 
+                    name="customer_id" id="customer_id" readonly>
+                    <option value="">Select Customers</option>
+                    @foreach($customers as $customer)
+                        <option value="{{ $customer->id }}" {{ ($customer->id == $order->customers_id) 
+                          ? 'selected'
+                          : ''}}>{{ $customer->id }} - {{ $customer->name }} ({{ $customer->remark }})</option>
                     @endforeach
-                </div>
-            </div>
-            <div class="row mb-3">
-              <label class="form-label col-form-label col-md-2">Active</label>
-              <div class="col-md-8">
-                <input type="text" class="form-control" value="{{ $user->active }}" readonly />
+                </select>
+              </div>
+              <label class="form-label col-form-label col-md-2">Schedule</label>
+              <div class="col-md-4">
+
+                  <div class="input-group">
+                    <input type="text" class="form-control" value="{{ $room->remark }} - {{ $order->scheduled_at }}" id="scheduled" disabled>
+                    <button type="button" class="btn btn-indigo" data-bs-toggle="modal" data-bs-target="#modal-scheduled" >
+                      <span class="fas fa-calendar-days"></span>
+                    </button>
+                  </div>
               </div>
             </div>
+            <div class="row mb-3">
+              <label class="form-label col-form-label col-md-2">Type Payment</label>
+              <div class="col-md-2">
+                <select class="form-control" 
+                      name="payment_type" id ="payment_type" readonly>
+                      <option value="">Select Payment</option>
+                      @foreach($payment_type as $value)
+                          <option value="{{ $value }}" {{ ($order->payment_type == $value) 
+                            ? 'selected'
+                            : ''}}>{{ $value }}</option>
+                      @endforeach
+                  </select>
+              </div>
+
+                <label class="form-label col-form-label col-md-2">Nominal Payment</label>
+                <div class="col-md-2">
+                  <input type="text" 
+                  id="payment_nominal"
+                  name="payment_nominal"
+                  class="form-control" 
+                  value="{{ $order->payment_nominal }}" readonly/>
+                  </div>
+
+                  <label class="form-label col-form-label col-md-1">Charge</label>
+                  <div class="col-md-3">
+                    <h2 class="text-end"><label id="order_charge">Rp. {{ number_format(($order->payment_nominal-$order->total), 2, ',', '.') }}</label></h2>
+                  </div>
+                
+            </div>
+          </div>
+
+          <div class="col-md-12">
+            <div class="panel-heading bg-teal-600 text-white"><strong>Order List</strong></div>
+            </br>
+
+            <table class="table table-striped" id="order_table">
+              <thead>
+              <tr>
+                  <th>Product</th>
+                  <th scope="col" width="10%">UOM</th>
+                  <th scope="col" width="10%">Price</th>
+                  <th scope="col" width="5%">Discount</th>
+                  <th scope="col" width="5%">Qty</th>
+                  <th scope="col" width="15%">Total</th>  
+                  <th scope="col" width="15%">Assigned To</th>  
+              </tr>
+              </thead>
+              <tbody>
+                @foreach($orderDetails as $orderDetail)
+                    <tr>
+                        <th scope="row">{{ $orderDetail->product_name }}</th>
+                        <td>{{ $orderDetail->uom }}</td>
+                        <td>{{ number_format($orderDetail->price, 2, ',', '.') }}</td>
+                        <td>{{ $orderDetail->discount }}</td>
+                        <td>{{ $orderDetail->qty }}</td>
+                        <td>{{ number_format($orderDetail->total, 2, ',', '.') }}</td>
+                        <td>{{ $orderDetail->assigned_to }}</td>
+                    </tr>
+                @endforeach
+              </tbody>
+            </table> 
+            
+            
+            <div class="row mb-3">
+              <label class="form-label col-form-label col-md-2"><h1>Total</h1></label>
+              <div class="col-md-10">
+                <h1 class="display-5 text-end"><label id="order-total">Rp. {{ number_format($order->total, 2, ',', '.') }}</label></h1>
+              </div>
+            </div>
+
           </div>
         </div>
     </div>
+  </div>
+</form>
 @endsection
+
+@push('scripts')
+    <script type="text/javascript">
+    </script>
+@endpush

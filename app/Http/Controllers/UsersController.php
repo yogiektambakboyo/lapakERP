@@ -10,6 +10,7 @@ use App\Models\Branch;
 use App\Models\JobTitle;
 use App\Models\Department;
 use App\Models\UserBranch;
+use App\Models\UserMutation;
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
 use Spatie\Permission\Models\Permission;
@@ -241,6 +242,17 @@ class UsersController extends Controller
                     ['branch_id' => (int)$arr[$i]],
                 )
             );
+
+            $user->update( array_merge(
+                    ['branch_id' => (int)$arr[$i] ],
+            ));
+
+            UserMutation::create(array_merge(
+                ['user_id' => $user->id ],
+                ['job_id' => $request->get('job_id') ],
+                ['branch_id' => (int)$arr[$i]],
+                ['department_id' => $request->get('department_id') ],
+            ));
         }
 
         return redirect()->route('users.index')
@@ -262,16 +274,15 @@ class UsersController extends Controller
                              from users u 
                              join users_branch ub on ub.user_id=u.id
                              join branch b on b.id = ub.branch_id
-                             join department dt on dt.id=u.department_id
+                             join departments dt on dt.id=u.department_id
                              join job_title jt on jt.id=u.job_id
                              where u.id = ? and u.name!='Admin' group by dt.remark,u.id,u.employee_id,u.name,jt.remark,u.join_date,u.phone_no,u.email,u.username,u.address,u.netizen_id,u.photo_netizen_id,u.photo,u.join_years,u.active,u.referral_id,u.city,u.gender,u.birth_place,u.birth_date  ; "
                              , [$user->id]);
-       // $users = User::join('branch as b','b.id','=','users.branch_id')->join('department as dt','dt.id','=','users.department_id')->join('job_title as jt','jt.id','=','users.job_id')->where('users.name','!=','Admin')->where('users.id','=',$user->id)->get(['dt.remark as department','users.id','users.employee_id','users.name','jt.remark as job_title','b.remark as branch_name','users.join_date',"users.phone_no","users.email","users.username","users.address","users.netizen_id","users.photo_netizen_id","users.photo","users.join_years","users.active","users.referral_id","users.city","users.gender","users.birth_place","users.birth_date" ])->first();
-        //return $userss[0];
         return view('pages.users.show', [
             'users' => $users[0],
             'user' => $user,
             'usersReferrals' => $usersReferral,
+            'usersMutations' => UserMutation::join('job_title as j','j.id','=','users_mutation.job_id')->join('departments as d','d.id','=','users_mutation.department_id')->join('branch as b','b.id','=','users_mutation.branch_id')->where('users_mutation.user_id',$user->id)->orderBy('users_mutation.created_at','ASC')->get(['users_mutation.*','j.remark as job_name','b.remark as branch_name','d.remark as department_name']),
         ],compact('data'));
     }
 
@@ -292,7 +303,7 @@ class UsersController extends Controller
                              from users u 
                              join users_branch ub on ub.user_id=u.id
                              join branch b on b.id = ub.branch_id
-                             join department dt on dt.id=u.department_id
+                             join departments dt on dt.id=u.department_id
                              join job_title jt on jt.id=u.job_id
                              where u.id = ? and u.name!='Admin' group by dt.remark,u.id,u.employee_id,u.name,jt.remark,u.join_date,u.phone_no,u.email,u.username,u.address,u.netizen_id,u.photo_netizen_id,u.photo,u.join_years,u.active,u.referral_id,u.city,u.gender,u.birth_place,u.birth_date  ; "
                              , [$user->id]);
@@ -301,8 +312,8 @@ class UsersController extends Controller
             'user' => $users[0],
             'userRole' => $user->roles->pluck('name')->toArray(),
             'roles' => Role::latest()->get(),
-            'branchs' => Branch::latest()->get(),
-            'userBranchs' => Branch::latest()->get()->pluck('remark')->toArray(),
+            'branchs' => Branch::join('users_branch as ub','ub.branch_id','=','branch.id')->where('ub.user_id','=',$user->id)->get(),
+            'userBranchs' => Branch::join('users_branch as ub','ub.branch_id','=','branch.id')->where('ub.user_id','=',$user->id)->get()->pluck('remark')->toArray(),
             'departments' => Department::latest()->get(),
             'userDepartements' => Department::latest()->get()->pluck('remark')->toArray(),
             'jobTitles' => JobTitle::latest()->get(),
@@ -324,6 +335,31 @@ class UsersController extends Controller
      */
     public function update(User $user, UpdateUserRequest $request) 
     {
+        DB::table('users_branch')->where('user_id', $user->id)->delete();
+
+        $arr = $request->get('branch_id');
+
+        for ($i=0; $i < count($arr); $i++) { 
+            if(($user->department_id!=$request->get('department_id'))||($user->job_id!=$request->get('job_id'))||((int)$arr[$i]!=$user->branch_id)){
+                UserMutation::create(array_merge(
+                    ['user_id' => $user->id ],
+                    ['job_id' => $request->get('job_id') ],
+                    ['branch_id' => (int)$arr[$i]],
+                    ['department_id' => $request->get('department_id') ],
+                ));
+            }
+
+            UserBranch::create(
+                array_merge(
+                    ['user_id' => $user->id],
+                    ['branch_id' => (int)$arr[$i]],
+                )
+            );
+
+            $user->update( array_merge(
+                 ['branch_id' => (int)$arr[$i] ],
+            ));
+        }
 
         $user->update($request->validated());
         $user->syncRoles($request->get('role'));
@@ -342,19 +378,6 @@ class UsersController extends Controller
             ['birth_place' => $request->get('birth_place') ],
             ['birth_date' => Carbon::parse($request->get('birth_date'))->format('d/m/Y')  ]
         ));
-
-
-        DB::table('users_branch')->where('user_id', $user->id)->delete();
-
-        $arr = $request->get('branch_id');
-        for ($i=0; $i < count($arr); $i++) { 
-            UserBranch::create(
-                array_merge(
-                    ['user_id' => $user->id],
-                    ['branch_id' => (int)$arr[$i]],
-                )
-            );
-        }
 
         if($request->file('photo_netizen_ids') == null){
 

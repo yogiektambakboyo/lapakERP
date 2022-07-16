@@ -169,13 +169,10 @@ class DepartmentsController extends Controller
      * @param  Department  $Department
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Department $epartment)
+    public function update(Request $request, Department $department)
     {
-        $request->validate([
-            'name' => 'required|unique:Departments,name,'.$Department->id
-        ]);
-
-        $Department->update($request->only('name'));
+        Department::where('id', $department->id)
+        ->update(['remark' => $request->get('remark')]);
 
         return redirect()->route('departments.index')
             ->withSuccess(__('Department updated successfully.'));

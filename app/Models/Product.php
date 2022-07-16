@@ -16,9 +16,11 @@ class Product extends Model
      * @var array
      */
     protected $fillable = [
+        'abbr',
         'remark',
         'type_id',
         'brand_id',
         'category_id',
+        'created_by',
     ];
 }

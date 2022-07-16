@@ -16,9 +16,9 @@
 			<div class="login-header">
 				<div class="brand">
 					<div class="d-flex align-items-center">
-						<span class="logo"></span> <b>Kakiku </b> Portal 
+						<span class="logo"></span>{{ $settings->company_name }}
 					</div>
-					<small>System Management</small>
+					<small>{{ $settings->app_name }} {{ $settings->version }}</small>
 				</div>
 				<div class="icon">
 					<i class="fa fa-lock"></i>

@@ -10,6 +10,9 @@ use Spatie\Permission\Models\Role;
 use App\Models\Branch;
 use App\Models\JobTitle;
 use App\Models\Department;
+use App\Models\ProductType;
+use App\Models\ProductBrand;
+use App\Models\ProductCategory;
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
 use Spatie\Permission\Models\Permission;
@@ -17,6 +20,8 @@ use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\ProductsExport;
 use App\Http\Controllers\Controller;
 use Yajra\Datatables\Datatables;
+use Auth;
+
 
 class ProductsController extends Controller
 {
@@ -120,14 +125,6 @@ class ProductsController extends Controller
 
     public function index(Request $request) 
     {
-        /*
-        select b.remark as branch_name,ps.id,ps.remark as product_name,pt.remark as product_type,pc.remark as product_category,pb.remark as product_brand from product_sku ps
-        join product_distribution pd on pd.product_id = ps.id
-        join branch b on b.id = pd.branch_id 
-        join product_type pt on pt.id = ps.type_id 
-        join product_category pc on pc.id =ps.category_id 
-        join product_brand pb on pb.id = ps.brand_id 
-        */
         $data = $this->data;
         $keyword = "";
         $products = Product::orderBy('product_sku.remark', 'ASC')
@@ -171,88 +168,43 @@ class ProductsController extends Controller
     public function create() 
     {
         $data = $this->data;
-        $gender = ['Male','Female'];
-        $active = [1,0];
-        $productsReferral = User::get(['products.id','products.name']);
         return view('pages.products.create',[
-            'roles' => Role::latest()->get(),
-            'branchs' => Branch::latest()->get(),
-            'userBranchs' => Branch::latest()->get()->pluck('remark')->toArray(),
-            'jobTitles' => JobTitle::latest()->get(),
-            'userJobTitles' => JobTitle::latest()->get()->pluck('remark')->toArray(),
-            'departments' => Department::latest()->get(),
-            'userDepartements' => Department::latest()->get()->pluck('remark')->toArray(),
-            'gender' => $gender,
-            'active' => $active,
+            'productCategorys' => ProductCategory::latest()->get(),
+            'productCategorysRemark' => ProductCategory::latest()->get()->pluck('remark')->toArray(),
+            'productBrands' => ProductBrand::latest()->get(),
+            'productBrandsRemark' => ProductBrand::latest()->get()->pluck('remark')->toArray(),
+            'productTypes' => ProductType::latest()->get(),
+            'productTypesRemark' => ProductType::latest()->get()->pluck('remark')->toArray(),
             'data' => $data,
-            'productsReferrals' => $productsReferral,
         ]);
     }
 
     /**
      * Store a newly created user
      * 
-     * @param User $user
-     * @param StoreUserRequest $request
+     * @param Product $product
+     * @param Request $request
      * 
      * @return \Illuminate\Http\Response
      */
-    public function store(User $user, StoreUserRequest $request) 
+    public function store(Product $product, Request $request) 
     {
         //For demo purposes only. When creating user or inviting a user
         // you should create a generated random password and email it to the user
     
-        if($request->file('photo_netizen_id') == null){
-            $user->create(
-                array_merge(
-                    $request->validated(), 
-                    ['password' => 'test123' ],
-                    ['phone_no' => $request->get('phone_no') ],
-                    ['join_date' => Carbon::parse($request->get('join_date'))->format('d/m/Y') ],
-                    ['gender' => $request->get('gender') ],
-                    ['netizen_id' => $request->get('netizen_id') ],
-                    ['active' => '1' ],
-                    ['city' => $request->get('city') ],
-                    ['employee_id' => $request->get('employee_id') ],
-                    ['job_id' => $request->get('job_id') ],
-                    ['branch_id' => $request->get('branch_id') ],
-                    ['department_id' => $request->get('department_id') ],
-                    ['address' => $request->get('address') ],
-                    ['referral_id' => $request->get('referral_id') ],
-                    ['birth_place' => $request->get('birth_place') ],
-                    ['birth_date' => Carbon::parse($request->get('birth_date'))->format('d/m/Y')  ]
-                )
-            );
-        }else{
-            $file = $request->file('photo_netizen_id');
-            $user->create(
-                array_merge(
-                    $request->validated(), 
-                    ['password' => 'test123' ],
-                    ['phone_no' => $request->get('phone_no') ],
-                    ['join_date' => Carbon::parse($request->get('join_date'))->format('d/m/Y') ],
-                    ['gender' => $request->get('gender') ],
-                    ['netizen_id' => $request->get('netizen_id') ],
-                    ['active' => '1' ],
-                    ['city' => $request->get('city') ],
-                    ['employee_id' => $request->get('employee_id') ],
-                    ['photo_netizen_id' => $file->getClientOriginalName() ],
-                    ['job_id' => $request->get('job_id') ],
-                    ['branch_id' => $request->get('branch_id') ],
-                    ['department_id' => $request->get('department_id') ],
-                    ['address' => $request->get('address') ],
-                    ['referral_id' => $request->get('referral_id') ],
-                    ['birth_place' => $request->get('birth_place') ],
-                    ['birth_date' => Carbon::parse($request->get('birth_date'))->format('d/m/Y')  ]
-                )
-            );
-
-            // upload file
-            $folder_upload = 'images/user-files';
-            $file->move($folder_upload,$file->getClientOriginalName());
-        }
+        $user = Auth::user();
+        $product->create(
+            array_merge(
+                ['abbr' => $request->get('abbr') ],
+                ['created_by' => $user->id],
+                ['remark' => $request->get('remark') ],
+                ['type_id' => $request->get('type_id') ],
+                ['category_id' => $request->get('category_id') ],
+                ['brand_id' => $request->get('brand_id') ],
+            )
+        );
         return redirect()->route('products.index')
-            ->withSuccess(__('User created successfully.'));
+            ->withSuccess(__('Product created successfully.'));
     }
 
     /**
@@ -262,76 +214,73 @@ class ProductsController extends Controller
      * 
      * @return \Illuminate\Http\Response
      */
-    public function show(User $user) 
+    public function show(Product $product) 
     {
         $data = $this->data;
-        $productsReferral = User::where('products.id','!=',$user->id)->get(['products.id','products.name']);
-        $products = User::join('branch as b','b.id','=','products.branch_id')->join('department as dt','dt.id','=','products.department_id')->join('job_title as jt','jt.id','=','products.job_id')->where('products.name','!=','Admin')->where('products.id','=',$user->id)->get(['dt.remark as department','products.id','products.employee_id','products.name','jt.remark as job_title','b.remark as branch_name','products.join_date',"products.phone_no","products.email","products.username","products.address","products.netizen_id","products.photo_netizen_id","products.photo","products.join_years","products.active","products.referral_id","products.city","products.gender","products.birth_place","products.birth_date" ])->first();
+        //return $product->id;
+        $products = Product::join('product_type as pt','pt.id','=','product_sku.type_id')
+        ->join('product_category as pc','pc.id','=','product_sku.category_id')
+        ->join('product_brand as pb','pb.id','=','product_sku.brand_id')
+        ->where('product_sku.id',$product->id)
+        ->get(['product_sku.id as product_id','product_sku.abbr','product_sku.remark as product_name','pt.remark as product_type','pc.remark as product_category','pb.remark as product_brand'])->first();
+
         return view('pages.products.show', [
-            'user' => $products ,
-            'productsReferrals' => $productsReferral,
-        ],compact('data'));
+            'product' => $products ,
+            'data' => $data,
+        ]);
     }
 
     /**
      * Edit user data
      * 
-     * @param User $user
+     * @param Product $product
      * 
      * @return \Illuminate\Http\Response
      */
-    public function edit(User $user) 
+    public function edit(Product $product) 
     {
         $data = $this->data;
-        $gender = ['Male','Female'];
-        $active = [1,0];
-        $products = User::join('branch as b','b.id','=','products.branch_id')->join('department as dt','dt.id','=','products.department_id')->join('job_title as jt','jt.id','=','products.job_id')->where('products.name','!=','Admin')->where('products.id','=',$user->id)->get(['dt.remark as department','products.id','products.employee_id','products.name','jt.remark as job_title','b.remark as branch_name','products.join_date as join_date',"products.phone_no","products.email","products.username","products.address","products.netizen_id","products.photo_netizen_id","products.photo","products.join_years","products.active","products.referral_id","products.city","products.gender","products.birth_place","products.birth_date" ])->first();
-        $productsReferral = User::where('products.id','!=',$user->id)->get(['products.id','products.name']);
+        $products = Product::join('product_type as pt','pt.id','=','product_sku.type_id')
+        ->join('product_category as pc','pc.id','=','product_sku.category_id')
+        ->join('product_brand as pb','pb.id','=','product_sku.brand_id')
+        ->where('product_sku.id',$product->id)
+        ->get(['product_sku.id as id','product_sku.abbr','product_sku.brand_id','product_sku.category_id','product_sku.type_id','product_sku.remark as product_name','pt.remark as product_type','pc.remark as product_category','pb.remark as product_brand'])->first();
         return view('pages.products.edit', [
-            'user' => $products,
-            'userRole' => $user->roles->pluck('name')->toArray(),
-            'roles' => Role::latest()->get(),
-            'branchs' => Branch::latest()->get(),
-            'userBranchs' => Branch::latest()->get()->pluck('remark')->toArray(),
-            'departments' => Department::latest()->get(),
-            'userDepartements' => Department::latest()->get()->pluck('remark')->toArray(),
-            'jobTitles' => JobTitle::latest()->get(),
-            'userJobTitles' => JobTitle::latest()->get()->pluck('remark')->toArray(),
-            'gender' => $gender,
-            'active' => $active,
+            'productCategorys' => ProductCategory::latest()->get(),
+            'productCategorysRemark' => ProductCategory::latest()->get()->pluck('remark')->toArray(),
+            'productBrands' => ProductBrand::latest()->get(),
+            'productBrandsRemark' => ProductBrand::latest()->get()->pluck('remark')->toArray(),
+            'productTypes' => ProductType::latest()->get(),
+            'productTypesRemark' => ProductType::latest()->get()->pluck('remark')->toArray(),
             'data' => $data,
-            'productsReferrals' => $productsReferral,
+            'product' => $products,
         ]);
     }
 
     /**
      * Update user data
      * 
-     * @param User $user
-     * @param UpdateUserRequest $request
+     * @param Product $product
+     * @param Request $request
      * 
      * @return \Illuminate\Http\Response
      */
-    public function update(User $user, UpdateUserRequest $request) 
+    public function update(Product $product, Request $request) 
     {
-
-        $user->update($request->validated());
-        $user->syncRoles($request->get('role'));
-        $user->update($request->all());
-
-        if($request->file('photo_netizen_ids') == null){
-
-        }else{
-            $file = $request->file('photo_netizen_ids');
-            $user->update(['photo_netizen_id'=>$file->getClientOriginalName()]);
-            
-            // upload file
-            $folder_upload = 'images/user-files';
-            $file->move($folder_upload,$file->getClientOriginalName());
-        }
+        $user = Auth::user();
+        $product->update(
+            array_merge(
+                ['abbr' => $request->get('abbr') ],
+                ['updated_by' => $user->id],
+                ['remark' => $request->get('remark') ],
+                ['type_id' => $request->get('type_id') ],
+                ['category_id' => $request->get('category_id') ],
+                ['brand_id' => $request->get('brand_id') ],
+            )
+        );
         
         return redirect()->route('products.index')
-            ->withSuccess(__('User updated successfully.'));
+            ->withSuccess(__('Product updated successfully.'));
     }
 
     /**
@@ -346,6 +295,6 @@ class ProductsController extends Controller
         $user->delete();
 
         return redirect()->route('products.index')
-            ->withSuccess(__('User deleted successfully.'));
+            ->withSuccess(__('Product deleted successfully.'));
     }
 }

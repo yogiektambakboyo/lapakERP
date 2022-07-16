@@ -1,13 +1,13 @@
 @extends('layouts.default', ['appSidebarSearch' => true])
 
-@section('title', 'Edit Sales Order')
+@section('title', 'Create New Sales Order')
 
 @section('content')
 <form method="POST" action="{{ route('orders.store') }}"  enctype="multipart/form-data">
   @csrf
   <div class="panel text-white">
     <div class="panel-heading  bg-teal-600">
-      <div class="panel-title"><h4 class="">Sales Order {{ $order->order_no }}</h4></div>
+      <div class="panel-title"><h4 class="">Sales Order</h4></div>
       <div class="">
         <a href="{{ route('orders.index') }}" class="btn btn-default">Cancel</a>
         <button type="button" id="save-btn" class="btn btn-info">Save</button>
@@ -20,12 +20,11 @@
             <div class="row mb-3">
               <label class="form-label col-form-label col-md-4">Date (mm/dd/YYYY)</label>
               <div class="col-md-8">
-                <input type="hidden" id="order_no" name="order_no" value="{{ $order->order_no }}">
                 <input type="text" 
                 name="order_date"
                 id="order_date"
                 class="form-control" 
-                value="{{ $order->dated }}"/>
+                value="{{ old('order_date') }}" required/>
                 @if ($errors->has('order_date'))
                           <span class="text-danger text-left">{{ $errors->first('join_date') }}</span>
                       @endif
@@ -38,9 +37,10 @@
                 name="remark"
                 id="remark"
                 class="form-control" 
-                value="{{ $order->remark }}"/>
+                value="{{ old('remark') }}"/>
                 </div>
             </div>
+
 
             <div class="panel-heading bg-teal-600 text-white"><strong>Product List</strong></div>
             </br>
@@ -58,7 +58,6 @@
                 </tbody>
               </table>    
             </div>
-
           </div>
 
           <div class="col-md-8">
@@ -66,12 +65,10 @@
               <label class="form-label col-form-label col-md-2">Customer</label>
               <div class="col-md-10">
                 <select class="form-control" 
-                    name="customer_id" id="customer_id">
+                    name="customer_id" id="customer_id" required>
                     <option value="">Select Customers</option>
                     @foreach($customers as $customer)
-                        <option value="{{ $customer->id }}" {{ ($customer->id == $order->customers_id) 
-                          ? 'selected'
-                          : ''}}>{{ $customer->id }} - {{ $customer->name }} ({{ $customer->remark }})</option>
+                        <option value="{{ $customer->id }}">{{ $customer->id }} - {{ $customer->name }} ({{ $customer->remark }})</option>
                     @endforeach
                 </select>
               </div>
@@ -80,12 +77,10 @@
               <label class="form-label col-form-label col-md-2">Type Payment</label>
               <div class="col-md-2">
                 <select class="form-control" 
-                      name="payment_type" id ="payment_type" >
+                      name="payment_type" id ="payment_type" required>
                       <option value="">Select Payment</option>
                       @foreach($payment_type as $value)
-                          <option value="{{ $value }}" {{ ($order->payment_type == $value) 
-                            ? 'selected'
-                            : ''}}>{{ $value }}</option>
+                          <option value="{{ $value }}">{{ $value }}</option>
                       @endforeach
                   </select>
               </div>
@@ -96,27 +91,28 @@
                   id="payment_nominal"
                   name="payment_nominal"
                   class="form-control" 
-                  value="{{ $order->payment_nominal }}" />
+                  value="{{ old('remark') }}" required/>
                   </div>
 
                   <label class="form-label col-form-label col-md-1">Charge</label>
                   <div class="col-md-3">
-                    <h2 class="text-end"><label id="order_charge">Rp. {{ number_format(($order->payment_nominal-$order->total), 2, ',', '.') }}</label></h2>
+                    <h2 class="text-end"><label id="order_charge">Rp. 0</label></h2>
                   </div>
+                
             </div>
 
             <div class="panel-heading bg-teal-600 text-white"><strong>Order List</strong></div>
-              </br>
-            <div class="row mb-3">
+            </br>
+
             <table class="table table-striped" id="order_table">
               <thead>
               <tr>
-                <th>Product Code</th>
-                <th scope="col" width="10%">Price</th>
-                <th scope="col" width="5%">Discount</th>
-                <th scope="col" width="5%">Qty</th>
-                <th scope="col" width="15%">Total</th>  
-                <th scope="col" width="15%">Action</th>  
+                  <th>Product Code</th>
+                  <th scope="col" width="10%">Price</th>
+                  <th scope="col" width="5%">Discount</th>
+                  <th scope="col" width="5%">Qty</th>
+                  <th scope="col" width="15%">Total</th>  
+                  <th scope="col" width="15%">Action</th>  
               </tr>
               </thead>
               <tbody>
@@ -127,13 +123,8 @@
             <div class="row mb-3">
               <label class="form-label col-form-label col-md-2"><h1>Total</h1></label>
               <div class="col-md-10">
-                <h1 class="display-5 text-end"><label id="order-total">Rp. {{ number_format($order->total, 2, ',', '.') }}</label></h1>
+                <h1 class="display-5 text-end"><label id="order-total">Rp. 0</label></h1>
               </div>
-            </div>
-
-
-            </div>
-                
             </div>
           </div>
         </div>
@@ -152,9 +143,7 @@
 
       var productList = [];
       var order_total = 0;
-
-      
-
+        
         $('#save-btn').on('click',function(){
           if($('#order_date').val()==''){
             $('#order_date').focus();
@@ -229,10 +218,9 @@
                 payment_type : $('#payment_type').val(),
                 payment_nominal : $('#payment_nominal').val(),
                 total_order : order_total,
-                order_no :  $('#order_no').val(),
               }
             );
-            const res = axios.patch("{{ route('orders.update',$order->id) }}", json, {
+            const res = axios.post("{{ route('orders.store') }}", json, {
               headers: {
                 // Overwrite Axios's automatically set Content-Type
                 'Content-Type': 'application/json'
@@ -269,8 +257,6 @@
         ],
         }); 
 
-        //sitePersonel.employees[0].manager = manager;
-
         var table = $('#order_table').DataTable({
           columnDefs: [{ 
             targets: -1, 
@@ -278,8 +264,7 @@
             defaultContent: 
             '<a href="#" id="add_row" class="btn btn-xs btn-green"><div class="fa-1x"><i class="fas fa-circle-plus fa-fw"></i></div></a>'+
             '<a href="#" id="minus_row" class="btn btn-xs btn-yellow"><div class="fa-1x"><i class="fas fa-circle-minus fa-fw"></i></div></a>'+
-            '<a href="#" id="delete_row" class="btn btn-xs btn-danger"><div class="fa-1x"><i class="fas fa-circle-xmark fa-fw"></i></div></a>'+
-            '<a href="#" id="assign_row" class="btn btn-xs btn-gray"><div class="fa-1x"><i class="fas fa-user-tag fa-fw"></i></div></a>',}],
+            '<a href="#" id="delete_row" class="btn btn-xs btn-danger"><div class="fa-1x"><i class="fas fa-circle-xmark fa-fw"></i></div></a>',}],
           columns: [
             { data: 'abbr' },
             { data: 'price',render: DataTable.render.number( '.', null, 0, '' ) },
@@ -407,54 +392,6 @@
                   }
                 }
               });
-
-
-              const res = axios.get("{{ route('orders.getorder',$order->order_no) }}", {
-              headers: {
-                // Overwrite Axios's automatically set Content-Type
-                'Content-Type': 'application/json'
-              }
-            }).then(resp => {
-                  console.log(resp.data);
-                  table.clear().draw(false);
-                  order_total = 0;
-
-                  for(var i=0;i<resp.data.length;i++){
-                      var product = {
-                            "id"        : resp.data[i]["product_id"],
-                            "abbr"      : resp.data[i]["abbr"],
-                            "price"     : resp.data[i]["price"],
-                            "discount"  : resp.data[i]["discount"],
-                            "qty"       : resp.data[i]["qty"],
-                            "total"     : resp.data[i]["price"],
-                      }
-
-                      productList.push(product);
-                  }
-
-                  for (var i = 0; i < productList.length; i++){
-                  var obj = productList[i];
-                  var value = obj["abbr"];
-                  table.row.add( {
-                        "id"        : obj["id"],
-                          "abbr"      : obj["abbr"],
-                          "price"     : obj["price"],
-                          "discount"  : obj["discount"],
-                          "qty"       : obj["qty"],
-                          "total"     : obj["total"],
-                          "action"    : "",
-                    }).draw(false);
-                    order_total = order_total + ((parseInt(productList[i]["qty"]))*parseFloat(productList[i]["price"]));
-                    if(($('#payment_nominal').val())>order_total){
-                      $('#order_charge').text(currency((($('#payment_nominal').val())-order_total), { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
-                    }else{
-                      $('#order_charge').text("Rp. 0");
-                    }
-                }
-
-                $('#order-total').text(currency(order_total, { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
-            });
-
  
     </script>
 @endpush

@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Requests\LoginRequest;
 use Illuminate\Support\Facades\Auth;
 use App\Services\Login\RememberMeExpiration;
+use App\Models\Settings;
 
 class LoginController extends Controller
 {
@@ -18,7 +19,9 @@ class LoginController extends Controller
      */
     public function show()
     {
-        return view('pages.auth.login');
+        return view('pages.auth.login',[
+            'settings' => Settings::get()->first()
+        ]);
     }
 
     /**

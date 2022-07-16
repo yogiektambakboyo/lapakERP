@@ -2,16 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Spatie\Permission\Models\Permission;
+use App\Models\Customer;
 use App\Models\Branch;
-use App\Exports\BranchsExport;
-use Maatwebsite\Excel\Facades\Excel;
+use Auth;
 
-
-class BranchsController extends Controller
+class CustomersController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -113,38 +111,29 @@ class BranchsController extends Controller
 
     public function index()
     {   
-        $branchs = Branch::all();
+        $user = Auth::user();
+        $Customers = Customer::join('branch as b','b.id','customers.branch_id')
+                            ->join('users_branch as ub', function($join){
+                                $join->on('ub.branch_id', '=', 'b.id');
+                            })->where('ub.user_id', $user->id)->get(['customers.*','b.remark as branch_name']);
         $data = $this->data;
-        $keyword = "";
 
-        return view('pages.branchs.index', [
-            'branchs' => $branchs,'data' => $data , 'keyword' => $keyword
+        return view('pages.customers.index', [
+            'customers' => $Customers,'data' => $data 
+            
         ]);
     }
 
-
-    public function search(Request $request) 
-    {
-        $keyword = $request->search;
-        $data = $this->data;
-
-        if($request->export=='Export Excel'){
-            return Excel::download(new BranchsExport($keyword), 'branchs_'.Carbon::now()->format('YmdHis').'.xlsx');
-        }else{
-            $branchs = Branch::orderBy('id', 'ASC')->where('branch.remark','LIKE','%'.$keyword.'%')->get();
-            return view('pages.branchs.index', compact('branchs','data','keyword'))->with('i', ($request->input('page', 1) - 1) * 5);
-        }
-    }
-
     /**
-     * Show form for creating branch
+     * Show form for creating Customer
      * 
      * @return \Illuminate\Http\Response
      */
     public function create() 
     {   
         $data = $this->data;
-        return view('pages.branchs.create',['data'=>$data]);
+        return view('pages.customers.create',['data'=>$data,'branchs' => Branch::latest()->get(),
+        'userBranchs' => Branch::latest()->get()->pluck('remark')->toArray(),]);
     }
 
     /**
@@ -155,27 +144,33 @@ class BranchsController extends Controller
      */
     public function store(Request $request)
     {   
-        $request->validate([
-            'remark' => 'required|unique:branch'
-        ]);
-
-        Branch::create($request->all());
-
-        return redirect()->route('branchs.index')
-            ->withSuccess(__('Branch created successfully.'));
+    
+        Customer::create(
+            array_merge( 
+                ['phone_no' => $request->get('phone_no') ],
+                ['name' => $request->get('name') ],
+                ['address' => $request->get('address') ],
+                ['membership_id' => '1' ],
+                ['abbr' => '1' ],
+                ['branch_id' => $request->get('branch_id') ],
+            )
+        );
+        return redirect()->route('customers.index')
+            ->withSuccess(__('Customer created successfully.'));
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  Branch  $branch
+     * @param  Customer  $Customer
      * @return \Illuminate\Http\Response
      */
-    public function edit(Branch $branch)
+    public function edit(Customer $Customer)
     {
         $data = $this->data;
-        return view('pages.branchs.edit', [
-            'branch' => $branch ,'data' => $data
+        return view('pages.customers.edit', [
+            'customer' => $Customer ,'data' => $data ,'branchs' => Branch::latest()->get(),
+            'userBranchs' => Branch::latest()->get()->pluck('remark')->toArray()
         ]);
     }
 
@@ -183,20 +178,28 @@ class BranchsController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  Branch  $branch
+     * @param  Customer  $Customer
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Branch $branch)
+    public function update(Request $request, Customer $customer)
     {
-        $request->validate([
-            'remark' => 'required|unique:branch,remark,'.$branch->id
-        ]);
+        Customer::where('id', $customer->id)
+        ->update(
+            array_merge( 
+                ['phone_no' => $request->get('phone_no') ],
+                ['name' => $request->get('name') ],
+                ['address' => $request->get('address') ],
+                ['membership_id' => '1' ],
+                ['abbr' => '1' ],
+                ['branch_id' => $request->get('branch_id') ],
+            )
+        );
 
-        $branch->update($request->only('name'));
-        
+       
 
-        return redirect()->route('branchs.index')
-            ->withSuccess(__('Branch updated successfully.'));
+
+        return redirect()->route('customers.index')
+            ->withSuccess(__('Customer updated successfully.'));
     }
 
     /**
@@ -205,11 +208,11 @@ class BranchsController extends Controller
      * @param  \App\Models\Post  $post
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Branch $branch)
+    public function destroy(Customer $Customer)
     {
-        $branch->delete();
+        $Customer->delete();
 
-        return redirect()->route('branchs.index')
-            ->withSuccess(__('Branch deleted successfully.'));
+        return redirect()->route('customers.index')
+            ->withSuccess(__('Customer deleted successfully.'));
     }
 }

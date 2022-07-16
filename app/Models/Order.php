@@ -30,5 +30,8 @@ class Order extends Model
         'payment_nominal',
         'voucher_code',
         'created_by',
+        'updated_by',
+        'scheduled_at',
+        'branch_room_id'
     ];
 }

@@ -86,6 +86,8 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
             Route::get('/{order}/show', 'OrdersController@show')->name('orders.show');
             Route::get('/{order}/edit', 'OrdersController@edit')->name('orders.edit');
             Route::get('/getproduct', 'OrdersController@getproduct')->name('orders.getproduct');
+            Route::get('/gettimetable', 'OrdersController@gettimetable')->name('orders.gettimetable');
+            Route::get('/{order}/getorder', 'OrdersController@getorder')->name('orders.getorder');
             Route::patch('/{order}/update', 'OrdersController@update')->name('orders.update');
             Route::delete('/{order}/delete', 'OrdersController@destroy')->name('orders.destroy');
             Route::get('/export', 'OrdersController@export')->name('orders.export');
@@ -111,7 +113,7 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
     
 
         /**
-         *  Routes
+         *  Posts Routes
          */
         Route::group(['prefix' => 'posts'], function() {
             Route::get('/', 'PostsController@index')->name('posts.index');
@@ -162,6 +164,19 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
             Route::get('/{room}/edit', 'BranchRoomsController@edit')->name('rooms.edit');
             Route::patch('/{room}/update', 'BranchRoomsController@update')->name('rooms.update');
             Route::delete('/{room}/delete', 'BranchRoomsController@destroy')->name('rooms.destroy');
+        });
+
+        /**
+         *  Customer
+         */
+        Route::group(['prefix' => 'customers'], function() {
+            Route::get('/', 'CustomersController@index')->name('customers.index');
+            Route::get('/create', 'CustomersController@create')->name('customers.create');
+            Route::post('/create', 'CustomersController@store')->name('customers.store');
+            Route::get('/{customer}/show', 'CustomersController@show')->name('customers.show');
+            Route::get('/{customer}/edit', 'CustomersController@edit')->name('customers.edit');
+            Route::patch('/{customer}/update', 'CustomersController@update')->name('customers.update');
+            Route::delete('/{customer}/delete', 'CustomersController@destroy')->name('customers.destroy');
         });
 
 
