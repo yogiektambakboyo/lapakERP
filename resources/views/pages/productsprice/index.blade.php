@@ -1,18 +1,18 @@
 @extends('layouts.default', ['appSidebarSearch' => true])
 
-@section('title', 'Users')
+@section('title', 'Products')
 
 @section('content')
     <div class="bg-light p-4 rounded">
-        <h1>Users</h1>
+        <h1>Products Price</h1>
         <div class="lead row mb-3">
             <div class="col-md-10">
-                <div class="col-md-2">
-                    Manage your users here.
+                <div class="col-md-4">
+                    Manage your products price here.
                 </div>
                 <div class="col-md-10"> 	
-                    <form action="{{ route('users.search') }}" method="GET" class="row row-cols-lg-auto g-3 align-items-center">
-                        <div class="col-2"><input type="text" class="form-control  form-control-sm" name="search" placeholder="Find User.." value="{{ $keyword }}"></div>
+                    <form action="{{ route('productsprice.search') }}" method="GET" class="row row-cols-lg-auto g-3 align-items-center">
+                        <div class="col-2"><input type="text" class="form-control  form-control-sm" name="search" placeholder="Find Product.." value="{{ $keyword }}"></div>
                         <div class="col-2"><input type="submit" class="btn btn-sm btn-secondary" value="Search" name="submit"></div>   
                         <div class="col-2"><a href="#modal-filter"  data-bs-toggle="modal" data-bs-target="#modal-filter" class="btn btn-sm btn-lime">Filter</a></div>   
                         <div class="col-2"><input type="submit" class="btn btn-sm btn-success" value="Export Excel" name="export"></div>  
@@ -20,7 +20,7 @@
                 </div>
             </div>
             <div class="col-md-2">
-                <a href="{{ route('users.create') }}" class="btn btn-primary float-right {{ $act_permission->allow_create==1?'':'d-none' }}">Add new user</a>
+                <a href="{{ route('productsprice.create') }}" class="btn btn-primary float-right  {{ $act_permission->allow_create==1?'':'d-none' }}">Add new product price</a>
             </div>
         </div>
         
@@ -31,12 +31,9 @@
         <table class="table table-striped" id="example">
             <thead>
             <tr>
-                <th scope="col" width="1%">#</th>
                 <th>Name</th>
-                <th scope="col" width="5%">Employee ID</th>
-                <th scope="col" width="15%">Job Title</th>
-                <th scope="col" width="5%">App Access</th>
-                <th scope="col" width="6%">Join Date</th>
+                <th scope="col" width="15%">Branch</th>
+                <th scope="col" width="10%">Price</th>
                 <th scope="col" width="2%">Action</th>   
                 <th scope="col" width="2%"></th>
                 <th scope="col" width="2%"></th>    
@@ -44,22 +41,14 @@
             </thead>
             <tbody>
 
-                @foreach($users as $user)
+                @foreach($products as $product)
                     <tr>
-                        <th scope="row">{{ $user->id }}</th>
-                        <td>{{ $user->name }}</td>
-                        <td>{{ $user->employee_id }}</td>
-                        <td>{{ $user->job_title }}</td>
-                        <td>
-                            @foreach($user->roles as $role)
-                                <span class="badge bg-primary">{{ $role->name }}</span>
-                            @endforeach
-                        </td>
-                        <td>{{ $user->join_date }}</td>
-                        <td><a href="{{ route('users.show', $user->id) }}" class="btn btn-warning btn-sm {{ $act_permission->allow_show==1?'':'d-none' }}">Show</a></td>
-                        <td><a href="{{ route('users.edit', $user->id) }}" class="btn btn-info btn-sm {{ $act_permission->allow_edit==1?'':'d-none' }}">Edit</a></td>
-                        <td class=" {{ $act_permission->allow_delete==1?'':'d-none' }}">
-                            {!! Form::open(['method' => 'DELETE','route' => ['users.destroy', $user->id],'style'=>'display:inline']) !!}
+                        <td>{{ $product->product_name }}</td>
+                        <td>{{ $product->branch_name }}</td>
+                        <td>{{ $product->product_price }}</td>
+                        <td><a href="{{ route('productsprice.edit', [$product->branch_id,$product->id]) }}" class="btn btn-info btn-sm  {{ $act_permission->allow_edit==1?'':'d-none' }}">Edit</a></td>
+                        <td class="{{ $act_permission->allow_delete==1?'':'d-none' }}">
+                            {!! Form::open(['method' => 'DELETE','route' => ['productsprice.destroy', $product->id],'style'=>'display:inline']) !!}
                             {!! Form::submit('Delete', ['class' => 'btn btn-danger btn-sm']) !!}
                             {!! Form::close() !!}
                         </td>
@@ -69,7 +58,7 @@
         </table>
 
         <div class="d-flex">
-            {!! $users->links() !!}
+            {!! $products->links() !!}
         </div>
 
         <!-- Vertically centered modal -->

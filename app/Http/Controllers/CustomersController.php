@@ -8,6 +8,8 @@ use Spatie\Permission\Models\Permission;
 use App\Models\Customer;
 use App\Models\Branch;
 use Auth;
+use Illuminate\Support\Facades\DB;
+
 
 class CustomersController extends Controller
 {
@@ -16,11 +18,21 @@ class CustomersController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    private $data;
+    private $data,$act_permission,$module="customers";
 
     public function __construct()
     {
-        // Closure as callback
+        $this->act_permission = DB::select("
+            select sum(coalesce(allow_create,0)) as allow_create,sum(coalesce(allow_delete,0)) as allow_delete,sum(coalesce(allow_show,0)) as allow_show,sum(coalesce(allow_edit,0)) as allow_edit from (
+                select count(1) as allow_create,0 as allow_delete,0 as allow_show,0 as allow_edit from permissions p join role_has_permissions rp on rp.permission_id = p.id where rp.role_id = 1 and p.name like '%.create' and p.name like '".$this->module.".%'
+                union 
+                select 0 as allow_create,count(1) as allow_delete,0 as allow_show,0 as allow_edit from permissions p  join role_has_permissions rp on rp.permission_id = p.id where rp.role_id = 1 and p.name like '%.delete' and p.name like '".$this->module.".%'
+                union 
+                select 0 as allow_create,0 as allow_delete,count(1) as allow_show,0 as allow_edit from permissions p  join role_has_permissions rp on rp.permission_id = p.id where rp.role_id = 1 and p.name like '%.show' and p.name like '".$this->module.".%'
+                union 
+                select 0 as allow_create,0 as allow_delete,0 as allow_show,count(1) as allow_edit from permissions p  join role_has_permissions rp on rp.permission_id = p.id where rp.role_id = 1 and p.name like '%.edit' and p.name like '".$this->module.".%'
+            ) a
+        ");
         $permissions = Permission::join('role_has_permissions',function ($join) {
             $join->on(function($query){
                 $query->on('role_has_permissions.permission_id', '=', 'permissions.id')

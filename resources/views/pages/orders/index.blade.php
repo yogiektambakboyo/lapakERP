@@ -20,7 +20,7 @@
                 </div>
             </div>
             <div class="col-md-2">
-                <a href="{{ route('orders.create') }}" class="btn btn-primary float-right">Add new order</a>
+                <a href="{{ route('orders.create') }}" class="btn btn-primary float-right {{ $act_permission->allow_create==1?'':'d-none' }}">Add new order</a>
             </div>
         </div>
         
@@ -56,9 +56,9 @@
                         <td>{{ $order->total }}</td>
                         <td>{{ $order->total_discount }}</td>
                         <td>{{ $order->total_payment }}</td>
-                        <td><a href="{{ route('orders.show', $order->id) }}" class="btn btn-warning btn-sm">Show</a></td>
-                        <td><a href="{{ route('orders.edit', $order->id) }}" class="btn btn-info btn-sm">Edit</a></td>
-                        <td>
+                        <td><a href="{{ route('orders.show', $order->id) }}" class="btn btn-warning btn-sm  {{ $act_permission->allow_show==1?'':'d-none' }}">Show</a></td>
+                        <td><a href="{{ route('orders.edit', $order->id) }}" class="btn btn-info btn-sm  {{ $act_permission->allow_edit==1?'':'d-none' }} ">Edit</a></td>
+                        <td class=" {{ $act_permission->allow_delete==1?'':'d-none' }}">
                             {!! Form::open(['method' => 'DELETE','route' => ['orders.destroy', $order->id],'style'=>'display:inline']) !!}
                             {!! Form::submit('Delete', ['class' => 'btn btn-danger btn-sm']) !!}
                             {!! Form::close() !!}

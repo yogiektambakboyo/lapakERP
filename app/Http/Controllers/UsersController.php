@@ -28,11 +28,22 @@ class UsersController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-    private $data;
+    private $data,$act_permission,$module="users";
 
     public function __construct()
     {
-        // Closure as callback
+        $this->act_permission = DB::select("
+            select sum(coalesce(allow_create,0)) as allow_create,sum(coalesce(allow_delete,0)) as allow_delete,sum(coalesce(allow_show,0)) as allow_show,sum(coalesce(allow_edit,0)) as allow_edit from (
+                select count(1) as allow_create,0 as allow_delete,0 as allow_show,0 as allow_edit from permissions p join role_has_permissions rp on rp.permission_id = p.id where rp.role_id = 1 and p.name like '%.create' and p.name like '".$this->module.".%'
+                union 
+                select 0 as allow_create,count(1) as allow_delete,0 as allow_show,0 as allow_edit from permissions p  join role_has_permissions rp on rp.permission_id = p.id where rp.role_id = 1 and p.name like '%.delete' and p.name like '".$this->module.".%'
+                union 
+                select 0 as allow_create,0 as allow_delete,count(1) as allow_show,0 as allow_edit from permissions p  join role_has_permissions rp on rp.permission_id = p.id where rp.role_id = 1 and p.name like '%.show' and p.name like '".$this->module.".%'
+                union 
+                select 0 as allow_create,0 as allow_delete,0 as allow_show,count(1) as allow_edit from permissions p  join role_has_permissions rp on rp.permission_id = p.id where rp.role_id = 1 and p.name like '%.edit' and p.name like '".$this->module.".%'
+            ) a
+        ");
+
         $permissions = Permission::join('role_has_permissions',function ($join) {
             $join->on(function($query){
                 $query->on('role_has_permissions.permission_id', '=', 'permissions.id')
@@ -124,8 +135,9 @@ class UsersController extends Controller
     {
         $data = $this->data;
         $keyword = "";
+        $act_permission = $this->act_permission[0];
         $users = User::orderBy('id', 'ASC')->join('job_title as jt','jt.id','=','users.job_id')->where('users.name','!=','Admin')->paginate(10,['users.id','users.employee_id','users.name','jt.remark as job_title','users.join_date' ]);
-        return view('pages.users.index', compact('users','data','keyword'))->with('i', ($request->input('page', 1) - 1) * 5);
+        return view('pages.users.index', compact('users','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
     }
 
     public function search(Request $request) 

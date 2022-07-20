@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Carbon\Carbon;
 use App\Models\User;
 use App\Models\Product;
+use App\Models\ProductPrice;
 use Illuminate\Http\Request;
 use Spatie\Permission\Models\Role;
 use App\Models\Branch;
@@ -24,7 +25,7 @@ use Auth;
 use Illuminate\Support\Facades\DB;
 
 
-class ProductsController extends Controller
+class ProductsPriceController extends Controller
 {
     /**
      * Display all products
@@ -32,7 +33,7 @@ class ProductsController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-    private $data,$act_permission,$module="products";
+    private $data,$act_permission,$module="productsprice";
 
     public function __construct()
     {
@@ -139,12 +140,15 @@ class ProductsController extends Controller
     {
         $data = $this->data;
         $keyword = "";
+        $act_permission = $this->act_permission[0];
         $products = Product::orderBy('product_sku.remark', 'ASC')
                     ->join('product_type as pt','pt.id','=','product_sku.type_id')
                     ->join('product_category as pc','pc.id','=','product_sku.category_id')
                     ->join('product_brand as pb','pb.id','=','product_sku.brand_id')
-                    ->paginate(10,['product_sku.id','product_sku.remark as product_name','pt.remark as product_type','pc.remark as product_category','pb.remark as product_brand']);
-        return view('pages.products.index', compact('products','data','keyword'))->with('i', ($request->input('page', 1) - 1) * 5);
+                    ->join('product_price as pr','pr.product_id','=','product_sku.id')
+                    ->join('branch as bc','bc.id','=','pr.branch_id')
+                    ->paginate(10,['product_sku.id','product_sku.remark as product_name','pr.branch_id','bc.remark as branch_name','pr.price as product_price','pb.remark as product_brand']);
+        return view('pages.productsprice.index', compact('products','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
     }
 
     public function search(Request $request) 
@@ -163,7 +167,7 @@ class ProductsController extends Controller
                         ->join('product_brand as pb','pb.id','=','product_sku.brand_id')
                         ->whereRaw($whereclause)
                         ->paginate(10,['product_sku.id','product_sku.remark as product_name','pt.remark as product_type','pc.remark as product_category','pb.remark as product_brand']);            
-            return view('pages.products.index', compact('products','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
+            return view('pages.productsprice.index', compact('products','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
         }
     }
 
@@ -180,15 +184,12 @@ class ProductsController extends Controller
      */
     public function create() 
     {
+        $user  = Auth::user();
         $data = $this->data;
-        return view('pages.products.create',[
-            'productCategorys' => ProductCategory::latest()->get(),
-            'productCategorysRemark' => ProductCategory::latest()->get()->pluck('remark')->toArray(),
-            'productBrands' => ProductBrand::latest()->get(),
-            'productBrandsRemark' => ProductBrand::latest()->get()->pluck('remark')->toArray(),
-            'productTypes' => ProductType::latest()->get(),
-            'productTypesRemark' => ProductType::latest()->get()->pluck('remark')->toArray(),
+        return view('pages.productsprice.create',[
+            'products' => DB::select('select ps.id,ps.remark from product_sku as ps where ps.id not in (select distinct product_id from product_price);'),
             'data' => $data,
+            'branchs' => Branch::join('users_branch as ub','ub.branch_id','=','branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']),
         ]);
     }
 
@@ -237,7 +238,7 @@ class ProductsController extends Controller
         ->where('product_sku.id',$product->id)
         ->get(['product_sku.id as product_id','product_sku.abbr','product_sku.remark as product_name','pt.remark as product_type','pc.remark as product_category','pb.remark as product_brand'])->first();
 
-        return view('pages.products.show', [
+        return view('pages.productsprice.show', [
             'product' => $products ,
             'data' => $data,
         ]);
@@ -246,25 +247,29 @@ class ProductsController extends Controller
     /**
      * Edit user data
      * 
-     * @param Product $product
+     * @param ProductPrice $product
      * 
      * @return \Illuminate\Http\Response
      */
-    public function edit(Product $product) 
+    public function edit(String $branch_id,String $product_id) 
     {
         $data = $this->data;
         $products = Product::join('product_type as pt','pt.id','=','product_sku.type_id')
         ->join('product_category as pc','pc.id','=','product_sku.category_id')
         ->join('product_brand as pb','pb.id','=','product_sku.brand_id')
-        ->where('product_sku.id',$product->id)
-        ->get(['product_sku.id as id','product_sku.abbr','product_sku.brand_id','product_sku.category_id','product_sku.type_id','product_sku.remark as product_name','pt.remark as product_type','pc.remark as product_category','pb.remark as product_brand'])->first();
-        return view('pages.products.edit', [
+        ->join('product_price as pr','pr.product_id','=','product_sku.id')
+        ->join('branch as bc','bc.id','=','pr.branch_id')
+        ->where('product_sku.id',$product_id)
+        ->where('bc.id','=',$branch_id)
+        ->get(['product_sku.id as id','product_sku.abbr','product_sku.brand_id','product_sku.category_id','product_sku.type_id','product_sku.remark as product_name','pt.remark as product_type','pc.remark as product_category','pb.remark as product_brand','pr.branch_id','bc.remark as branch_name','pr.price as product_price'])->first();
+        return view('pages.productsprice.edit', [
             'productCategorys' => ProductCategory::latest()->get(),
             'productCategorysRemark' => ProductCategory::latest()->get()->pluck('remark')->toArray(),
             'productBrands' => ProductBrand::latest()->get(),
             'productBrandsRemark' => ProductBrand::latest()->get()->pluck('remark')->toArray(),
             'productTypes' => ProductType::latest()->get(),
             'productTypesRemark' => ProductType::latest()->get()->pluck('remark')->toArray(),
+            'Branchs' => Branch::latest()->get(),
             'data' => $data,
             'product' => $products,
         ]);
@@ -273,15 +278,15 @@ class ProductsController extends Controller
     /**
      * Update user data
      * 
-     * @param Product $product
+     * @param ProductPrice $product
      * @param Request $request
      * 
      * @return \Illuminate\Http\Response
      */
-    public function update(Product $product, Request $request) 
+    public function update(ProductPrice $productprice, Request $request) 
     {
         $user = Auth::user();
-        $product->update(
+        $productprice->update(
             array_merge(
                 ['abbr' => $request->get('abbr') ],
                 ['updated_by' => $user->id],

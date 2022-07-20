@@ -32,10 +32,21 @@ class OrdersController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-    private $data;
+    private $data,$act_permission,$module="orders";
 
     public function __construct()
     {
+        $this->act_permission = DB::select("
+            select sum(coalesce(allow_create,0)) as allow_create,sum(coalesce(allow_delete,0)) as allow_delete,sum(coalesce(allow_show,0)) as allow_show,sum(coalesce(allow_edit,0)) as allow_edit from (
+                select count(1) as allow_create,0 as allow_delete,0 as allow_show,0 as allow_edit from permissions p join role_has_permissions rp on rp.permission_id = p.id where rp.role_id = 1 and p.name like '%.create' and p.name like '".$this->module.".%'
+                union 
+                select 0 as allow_create,count(1) as allow_delete,0 as allow_show,0 as allow_edit from permissions p  join role_has_permissions rp on rp.permission_id = p.id where rp.role_id = 1 and p.name like '%.delete' and p.name like '".$this->module.".%'
+                union 
+                select 0 as allow_create,0 as allow_delete,count(1) as allow_show,0 as allow_edit from permissions p  join role_has_permissions rp on rp.permission_id = p.id where rp.role_id = 1 and p.name like '%.show' and p.name like '".$this->module.".%'
+                union 
+                select 0 as allow_create,0 as allow_delete,0 as allow_show,count(1) as allow_edit from permissions p  join role_has_permissions rp on rp.permission_id = p.id where rp.role_id = 1 and p.name like '%.edit' and p.name like '".$this->module.".%'
+            ) a
+        ");
         // Closure as callback
         $permissions = Permission::join('role_has_permissions',function ($join) {
             $join->on(function($query){
@@ -129,12 +140,7 @@ class OrdersController extends Controller
         $data = $this->data;
         $keyword = "";
         $user = Auth::user();
-        
-        //$orders = DB::select("select om.id,b.remark as branch_name,om.order_no,om.dated,jt.name as customer,om.total,om.total_discount,total_payment from order_master om 
-        //                        join customers as jt on jt.id=om.customers_id
-        //                        join branch as b on b.id=jt.branch_id
-         //                       join users_branch as ub on ub.branch_id= b.id and ub.branch_id=jt.branch_id
-        //");
+        $act_permission = $this->act_permission[0];
         
         $orders = Order::orderBy('id', 'ASC')
                 ->join('customers as jt','jt.id','=','order_master.customers_id')
@@ -144,7 +150,7 @@ class OrdersController extends Controller
                     ->whereColumn('ub.branch_id', 'jt.branch_id');
                 })->where('ub.user_id', $user->id)  
               ->paginate(10,['order_master.id','b.remark as branch_name','order_master.order_no','order_master.dated','jt.name as customer','order_master.total','order_master.total_discount','order_master.total_payment' ]);
-        return view('pages.orders.index', compact('orders','data','keyword'))->with('i', ($request->input('page', 1) - 1) * 5);
+        return view('pages.orders.index', compact('orders','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
     }
 
     public function search(Request $request) 
@@ -345,13 +351,18 @@ class OrdersController extends Controller
     {
         $data = $this->data;
         $user = Auth::user();
+        $room = Room::where('branch_room.id','=',$order->branch_room_id)->get(['branch_room.remark'])->first();
         $payment_type = ['Cash','Debit Card'];
+        $users = User::join('users_branch as ub','ub.branch_id', '=', 'users.branch_id')->where('ub.user_id','=',$user->id)->where('users.job_id','=',2)->get(['users.id','users.name']);
         $usersReferral = User::get(['users.id','users.name']);
         return view('pages.orders.edit',[
             'customers' => Customer::join('users_branch as ub','ub.branch_id', '=', 'customers.branch_id')->join('branch as b','b.id','=','ub.branch_id')->where('ub.user_id',$user->id)->get(['customers.id','customers.name','b.remark']),
             'data' => $data,
             'order' => $order,
-            'orderDetails' => OrderDetail::join('order_master as om','om.order_no','=','order_detail.order_no')->join('product_sku as ps','ps.id','=','order_detail.product_id')->where('order_detail.order_no',$order->order_no)->get(['order_detail.qty','order_detail.price','order_detail.total','ps.id','ps.remark as product_name','order_detail.discount']),
+            'room' => $room,
+            'rooms' => Room::join('users_branch as ub','ub.branch_id', '=', 'branch_room.branch_id')->where('ub.user_id','=',$user->id)->get(['branch_room.id','branch_room.remark']),
+            'users' => $users,
+            'orderDetails' => OrderDetail::join('order_master as om','om.order_no','=','order_detail.order_no')->join('product_sku as ps','ps.id','=','order_detail.product_id')->join('product_uom as u','u.product_id','=','order_detail.product_id')->join('uom as um','um.id','=','u.uom_id')->leftjoin('users as us','us.id','=','order_detail.assigned_to')->where('order_detail.order_no',$order->order_no)->get(['us.name as assigned_to','um.remark as uom','order_detail.qty','order_detail.price','order_detail.total','ps.id','ps.remark as product_name','order_detail.discount']),
             'usersReferrals' => $usersReferral,
             'payment_type' => $payment_type,
         ]);
@@ -368,14 +379,22 @@ class OrdersController extends Controller
     {
         $data = $this->data;
         $user = Auth::user();
-        $product = DB::select(" select od.qty,od.product_id,od.discount,od.price,od.total,ps.remark,ps.abbr from order_detail od join product_sku ps on ps.id=od.product_id where od.order_no='".$order_no."' ");
+        $product = DB::select(" select od.qty,od.product_id,od.discount,od.price,od.total,ps.remark,ps.abbr,um.remark as uom,us.name as assignedto,us.id as assignedtoid 
+        from order_detail od 
+        join order_master om on om.order_no = od.order_no
+        join product_sku ps on ps.id=od.product_id
+        join product_uom uo on uo.product_id = od.product_id
+        join uom um on um.id=uo.uom_id 
+        join users us on us.id= od.assigned_to
+        where od.order_no='".$order_no."' ");
         
         return $product;
         return Datatables::of($product)
         ->addColumn('action', function ($product) {
             return  '<a href="#" id="add_row" class="btn btn-xs btn-green"><div class="fa-1x"><i class="fas fa-circle-plus fa-fw"></i></div></a>'.
             '<a href="#" id="minus_row" class="btn btn-xs btn-yellow"><div class="fa-1x"><i class="fas fa-circle-minus fa-fw"></i></div></a>'.
-            '<a href="#" id="delete_row" class="btn btn-xs btn-danger"><div class="fa-1x"><i class="fas fa-circle-xmark fa-fw"></i></div></a>';
+            '<a href="#" id="delete_row" class="btn btn-xs btn-danger"><div class="fa-1x"><i class="fas fa-circle-xmark fa-fw"></i></div></a>'.
+            '<a href="#" id="assign_row" class="btn btn-xs btn-gray"><div class="fa-1x"><i class="fas fa-user-tag fa-fw"></i></div></a>';
         })->make();
     }
 
@@ -406,7 +425,7 @@ class OrdersController extends Controller
                 ['payment_nominal' => $request->get('payment_nominal') ],
                 ['payment_type' => $request->get('payment_type') ],
                 ['total_payment' => $request->get('total_order') ],
-                ['scheduled_at' => $request->get('scheduled_at')],
+                ['scheduled_at' => Carbon::parse($request->get('scheduled_at'))->format('d/m/Y H:i:s.u') ],
                 ['branch_room_id' => $request->get('branch_room_id')],
             )
         );

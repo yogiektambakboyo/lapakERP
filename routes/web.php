@@ -109,8 +109,21 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
             Route::get('/export', 'ProductsController@export')->name('products.export');
         });
 
+        /**
+         * Product Price
+         */
+        Route::group(['prefix' => 'productsprice'], function() {
+            Route::get('/', 'ProductsPriceController@index')->name('productsprice.index');
+            Route::get('/create', 'ProductsPriceController@create')->name('productsprice.create');
+            Route::post('/create', 'ProductsPriceController@store')->name('productsprice.store');
+            Route::get('/search', 'ProductsPriceController@search')->name('productsprice.search');
+            Route::get('/{branch}/{product}/show', 'ProductsPriceController@show')->name('productsprice.show');
+            Route::get('/{branch}/{product}/edit', 'ProductsPriceController@edit')->name('productsprice.edit');
+            Route::patch('/{branch}/{product}/update', 'ProductsPriceController@update')->name('productsprice.update');
+            Route::delete('/{productsprice}/delete', 'ProductsPriceController@destroy')->name('productsprice.destroy');
+            Route::get('/export', 'ProductsPriceController@export')->name('productsprice.export');
+        });
 
-    
 
         /**
          *  Posts Routes
