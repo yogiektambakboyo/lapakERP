@@ -10,10 +10,12 @@ class ProductPrice extends Model
     use HasFactory;
 
     protected $table = 'product_price';
+    public $incrementing = false;
 
     protected $fillable = [
         'product_id',
         'branch_id',
-        'price'
+        'price',
+        'created_by'
     ];
 }

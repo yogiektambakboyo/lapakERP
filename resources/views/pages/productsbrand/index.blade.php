@@ -4,15 +4,15 @@
 
 @section('content')
     <div class="bg-light p-4 rounded">
-        <h1>Products Price</h1>
+        <h1>Products Brand</h1>
         <div class="lead row mb-3">
             <div class="col-md-10">
-                <div class="col-md-4">
-                    Manage your products price here.
+                <div class="col-md-2">
+                    Manage your products brand here.
                 </div>
                 <div class="col-md-10"> 	
-                    <form action="{{ route('productsprice.search') }}" method="GET" class="row row-cols-lg-auto g-3 align-items-center">
-                        <div class="col-2"><input type="text" class="form-control  form-control-sm" name="search" placeholder="Find Product.." value="{{ $keyword }}"></div>
+                    <form action="{{ route('productsbrand.search') }}" method="GET" class="row row-cols-lg-auto g-3 align-items-center">
+                        <div class="col-2"><input type="text" class="form-control  form-control-sm" name="search" placeholder="Find Brand.." value="{{ $keyword }}"></div>
                         <div class="col-2"><input type="submit" class="btn btn-sm btn-secondary" value="Search" name="submit"></div>   
                         <div class="col-2"><a href="#modal-filter"  data-bs-toggle="modal" data-bs-target="#modal-filter" class="btn btn-sm btn-lime">Filter</a></div>   
                         <div class="col-2"><input type="submit" class="btn btn-sm btn-success" value="Export Excel" name="export"></div>  
@@ -20,7 +20,7 @@
                 </div>
             </div>
             <div class="col-md-2">
-                <a href="{{ route('productsprice.create') }}" class="btn btn-primary float-right  {{ $act_permission->allow_create==1?'':'d-none' }}">Add new product price</a>
+                <a href="{{ route('productsbrand.create') }}" class="btn btn-primary float-right">Add new brand</a>
             </div>
         </div>
         
@@ -31,9 +31,8 @@
         <table class="table table-striped" id="example">
             <thead>
             <tr>
+                <th scope="col" width="1%">#</th>
                 <th>Name</th>
-                <th scope="col" width="15%">Branch</th>
-                <th scope="col" width="10%">Price</th>
                 <th scope="col" width="2%">Action</th>   
                 <th scope="col" width="2%"></th>
                 <th scope="col" width="2%"></th>    
@@ -41,14 +40,13 @@
             </thead>
             <tbody>
 
-                @foreach($products as $product)
+                @foreach($brands as $brand)
                     <tr>
-                        <td>{{ $product->product_name }}</td>
-                        <td>{{ $product->branch_name }}</td>
-                        <td>{{ $product->product_price }}</td>
-                        <td><a href="{{ route('productsprice.edit', [$product->branch_id,$product->id]) }}" class="btn btn-info btn-sm  {{ $act_permission->allow_edit==1?'':'d-none' }}">Edit</a></td>
-                        <td class="{{ $act_permission->allow_delete==1?'':'d-none' }}">
-                            {!! Form::open(['method' => 'DELETE','route' => ['productsprice.destroy', [$product->branch_id,$product->id]],'style'=>'display:inline']) !!}
+                        <th scope="row">{{ $brand->id }}</th>
+                        <td>{{ $brand->remark }}</td>
+                        <td><a href="{{ route('productsbrand.edit', $brand->id) }}" class="btn btn-info btn-sm">Edit</a></td>
+                        <td>
+                            {!! Form::open(['method' => 'DELETE','route' => ['productsbrand.destroy', $brand->id],'style'=>'display:inline']) !!}
                             {!! Form::submit('Delete', ['class' => 'btn btn-danger btn-sm']) !!}
                             {!! Form::close() !!}
                         </td>
@@ -58,7 +56,7 @@
         </table>
 
         <div class="d-flex">
-            {!! $products->links() !!}
+            {!! $brands->links() !!}
         </div>
 
         <!-- Vertically centered modal -->

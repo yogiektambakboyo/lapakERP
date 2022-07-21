@@ -25,13 +25,29 @@
             <div class="row mb-3">
               <label class="form-label col-form-label col-md-2">Product Name</label>
               <div class="col-md-8">
-                <input type="text" class="form-control" name="remark" value="{{ $product->product_name }}" disabled/>
+                <select class="form-control" 
+                name="product_id" disabled>
+                <option value="">Select Product</option>
+                @foreach($products as $productx)
+                    <option value="{{ $productx->id }}"  {{ ($productx->id == $product->id) 
+                      ? 'selected'
+                      : '' }}>{{  $productx->remark }}</option>
+                @endforeach
+              </select>
               </div>
           </div>
           <div class="row mb-3">
             <label class="form-label col-form-label col-md-2">Branch</label>
             <div class="col-md-8">
-              <input type="text" class="form-control" name="branch_name" value="{{ $product->branch_name }}"  disabled/>
+              <select class="form-control" 
+                    name="branch_id" disabled>
+                    <option value="">Select Branch</option>
+                    @foreach($branchs as $branch)
+                        <option value="{{ $branch->id }}"   {{ ($product->branch_id == $branch->id) 
+                          ? 'selected'
+                          : '' }}>{{  $branch->remark }}</option>
+                    @endforeach
+                </select>
             </div>
           </div>
           <div class="row mb-3">

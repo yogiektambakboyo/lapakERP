@@ -110,6 +110,22 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
         });
 
         /**
+         * Product Brand
+         */
+        Route::group(['prefix' => 'productsbrand'], function() {
+            Route::get('/', 'ProductsBrandController@index')->name('productsbrand.index');
+            Route::get('/create', 'ProductsBrandController@create')->name('productsbrand.create');
+            Route::post('/create', 'ProductsBrandController@store')->name('productsbrand.store');
+            Route::get('/search', 'ProductsBrandController@search')->name('productsbrand.search');
+            Route::get('/{productbrand}/show', 'ProductsBrandController@show')->name('productsbrand.show');
+            Route::get('/{productbrand}/edit', 'ProductsBrandController@edit')->name('productsbrand.edit');
+            Route::patch('/{productbrand}/update', 'ProductsBrandController@update')->name('productsbrand.update');
+            Route::delete('/{productbrand}/delete', 'ProductsBrandController@destroy')->name('productsbrand.destroy');
+            Route::get('/export', 'ProductsBrandController@export')->name('productsbrand.export');
+        });
+
+
+        /**
          * Product Price
          */
         Route::group(['prefix' => 'productsprice'], function() {
@@ -120,7 +136,7 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
             Route::get('/{branch}/{product}/show', 'ProductsPriceController@show')->name('productsprice.show');
             Route::get('/{branch}/{product}/edit', 'ProductsPriceController@edit')->name('productsprice.edit');
             Route::patch('/{branch}/{product}/update', 'ProductsPriceController@update')->name('productsprice.update');
-            Route::delete('/{productsprice}/delete', 'ProductsPriceController@destroy')->name('productsprice.destroy');
+            Route::delete('/{branch}/{product}/delete', 'ProductsPriceController@destroy')->name('productsprice.destroy');
             Route::get('/export', 'ProductsPriceController@export')->name('productsprice.export');
         });
 

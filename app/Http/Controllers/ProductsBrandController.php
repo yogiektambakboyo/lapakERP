@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use Carbon\Carbon;
 use App\Models\User;
 use App\Models\Product;
-use App\Models\ProductPrice;
 use Illuminate\Http\Request;
 use Spatie\Permission\Models\Role;
 use App\Models\Branch;
@@ -25,7 +24,7 @@ use Auth;
 use Illuminate\Support\Facades\DB;
 
 
-class ProductsPriceController extends Controller
+class ProductsBrandController extends Controller
 {
     /**
      * Display all products
@@ -33,7 +32,7 @@ class ProductsPriceController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-    private $data,$act_permission,$module="productsprice";
+    private $data,$act_permission,$module="productsbrand";
 
     public function __construct()
     {
@@ -140,15 +139,9 @@ class ProductsPriceController extends Controller
     {
         $data = $this->data;
         $keyword = "";
-        $act_permission = $this->act_permission[0];
-        $products = Product::orderBy('product_sku.remark', 'ASC')
-                    ->join('product_type as pt','pt.id','=','product_sku.type_id')
-                    ->join('product_category as pc','pc.id','=','product_sku.category_id')
-                    ->join('product_brand as pb','pb.id','=','product_sku.brand_id')
-                    ->join('product_price as pr','pr.product_id','=','product_sku.id')
-                    ->join('branch as bc','bc.id','=','pr.branch_id')
-                    ->paginate(10,['product_sku.id','product_sku.remark as product_name','pr.branch_id','bc.remark as branch_name','pr.price as product_price','pb.remark as product_brand']);
-        return view('pages.productsprice.index', compact('products','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
+        $brands = ProductBrand::orderBy('product_brand.remark', 'ASC')
+                    ->paginate(10,['product_brand.id','product_brand.remark']);
+        return view('pages.productsbrand.index', compact('brands','data','keyword'))->with('i', ($request->input('page', 1) - 1) * 5);
     }
 
     public function search(Request $request) 
@@ -165,11 +158,9 @@ class ProductsPriceController extends Controller
                         ->join('product_type as pt','pt.id','=','product_sku.type_id')
                         ->join('product_category as pc','pc.id','=','product_sku.category_id')
                         ->join('product_brand as pb','pb.id','=','product_sku.brand_id')
-                        ->join('product_price as pr','pr.product_id','=','product_sku.id')
-                        ->join('branch as bc','bc.id','=','pr.branch_id')
                         ->whereRaw($whereclause)
-                        ->paginate(10,['product_sku.id','product_sku.remark as product_name','pr.branch_id','bc.remark as branch_name','pr.price as product_price','pb.remark as product_brand']);           
-            return view('pages.productsprice.index', compact('products','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
+                        ->paginate(10,['product_sku.id','product_sku.remark as product_name','pt.remark as product_type','pc.remark as product_category','pb.remark as product_brand']);            
+            return view('pages.productsbrand.index', compact('products','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
         }
     }
 
@@ -186,39 +177,33 @@ class ProductsPriceController extends Controller
      */
     public function create() 
     {
-        $user  = Auth::user();
         $data = $this->data;
-        return view('pages.productsprice.create',[
-            'products' => DB::select('select ps.id,ps.remark from product_sku as ps;'),
+        return view('pages.productsbrand.create',[
             'data' => $data,
-            'branchs' => Branch::join('users_branch as ub','ub.branch_id','=','branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']),
         ]);
     }
 
     /**
      * Store a newly created user
      * 
-     * @param ProductPrice $productprice
+     * @param ProductBrand $product
      * @param Request $request
      * 
      * @return \Illuminate\Http\Response
      */
-    public function store(ProductPrice $productprice, Request $request) 
+    public function store(ProductBrand $productbrand, Request $request) 
     {
         //For demo purposes only. When creating user or inviting a user
         // you should create a generated random password and email it to the user
     
         $user = Auth::user();
-        $productprice->create(
+        $productbrand->create(
             array_merge(
-                ['price' => $request->get('price') ],
-                ['product_id' => $request->get('product_id') ],
-                ['branch_id' => $request->get('branch_id') ],
-                ['created_by' => $user->id ],
+                ['remark' => $request->get('remark') ],
             )
         );
-        return redirect()->route('productsprice.index')
-            ->withSuccess(__('Product price created successfully.'));
+        return redirect()->route('productsbrand.index')
+            ->withSuccess(__('Brand created successfully.'));
     }
 
     /**
@@ -238,7 +223,7 @@ class ProductsPriceController extends Controller
         ->where('product_sku.id',$product->id)
         ->get(['product_sku.id as product_id','product_sku.abbr','product_sku.remark as product_name','pt.remark as product_type','pc.remark as product_category','pb.remark as product_brand'])->first();
 
-        return view('pages.productsprice.show', [
+        return view('pages.productsbrand.show', [
             'product' => $products ,
             'data' => $data,
         ]);
@@ -247,68 +232,54 @@ class ProductsPriceController extends Controller
     /**
      * Edit user data
      * 
-     * @param ProductPrice $product
+     * @param Product $product
      * 
      * @return \Illuminate\Http\Response
      */
-    public function edit(String $branch_id,String $product_id) 
+    public function edit(ProductBrand $productbrand) 
     {
-        $user  = Auth::user();
         $data = $this->data;
-        $product = Product::join('product_type as pt','pt.id','=','product_sku.type_id')
-        ->join('product_category as pc','pc.id','=','product_sku.category_id')
-        ->join('product_brand as pb','pb.id','=','product_sku.brand_id')
-        ->join('product_price as pr','pr.product_id','=','product_sku.id')
-        ->join('branch as bc','bc.id','=','pr.branch_id')
-        ->where('product_sku.id',$product_id)
-        ->where('bc.id','=',$branch_id)
-        ->get(['product_sku.id as id','product_sku.abbr','product_sku.brand_id','product_sku.category_id','product_sku.type_id','product_sku.remark as product_name','pt.remark as product_type','pc.remark as product_category','pb.remark as product_brand','pr.branch_id','bc.remark as branch_name','pr.price as product_price'])->first();
-        return view('pages.productsprice.edit', [
-            'productCategorys' => ProductCategory::latest()->get(),
-            'productCategorysRemark' => ProductCategory::latest()->get()->pluck('remark')->toArray(),
-            'productBrands' => ProductBrand::latest()->get(),
-            'productBrandsRemark' => ProductBrand::latest()->get()->pluck('remark')->toArray(),
-            'productTypes' => ProductType::latest()->get(),
-            'productTypesRemark' => ProductType::latest()->get()->pluck('remark')->toArray(),
-            'branchs' => Branch::join('users_branch as ub','ub.branch_id','=','branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']),
+        $brand = ProductBrand::where('product_brand.id',$productbrand->id)
+        ->get(['product_brand.id as id','product_brand.remark'])->first();
+        return view('pages.productsbrand.edit', [
             'data' => $data,
-            'product' => $product,
-            'products' => Product::get(),
+            'brand' => $brand,
         ]);
     }
 
     /**
      * Update user data
      * 
-     * @param ProductPrice $product
+     * @param ProductBrand $productbrand
      * @param Request $request
      * 
      * @return \Illuminate\Http\Response
      */
-    public function update(String $branch,String $product, Request $request) 
+    public function update(ProductBrand $productbrand, Request $request) 
     {
         $user = Auth::user();
-        ProductPrice::where('product_id','=',$product)->where('branch_id','=',$branch)->update(
+        $productbrand->update(
             array_merge(
-                ['price' => $request->get('price') ],
+                ['remark' => $request->get('remark') ],
             )
         );
         
-        return redirect()->route('productsprice.index')
-            ->withSuccess(__('Product price updated successfully.'));
+        return redirect()->route('productsbrand.index')
+            ->withSuccess(__('Product updated successfully.'));
     }
 
     /**
      * Delete user data
      * 
-     * @param ProductPrice $user
+     * @param ProductBrand $productbrand
      * 
      * @return \Illuminate\Http\Response
      */
-    public function destroy(String $branch,String $product) 
+    public function destroy(ProductBrand $productbrand) 
     {
-        ProductPrice::where('product_id','=',$product)->where('branch_id','=',$branch)->delete();
-        return redirect()->route('productsprice.index')
-            ->withSuccess(__('Product price deleted successfully.'));
+        $productbrand->delete();
+
+        return redirect()->route('productsbrand.index')
+            ->withSuccess(__('Brand deleted successfully.'));
     }
 }
