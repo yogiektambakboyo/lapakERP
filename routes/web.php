@@ -93,6 +93,25 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
             Route::get('/export', 'OrdersController@export')->name('orders.export');
         });
 
+         /**
+         * Invoice Routes
+         */
+        Route::group(['prefix' => 'invoices'], function() {
+            Route::get('/', 'InvoicesController@index')->name('invoices.index');
+            Route::get('/create', 'InvoicesController@create')->name('invoices.create');
+            Route::post('/create', 'InvoicesController@store')->name('invoices.store');
+            Route::get('/search', 'InvoicesController@search')->name('invoices.search');
+            Route::get('/{invoice}/show', 'InvoicesController@show')->name('invoices.show');
+            Route::get('/{invoice}/edit', 'InvoicesController@edit')->name('invoices.edit');
+            Route::get('/getproduct', 'InvoicesController@getproduct')->name('invoices.getproduct');
+            Route::get('/gettimetable', 'InvoicesController@gettimetable')->name('invoices.gettimetable');
+            Route::get('/{invoice}/getinvoice', 'InvoicesController@getinvoice')->name('invoices.getinvoice');
+            Route::patch('/{invoice}/update', 'InvoicesController@update')->name('invoices.update');
+            Route::delete('/{invoice}/delete', 'InvoicesController@destroy')->name('invoices.destroy');
+            Route::get('/export', 'InvoicesController@export')->name('invoices.export');
+        });
+
+
 
          /**
          * Product Routes
@@ -138,6 +157,22 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
             Route::patch('/{branch}/{product}/update', 'ProductsPriceController@update')->name('productsprice.update');
             Route::delete('/{branch}/{product}/delete', 'ProductsPriceController@destroy')->name('productsprice.destroy');
             Route::get('/export', 'ProductsPriceController@export')->name('productsprice.export');
+        });
+
+
+        /**
+         * Product Stock
+         */
+        Route::group(['prefix' => 'productsstock'], function() {
+            Route::get('/', 'ProductsStockController@index')->name('productsstock.index');
+            Route::get('/create', 'ProductsStockController@create')->name('productsstock.create');
+            Route::post('/create', 'ProductsStockController@store')->name('productsstock.store');
+            Route::get('/search', 'ProductsStockController@search')->name('productsstock.search');
+            Route::get('/{branch}/{product}/show', 'ProductsStockController@show')->name('productsstock.show');
+            Route::get('/{branch}/{product}/edit', 'ProductsStockController@edit')->name('productsstock.edit');
+            Route::patch('/{branch}/{product}/update', 'ProductsStockController@update')->name('productsstock.update');
+            Route::delete('/{branch}/{product}/delete', 'ProductsStockController@destroy')->name('productsstock.destroy');
+            Route::get('/export', 'ProductsStockController@export')->name('productsstock.export');
         });
 
 

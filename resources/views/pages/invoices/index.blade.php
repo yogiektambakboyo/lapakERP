@@ -1,18 +1,18 @@
 @extends('layouts.default', ['appSidebarSearch' => true])
 
-@section('title', 'Products')
+@section('title', 'Sales Order')
 
 @section('content')
     <div class="bg-light p-4 rounded">
-        <h1>Products Brand</h1>
+        <h1>Sales Invoices</h1>
         <div class="lead row mb-3">
             <div class="col-md-10">
                 <div class="col-md-2">
-                    Manage your products brand here.
+                    Manage your invoices here.
                 </div>
                 <div class="col-md-10"> 	
-                    <form action="{{ route('productsbrand.search') }}" method="GET" class="row row-cols-lg-auto g-3 align-items-center">
-                        <div class="col-2"><input type="text" class="form-control  form-control-sm" name="search" placeholder="Find Brand.." value="{{ $keyword }}"></div>
+                    <form action="{{ route('invoices.search') }}" method="GET" class="row row-cols-lg-auto g-3 align-items-center">
+                        <div class="col-2"><input type="text" class="form-control  form-control-sm" name="search" placeholder="Find Invoices.." value="{{ $keyword }}"></div>
                         <div class="col-2"><input type="submit" class="btn btn-sm btn-secondary" value="Search" name="submit"></div>   
                         <div class="col-2"><a href="#modal-filter"  data-bs-toggle="modal" data-bs-target="#modal-filter" class="btn btn-sm btn-lime">Filter</a></div>   
                         <div class="col-2"><input type="submit" class="btn btn-sm btn-success" value="Export Excel" name="export"></div>  
@@ -20,7 +20,7 @@
                 </div>
             </div>
             <div class="col-md-2">
-                <a href="{{ route('productsbrand.create') }}" class="btn btn-primary float-right {{ $act_permission->allow_create==1?'':'d-none' }}">Add new brand</a>
+                <a href="{{ route('invoices.create') }}" class="btn btn-primary float-right {{ $act_permission->allow_create==1?'':'d-none' }}">Add new invoice</a>
             </div>
         </div>
         
@@ -32,7 +32,13 @@
             <thead>
             <tr>
                 <th scope="col" width="1%">#</th>
-                <th>Name</th>
+                <th scope="col" width="10%">Branch</th>
+                <th>Invoice No</th>
+                <th scope="col" width="8%">Dated</th>
+                <th scope="col" width="15%">Customer</th>
+                <th scope="col" width="10%">Total</th>
+                <th scope="col" width="10%">Total Discount</th>
+                <th scope="col" width="10%">Total Payment</th>
                 <th scope="col" width="2%">Action</th>   
                 <th scope="col" width="2%"></th>
                 <th scope="col" width="2%"></th>    
@@ -40,13 +46,20 @@
             </thead>
             <tbody>
 
-                @foreach($brands as $brand)
+                @foreach($invoices as $order)
                     <tr>
-                        <th scope="row">{{ $brand->id }}</th>
-                        <td>{{ $brand->remark }}</td>
-                        <td><a href="{{ route('productsbrand.edit', $brand->id) }}" class="btn btn-info btn-sm  {{ $act_permission->allow_edit==1?'':'d-none' }}">Edit</a></td>
+                        <th scope="row">{{ $order->id }}</th>
+                        <td>{{ $order->branch_name }}</td>
+                        <td>{{ $order->invoice_no }}</td>
+                        <td>{{ $order->dated }}</td>
+                        <td>{{ $order->customer }}</td>
+                        <td>{{ $order->total }}</td>
+                        <td>{{ $order->total_discount }}</td>
+                        <td>{{ $order->total_payment }}</td>
+                        <td><a href="{{ route('invoices.show', $order->id) }}" class="btn btn-warning btn-sm  {{ $act_permission->allow_show==1?'':'d-none' }}">Show</a></td>
+                        <td><a href="{{ route('invoices.edit', $order->id) }}" class="btn btn-info btn-sm  {{ $act_permission->allow_edit==1?'':'d-none' }} ">Edit</a></td>
                         <td class=" {{ $act_permission->allow_delete==1?'':'d-none' }}">
-                            {!! Form::open(['method' => 'DELETE','route' => ['productsbrand.destroy', $brand->id],'style'=>'display:inline']) !!}
+                            {!! Form::open(['method' => 'DELETE','route' => ['invoices.destroy', $order->id],'style'=>'display:inline']) !!}
                             {!! Form::submit('Delete', ['class' => 'btn btn-danger btn-sm']) !!}
                             {!! Form::close() !!}
                         </td>
@@ -56,7 +69,7 @@
         </table>
 
         <div class="d-flex">
-            {!! $brands->links() !!}
+            {!! $invoices->links() !!}
         </div>
 
         <!-- Vertically centered modal -->

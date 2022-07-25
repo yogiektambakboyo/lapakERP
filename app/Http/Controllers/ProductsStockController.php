@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Carbon\Carbon;
 use App\Models\User;
 use App\Models\Product;
+use App\Models\ProductPrice;
 use Illuminate\Http\Request;
 use Spatie\Permission\Models\Role;
 use App\Models\Branch;
@@ -13,6 +14,7 @@ use App\Models\Department;
 use App\Models\ProductType;
 use App\Models\ProductBrand;
 use App\Models\ProductCategory;
+use App\Models\ProductStock;
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
 use Spatie\Permission\Models\Permission;
@@ -24,7 +26,7 @@ use Auth;
 use Illuminate\Support\Facades\DB;
 
 
-class ProductsBrandController extends Controller
+class ProductsStockController extends Controller
 {
     /**
      * Display all products
@@ -32,7 +34,7 @@ class ProductsBrandController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-    private $data,$act_permission,$module="productsbrand";
+    private $data,$act_permission,$module="productsstock";
 
     public function __construct()
     {
@@ -140,9 +142,14 @@ class ProductsBrandController extends Controller
         $data = $this->data;
         $keyword = "";
         $act_permission = $this->act_permission[0];
-        $brands = ProductBrand::orderBy('product_brand.remark', 'ASC')
-                    ->paginate(10,['product_brand.id','product_brand.remark']);
-        return view('pages.productsbrand.index', compact('brands','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
+        $products = Product::orderBy('product_sku.remark', 'ASC')
+                    ->join('product_type as pt','pt.id','=','product_sku.type_id')
+                    ->join('product_category as pc','pc.id','=','product_sku.category_id')
+                    ->join('product_brand as pb','pb.id','=','product_sku.brand_id')
+                    ->join('product_stock as pr','pr.product_id','=','product_sku.id')
+                    ->join('branch as bc','bc.id','=','pr.branch_id')
+                    ->paginate(10,['product_sku.id','product_sku.remark as product_name','pr.branch_id','bc.remark as branch_name','pr.qty as product_qty','pb.remark as product_brand']);
+        return view('pages.productsstock.index', compact('products','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
     }
 
     public function search(Request $request) 
@@ -159,9 +166,11 @@ class ProductsBrandController extends Controller
                         ->join('product_type as pt','pt.id','=','product_sku.type_id')
                         ->join('product_category as pc','pc.id','=','product_sku.category_id')
                         ->join('product_brand as pb','pb.id','=','product_sku.brand_id')
+                        ->join('product_price as pr','pr.product_id','=','product_sku.id')
+                        ->join('branch as bc','bc.id','=','pr.branch_id')
                         ->whereRaw($whereclause)
-                        ->paginate(10,['product_sku.id','product_sku.remark as product_name','pt.remark as product_type','pc.remark as product_category','pb.remark as product_brand']);            
-            return view('pages.productsbrand.index', compact('products','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
+                        ->paginate(10,['product_sku.id','product_sku.remark as product_name','pr.branch_id','bc.remark as branch_name','pr.price as product_price','pb.remark as product_brand']);           
+            return view('pages.productsstock.index', compact('products','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
         }
     }
 
@@ -178,33 +187,39 @@ class ProductsBrandController extends Controller
      */
     public function create() 
     {
+        $user  = Auth::user();
         $data = $this->data;
-        return view('pages.productsbrand.create',[
+        return view('pages.productsstock.create',[
+            'products' => DB::select('select ps.id,ps.remark from product_sku as ps;'),
             'data' => $data,
+            'branchs' => Branch::join('users_branch as ub','ub.branch_id','=','branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']),
         ]);
     }
 
     /**
      * Store a newly created user
      * 
-     * @param ProductBrand $product
+     * @param ProductStock $productstock
      * @param Request $request
      * 
      * @return \Illuminate\Http\Response
      */
-    public function store(ProductBrand $productbrand, Request $request) 
+    public function store(ProductStock $productstock, Request $request) 
     {
         //For demo purposes only. When creating user or inviting a user
         // you should create a generated random password and email it to the user
     
         $user = Auth::user();
-        $productbrand->create(
+        $productstock->create(
             array_merge(
-                ['remark' => $request->get('remark') ],
+                ['qty' => $request->get('quantity') ],
+                ['product_id' => $request->get('product_id') ],
+                ['branch_id' => $request->get('branch_id') ],
+                ['created_by' => $user->id ],
             )
         );
-        return redirect()->route('productsbrand.index')
-            ->withSuccess(__('Brand created successfully.'));
+        return redirect()->route('productsstock.index')
+            ->withSuccess(__('Product stock created successfully.'));
     }
 
     /**
@@ -224,7 +239,7 @@ class ProductsBrandController extends Controller
         ->where('product_sku.id',$product->id)
         ->get(['product_sku.id as product_id','product_sku.abbr','product_sku.remark as product_name','pt.remark as product_type','pc.remark as product_category','pb.remark as product_brand'])->first();
 
-        return view('pages.productsbrand.show', [
+        return view('pages.productsstock.show', [
             'product' => $products ,
             'data' => $data,
         ]);
@@ -233,54 +248,61 @@ class ProductsBrandController extends Controller
     /**
      * Edit user data
      * 
-     * @param Product $product
+     * @param ProductStock $productstock
      * 
      * @return \Illuminate\Http\Response
      */
-    public function edit(ProductBrand $productbrand) 
+    public function edit(String $branch_id,String $product_id) 
     {
+        $user  = Auth::user();
         $data = $this->data;
-        $brand = ProductBrand::where('product_brand.id',$productbrand->id)
-        ->get(['product_brand.id as id','product_brand.remark'])->first();
-        return view('pages.productsbrand.edit', [
+        $product = Product::join('product_stock as pb','pb.product_id','=','product_sku.id')
+        ->join('branch as b','b.id','=','pb.branch_id')
+        ->where('product_sku.id',$product_id)
+        ->where('pb.branch_id',$branch_id)
+        ->get(['product_sku.id as product_id','pb.branch_id','product_sku.abbr','product_sku.remark as product_name','b.remark as branch_name','pb.qty'])->first();
+        
+
+        return view('pages.productsstock.edit', [
+            'branchs' => Branch::join('users_branch as ub','ub.branch_id','=','branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']),
             'data' => $data,
-            'brand' => $brand,
+            'product' => $product,
+            'products' => Product::get(),
         ]);
     }
 
     /**
      * Update user data
      * 
-     * @param ProductBrand $productbrand
+     * @param ProductStock $productstock
      * @param Request $request
      * 
      * @return \Illuminate\Http\Response
      */
-    public function update(ProductBrand $productbrand, Request $request) 
+    public function update(String $branch,String $product, Request $request) 
     {
         $user = Auth::user();
-        $productbrand->update(
+        ProductStock::where('product_id','=',$product)->where('branch_id','=',$branch)->update(
             array_merge(
-                ['remark' => $request->get('remark') ],
+                ['qty' => $request->get('qty') ],
             )
         );
         
-        return redirect()->route('productsbrand.index')
-            ->withSuccess(__('Product updated successfully.'));
+        return redirect()->route('productsstock.index')
+            ->withSuccess(__('Product stock updated successfully.'));
     }
 
     /**
      * Delete user data
      * 
-     * @param ProductBrand $productbrand
+     * @param ProductStock $productstock
      * 
      * @return \Illuminate\Http\Response
      */
-    public function destroy(ProductBrand $productbrand) 
+    public function destroy(String $branch,String $product) 
     {
-        $productbrand->delete();
-
-        return redirect()->route('productsbrand.index')
-            ->withSuccess(__('Brand deleted successfully.'));
+        ProductStock::where('product_id','=',$product)->where('branch_id','=',$branch)->delete();
+        return redirect()->route('productsstock.index')
+            ->withSuccess(__('Product Stock deleted successfully.'));
     }
 }

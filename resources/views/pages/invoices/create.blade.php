@@ -1,15 +1,15 @@
 @extends('layouts.default', ['appSidebarSearch' => true])
 
-@section('title', 'Edit Sales Order')
+@section('title', 'Create New Invoice')
 
 @section('content')
-<form method="POST" action="{{ route('orders.store') }}"  enctype="multipart/form-data">
+<form method="POST" action="{{ route('invoices.store') }}"  enctype="multipart/form-data">
   @csrf
   <div class="panel text-white">
     <div class="panel-heading  bg-teal-600">
-      <div class="panel-title"><h4 class="">Sales Order {{ $order->order_no }}</h4></div>
+      <div class="panel-title"><h4 class="">Sales Invoice</h4></div>
       <div class="">
-        <a href="{{ route('orders.index') }}" class="btn btn-default">Cancel</a>
+        <a href="{{ route('invoices.index') }}" class="btn btn-default">Cancel</a>
         <button type="button" id="save-btn" class="btn btn-info">Save</button>
       </div>
     </div>
@@ -20,13 +20,12 @@
             <div class="row mb-3">
               <label class="form-label col-form-label col-md-4">Date (mm/dd/YYYY)</label>
               <div class="col-md-8">
-                <input type="hidden" id="order_no" name="order_no" value="{{ $order->order_no }}">
                 <input type="text" 
-                name="order_date"
-                id="order_date"
+                name="invoice_date"
+                id="invoice_date"
                 class="form-control" 
-                value="{{ substr(explode(" ",$order->dated)[0],5,2) }}/{{ substr(explode(" ",$order->dated)[0],8,2) }}/{{ substr(explode(" ",$order->dated)[0],0,4) }}" required/>
-                @if ($errors->has('order_date'))
+                value="{{ old('invoice_date') }}" required/>
+                @if ($errors->has('invoice_date'))
                           <span class="text-danger text-left">{{ $errors->first('join_date') }}</span>
                       @endif
               </div>
@@ -38,9 +37,10 @@
                 name="remark"
                 id="remark"
                 class="form-control" 
-                value="{{ $order->remark }}"/>
+                value="{{ old('remark') }}"/>
                 </div>
             </div>
+
 
             <div class="panel-heading bg-teal-600 text-white"><strong>Product List</strong></div>
             </br>
@@ -58,28 +58,38 @@
                 </tbody>
               </table>    
             </div>
-
           </div>
 
           <div class="col-md-8">
             <div class="row mb-3">
-              <label class="form-label col-form-label col-md-2">Customer</label>
-              <div class="col-md-4">
+
+              <label class="form-label col-form-label col-md-2">Sales Order</label>
+              <div class="col-md-3">
                 <select class="form-control" 
-                    name="customer_id" id="customer_id">
-                    <option value="">Select Customers</option>
-                    @foreach($customers as $customer)
-                        <option value="{{ $customer->id }}" {{ ($customer->id == $order->customers_id) 
-                          ? 'selected'
-                          : ''}}>{{ $customer->id }} - {{ $customer->name }} ({{ $customer->remark }})</option>
+                    name="ref_no" id="ref_no" required>
+                    <option value="">Select Sales Order</option>
+                    @foreach($orders as $order)
+                        <option value="{{ $order->order_no }}">{{ $order->order_no }} </option>
                     @endforeach
                 </select>
               </div>
-              <label class="form-label col-form-label col-md-2">Schedule</label>
-              <div class="col-md-4">
 
+
+
+              <label class="form-label col-form-label col-md-1">Customer</label>
+              <div class="col-md-2">
+                <select class="form-control" 
+                    name="customer_id" id="customer_id" required>
+                    <option value="">Select Customers</option>
+                    @foreach($customers as $customer)
+                        <option value="{{ $customer->id }}">{{ $customer->id }} - {{ $customer->name }} ({{ $customer->remark }})</option>
+                    @endforeach
+                </select>
+              </div>
+              <label class="form-label col-form-label col-md-1">Schedule</label>
+              <div class="col-md-3">
                   <div class="input-group">
-                    <input type="text" class="form-control" id="scheduled" value="{{ $room->remark }} - {{ $order->scheduled_at }}">
+                    <input type="text" class="form-control" id="scheduled" disabled>
                     <button type="button" class="btn btn-indigo" data-bs-toggle="modal" data-bs-target="#modal-scheduled" >
                       <span class="fas fa-calendar-days"></span>
                     </button>
@@ -90,12 +100,10 @@
               <label class="form-label col-form-label col-md-2">Type Payment</label>
               <div class="col-md-2">
                 <select class="form-control" 
-                      name="payment_type" id ="payment_type" >
+                      name="payment_type" id ="payment_type" required>
                       <option value="">Select Payment</option>
                       @foreach($payment_type as $value)
-                          <option value="{{ $value }}" {{ ($order->payment_type == $value) 
-                            ? 'selected'
-                            : ''}}>{{ $value }}</option>
+                          <option value="{{ $value }}">{{ $value }}</option>
                       @endforeach
                   </select>
               </div>
@@ -106,29 +114,30 @@
                   id="payment_nominal"
                   name="payment_nominal"
                   class="form-control" 
-                  value="{{ $order->payment_nominal }}" />
+                  value="{{ old('remark') }}" required/>
                   </div>
 
                   <label class="form-label col-form-label col-md-1">Charge</label>
                   <div class="col-md-3">
-                    <h2 class="text-end"><label id="order_charge">Rp. {{ number_format(($order->payment_nominal-$order->total), 2, ',', '.') }}</label></h2>
+                    <h2 class="text-end"><label id="order_charge">Rp. 0</label></h2>
                   </div>
+                
             </div>
 
             <div class="panel-heading bg-teal-600 text-white"><strong>Order List</strong></div>
-              </br>
-            <div class="row mb-3">
+            </br>
+
             <table class="table table-striped" id="order_table">
               <thead>
               <tr>
-                <th>Product Code</th>
-                <th scope="col" width="10%">UOM</th>
-                <th scope="col" width="10%">Price</th>
-                <th scope="col" width="5%">Discount</th>
-                <th scope="col" width="5%">Qty</th>
-                <th scope="col" width="15%">Total</th>  
-                <th scope="col" width="15%">Assigned to</th>  
-                <th scope="col" width="15%">Action</th>  
+                  <th>Product Code</th>
+                  <th scope="col" width="10%">UOM</th>
+                  <th scope="col" width="10%">Price</th>
+                  <th scope="col" width="5%">Discount</th>
+                  <th scope="col" width="5%">Qty</th>
+                  <th scope="col" width="15%">Total</th>  
+                  <th scope="col" width="15%">Assigned to</th>  
+                  <th scope="col" width="15%">Action</th>  
               </tr>
               </thead>
               <tbody>
@@ -139,7 +148,7 @@
             <div class="row mb-3">
               <label class="form-label col-form-label col-md-2"><h1>Total</h1></label>
               <div class="col-md-10">
-                <h1 class="display-5 text-end"><label id="order-total">Rp. {{ number_format($order->total, 2, ',', '.') }}</label></h1>
+                <h1 class="display-5 text-end"><label id="order-total">Rp. 0</label></h1>
               </div>
             </div>
 
@@ -188,8 +197,8 @@
                           <select class="form-control" 
                               name="room_id" id="room_id" required>
                               <option value="">Select Rooms</option>
-                              @foreach($rooms as $roomx)
-                                  <option value="{{ $roomx->id }}"  {{ $roomx->remark==$room->remark?"selected":"" }}>{{ $roomx->remark }}</option>
+                              @foreach($rooms as $room)
+                                  <option value="{{ $room->id }}">{{ $room->remark }}</option>
                               @endforeach
                           </select>
                       </div>
@@ -201,9 +210,9 @@
                         name="schedule_date"
                         id="schedule_date"
                         class="form-control" 
-                        value="{{ substr(explode(" ",$order->scheduled_at)[0],5,2) }}/{{ substr(explode(" ",$order->scheduled_at)[0],8,2) }}/{{ substr(explode(" ",$order->scheduled_at)[0],0,4) }}" required/>
-                        @if ($errors->has('order_date'))
-                                  <span class="text-danger text-left">{{ $errors->first('schedule_date') }}</span>
+                        value="{{ old('invoice_date') }}" required/>
+                        @if ($errors->has('invoice_date'))
+                                  <span class="text-danger text-left">{{ $errors->first('join_date') }}</span>
                               @endif
                       </div>
                       <div class="col-md-1">
@@ -211,7 +220,7 @@
                       </div>
                       <div class="col-md-2">
                         <div class="input-group bootstrap-timepicker timepicker">
-                            <input id="timepicker1" type="text" class="form-control input-small" value="{{ explode(" ",$order->scheduled_at)[1] }}">
+                            <input id="timepicker1" type="text" class="form-control input-small">
                             <span class="btn btn-indigo input-group-addon"><i class="fas fa-clock"></i></span>
                         </div>    
                       </div>
@@ -246,10 +255,6 @@
             </div>
 
 
-
-            </div>
-                
-            </div>
           </div>
         </div>
     </div>
@@ -260,11 +265,127 @@
 @push('scripts')
     <script type="text/javascript">
       $(function () {
-          $('#order_date').datepicker({
-              format : 'yyyy-mm-dd'
-          });
-      });
+          const today = new Date();
+          const yyyy = today.getFullYear();
+          let mm = today.getMonth() + 1; // Months start at 0!
+          let dd = today.getDate();
 
+          if (dd < 10) dd = '0' + dd;
+          if (mm < 10) mm = '0' + mm;
+
+          const formattedToday = mm + '/' + dd + '/' + yyyy;
+          $('#invoice_date').datepicker({
+              format : 'yyyy-mm-dd',
+              todayHighlight: true,
+          });
+          $('#invoice_date').val(formattedToday);
+          $('#schedule_date').datepicker({
+              format : 'yyyy-mm-dd',
+              todayHighlight: true,
+          });
+          $('#schedule_date').val(formattedToday);
+
+          var url = "{{ route('orders.getorder','XX') }}";
+          var lastvalurl = "XX";
+          console.log(url);
+          $('#ref_no').change(function(){
+              if($(this).val()==""){
+
+                      table.clear().draw(false);
+                      order_total = 0;
+                      productList = [];
+                      $('#order_charge').text("Rp. 0");
+                      $('#order-total').text("Rp. 0");
+
+              }else{
+                url = url.replace(lastvalurl, $(this).val())
+                lastvalurl = $(this).val();
+                const res = axios.get(url, {
+                  headers: {
+                      'Content-Type': 'application/json'
+                    }
+                }).then(resp => {
+                      table.clear().draw(false);
+                      order_total = 0;
+
+                      for(var i=0;i<resp.data.length;i++){
+                          var product = {
+                                "id"        : resp.data[i]["product_id"],
+                                "abbr"      : resp.data[i]["abbr"],
+                                "uom"      : resp.data[i]["uom"],
+                                "price"     : resp.data[i]["price"],
+                                "discount"  : resp.data[i]["discount"],
+                                "qty"       : resp.data[i]["qty"],
+                                "total"     : resp.data[i]["total"],
+                                "assignedto"     : resp.data[i]["assignedto"],
+                                "assignedtoid"     : resp.data[i]["assignedtoid"],
+                          }
+
+                          productList.push(product);
+                      }
+
+                      for (var i = 0; i < productList.length; i++){
+                      var obj = productList[i];
+                      var value = obj["abbr"];
+                      table.row.add( {
+                          "id"        : obj["id"],
+                          "abbr"      : obj["abbr"],
+                          "uom"       : obj["uom"],
+                          "price"     : obj["price"],
+                          "discount"  : obj["discount"],
+                          "qty"       : obj["qty"],
+                          "total"     : obj["total"],
+                          "assignedto" : obj["assignedto"],
+                          "action"    : "",
+                        }).draw(false);
+                        order_total = order_total + ((parseInt(productList[i]["qty"]))*parseFloat(productList[i]["price"]));
+                        if(($('#payment_nominal').val())>order_total){
+                          $('#order_charge').text(currency((($('#payment_nominal').val())-order_total), { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
+                        }else{
+                          $('#order_charge').text("Rp. 0");
+                        }
+                    }
+
+                    $('#order-total').text(currency(order_total, { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
+
+                    $('#invoice_date').val(resp.data[0]["dated"]);
+                    $('#customer_id').val(resp.data[0]["customers_id"]);
+                    $('#remark').val(resp.data[0]["order_remark"]);
+                    $('#payment_type').val(resp.data[0]["payment_type"]);
+                    $('#payment_nominal').val(resp.data[0]["payment_nominal"]);
+                    $('#schedule_date').val(resp.data[0]["scheduled_date"]);
+                    $('#timepicker1').val(resp.data[0]["scheduled_time"]);
+                    $('#room_id').val(resp.data[0]["branch_room_id"]);
+                    $('#scheduled').val($('#room_id option:selected').text()+" - "+$('#schedule_date').val()+" "+$('#timepicker1').val());
+
+
+                });
+
+              }
+
+              
+
+          });
+
+          $('#btn_scheduled').on('click',function(){
+            if($('#room_id').val()==""){
+              Swal.fire(
+                  {
+                    position: 'top-end',
+                    icon: 'warning',
+                    text: 'Please choose room',
+                    showConfirmButton: false,
+                    imageHeight: 30, 
+                    imageWidth: 30,   
+                    timer: 1500
+                  }
+                );
+            }else{
+            $('#scheduled').val($('#room_id option:selected').text()+" - "+$('#schedule_date').val()+" "+$('#timepicker1').val());
+            }
+          });
+
+      });
 
       $('#btn_assigned').on('click',function(){
         if($('#assign_id').val()==""){
@@ -321,12 +442,10 @@
 
       var productList = [];
       var order_total = 0;
-
-      
-
+        
         $('#save-btn').on('click',function(){
-          if($('#order_date').val()==''){
-            $('#order_date').focus();
+          if($('#invoice_date').val()==''){
+            $('#invoice_date').focus();
             Swal.fire(
               {
                 position: 'top-end',
@@ -404,26 +523,26 @@
             );
           }else{
               const json = JSON.stringify({
-                order_date : $('#order_date').val(),
+                invoice_date : $('#invoice_date').val(),
                 product : productList,
                 customer_id : $('#customer_id').val(),
                 remark : $('#remark').val(),
                 payment_type : $('#payment_type').val(),
                 payment_nominal : $('#payment_nominal').val(),
                 total_order : order_total,
-                order_no :  $('#order_no').val(),
                 scheduled_at : $('#schedule_date').val()+" "+$('#timepicker1').val(),
-                branch_room_id : $('#room_id').val()
+                branch_room_id : $('#room_id').val(),
+                ref_no : $('#ref_no').val(),
               }
             );
-            const res = axios.patch("{{ route('orders.update',$order->id) }}", json, {
+            const res = axios.post("{{ route('invoices.store') }}", json, {
               headers: {
                 // Overwrite Axios's automatically set Content-Type
                 'Content-Type': 'application/json'
               }
             }).then(resp => {
                   if(resp.data.status=="success"){
-                    window.location.href = "{{ route('orders.index') }}"; 
+                    window.location.href = "{{ route('invoices.index') }}"; 
                   }else{
                     Swal.fire(
                       {
@@ -444,7 +563,7 @@
         $('#product-table').DataTable({
           "bInfo" : false,
           pagingType: 'numbers',
-          ajax: "{{ route('orders.getproduct') }}",
+          ajax: "{{ route('invoices.getproduct') }}",
           columns: [
             { data: 'abbr' },
             { data: 'remark' },
@@ -456,10 +575,10 @@
         $('#order_time_table').DataTable({
           "bInfo" : false,
           pagingType: 'numbers',
-          ajax: "{{ route('orders.gettimetable') }}",
+          ajax: "{{ route('invoices.gettimetable') }}",
           columns: [
             { data: 'branch_room_name' },
-            { data: 'order_no' },
+            { data: 'invoice_no' },
             { data: 'customer_name' },
             { data: 'scheduled_at' },
             { data: 'duration' },
@@ -471,8 +590,6 @@
             var table = $('#order_time_table').DataTable();
             table.columns.adjust();
         });
-
-
 
         var table = $('#order_table').DataTable({
           columnDefs: [{ 
@@ -495,11 +612,11 @@
         ],
         });
 
-        function addProduct(id,abbr, price, discount, qty,uom){
+        function addProduct(id,abbr, price, discount, qty, uom){
           table.clear().draw(false);
           order_total = 0;
           var product = {
-            "id"        : id,
+                "id"        : id,
                 "abbr"      : abbr,
                 "price"     : price,
                 "discount"  : discount,
@@ -530,7 +647,7 @@
             var obj = productList[i];
             var value = obj["abbr"];
             table.row.add( {
-                    "id"        : obj["id"],
+                   "id"        : obj["id"],
                     "abbr"      : obj["abbr"],
                     "uom"       : obj["uom"],
                     "price"     : obj["price"],
@@ -626,59 +743,6 @@
                   }
                 }
               });
-
-
-            const res = axios.get("{{ route('orders.getorder',$order->order_no) }}", {
-              headers: {
-                // Overwrite Axios's automatically set Content-Type
-                'Content-Type': 'application/json'
-              }
-            }).then(resp => {
-                  console.log(resp.data);
-                  table.clear().draw(false);
-                  order_total = 0;
-
-                  for(var i=0;i<resp.data.length;i++){
-                      var product = {
-                            "id"        : resp.data[i]["product_id"],
-                            "abbr"      : resp.data[i]["abbr"],
-                            "uom"      : resp.data[i]["uom"],
-                            "price"     : resp.data[i]["price"],
-                            "discount"  : resp.data[i]["discount"],
-                            "qty"       : resp.data[i]["qty"],
-                            "total"     : resp.data[i]["total"],
-                            "assignedto"     : resp.data[i]["assignedto"],
-                            "assignedtoid"     : resp.data[i]["assignedtoid"],
-                      }
-
-                      productList.push(product);
-                  }
-
-                  for (var i = 0; i < productList.length; i++){
-                  var obj = productList[i];
-                  var value = obj["abbr"];
-                  table.row.add( {
-                      "id"        : obj["id"],
-                      "abbr"      : obj["abbr"],
-                      "uom"       : obj["uom"],
-                      "price"     : obj["price"],
-                      "discount"  : obj["discount"],
-                      "qty"       : obj["qty"],
-                      "total"     : obj["total"],
-                      "assignedto" : obj["assignedto"],
-                      "action"    : "",
-                    }).draw(false);
-                    order_total = order_total + ((parseInt(productList[i]["qty"]))*parseFloat(productList[i]["price"]));
-                    if(($('#payment_nominal').val())>order_total){
-                      $('#order_charge').text(currency((($('#payment_nominal').val())-order_total), { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
-                    }else{
-                      $('#order_charge').text("Rp. 0");
-                    }
-                }
-
-                $('#order-total').text(currency(order_total, { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
-            });
-
  
     </script>
 @endpush

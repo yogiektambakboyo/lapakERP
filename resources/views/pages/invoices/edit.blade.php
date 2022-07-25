@@ -3,13 +3,13 @@
 @section('title', 'Edit Sales Order')
 
 @section('content')
-<form method="POST" action="{{ route('orders.store') }}"  enctype="multipart/form-data">
+<form method="POST" action="{{ route('invoices.store') }}"  enctype="multipart/form-data">
   @csrf
   <div class="panel text-white">
     <div class="panel-heading  bg-teal-600">
-      <div class="panel-title"><h4 class="">Sales Order {{ $order->order_no }}</h4></div>
+      <div class="panel-title"><h4 class="">Sales Invoice {{ $invoice->invoice_no }}</h4></div>
       <div class="">
-        <a href="{{ route('orders.index') }}" class="btn btn-default">Cancel</a>
+        <a href="{{ route('invoices.index') }}" class="btn btn-default">Cancel</a>
         <button type="button" id="save-btn" class="btn btn-info">Save</button>
       </div>
     </div>
@@ -20,12 +20,12 @@
             <div class="row mb-3">
               <label class="form-label col-form-label col-md-4">Date (mm/dd/YYYY)</label>
               <div class="col-md-8">
-                <input type="hidden" id="order_no" name="order_no" value="{{ $order->order_no }}">
+                <input type="hidden" id="invoice_no" name="invoice_no" value="{{ $invoice->invoice_no }}">
                 <input type="text" 
                 name="order_date"
                 id="order_date"
                 class="form-control" 
-                value="{{ substr(explode(" ",$order->dated)[0],5,2) }}/{{ substr(explode(" ",$order->dated)[0],8,2) }}/{{ substr(explode(" ",$order->dated)[0],0,4) }}" required/>
+                value="{{ substr(explode(" ",$invoice->dated)[0],5,2) }}/{{ substr(explode(" ",$invoice->dated)[0],8,2) }}/{{ substr(explode(" ",$invoice->dated)[0],0,4) }}" required/>
                 @if ($errors->has('order_date'))
                           <span class="text-danger text-left">{{ $errors->first('join_date') }}</span>
                       @endif
@@ -38,7 +38,7 @@
                 name="remark"
                 id="remark"
                 class="form-control" 
-                value="{{ $order->remark }}"/>
+                value="{{ $invoice->remark }}"/>
                 </div>
             </div>
 
@@ -63,23 +63,27 @@
 
           <div class="col-md-8">
             <div class="row mb-3">
-              <label class="form-label col-form-label col-md-2">Customer</label>
-              <div class="col-md-4">
+              <label class="form-label col-form-label col-md-1">Ref No.</label>
+              <div class="col-md-3">
+                <input type="text" class="form-control" id="ref_no" name="ref_no" value="{{ $invoice->ref_no }}" id="scheduled" disabled>
+              </div>
+              <label class="form-label col-form-label col-md-1">Customer</label>
+              <div class="col-md-3">
                 <select class="form-control" 
                     name="customer_id" id="customer_id">
                     <option value="">Select Customers</option>
                     @foreach($customers as $customer)
-                        <option value="{{ $customer->id }}" {{ ($customer->id == $order->customers_id) 
+                        <option value="{{ $customer->id }}" {{ ($customer->id == $invoice->customers_id) 
                           ? 'selected'
                           : ''}}>{{ $customer->id }} - {{ $customer->name }} ({{ $customer->remark }})</option>
                     @endforeach
                 </select>
               </div>
-              <label class="form-label col-form-label col-md-2">Schedule</label>
-              <div class="col-md-4">
+              <label class="form-label col-form-label col-md-1">Schedule</label>
+              <div class="col-md-3">
 
                   <div class="input-group">
-                    <input type="text" class="form-control" id="scheduled" value="{{ $room->remark }} - {{ $order->scheduled_at }}">
+                    <input type="text" class="form-control" id="scheduled" value="{{ $room->remark }} - {{ $invoice->scheduled_at }}">
                     <button type="button" class="btn btn-indigo" data-bs-toggle="modal" data-bs-target="#modal-scheduled" >
                       <span class="fas fa-calendar-days"></span>
                     </button>
@@ -93,7 +97,7 @@
                       name="payment_type" id ="payment_type" >
                       <option value="">Select Payment</option>
                       @foreach($payment_type as $value)
-                          <option value="{{ $value }}" {{ ($order->payment_type == $value) 
+                          <option value="{{ $value }}" {{ ($invoice->payment_type == $value) 
                             ? 'selected'
                             : ''}}>{{ $value }}</option>
                       @endforeach
@@ -106,16 +110,16 @@
                   id="payment_nominal"
                   name="payment_nominal"
                   class="form-control" 
-                  value="{{ $order->payment_nominal }}" />
+                  value="{{ $invoice->payment_nominal }}" />
                   </div>
 
                   <label class="form-label col-form-label col-md-1">Charge</label>
                   <div class="col-md-3">
-                    <h2 class="text-end"><label id="order_charge">Rp. {{ number_format(($order->payment_nominal-$order->total), 2, ',', '.') }}</label></h2>
+                    <h2 class="text-end"><label id="order_charge">Rp. {{ number_format(($invoice->payment_nominal-$invoice->total), 2, ',', '.') }}</label></h2>
                   </div>
             </div>
 
-            <div class="panel-heading bg-teal-600 text-white"><strong>Order List</strong></div>
+            <div class="panel-heading bg-teal-600 text-white"><strong>Invoice List</strong></div>
               </br>
             <div class="row mb-3">
             <table class="table table-striped" id="order_table">
@@ -139,7 +143,7 @@
             <div class="row mb-3">
               <label class="form-label col-form-label col-md-2"><h1>Total</h1></label>
               <div class="col-md-10">
-                <h1 class="display-5 text-end"><label id="order-total">Rp. {{ number_format($order->total, 2, ',', '.') }}</label></h1>
+                <h1 class="display-5 text-end"><label id="order-total">Rp. {{ number_format($invoice->total, 2, ',', '.') }}</label></h1>
               </div>
             </div>
 
@@ -201,7 +205,7 @@
                         name="schedule_date"
                         id="schedule_date"
                         class="form-control" 
-                        value="{{ substr(explode(" ",$order->scheduled_at)[0],5,2) }}/{{ substr(explode(" ",$order->scheduled_at)[0],8,2) }}/{{ substr(explode(" ",$order->scheduled_at)[0],0,4) }}" required/>
+                        value="{{ substr(explode(" ",$invoice->scheduled_at)[0],5,2) }}/{{ substr(explode(" ",$invoice->scheduled_at)[0],8,2) }}/{{ substr(explode(" ",$invoice->scheduled_at)[0],0,4) }}" required/>
                         @if ($errors->has('order_date'))
                                   <span class="text-danger text-left">{{ $errors->first('schedule_date') }}</span>
                               @endif
@@ -211,7 +215,7 @@
                       </div>
                       <div class="col-md-2">
                         <div class="input-group bootstrap-timepicker timepicker">
-                            <input id="timepicker1" type="text" class="form-control input-small" value="{{ explode(" ",$order->scheduled_at)[1] }}">
+                            <input id="timepicker1" type="text" class="form-control input-small" value="{{ explode(" ",$invoice->scheduled_at)[1] }}">
                             <span class="btn btn-indigo input-group-addon"><i class="fas fa-clock"></i></span>
                         </div>    
                       </div>
@@ -411,19 +415,20 @@
                 payment_type : $('#payment_type').val(),
                 payment_nominal : $('#payment_nominal').val(),
                 total_order : order_total,
-                order_no :  $('#order_no').val(),
+                invoice_no :  $('#invoice_no').val(),
                 scheduled_at : $('#schedule_date').val()+" "+$('#timepicker1').val(),
-                branch_room_id : $('#room_id').val()
+                branch_room_id : $('#room_id').val(),
+                ref_no : $('#ref_no').val(),
               }
             );
-            const res = axios.patch("{{ route('orders.update',$order->id) }}", json, {
+            const res = axios.patch("{{ route('invoices.update',$invoice->id) }}", json, {
               headers: {
                 // Overwrite Axios's automatically set Content-Type
                 'Content-Type': 'application/json'
               }
             }).then(resp => {
                   if(resp.data.status=="success"){
-                    window.location.href = "{{ route('orders.index') }}"; 
+                    window.location.href = "{{ route('invoices.index') }}"; 
                   }else{
                     Swal.fire(
                       {
@@ -459,7 +464,7 @@
           ajax: "{{ route('orders.gettimetable') }}",
           columns: [
             { data: 'branch_room_name' },
-            { data: 'order_no' },
+            { data: 'invoice_no' },
             { data: 'customer_name' },
             { data: 'scheduled_at' },
             { data: 'duration' },
@@ -628,7 +633,7 @@
               });
 
 
-            const res = axios.get("{{ route('orders.getorder',$order->order_no) }}", {
+              const res = axios.get("{{ route('invoices.getinvoice',$invoice->invoice_no) }}", {
               headers: {
                 // Overwrite Axios's automatically set Content-Type
                 'Content-Type': 'application/json'

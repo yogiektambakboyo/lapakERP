@@ -11,6 +11,8 @@ use App\Models\Room;
 use App\Models\JobTitle;
 use App\Models\Order;
 use App\Models\OrderDetail;
+use App\Models\Invoice;
+use App\Models\InvoiceDetail;
 use App\Models\Customer;
 use App\Models\Department;
 use App\Http\Requests\StoreUserRequest;
@@ -24,7 +26,7 @@ use Auth;
 use Illuminate\Support\Facades\DB;
 
 
-class OrdersController extends Controller
+class InvoicesController extends Controller
 {
     /**
      * Display all users
@@ -32,7 +34,7 @@ class OrdersController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-    private $data,$act_permission,$module="orders";
+    private $data,$act_permission,$module="invoices";
 
     public function __construct()
     {
@@ -142,15 +144,15 @@ class OrdersController extends Controller
         $user = Auth::user();
         $act_permission = $this->act_permission[0];
         
-        $orders = Order::orderBy('id', 'ASC')
-                ->join('customers as jt','jt.id','=','order_master.customers_id')
+        $invoices = Invoice::orderBy('id', 'ASC')
+                ->join('customers as jt','jt.id','=','invoice_master.customers_id')
                 ->join('branch as b','b.id','=','jt.branch_id')
                 ->join('users_branch as ub', function($join){
                     $join->on('ub.branch_id', '=', 'b.id')
                     ->whereColumn('ub.branch_id', 'jt.branch_id');
                 })->where('ub.user_id', $user->id)  
-              ->paginate(10,['order_master.id','b.remark as branch_name','order_master.order_no','order_master.dated','jt.name as customer','order_master.total','order_master.total_discount','order_master.total_payment' ]);
-        return view('pages.orders.index', compact('orders','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
+              ->paginate(10,['invoice_master.id','b.remark as branch_name','invoice_master.invoice_no','invoice_master.dated','jt.name as customer','invoice_master.total','invoice_master.total_discount','invoice_master.total_payment' ]);
+        return view('pages.invoices.index', compact('invoices','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
     }
 
     public function search(Request $request) 
@@ -162,7 +164,7 @@ class OrdersController extends Controller
             return Excel::download(new UsersExport($keyword), 'users_'.Carbon::now()->format('YmdHis').'.xlsx');
         }else{
             $users = User::orderBy('id', 'ASC')->join('branch as b','b.id','=','users.branch_id')->join('job_title as jt','jt.id','=','users.job_id')->where('users.name','!=','Admin')->where('users.name','LIKE','%'.$keyword.'%')->paginate(10,['users.id','users.employee_id','users.name','jt.remark as job_title','b.remark as branch_name','users.join_date' ]);
-            return view('pages.orders.index', compact('users','data','keyword'))->with('i', ($request->input('page', 1) - 1) * 5);
+            return view('pages.invoices.index', compact('users','data','keyword'))->with('i', ($request->input('page', 1) - 1) * 5);
         }
     }
 
@@ -183,10 +185,11 @@ class OrdersController extends Controller
         $user = Auth::user();
         $payment_type = ['Cash','Debit Card'];
         $users = User::join('users_branch as ub','ub.branch_id', '=', 'users.branch_id')->where('ub.user_id','=',$user->id)->where('users.job_id','=',2)->get(['users.id','users.name']);
-        return view('pages.orders.create',[
+        return view('pages.invoices.create',[
             'customers' => Customer::join('users_branch as ub','ub.branch_id', '=', 'customers.branch_id')->join('branch as b','b.id','=','ub.branch_id')->where('ub.user_id',$user->id)->get(['customers.id','customers.name','b.remark']),
             'data' => $data,
             'users' => $users,
+            'orders' => Order::where('is_checkout','0')->get(),
             'payment_type' => $payment_type,
             'rooms' => Room::join('users_branch as ub','ub.branch_id', '=', 'branch_room.branch_id')->where('ub.user_id','=',$user->id)->get(['branch_room.id','branch_room.remark']),
         ]);
@@ -206,6 +209,7 @@ class OrdersController extends Controller
         join product_uom pu on pu.product_id = product_sku.id
         join uom m on m.id = pu.uom_id
         join (select * from users_branch u where u.user_id = '".$user->id."' order by branch_id desc limit 1 ) ub on ub.branch_id = pp.branch_id and ub.branch_id=pd.branch_id 
+        join product_stock pk on pk.product_id = product_sku.id and pk.branch_id = ub.branch_id
         where product_sku.active = '1' ");
         return Datatables::of($product)
         ->addColumn('action', function ($product) {
@@ -217,18 +221,18 @@ class OrdersController extends Controller
     {
         $data = $this->data;
         $user = Auth::user();
-        $timetable = DB::select(" select br.remark as branch_room_name,om.order_no,c.name as customer_name,to_char(om.scheduled_at,'YYYY-MM-DD HH24:MI') scheduled_at,case when sum(u.conversion)<30 then 30 else sum(u.conversion) end as duration,
+        $timetable = DB::select(" select br.remark as branch_room_name,om.invoice_no,c.name as customer_name,to_char(om.scheduled_at,'YYYY-MM-DD HH24:MI') scheduled_at,case when sum(u.conversion)<30 then 30 else sum(u.conversion) end as duration,
         case when sum(u.conversion)<30 then to_char(om.scheduled_at+interval'30 minutes','YYYY-MM-DD HH24:MI') 
         else to_char((om.scheduled_at+interval '1 minutes' * sum(u.conversion)),'YYYY-MM-DD HH24:MI') end as est_end
-        from order_master om
-        join order_detail od on od.order_no = om.order_no 
+        from invoice_master om
+        join invoice_detail od on od.invoice_no = om.invoice_no 
         join product_uom pu on pu.product_id = od.product_id 
         join uom u  on u.id = pu.uom_id 
         join customers c on c.id = om.customers_id 
         join branch_room br on br.branch_id = c.branch_id and br.id = om.branch_room_id 
         join users_branch ub on ub.branch_id = br.branch_id and ub.branch_id = c.branch_id and ub.user_id = ".$user->id."
         where scheduled_at >= now()::date and om.is_checkout='0'
-        group by br.remark,om.order_no,om.customers_id,om.scheduled_at,c.name
+        group by br.remark,om.invoice_no,om.customers_id,om.scheduled_at,c.name
         order by 1,4 ");
         return Datatables::of($timetable)->make();
     }
@@ -237,7 +241,7 @@ class OrdersController extends Controller
      * Store a newly created user
      * 
      * @param User $user
-     * @param Order $request
+     * @param Invoice $request
      * 
      * @return \Illuminate\Http\Response
      */
@@ -248,12 +252,12 @@ class OrdersController extends Controller
         
         $user = Auth::user();
         $branch = Customer::where('id','=',$request->get('customer_id'))->get(['branch_id'])->first();
-        $count_no = DB::select("select max(id) as id from order_master om where to_char(om.dated,'YYYY')=to_char(now(),'YYYY') ");
-        $order_no = 'ORD-'.substr(('000'.$branch->branch_id),-3).'-'.date("Y").'-'.substr(('00000000'.((int)($count_no[0]->id) + 1)),-8);
+        $count_no = DB::select("select max(id) as id from invoice_master om where to_char(om.dated,'YYYY')=to_char(now(),'YYYY') ");
+        $invoice_no = 'INV-'.substr(('000'.$branch->branch_id),-3).'-'.date("Y").'-'.substr(('00000000'.((int)($count_no[0]->id) + 1)),-8);
 
-        $res_order = Order::create(
+        $res_invoice = Invoice::create(
             array_merge(
-                ['order_no' => $order_no ],
+                ['invoice_no' => $invoice_no ],
                 ['created_by' => $user->id],
                 ['dated' => Carbon::parse($request->get('order_date'))->format('d/m/Y') ],
                 ['customers_id' => $request->get('customer_id') ],
@@ -264,14 +268,17 @@ class OrdersController extends Controller
                 ['total_payment' => $request->get('total_order') ],
                 ['scheduled_at' => Carbon::parse($request->get('scheduled_at'))->format('d/m/Y H:i:s.u') ],
                 ['branch_room_id' => $request->get('branch_room_id')],
+                ['ref_no' => $request->get('ref_no')],
             )
         );
 
-        if(!$res_order){
+        $branch_id = Room::where('id',$request->get('branch_room_id'))->get(['branch_id'])->first();
+
+        if(!$res_invoice){
             $result = array_merge(
                 ['status' => 'failed'],
                 ['data' => ''],
-                ['message' => 'Save order failed'],
+                ['message' => 'Save invoice failed'],
             );
     
             return $result;
@@ -279,9 +286,9 @@ class OrdersController extends Controller
 
 
         for ($i=0; $i < count($request->get('product')); $i++) { 
-            $res_order_detail = OrderDetail::create(
+            $res_invoice_detail = InvoiceDetail::create(
                 array_merge(
-                    ['order_no' => $order_no],
+                    ['invoice_no' => $invoice_no],
                     ['product_id' => $request->get('product')[$i]["id"]],
                     ['qty' => $request->get('product')[$i]["qty"]],
                     ['price' => $request->get('product')[$i]["price"]],
@@ -294,21 +301,31 @@ class OrdersController extends Controller
             );
 
 
-            if(!$res_order_detail){
+            if(!$res_invoice_detail){
                 $result = array_merge(
                     ['status' => 'failed'],
                     ['data' => ''],
-                    ['message' => 'Save order detail failed'],
+                    ['message' => 'Save invoice detail failed'],
                 );
         
                 return $result;
             }
+
+            DB::update("UPDATE product_stock set qty = qty-".$request->get('product')[$i]['qty']." WHERE branch_id = ".$branch_id['branch_id']." and product_id = ".$request->get('product')[$i]["id"]);
+
         }
+
+
+        Order::where('order_no',$request->get('ref_no'))->update(
+            array_merge(
+                ['is_checkout'   => '1'],
+            )
+        );
 
 
         $result = array_merge(
             ['status' => 'success'],
-            ['data' => $order_no],
+            ['data' => $invoice_no],
             ['message' => 'Save Successfully'],
         );
 
@@ -318,23 +335,23 @@ class OrdersController extends Controller
     /**
      * Show user data
      * 
-     * @param Order $order
+     * @param Invoice $invoice
      * 
      * @return \Illuminate\Http\Response
      */
-    public function show(Order $order) 
+    public function show(Invoice $invoice) 
     {
         $data = $this->data;
         $user = Auth::user();
-        $room = Room::where('branch_room.id','=',$order->branch_room_id)->get(['branch_room.remark'])->first();
+        $room = Room::where('branch_room.id','=',$invoice->branch_room_id)->get(['branch_room.remark'])->first();
         $payment_type = ['Cash','Debit Card'];
         $usersReferral = User::get(['users.id','users.name']);
-        return view('pages.orders.show',[
+        return view('pages.invoices.show',[
             'customers' => Customer::join('users_branch as ub','ub.branch_id', '=', 'customers.branch_id')->join('branch as b','b.id','=','ub.branch_id')->where('ub.user_id',$user->id)->get(['customers.id','customers.name','b.remark']),
             'data' => $data,
-            'order' => $order,
+            'invoice' => $invoice,
             'room' => $room,
-            'orderDetails' => OrderDetail::join('order_master as om','om.order_no','=','order_detail.order_no')->join('product_sku as ps','ps.id','=','order_detail.product_id')->join('product_uom as u','u.product_id','=','order_detail.product_id')->join('uom as um','um.id','=','u.uom_id')->leftjoin('users as us','us.id','=','order_detail.assigned_to')->where('order_detail.order_no',$order->order_no)->get(['us.name as assigned_to','um.remark as uom','order_detail.qty','order_detail.price','order_detail.total','ps.id','ps.remark as product_name','order_detail.discount']),
+            'orderDetails' =>InvoiceDetail::join('invoice_master as om','om.invoice_no','=','invoice_detail.invoice_no')->join('product_sku as ps','ps.id','=','invoice_detail.product_id')->join('product_uom as u','u.product_id','=','invoice_detail.product_id')->join('uom as um','um.id','=','u.uom_id')->leftjoin('users as us','us.id','=','invoice_detail.assigned_to')->where('invoice_detail.invoice_no',$invoice->invoice_no)->get(['us.name as assigned_to','um.remark as uom','invoice_detail.qty','invoice_detail.price','invoice_detail.total','ps.id','ps.remark as product_name','invoice_detail.discount']),
             'usersReferrals' => $usersReferral,
             'payment_type' => $payment_type,
         ]);
@@ -343,26 +360,26 @@ class OrdersController extends Controller
     /**
      * Edit user data
      * 
-     * @param Order $order
+     * @param Invoice $invoice
      * 
      * @return \Illuminate\Http\Response
      */
-    public function edit(Order $order) 
+    public function edit(Invoice $invoice) 
     {
         $data = $this->data;
         $user = Auth::user();
-        $room = Room::where('branch_room.id','=',$order->branch_room_id)->get(['branch_room.remark'])->first();
+        $room = Room::where('branch_room.id','=',$invoice->branch_room_id)->get(['branch_room.remark'])->first();
         $payment_type = ['Cash','Debit Card'];
         $users = User::join('users_branch as ub','ub.branch_id', '=', 'users.branch_id')->where('ub.user_id','=',$user->id)->where('users.job_id','=',2)->get(['users.id','users.name']);
         $usersReferral = User::get(['users.id','users.name']);
-        return view('pages.orders.edit',[
+        return view('pages.invoices.edit',[
             'customers' => Customer::join('users_branch as ub','ub.branch_id', '=', 'customers.branch_id')->join('branch as b','b.id','=','ub.branch_id')->where('ub.user_id',$user->id)->get(['customers.id','customers.name','b.remark']),
             'data' => $data,
-            'order' => $order,
+            'invoice' => $invoice,
             'room' => $room,
             'rooms' => Room::join('users_branch as ub','ub.branch_id', '=', 'branch_room.branch_id')->where('ub.user_id','=',$user->id)->get(['branch_room.id','branch_room.remark']),
             'users' => $users,
-            'orderDetails' => OrderDetail::join('order_master as om','om.order_no','=','order_detail.order_no')->join('product_sku as ps','ps.id','=','order_detail.product_id')->join('product_uom as u','u.product_id','=','order_detail.product_id')->join('uom as um','um.id','=','u.uom_id')->leftjoin('users as us','us.id','=','order_detail.assigned_to')->where('order_detail.order_no',$order->order_no)->get(['us.name as assigned_to','um.remark as uom','order_detail.qty','order_detail.price','order_detail.total','ps.id','ps.remark as product_name','order_detail.discount']),
+            'orderDetails' => InvoiceDetail::join('invoice_master as om','om.invoice_no','=','invoice_detail.invoice_no')->join('product_sku as ps','ps.id','=','invoice_detail.product_id')->join('product_uom as u','u.product_id','=','invoice_detail.product_id')->join('uom as um','um.id','=','u.uom_id')->leftjoin('users as us','us.id','=','invoice_detail.assigned_to')->where('invoice_detail.invoice_no',$invoice->invoice_no)->get(['us.name as assigned_to','um.remark as uom','invoice_detail.qty','invoice_detail.price','invoice_detail.total','ps.id','ps.remark as product_name','invoice_detail.discount']),
             'usersReferrals' => $usersReferral,
             'payment_type' => $payment_type,
         ]);
@@ -375,19 +392,18 @@ class OrdersController extends Controller
      * 
      * @return \Illuminate\Http\Response
      */
-    public function getorder(String $order_no) 
+    public function getinvoice(String $invoice_no) 
     {
         $data = $this->data;
         $user = Auth::user();
-        $product = DB::select(" select to_char(om.scheduled_at,'mm/dd/YYYY') as scheduled_date,to_char(om.scheduled_at,'HH24:MI') as scheduled_time,rm.remark as room_name,om.customers_id,om.remark as order_remark,to_char(om.dated,'mm/dd/YYYY') as dated,om.payment_type,om.payment_nominal,om.scheduled_at,om.branch_room_id,od.qty,od.product_id,od.discount,od.price,od.total,ps.remark,ps.abbr,um.remark as uom,us.name as assignedto,us.id as assignedtoid 
-        from order_detail od 
-        join order_master om on om.order_no = od.order_no
+        $product = DB::select(" select od.qty,od.product_id,od.discount,od.price,od.total,ps.remark,ps.abbr,um.remark as uom,us.name as assignedto,us.id as assignedtoid 
+        from invoice_detail od 
+        join invoice_master om on om.invoice_no = od.invoice_no
         join product_sku ps on ps.id=od.product_id
         join product_uom uo on uo.product_id = od.product_id
         join uom um on um.id=uo.uom_id 
         join users us on us.id= od.assigned_to
-        join branch_room rm on rm.id=om.branch_room_id
-        where od.order_no='".$order_no."' ");
+        where od.invoice_no='".$invoice_no."' ");
         
         return $product;
         return Datatables::of($product)
@@ -402,21 +418,20 @@ class OrdersController extends Controller
     /**
      * Update user data
      * 
-     * @param User $user
+     * @param Invoice $invoice
      * @param Request $request
      * 
      * @return \Illuminate\Http\Response
      */
-    public function update(Order $order, Request $request) 
+    public function update(Invoice $invoice, Request $request) 
     {
 
         $user = Auth::user();
-        $order_no = $request->get('order_no');
+        $invoice_no = $request->get('invoice_no');
 
-        OrderDetail::where('order_no', $order_no)->delete();
-        //$order->delete();
+        InvoiceDetail::where('invoice_no', $invoice_no)->delete();
 
-        $res_order = $order->update(
+        $res_invoice = $invoice->update(
             array_merge(
                 ['updated_by'   => $user->id],
                 ['dated' => Carbon::parse($request->get('order_date'))->format('d/m/Y') ],
@@ -428,14 +443,17 @@ class OrdersController extends Controller
                 ['total_payment' => $request->get('total_order') ],
                 ['scheduled_at' => Carbon::parse($request->get('scheduled_at'))->format('d/m/Y H:i:s.u') ],
                 ['branch_room_id' => $request->get('branch_room_id')],
+                ['ref_no' => $request->get('ref_no')],
             )
         );
 
-        if(!$res_order){
+        $branch_id = Room::where('id',$request->get('branch_room_id'))->get(['branch_id'])->first();
+
+        if(!$res_invoice){
             $result = array_merge(
                 ['status' => 'failed'],
                 ['data' => ''],
-                ['message' => 'Save order failed'],
+                ['message' => 'Save invoice failed'],
             );
     
             return $result;
@@ -443,9 +461,9 @@ class OrdersController extends Controller
 
 
         for ($i=0; $i < count($request->get('product')); $i++) { 
-            $res_order_detail = OrderDetail::create(
+            $res_invoice_detail = InvoiceDetail::create(
                 array_merge(
-                    ['order_no' => $order_no],
+                    ['invoice_no' => $invoice_no],
                     ['product_id' => $request->get('product')[$i]["id"]],
                     ['qty' => $request->get('product')[$i]["qty"]],
                     ['price' => $request->get('product')[$i]["price"]],
@@ -458,21 +476,22 @@ class OrdersController extends Controller
             );
 
 
-            if(!$res_order_detail){
+            if(!$res_invoice_detail){
                 $result = array_merge(
                     ['status' => 'failed'],
                     ['data' => ''],
-                    ['message' => 'Save order detail failed'],
+                    ['message' => 'Save invoice detail failed'],
                 );
         
                 return $result;
             }
+           
+            DB::update("UPDATE product_stock set qty = qty-".$request->get('product')[$i]['qty']." WHERE branch_id = ".$branch_id['branch_id']." and product_id = ".$request->get('product')[$i]["id"]);
         }
-
 
         $result = array_merge(
             ['status' => 'success'],
-            ['data' => $order_no],
+            ['data' => $invoice_no],
             ['message' => 'Save Successfully'],
         );
 
@@ -482,17 +501,17 @@ class OrdersController extends Controller
     /**
      * Delete user data
      * 
-     * @param Order $order
+     * @param Invoice $invoice
      * 
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Order $order) 
+    public function destroy(Invoice $invoice) 
     {
-        OrderDetail::where('order_no', $order->order_no)->delete();
+        InvoiceDetail::where('invoice_no', $invoice->invoice_no)->delete();
 
-        $order->delete();
+        $invoice->delete();
 
-        return redirect()->route('orders.index')
-            ->withSuccess(__('Order deleted successfully.'));
+        return redirect()->route('invoices.index')
+            ->withSuccess(__('Invoice deleted successfully.'));
     }
 }
