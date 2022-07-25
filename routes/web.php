@@ -230,8 +230,52 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
             Route::delete('/{room}/delete', 'BranchRoomsController@destroy')->name('rooms.destroy');
         });
 
+
         /**
-         *  Customer
+         *  UOM
+         */
+        Route::group(['prefix' => 'uoms'], function() {
+            Route::get('/', 'UomController@index')->name('uoms.index');
+            Route::get('/create', 'UomController@create')->name('uoms.create');
+            Route::post('/create', 'UomController@store')->name('uoms.store');
+            Route::get('/{uom}/show', 'UomController@show')->name('uoms.show');
+            Route::get('/{uom}/edit', 'UomController@edit')->name('uoms.edit');
+            Route::patch('/{uom}/update', 'UomController@update')->name('uoms.update');
+            Route::delete('/{uom}/delete', 'UomController@destroy')->name('uoms.destroy');
+        });
+
+
+        /**
+         *  Category
+         */
+        Route::group(['prefix' => 'categories'], function() {
+            Route::get('/', 'CategoriesController@index')->name('categories.index');
+            Route::get('/create', 'CategoriesController@create')->name('categories.create');
+            Route::post('/create', 'CategoriesController@store')->name('categories.store');
+            Route::get('/{category}/show', 'CategoriesController@show')->name('categories.show');
+            Route::get('/{category}/edit', 'CategoriesController@edit')->name('categories.edit');
+            Route::patch('/{category}/update', 'CategoriesController@update')->name('categories.update');
+            Route::delete('/{category}/delete', 'CategoriesController@destroy')->name('categories.destroy');
+        });
+
+
+
+        /**
+         *  Type
+         */
+        Route::group(['prefix' => 'types'], function() {
+            Route::get('/', 'TypeController@index')->name('types.index');
+            Route::get('/create', 'TypeController@create')->name('types.create');
+            Route::post('/create', 'TypeController@store')->name('types.store');
+            Route::get('/{type}/show', 'TypeController@show')->name('types.show');
+            Route::get('/{type}/edit', 'TypeController@edit')->name('types.edit');
+            Route::patch('/{type}/update', 'TypeController@update')->name('types.update');
+            Route::delete('/{type}/delete', 'TypeController@destroy')->name('types.destroy');
+        });
+
+
+        /**
+         *  Customers
          */
         Route::group(['prefix' => 'customers'], function() {
             Route::get('/', 'CustomersController@index')->name('customers.index');

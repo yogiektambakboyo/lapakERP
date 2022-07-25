@@ -5,10 +5,10 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class ProductType extends Model
+class Category extends Model
 {
     use HasFactory;
-    protected $table = 'product_type';
+    protected $table = 'product_category';
 
     protected $fillable = [
         'remark'
