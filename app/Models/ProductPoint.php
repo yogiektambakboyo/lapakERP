@@ -10,6 +10,8 @@ class ProductPoint extends Model
     use HasFactory;
 
     protected $table = 'product_point';
+    public $incrementing = false;
+
 
     protected $fillable = [
         'product_id',

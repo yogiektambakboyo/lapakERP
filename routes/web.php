@@ -161,6 +161,38 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
 
 
         /**
+         * Product Distribution
+         */
+        Route::group(['prefix' => 'productsdistribution'], function() {
+            Route::get('/', 'ProductsDistributionController@index')->name('productsdistribution.index');
+            Route::get('/create', 'ProductsDistributionController@create')->name('productsdistribution.create');
+            Route::post('/create', 'ProductsDistributionController@store')->name('productsdistribution.store');
+            Route::get('/search', 'ProductsDistributionController@search')->name('productsdistribution.search');
+            Route::get('/{branch}/{product}/show', 'ProductsDistributionController@show')->name('productsdistribution.show');
+            Route::get('/{branch}/{product}/edit', 'ProductsDistributionController@edit')->name('productsdistribution.edit');
+            Route::patch('/{branch}/{product}/update', 'ProductsDistributionController@update')->name('productsdistribution.update');
+            Route::delete('/{branch}/{product}/delete', 'ProductsDistributionController@destroy')->name('productsdistribution.destroy');
+            Route::get('/export', 'ProductsDistributionController@export')->name('productsdistribution.export');
+        });
+
+
+        /**
+         * Product Point
+         */
+        Route::group(['prefix' => 'productspoint'], function() {
+            Route::get('/', 'ProductsPointController@index')->name('productspoint.index');
+            Route::get('/create', 'ProductsPointController@create')->name('productspoint.create');
+            Route::post('/create', 'ProductsPointController@store')->name('productspoint.store');
+            Route::get('/search', 'ProductsPointController@search')->name('productspoint.search');
+            Route::get('/{branch}/{product}/show', 'ProductsPointController@show')->name('productspoint.show');
+            Route::get('/{branch}/{product}/edit', 'ProductsPointController@edit')->name('productspoint.edit');
+            Route::patch('/{branch}/{product}/update', 'ProductsPointController@update')->name('productspoint.update');
+            Route::delete('/{branch}/{product}/delete', 'ProductsPointController@destroy')->name('productspoint.destroy');
+            Route::get('/export', 'ProductsPointController@export')->name('productspoint.export');
+        });
+
+
+        /**
          * Product Stock
          */
         Route::group(['prefix' => 'productsstock'], function() {
