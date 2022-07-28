@@ -175,6 +175,37 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
             Route::get('/export', 'ProductsDistributionController@export')->name('productsdistribution.export');
         });
 
+        /**
+         * Product Commisions
+         */
+        Route::group(['prefix' => 'productscommision'], function() {
+            Route::get('/', 'ProductsCommisionController@index')->name('productscommision.index');
+            Route::get('/create', 'ProductsCommisionController@create')->name('productscommision.create');
+            Route::post('/create', 'ProductsCommisionController@store')->name('productscommision.store');
+            Route::get('/search', 'ProductsCommisionController@search')->name('productscommision.search');
+            Route::get('/{branch}/{product}/show', 'ProductsCommisionController@show')->name('productscommision.show');
+            Route::get('/{branch}/{product}/edit', 'ProductsCommisionController@edit')->name('productscommision.edit');
+            Route::patch('/{branch}/{product}/update', 'ProductsCommisionController@update')->name('productscommision.update');
+            Route::delete('/{branch}/{product}/delete', 'ProductsCommisionController@destroy')->name('productscommision.destroy');
+            Route::get('/export', 'ProductsCommisionController@export')->name('productscommision.export');
+        });
+
+        /**
+         * Product Commisions By Year
+         */
+        Route::group(['prefix' => 'productscommisionbyyear'], function() {
+            Route::get('/', 'ProductsCommisionByYearController@index')->name('productscommisionbyyear.index');
+            Route::get('/create', 'ProductsCommisionByYearController@create')->name('productscommisionbyyear.create');
+            Route::post('/create', 'ProductsCommisionByYearController@store')->name('productscommisionbyyear.store');
+            Route::get('/search', 'ProductsCommisionByYearController@search')->name('productscommisionbyyear.search');
+            Route::get('/{branch}/{product}/show', 'ProductsCommisionByYearController@show')->name('productscommisionbyyear.show');
+            Route::get('/{branch}/{product}/edit', 'ProductsCommisionByYearController@edit')->name('productscommisionbyyear.edit');
+            Route::patch('/{branch}/{product}/update', 'ProductsCommisionByYearController@update')->name('productscommisionbyyear.update');
+            Route::delete('/{branch}/{product}/delete', 'ProductsCommisionByYearController@destroy')->name('productscommisionbyyear.destroy');
+            Route::get('/export', 'ProductsCommisionByYearController@export')->name('productscommisionbyyear.export');
+        });
+
+
 
         /**
          * Product Point

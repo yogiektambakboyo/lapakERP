@@ -10,12 +10,14 @@ class ProductCommisionByYear extends Model
     use HasFactory;
 
     protected $table = 'product_commision_by_year';
+    public $incrementing = false;
 
     protected $fillable = [
         'product_id',
         'branch_id',
         'jobs_id',
         'years',
-        'values'
+        'values',
+        'created_by'
     ];
 }
