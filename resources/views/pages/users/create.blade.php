@@ -100,9 +100,9 @@
             <div class="row mb-3">
                 <label class="form-label col-form-label col-md-2">Netizen ID Photo</label>
                 <div class="col-md-8">
-                  <a href="/images/user-files/ttd.jpeg" target="_blank"><img src="/images/user-files/ttd.jpeg" width="200" height="100" class="rounded float-start" alt="..."></a>
+                  <a href="/images/user-files/draft_netizen.jpg" target="_blank"><img src="/images/user-files/draft_netizen.jpg" width="200" height="100" class="rounded float-start" alt="..."></a>
                   <input type="file" 
-                  name="{{ old('photo_netizen_id') }}"
+                  name="photo_netizen_id"
                   class="form-control"  />
                   <span></span>
                 </div>
@@ -195,7 +195,7 @@
               <label class="form-label col-form-label col-md-2">Referral ID</label>
               <div class="col-md-8">
                 <select class="form-control" 
-                      name="referral_id" required>
+                      name="referral_id">
                       <option value="">Select Referral</option>
                       @foreach($usersReferrals as $usersreferral)
                           <option value="{{ $usersreferral->id }}" >{{  $usersreferral->name }}</option>
@@ -218,6 +218,18 @@
                 value="{{ old('username') }}"  required/>
                 @if ($errors->has('username'))
                     <span class="text-danger text-left">{{ $errors->first('username') }}</span>
+                @endif
+              </div>
+            </div>
+            <div class="row mb-3">
+              <label class="form-label col-form-label col-md-2">Password</label>
+              <div class="col-md-8">
+                <input type="text" 
+                class="form-control"
+                name="password" 
+                value="{{ old('password') }}"  required/>
+                @if ($errors->has('password'))
+                    <span class="text-danger text-left">{{ $errors->first('password') }}</span>
                 @endif
               </div>
             </div>

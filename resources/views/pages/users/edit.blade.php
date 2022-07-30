@@ -95,7 +95,7 @@
               name="join_date"
               id="datepicker"
               class="form-control" 
-              value="{{ \Carbon\Carbon::parse($user->join_date)->format('d/m/Y') }}"  required/>
+              value="{{ \Carbon\Carbon::parse($user->join_date)->format('m/d/Y') }}"  required/>
               @if ($errors->has('join_date'))
                         <span class="text-danger text-left">{{ $errors->first('join_date') }}</span>
                     @endif
@@ -163,7 +163,7 @@
                   name="birth_date"
                   id="datepicker_2"
                   class="form-control" 
-                  value="{{ \Carbon\Carbon::parse($user->birth_date)->format('d/m/Y') }}"  required/>
+                  value="{{ \Carbon\Carbon::parse($user->birth_date)->format('m/d/Y') }}"  required/>
                   @if ($errors->has('birth_date'))
                       <span class="text-danger text-left">{{ $errors->first('birth_date') }}</span>
                   @endif
@@ -221,7 +221,7 @@
               <label class="form-label col-form-label col-md-2">Referral ID</label>
               <div class="col-md-8">
                 <select class="form-control" 
-                      name="referral_id" required>
+                      name="referral_id">
                       <option value="">Select Referral</option>
                       @foreach($usersReferrals as $usersreferral)
                           <option value="{{ $usersreferral->id }}" {{ ($user->referral_id==$usersreferral->id) 

@@ -19,6 +19,8 @@ use App\Exports\UsersExport;
 use App\Http\Controllers\Controller;
 use Yajra\Datatables\Datatables;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
+use File;
 
 class UsersController extends Controller
 {
@@ -198,11 +200,12 @@ class UsersController extends Controller
         //For demo purposes only. When creating user or inviting a user
         // you should create a generated random password and email it to the user
 
+
         if($request->file('photo_netizen_id') == null){
             $user->create(
                 array_merge(
                     $request->validated(), 
-                    ['password' => 'test123' ],
+                    ['password' => $request->get('password') ],
                     ['phone_no' => $request->get('phone_no') ],
                     ['join_date' => Carbon::parse($request->get('join_date'))->format('d/m/Y') ],
                     ['gender' => $request->get('gender') ],
@@ -223,7 +226,7 @@ class UsersController extends Controller
             $user->create(
                 array_merge(
                     $request->validated(), 
-                    ['password' => 'test123' ],
+                    ['password' => $request->get('password') ],
                     ['phone_no' => $request->get('phone_no') ],
                     ['join_date' => Carbon::parse($request->get('join_date'))->format('d/m/Y') ],
                     ['gender' => $request->get('gender') ],
@@ -241,10 +244,30 @@ class UsersController extends Controller
                 )
             );
 
+            $img_file = $file->getClientOriginalName();
+            $my_id = User::orderBy('id', 'desc')->first()->id;
+            $final_fileimg = $my_id.'_'.$img_file;
             // upload file
             $folder_upload = 'images/user-files';
-            $file->move($folder_upload,$file->getClientOriginalName());
+            $file->move($folder_upload,$img_file);
+
+            $destination = '/images/user-files/'.$img_file;//or any extension such as jpeg,png
+            $newdestination =  '/images/user-files/'.$final_fileimg;
+            File::move(public_path($destination), public_path($newdestination));
+
+        
+            User::where(['id' => $my_id])->update( array_merge(
+                    ['photo_netizen_id' => $final_fileimg],
+            ));
+
         }
+
+        $my_id = User::orderBy('id', 'desc')->first()->id;
+
+        $rolex = Role::where('id', $request->get('role'))->first();
+        $user_x = User::where(['id' => $my_id])->first();
+        $user_x->assignRole($rolex);
+        
 
         $arr = $request->get('branch_id');
         for ($i=0; $i < count($arr); $i++) { 
@@ -255,12 +278,12 @@ class UsersController extends Controller
                 )
             );
 
-            $user->update( array_merge(
+            User::where(['id' => $my_id])->update( array_merge(
                     ['branch_id' => (int)$arr[$i] ],
             ));
 
             UserMutation::create(array_merge(
-                ['user_id' => $user->id ],
+                ['user_id' => User::orderBy('id', 'desc')->first()->id ],
                 ['job_id' => $request->get('job_id') ],
                 ['branch_id' => (int)$arr[$i]],
                 ['department_id' => $request->get('department_id') ],
