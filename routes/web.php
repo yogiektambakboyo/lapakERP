@@ -350,6 +350,14 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
             Route::delete('/{customer}/delete', 'CustomersController@destroy')->name('customers.destroy');
         });
 
+        /**
+         *  Report
+         */
+        Route::group(['prefix' => 'reports'], function() {
+            Route::get('/cashier', 'ReportCashierComController@index')->name('reports.cashier.index');
+            Route::get('/terapist', 'ReportTerapistComController@index')->name('reports.terapist.index');
+        });
+
 
         Route::resource('roles', RolesController::class);
         Route::resource('permissions', PermissionsController::class);

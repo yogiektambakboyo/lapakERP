@@ -137,6 +137,7 @@
                   <th scope="col" width="5%">Qty</th>
                   <th scope="col" width="15%">Total</th>  
                   <th scope="col" width="15%">Assigned to</th>  
+                  <th scope="col" width="15%">Referral to</th>  
                   <th scope="col" width="15%">Action</th>  
               </tr>
               </thead>
@@ -175,6 +176,34 @@
                   <div class="modal-footer">
                   <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                   <button type="button" class="btn btn-primary"  data-bs-dismiss="modal" id="btn_assigned">Apply</button>
+                  </div>
+              </div>
+              </div>
+            </div>
+
+            <div class="modal fade" id="modal-referral" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+              <div class="modal-dialog">
+              <div class="modal-content">
+                  <div class="modal-header">
+                  <h5 class="modal-title" id="staticBackdropLabel">Referral By</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
+                    <label class="form-label col-form-label col-md-8" id="referral_selected_lbl">Choose User </label>
+                    <input type="hidden" id="referral_selected" value="">
+                    <div class="col-md-8">
+                      <select class="form-control" 
+                          name="referral_by" id="referral_by">
+                          <option value="">Select Staff</option>
+                          @foreach($usersall as $userall)
+                              <option value="{{ $userall->id }}">{{ $userall->name }}</option>
+                          @endforeach
+                      </select>
+                    </div>
+                  </div>
+                  <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                  <button type="button" class="btn btn-primary"  data-bs-dismiss="modal" id="btn_referred">Apply</button>
                   </div>
               </div>
               </div>
@@ -319,6 +348,8 @@
                                 "total"     : resp.data[i]["total"],
                                 "assignedto"     : resp.data[i]["assignedto"],
                                 "assignedtoid"     : resp.data[i]["assignedtoid"],
+                                "referralby"     : resp.data[i]["referralby"],
+                                "referralbyid"     : resp.data[i]["referralbyid"],
                           }
 
                           productList.push(product);
@@ -336,6 +367,7 @@
                           "qty"       : obj["qty"],
                           "total"     : obj["total"],
                           "assignedto" : obj["assignedto"],
+                          "referralby" : obj["referralby"],
                           "action"    : "",
                         }).draw(false);
                         order_total = order_total + ((parseInt(productList[i]["qty"]))*parseFloat(productList[i]["price"]));
@@ -426,6 +458,63 @@
                     "total"     : obj["total"],
                     "assignedto": obj["assignedto"],
                     "assignedtoid": obj["assignedtoid"],
+                    "referralby" : obj["referralby"],
+                    "referralbyid" : obj["referralbyid"],
+                    "action"    : "",
+              }).draw(false);
+              order_total = order_total + ((parseInt(productList[i]["qty"]))*parseFloat(productList[i]["price"]));
+              if(($('#payment_nominal').val())>order_total){
+                $('#order_charge').text(currency((($('#payment_nominal').val())-order_total), { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
+              }else{
+                $('#order_charge').text("Rp. 0");
+              }
+          }
+
+          $('#order-total').text(currency(order_total, { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
+        }
+      });
+
+      $('#btn_referred').on('click',function(){
+        if($('#referral_by').val()==""){
+          Swal.fire(
+              {
+                position: 'top-end',
+                icon: 'warning',
+                text: 'Please choose staff',
+                showConfirmButton: false,
+                imageHeight: 30, 
+                imageWidth: 30,   
+                timer: 1500
+              }
+            );
+        }else{
+          table.clear().draw(false);
+          order_total = 0;
+          for (var i = 0; i < productList.length; i++){
+            var obj = productList[i];
+            var value = obj["id"];
+            if($('#referral_selected').val()==obj["id"]){
+              productList[i]["referralby"] = $('#referral_by option:selected').text();
+              productList[i]["referralbyid"] = $('#referral_by').val();
+            }
+          }
+
+
+          for (var i = 0; i < productList.length; i++){
+            var obj = productList[i];
+            var value = obj["abbr"];
+            table.row.add( {
+                   "id"        : obj["id"],
+                    "abbr"      : obj["abbr"],
+                    "uom"       : obj["uom"],
+                    "price"     : obj["price"],
+                    "discount"  : obj["discount"],
+                    "qty"       : obj["qty"],
+                    "total"     : obj["total"],
+                    "assignedto": obj["assignedto"],
+                    "assignedtoid": obj["assignedtoid"],
+                    "referralby" : obj["referralby"],
+                    "referralbyid" : obj["referralbyid"],
                     "action"    : "",
               }).draw(false);
               order_total = order_total + ((parseInt(productList[i]["qty"]))*parseFloat(productList[i]["price"]));
@@ -599,7 +688,9 @@
             '<a href="#" id="add_row" class="btn btn-xs btn-green"><div class="fa-1x"><i class="fas fa-circle-plus fa-fw"></i></div></a>'+
             '<a href="#" id="minus_row" class="btn btn-xs btn-yellow"><div class="fa-1x"><i class="fas fa-circle-minus fa-fw"></i></div></a>'+
             '<a href="#" id="delete_row" class="btn btn-xs btn-danger"><div class="fa-1x"><i class="fas fa-circle-xmark fa-fw"></i></div></a>'+
-            '<a href="#" href="#modal-filter" data-bs-toggle="modal" data-bs-target="#modal-filter" id="assign_row" class="btn btn-xs btn-gray"><div class="fa-1x"><i class="fas fa-user-tag fa-fw"></i></div></a>',}],
+            '<a href="#" href="#modal-filter" data-bs-toggle="modal" data-bs-target="#modal-filter" id="assign_row" class="btn btn-xs btn-gray"><div class="fa-1x"><i class="fas fa-user-tag fa-fw"></i></div></a>'+
+            '<a href="#" href="#modal-referral" data-bs-toggle="modal" data-bs-target="#modal-referral" id="referral_row" class="btn btn-xs btn-purple"><div class="fa-1x"><i class="fas fa-users fa-fw"></i></div></a>',
+          }],
           columns: [
             { data: 'abbr' },
             { data: 'uom' },
@@ -608,6 +699,7 @@
             { data: 'qty' },
             { data: 'total',render: DataTable.render.number( '.', null, 0, '' ) },
             { data: 'assignedto' },
+            { data: 'referralby' },
             { data: null},
         ],
         });
@@ -624,6 +716,8 @@
                 "total"     : price,
                 "assignedto" : "",
                 "assignedtoid" : "",
+                "referralby" : "",
+                "referralbyid" : "",
                 "uom" : uom,
           }
 
@@ -655,6 +749,7 @@
                     "qty"       : obj["qty"],
                     "total"     : obj["total"],
                     "assignedto": obj["assignedto"],
+                    "referralby" : obj["referralby"],
                     "action"    : "",
               }).draw(false);
               order_total = order_total + ((parseInt(productList[i]["qty"]))*parseFloat(productList[i]["price"]));
@@ -705,6 +800,13 @@
                   $('#product_id_selected_lbl').text("Choose terapist for product "+data["abbr"]);
                 }
               }
+
+              if($(this).attr("id")=="referral_row"){
+                if(data["id"]==obj["id"]){
+                  $('#referral_selected').val(data["id"]);
+                  $('#referral_selected_lbl').text("Choose referral for product "+data["abbr"]);
+                }
+              }
             }
 
             for (var i = 0; i < productList.length; i++){
@@ -718,6 +820,7 @@
                       "qty"       : obj["qty"],
                       "total"     : obj["total"],
                       "assignedto" : obj["assignedto"],
+                      "referralby" : obj["referralby"],
                       "action"    : "",
                 }).draw(false);
               order_total = order_total + ((parseInt(productList[i]["qty"]))*parseFloat(productList[i]["price"]));

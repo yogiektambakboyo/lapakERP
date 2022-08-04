@@ -116,6 +116,7 @@
                   <th scope="col" width="5%">Qty</th>
                   <th scope="col" width="15%">Total</th>  
                   <th scope="col" width="15%">Assigned To</th>  
+                  <th scope="col" width="15%">Referral By</th>  
               </tr>
               </thead>
               <tbody>
@@ -128,6 +129,7 @@
                         <td>{{ $orderDetail->qty }}</td>
                         <td>{{ number_format($orderDetail->total, 2, ',', '.') }}</td>
                         <td>{{ $orderDetail->assigned_to }}</td>
+                        <td>{{ $orderDetail->referral_by }}</td>
                     </tr>
                 @endforeach
               </tbody>

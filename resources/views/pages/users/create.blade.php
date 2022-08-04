@@ -40,7 +40,9 @@
                     name="job_id" required>
                     <option value="">Select Job Title</option>
                     @foreach($jobTitles as $jobTitle)
-                        <option value="{{ $jobTitle->id }}">{{ $jobTitle->remark }}</option>
+                        <option value="{{ $jobTitle->id }}" {{ ($jobTitle->id==old('job_id') ) 
+                          ? 'selected'
+                          : '' }}>{{ $jobTitle->remark }}</option>
                     @endforeach
                 </select>
               </div>
@@ -64,7 +66,9 @@
                     name="department_id" required>
                     <option value="">Select Department</option>
                     @foreach($departments as $department)
-                        <option value="{{ $department->id }}">{{  $department->remark }}</option>
+                        <option value="{{ $department->id }}" {{ ($department->id==old('department_id') ) 
+                          ? 'selected'
+                          : '' }}>{{  $department->remark }}</option>
                     @endforeach
                 </select>
             </div>
@@ -88,6 +92,18 @@
         <div class="panel text-white">
           <div class="panel-heading bg-teal-600"><h4>Personal Info</h4></div>
           <div class="panel-body bg-white text-black">
+
+            <div class="row mb-3">
+              <label class="form-label col-form-label col-md-2">Photo</label>
+              <div class="col-md-8">
+                <a href="/images/user-files/user.png" target="_blank"><img src="/images/user-files/user.png" width="100" height="100" class="rounded float-start" alt="..."></a>
+                <input type="file" 
+                name="photo"
+                class="form-control"  />
+                <span></span>
+              </div>
+          </div>
+          
             <div class="row mb-3">
               <label class="form-label col-form-label col-md-2">Netizen ID</label>
               <div class="col-md-8">
@@ -114,7 +130,9 @@
                     name="gender" required>
                     <option value="">Select Gender</option>
                     @foreach($gender as $value)
-                        <option value="{{ $value }}">{{ $value }}</option>
+                        <option value="{{ $value }}" {{ ($value==old('gender') ) 
+                          ? 'selected'
+                          : '' }}>{{ $value }}</option>
                     @endforeach
                 </select>
               </div>
@@ -198,7 +216,9 @@
                       name="referral_id">
                       <option value="">Select Referral</option>
                       @foreach($usersReferrals as $usersreferral)
-                          <option value="{{ $usersreferral->id }}" >{{  $usersreferral->name }}</option>
+                          <option value="{{ $usersreferral->id }}" {{ ($usersreferral->id==old('referral_id') ) 
+                            ? 'selected'
+                            : '' }} >{{  $usersreferral->name }}</option>
                       @endforeach
                   </select>
               </div>
@@ -240,7 +260,9 @@
                         name="role" required>
                         <option value="">Select role</option>
                         @foreach($roles as $role)
-                            <option value="{{ $role->id }}">{{ $role->name }}</option>
+                            <option value="{{ $role->id }}" {{ ($role->id==old('role') ) 
+                              ? 'selected'
+                              : '' }}>{{ $role->name }}</option>
                         @endforeach
                     </select>
                     @if ($errors->has('role'))

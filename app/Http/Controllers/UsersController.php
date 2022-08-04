@@ -146,12 +146,12 @@ class UsersController extends Controller
     {
         $keyword = $request->search;
         $data = $this->data;
-
+        $act_permission = $this->act_permission[0];
         if($request->export=='Export Excel'){
             return Excel::download(new UsersExport($keyword), 'users_'.Carbon::now()->format('YmdHis').'.xlsx');
         }else{
             $users = User::orderBy('id', 'ASC')->join('branch as b','b.id','=','users.branch_id')->join('job_title as jt','jt.id','=','users.job_id')->where('users.name','!=','Admin')->where('users.name','LIKE','%'.$keyword.'%')->paginate(10,['users.id','users.employee_id','users.name','jt.remark as job_title','b.remark as branch_name','users.join_date' ]);
-            return view('pages.users.index', compact('users','data','keyword'))->with('i', ($request->input('page', 1) - 1) * 5);
+            return view('pages.users.index', compact('users','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
         }
     }
 
@@ -200,53 +200,36 @@ class UsersController extends Controller
         //For demo purposes only. When creating user or inviting a user
         // you should create a generated random password and email it to the user
 
+        $user->create(
+            array_merge(
+                $request->validated(), 
+                ['password' => $request->get('password') ],
+                ['phone_no' => $request->get('phone_no') ],
+                ['join_date' => Carbon::parse($request->get('join_date'))->format('d/m/Y') ],
+                ['gender' => $request->get('gender') ],
+                ['netizen_id' => $request->get('netizen_id') ],
+                ['active' => '1' ],
+                ['city' => $request->get('city') ],
+                ['employee_id' => $request->get('employee_id') ],
+                ['job_id' => $request->get('job_id') ],
+                ['department_id' => $request->get('department_id') ],
+                ['address' => $request->get('address') ],
+                ['referral_id' => $request->get('referral_id') ],
+                ['birth_place' => $request->get('birth_place') ],
+                ['birth_date' => Carbon::parse($request->get('birth_date'))->format('d/m/Y')  ]
+            )
+        );
+
+        $my_id = User::orderBy('id', 'desc')->first()->id;
+
+
 
         if($request->file('photo_netizen_id') == null){
-            $user->create(
-                array_merge(
-                    $request->validated(), 
-                    ['password' => $request->get('password') ],
-                    ['phone_no' => $request->get('phone_no') ],
-                    ['join_date' => Carbon::parse($request->get('join_date'))->format('d/m/Y') ],
-                    ['gender' => $request->get('gender') ],
-                    ['netizen_id' => $request->get('netizen_id') ],
-                    ['active' => '1' ],
-                    ['city' => $request->get('city') ],
-                    ['employee_id' => $request->get('employee_id') ],
-                    ['job_id' => $request->get('job_id') ],
-                    ['department_id' => $request->get('department_id') ],
-                    ['address' => $request->get('address') ],
-                    ['referral_id' => $request->get('referral_id') ],
-                    ['birth_place' => $request->get('birth_place') ],
-                    ['birth_date' => Carbon::parse($request->get('birth_date'))->format('d/m/Y')  ]
-                )
-            );
+
         }else{
             $file = $request->file('photo_netizen_id');
-            $user->create(
-                array_merge(
-                    $request->validated(), 
-                    ['password' => $request->get('password') ],
-                    ['phone_no' => $request->get('phone_no') ],
-                    ['join_date' => Carbon::parse($request->get('join_date'))->format('d/m/Y') ],
-                    ['gender' => $request->get('gender') ],
-                    ['netizen_id' => $request->get('netizen_id') ],
-                    ['active' => '1' ],
-                    ['city' => $request->get('city') ],
-                    ['employee_id' => $request->get('employee_id') ],
-                    ['photo_netizen_id' => $file->getClientOriginalName() ],
-                    ['job_id' => $request->get('job_id') ],
-                    ['department_id' => $request->get('department_id') ],
-                    ['address' => $request->get('address') ],
-                    ['referral_id' => $request->get('referral_id') ],
-                    ['birth_place' => $request->get('birth_place') ],
-                    ['birth_date' => Carbon::parse($request->get('birth_date'))->format('d/m/Y')  ]
-                )
-            );
-
             $img_file = $file->getClientOriginalName();
-            $my_id = User::orderBy('id', 'desc')->first()->id;
-            $final_fileimg = $my_id.'_'.$img_file;
+            $final_fileimg = md5($my_id.'_'.$img_file).'.'.$file->getClientOriginalExtension();
             // upload file
             $folder_upload = 'images/user-files';
             $file->move($folder_upload,$img_file);
@@ -255,14 +238,33 @@ class UsersController extends Controller
             $newdestination =  '/images/user-files/'.$final_fileimg;
             File::move(public_path($destination), public_path($newdestination));
 
-        
             User::where(['id' => $my_id])->update( array_merge(
                     ['photo_netizen_id' => $final_fileimg],
             ));
 
         }
 
-        $my_id = User::orderBy('id', 'desc')->first()->id;
+
+        if($request->file('photo') == null){
+
+        }else{
+            $file_photo = $request->file('photo');
+            $img_file_photo = $file_photo->getClientOriginalName().'.'.$file_photo->getClientOriginalExtension();
+            $final_fileimg_photo = md5($my_id.'_'.$img_file_photo).'.'.$file_photo->getClientOriginalExtension();
+            
+            // upload file
+            $folder_upload = 'images/user-files';
+            $file_photo->move($folder_upload,$img_file_photo);
+
+            $destinationx = '/images/user-files/'.$img_file_photo;//or any extension such as jpeg,png
+            $newdestinationx =  '/images/user-files/'.$final_fileimg_photo;
+            File::move(public_path($destinationx), public_path($newdestinationx));
+
+            User::where(['id' => $my_id])->update( array_merge(
+                    ['photo' => $final_fileimg_photo],
+            ));
+        }
+
 
         $rolex = Role::where('id', $request->get('role'))->first();
         $user_x = User::where(['id' => $my_id])->first();

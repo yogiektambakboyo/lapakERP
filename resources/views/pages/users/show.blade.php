@@ -20,7 +20,7 @@
           <div class="row">
             <div class="col-md-1">
                <!-- begin widget-img -->
-                <div class="widget-img rounded bg-dark widget-img-xl" style="background-image: url(/assets/img/user/{{ $users->photo }})"></div>
+                <div class="widget-img rounded widget-img-xl" style="background-image: url(/images/user-files/{{ $users->photo }})"></div>
               <!-- end widget-img -->
             </div>
             <div class="col-md-11">
