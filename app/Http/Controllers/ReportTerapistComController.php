@@ -32,7 +32,7 @@ class ReportTerapistComController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-    private $data,$act_permission,$module="productsbrand";
+    private $data,$act_permission,$module="productsbrand",$id=1;
 
     public function __construct()
     {
@@ -48,95 +48,15 @@ class ReportTerapistComController extends Controller
             ) a
         ");
         // Closure as callback
-        $permissions = Permission::join('role_has_permissions',function ($join) {
-            $join->on(function($query){
-                $query->on('role_has_permissions.permission_id', '=', 'permissions.id')
-                ->where('role_has_permissions.role_id','=','1')->where('permissions.name','like','%.index%')->where('permissions.url','!=','null');
-            });
-           })->get(['permissions.name','permissions.url','permissions.remark','permissions.parent']);
-       
-        $this->data = [
-            'menu' => 
-                [
-                    [
-                        'icon' => 'fa fa-user-gear',
-                        'title' => 'User Management',
-                        'url' => 'javascript:;',
-                        'caret' => true,
-                        'sub_menu' => []
-                    ],
-                    [
-                        'icon' => 'fa fa-box',
-                        'title' => 'Product Management',
-                        'url' => 'javascript:;',
-                        'caret' => true,
-                        'sub_menu' => []
-                    ],
-                    [
-                        'icon' => 'fa fa-table',
-                        'title' => 'Transactions',
-                        'url' => 'javascript:;',
-                        'caret' => true,
-                        'sub_menu' => []
-                    ],
-                    [
-                        'icon' => 'fa fa-chart-column',
-                        'title' => 'Reports',
-                        'url' => 'javascript:;',
-                        'caret' => true,
-                        'sub_menu' => []
-                    ],
-                    [
-                        'icon' => 'fa fa-screwdriver-wrench',
-                        'title' => 'Settings',
-                        'url' => 'javascript:;',
-                        'caret' => true,
-                        'sub_menu' => []
-                    ]  
-                ]      
-        ];
-
-        foreach ($permissions as $key => $menu) {
-            if($menu['parent']=='Users'){
-                array_push($this->data['menu'][0]['sub_menu'], array(
-                    'url' => $menu['url'],
-                    'title' => $menu['remark'],
-                    'route-name' => $menu['name']
-                ));
-            }
-            if($menu['parent']=='Products'){
-                array_push($this->data['menu'][1]['sub_menu'], array(
-                    'url' => $menu['url'],
-                    'title' => $menu['remark'],
-                    'route-name' => $menu['name']
-                ));
-            }
-            if($menu['parent']=='Transactions'){
-                array_push($this->data['menu'][2]['sub_menu'], array(
-                    'url' => $menu['url'],
-                    'title' => $menu['remark'],
-                    'route-name' => $menu['name']
-                ));
-            }
-            if($menu['parent']=='Reports'){
-                array_push($this->data['menu'][3]['sub_menu'], array(
-                    'url' => $menu['url'],
-                    'title' => $menu['remark'],
-                    'route-name' => $menu['name']
-                ));
-            }
-            if($menu['parent']=='Settings'){
-                array_push($this->data['menu'][4]['sub_menu'], array(
-                    'url' => $menu['url'],
-                    'title' => $menu['remark'],
-                    'route-name' => $menu['name']
-                ));
-            }
-        }
+        
     }
 
     public function index(Request $request) 
     {
+        $user = Auth::user();
+        $id = $user->roles->first()->id;
+        $this->getpermissions($id);
+
         $report_data = DB::select("
                                     select  'work_commission' as com_type,im.dated,im.invoice_no,ps.abbr,ps.remark,u.work_year,u.name,id.price,id.qty,id.total,pc.values base_commision,pc.values  * id.qty as commisions  
                                     from invoice_master im 
@@ -169,6 +89,10 @@ class ReportTerapistComController extends Controller
 
     public function search(Request $request) 
     {
+        $user = Auth::user();
+        $id = $user->roles->first()->id;
+        $this->getpermissions($id);
+
         $keyword = $request->search;
         $data = $this->data;
         $act_permission = $this->act_permission[0];
@@ -176,14 +100,32 @@ class ReportTerapistComController extends Controller
         if($request->export=='Export Excel'){
             return Excel::download(new ProductsExport($keyword), 'products_'.Carbon::now()->format('YmdHis').'.xlsx');
         }else{
-            $whereclause = " upper(product_sku.remark) like '%".strtoupper($keyword)."%'";
-            $products = Product::orderBy('product_sku.remark', 'ASC')
-                        ->join('product_type as pt','pt.id','=','product_sku.type_id')
-                        ->join('product_category as pc','pc.id','=','product_sku.category_id')
-                        ->join('product_brand as pb','pb.id','=','product_sku.brand_id')
-                        ->whereRaw($whereclause)
-                        ->paginate(10,['product_sku.id','product_sku.remark as product_name','pt.remark as product_type','pc.remark as product_category','pb.remark as product_brand']);            
-            return view('pages.productsbrand.index', compact('products','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
+            $whereclause = " upper(u.name) like '%".strtoupper($keyword)."%'";
+            $brands = ProductBrand::orderBy('product_brand.remark', 'ASC')
+                    ->paginate(10,['product_brand.id','product_brand.remark']);
+            $report_data = DB::select("
+                                    select  'work_commission' as com_type,im.dated,im.invoice_no,ps.abbr,ps.remark,u.work_year,u.name,id.price,id.qty,id.total,pc.values base_commision,pc.values  * id.qty as commisions  
+                                    from invoice_master im 
+                                    join invoice_detail id on id.invoice_no = im.invoice_no
+                                    join product_sku ps on ps.id = id.product_id 
+                                    join customers c on c.id = im.customers_id 
+                                    join product_commision_by_year pc on pc.product_id = id.product_id and pc.branch_id = c.branch_id
+                                    join (
+                                        select r.id,r.name,r.job_id,case when date_part('year', age(now(),join_date))::int=0 then 1 else date_part('year', age(now(),join_date)) end as work_year 
+                                        from users r
+                                        ) u on u.id = id.assigned_to and u.job_id = pc.jobs_id  and u.id = id.assigned_to  and u.work_year = pc.years  and ".$whereclause."
+                                    where pc.values > 0 
+                                    union all            
+                                    select  'referral' as com_type,im.dated,im.invoice_no,ps.abbr,ps.remark,case when date_part('year', age(now(),join_date))::int=0 then 1 else date_part('year', age(now(),join_date)) end as work_year,u.name,id.price,id.qty,id.total,pc.referral_fee base_commision,pc.referral_fee * id.qty as commisions   
+                                    from invoice_master im 
+                                    join invoice_detail id on id.invoice_no = im.invoice_no 
+                                    join product_sku ps on ps.id = id.product_id 
+                                    join customers c on c.id = im.customers_id 
+                                    join product_commisions pc on pc.product_id = id.product_id and pc.branch_id = c.branch_id
+                                    join users u on u.job_id = 2  and u.id = id.referral_by   and ".$whereclause."
+                                    where pc.referral_fee  > 0              
+        ");            
+            return view('pages.reports.commision_terapist', compact('report_data','brands','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
         }
     }
 
@@ -200,6 +142,10 @@ class ReportTerapistComController extends Controller
      */
     public function create() 
     {
+        $user = Auth::user();
+        $id = $user->roles->first()->id;
+        $this->getpermissions($id);
+
         $data = $this->data;
         return view('pages.productsbrand.create',[
             'data' => $data,
@@ -304,5 +250,96 @@ class ReportTerapistComController extends Controller
 
         return redirect()->route('productsbrand.index')
             ->withSuccess(__('Brand deleted successfully.'));
+    }
+
+    public function getpermissions($role_id){
+        $id = $role_id;
+        $permissions = Permission::join('role_has_permissions',function ($join)  use ($id) {
+            $join->on(function($query) use ($id) {
+                $query->on('role_has_permissions.permission_id', '=', 'permissions.id')
+                ->where('role_has_permissions.role_id','=',$id)->where('permissions.name','like','%.index%')->where('permissions.url','!=','null');
+            });
+           })->get(['permissions.name','permissions.url','permissions.remark','permissions.parent']);
+
+        $this->data = [
+            'menu' => 
+                [
+                    [
+                        'icon' => 'fa fa-user-gear',
+                        'title' => 'User Management',
+                        'url' => 'javascript:;',
+                        'caret' => true,
+                        'sub_menu' => []
+                    ],
+                    [
+                        'icon' => 'fa fa-box',
+                        'title' => 'Product Management',
+                        'url' => 'javascript:;',
+                        'caret' => true,
+                        'sub_menu' => []
+                    ],
+                    [
+                        'icon' => 'fa fa-table',
+                        'title' => 'Transactions',
+                        'url' => 'javascript:;',
+                        'caret' => true,
+                        'sub_menu' => []
+                    ],
+                    [
+                        'icon' => 'fa fa-chart-column',
+                        'title' => 'Reports',
+                        'url' => 'javascript:;',
+                        'caret' => true,
+                        'sub_menu' => []
+                    ],
+                    [
+                        'icon' => 'fa fa-screwdriver-wrench',
+                        'title' => 'Settings',
+                        'url' => 'javascript:;',
+                        'caret' => true,
+                        'sub_menu' => []
+                    ]  
+                ]      
+        ];
+
+        foreach ($permissions as $key => $menu) {
+            if($menu['parent']=='Users'){
+                array_push($this->data['menu'][0]['sub_menu'], array(
+                    'url' => $menu['url'],
+                    'title' => $menu['remark'],
+                    'route-name' => $menu['name']
+                ));
+            }
+            if($menu['parent']=='Products'){
+                array_push($this->data['menu'][1]['sub_menu'], array(
+                    'url' => $menu['url'],
+                    'title' => $menu['remark'],
+                    'route-name' => $menu['name']
+                ));
+            }
+            if($menu['parent']=='Transactions'){
+                array_push($this->data['menu'][2]['sub_menu'], array(
+                    'url' => $menu['url'],
+                    'title' => $menu['remark'],
+                    'route-name' => $menu['name']
+                ));
+            }
+            if($menu['parent']=='Reports'){
+                array_push($this->data['menu'][3]['sub_menu'], array(
+                    'url' => $menu['url'],
+                    'title' => $menu['remark'],
+                    'route-name' => $menu['name']
+                ));
+            }
+            if($menu['parent']=='Settings'){
+                array_push($this->data['menu'][4]['sub_menu'], array(
+                    'url' => $menu['url'],
+                    'title' => $menu['remark'],
+                    'route-name' => $menu['name']
+                ));
+            }
+        }
+
+
     }
 }

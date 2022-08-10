@@ -63,7 +63,7 @@
           <div class="col-md-8">
             <div class="row mb-3">
               <label class="form-label col-form-label col-md-2">Customer</label>
-              <div class="col-md-4">
+              <div class="col-md-3">
                 <select class="form-control" 
                     name="customer_id" id="customer_id" required>
                     <option value="">Select Customers</option>
@@ -71,6 +71,9 @@
                         <option value="{{ $customer->id }}">{{ $customer->id }} - {{ $customer->name }} ({{ $customer->remark }})</option>
                     @endforeach
                 </select>
+              </div>
+              <div class="col-md-1">
+                <a type="button" id="add-customer-btn" class="btn btn-green"  href="#modal-add-customer" data-bs-toggle="modal" data-bs-target="#modal-add-customer"><span class="fas fa-user-plus"></span></a>
               </div>
               <label class="form-label col-form-label col-md-2">Schedule</label>
               <div class="col-md-4">
@@ -167,6 +170,79 @@
               </div>
             </div>
 
+            <div class="modal fade" id="modal-add-customer" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+              <div class="modal-dialog">
+              <div class="modal-content">
+                  <div class="modal-header">
+                  <h5 class="modal-title" id="staticBackdropLabel">Add Customer</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
+                    
+                    <div class="container mt-4">
+                            <div class="mb-3">
+                                <label for="cust_name" class="form-label">Name</label>
+                                <input value="{{ old('cust_name') }}" 
+                                    type="text" 
+                                    class="form-control" 
+                                    name="cust_name" 
+                                    id="cust_name" 
+                                    placeholder="Name" required>
+            
+                                @if ($errors->has('cust_name'))
+                                    <span class="text-danger text-left">{{ $errors->first('cust_name') }}</span>
+                                @endif
+                            </div>
+            
+                            <div class="mb-3">
+                                <label for="address" class="form-label">Address</label>
+                                <input value="{{ old('cust_address') }}" 
+                                    type="text" 
+                                    class="form-control" 
+                                    name="cust_address" id="cust_address" 
+                                    placeholder="Address" required>
+            
+                                @if ($errors->has('cust_address'))
+                                    <span class="text-danger text-left">{{ $errors->first('cust_address') }}</span>
+                                @endif
+                            </div>
+            
+                            <div class="mb-3">
+                                <label for="cust_phone_no" class="form-label">Phone No</label>
+                                <input value="{{ old('cust_phone_no') }}" 
+                                    type="text" 
+                                    class="form-control" 
+                                    name="cust_phone_no" id="cust_phone_no" 
+                                    placeholder="Phone No" required>
+            
+                                @if ($errors->has('cust_phone_no'))
+                                    <span class="text-danger text-left">{{ $errors->first('cust_phone_no') }}</span>
+                                @endif
+                            </div>
+            
+                            <div class="mb-3">
+                                <label class="form-label">Branch</label>
+                                <div class="col-md-12">
+                                  <select class="form-control" 
+                                        name="cust_branch_id" id="cust_branch_id">
+                                        <option value="">Select Branch</option>
+                                        @foreach($branchs as $branch)
+                                            <option value="{{ $branch->id }}">{{  $branch->remark }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                              </div>
+                    </div>
+
+                  </div>
+                  <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                  <button type="button" class="btn btn-primary"  data-bs-dismiss="modal" id="btn_save_customer">Save Customer</button>
+                  </div>
+              </div>
+              </div>
+            </div>
+
             <div class="modal fade" id="modal-scheduled" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
               <div class="modal-dialog modal-lg">
               <div class="modal-content">
@@ -252,6 +328,9 @@
 @push('scripts')
     <script type="text/javascript">
       $(function () {
+
+          $('#app').removeClass('app app-sidebar-fixed app-header-fixed-minified').addClass('app app-sidebar-fixed app-header-fixed-minified app-sidebar-minified');
+          
           const today = new Date();
           const yyyy = today.getFullYear();
           let mm = today.getMonth() + 1; // Months start at 0!
@@ -271,6 +350,102 @@
               todayHighlight: true,
           });
           $('#schedule_date').val(formattedToday);
+
+          $('#customer_id').select2({});
+      });
+
+      $('#btn_save_customer').on('click', function(){
+        if($('#cust_name').val()==''){
+            $('#cust_name').focus();
+            Swal.fire(
+              {
+                position: 'top-end',
+                icon: 'warning',
+                text: 'Please fill name',
+                showConfirmButton: false,
+                imageHeight: 30, 
+                imageWidth: 30,   
+                timer: 1500
+              }
+            );
+          }else if($('#cust_address').val()==''){
+            $('#cust_address').focus();
+            Swal.fire(
+              {
+                position: 'top-end',
+                icon: 'warning',
+                text: 'Please fill address',
+                showConfirmButton: false,
+                imageHeight: 30, 
+                imageWidth: 30,   
+                timer: 1500
+              }
+            );
+          }else if($('#cust_phone_no').val()==''){
+            $('#cust_phone_no').focus();
+            Swal.fire(
+              {
+                position: 'top-end',
+                icon: 'warning',
+                text: 'Please fill phone no',
+                showConfirmButton: false,
+                imageHeight: 30, 
+                imageWidth: 30,   
+                timer: 1500
+              }
+            );
+          }else if($('#cust_branch_id').val()==''){
+            $('#cust_branch_id').focus();
+            Swal.fire(
+              {
+                position: 'top-end',
+                icon: 'warning',
+                text: 'Please choose branch',
+                showConfirmButton: false,
+                imageHeight: 30, 
+                imageWidth: 30,   
+                timer: 1500
+              }
+            );
+          }else{
+            const json = JSON.stringify({
+                name : $('#cust_name').val(),
+                address : $('#cust_address').val(),
+                phone_no : $('#cust_phone_no').val(),
+                branch_id : $('#cust_branch_id').val()
+                }
+              );
+              const res = axios.post("{{ route('customers.storeapi') }}", json, {
+                headers: {
+                  // Overwrite Axios's automatically set Content-Type
+                  'Content-Type': 'application/json'
+                }
+              }).then(resp => {
+                    if(resp.data.status=="success"){
+                        var data = {
+                            id: resp.data.data,
+                            text: $('#cust_name').val() +" ("+ $('#cust_branch_id option:selected').text() +")"
+                        };
+
+                        var newOption = new Option(data.text, data.id, false, false);
+                        $('#customer_id').append(newOption).trigger('change');
+                    }else{
+                      Swal.fire(
+                        {
+                          position: 'top-end',
+                          icon: 'warning',
+                          text: 'Something went wrong - '+resp.data.message,
+                          showConfirmButton: false,
+                          imageHeight: 30, 
+                          imageWidth: 30,   
+                          timer: 1500
+                        }
+                      );
+                    }
+              });
+
+
+          }
       });
 
       $('#btn_scheduled').on('click',function(){

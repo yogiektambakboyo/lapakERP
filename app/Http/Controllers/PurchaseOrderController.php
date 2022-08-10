@@ -26,7 +26,7 @@ use Auth;
 use Illuminate\Support\Facades\DB;
 
 
-class InvoicesController extends Controller
+class PurchaseOrderController extends Controller
 {
     /**
      * Display all users
@@ -34,7 +34,7 @@ class InvoicesController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-    private $data,$act_permission,$module="invoices",$id=1;
+    private $data,$act_permission,$module="purchaseorders",$id=1;
 
     public function __construct()
     {
@@ -49,8 +49,8 @@ class InvoicesController extends Controller
                 select 0 as allow_create,0 as allow_delete,0 as allow_show,count(1) as allow_edit from permissions p  join role_has_permissions rp on rp.permission_id = p.id where rp.role_id = 1 and p.name like '%.edit' and p.name like '".$this->module.".%'
             ) a
         ");
-
-
+        
+        
     }
 
     public function index(Request $request) 
@@ -127,10 +127,6 @@ class InvoicesController extends Controller
 
     public function getproduct() 
     {
-        $user = Auth::user();
-        $id = $user->roles->first()->id;
-        $this->getpermissions($id);
-
         $data = $this->data;
         $user = Auth::user();
         $product = DB::select("select m.remark as uom,product_sku.id,product_sku.remark,product_sku.abbr,pt.remark as type,pc.remark as category_name,pb.remark as brand_name,pp.price,'0' as discount,'0' as qty,'0' as total
@@ -304,6 +300,10 @@ class InvoicesController extends Controller
      */
     public function edit(Invoice $invoice) 
     {
+        $user = Auth::user();
+        $id = $user->roles->first()->id;
+        $this->getpermissions($id);
+
         $data = $this->data;
         $user = Auth::user();
         $room = Room::where('branch_room.id','=',$invoice->branch_room_id)->get(['branch_room.remark'])->first();

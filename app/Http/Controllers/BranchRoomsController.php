@@ -8,6 +8,7 @@ use Spatie\Permission\Models\Permission;
 use App\Models\Room;
 use App\Models\Branch;
 use Illuminate\Support\Facades\DB;
+use Auth;
 
 
 
@@ -18,7 +19,7 @@ class BranchRoomsController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    private $data,$act_permission,$module="rooms";
+    private $data,$act_permission,$module="rooms",$id=1;
 
     public function __construct()
     {
@@ -33,13 +34,123 @@ class BranchRoomsController extends Controller
                 select 0 as allow_create,0 as allow_delete,0 as allow_show,count(1) as allow_edit from permissions p  join role_has_permissions rp on rp.permission_id = p.id where rp.role_id = 1 and p.name like '%.edit' and p.name like '".$this->module.".%'
             ) a
         ");
-        $permissions = Permission::join('role_has_permissions',function ($join) {
-            $join->on(function($query){
+    }
+
+
+    public function index(Request $request)
+    { 
+        $user = Auth::user();
+        $id = $user->roles->first()->id;
+        $this->getpermissions($id);
+  
+        $user = Auth::user();
+        $id = $user->roles->first()->id;
+        $this->getpermissions($id);
+
+        $rooms = Room::join('branch','branch.id','=','branch_room.branch_id')->paginate(10,['branch_room.id','branch_room.remark','branch_room.branch_id','branch.remark as branch_name']);
+        $data = $this->data;
+
+        return view('pages.rooms.index', [
+            'rooms' => $rooms,'data' => $data
+        ])->with('i', ($request->input('page', 1) - 1) * 5);
+    }
+
+    /**
+     * Show form for creating branch
+     * 
+     * @return \Illuminate\Http\Response
+     */
+    public function create() 
+    {   
+        $user = Auth::user();
+        $id = $user->roles->first()->id;
+        $this->getpermissions($id);
+
+        $data = $this->data;
+        return view('pages.rooms.create',[
+            'data' => $data,
+            'branchs' => Branch::latest()->get(),
+        ]);
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function store(Request $request)
+    {   
+        $request->validate([
+            'remark' => 'required|unique:branch_room'
+        ]);
+
+        Room::create($request->all());
+
+        return redirect()->route('rooms.index')
+            ->withSuccess(__('Room created successfully.'));
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  Room  $room
+     * @return \Illuminate\Http\Response
+     */
+    public function edit(Room $room)
+    {
+        $user = Auth::user();
+        $id = $user->roles->first()->id;
+        $this->getpermissions($id);
+
+        $data = $this->data;
+        return view('pages.rooms.edit', [
+            'room' => $room ,'data' => $data ,'branchs' => Branch::latest()->get()
+        ]);
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  Room  $room
+     * @return \Illuminate\Http\Response
+     */
+    public function update(Request $request, Room $room)
+    {
+        $request->validate([
+            'remark' => 'required|unique:branch_room,remark,'.$room->id
+        ]);
+
+        $room->update($request->all());
+
+        return redirect()->route('rooms.index')
+            ->withSuccess(__('Room updated successfully.'));
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  \App\Models\Post  $post
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy(Room $room)
+    {
+        $room->delete();
+
+        return redirect()->route('rooms.index')
+            ->withSuccess(__('Room deleted successfully.'));
+    }
+
+    public function getpermissions($role_id){
+        $id = $role_id;
+        $permissions = Permission::join('role_has_permissions',function ($join)  use ($id) {
+            $join->on(function($query) use ($id) {
                 $query->on('role_has_permissions.permission_id', '=', 'permissions.id')
-                ->where('role_has_permissions.role_id','=','1')->where('permissions.name','like','%.index%')->where('permissions.url','!=','null');
+                ->where('role_has_permissions.role_id','=',$id)->where('permissions.name','like','%.index%')->where('permissions.url','!=','null');
             });
            })->get(['permissions.name','permissions.url','permissions.remark','permissions.parent']);
-       
+
         $this->data = [
             'menu' => 
                 [
@@ -118,95 +229,7 @@ class BranchRoomsController extends Controller
                 ));
             }
         }
-    }
 
 
-    public function index(Request $request)
-    {   
-        $rooms = Room::join('branch','branch.id','=','branch_room.branch_id')->paginate(10,['branch_room.id','branch_room.remark','branch_room.branch_id','branch.remark as branch_name']);
-        $data = $this->data;
-
-        return view('pages.rooms.index', [
-            'rooms' => $rooms,'data' => $data
-        ])->with('i', ($request->input('page', 1) - 1) * 5);
-    }
-
-    /**
-     * Show form for creating branch
-     * 
-     * @return \Illuminate\Http\Response
-     */
-    public function create() 
-    {   
-        $data = $this->data;
-        return view('pages.rooms.create',[
-            'data' => $data,
-            'branchs' => Branch::latest()->get(),
-        ]);
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {   
-        $request->validate([
-            'remark' => 'required|unique:branch_room'
-        ]);
-
-        Room::create($request->all());
-
-        return redirect()->route('rooms.index')
-            ->withSuccess(__('Room created successfully.'));
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  Room  $room
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Room $room)
-    {
-        $data = $this->data;
-        return view('pages.rooms.edit', [
-            'room' => $room ,'data' => $data ,'branchs' => Branch::latest()->get()
-        ]);
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  Room  $room
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Room $room)
-    {
-        $request->validate([
-            'remark' => 'required|unique:branch_room,remark,'.$room->id
-        ]);
-
-        $room->update($request->all());
-
-        return redirect()->route('rooms.index')
-            ->withSuccess(__('Room updated successfully.'));
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Post  $post
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Room $room)
-    {
-        $room->delete();
-
-        return redirect()->route('rooms.index')
-            ->withSuccess(__('Room deleted successfully.'));
     }
 }

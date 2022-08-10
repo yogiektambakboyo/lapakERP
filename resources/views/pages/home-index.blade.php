@@ -1,6 +1,6 @@
 @extends('layouts.default', ['appSidebarSearch' => true])
 
-@section('title', 'Page with Search Sidebar')
+@section('title', 'Home')
 
 @push('scripts')
 	<script src="/assets/plugins/@highlightjs/cdn-assets/highlight.min.js"></script>
@@ -12,13 +12,6 @@
 @endif
 
 @section('content')
-	<!-- BEGIN breadcrumb -->
-	<ol class="breadcrumb float-xl-end">
-		<li class="breadcrumb-item"><a href="javascript:;">Home</a></li>
-		<li class="breadcrumb-item"><a href="javascript:;">Page Options</a></li>
-		<li class="breadcrumb-item active">Page with Search Sidebar</li>
-	</ol>
-	<!-- END breadcrumb -->
 	<!-- BEGIN page-header -->
 	<h1 class="page-header">Welcome @auth
 		{{auth()->user()->name}} 

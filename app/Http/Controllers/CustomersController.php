@@ -18,7 +18,7 @@ class CustomersController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    private $data,$act_permission,$module="customers";
+    private $data,$act_permission,$module="customers",$id=1;
 
     public function __construct()
     {
@@ -33,13 +33,162 @@ class CustomersController extends Controller
                 select 0 as allow_create,0 as allow_delete,0 as allow_show,count(1) as allow_edit from permissions p  join role_has_permissions rp on rp.permission_id = p.id where rp.role_id = 1 and p.name like '%.edit' and p.name like '".$this->module.".%'
             ) a
         ");
-        $permissions = Permission::join('role_has_permissions',function ($join) {
-            $join->on(function($query){
+        
+        
+    }
+
+
+    public function index()
+    {   
+        $user = Auth::user();
+        $id = $user->roles->first()->id;
+        $this->getpermissions($id);
+
+        $user = Auth::user();
+        $Customers = Customer::join('branch as b','b.id','customers.branch_id')
+                            ->join('users_branch as ub', function($join){
+                                $join->on('ub.branch_id', '=', 'b.id');
+                            })->where('ub.user_id', $user->id)->get(['customers.*','b.remark as branch_name']);
+        $data = $this->data;
+
+        return view('pages.customers.index', [
+            'customers' => $Customers,'data' => $data 
+            
+        ]);
+    }
+
+    /**
+     * Show form for creating Customer
+     * 
+     * @return \Illuminate\Http\Response
+     */
+    public function create() 
+    {  
+        $user = Auth::user();
+        $id = $user->roles->first()->id;
+        $this->getpermissions($id);
+ 
+        $data = $this->data;
+        return view('pages.customers.create',['data'=>$data,'branchs' => Branch::latest()->get(),
+        'userBranchs' => Branch::latest()->get()->pluck('remark')->toArray(),]);
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function store(Request $request)
+    {   
+    
+        Customer::create(
+            array_merge( 
+                ['phone_no' => $request->get('phone_no') ],
+                ['name' => $request->get('name') ],
+                ['address' => $request->get('address') ],
+                ['membership_id' => '1' ],
+                ['abbr' => '1' ],
+                ['branch_id' => $request->get('branch_id') ],
+            )
+        );
+        return redirect()->route('customers.index')
+            ->withSuccess(__('Customer created successfully.'));
+    }
+
+    public function storeapi(Request $request)
+    {   
+    
+        Customer::create(
+            array_merge( 
+                ['phone_no' => $request->get('phone_no') ],
+                ['name' => $request->get('name') ],
+                ['address' => $request->get('address') ],
+                ['membership_id' => '1' ],
+                ['abbr' => '1' ],
+                ['branch_id' => $request->get('branch_id') ],
+            )
+        );
+
+        $id = Customer::where('name','=',$request->get('name'))->max('id');
+        $result = array_merge(
+            ['status' => 'success'],
+            ['data' => $id],
+            ['message' => 'Save Successfully'],
+        );
+
+        return $result;
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  Customer  $Customer
+     * @return \Illuminate\Http\Response
+     */
+    public function edit(Customer $Customer)
+    {
+        $user = Auth::user();
+        $id = $user->roles->first()->id;
+        $this->getpermissions($id);
+        $data = $this->data;
+        return view('pages.customers.edit', [
+            'customer' => $Customer ,'data' => $data ,'branchs' => Branch::latest()->get(),
+            'userBranchs' => Branch::latest()->get()->pluck('remark')->toArray()
+        ]);
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  Customer  $Customer
+     * @return \Illuminate\Http\Response
+     */
+    public function update(Request $request, Customer $customer)
+    {
+        Customer::where('id', $customer->id)
+        ->update(
+            array_merge( 
+                ['phone_no' => $request->get('phone_no') ],
+                ['name' => $request->get('name') ],
+                ['address' => $request->get('address') ],
+                ['membership_id' => '1' ],
+                ['abbr' => '1' ],
+                ['branch_id' => $request->get('branch_id') ],
+            )
+        );
+
+       
+
+
+        return redirect()->route('customers.index')
+            ->withSuccess(__('Customer updated successfully.'));
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  \App\Models\Post  $post
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy(Customer $Customer)
+    {
+        $Customer->delete();
+
+        return redirect()->route('customers.index')
+            ->withSuccess(__('Customer deleted successfully.'));
+    }
+
+    public function getpermissions($role_id){
+        $id = $role_id;
+        $permissions = Permission::join('role_has_permissions',function ($join)  use ($id) {
+            $join->on(function($query) use ($id) {
                 $query->on('role_has_permissions.permission_id', '=', 'permissions.id')
-                ->where('role_has_permissions.role_id','=','1')->where('permissions.name','like','%.index%')->where('permissions.url','!=','null');
+                ->where('role_has_permissions.role_id','=',$id)->where('permissions.name','like','%.index%')->where('permissions.url','!=','null');
             });
            })->get(['permissions.name','permissions.url','permissions.remark','permissions.parent']);
-       
+
         $this->data = [
             'menu' => 
                 [
@@ -118,113 +267,7 @@ class CustomersController extends Controller
                 ));
             }
         }
-    }
 
 
-    public function index()
-    {   
-        $user = Auth::user();
-        $Customers = Customer::join('branch as b','b.id','customers.branch_id')
-                            ->join('users_branch as ub', function($join){
-                                $join->on('ub.branch_id', '=', 'b.id');
-                            })->where('ub.user_id', $user->id)->get(['customers.*','b.remark as branch_name']);
-        $data = $this->data;
-
-        return view('pages.customers.index', [
-            'customers' => $Customers,'data' => $data 
-            
-        ]);
-    }
-
-    /**
-     * Show form for creating Customer
-     * 
-     * @return \Illuminate\Http\Response
-     */
-    public function create() 
-    {   
-        $data = $this->data;
-        return view('pages.customers.create',['data'=>$data,'branchs' => Branch::latest()->get(),
-        'userBranchs' => Branch::latest()->get()->pluck('remark')->toArray(),]);
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {   
-    
-        Customer::create(
-            array_merge( 
-                ['phone_no' => $request->get('phone_no') ],
-                ['name' => $request->get('name') ],
-                ['address' => $request->get('address') ],
-                ['membership_id' => '1' ],
-                ['abbr' => '1' ],
-                ['branch_id' => $request->get('branch_id') ],
-            )
-        );
-        return redirect()->route('customers.index')
-            ->withSuccess(__('Customer created successfully.'));
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  Customer  $Customer
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Customer $Customer)
-    {
-        $data = $this->data;
-        return view('pages.customers.edit', [
-            'customer' => $Customer ,'data' => $data ,'branchs' => Branch::latest()->get(),
-            'userBranchs' => Branch::latest()->get()->pluck('remark')->toArray()
-        ]);
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  Customer  $Customer
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Customer $customer)
-    {
-        Customer::where('id', $customer->id)
-        ->update(
-            array_merge( 
-                ['phone_no' => $request->get('phone_no') ],
-                ['name' => $request->get('name') ],
-                ['address' => $request->get('address') ],
-                ['membership_id' => '1' ],
-                ['abbr' => '1' ],
-                ['branch_id' => $request->get('branch_id') ],
-            )
-        );
-
-       
-
-
-        return redirect()->route('customers.index')
-            ->withSuccess(__('Customer updated successfully.'));
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Post  $post
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Customer $Customer)
-    {
-        $Customer->delete();
-
-        return redirect()->route('customers.index')
-            ->withSuccess(__('Customer deleted successfully.'));
     }
 }

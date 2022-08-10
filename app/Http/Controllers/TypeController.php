@@ -9,6 +9,7 @@ use App\Models\Room;
 use App\Models\Type;
 use App\Models\Branch;
 use Illuminate\Support\Facades\DB;
+use Auth;
 
 
 
@@ -19,7 +20,7 @@ class TypeController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    private $data,$act_permission,$module="type";
+    private $data,$act_permission,$module="type",$id=1;
 
     public function __construct()
     {
@@ -34,13 +35,119 @@ class TypeController extends Controller
                 select 0 as allow_create,0 as allow_delete,0 as allow_show,count(1) as allow_edit from permissions p  join role_has_permissions rp on rp.permission_id = p.id where rp.role_id = 1 and p.name like '%.edit' and p.name like '".$this->module.".%'
             ) a
         ");
-        $permissions = Permission::join('role_has_permissions',function ($join) {
-            $join->on(function($query){
+        
+    }
+
+
+    public function index(Request $request)
+    {   
+        $user = Auth::user();
+        $id = $user->roles->first()->id;
+        $this->getpermissions($id);
+
+        $types = Type::paginate(10,['product_type.id','product_type.remark']);
+        $data = $this->data;
+
+        return view('pages.types.index', [
+            'types' => $types,'data' => $data
+        ])->with('i', ($request->input('page', 1) - 1) * 5);
+    }
+
+    /**
+     * Show form for creating branch
+     * 
+     * @return \Illuminate\Http\Response
+     */
+    public function create() 
+    {   
+        $user = Auth::user();
+        $id = $user->roles->first()->id;
+        $this->getpermissions($id);
+
+        $data = $this->data;
+        return view('pages.types.create',[
+            'data' => $data,
+        ]);
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function store(Request $request)
+    {   
+        $request->validate([
+            'remark' => 'required|unique:product_type'
+        ]);
+
+        Type::create($request->all());
+
+        return redirect()->route('types.index')
+            ->withSuccess(__('Type created successfully.'));
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  Type  $type
+     * @return \Illuminate\Http\Response
+     */
+    public function edit(Type $type)
+    {
+        $user = Auth::user();
+        $id = $user->roles->first()->id;
+        $this->getpermissions($id);
+
+        $data = $this->data;
+        return view('pages.types.edit', [
+            'type' => $type ,'data' => $data 
+        ]);
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  Type  $type
+     * @return \Illuminate\Http\Response
+     */
+    public function update(Request $request, Type $type)
+    {
+        $request->validate([
+            'remark' => 'required|unique:product_type,remark,'.$type->id
+        ]);
+
+        $type->update($request->all());
+
+        return redirect()->route('types.index')
+            ->withSuccess(__('Type updated successfully.'));
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  \App\Models\Post  $post
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy(Type $type)
+    {
+        $type->delete();
+
+        return redirect()->route('types.index')
+            ->withSuccess(__('Type deleted successfully.'));
+    }
+
+    public function getpermissions($role_id){
+        $id = $role_id;
+        $permissions = Permission::join('role_has_permissions',function ($join)  use ($id) {
+            $join->on(function($query) use ($id) {
                 $query->on('role_has_permissions.permission_id', '=', 'permissions.id')
-                ->where('role_has_permissions.role_id','=','1')->where('permissions.name','like','%.index%')->where('permissions.url','!=','null');
+                ->where('role_has_permissions.role_id','=',$id)->where('permissions.name','like','%.index%')->where('permissions.url','!=','null');
             });
            })->get(['permissions.name','permissions.url','permissions.remark','permissions.parent']);
-       
+
         $this->data = [
             'menu' => 
                 [
@@ -119,94 +226,7 @@ class TypeController extends Controller
                 ));
             }
         }
-    }
 
 
-    public function index(Request $request)
-    {   
-        $types = Type::paginate(10,['product_type.id','product_type.remark']);
-        $data = $this->data;
-
-        return view('pages.types.index', [
-            'types' => $types,'data' => $data
-        ])->with('i', ($request->input('page', 1) - 1) * 5);
-    }
-
-    /**
-     * Show form for creating branch
-     * 
-     * @return \Illuminate\Http\Response
-     */
-    public function create() 
-    {   
-        $data = $this->data;
-        return view('pages.types.create',[
-            'data' => $data,
-        ]);
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {   
-        $request->validate([
-            'remark' => 'required|unique:product_type'
-        ]);
-
-        Type::create($request->all());
-
-        return redirect()->route('types.index')
-            ->withSuccess(__('Type created successfully.'));
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  Type  $type
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Type $type)
-    {
-        $data = $this->data;
-        return view('pages.types.edit', [
-            'type' => $type ,'data' => $data 
-        ]);
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  Type  $type
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Type $type)
-    {
-        $request->validate([
-            'remark' => 'required|unique:product_type,remark,'.$type->id
-        ]);
-
-        $type->update($request->all());
-
-        return redirect()->route('types.index')
-            ->withSuccess(__('Type updated successfully.'));
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Post  $post
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Type $type)
-    {
-        $type->delete();
-
-        return redirect()->route('types.index')
-            ->withSuccess(__('Type deleted successfully.'));
     }
 }

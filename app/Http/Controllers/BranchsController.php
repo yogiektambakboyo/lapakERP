@@ -10,6 +10,7 @@ use App\Models\Branch;
 use App\Exports\BranchsExport;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
+use Auth;
 
 
 class BranchsController extends Controller
@@ -19,7 +20,7 @@ class BranchsController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    private $data,$act_permission,$module="branchs";
+    private $data,$act_permission,$module="branchs",$id=1;
 
     public function __construct()
     {
@@ -34,13 +35,136 @@ class BranchsController extends Controller
                 select 0 as allow_create,0 as allow_delete,0 as allow_show,count(1) as allow_edit from permissions p  join role_has_permissions rp on rp.permission_id = p.id where rp.role_id = 1 and p.name like '%.edit' and p.name like '".$this->module.".%'
             ) a
         ");
-        $permissions = Permission::join('role_has_permissions',function ($join) {
-            $join->on(function($query){
+    }
+
+
+    public function index()
+    {   
+        $user = Auth::user();
+        $id = $user->roles->first()->id;
+        $this->getpermissions($id);
+
+        $branchs = Branch::all();
+        $data = $this->data;
+        $keyword = "";
+
+        return view('pages.branchs.index', [
+            'branchs' => $branchs,'data' => $data , 'keyword' => $keyword
+        ]);
+    }
+
+
+    public function search(Request $request) 
+    {
+        $user = Auth::user();
+        $id = $user->roles->first()->id;
+        $this->getpermissions($id);
+
+        $keyword = $request->search;
+        $data = $this->data;
+
+        if($request->export=='Export Excel'){
+            return Excel::download(new BranchsExport($keyword), 'branchs_'.Carbon::now()->format('YmdHis').'.xlsx');
+        }else{
+            $branchs = Branch::orderBy('id', 'ASC')->where('branch.remark','LIKE','%'.$keyword.'%')->get();
+            return view('pages.branchs.index', compact('branchs','data','keyword'))->with('i', ($request->input('page', 1) - 1) * 5);
+        }
+    }
+
+    /**
+     * Show form for creating branch
+     * 
+     * @return \Illuminate\Http\Response
+     */
+    public function create() 
+    {  
+        $user = Auth::user();
+        $id = $user->roles->first()->id;
+        $this->getpermissions($id);
+ 
+        $data = $this->data;
+        return view('pages.branchs.create',['data'=>$data]);
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function store(Request $request)
+    {   
+        $request->validate([
+            'remark' => 'required|unique:branch'
+        ]);
+
+        Branch::create($request->all());
+
+        return redirect()->route('branchs.index')
+            ->withSuccess(__('Branch created successfully.'));
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  Branch  $branch
+     * @return \Illuminate\Http\Response
+     */
+    public function edit(Branch $branch)
+    {
+        $user = Auth::user();
+        $id = $user->roles->first()->id;
+        $this->getpermissions($id);
+
+        $data = $this->data;
+        return view('pages.branchs.edit', [
+            'branch' => $branch ,'data' => $data
+        ]);
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  Branch  $branch
+     * @return \Illuminate\Http\Response
+     */
+    public function update(Request $request, Branch $branch)
+    {
+        $request->validate([
+            'remark' => 'required|unique:branch,remark,'.$branch->id
+        ]);
+
+        $branch->update($request->only('name'));
+        
+
+        return redirect()->route('branchs.index')
+            ->withSuccess(__('Branch updated successfully.'));
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  \App\Models\Post  $post
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy(Branch $branch)
+    {
+        $branch->delete();
+
+        return redirect()->route('branchs.index')
+            ->withSuccess(__('Branch deleted successfully.'));
+    }
+
+    public function getpermissions($role_id){
+        $id = $role_id;
+        $permissions = Permission::join('role_has_permissions',function ($join)  use ($id) {
+            $join->on(function($query) use ($id) {
                 $query->on('role_has_permissions.permission_id', '=', 'permissions.id')
-                ->where('role_has_permissions.role_id','=','1')->where('permissions.name','like','%.index%')->where('permissions.url','!=','null');
+                ->where('role_has_permissions.role_id','=',$id)->where('permissions.name','like','%.index%')->where('permissions.url','!=','null');
             });
            })->get(['permissions.name','permissions.url','permissions.remark','permissions.parent']);
-       
+
         $this->data = [
             'menu' => 
                 [
@@ -119,108 +243,7 @@ class BranchsController extends Controller
                 ));
             }
         }
-    }
 
 
-    public function index()
-    {   
-        $branchs = Branch::all();
-        $data = $this->data;
-        $keyword = "";
-
-        return view('pages.branchs.index', [
-            'branchs' => $branchs,'data' => $data , 'keyword' => $keyword
-        ]);
-    }
-
-
-    public function search(Request $request) 
-    {
-        $keyword = $request->search;
-        $data = $this->data;
-
-        if($request->export=='Export Excel'){
-            return Excel::download(new BranchsExport($keyword), 'branchs_'.Carbon::now()->format('YmdHis').'.xlsx');
-        }else{
-            $branchs = Branch::orderBy('id', 'ASC')->where('branch.remark','LIKE','%'.$keyword.'%')->get();
-            return view('pages.branchs.index', compact('branchs','data','keyword'))->with('i', ($request->input('page', 1) - 1) * 5);
-        }
-    }
-
-    /**
-     * Show form for creating branch
-     * 
-     * @return \Illuminate\Http\Response
-     */
-    public function create() 
-    {   
-        $data = $this->data;
-        return view('pages.branchs.create',['data'=>$data]);
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {   
-        $request->validate([
-            'remark' => 'required|unique:branch'
-        ]);
-
-        Branch::create($request->all());
-
-        return redirect()->route('branchs.index')
-            ->withSuccess(__('Branch created successfully.'));
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  Branch  $branch
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Branch $branch)
-    {
-        $data = $this->data;
-        return view('pages.branchs.edit', [
-            'branch' => $branch ,'data' => $data
-        ]);
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  Branch  $branch
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Branch $branch)
-    {
-        $request->validate([
-            'remark' => 'required|unique:branch,remark,'.$branch->id
-        ]);
-
-        $branch->update($request->only('name'));
-        
-
-        return redirect()->route('branchs.index')
-            ->withSuccess(__('Branch updated successfully.'));
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Post  $post
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Branch $branch)
-    {
-        $branch->delete();
-
-        return redirect()->route('branchs.index')
-            ->withSuccess(__('Branch deleted successfully.'));
     }
 }

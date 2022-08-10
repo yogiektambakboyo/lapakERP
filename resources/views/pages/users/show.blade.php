@@ -45,8 +45,12 @@
             <a href="#tab_account" data-bs-toggle="tab" class="nav-link"><span class="fas fa-lock"></span> Account</a>
           </li>
           <li class="nav-item">
-            <a href="#tab_history" data-bs-toggle="tab" class="nav-link"><span class="fas fa-clock-rotate-left"></span> History</a>
+            <a href="#tab_training" data-bs-toggle="tab" class="nav-link"><span class="fas fa-clock-rotate-left"></span> Training & Skill</a>
           </li>
+          <li class="nav-item">
+            <a href="#tab_history" data-bs-toggle="tab" class="nav-link"><span class="fas fa-clock-rotate-left"></span> Work History</a>
+          </li>
+          
         </ul>
         <div class="tab-content panel p-3 rounded-0 rounded-bottom">
           <div class="tab-pane fade active show" id="tab_employee_info">
@@ -224,9 +228,51 @@
                         </tbody>
                     </table>
                   </div>
+                </div>
               </div>
             </div>
           </div>
-        </div>
+
+          <div class="tab-pane fade" id="tab_training">
+            <div class="panel text-white">
+              <div class="panel-heading bg-teal-600"><h4>Training & Skill</h4></div>
+              <div class="panel-body bg-white text-black">
+                <div class="row mb-3">
+                  <div class="col-md-12">
+                    <table class="table table-striped" id="example">
+                        <thead>
+                        <tr>
+                            <th scope="col" width="10%">Training Date</th>
+                            <th scope="col">Title</th>
+                            <th scope="col" width="20%">Trainer</th>
+                            <th scope="col" width="15%">Status</th> 
+                        </tr>
+                        </thead>
+                        <tbody>            
+                            <tr>
+                                <td>2020-01-01</td>
+                                <td>Full Body Therapy</td>
+                                <td>Coach Andy</td>
+                                <td><span class="badge bg-primary">In Training</span></td>
+                            </tr>
+                            <tr>
+                              <td>2019-12-01</td>
+                              <td>Tuina</td>
+                              <td>Coach Andy</td>
+                              <td><span class="badge bg-success">Pass</span></td>
+                            </tr>
+                            <tr>
+                              <td>2019-12-01</td>
+                              <td>Full Body Reflexology</td>
+                              <td>Coach Andy</td>
+                              <td><span class="badge bg-danger">Failed</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
     </div>
 @endsection

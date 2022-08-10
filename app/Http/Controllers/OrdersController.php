@@ -22,7 +22,7 @@ use App\Http\Controllers\Controller;
 use Yajra\Datatables\Datatables;
 use Auth;
 use Illuminate\Support\Facades\DB;
-
+use Illuminate\Support\Facades\Session;
 
 class OrdersController extends Controller
 {
@@ -32,7 +32,7 @@ class OrdersController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-    private $data,$act_permission,$module="orders";
+    private $data,$act_permission,$module="orders",$id=1;
 
     public function __construct()
     {
@@ -46,102 +46,18 @@ class OrdersController extends Controller
                 union 
                 select 0 as allow_create,0 as allow_delete,0 as allow_show,count(1) as allow_edit from permissions p  join role_has_permissions rp on rp.permission_id = p.id where rp.role_id = 1 and p.name like '%.edit' and p.name like '".$this->module.".%'
             ) a
-        ");
-        // Closure as callback
-        $permissions = Permission::join('role_has_permissions',function ($join) {
-            $join->on(function($query){
-                $query->on('role_has_permissions.permission_id', '=', 'permissions.id')
-                ->where('role_has_permissions.role_id','=','1')->where('permissions.name','like','%.index%')->where('permissions.url','!=','null');
-            });
-           })->get(['permissions.name','permissions.url','permissions.remark','permissions.parent']);
-       
-        $this->data = [
-            'menu' => 
-                [
-                    [
-                        'icon' => 'fa fa-user-gear',
-                        'title' => 'User Management',
-                        'url' => 'javascript:;',
-                        'caret' => true,
-                        'sub_menu' => []
-                    ],
-                    [
-                        'icon' => 'fa fa-box',
-                        'title' => 'Product Management',
-                        'url' => 'javascript:;',
-                        'caret' => true,
-                        'sub_menu' => []
-                    ],
-                    [
-                        'icon' => 'fa fa-table',
-                        'title' => 'Transactions',
-                        'url' => 'javascript:;',
-                        'caret' => true,
-                        'sub_menu' => []
-                    ],
-                    [
-                        'icon' => 'fa fa-chart-column',
-                        'title' => 'Reports',
-                        'url' => 'javascript:;',
-                        'caret' => true,
-                        'sub_menu' => []
-                    ],
-                    [
-                        'icon' => 'fa fa-screwdriver-wrench',
-                        'title' => 'Settings',
-                        'url' => 'javascript:;',
-                        'caret' => true,
-                        'sub_menu' => []
-                    ]  
-                ]      
-        ];
-
-        foreach ($permissions as $key => $menu) {
-            if($menu['parent']=='Users'){
-                array_push($this->data['menu'][0]['sub_menu'], array(
-                    'url' => $menu['url'],
-                    'title' => $menu['remark'],
-                    'route-name' => $menu['name']
-                ));
-            }
-            if($menu['parent']=='Products'){
-                array_push($this->data['menu'][1]['sub_menu'], array(
-                    'url' => $menu['url'],
-                    'title' => $menu['remark'],
-                    'route-name' => $menu['name']
-                ));
-            }
-            if($menu['parent']=='Transactions'){
-                array_push($this->data['menu'][2]['sub_menu'], array(
-                    'url' => $menu['url'],
-                    'title' => $menu['remark'],
-                    'route-name' => $menu['name']
-                ));
-            }
-            if($menu['parent']=='Reports'){
-                array_push($this->data['menu'][3]['sub_menu'], array(
-                    'url' => $menu['url'],
-                    'title' => $menu['remark'],
-                    'route-name' => $menu['name']
-                ));
-            }
-            if($menu['parent']=='Settings'){
-                array_push($this->data['menu'][4]['sub_menu'], array(
-                    'url' => $menu['url'],
-                    'title' => $menu['remark'],
-                    'route-name' => $menu['name']
-                ));
-            }
-        }
+        ");    
     }
 
     public function index(Request $request) 
     {
+        $user = Auth::user();
+        $id = $user->roles->first()->id;
+        $this->getpermissions($id);
+
         $data = $this->data;
         $keyword = "";
-        $user = Auth::user();
         $act_permission = $this->act_permission[0];
-        
         $orders = Order::orderBy('id', 'ASC')
                 ->join('customers as jt','jt.id','=','order_master.customers_id')
                 ->join('branch as b','b.id','=','jt.branch_id')
@@ -155,6 +71,10 @@ class OrdersController extends Controller
 
     public function search(Request $request) 
     {
+        $user = Auth::user();
+        $id = $user->roles->first()->id;
+        $this->getpermissions($id);
+
         $keyword = $request->search;
         $data = $this->data;
 
@@ -179,6 +99,10 @@ class OrdersController extends Controller
      */
     public function create() 
     {
+        $user = Auth::user();
+        $id = $user->roles->first()->id;
+        $this->getpermissions($id);
+
         $data = $this->data;
         $user = Auth::user();
         $payment_type = ['Cash','Debit Card'];
@@ -187,6 +111,7 @@ class OrdersController extends Controller
             'customers' => Customer::join('users_branch as ub','ub.branch_id', '=', 'customers.branch_id')->join('branch as b','b.id','=','ub.branch_id')->where('ub.user_id',$user->id)->get(['customers.id','customers.name','b.remark']),
             'data' => $data,
             'users' => $users,
+            'branchs' => Branch::join('users_branch as ub','ub.branch_id', '=', 'branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']),
             'payment_type' => $payment_type,
             'rooms' => Room::join('users_branch as ub','ub.branch_id', '=', 'branch_room.branch_id')->where('ub.user_id','=',$user->id)->get(['branch_room.id','branch_room.remark']),
         ]);
@@ -194,6 +119,10 @@ class OrdersController extends Controller
 
     public function getproduct() 
     {
+        $user = Auth::user();
+        $id = $user->roles->first()->id;
+        $this->getpermissions($id);
+
         $data = $this->data;
         $user = Auth::user();
         $product = DB::select("select m.remark as uom,product_sku.id,product_sku.remark,product_sku.abbr,pt.remark as type,pc.remark as category_name,pb.remark as brand_name,pp.price,'0' as discount,'0' as qty,'0' as total
@@ -243,9 +172,7 @@ class OrdersController extends Controller
      */
     public function store(Request $request) 
     {
-        //For demo purposes only. When creating user or inviting a user
-        // you should create a generated random password and email it to the user
-        
+
         $user = Auth::user();
         $branch = Customer::where('id','=',$request->get('customer_id'))->get(['branch_id'])->first();
         $count_no = DB::select("select max(id) as id from order_master om where to_char(om.dated,'YYYY')=to_char(now(),'YYYY') ");
@@ -324,6 +251,11 @@ class OrdersController extends Controller
      */
     public function show(Order $order) 
     {
+        $user = Auth::user();
+        $id = $user->roles->first()->id;
+        $this->getpermissions($id);
+
+
         $data = $this->data;
         $user = Auth::user();
         $room = Room::where('branch_room.id','=',$order->branch_room_id)->get(['branch_room.remark'])->first();
@@ -349,6 +281,10 @@ class OrdersController extends Controller
      */
     public function edit(Order $order) 
     {
+        $user = Auth::user();
+        $id = $user->roles->first()->id;
+        $this->getpermissions($id);
+
         $data = $this->data;
         $user = Auth::user();
         $room = Room::where('branch_room.id','=',$order->branch_room_id)->get(['branch_room.remark'])->first();
@@ -492,10 +428,99 @@ class OrdersController extends Controller
     public function destroy(Order $order) 
     {
         OrderDetail::where('order_no', $order->order_no)->delete();
-
         $order->delete();
-
         return redirect()->route('orders.index')
             ->withSuccess(__('Order deleted successfully.'));
+    }
+
+    public function getpermissions($role_id){
+        $id = $role_id;
+        $permissions = Permission::join('role_has_permissions',function ($join)  use ($id) {
+            $join->on(function($query) use ($id) {
+                $query->on('role_has_permissions.permission_id', '=', 'permissions.id')
+                ->where('role_has_permissions.role_id','=',$id)->where('permissions.name','like','%.index%')->where('permissions.url','!=','null');
+            });
+           })->get(['permissions.name','permissions.url','permissions.remark','permissions.parent']);
+
+        $this->data = [
+            'menu' => 
+                [
+                    [
+                        'icon' => 'fa fa-user-gear',
+                        'title' => 'User Management',
+                        'url' => 'javascript:;',
+                        'caret' => true,
+                        'sub_menu' => []
+                    ],
+                    [
+                        'icon' => 'fa fa-box',
+                        'title' => 'Product Management',
+                        'url' => 'javascript:;',
+                        'caret' => true,
+                        'sub_menu' => []
+                    ],
+                    [
+                        'icon' => 'fa fa-table',
+                        'title' => 'Transactions',
+                        'url' => 'javascript:;',
+                        'caret' => true,
+                        'sub_menu' => []
+                    ],
+                    [
+                        'icon' => 'fa fa-chart-column',
+                        'title' => 'Reports',
+                        'url' => 'javascript:;',
+                        'caret' => true,
+                        'sub_menu' => []
+                    ],
+                    [
+                        'icon' => 'fa fa-screwdriver-wrench',
+                        'title' => 'Settings',
+                        'url' => 'javascript:;',
+                        'caret' => true,
+                        'sub_menu' => []
+                    ]  
+                ]      
+        ];
+
+        foreach ($permissions as $key => $menu) {
+            if($menu['parent']=='Users'){
+                array_push($this->data['menu'][0]['sub_menu'], array(
+                    'url' => $menu['url'],
+                    'title' => $menu['remark'],
+                    'route-name' => $menu['name']
+                ));
+            }
+            if($menu['parent']=='Products'){
+                array_push($this->data['menu'][1]['sub_menu'], array(
+                    'url' => $menu['url'],
+                    'title' => $menu['remark'],
+                    'route-name' => $menu['name']
+                ));
+            }
+            if($menu['parent']=='Transactions'){
+                array_push($this->data['menu'][2]['sub_menu'], array(
+                    'url' => $menu['url'],
+                    'title' => $menu['remark'],
+                    'route-name' => $menu['name']
+                ));
+            }
+            if($menu['parent']=='Reports'){
+                array_push($this->data['menu'][3]['sub_menu'], array(
+                    'url' => $menu['url'],
+                    'title' => $menu['remark'],
+                    'route-name' => $menu['name']
+                ));
+            }
+            if($menu['parent']=='Settings'){
+                array_push($this->data['menu'][4]['sub_menu'], array(
+                    'url' => $menu['url'],
+                    'title' => $menu['remark'],
+                    'route-name' => $menu['name']
+                ));
+            }
+        }
+
+
     }
 }

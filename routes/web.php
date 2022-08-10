@@ -112,6 +112,24 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
         });
 
 
+         /**
+         * Order Routes
+         */
+        Route::group(['prefix' => 'purchaseorders'], function() {
+            Route::get('/', 'PurchaseOrderController@index')->name('purchaseorders.index');
+            Route::get('/create', 'PurchaseOrderController@create')->name('purchaseorders.create');
+            Route::post('/create', 'PurchaseOrderController@store')->name('purchaseorders.store');
+            Route::get('/search', 'PurchaseOrderController@search')->name('purchaseorders.search');
+            Route::get('/{order}/show', 'PurchaseOrderController@show')->name('purchaseorders.show');
+            Route::get('/{order}/edit', 'PurchaseOrderController@edit')->name('purchaseorders.edit');
+            Route::get('/getproduct', 'PurchaseOrderController@getproduct')->name('purchaseorders.getproduct');
+            Route::get('/gettimetable', 'PurchaseOrderController@gettimetable')->name('purchaseorders.gettimetable');
+            Route::get('/{order}/getorder', 'PurchaseOrderController@getorder')->name('purchaseorders.getorder');
+            Route::patch('/{order}/update', 'PurchaseOrderController@update')->name('purchaseorders.update');
+            Route::delete('/{order}/delete', 'PurchaseOrderController@destroy')->name('purchaseorders.destroy');
+            Route::get('/export', 'PurchaseOrderController@export')->name('purchaseorders.export');
+        });
+
 
          /**
          * Product Routes
@@ -344,6 +362,7 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
             Route::get('/', 'CustomersController@index')->name('customers.index');
             Route::get('/create', 'CustomersController@create')->name('customers.create');
             Route::post('/create', 'CustomersController@store')->name('customers.store');
+            Route::post('/createapi', 'CustomersController@storeapi')->name('customers.storeapi');
             Route::get('/{customer}/show', 'CustomersController@show')->name('customers.show');
             Route::get('/{customer}/edit', 'CustomersController@edit')->name('customers.edit');
             Route::patch('/{customer}/update', 'CustomersController@update')->name('customers.update');
@@ -355,7 +374,9 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
          */
         Route::group(['prefix' => 'reports'], function() {
             Route::get('/cashier', 'ReportCashierComController@index')->name('reports.cashier.index');
+            Route::get('/search_cashier', 'ReportCashierComController@search')->name('reports.cashier.search');
             Route::get('/terapist', 'ReportTerapistComController@index')->name('reports.terapist.index');
+            Route::get('/search_terapist', 'ReportTerapistComController@search')->name('reports.terapist.search');
         });
 
 

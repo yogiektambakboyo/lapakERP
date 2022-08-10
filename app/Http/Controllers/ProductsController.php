@@ -32,7 +32,7 @@ class ProductsController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-    private $data,$act_permission,$module="products";
+    private $data,$act_permission,$module="products",$id=1;
 
     public function __construct()
     {
@@ -47,14 +47,215 @@ class ProductsController extends Controller
                 select 0 as allow_create,0 as allow_delete,0 as allow_show,count(1) as allow_edit from permissions p  join role_has_permissions rp on rp.permission_id = p.id where rp.role_id = 1 and p.name like '%.edit' and p.name like '".$this->module.".%'
             ) a
         ");
-        // Closure as callback
-        $permissions = Permission::join('role_has_permissions',function ($join) {
-            $join->on(function($query){
+        
+        
+    }
+
+    public function index(Request $request) 
+    {
+        $user = Auth::user();
+        $id = $user->roles->first()->id;
+        $this->getpermissions($id);
+
+        $data = $this->data;
+        $keyword = "";
+        $products = Product::orderBy('product_sku.remark', 'ASC')
+                    ->join('product_type as pt','pt.id','=','product_sku.type_id')
+                    ->join('product_category as pc','pc.id','=','product_sku.category_id')
+                    ->join('product_brand as pb','pb.id','=','product_sku.brand_id')
+                    ->paginate(10,['product_sku.id','product_sku.remark as product_name','pt.remark as product_type','pc.remark as product_category','pb.remark as product_brand']);
+        return view('pages.products.index', compact('products','data','keyword'))->with('i', ($request->input('page', 1) - 1) * 5);
+    }
+
+    public function search(Request $request) 
+    {
+        $user = Auth::user();
+        $id = $user->roles->first()->id;
+        $this->getpermissions($id);
+
+        $keyword = $request->search;
+        $data = $this->data;
+        $act_permission = $this->act_permission[0];
+
+        if($request->export=='Export Excel'){
+            return Excel::download(new ProductsExport($keyword), 'products_'.Carbon::now()->format('YmdHis').'.xlsx');
+        }else{
+            $whereclause = " upper(product_sku.remark) like '%".strtoupper($keyword)."%'";
+            $products = Product::orderBy('product_sku.remark', 'ASC')
+                        ->join('product_type as pt','pt.id','=','product_sku.type_id')
+                        ->join('product_category as pc','pc.id','=','product_sku.category_id')
+                        ->join('product_brand as pb','pb.id','=','product_sku.brand_id')
+                        ->whereRaw($whereclause)
+                        ->paginate(10,['product_sku.id','product_sku.remark as product_name','pt.remark as product_type','pc.remark as product_category','pb.remark as product_brand']);            
+            return view('pages.products.index', compact('products','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
+        }
+    }
+
+    public function export(Request $request) 
+    {
+        $keyword = $request->search;
+        return Excel::download(new ProductsExport, 'products_'.Carbon::now()->format('YmdHis').'.xlsx');
+    }
+
+    /**
+     * Show form for creating user
+     * 
+     * @return \Illuminate\Http\Response
+     */
+    public function create() 
+    {
+        $user = Auth::user();
+        $id = $user->roles->first()->id;
+        $this->getpermissions($id);
+
+        $data = $this->data;
+        return view('pages.products.create',[
+            'productCategorys' => ProductCategory::latest()->get(),
+            'productCategorysRemark' => ProductCategory::latest()->get()->pluck('remark')->toArray(),
+            'productBrands' => ProductBrand::latest()->get(),
+            'productBrandsRemark' => ProductBrand::latest()->get()->pluck('remark')->toArray(),
+            'productTypes' => ProductType::latest()->get(),
+            'productTypesRemark' => ProductType::latest()->get()->pluck('remark')->toArray(),
+            'data' => $data,
+        ]);
+    }
+
+    /**
+     * Store a newly created user
+     * 
+     * @param Product $product
+     * @param Request $request
+     * 
+     * @return \Illuminate\Http\Response
+     */
+    public function store(Product $product, Request $request) 
+    {
+        //For demo purposes only. When creating user or inviting a user
+        // you should create a generated random password and email it to the user
+    
+        $user = Auth::user();
+        $product->create(
+            array_merge(
+                ['abbr' => $request->get('abbr') ],
+                ['created_by' => $user->id],
+                ['remark' => $request->get('remark') ],
+                ['type_id' => $request->get('type_id') ],
+                ['category_id' => $request->get('category_id') ],
+                ['brand_id' => $request->get('brand_id') ],
+            )
+        );
+        return redirect()->route('products.index')
+            ->withSuccess(__('Product created successfully.'));
+    }
+
+    /**
+     * Show user data
+     * 
+     * @param User $user
+     * 
+     * @return \Illuminate\Http\Response
+     */
+    public function show(Product $product) 
+    {
+        $user = Auth::user();
+        $id = $user->roles->first()->id;
+        $this->getpermissions($id);
+
+        $data = $this->data;
+        //return $product->id;
+        $products = Product::join('product_type as pt','pt.id','=','product_sku.type_id')
+        ->join('product_category as pc','pc.id','=','product_sku.category_id')
+        ->join('product_brand as pb','pb.id','=','product_sku.brand_id')
+        ->where('product_sku.id',$product->id)
+        ->get(['product_sku.id as product_id','product_sku.abbr','product_sku.remark as product_name','pt.remark as product_type','pc.remark as product_category','pb.remark as product_brand'])->first();
+
+        return view('pages.products.show', [
+            'product' => $products ,
+            'data' => $data,
+        ]);
+    }
+
+    /**
+     * Edit user data
+     * 
+     * @param Product $product
+     * 
+     * @return \Illuminate\Http\Response
+     */
+    public function edit(Product $product) 
+    {
+        $user = Auth::user();
+        $id = $user->roles->first()->id;
+        $this->getpermissions($id);
+
+        $data = $this->data;
+        $products = Product::join('product_type as pt','pt.id','=','product_sku.type_id')
+        ->join('product_category as pc','pc.id','=','product_sku.category_id')
+        ->join('product_brand as pb','pb.id','=','product_sku.brand_id')
+        ->where('product_sku.id',$product->id)
+        ->get(['product_sku.id as id','product_sku.abbr','product_sku.brand_id','product_sku.category_id','product_sku.type_id','product_sku.remark as product_name','pt.remark as product_type','pc.remark as product_category','pb.remark as product_brand'])->first();
+        return view('pages.products.edit', [
+            'productCategorys' => ProductCategory::latest()->get(),
+            'productCategorysRemark' => ProductCategory::latest()->get()->pluck('remark')->toArray(),
+            'productBrands' => ProductBrand::latest()->get(),
+            'productBrandsRemark' => ProductBrand::latest()->get()->pluck('remark')->toArray(),
+            'productTypes' => ProductType::latest()->get(),
+            'productTypesRemark' => ProductType::latest()->get()->pluck('remark')->toArray(),
+            'data' => $data,
+            'product' => $products,
+        ]);
+    }
+
+    /**
+     * Update user data
+     * 
+     * @param Product $product
+     * @param Request $request
+     * 
+     * @return \Illuminate\Http\Response
+     */
+    public function update(Product $product, Request $request) 
+    {
+        $user = Auth::user();
+        $product->update(
+            array_merge(
+                ['abbr' => $request->get('abbr') ],
+                ['updated_by' => $user->id],
+                ['remark' => $request->get('remark') ],
+                ['type_id' => $request->get('type_id') ],
+                ['category_id' => $request->get('category_id') ],
+                ['brand_id' => $request->get('brand_id') ],
+            )
+        );
+        
+        return redirect()->route('products.index')
+            ->withSuccess(__('Product updated successfully.'));
+    }
+
+    /**
+     * Delete user data
+     * 
+     * @param User $user
+     * 
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy(User $user) 
+    {
+        $user->delete();
+
+        return redirect()->route('products.index')
+            ->withSuccess(__('Product deleted successfully.'));
+    }
+
+    public function getpermissions($role_id){
+        $id = $role_id;
+        $permissions = Permission::join('role_has_permissions',function ($join)  use ($id) {
+            $join->on(function($query) use ($id) {
                 $query->on('role_has_permissions.permission_id', '=', 'permissions.id')
-                ->where('role_has_permissions.role_id','=','1')->where('permissions.name','like','%.index%')->where('permissions.url','!=','null');
+                ->where('role_has_permissions.role_id','=',$id)->where('permissions.name','like','%.index%')->where('permissions.url','!=','null');
             });
            })->get(['permissions.name','permissions.url','permissions.remark','permissions.parent']);
-       
+
         $this->data = [
             'menu' => 
                 [
@@ -133,181 +334,7 @@ class ProductsController extends Controller
                 ));
             }
         }
-    }
 
-    public function index(Request $request) 
-    {
-        $data = $this->data;
-        $keyword = "";
-        $products = Product::orderBy('product_sku.remark', 'ASC')
-                    ->join('product_type as pt','pt.id','=','product_sku.type_id')
-                    ->join('product_category as pc','pc.id','=','product_sku.category_id')
-                    ->join('product_brand as pb','pb.id','=','product_sku.brand_id')
-                    ->paginate(10,['product_sku.id','product_sku.remark as product_name','pt.remark as product_type','pc.remark as product_category','pb.remark as product_brand']);
-        return view('pages.products.index', compact('products','data','keyword'))->with('i', ($request->input('page', 1) - 1) * 5);
-    }
 
-    public function search(Request $request) 
-    {
-        $keyword = $request->search;
-        $data = $this->data;
-        $act_permission = $this->act_permission[0];
-
-        if($request->export=='Export Excel'){
-            return Excel::download(new ProductsExport($keyword), 'products_'.Carbon::now()->format('YmdHis').'.xlsx');
-        }else{
-            $whereclause = " upper(product_sku.remark) like '%".strtoupper($keyword)."%'";
-            $products = Product::orderBy('product_sku.remark', 'ASC')
-                        ->join('product_type as pt','pt.id','=','product_sku.type_id')
-                        ->join('product_category as pc','pc.id','=','product_sku.category_id')
-                        ->join('product_brand as pb','pb.id','=','product_sku.brand_id')
-                        ->whereRaw($whereclause)
-                        ->paginate(10,['product_sku.id','product_sku.remark as product_name','pt.remark as product_type','pc.remark as product_category','pb.remark as product_brand']);            
-            return view('pages.products.index', compact('products','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
-        }
-    }
-
-    public function export(Request $request) 
-    {
-        $keyword = $request->search;
-        return Excel::download(new ProductsExport, 'products_'.Carbon::now()->format('YmdHis').'.xlsx');
-    }
-
-    /**
-     * Show form for creating user
-     * 
-     * @return \Illuminate\Http\Response
-     */
-    public function create() 
-    {
-        $data = $this->data;
-        return view('pages.products.create',[
-            'productCategorys' => ProductCategory::latest()->get(),
-            'productCategorysRemark' => ProductCategory::latest()->get()->pluck('remark')->toArray(),
-            'productBrands' => ProductBrand::latest()->get(),
-            'productBrandsRemark' => ProductBrand::latest()->get()->pluck('remark')->toArray(),
-            'productTypes' => ProductType::latest()->get(),
-            'productTypesRemark' => ProductType::latest()->get()->pluck('remark')->toArray(),
-            'data' => $data,
-        ]);
-    }
-
-    /**
-     * Store a newly created user
-     * 
-     * @param Product $product
-     * @param Request $request
-     * 
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Product $product, Request $request) 
-    {
-        //For demo purposes only. When creating user or inviting a user
-        // you should create a generated random password and email it to the user
-    
-        $user = Auth::user();
-        $product->create(
-            array_merge(
-                ['abbr' => $request->get('abbr') ],
-                ['created_by' => $user->id],
-                ['remark' => $request->get('remark') ],
-                ['type_id' => $request->get('type_id') ],
-                ['category_id' => $request->get('category_id') ],
-                ['brand_id' => $request->get('brand_id') ],
-            )
-        );
-        return redirect()->route('products.index')
-            ->withSuccess(__('Product created successfully.'));
-    }
-
-    /**
-     * Show user data
-     * 
-     * @param User $user
-     * 
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Product $product) 
-    {
-        $data = $this->data;
-        //return $product->id;
-        $products = Product::join('product_type as pt','pt.id','=','product_sku.type_id')
-        ->join('product_category as pc','pc.id','=','product_sku.category_id')
-        ->join('product_brand as pb','pb.id','=','product_sku.brand_id')
-        ->where('product_sku.id',$product->id)
-        ->get(['product_sku.id as product_id','product_sku.abbr','product_sku.remark as product_name','pt.remark as product_type','pc.remark as product_category','pb.remark as product_brand'])->first();
-
-        return view('pages.products.show', [
-            'product' => $products ,
-            'data' => $data,
-        ]);
-    }
-
-    /**
-     * Edit user data
-     * 
-     * @param Product $product
-     * 
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Product $product) 
-    {
-        $data = $this->data;
-        $products = Product::join('product_type as pt','pt.id','=','product_sku.type_id')
-        ->join('product_category as pc','pc.id','=','product_sku.category_id')
-        ->join('product_brand as pb','pb.id','=','product_sku.brand_id')
-        ->where('product_sku.id',$product->id)
-        ->get(['product_sku.id as id','product_sku.abbr','product_sku.brand_id','product_sku.category_id','product_sku.type_id','product_sku.remark as product_name','pt.remark as product_type','pc.remark as product_category','pb.remark as product_brand'])->first();
-        return view('pages.products.edit', [
-            'productCategorys' => ProductCategory::latest()->get(),
-            'productCategorysRemark' => ProductCategory::latest()->get()->pluck('remark')->toArray(),
-            'productBrands' => ProductBrand::latest()->get(),
-            'productBrandsRemark' => ProductBrand::latest()->get()->pluck('remark')->toArray(),
-            'productTypes' => ProductType::latest()->get(),
-            'productTypesRemark' => ProductType::latest()->get()->pluck('remark')->toArray(),
-            'data' => $data,
-            'product' => $products,
-        ]);
-    }
-
-    /**
-     * Update user data
-     * 
-     * @param Product $product
-     * @param Request $request
-     * 
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Product $product, Request $request) 
-    {
-        $user = Auth::user();
-        $product->update(
-            array_merge(
-                ['abbr' => $request->get('abbr') ],
-                ['updated_by' => $user->id],
-                ['remark' => $request->get('remark') ],
-                ['type_id' => $request->get('type_id') ],
-                ['category_id' => $request->get('category_id') ],
-                ['brand_id' => $request->get('brand_id') ],
-            )
-        );
-        
-        return redirect()->route('products.index')
-            ->withSuccess(__('Product updated successfully.'));
-    }
-
-    /**
-     * Delete user data
-     * 
-     * @param User $user
-     * 
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(User $user) 
-    {
-        $user->delete();
-
-        return redirect()->route('products.index')
-            ->withSuccess(__('Product deleted successfully.'));
     }
 }
