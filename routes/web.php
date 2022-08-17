@@ -120,13 +120,14 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
             Route::get('/create', 'PurchaseOrderController@create')->name('purchaseorders.create');
             Route::post('/create', 'PurchaseOrderController@store')->name('purchaseorders.store');
             Route::get('/search', 'PurchaseOrderController@search')->name('purchaseorders.search');
-            Route::get('/{order}/show', 'PurchaseOrderController@show')->name('purchaseorders.show');
-            Route::get('/{order}/edit', 'PurchaseOrderController@edit')->name('purchaseorders.edit');
+            Route::get('/{purchase}/show', 'PurchaseOrderController@show')->name('purchaseorders.show');
+            Route::get('/{purchase}/edit', 'PurchaseOrderController@edit')->name('purchaseorders.edit');
             Route::get('/getproduct', 'PurchaseOrderController@getproduct')->name('purchaseorders.getproduct');
             Route::get('/gettimetable', 'PurchaseOrderController@gettimetable')->name('purchaseorders.gettimetable');
-            Route::get('/{order}/getorder', 'PurchaseOrderController@getorder')->name('purchaseorders.getorder');
-            Route::patch('/{order}/update', 'PurchaseOrderController@update')->name('purchaseorders.update');
-            Route::delete('/{order}/delete', 'PurchaseOrderController@destroy')->name('purchaseorders.destroy');
+            Route::get('/{purchase}/getorder', 'PurchaseOrderController@getorder')->name('purchaseorders.getorder');
+            Route::patch('/{purchase}/update', 'PurchaseOrderController@update')->name('purchaseorders.update');
+            Route::get('/{purchase}/getdocdata', 'PurchaseOrderController@getdocdata')->name('purchaseorders.getdocdata');
+            Route::delete('/{purchase}/delete', 'PurchaseOrderController@destroy')->name('purchaseorders.destroy');
             Route::get('/export', 'PurchaseOrderController@export')->name('purchaseorders.export');
         });
 

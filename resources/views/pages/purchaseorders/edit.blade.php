@@ -1,0 +1,515 @@
+@extends('layouts.default', ['appSidebarSearch' => true])
+
+@section('title', 'Edit Purchase Order')
+
+@section('content')
+  <div class="panel text-white">
+    <div class="panel-heading  bg-teal-600">
+      <div class="panel-title"><h4 class="">Purchase Order {{ $purchase->purchase_no }}</h4></div>
+      <div class="">
+        <a href="{{ route('purchaseorders.index') }}" class="btn btn-default">Cancel</a>
+        <button type="button" id="save-btn" class="btn btn-info">Save</button>
+      </div>
+    </div>
+    <div class="panel-body bg-white text-black">
+
+        <div class="row mb-3">
+          <div class="row mb-3">
+          <div class="col-md-12">
+            <div class="row mb-3">
+              <label class="form-label col-form-label col-md-1">Date (mm/dd/YYYY)</label>
+              <div class="col-md-2">
+                <input id="purchase_no" name="purchase_no" type="hidden" value="{{ $purchase->purchase_no }}">
+                <input type="text" 
+                name="dated"
+                id="dated"
+                class="form-control" 
+                value="{{ substr(explode(" ",$purchase->dated)[0],5,2) }}/{{ substr(explode(" ",$purchase->dated)[0],8,2) }}/{{ substr(explode(" ",$purchase->dated)[0],0,4) }}"
+                required/>
+                @if ($errors->has('purchase_date'))
+                          <span class="text-danger text-left">{{ $errors->first('purchase_date') }}</span>
+                      @endif
+              </div>
+
+              <label class="form-label col-form-label col-md-1">Shipto</label>
+              <div class="col-md-2">
+                <select class="form-control" 
+                    name="branch_id" id="branch_id" required>
+                    <option value="">Select Branch</option>
+                    @foreach($branchs as $branch)
+                        <option value="{{ $branch->id }}"  {{ $purchase->branch_id == $branch->id ? 'selected' : '' }}>{{ $branch->remark }} </option>
+                    @endforeach
+                </select>
+              </div>
+
+              <label class="form-label col-form-label col-md-1">Supplier</label>
+              <div class="col-md-2">
+                <select class="form-control" 
+                    name="supplier_id" id="supplier_id" required>
+                    <option value="">Select Suppliers</option>
+                    @foreach($suppliers as $supplier)
+                        <option value="{{ $supplier->id }}" {{ $purchase->supplier_id == $supplier->id ? 'selected' : '' }} >{{ $supplier->id }} - {{ $supplier->name }} </option>
+                    @endforeach
+                </select>
+              </div>
+
+                <label class="form-label col-form-label col-md-1">Remark</label>
+                <div class="col-md-2">
+                  <input type="text" 
+                  name="remark"
+                  id="remark"
+                  class="form-control" 
+                  value="{{ $purchase->remark }}"/>
+                  </div>
+            </div>
+
+            <div class="panel-heading bg-teal-600 text-white"><strong>Order List</strong></div>
+            <div class="row mb-3">
+              <div class="col-md-3">
+                <label class="form-label col-form-label">Product</label>
+                <select class="form-control" 
+                      name="input_product_id" id="input_product_id" required>
+                      <option value="">Select Product</option>
+                  </select>
+              </div>
+
+
+              <div class="col-md-2">
+                <label class="form-label col-form-label">UOM</label>
+                <input type="text" 
+                name="input_product_uom"
+                id="input_product_uom"
+                class="form-control" 
+                value="{{ old('input_product_uom') }}" required disabled/>
+              </div>
+
+              <div class="col-md-2">
+                <label class="form-label col-form-label">Price</label>
+                <input type="text" 
+                name="input_product_price"
+                id="input_product_price"
+                class="form-control" 
+                value="{{ old('input_product_price') }}" required/>
+              </div>
+
+              <div class="col-md-1">
+                <label class="form-label col-form-label">Qty</label>
+                <input type="text" 
+                name="input_product_qty"
+                id="input_product_qty"
+                class="form-control" 
+                value="{{ old('input_product_qty') }}" required/>
+              </div>
+
+              <div class="col-md-2">
+                <label class="form-label col-form-label">Total</label>
+                <input type="text" 
+                name="input_product_total"
+                id="input_product_total"
+                class="form-control" 
+                value="{{ old('input_product_total') }}" required disabled/>
+              </div>
+
+              <div class="col-md-2">
+                <div class="col-md-12"><label class="form-label col-form-label">_</label></div>
+                <a href="#" id="input_product_submit" class="btn btn-green"><div class="fa-1x"><i class="fas fa-plus fa-fw"></i>Add Product</div></a>
+              </div>
+
+            </div>
+            
+
+            <table class="table table-striped" id="order_table">
+              <thead>
+              <tr>
+                  <th>Product Code</th>
+                  <th scope="col" width="10%">UOM</th>
+                  <th scope="col" width="10%">Price</th>
+                  <th scope="col" width="5%">Qty</th>
+                  <th scope="col" width="10%">Total</th>
+                  <th scope="col" width="20%">Action</th>  
+              </tr>
+              </thead>
+              <tbody>
+              </tbody>
+            </table> 
+            
+            
+            <div class="row mb-3">
+              <label class="form-label col-form-label col-md-2"><h1>Total</h1></label>
+              <div class="col-md-10">
+                <h1 class="display-5 text-end"><label id="order-total">Rp. 0</label></h1>
+              </div>
+            </div>
+          <div class="col-md-12">
+          </div>
+        </div>
+    </div>
+  </div>
+@endsection
+
+@push('scripts')
+    <script type="text/javascript">
+      var productList = [];
+      var orderList = [];
+      var order_total = 0;
+         
+      $(function () {
+          $('#app').removeClass('app app-sidebar-fixed app-header-fixed-minified').addClass('app app-sidebar-fixed app-header-fixed-minified app-sidebar-minified');
+          const today = new Date();
+          const yyyy = today.getFullYear();
+          let mm = today.getMonth() + 1; // Months start at 0!
+          let dd = today.getDate();
+
+          if (dd < 10) dd = '0' + dd;
+          if (mm < 10) mm = '0' + mm;
+
+          const formattedToday = mm + '/' + dd + '/' + yyyy;
+          
+          $('#invoice_date').datepicker({
+              format : 'yyyy-mm-dd',
+              todayHighlight: true,
+          });
+
+          var url = "{{ route('purchaseorders.getproduct') }}";
+          var lastvalurl = "XX";
+          console.log(url);
+          url = url.replace(lastvalurl, $(this).val())
+          lastvalurl = $(this).val();
+          const res = axios.get(url, {
+            headers: {
+                'Content-Type': 'application/json'
+              }
+          }).then(resp => {
+                $('#input_product_id').select2();
+              
+                for(var i=0;i<resp.data.length;i++){
+                    var product = {
+                          "id"          : resp.data[i]["id"],
+                          "abbr"        : resp.data[i]["abbr"],
+                          "remark"      : resp.data[i]["remark"],
+                          "uom"         : resp.data[i]["uom"],
+                          "price"       : resp.data[i]["price"]
+                    }
+
+                    productList.push(product);
+                }
+
+                for (var i = 0; i < productList.length; i++){
+                  var obj = productList[i];
+                  var newOption = new Option(obj["remark"], obj["id"], false, false);
+                  $('#input_product_id').append(newOption).trigger('change');  
+                }
+
+              $('#input_product_id').on('change.select2', function(e){
+                $.each(productList, function(i, v) {
+                    if (v.id == $('#input_product_id').find(':selected').val()) {
+                        $('#input_product_uom').val(v.uom);
+                        $('#input_product_price').val(v.price);
+                        $('#input_product_qty').val(1);
+                        $('#input_product_total').val(v.price);
+                        return;
+                    }
+                });
+              });
+
+              $('#input_product_price').on('input', function(){
+                $('#input_product_total').val(($('#input_product_price').val()*$('#input_product_qty').val()))
+              });
+
+              $('#input_product_qty').on('input', function(){
+                $('#input_product_total').val(($('#input_product_price').val()*$('#input_product_qty').val()))
+              });
+
+              $('#input_product_submit').on('click', function(){
+                if($('#input_product_id').val()==''){
+                  Swal.fire(
+                    {
+                      position: 'top-end',
+                      icon: 'warning',
+                      text: 'Please choose product',
+                      showConfirmButton: false,
+                      imageHeight: 30, 
+                      imageWidth: 30,   
+                      timer: 1500
+                    }
+                  );
+                }else if($('#input_product_qty').val()==''){
+                  Swal.fire(
+                    {
+                      position: 'top-end',
+                      icon: 'warning',
+                      text: 'Please input qty',
+                      showConfirmButton: false,
+                      imageHeight: 30, 
+                      imageWidth: 30,   
+                      timer: 1500
+                    }
+                  );
+                }else if($('#input_product_price').val()==''){
+                  Swal.fire(
+                    {
+                      position: 'top-end',
+                      icon: 'warning',
+                      text: 'Please input price',
+                      showConfirmButton: false,
+                      imageHeight: 30, 
+                      imageWidth: 30,   
+                      timer: 1500
+                    }
+                  );
+                }else{
+                  addProduct($('#input_product_id').val(),$('#input_product_id option:selected').text(), $('#input_product_price').val(), $('#input_product_total').val(), $('#input_product_qty').val(), $('#input_product_uom').val(),$('#input_product_id option:selected').text());
+                }
+              });
+              
+
+          });
+
+
+          var url = "{{ route('purchaseorders.getdocdata',$purchase->purchase_no) }}";
+          const resGetPO = axios.get(url, {
+            headers: {
+                'Content-Type': 'application/json'
+              }
+          }).then(resp => {
+                for(var i=0;i<resp.data.length;i++){
+                    var product = {
+                          "id"          : resp.data[i]["product_id"],
+                          "abbr"        : resp.data[i]["abbr"],
+                          "remark"      : resp.data[i]["remark"],
+                          "uom"         : resp.data[i]["uom"],
+                          "qty"         : resp.data[i]["qty"],
+                          "total"       : resp.data[i]["total"],
+                          "price"       : resp.data[i]["price"]
+                    }
+
+                    orderList.push(product);
+
+                    console.log(resp.data[i]["id"]);
+                }
+
+                for (var i = 0; i < orderList.length; i++){
+                  var obj = orderList[i];
+
+                  table.row.add( {
+                   "id"           : obj["id"],
+                    "remark"      : obj["remark"],
+                    "uom"         : obj["uom"],
+                    "price"       : obj["price"],
+                    "qty"         : obj["qty"],
+                    "total"       : obj["total"],
+                    "action"      : "",
+                  }).draw(false);
+                  order_total = order_total + ((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"]));
+              
+                }
+          });
+      });
+
+        $('#save-btn').on('click',function(){
+          if($('#branch_id').val()==''){
+            $('#branch_id').focus();
+            Swal.fire(
+              {
+                position: 'top-end',
+                icon: 'warning',
+                text: 'Please choose shipto',
+                showConfirmButton: false,
+                imageHeight: 30, 
+                imageWidth: 30,   
+                timer: 1500
+              }
+            );
+          }else if($('#supplier_id').val()==''){
+            $('#supplier_id').focus();
+            Swal.fire(
+              {
+                position: 'top-end',
+                icon: 'warning',
+                text: 'Please choose supplier',
+                showConfirmButton: false,
+                imageHeight: 30, 
+                imageWidth: 30,   
+                timer: 1500
+              }
+            );
+          }else if($('#purchase_date').val()==''){
+            $('#purchase_date').focus();
+            Swal.fire(
+              {
+                position: 'top-end',
+                icon: 'warning',
+                text: 'Please choose purchase date',
+                showConfirmButton: false,
+                imageHeight: 30, 
+                imageWidth: 30,   
+                timer: 1500
+              }
+            );
+          }else if(order_total<=0){
+            Swal.fire(
+              {
+                position: 'top-end',
+                icon: 'warning',
+                text: 'Please choose at least 1 product',
+                showConfirmButton: false,
+                imageHeight: 30, 
+                imageWidth: 30,   
+                timer: 1500
+              }
+            );
+          }else{
+              const json = JSON.stringify({
+                branch_id : $('#branch_id').val(),
+                product : orderList,
+                supplier_id : $('#supplier_id').val(),
+                remark : $('#remark').val(),
+                total_order : order_total,
+                dated : $('#dated').val(),
+                purchase_no : $('#purchase_no').val()
+              }
+            );
+            const res = axios.patch("{{ route('purchaseorders.update',$purchase->id) }}", json, {
+              headers: {
+                // Overwrite Axios's automatically set Content-Type
+                'Content-Type': 'application/json'
+              }
+            }).then(resp => {
+                  if(resp.data.status=="success"){
+                    window.location.href = "{{ route('purchaseorders.index') }}"; 
+                  }else{
+                    Swal.fire(
+                      {
+                        position: 'top-end',
+                        icon: 'warning',
+                        text: 'Something went wrong - '+resp.data.message,
+                        showConfirmButton: false,
+                        imageHeight: 30, 
+                        imageWidth: 30,   
+                        timer: 1500
+                      }
+                    );
+                  }
+            });
+          }
+        });
+
+        var table = $('#order_table').DataTable({
+          columnDefs: [{ 
+            targets: -1, 
+            data: null, 
+            defaultContent: 
+            '  <a href="#" id="add_row" class="btn btn-green"><div class="fa-1x"><i class="fas fa-circle-plus fa-lg"></i></div></a>'+
+            '  <a href="#" id="minus_row" class="btn btn-yellow ml-1"><div class="fa-1x"><i class="fas fa-circle-minus fa-lg"></i></div></a>'+
+            '  <a href="#" id="delete_row" class="btn btn-danger"><div class="fa-1x"><i class="fas fa-circle-xmark fa-lg"></i></div></a>'
+          }],
+          columns: [
+            { data: 'remark' },
+            { data: 'uom' },
+            { data: 'price' },
+            { data: 'qty' },
+            { data: 'total' },
+            { data: null},
+        ],
+        });
+
+        function addProduct(id,abbr, price, total, qty, uom,remark){
+          table.clear().draw(false);
+          order_total = 0;
+          var product = {
+                "id"        : id,
+                "abbr"      : abbr,
+                "remark"    : remark,
+                "qty"       : qty,
+                "price"     : price,
+                "total"     : total,
+                "uom" : uom
+          }
+
+          var isExist = 0;
+          for (var i = 0; i < orderList.length; i++){
+            var obj = orderList[i];
+            var value = obj["id"];
+            if(id==obj["id"]){
+              isExist = 1;
+              orderList[i]["total"] = (parseInt(orderList[i]["qty"])+parseInt(qty))*parseFloat(orderList[i]["price"]); 
+              orderList[i]["qty"] = parseInt(orderList[i]["qty"])+parseInt(qty);
+            }
+          }
+
+          if(isExist==0){
+            orderList.push(product);
+          }
+
+
+          for (var i = 0; i < orderList.length; i++){
+            var obj = orderList[i];
+            var value = obj["abbr"];
+            table.row.add( {
+                   "id"        : obj["id"],
+                    "remark"      : obj["remark"],
+                    "uom"       : obj["uom"],
+                    "price"       : obj["price"],
+                    "qty"       : obj["qty"],
+                    "total"       : obj["total"],
+                    "action"    : "",
+              }).draw(false);
+              order_total = order_total + ((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"]));
+              
+          }
+
+          $('#order-total').text(currency(order_total, { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
+        }
+
+        $('#order_table tbody').on('click', 'a', function () {
+            var data = table.row($(this).parents('tr')).data();
+            order_total = 0;
+            table.clear().draw(false);
+            
+            for (var i = 0; i < orderList.length; i++){
+              var obj = orderList[i];
+              var value = obj["id"];
+
+              if($(this).attr("id")=="add_row"){
+                if(data["id"]==obj["id"]){
+                  orderList[i]["total"] = (parseInt(orderList[i]["qty"])+1)*parseFloat(orderList[i]["price"]); 
+                  orderList[i]["qty"] = parseInt(orderList[i]["qty"])+1;
+                }
+              }
+              
+              if($(this).attr("id")=="minus_row"){
+                if(data["id"]==obj["id"]&&parseInt(orderList[i]["qty"])>1){
+                  orderList[i]["total"] = (parseInt(orderList[i]["qty"])-1)*parseFloat(orderList[i]["price"]); 
+                  orderList[i]["qty"] = parseInt(orderList[i]["qty"])-1;
+                } else if(data["id"]==obj["id"]&&parseInt(orderList[i]["qty"])==1) {
+                  orderList.splice(i,1);
+                }
+              }
+
+              if($(this).attr("id")=="delete_row"){
+                if(data["id"]==obj["id"]){
+                  orderList.splice(i,1);
+                }
+              }
+
+            }
+
+            for (var i = 0; i < orderList.length; i++){
+              var obj = orderList[i];
+              table.row.add( {
+                      "id"        : obj["id"],
+                      "remark"      : obj["remark"],
+                      "uom"       : obj["uom"],
+                      "price"      : obj["price"],
+                      "qty"       : obj["qty"],
+                      "total"       : obj["total"],
+                      "action"    : "",
+                }).draw(false);
+              order_total = order_total + ((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"]));
+            }
+
+            $('#order-total').text(currency(order_total, { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
+        });
+ 
+    </script>
+@endpush

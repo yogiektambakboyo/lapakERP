@@ -32,7 +32,7 @@ class Purchase extends Model
         'created_by',
         'updated_by',
         'scheduled_at',
-        'branch_room_id',
+        'branch_id',
         'ref_no',
         'is_receive',
         'ship_to',
