@@ -131,6 +131,26 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
             Route::get('/export', 'PurchaseOrderController@export')->name('purchaseorders.export');
         });
 
+         /**
+         * Receive Routes
+         */
+        Route::group(['prefix' => 'receiveorders'], function() {
+            Route::get('/', 'ReceiveOrderController@index')->name('receiveorders.index');
+            Route::get('/create', 'ReceiveOrderController@create')->name('receiveorders.create');
+            Route::post('/create', 'ReceiveOrderController@store')->name('receiveorders.store');
+            Route::get('/search', 'ReceiveOrderController@search')->name('receiveorders.search');
+            Route::get('/{receive}/show', 'ReceiveOrderController@show')->name('receiveorders.show');
+            Route::get('/{receive}/edit', 'ReceiveOrderController@edit')->name('receiveorders.edit');
+            Route::get('/getproduct', 'ReceiveOrderController@getproduct')->name('receiveorders.getproduct');
+            Route::get('/gettimetable', 'ReceiveOrderController@gettimetable')->name('receiveorders.gettimetable');
+            Route::get('/{receive}/getorder', 'ReceiveOrderController@getorder')->name('receiveorders.getorder');
+            Route::patch('/{receive}/update', 'ReceiveOrderController@update')->name('receiveorders.update');
+            Route::get('/{receive}/getdocdata', 'ReceiveOrderController@getdocdata')->name('receiveorders.getdocdata');
+            Route::delete('/{receive}/delete', 'ReceiveOrderController@destroy')->name('receiveorders.destroy');
+            Route::get('/export', 'ReceiveOrderController@export')->name('receiveorders.export');
+        });
+
+
 
          /**
          * Product Routes

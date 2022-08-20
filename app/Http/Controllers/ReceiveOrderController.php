@@ -15,7 +15,8 @@ use App\Models\OrderDetail;
 use App\Models\Invoice;
 use App\Models\InvoiceDetail;
 use App\Models\Purchase;
-use App\Models\PurchaseDetail;
+use App\Models\Receive;
+use App\Models\ReceiveDetail;
 use App\Models\Customer;
 use App\Models\Department;
 use App\Http\Requests\StoreUserRequest;
@@ -29,7 +30,7 @@ use Auth;
 use Illuminate\Support\Facades\DB;
 
 
-class PurchaseOrderController extends Controller
+class ReceiveOrderController extends Controller
 {
     /**
      * Display all users
@@ -37,7 +38,7 @@ class PurchaseOrderController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-    private $data,$act_permission,$module="purchaseorders",$id=1;
+    private $data,$act_permission,$module="receiveorders",$id=1;
 
     public function __construct()
     {
@@ -67,15 +68,15 @@ class PurchaseOrderController extends Controller
         $user = Auth::user();
         $act_permission = $this->act_permission[0];
         
-        $purchases = Purchase::orderBy('id', 'ASC')
-                ->join('suppliers as jt','jt.id','=','purchase_master.supplier_id')
+        $receives = Receive::orderBy('id', 'ASC')
+                ->join('suppliers as jt','jt.id','=','receive_master.supplier_id')
                 ->join('branch as b','b.id','=','jt.branch_id')
                 ->join('users_branch as ub', function($join){
                     $join->on('ub.branch_id', '=', 'b.id')
                     ->whereColumn('ub.branch_id', 'jt.branch_id');
                 })->where('ub.user_id', $user->id)  
-              ->paginate(10,['purchase_master.id','b.remark as branch_name','purchase_master.purchase_no','purchase_master.dated','jt.name as customer','purchase_master.total','purchase_master.total_discount','purchase_master.total_payment' ]);
-        return view('pages.purchaseorders.index', compact('purchases','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
+              ->paginate(10,['receive_master.id','b.remark as branch_name','receive_master.receive_no','receive_master.dated','jt.name as customer','receive_master.total','receive_master.total_discount','receive_master.total_payment' ]);
+        return view('pages.receiveorders.index', compact('receives','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
     }
 
     public function search(Request $request) 
@@ -91,15 +92,15 @@ class PurchaseOrderController extends Controller
         if($request->export=='Export Excel'){
             return Excel::download(new UsersExport($keyword), 'users_'.Carbon::now()->format('YmdHis').'.xlsx');
         }else{
-            $purchases = Purchase::orderBy('id', 'ASC')
-                ->join('suppliers as jt','jt.id','=','purchase_master.supplier_id')
+            $receives = Receive::orderBy('id', 'ASC')
+                ->join('suppliers as jt','jt.id','=','receive_master.supplier_id')
                 ->join('branch as b','b.id','=','jt.branch_id')
                 ->join('users_branch as ub', function($join){
                     $join->on('ub.branch_id', '=', 'b.id')
                     ->whereColumn('ub.branch_id', 'jt.branch_id');
-                })->where('ub.user_id', $user->id)->where('purchase_master.purchase_no','like','%'.$keyword.'%')  
-              ->paginate(10,['purchase_master.id','b.remark as branch_name','purchase_master.purchase_no','purchase_master.dated','jt.name as customer','purchase_master.total','purchase_master.total_discount','purchase_master.total_payment' ]);
-            return view('pages.purchaseorders.index', compact('purchases','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
+                })->where('ub.user_id', $user->id)->where('receive_master.receive_no','like','%'.$keyword.'%')  
+              ->paginate(10,['receive_master.id','b.remark as branch_name','receive_master.receive_no','receive_master.dated','jt.name as customer','receive_master.total','receive_master.total_discount','receive_master.total_payment' ]);
+            return view('pages.receiveorders.index', compact('receives','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
         }
     }
 
@@ -123,13 +124,18 @@ class PurchaseOrderController extends Controller
         $data = $this->data;
         $user = Auth::user();
         $payment_type = ['Cash','Debit Card'];
+        $purchases = DB::select("select distinct pm.purchase_no as purchase_no
+                                from purchase_master pm
+                                join (select * from users_branch u where u.user_id = '".$user->id."' order by branch_id desc limit 1 ) ub on ub.branch_id = pm.branch_id 
+                                where pm.purchase_no not in (select coalesce(ref_no,'-') as po from receive_master) ");
         $suppliers = Supplier::join('users_branch as ub','ub.branch_id', '=', 'suppliers.branch_id')->where('ub.user_id','=',$user->id)->get(['suppliers.id','suppliers.name']);
         $usersall = User::join('users_branch as ub','ub.branch_id', '=', 'users.branch_id')->where('ub.user_id','=',$user->id)->whereIn('users.job_id',[1,2])->get(['users.id','users.name']);
-        return view('pages.purchaseorders.create',[
+        return view('pages.receiveorders.create',[
             'customers' => Customer::join('users_branch as ub','ub.branch_id', '=', 'customers.branch_id')->join('branch as b','b.id','=','ub.branch_id')->where('ub.user_id',$user->id)->get(['customers.id','customers.name','b.remark']),
             'data' => $data,
             'suppliers' => $suppliers,
             'usersall' => $usersall,
+            'purchases' => $purchases,
             'branchs' => Branch::join('users_branch as ub','ub.branch_id', '=', 'branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']),
             'payment_type' => $payment_type,
             'rooms' => Room::join('users_branch as ub','ub.branch_id', '=', 'branch_room.branch_id')->where('ub.user_id','=',$user->id)->get(['branch_room.id','branch_room.remark']),
@@ -179,7 +185,7 @@ class PurchaseOrderController extends Controller
      * Store a newly created user
      * 
      * @param User $user
-     * @param PurchaseOrder $request
+     * @param ReceiveOrder $request
      * 
      * @return \Illuminate\Http\Response
      */
@@ -189,29 +195,30 @@ class PurchaseOrderController extends Controller
         // you should create a generated random password and email it to the user
         
         $user = Auth::user();
-        $count_no = DB::select("select max(id) as id from purchase_master om where to_char(om.dated,'YYYY')=to_char(now(),'YYYY') ");
-        $purchase_no = 'PO-'.substr(
+        $count_no = DB::select("select max(id) as id from receive_master om where to_char(om.dated,'YYYY')=to_char(now(),'YYYY') ");
+        $receive_no = 'RC-'.substr(
             ('000'.$request->get('branch_id')),-3).
             '-'.date("Y").'-'.
             substr(('00000000'.((int)($count_no[0]->id) + 1)),-8);
 
-        $res_purchase = Purchase::create(
+        $res_receive = Receive::create(
             array_merge(
-                ['purchase_no' => $purchase_no ],
+                ['receive_no' => $receive_no ],
                 ['created_by' => $user->id],
                 ['dated' => Carbon::parse($request->get('order_date'))->format('d/m/Y') ],
                 ['supplier_id' => $request->get('supplier_id') ],
                 ['total' => $request->get('total_order') ],
                 ['remark' => $request->get('remark') ],
+                ['ref_no' => $request->get('ref_no') ],
                 ['branch_id' => $request->get('branch_id')],
             )
         );
 
-        if(!$res_purchase){
+        if(!$res_receive){
             $result = array_merge(
                 ['status' => 'failed'],
                 ['data' => ''],
-                ['message' => 'Save invoice failed'],
+                ['message' => 'Save receive failed'],
             );
     
             return $result;
@@ -219,32 +226,39 @@ class PurchaseOrderController extends Controller
 
 
         for ($i=0; $i < count($request->get('product')); $i++) { 
-            $res_purchase_detail = PurchaseDetail::create(
+            $res_receive_detail = ReceiveDetail::create(
                 array_merge(
-                    ['purchase_no' => $purchase_no],
+                    ['receive_no' => $receive_no],
                     ['product_id' => $request->get('product')[$i]["id"]],
                     ['qty' => $request->get('product')[$i]["qty"]],
                     ['price' => $request->get('product')[$i]["price"]],
                     ['total' => $request->get('product')[$i]["total"]],
+                    ['batch_no' => $request->get('product')[$i]["bno"]],
+                    ['expired_at' => Carbon::parse($request->get('product')[$i]["exp"])->format('d/m/Y') ],
                     ['seq' => $i ],
                  )
             );
 
 
-            if(!$res_purchase_detail){
+            if(!$res_receive_detail){
                 $result = array_merge(
                     ['status' => 'failed'],
                     ['data' => ''],
-                    ['message' => 'Save invoice detail failed'],
+                    ['message' => 'Save receive detail failed'],
                 );
         
                 return $result;
             }
+
+            DB::update("UPDATE product_stock set updated_at=now(),qty = qty+".$request->get('product')[$i]['qty']." WHERE branch_id = ".$request->get('branch_id')." and product_id = ".$request->get('product')[$i]["id"]);
+
+            DB::insert("INSERT INTO public.product_stock_detail (product_id, branch_id, qty, expired_at, updated_at, created_at, created_by) VALUES(".$request->get('product')[$i]['id'].", ".$request->get('branch_id').", ".$request->get('product')[$i]['qty'].", (now() + '2 years'::interval), null, now(), ".$user->id.")");
+            DB::update("update public.period_stock set qty_in=qty_in+".$request->get('product')[$i]['qty']." ,updated_at = now(), balance_end = balance_end + ".$request->get('product')[$i]['qty']." where branch_id = ".$request->get('branch_id')." and product_id = ".$request->get('product')[$i]['id']." and periode = to_char(now(),'YYYYMM')::int;");
         }
 
         $result = array_merge(
             ['status' => 'success'],
-            ['data' => $purchase_no],
+            ['data' => $receive_no],
             ['message' => 'Save Successfully'],
         );
 
@@ -254,11 +268,11 @@ class PurchaseOrderController extends Controller
     /**
      * Show user data
      * 
-     * @param Purchase $purchase
+     * @param Receive $receive
      * 
      * @return \Illuminate\Http\Response
      */
-    public function show(Purchase $purchase) 
+    public function show(Receive $receive) 
     {
         $user = Auth::user();
         $id = $user->roles->first()->id;
@@ -269,13 +283,13 @@ class PurchaseOrderController extends Controller
         $payment_type = ['Cash','Debit Card'];
         $users = User::join('users_branch as ub','ub.branch_id', '=', 'users.branch_id')->where('ub.user_id','=',$user->id)->where('users.job_id','=',2)->get(['users.id','users.name']);
         $usersReferral = User::get(['users.id','users.name']);
-        return view('pages.purchaseorders.show',[
+        return view('pages.receiveorders.show',[
             'data' => $data,
             'suppliers' => $suppliers,
             'branchs' => Branch::join('users_branch as ub','ub.branch_id', '=', 'branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']),
             'users' => $users,
-            'purchase' => $purchase,
-            'purchaseDetails' => PurchaseDetail::join('purchase_master as om','om.purchase_no','=','purchase_detail.purchase_no')->join('product_sku as ps','ps.id','=','purchase_detail.product_id')->join('product_uom as u','u.product_id','=','purchase_detail.product_id')->join('uom as um','um.id','=','u.uom_id')->where('purchase_detail.purchase_no',$purchase->purchase_no)->get(['um.remark as uom','purchase_detail.qty','purchase_detail.price','purchase_detail.total','ps.id','ps.remark as product_name','purchase_detail.discount']),
+            'receive' => $receive,
+            'receiveDetails' => ReceiveDetail::join('receive_master as om','om.receive_no','=','receive_detail.receive_no')->join('product_sku as ps','ps.id','=','receive_detail.product_id')->join('product_uom as u','u.product_id','=','receive_detail.product_id')->join('uom as um','um.id','=','u.uom_id')->where('receive_detail.receive_no',$receive->receive_no)->get(['um.remark as uom','receive_detail.qty','receive_detail.price','receive_detail.total','ps.id','ps.remark as product_name','receive_detail.discount']),
             'usersReferrals' => $usersReferral,
             'payment_type' => $payment_type,
         ]);
@@ -284,11 +298,11 @@ class PurchaseOrderController extends Controller
     /**
      * Edit user data
      * 
-     * @param Purchase $purchase
+     * @param Receive $receive
      * 
      * @return \Illuminate\Http\Response
      */
-    public function edit(Purchase $purchase) 
+    public function edit(Receive $receive) 
     {
         $user = Auth::user();
         $id = $user->roles->first()->id;
@@ -299,13 +313,13 @@ class PurchaseOrderController extends Controller
         $payment_type = ['Cash','Debit Card'];
         $users = User::join('users_branch as ub','ub.branch_id', '=', 'users.branch_id')->where('ub.user_id','=',$user->id)->where('users.job_id','=',2)->get(['users.id','users.name']);
         $usersReferral = User::get(['users.id','users.name']);
-        return view('pages.purchaseorders.edit',[
+        return view('pages.receiveorders.edit',[
             'data' => $data,
             'suppliers' => $suppliers,
             'branchs' => Branch::join('users_branch as ub','ub.branch_id', '=', 'branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']),
             'users' => $users,
-            'purchase' => $purchase,
-            'purchaseDetails' => PurchaseDetail::join('purchase_master as om','om.purchase_no','=','purchase_detail.purchase_no')->join('product_sku as ps','ps.id','=','purchase_detail.product_id')->join('product_uom as u','u.product_id','=','purchase_detail.product_id')->join('uom as um','um.id','=','u.uom_id')->where('purchase_detail.purchase_no',$purchase->purchase_no)->get(['um.remark as uom','purchase_detail.qty','purchase_detail.price','purchase_detail.total','ps.id','ps.remark as product_name','purchase_detail.discount']),
+            'receive' => $receive,
+            'receiveDetails' => ReceiveDetail::join('receive_master as om','om.receive_no','=','receive_detail.receive_no')->join('product_sku as ps','ps.id','=','receive_detail.product_id')->join('product_uom as u','u.product_id','=','receive_detail.product_id')->join('uom as um','um.id','=','u.uom_id')->where('receive_detail.receive_no',$receive->receive_no)->get(['um.remark as uom','receive_detail.qty','receive_detail.price','receive_detail.total','ps.id','ps.remark as product_name','receive_detail.discount']),
             'usersReferrals' => $usersReferral,
             'payment_type' => $payment_type,
         ]);
@@ -314,21 +328,21 @@ class PurchaseOrderController extends Controller
      /**
      * Edit user data
      * 
-     * @param Purchase $purchase
+     * @param Receive $receive
      * 
      * @return \Illuminate\Http\Response
      */
-    public function getdocdata(String $purchase_no) 
+    public function getdocdata(String $receive_no) 
     {
         $data = $this->data;
         $user = Auth::user();
-        $product = DB::select(" select od.qty,od.product_id,od.discount,od.price,od.total,ps.remark,ps.abbr,um.remark as uom,om.dated,om.supplier_id,om.branch_id,om.remark as d_remark
-        from purchase_detail od 
-        join purchase_master om on om.purchase_no = od.purchase_no
+        $product = DB::select(" select om.receive_no,to_char(od.expired_at,'mm/dd/YYYY') as exp,od.batch_no as bno,od.qty,od.product_id,od.discount,od.price,od.total,ps.remark,ps.abbr,um.remark as uom 
+        from receive_detail od 
+        join receive_master om on om.receive_no = od.receive_no
         join product_sku ps on ps.id=od.product_id
         join product_uom uo on uo.product_id = od.product_id
         join uom um on um.id=uo.uom_id 
-        where od.purchase_no='".$purchase_no."' ");
+        where od.receive_no='".$receive_no."' ");
         
         return $product;
         return Datatables::of($product)
@@ -342,20 +356,20 @@ class PurchaseOrderController extends Controller
     /**
      * Update user data
      * 
-     * @param Purchase $purchase
+     * @param Receive $receive
      * @param Request $request
      * 
      * @return \Illuminate\Http\Response
      */
-    public function update(Purchase $purchase, Request $request) 
+    public function update(Receive $receive, Request $request) 
     {
 
         $user = Auth::user();
-        $purchase_no = $request->get('purchase_no');
+        $receive_no = $request->get('receive_no');
 
-        PurchaseDetail::where('purchase_no', $purchase_no)->delete();
+        ReceiveDetail::where('receive_no', $receive_no)->delete();
 
-        $res_purchase = $purchase->update(
+        $res_receive = $receive->update(
             array_merge(
                 ['updated_by'   => $user->id],
                 ['dated' => Carbon::parse($request->get('dated'))->format('d/m/Y') ],
@@ -366,11 +380,11 @@ class PurchaseOrderController extends Controller
             )
         );
 
-        if(!$res_purchase){
+        if(!$res_receive){
             $result = array_merge(
                 ['status' => 'failed'],
                 ['data' => ''],
-                ['message' => 'Save purchase failed'],
+                ['message' => 'Save receive failed'],
             );
     
             return $result;
@@ -378,9 +392,9 @@ class PurchaseOrderController extends Controller
 
 
         for ($i=0; $i < count($request->get('product')); $i++) { 
-            $res_purchase_detail = PurchaseDetail::create(
+            $res_receive_detail = ReceiveDetail::create(
                 array_merge(
-                    ['purchase_no' => $purchase_no],
+                    ['receive_no' => $receive_no],
                     ['product_id' => $request->get('product')[$i]["id"]],
                     ['qty' => $request->get('product')[$i]["qty"]],
                     ['price' => $request->get('product')[$i]["price"]],
@@ -390,11 +404,11 @@ class PurchaseOrderController extends Controller
             );
 
 
-            if(!$res_purchase_detail){
+            if(!$res_receive_detail){
                 $result = array_merge(
                     ['status' => 'failed'],
                     ['data' => ''],
-                    ['message' => 'Save purchase detail failed'],
+                    ['message' => 'Save receive detail failed'],
                 );
         
                 return $result;
@@ -404,7 +418,7 @@ class PurchaseOrderController extends Controller
 
         $result = array_merge(
             ['status' => 'success'],
-            ['data' => $purchase_no],
+            ['data' => $receive_no],
             ['message' => 'Save Successfully'],
         );
 
@@ -414,18 +428,30 @@ class PurchaseOrderController extends Controller
     /**
      * Delete user data
      * 
-     * @param Purchase $purchase
+     * @param Receive $receive
      * 
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Purchase $purchase) 
+    public function destroy(Receive $receive) 
     {
-        PurchaseDetail::where('purchase_no', $purchase->purchase_no)->delete();
+        ReceiveDetail::where('receive_no', $receive->receive_no)->delete();
 
-        $purchase->delete();
+        if($receive->delete()){
+            $result = array_merge(
+                ['status' => 'success'],
+                ['data' => $receive->receive_no],
+                ['message' => 'Save Successfully'],
+            );    
+        }else{
+            $result = array_merge(
+                ['status' => 'failed'],
+                ['data' => $receive->receive_no],
+                ['message' => 'Delete failed'],
+            );   
+        }
 
-        return redirect()->route('purchaseorders.index')
-            ->withSuccess(__('Purchase deleted successfully.'));
+        //return redirect()->route('receiveorders.index')->withSuccess(__('Receive deleted successfully.'));
+        return $result;
     }
 
     public function getpermissions($role_id){

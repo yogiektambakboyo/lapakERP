@@ -237,8 +237,8 @@ class UsersController extends Controller
      */
     public function show(User $user) 
     {
-        $user = Auth::user();
-        $id = $user->roles->first()->id;
+        $userx = Auth::user();
+        $id = $userx->roles->first()->id;
         $this->getpermissions($id);
 
         $data = $this->data;
@@ -268,8 +268,8 @@ class UsersController extends Controller
      */
     public function edit(User $user) 
     {
-        $user = Auth::user();
-        $id = $user->roles->first()->id;
+        $userx = Auth::user();
+        $id = $userx->roles->first()->id;
         $this->getpermissions($id);
 
         $data = $this->data;

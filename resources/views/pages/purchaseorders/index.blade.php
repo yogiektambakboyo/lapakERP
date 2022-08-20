@@ -35,7 +35,7 @@
                 <th scope="col" width="10%">Branch</th>
                 <th>Invoice No</th>
                 <th scope="col" width="8%">Dated</th>
-                <th scope="col" width="15%">Customer</th>
+                <th scope="col" width="15%">Supplier</th>
                 <th scope="col" width="10%">Total</th>
                 <th scope="col" width="2%">Action</th>   
                 <th scope="col" width="2%"></th>
