@@ -67,6 +67,10 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
             Route::get('/', 'UsersController@index')->name('users.index');
             Route::get('/create', 'UsersController@create')->name('users.create');
             Route::post('/create', 'UsersController@store')->name('users.store');
+            Route::post('/addtraining', 'UsersController@storetraining')->name('users.addtraining');
+            Route::post('/deletetraining', 'UsersController@deletetraining')->name('users.deletetraining');
+            Route::post('/addexperience', 'UsersController@storeexperience')->name('users.addexperience');
+            Route::post('/deleteexperience', 'UsersController@deleteexperience')->name('users.deleteexperience');
             Route::get('/search', 'UsersController@search')->name('users.search');
             Route::get('/{user}/show', 'UsersController@show')->name('users.show');
             Route::get('/{user}/edit', 'UsersController@edit')->name('users.edit');
@@ -119,7 +123,7 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
             Route::get('/', 'PurchaseOrderController@index')->name('purchaseorders.index');
             Route::get('/create', 'PurchaseOrderController@create')->name('purchaseorders.create');
             Route::post('/create', 'PurchaseOrderController@store')->name('purchaseorders.store');
-            Route::get('/search', 'PurchaseOrderController@search')->name('purchaseorders.search');
+            Route::post('/search', 'PurchaseOrderController@search')->name('purchaseorders.search');
             Route::get('/{purchase}/show', 'PurchaseOrderController@show')->name('purchaseorders.show');
             Route::get('/{purchase}/edit', 'PurchaseOrderController@edit')->name('purchaseorders.edit');
             Route::get('/getproduct', 'PurchaseOrderController@getproduct')->name('purchaseorders.getproduct');

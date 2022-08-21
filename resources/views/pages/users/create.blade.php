@@ -33,6 +33,7 @@
                   <input type="text" name="employee_id" class="form-control" value="{{ old('employee_id') }}"   required />
                 </div>
             </div>
+            
             <div class="row mb-3">
               <label class="form-label col-form-label col-md-2">Job Title</label>
               <div class="col-md-8">
@@ -46,19 +47,35 @@
                     @endforeach
                 </select>
               </div>
-          </div>
-          <div class="row mb-3">
-            <label class="form-label col-form-label col-md-2">Branch</label>
-            <div class="col-md-8">
-              <select class="multiple-select2 form-control" 
-                    name="branch_id[]" required multiple="multiple">
-                    <option value="">Select Branch</option>
-                    @foreach($branchs as $branch)
-                        <option value="{{ $branch->id }}">{{  $branch->remark }}</option>
+            </div>
+
+            <div class="row mb-3">
+              <label class="form-label col-form-label col-md-2">Employee Status</label>
+              <div class="col-md-8">
+                <select class="form-control" 
+                    name="employee_status" required>
+                    <option value="">Select Employee Status</option>
+                    @foreach($employeestatusx as $employee_status)
+                        <option value="{{ $employee_status }}" {{ ($employee_status==old('employee_status') ) 
+                          ? 'selected'
+                          : '' }}>{{ $employee_status }}</option>
                     @endforeach
                 </select>
+              </div>
             </div>
-          </div>
+
+            <div class="row mb-3">
+              <label class="form-label col-form-label col-md-2">Branch</label>
+              <div class="col-md-8">
+                <select class="multiple-select2 form-control" 
+                      name="branch_id[]" required multiple="multiple">
+                      <option value="">Select Branch</option>
+                      @foreach($branchs as $branch)
+                          <option value="{{ $branch->id }}">{{  $branch->remark }}</option>
+                      @endforeach
+                  </select>
+              </div>
+            </div>
           <div class="row mb-3">
             <label class="form-label col-form-label col-md-2">Department</label>
             <div class="col-md-8">
@@ -96,13 +113,13 @@
             <div class="row mb-3">
               <label class="form-label col-form-label col-md-2">Photo</label>
               <div class="col-md-8">
-                <a href="/images/user-files/user.png" target="_blank"><img src="/images/user-files/user.png" width="100" height="100" class="rounded float-start" alt="..."></a>
+                <a href="/images/user-files/user.png" target="_blank"><img  id="photo_preview" src="/images/user-files/user.png" width="100" height="100" class="rounded float-start" alt="..."></a>
                 <input type="file" 
-                name="photo"
+                name="photo"  id="photo" onchange="previewFile(this);"
                 class="form-control"  />
                 <span></span>
               </div>
-          </div>
+            </div>
           
             <div class="row mb-3">
               <label class="form-label col-form-label col-md-2">Netizen ID</label>
@@ -116,9 +133,9 @@
             <div class="row mb-3">
                 <label class="form-label col-form-label col-md-2">Netizen ID Photo</label>
                 <div class="col-md-8">
-                  <a href="/images/user-files/draft_netizen.jpg" target="_blank"><img src="/images/user-files/draft_netizen.jpg" width="200" height="100" class="rounded float-start" alt="..."></a>
-                  <input type="file" 
-                  name="photo_netizen_id"
+                  <a href="/images/user-files/draft_netizen.jpg" target="_blank"><img  id="photo_netizen_preview" src="/images/user-files/draft_netizen.jpg" width="200" height="100" class="rounded float-start" alt="..."></a>
+                  <input type="file"  onchange="previewFileNetizen(this);"
+                  name="photo_netizen_ids" id="photo_netizen_ids"
                   class="form-control"  />
                   <span></span>
                 </div>
@@ -273,7 +290,7 @@
             <div class="row mb-3">
               <label class="form-label col-form-label col-md-2">Status</label>
               <div class="col-md-8">
-                <input type="checkbox" name="active" id="active" value="{{ old('active') }}" > <label for="active">Active</label>
+                <input type="checkbox" name="active" id="active" value="{{ old('active') }}" checked> <label for="active">Active</label>
               </div>
             </div>
           </div>
@@ -281,3 +298,34 @@
     </div>
 </form>
 @endsection
+@push('scripts')
+<script type="text/javascript">
+    function previewFile(input){
+        var file = $("#photo").get(0).files[0];
+ 
+        if(file){
+            var reader = new FileReader();
+ 
+            reader.onload = function(){
+                $("#photo_preview").attr("src", reader.result);
+            }
+ 
+            reader.readAsDataURL(file);
+        }
+    }
+
+    function previewFileNetizen(input){
+        var file = $("#photo_netizen_ids").get(0).files[0];
+ 
+        if(file){
+            var reader = new FileReader();
+ 
+            reader.onload = function(){
+                $("#photo_netizen_preview").attr("src", reader.result);
+            }
+ 
+            reader.readAsDataURL(file);
+        }
+    }
+</script>
+@endpush

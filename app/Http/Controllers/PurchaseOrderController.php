@@ -66,16 +66,18 @@ class PurchaseOrderController extends Controller
         $keyword = "";
         $user = Auth::user();
         $act_permission = $this->act_permission[0];
-        
+        $branchs = Branch::join('users_branch as ub','ub.branch_id', '=', 'branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']);
         $purchases = Purchase::orderBy('id', 'ASC')
                 ->join('suppliers as jt','jt.id','=','purchase_master.supplier_id')
                 ->join('branch as b','b.id','=','jt.branch_id')
                 ->join('users_branch as ub', function($join){
                     $join->on('ub.branch_id', '=', 'b.id')
                     ->whereColumn('ub.branch_id', 'jt.branch_id');
-                })->where('ub.user_id', $user->id)  
+                })->where('ub.user_id', $user->id)->where('purchase_master.dated','>=',Carbon::now()->subDay(7))  
               ->paginate(10,['purchase_master.id','b.remark as branch_name','purchase_master.purchase_no','purchase_master.dated','jt.name as customer','purchase_master.total','purchase_master.total_discount','purchase_master.total_payment' ]);
-        return view('pages.purchaseorders.index', compact('purchases','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
+        return view('pages.purchaseorders.index',[
+            'branchs' => $branchs
+        ], compact('purchases','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
     }
 
     public function search(Request $request) 
@@ -87,7 +89,11 @@ class PurchaseOrderController extends Controller
         $keyword = $request->search;
         $data = $this->data;
         $act_permission = $this->act_permission[0];
+        $branchs = Branch::join('users_branch as ub','ub.branch_id', '=', 'branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']);
 
+        $begindate = date(Carbon::parse($request->filter_begin_date)->format('Y-m-d'));
+        $enddate = date(Carbon::parse($request->filter_end_date)->format('Y-m-d'));
+        $fil = [ $begindate , $enddate ];
         if($request->export=='Export Excel'){
             return Excel::download(new UsersExport($keyword), 'users_'.Carbon::now()->format('YmdHis').'.xlsx');
         }else{
@@ -97,9 +103,11 @@ class PurchaseOrderController extends Controller
                 ->join('users_branch as ub', function($join){
                     $join->on('ub.branch_id', '=', 'b.id')
                     ->whereColumn('ub.branch_id', 'jt.branch_id');
-                })->where('ub.user_id', $user->id)->where('purchase_master.purchase_no','like','%'.$keyword.'%')  
+                })->where('ub.user_id', $user->id)->where('purchase_master.purchase_no','like','%'.$keyword.'%')
+                ->where('b.id','like','%'.$request->filter_branch_id.'%')  
+                ->whereBetween('purchase_master.dated',$fil)  
               ->paginate(10,['purchase_master.id','b.remark as branch_name','purchase_master.purchase_no','purchase_master.dated','jt.name as customer','purchase_master.total','purchase_master.total_discount','purchase_master.total_payment' ]);
-            return view('pages.purchaseorders.index', compact('purchases','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
+              return view('pages.purchaseorders.index',compact('branchs','purchases','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
         }
     }
 

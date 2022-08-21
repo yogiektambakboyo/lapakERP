@@ -172,7 +172,6 @@
 
           var url = "{{ route('purchaseorders.getproduct') }}";
           var lastvalurl = "XX";
-          console.log(url);
           url = url.replace(lastvalurl, $(this).val())
           lastvalurl = $(this).val();
           const res = axios.get(url, {

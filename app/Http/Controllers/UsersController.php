@@ -8,8 +8,11 @@ use Illuminate\Http\Request;
 use Spatie\Permission\Models\Role;
 use App\Models\Branch;
 use App\Models\JobTitle;
+use App\Models\Product;
+use App\Models\UserExperience;
 use App\Models\Department;
 use App\Models\UserBranch;
+use App\Models\UserSkill;
 use App\Models\UserMutation;
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
@@ -115,6 +118,7 @@ class UsersController extends Controller
             'gender' => $gender,
             'active' => $active,
             'data' => $data,
+            'employeestatusx' => ['On Job Training','Permanent','Outsourcing','Contract','Probation'],
             'usersReferrals' => $usersReferral,
         ]);
     }
@@ -147,6 +151,7 @@ class UsersController extends Controller
                 ['department_id' => $request->get('department_id') ],
                 ['address' => $request->get('address') ],
                 ['referral_id' => $request->get('referral_id') ],
+                ['employee_status' => $request->get('employee_status') ],
                 ['birth_place' => $request->get('birth_place') ],
                 ['birth_date' => Carbon::parse($request->get('birth_date'))->format('d/m/Y')  ]
             )
@@ -229,6 +234,100 @@ class UsersController extends Controller
     }
 
     /**
+     * Store a newly created user skill
+     * 
+     *
+     * @param Request $request
+     * 
+     * @return \Illuminate\Http\Response
+     */
+    public function storetraining(Request $request) 
+    {
+
+        DB::insert("INSERT INTO public.users_skills
+        (users_id, modul, trainer, status, dated, updated_at, created_by, created_at)
+        VALUES(".$request->get('user_id').", ".$request->get('module').", ".$request->get('trainer').", '".$request->get('status')."', '".Carbon::parse($request->get('dated'))->format('d/m/Y')."', null, 1, now());");
+            
+        $result = array_merge(
+            ['status' => 'success'],
+            ['data' => ''],
+            ['message' => 'Save Successfully'],
+        );    
+        return $result;
+    }
+
+
+    /**
+     * Store a newly created user skill
+     * 
+     *
+     * @param Request $request
+     * 
+     * @return \Illuminate\Http\Response
+     */
+    public function deletetraining(Request $request) 
+    {
+
+        DB::insert("DELETE FROM public.users_skills
+        where users_id=".$request->get('user_id')." and status='".$request->get('status')."'  and modul=".$request->get('module')." and dated='".$request->get('dated')."'");
+            
+        $result = array_merge(
+            ['status' => 'success'],
+            ['data' => ''],
+            ['message' => 'Save Successfully'],
+        );    
+        return $result;
+    }
+
+
+
+        /**
+     * Store a newly created user skill
+     * 
+     *
+     * @param Request $request
+     * 
+     * @return \Illuminate\Http\Response
+     */
+    public function storeexperience(Request $request) 
+    {
+
+        DB::insert("INSERT INTO public.users_experience
+        (users_id, company, job_position, years, updated_at, created_by, created_at)
+        VALUES(".$request->get('user_id').", '".$request->get('company')."', '".$request->get('job_position')."', '".$request->get('years')."', null, 1, now());");
+            
+        $result = array_merge(
+            ['status' => 'success'],
+            ['data' => ''],
+            ['message' => 'Save Successfully'],
+        );    
+        return $result;
+    }
+
+
+    /**
+     * Store a newly created user skill
+     * 
+     *
+     * @param Request $request
+     * 
+     * @return \Illuminate\Http\Response
+     */
+    public function deleteexperience(Request $request) 
+    {
+
+        DB::insert("DELETE FROM public.users_experience
+        where id=".$request->get('id').";");
+            
+        $result = array_merge(
+            ['status' => 'success'],
+            ['data' => ''],
+            ['message' => 'Save Successfully'],
+        );    
+        return $result;
+    }
+
+    /**
      * Show user data
      * 
      * @param User $user
@@ -241,9 +340,13 @@ class UsersController extends Controller
         $id = $userx->roles->first()->id;
         $this->getpermissions($id);
 
+        $user_skill = UserSkill::join('product_sku as ps','ps.id','users_skills.modul')
+        ->join('users as u','u.id','users_skills.users_id')->where('u.id','=',$user->id)->get(['u.id','ps.id as product_id','users_skills.dated','u.name','ps.remark','users_skills.status']);
+
+        $product = Product::where('type_id','=','2')->orderBy('remark','ASC')->get(['id','abbr','remark']);
         $data = $this->data;
         $usersReferral = User::where('users.id','!=',$user->id)->get(['users.id','users.name']);
-        $users = DB::select("select dt.remark as department,u.id,u.employee_id,u.name,jt.remark as job_title,string_agg(b.remark,',') as branch_name,u.join_date,u.phone_no,u.email,u.username,u.address,u.netizen_id,u.photo_netizen_id,u.photo,u.join_years,u.active,u.referral_id,u.city,u.gender,u.birth_place,u.birth_date 
+        $users = DB::select("select u.employee_status,dt.remark as department,u.id,u.employee_id,u.name,jt.remark as job_title,string_agg(b.remark,',') as branch_name,u.join_date,u.phone_no,u.email,u.username,u.address,u.netizen_id,u.photo_netizen_id,u.photo,u.join_years,u.active,u.referral_id,u.city,u.gender,u.birth_place,u.birth_date 
                              from users u 
                              join users_branch ub on ub.user_id=u.id
                              join branch b on b.id = ub.branch_id
@@ -254,6 +357,12 @@ class UsersController extends Controller
         return view('pages.users.show', [
             'users' => $users[0],
             'user' => $user,
+            'products' => $product,
+            'status' => ['Failed','In Training','Pass'],
+            'userTrainers' => User::where('job_id','=','7')->get(['id','name']),
+            'userSkills' => $user_skill,
+            'userExperiences' => UserExperience::get(),
+            'employeestatusx' => ['On Job Training','Permanent','Outsourcing','Contract','Probation'],
             'usersReferrals' => $usersReferral,
             'usersMutations' => UserMutation::join('job_title as j','j.id','=','users_mutation.job_id')->join('departments as d','d.id','=','users_mutation.department_id')->join('branch as b','b.id','=','users_mutation.branch_id')->where('users_mutation.user_id',$user->id)->orderBy('users_mutation.created_at','ASC')->get(['users_mutation.*','j.remark as job_name','b.remark as branch_name','d.remark as department_name']),
         ],compact('data'));
@@ -276,7 +385,7 @@ class UsersController extends Controller
         $gender = ['Male','Female'];
         $active = [1,0];
         //$users = User::join('branch as b','b.id','=','users.branch_id')->join('department as dt','dt.id','=','users.department_id')->join('job_title as jt','jt.id','=','users.job_id')->where('users.name','!=','Admin')->where('users.id','=',$user->id)->get(['dt.remark as department','users.id','users.employee_id','users.name','jt.remark as job_title','b.remark as branch_name','users.join_date as join_date',"users.phone_no","users.email","users.username","users.address","users.netizen_id","users.photo_netizen_id","users.photo","users.join_years","users.active","users.referral_id","users.city","users.gender","users.birth_place","users.birth_date" ])->first();
-        $users = DB::select("select dt.remark as department,u.id,u.employee_id,u.name,jt.remark as job_title,string_agg(b.id::character varying,',') as branch_name,u.join_date,u.phone_no,u.email,u.username,u.address,u.netizen_id,u.photo_netizen_id,u.photo,u.join_years,u.active,u.referral_id,u.city,u.gender,u.birth_place,u.birth_date 
+        $users = DB::select("select u.employee_status,dt.remark as department,u.id,u.employee_id,u.name,jt.remark as job_title,string_agg(b.id::character varying,',') as branch_name,u.join_date,u.phone_no,u.email,u.username,u.address,u.netizen_id,u.photo_netizen_id,u.photo,u.join_years,u.active,u.referral_id,u.city,u.gender,u.birth_place,u.birth_date 
                              from users u 
                              join users_branch ub on ub.user_id=u.id
                              join branch b on b.id = ub.branch_id
@@ -298,6 +407,7 @@ class UsersController extends Controller
             'gender' => $gender,
             'active' => $active,
             'data' => $data,
+            'employeestatusx' => ['On Job Training','Permanent','Outsourcing','Contract','Probation'],
             'usersReferrals' => $usersReferral,
         ]);
     }
@@ -353,6 +463,7 @@ class UsersController extends Controller
             ['address' => $request->get('address') ],
             ['referral_id' => $request->get('referral_id') ],
             ['birth_place' => $request->get('birth_place') ],
+            ['employee_status' => $request->get('employee_status') ],
             ['birth_date' => Carbon::parse($request->get('birth_date'))->format('d/m/Y')  ]
         ));
 
@@ -365,6 +476,17 @@ class UsersController extends Controller
             // upload file
             $folder_upload = 'images/user-files';
             $file->move($folder_upload,$file->getClientOriginalName());
+        }
+
+        if($request->file('photo') == null){
+
+        }else{
+            $file_photo = $request->file('photo');
+            $user->update(['photo'=>$file_photo->getClientOriginalName()]);
+            
+            // upload file
+            $folder_upload = 'images/user-files';
+            $file_photo->move($folder_upload,$file_photo->getClientOriginalName());
         }
         
         return redirect()->route('users.index')

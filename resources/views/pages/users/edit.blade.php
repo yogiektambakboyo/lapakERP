@@ -23,7 +23,7 @@
           <div class="row">
             <div class="col-md-1">
                <!-- begin widget-img -->
-                <div class="widget-img rounded bg-dark widget-img-xl" style="background-image: url(/assets/img/user/{{ $user->photo }})"></div>
+               <div class="widget-img rounded widget-img-xl" style="background-image: url(/images/user-files/{{ $user->photo }})"></div>
               <!-- end widget-img -->
             </div>
             <div class="col-md-11">
@@ -60,20 +60,34 @@
                     @endforeach
                 </select>
               </div>
-          </div>
-          <div class="row mb-3">
-            <label class="form-label col-form-label col-md-2">Branch</label>
-            <div class="col-md-8">
-              <input type="hidden" id="hide_val" class="form-control" value="{{ $user->branch_name }}"  />
-              <select class="form-control" id="branch_id" 
-                    name="branch_id[]" required multiple="multiple">
-                    <option value="">Select Branch</option>
-                    @foreach($branchs as $branch)
-                        <option value="{{ $branch->id }}">{{  $branch->remark }}</option>
+            </div>
+            <div class="row mb-3">
+              <label class="form-label col-form-label col-md-2">Employee Status</label>
+              <div class="col-md-8">
+                <select class="form-control" 
+                    name="employee_status" required>
+                    <option value="">Select Employee Status</option>
+                    @foreach($employeestatusx as $employee_status)
+                        <option value="{{ $employee_status }}" {{ ($employee_status==$user->employee_status ) 
+                          ? 'selected'
+                          : '' }}>{{ $employee_status }}</option>
                     @endforeach
                 </select>
+              </div>
             </div>
-          </div>
+            <div class="row mb-3">
+              <label class="form-label col-form-label col-md-2">Branch</label>
+              <div class="col-md-8">
+                <input type="hidden" id="hide_val" class="form-control" value="{{ $user->branch_name }}"  />
+                <select class="form-control" id="branch_id" 
+                      name="branch_id[]" required multiple="multiple">
+                      <option value="">Select Branch</option>
+                      @foreach($branchs as $branch)
+                          <option value="{{ $branch->id }}">{{  $branch->remark }}</option>
+                      @endforeach
+                  </select>
+              </div>
+            </div>
           <div class="row mb-3">
             <label class="form-label col-form-label col-md-2">Department</label>
             <div class="col-md-8">
@@ -113,6 +127,18 @@
         <div class="panel text-white">
           <div class="panel-heading bg-teal-600"><h4>Personal Info</h4></div>
           <div class="panel-body bg-white text-black">
+           
+            <div class="row mb-3">
+              <label class="form-label col-form-label col-md-2">Photo</label>
+              <div class="col-md-8">
+                <a href="/images/user-files/{{ $user->photo }}" target="_blank"><img id="photo_preview" src="/images/user-files/{{ $user->photo }}" width="100" height="100" class="rounded float-start" alt="..."></a>
+                <input type="file" 
+                name="photo" id="photo" onchange="previewFile(this);"
+                class="form-control"  />
+                <span></span>
+              </div>
+            </div>
+          
             <div class="row mb-3">
               <label class="form-label col-form-label col-md-2">Netizen ID</label>
               <div class="col-md-8">
@@ -125,9 +151,9 @@
             <div class="row mb-3">
                 <label class="form-label col-form-label col-md-2">Netizen ID Photo</label>
                 <div class="col-md-8">
-                  <a href="/images/user-files/{{ $user->photo_netizen_id }}" target="_blank"><img src="/images/user-files/{{ $user->photo_netizen_id }}" width="200" height="100" class="rounded float-start" alt="..."></a>
-                  <input type="file" 
-                  name="photo_netizen_ids"
+                  <a href="/images/user-files/{{ $user->photo_netizen_id }}" target="_blank"><img id="photo_netizen_preview" src="/images/user-files/{{ $user->photo_netizen_id }}" width="200" height="100" class="rounded float-start" alt="..."></a>
+                  <input type="file"  onchange="previewFileNetizen(this);"
+                  name="photo_netizen_ids" id="photo_netizen_ids"
                   class="form-control"  />
                   <span></span>
                 </div>
@@ -278,3 +304,34 @@
     </div>
 </form>
 @endsection
+@push('scripts')
+<script type="text/javascript">
+    function previewFile(input){
+        var file = $("#photo").get(0).files[0];
+ 
+        if(file){
+            var reader = new FileReader();
+ 
+            reader.onload = function(){
+                $("#photo_preview").attr("src", reader.result);
+            }
+ 
+            reader.readAsDataURL(file);
+        }
+    }
+
+    function previewFileNetizen(input){
+        var file = $("#photo_netizen_ids").get(0).files[0];
+ 
+        if(file){
+            var reader = new FileReader();
+ 
+            reader.onload = function(){
+                $("#photo_netizen_preview").attr("src", reader.result);
+            }
+ 
+            reader.readAsDataURL(file);
+        }
+    }
+</script>
+@endpush
