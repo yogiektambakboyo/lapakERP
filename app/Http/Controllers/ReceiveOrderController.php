@@ -440,7 +440,7 @@ class ReceiveOrderController extends Controller
             $result = array_merge(
                 ['status' => 'success'],
                 ['data' => $receive->receive_no],
-                ['message' => 'Save Successfully'],
+                ['message' => 'Delete Successfully'],
             );    
         }else{
             $result = array_merge(

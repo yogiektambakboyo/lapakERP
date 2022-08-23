@@ -56,9 +56,7 @@
                         <td><a href="{{ route('purchaseorders.show', $purchase->id) }}" class="btn btn-warning btn-sm  {{ $act_permission->allow_show==1?'':'d-none' }}">Show</a></td>
                         <td><a href="{{ route('purchaseorders.edit', $purchase->id) }}" class="btn btn-info btn-sm  {{ $act_permission->allow_edit==1?'':'d-none' }} ">Edit</a></td>
                         <td class=" {{ $act_permission->allow_delete==1?'':'d-none' }}">
-                            {!! Form::open(['method' => 'DELETE','route' => ['purchaseorders.destroy', $purchase->id],'style'=>'display:inline']) !!}
-                            {!! Form::submit('Delete', ['class' => 'btn btn-danger btn-sm']) !!}
-                            {!! Form::close() !!}
+                            <a onclick="showConfirm({{ $purchase->id }}, '{{ $purchase->purchase_no }}')" class="btn btn-danger btn-sm  {{ $act_permission->allow_delete==1?'':'d-none' }} ">Delete</a>
                         </td>
                     </tr>
                 @endforeach
@@ -160,5 +158,56 @@
               todayHighlight: true,
           });
           $('#filter_end_date').val(formattedToday);
+
+          function showConfirm(id,data){
+            Swal.fire({
+            title: 'Are you sure?',
+            text: "You will delete document "+data+" !",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+            if (result.isConfirmed) {
+                var url = "{{ route('purchaseorders.destroy','XX') }}";
+                var lastvalurl = "XX";
+                console.log(url);
+                url = url.replace(lastvalurl, id)
+                const res = axios.delete(url, {}, {
+                    headers: {
+                        // Overwrite Axios's automatically set Content-Type
+                        'Content-Type': 'application/json'
+                    }
+                    }).then(resp => {
+                        if(resp.data.status=="success"){
+                            Swal.fire({
+                                title: 'Deleted!',
+                                text: 'Your data has been deleted.',
+                                icon: 'success',
+                                showCancelButton: false,
+                                confirmButtonColor: '#3085d6',
+                                cancelButtonColor: '#d33',
+                                confirmButtonText: 'Close'
+                                }).then((result) => {
+                                    window.location.href = "{{ route('purchaseorders.index') }}"; 
+                                })
+                        }else{
+                            Swal.fire(
+                            {
+                                position: 'top-end',
+                                icon: 'warning',
+                                text: 'Something went wrong - '+resp.data.message,
+                                showConfirmButton: false,
+                                imageHeight: 30, 
+                                imageWidth: 30,   
+                                timer: 1500
+                            }
+                            );
+                        }
+                    });
+            }
+            })
+        }
     </script>
 @endpush

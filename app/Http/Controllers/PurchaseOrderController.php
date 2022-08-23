@@ -22,11 +22,12 @@ use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
 use Spatie\Permission\Models\Permission;
 use Maatwebsite\Excel\Facades\Excel;
-use App\Exports\UsersExport;
+use App\Exports\PurchasesExport;
 use App\Http\Controllers\Controller;
 use Yajra\Datatables\Datatables;
 use Auth;
 use Illuminate\Support\Facades\DB;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 
 class PurchaseOrderController extends Controller
@@ -75,9 +76,10 @@ class PurchaseOrderController extends Controller
                     ->whereColumn('ub.branch_id', 'jt.branch_id');
                 })->where('ub.user_id', $user->id)->where('purchase_master.dated','>=',Carbon::now()->subDay(7))  
               ->paginate(10,['purchase_master.id','b.remark as branch_name','purchase_master.purchase_no','purchase_master.dated','jt.name as customer','purchase_master.total','purchase_master.total_discount','purchase_master.total_payment' ]);
-        return view('pages.purchaseorders.index',[
-            'branchs' => $branchs
-        ], compact('purchases','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
+        return view('pages.purchaseorders.index', compact('purchases','data','keyword','act_permission','branchs'))->with('i', ($request->input('page', 1) - 1) * 5);
+
+        //$pdf = Pdf::loadView('pages.purchaseorders.index', compact('purchases','data','keyword','act_permission','branchs'))->setOptions(['defaultFont' => 'sans-serif']);;
+        //return $pdf->download('invoice.pdf');
     }
 
     public function search(Request $request) 
@@ -93,9 +95,11 @@ class PurchaseOrderController extends Controller
 
         $begindate = date(Carbon::parse($request->filter_begin_date)->format('Y-m-d'));
         $enddate = date(Carbon::parse($request->filter_end_date)->format('Y-m-d'));
+        $branchx = $request->filter_branch_id;
         $fil = [ $begindate , $enddate ];
         if($request->export=='Export Excel'){
-            return Excel::download(new UsersExport($keyword), 'users_'.Carbon::now()->format('YmdHis').'.xlsx');
+            $strencode = base64_encode($keyword.'#'.$begindate.'#'.$enddate.'#'.$branchx);
+            return Excel::download(new PurchasesExport($strencode), 'purchases_'.Carbon::now()->format('YmdHis').'.xlsx');
         }else{
             $purchases = Purchase::orderBy('id', 'ASC')
                 ->join('suppliers as jt','jt.id','=','purchase_master.supplier_id')
@@ -104,7 +108,7 @@ class PurchaseOrderController extends Controller
                     $join->on('ub.branch_id', '=', 'b.id')
                     ->whereColumn('ub.branch_id', 'jt.branch_id');
                 })->where('ub.user_id', $user->id)->where('purchase_master.purchase_no','like','%'.$keyword.'%')
-                ->where('b.id','like','%'.$request->filter_branch_id.'%')  
+                ->where('b.id','like','%'.$branchx.'%')  
                 ->whereBetween('purchase_master.dated',$fil)  
               ->paginate(10,['purchase_master.id','b.remark as branch_name','purchase_master.purchase_no','purchase_master.dated','jt.name as customer','purchase_master.total','purchase_master.total_discount','purchase_master.total_payment' ]);
               return view('pages.purchaseorders.index',compact('branchs','purchases','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
@@ -114,7 +118,7 @@ class PurchaseOrderController extends Controller
     public function export(Request $request) 
     {
         $keyword = $request->search;
-        return Excel::download(new UsersExport, 'users_'.Carbon::now()->format('YmdHis').'.xlsx');
+        return Excel::download(new PurchasesExport, 'purchases_'.Carbon::now()->format('YmdHis').'.xlsx');
     }
 
     /**
@@ -276,7 +280,6 @@ class PurchaseOrderController extends Controller
         $suppliers = Supplier::join('users_branch as ub','ub.branch_id', '=', 'suppliers.branch_id')->where('ub.user_id','=',$user->id)->get(['suppliers.id','suppliers.name']);
         $payment_type = ['Cash','Debit Card'];
         $users = User::join('users_branch as ub','ub.branch_id', '=', 'users.branch_id')->where('ub.user_id','=',$user->id)->where('users.job_id','=',2)->get(['users.id','users.name']);
-        $usersReferral = User::get(['users.id','users.name']);
         return view('pages.purchaseorders.show',[
             'data' => $data,
             'suppliers' => $suppliers,
@@ -284,7 +287,41 @@ class PurchaseOrderController extends Controller
             'users' => $users,
             'purchase' => $purchase,
             'purchaseDetails' => PurchaseDetail::join('purchase_master as om','om.purchase_no','=','purchase_detail.purchase_no')->join('product_sku as ps','ps.id','=','purchase_detail.product_id')->join('product_uom as u','u.product_id','=','purchase_detail.product_id')->join('uom as um','um.id','=','u.uom_id')->where('purchase_detail.purchase_no',$purchase->purchase_no)->get(['um.remark as uom','purchase_detail.qty','purchase_detail.price','purchase_detail.total','ps.id','ps.remark as product_name','purchase_detail.discount']),
-            'usersReferrals' => $usersReferral,
+            'usersReferrals' => User::get(['users.id','users.name']),
+            'payment_type' => $payment_type,
+        ]);
+    }
+
+    public function print(Purchase $purchase) 
+    {
+        $user = Auth::user();
+        $id = $user->roles->first()->id;
+        $this->getpermissions($id);
+
+        $data = $this->data;
+        $suppliers = Supplier::join('users_branch as ub','ub.branch_id', '=', 'suppliers.branch_id')->where('ub.user_id','=',$user->id)->get(['suppliers.id','suppliers.name']);
+        $payment_type = ['Cash','Debit Card'];
+        $users = User::join('users_branch as ub','ub.branch_id', '=', 'users.branch_id')->where('ub.user_id','=',$user->id)->where('users.job_id','=',2)->get(['users.id','users.name']);
+    
+        $pdf = Pdf::loadView('pages.purchaseorders.print', [
+            'data' => $data,
+            'suppliers' => $suppliers,
+            'branchs' => Branch::join('users_branch as ub','ub.branch_id', '=', 'branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']),
+            'users' => $users,
+            'purchase' => $purchase,
+            'purchaseDetails' => PurchaseDetail::join('purchase_master as om','om.purchase_no','=','purchase_detail.purchase_no')->join('product_sku as ps','ps.id','=','purchase_detail.product_id')->join('product_uom as u','u.product_id','=','purchase_detail.product_id')->join('uom as um','um.id','=','u.uom_id')->where('purchase_detail.purchase_no',$purchase->purchase_no)->get(['um.remark as uom','purchase_detail.qty','purchase_detail.price','purchase_detail.total','ps.id','ps.remark as product_name','purchase_detail.discount']),
+            'usersReferrals' => User::get(['users.id','users.name']),
+            'payment_type' => $payment_type,
+        ])->setOptions(['defaultFont' => 'sans-serif'])->setPaper('a4', 'landscape');
+        //return $pdf->stream('invoice.pdf');
+        return view('pages.purchaseorders.print',[
+            'data' => $data,
+            'suppliers' => $suppliers,
+            'branchs' => Branch::join('users_branch as ub','ub.branch_id', '=', 'branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']),
+            'users' => $users,
+            'purchase' => $purchase,
+            'purchaseDetails' => PurchaseDetail::join('purchase_master as om','om.purchase_no','=','purchase_detail.purchase_no')->join('product_sku as ps','ps.id','=','purchase_detail.product_id')->join('product_uom as u','u.product_id','=','purchase_detail.product_id')->join('uom as um','um.id','=','u.uom_id')->where('purchase_detail.purchase_no',$purchase->purchase_no)->get(['um.remark as uom','purchase_detail.qty','purchase_detail.price','purchase_detail.total','ps.id','ps.remark as product_name','purchase_detail.discount']),
+            'usersReferrals' => User::get(['users.id','users.name']),
             'payment_type' => $payment_type,
         ]);
     }
@@ -430,10 +467,20 @@ class PurchaseOrderController extends Controller
     {
         PurchaseDetail::where('purchase_no', $purchase->purchase_no)->delete();
 
-        $purchase->delete();
-
-        return redirect()->route('purchaseorders.index')
-            ->withSuccess(__('Purchase deleted successfully.'));
+        if($purchase->delete()){
+            $result = array_merge(
+                ['status' => 'success'],
+                ['data' => $purchase->purchase_no],
+                ['message' => 'Delete Successfully'],
+            );    
+        }else{
+            $result = array_merge(
+                ['status' => 'failed'],
+                ['data' => $purchase->purchase_no],
+                ['message' => 'Delete failed'],
+            );   
+        }
+        return $result;
     }
 
     public function getpermissions($role_id){

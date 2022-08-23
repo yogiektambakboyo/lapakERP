@@ -125,6 +125,7 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
             Route::post('/create', 'PurchaseOrderController@store')->name('purchaseorders.store');
             Route::post('/search', 'PurchaseOrderController@search')->name('purchaseorders.search');
             Route::get('/{purchase}/show', 'PurchaseOrderController@show')->name('purchaseorders.show');
+            Route::get('/{purchase}/print', 'PurchaseOrderController@print')->name('purchaseorders.print');
             Route::get('/{purchase}/edit', 'PurchaseOrderController@edit')->name('purchaseorders.edit');
             Route::get('/getproduct', 'PurchaseOrderController@getproduct')->name('purchaseorders.getproduct');
             Route::get('/gettimetable', 'PurchaseOrderController@gettimetable')->name('purchaseorders.gettimetable');
