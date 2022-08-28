@@ -48,7 +48,7 @@
                     name="supplier_id" id="supplier_id" required>
                     <option value="">Select Suppliers</option>
                     @foreach($suppliers as $supplier)
-                        <option value="{{ $supplier->id }}">{{ $supplier->id }} - {{ $supplier->name }} </option>
+                        <option value="{{ $supplier->id }}">{{ $supplier->name }} </option>
                     @endforeach
                 </select>
               </div>
@@ -514,6 +514,8 @@
                 branch_id : $('#branch_id').val(),
                 product : orderList,
                 supplier_id : $('#supplier_id').val(),
+                supplier_name : $('#supplier_id option:selected').text(),
+                branch_name : $('#branch_id option:selected').text(),
                 remark : $('#remark').val(),
                 total_order : order_total,
                 total_vat : _vat_total,
@@ -572,12 +574,14 @@
           disc_total = 0;
           _vat_total = 0;
           sub_total = 0;
+          var total_vat = parseFloat(total) * (parseFloat(vat_total)/100); 
           var product = {
                 "id"        : id,
                 "abbr"      : abbr,
                 "qty"       : qty,
                 "price"     : price,
                 "total"     : total,
+                "total_vat"     : total_vat,
                 "disc"      : disc,
                 "vat_total"     : vat_total,
                 "uom" : uom
@@ -590,6 +594,7 @@
             if(id==obj["id"]){
               isExist = 1;
               orderList[i]["total"] = ((parseInt(orderList[i]["qty"])+parseInt(qty))*parseFloat(orderList[i]["price"]))-(parseFloat(orderList[i]["disc"])+disc); 
+              orderList[i]["total_vat"] = (((parseInt(orderList[i]["qty"])+parseInt(qty))*parseFloat(orderList[i]["price"]))-(parseFloat(orderList[i]["disc"])+disc))*(1+(parseFloat(vat_total)/100)); 
               orderList[i]["qty"] = parseInt(orderList[i]["qty"])+parseInt(qty);
               orderList[i]["disc"] = parseFloat(orderList[i]["disc"])+parseFloat(disc);
             }
@@ -612,12 +617,12 @@
                     "disc"       : currency(obj["disc"], { separator: ".", decimal: ",", symbol: "", precision: 0 }).format(),
                     "total"       : currency(obj["total"], { separator: ".", decimal: ",", symbol: "", precision: 0 }).format(),
                     "action"    : "",
-              }).draw(false);
+              }).draw(false);            
               disc_total = disc_total + (parseFloat(orderList[i]["disc"]));
-              sub_total = sub_total + (((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"]))-disc_total);
-              _vat_total = _vat_total + (((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"]))*(parseFloat(orderList[i]["vat_total"])/100));
-              order_total = order_total + ((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"])+_vat_total)-disc_total;
-              
+              sub_total = sub_total + (((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"]))-(parseFloat(orderList[i]["disc"])));
+              _vat_total = _vat_total + ((((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"]))-(parseFloat(orderList[i]["disc"])))*(parseFloat(orderList[i]["vat_total"])/100));
+              order_total = order_total + ((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"])+((((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"]))-(parseFloat(orderList[i]["disc"])))*(parseFloat(orderList[i]["vat_total"])/100)))-(parseFloat(orderList[i]["disc"]));
+
           }
 
           $('#order-total').text(currency(order_total, { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
@@ -641,6 +646,7 @@
               if($(this).attr("id")=="add_row"){
                 if(data["id"]==obj["id"]){
                   orderList[i]["total"] = ((parseInt(orderList[i]["qty"])+1)*parseFloat(orderList[i]["price"]))-(parseFloat(orderList[i]["disc"])); 
+                  orderList[i]["total_vat"] = (((parseInt(orderList[i]["qty"])+1)*parseFloat(orderList[i]["price"]))-(parseFloat(orderList[i]["disc"])+disc))*(1+(parseFloat(orderList[i]["vat_total"])/100)); 
                   orderList[i]["qty"] = parseInt(orderList[i]["qty"])+1;
                 }
               }
@@ -648,7 +654,8 @@
               if($(this).attr("id")=="minus_row"){
                 if(data["id"]==obj["id"]&&parseInt(orderList[i]["qty"])>1){
                   orderList[i]["total"] = ((parseInt(orderList[i]["qty"])-1)*parseFloat(orderList[i]["price"]))-(parseFloat(orderList[i]["disc"])); 
-                  orderList[i]["qty"] = parseInt(orderList[i]["qty"])-1;
+                  orderList[i]["total_vat"] = (((parseInt(orderList[i]["qty"])-1)*parseFloat(orderList[i]["price"]))-(parseFloat(orderList[i]["disc"])+disc))*(1+(parseFloat(orderList[i]["vat_total"])/100)); 
+                 orderList[i]["qty"] = parseInt(orderList[i]["qty"])-1;
                 } else if(data["id"]==obj["id"]&&parseInt(orderList[i]["qty"])==1) {
                   orderList.splice(i,1);
                 }
@@ -675,9 +682,9 @@
                     "action"    : "",
                 }).draw(false);
                 disc_total = disc_total + (parseFloat(orderList[i]["disc"]));
-                sub_total = sub_total + (((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"]))-disc_total);
-                _vat_total = _vat_total + (((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"]))*(parseFloat(orderList[i]["vat_total"])/100));
-                order_total = order_total + ((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"])+_vat_total)-disc_total;
+                sub_total = sub_total + (((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"]))-(parseFloat(orderList[i]["disc"])));
+                _vat_total = _vat_total + ((((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"]))-(parseFloat(orderList[i]["disc"])))*(parseFloat(orderList[i]["vat_total"])/100));
+                order_total = order_total + ((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"])+((((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"]))-(parseFloat(orderList[i]["disc"])))*(parseFloat(orderList[i]["vat_total"])/100)))-(parseFloat(orderList[i]["disc"]));
 
             }
 

@@ -278,7 +278,7 @@
                           "remark"      : resp.data[i]["remark"],
                           "uom"         : resp.data[i]["uom"],
                           "qty"         : resp.data[i]["qty"],
-                          "total"       : resp.data[i]["total"],
+                          "total"       : resp.data[i]["subtotal"],
                           "price"       : resp.data[i]["price"]
                     }
 

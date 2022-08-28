@@ -75,8 +75,8 @@
                   <th scope="col" width="10%">UOM</th>
                   <th scope="col" width="10%">Price</th>
                   <th scope="col" width="5%">Qty</th>
+                  <th scope="col" width="5%">Disc</th>
                   <th scope="col" width="10%">Total</th>
-                  <th scope="col" width="20%">Action</th>  
               </tr>
               </thead>
               <tbody>
@@ -134,13 +134,13 @@
                           "remark"      : resp.data[i]["remark"],
                           "uom"         : resp.data[i]["uom"],
                           "qty"         : resp.data[i]["qty"],
-                          "total"       : resp.data[i]["total"],
+                          "disc"         : resp.data[i]["discount"],
+                          "total"       : resp.data[i]["subtotal"],
+                          "total_vat"       : resp.data[i]["subtotal_vat"],
                           "price"       : resp.data[i]["price"]
                     }
 
                     orderList.push(product);
-
-                    console.log(resp.data[i]["id"]);
                 }
 
                 for (var i = 0; i < orderList.length; i++){
@@ -152,10 +152,10 @@
                     "uom"         : obj["uom"],
                     "price"       : obj["price"],
                     "qty"         : obj["qty"],
+                    "disc"         : obj["disc"],
                     "total"       : obj["total"],
-                    "action"      : "",
                   }).draw(false);
-                  order_total = order_total + ((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"]));
+                  order_total = order_total + (parseFloat(orderList[i]["total_vat"]));
                 }
 
                 $('#order-total').text(currency(order_total, { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
@@ -175,58 +175,9 @@
             { data: 'uom' },
             { data: 'price' },
             { data: 'qty' },
+            { data: 'disc' },
             { data: 'total' },
-            { data: null},
         ],
-        });
-
-        function addProduct(id,abbr, price, total, qty, uom,remark){
-          table.clear().draw(false);
-          order_total = 0;
-          var product = {
-                "id"        : id,
-                "abbr"      : abbr,
-                "remark"    : remark,
-                "qty"       : qty,
-                "price"     : price,
-                "total"     : total,
-                "uom" : uom
-          }
-
-          var isExist = 0;
-          for (var i = 0; i < orderList.length; i++){
-            var obj = orderList[i];
-            var value = obj["id"];
-            if(id==obj["id"]){
-              isExist = 1;
-              orderList[i]["total"] = (parseInt(orderList[i]["qty"])+parseInt(qty))*parseFloat(orderList[i]["price"]); 
-              orderList[i]["qty"] = parseInt(orderList[i]["qty"])+parseInt(qty);
-            }
-          }
-
-          if(isExist==0){
-            orderList.push(product);
-          }
-
-
-          for (var i = 0; i < orderList.length; i++){
-            var obj = orderList[i];
-            var value = obj["abbr"];
-            table.row.add( {
-                   "id"        : obj["id"],
-                    "remark"      : obj["remark"],
-                    "uom"       : obj["uom"],
-                    "price"       : obj["price"],
-                    "qty"       : obj["qty"],
-                    "total"       : obj["total"],
-                    "action"    : "",
-              }).draw(false);
-              order_total = order_total + ((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"]));
-              
-          }
-
-          $('#order-total').text(currency(order_total, { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
-        }
- 
+        }); 
     </script>
 @endpush
