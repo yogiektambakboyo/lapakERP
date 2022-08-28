@@ -23,7 +23,7 @@
                 </div>
             </div>
             <div class="col-md-2">
-                <a href="{{ route('purchaseorders.create') }}" class="btn btn-primary float-right {{ $act_permission->allow_create==1?'':'d-none' }}">Add new PO</a>
+                <a href="{{ route('purchaseorders.create') }}" class="btn btn-primary float-right {{ $act_permission->allow_create==1?'':'d-none' }}"><span class="fa fa-circle-plus"></span> Add new PO</a>
             </div>
         </div>
         
@@ -38,6 +38,7 @@
                 <th>Invoice No</th>
                 <th scope="col" width="8%">Dated</th>
                 <th scope="col" width="15%">Supplier</th>
+                <th scope="col" width="8%">Remark</th>
                 <th scope="col" width="10%">Total</th>
                 <th scope="col" width="2%">Action</th>   
                 <th scope="col" width="2%"></th>
@@ -51,8 +52,9 @@
                         <td>{{ $purchase->branch_name }}</td>
                         <td>{{ $purchase->purchase_no }}</td>
                         <td>{{ $purchase->dated }}</td>
-                        <td>{{ $purchase->customer }}</td>
-                        <td>{{ $purchase->total }}</td>
+                        <td>{{ $purchase->supplier }}</td>
+                        <td>{{ $purchase->remark }}</td>
+                        <td>{{ number_format($purchase->total,0,',','.') }}</td>
                         <td><a href="{{ route('purchaseorders.show', $purchase->id) }}" class="btn btn-warning btn-sm  {{ $act_permission->allow_show==1?'':'d-none' }}">Show</a></td>
                         <td><a href="{{ route('purchaseorders.edit', $purchase->id) }}" class="btn btn-info btn-sm  {{ $act_permission->allow_edit==1?'':'d-none' }} ">Edit</a></td>
                         <td class=" {{ $act_permission->allow_delete==1?'':'d-none' }}">

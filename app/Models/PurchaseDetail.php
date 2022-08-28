@@ -25,6 +25,10 @@ class PurchaseDetail extends Model
         'qty',
         'price',
         'total',
+        'vat_total',
+        'uom',
+        'vat',
+        'product_remark',
         'discount',
         'seq'
     ];

@@ -11,6 +11,7 @@ use App\Models\Room;
 use App\Models\JobTitle;
 use App\Models\Order;
 use App\Models\Supplier;
+use App\Models\Settings;
 use App\Models\OrderDetail;
 use App\Models\Invoice;
 use App\Models\InvoiceDetail;
@@ -52,9 +53,7 @@ class PurchaseOrderController extends Controller
                 union 
                 select 0 as allow_create,0 as allow_delete,0 as allow_show,count(1) as allow_edit from permissions p  join role_has_permissions rp on rp.permission_id = p.id where rp.role_id = 1 and p.name like '%.edit' and p.name like '".$this->module.".%'
             ) a
-        ");
-        
-        
+        ");        
     }
 
     public function index(Request $request) 
@@ -75,7 +74,7 @@ class PurchaseOrderController extends Controller
                     $join->on('ub.branch_id', '=', 'b.id')
                     ->whereColumn('ub.branch_id', 'jt.branch_id');
                 })->where('ub.user_id', $user->id)->where('purchase_master.dated','>=',Carbon::now()->subDay(7))  
-              ->paginate(10,['purchase_master.id','b.remark as branch_name','purchase_master.purchase_no','purchase_master.dated','jt.name as customer','purchase_master.total','purchase_master.total_discount','purchase_master.total_payment' ]);
+              ->paginate(10,['purchase_master.id','b.remark as branch_name','purchase_master.purchase_no','purchase_master.dated','jt.name as supplier','purchase_master.total','purchase_master.total_discount','purchase_master.total_payment' ]);
         return view('pages.purchaseorders.index', compact('purchases','data','keyword','act_permission','branchs'))->with('i', ($request->input('page', 1) - 1) * 5);
 
         //$pdf = Pdf::loadView('pages.purchaseorders.index', compact('purchases','data','keyword','act_permission','branchs'))->setOptions(['defaultFont' => 'sans-serif']);;
@@ -110,7 +109,7 @@ class PurchaseOrderController extends Controller
                 })->where('ub.user_id', $user->id)->where('purchase_master.purchase_no','like','%'.$keyword.'%')
                 ->where('b.id','like','%'.$branchx.'%')  
                 ->whereBetween('purchase_master.dated',$fil)  
-              ->paginate(10,['purchase_master.id','b.remark as branch_name','purchase_master.purchase_no','purchase_master.dated','jt.name as customer','purchase_master.total','purchase_master.total_discount','purchase_master.total_payment' ]);
+              ->paginate(10,['purchase_master.id','b.remark as branch_name','purchase_master.purchase_no','purchase_master.dated','jt.name as supplier','purchase_master.total','purchase_master.total_discount','purchase_master.total_payment' ]);
               return view('pages.purchaseorders.index',compact('branchs','purchases','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
         }
     }
@@ -152,7 +151,7 @@ class PurchaseOrderController extends Controller
     {
         $data = $this->data;
         $user = Auth::user();
-        $product = DB::select("select distinct m.remark as uom,product_sku.id,product_sku.remark,product_sku.abbr,pt.remark as type,pc.remark as category_name,pb.remark as brand_name,pp.price,'0' as discount,'0' as qty,'0' as total
+        $product = DB::select("select distinct m.remark as uom,product_sku.id,product_sku.remark,product_sku.abbr,pt.remark as type,pc.remark as category_name,pb.remark as brand_name,pp.price,product_sku.vat as vat_total,'0' as discount,'0' as qty,'0' as total
         from product_sku
         join product_distribution pd  on pd.product_id = product_sku.id  and pd.active = '1'
         join product_category pc on pc.id = product_sku.category_id 
@@ -214,7 +213,9 @@ class PurchaseOrderController extends Controller
                 ['dated' => Carbon::parse($request->get('order_date'))->format('d/m/Y') ],
                 ['supplier_id' => $request->get('supplier_id') ],
                 ['total' => $request->get('total_order') ],
+                ['total_vat' => $request->get('total_vat') ],
                 ['remark' => $request->get('remark') ],
+                ['total_discount' => $request->get('total_discount') ],
                 ['branch_id' => $request->get('branch_id')],
             )
         );
@@ -238,6 +239,11 @@ class PurchaseOrderController extends Controller
                     ['qty' => $request->get('product')[$i]["qty"]],
                     ['price' => $request->get('product')[$i]["price"]],
                     ['total' => $request->get('product')[$i]["total"]],
+                    ['vat' => $request->get('product')[$i]["vat_total"]],
+                    ['discount' => $request->get('product')[$i]["disc"]],
+                    ['vat_total' => (floatval($request->get('product')[$i]["vat_total"])*floatval($request->get('product')[$i]["total"]))/100],
+                    ['product_remark' => $request->get('product')[$i]["abbr"]],
+                    ['uom' => $request->get('product')[$i]["uom"]],
                     ['seq' => $i ],
                  )
             );
@@ -298,29 +304,32 @@ class PurchaseOrderController extends Controller
         $id = $user->roles->first()->id;
         $this->getpermissions($id);
 
+
         $data = $this->data;
-        $suppliers = Supplier::join('users_branch as ub','ub.branch_id', '=', 'suppliers.branch_id')->where('ub.user_id','=',$user->id)->get(['suppliers.id','suppliers.name']);
+        $suppliers = Supplier::join('users_branch as ub','ub.branch_id', '=', 'suppliers.branch_id')->where('ub.user_id','=',$user->id)->get(['suppliers.id','suppliers.name','suppliers.address','suppliers.email','suppliers.handphone']);
         $payment_type = ['Cash','Debit Card'];
         $users = User::join('users_branch as ub','ub.branch_id', '=', 'users.branch_id')->where('ub.user_id','=',$user->id)->where('users.job_id','=',2)->get(['users.id','users.name']);
-    
+
         $pdf = Pdf::loadView('pages.purchaseorders.print', [
             'data' => $data,
             'suppliers' => $suppliers,
             'branchs' => Branch::join('users_branch as ub','ub.branch_id', '=', 'branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']),
             'users' => $users,
+            'settings' => Settings::get(),
             'purchase' => $purchase,
-            'purchaseDetails' => PurchaseDetail::join('purchase_master as om','om.purchase_no','=','purchase_detail.purchase_no')->join('product_sku as ps','ps.id','=','purchase_detail.product_id')->join('product_uom as u','u.product_id','=','purchase_detail.product_id')->join('uom as um','um.id','=','u.uom_id')->where('purchase_detail.purchase_no',$purchase->purchase_no)->get(['um.remark as uom','purchase_detail.qty','purchase_detail.price','purchase_detail.total','ps.id','ps.remark as product_name','purchase_detail.discount']),
+            'purchaseDetails' => PurchaseDetail::join('purchase_master as om','om.purchase_no','=','purchase_detail.purchase_no')->join('branch as bh','bh.id','=','om.branch_id')->join('product_sku as ps','ps.id','=','purchase_detail.product_id')->join('product_uom as u','u.product_id','=','purchase_detail.product_id')->join('uom as um','um.id','=','u.uom_id')->where('purchase_detail.purchase_no',$purchase->purchase_no)->get(['um.remark as uom','purchase_detail.qty','purchase_detail.price','purchase_detail.total','ps.id','ps.remark as product_name','purchase_detail.discount','bh.remark as branch_name','bh.address']),
             'usersReferrals' => User::get(['users.id','users.name']),
             'payment_type' => $payment_type,
         ])->setOptions(['defaultFont' => 'sans-serif'])->setPaper('a4', 'landscape');
-        //return $pdf->stream('invoice.pdf');
+        return $pdf->stream('invoice.pdf');
         return view('pages.purchaseorders.print',[
             'data' => $data,
             'suppliers' => $suppliers,
             'branchs' => Branch::join('users_branch as ub','ub.branch_id', '=', 'branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']),
             'users' => $users,
+            'settings' => Settings::get(),
             'purchase' => $purchase,
-            'purchaseDetails' => PurchaseDetail::join('purchase_master as om','om.purchase_no','=','purchase_detail.purchase_no')->join('product_sku as ps','ps.id','=','purchase_detail.product_id')->join('product_uom as u','u.product_id','=','purchase_detail.product_id')->join('uom as um','um.id','=','u.uom_id')->where('purchase_detail.purchase_no',$purchase->purchase_no)->get(['um.remark as uom','purchase_detail.qty','purchase_detail.price','purchase_detail.total','ps.id','ps.remark as product_name','purchase_detail.discount']),
+            'purchaseDetails' => PurchaseDetail::join('purchase_master as om','om.purchase_no','=','purchase_detail.purchase_no')->join('branch as bh','bh.id','=','om.branch_id')->join('product_sku as ps','ps.id','=','purchase_detail.product_id')->join('product_uom as u','u.product_id','=','purchase_detail.product_id')->join('uom as um','um.id','=','u.uom_id')->where('purchase_detail.purchase_no',$purchase->purchase_no)->get(['um.remark as uom','purchase_detail.qty','purchase_detail.price','purchase_detail.total','ps.id','ps.remark as product_name','purchase_detail.discount','bh.remark as branch_name','bh.address']),
             'usersReferrals' => User::get(['users.id','users.name']),
             'payment_type' => $payment_type,
         ]);

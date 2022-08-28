@@ -14,5 +14,6 @@ class Settings extends Model
         'app_name',
         'company_name',
         'version',
+        'icon_file',
     ];
 }
