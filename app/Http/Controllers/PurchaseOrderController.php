@@ -29,6 +29,8 @@ use Yajra\Datatables\Datatables;
 use Auth;
 use Illuminate\Support\Facades\DB;
 use Barryvdh\DomPDF\Facade\Pdf;
+use App\Models\Company;
+
 
 
 class PurchaseOrderController extends Controller
@@ -70,10 +72,7 @@ class PurchaseOrderController extends Controller
         $purchases = Purchase::orderBy('id', 'ASC')
                 ->join('users_branch as ub', 'ub.branch_id','purchase_master.branch_id')->where('ub.user_id', $user->id)->where('purchase_master.dated','>=',Carbon::now()->subDay(7))  
               ->paginate(10,['purchase_master.id','purchase_master.branch_name','purchase_master.remark','purchase_master.purchase_no','purchase_master.dated','purchase_master.supplier_name as supplier','purchase_master.total','purchase_master.total_discount','purchase_master.total_payment' ]);
-        return view('pages.purchaseorders.index', compact('purchases','data','keyword','act_permission','branchs'))->with('i', ($request->input('page', 1) - 1) * 5);
-
-        //$pdf = Pdf::loadView('pages.purchaseorders.index', compact('purchases','data','keyword','act_permission','branchs'))->setOptions(['defaultFont' => 'sans-serif']);;
-        //return $pdf->download('invoice.pdf');
+        return view('pages.purchaseorders.index',['company' => Company::get()->first()],compact('purchases','data','keyword','act_permission','branchs'))->with('i', ($request->input('page', 1) - 1) * 5);
     }
 
     public function search(Request $request) 
@@ -105,7 +104,7 @@ class PurchaseOrderController extends Controller
                 ->where('b.id','like','%'.$branchx.'%')  
                 ->whereBetween('purchase_master.dated',$fil)  
               ->paginate(10,['purchase_master.id','b.remark as branch_name','purchase_master.purchase_no','purchase_master.dated','jt.name as supplier','purchase_master.total','purchase_master.total_discount','purchase_master.total_payment' ]);
-              return view('pages.purchaseorders.index',compact('branchs','purchases','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
+              return view('pages.purchaseorders.index',['company' => Company::get()->first()] ,compact('branchs','purchases','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
         }
     }
 
@@ -137,7 +136,7 @@ class PurchaseOrderController extends Controller
             'suppliers' => $suppliers,
             'usersall' => $usersall,
             'branchs' => Branch::join('users_branch as ub','ub.branch_id', '=', 'branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']),
-            'payment_type' => $payment_type,
+            'payment_type' => $payment_type, 'company' => Company::get()->first(),
             'rooms' => Room::join('users_branch as ub','ub.branch_id', '=', 'branch_room.branch_id')->where('ub.user_id','=',$user->id)->get(['branch_room.id','branch_room.remark']),
         ]);
     }
@@ -292,7 +291,7 @@ class PurchaseOrderController extends Controller
             'purchase' => $purchase,
             'purchaseDetails' => PurchaseDetail::join('purchase_master as om','om.purchase_no','=','purchase_detail.purchase_no')->join('product_sku as ps','ps.id','=','purchase_detail.product_id')->join('product_uom as u','u.product_id','=','purchase_detail.product_id')->join('uom as um','um.id','=','u.uom_id')->where('purchase_detail.purchase_no',$purchase->purchase_no)->get(['um.remark as uom','purchase_detail.qty','purchase_detail.price','purchase_detail.subtotal_vat','purchase_detail.subtotal','ps.id','ps.remark as product_name','purchase_detail.discount']),
             'usersReferrals' => User::get(['users.id','users.name']),
-            'payment_type' => $payment_type,
+            'payment_type' => $payment_type, 'company' => Company::get()->first(),
         ]);
     }
 
@@ -329,7 +328,7 @@ class PurchaseOrderController extends Controller
             'purchase' => $purchase,
             'purchaseDetails' => PurchaseDetail::join('purchase_master as om','om.purchase_no','=','purchase_detail.purchase_no')->join('branch as bh','bh.id','=','om.branch_id')->join('product_sku as ps','ps.id','=','purchase_detail.product_id')->join('product_uom as u','u.product_id','=','purchase_detail.product_id')->join('uom as um','um.id','=','u.uom_id')->where('purchase_detail.purchase_no',$purchase->purchase_no)->get(['um.remark as uom','purchase_detail.qty','purchase_detail.price','purchase_detail.subtotal as total','ps.id','ps.remark as product_name','purchase_detail.discount','bh.remark as branch_name','bh.address']),
             'usersReferrals' => User::get(['users.id','users.name']),
-            'payment_type' => $payment_type,
+            'payment_type' => $payment_type, 'company' => Company::get()->first(),
         ]);
     }
 
@@ -359,7 +358,7 @@ class PurchaseOrderController extends Controller
             'purchase' => $purchase,
             'purchaseDetails' => PurchaseDetail::join('purchase_master as om','om.purchase_no','=','purchase_detail.purchase_no')->join('product_sku as ps','ps.id','=','purchase_detail.product_id')->join('product_uom as u','u.product_id','=','purchase_detail.product_id')->join('uom as um','um.id','=','u.uom_id')->where('purchase_detail.purchase_no',$purchase->purchase_no)->get(['um.remark as uom','purchase_detail.qty','purchase_detail.price','purchase_detail.subtotal as total','ps.id','ps.remark as product_name','purchase_detail.discount']),
             'usersReferrals' => $usersReferral,
-            'payment_type' => $payment_type,
+            'payment_type' => $payment_type, 'company' => Company::get()->first(),
         ]);
     }
 

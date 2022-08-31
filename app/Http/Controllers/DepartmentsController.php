@@ -8,6 +8,7 @@ use Spatie\Permission\Models\Permission;
 use App\Models\Department;
 use Illuminate\Support\Facades\DB;
 use Auth;
+use App\Models\Company;
 
 
 
@@ -49,7 +50,7 @@ class DepartmentsController extends Controller
 
         return view('pages.departments.index
     ', [
-            'departments' => $Departments,'data' => $data
+            'departments' => $Departments,'data' => $data, 'company' => Company::get()->first()
         ]);
     }
 
@@ -65,7 +66,7 @@ class DepartmentsController extends Controller
         $this->getpermissions($id);
 
         $data = $this->data;
-        return view('pages.departments.create',['data'=>$data]);
+        return view('pages.departments.create',['data'=>$data , 'company' => Company::get()->first()]);
     }
 
     /**
@@ -100,7 +101,7 @@ class DepartmentsController extends Controller
 
         $data = $this->data;
         return view('pages.departments.edit', [
-            'department' => $Department ,'data' => $data
+            'department' => $Department ,'data' => $data, 'company' => Company::get()->first()
         ]);
     }
 

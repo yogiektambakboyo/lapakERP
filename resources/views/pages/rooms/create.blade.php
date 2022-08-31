@@ -4,9 +4,9 @@
 
 @section('content')
     <div class="bg-light p-4 rounded">
-        <h2>Add new Room</h2>
+        <h2>Create Room</h2>
         <div class="lead">
-            Add new Room.
+            Add New Room.
         </div>
 
         <div class="container mt-4">

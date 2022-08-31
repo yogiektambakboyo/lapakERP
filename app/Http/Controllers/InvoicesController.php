@@ -23,6 +23,7 @@ use App\Exports\UsersExport;
 use App\Http\Controllers\Controller;
 use Yajra\Datatables\Datatables;
 use Auth;
+use App\Models\Company;
 use Illuminate\Support\Facades\DB;
 
 
@@ -72,7 +73,7 @@ class InvoicesController extends Controller
                     ->whereColumn('ub.branch_id', 'jt.branch_id');
                 })->where('ub.user_id', $user->id)  
               ->paginate(10,['invoice_master.id','b.remark as branch_name','invoice_master.invoice_no','invoice_master.dated','jt.name as customer','invoice_master.total','invoice_master.total_discount','invoice_master.total_payment' ]);
-        return view('pages.invoices.index', compact('invoices','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
+        return view('pages.invoices.index',['company' => Company::get()->first()], compact('invoices','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
     }
 
     public function search(Request $request) 
@@ -88,7 +89,7 @@ class InvoicesController extends Controller
             return Excel::download(new UsersExport($keyword), 'users_'.Carbon::now()->format('YmdHis').'.xlsx');
         }else{
             $users = User::orderBy('id', 'ASC')->join('branch as b','b.id','=','users.branch_id')->join('job_title as jt','jt.id','=','users.job_id')->where('users.name','!=','Admin')->where('users.name','LIKE','%'.$keyword.'%')->paginate(10,['users.id','users.employee_id','users.name','jt.remark as job_title','b.remark as branch_name','users.join_date' ]);
-            return view('pages.invoices.index', compact('users','data','keyword'))->with('i', ($request->input('page', 1) - 1) * 5);
+            return view('pages.invoices.index',['company' => Company::get()->first()], compact('users','data','keyword'))->with('i', ($request->input('page', 1) - 1) * 5);
         }
     }
 
@@ -120,7 +121,7 @@ class InvoicesController extends Controller
             'users' => $users,
             'usersall' => $usersall,
             'orders' => Order::where('is_checkout','0')->get(),
-            'payment_type' => $payment_type,
+            'payment_type' => $payment_type, 'company' => Company::get()->first(),
             'rooms' => Room::join('users_branch as ub','ub.branch_id', '=', 'branch_room.branch_id')->where('ub.user_id','=',$user->id)->get(['branch_room.id','branch_room.remark']),
         ]);
     }
@@ -291,7 +292,7 @@ class InvoicesController extends Controller
             'room' => $room,
             'orderDetails' =>InvoiceDetail::join('invoice_master as om','om.invoice_no','=','invoice_detail.invoice_no')->join('product_sku as ps','ps.id','=','invoice_detail.product_id')->join('product_uom as u','u.product_id','=','invoice_detail.product_id')->join('uom as um','um.id','=','u.uom_id')->leftjoin('users as us','us.id','=','invoice_detail.assigned_to')->leftjoin('users as usm','usm.id','=','invoice_detail.referral_by')->where('invoice_detail.invoice_no',$invoice->invoice_no)->get(['usm.name as referral_by','us.name as assigned_to','um.remark as uom','invoice_detail.qty','invoice_detail.price','invoice_detail.total','ps.id','ps.remark as product_name','invoice_detail.discount']),
             'usersReferrals' => $usersReferral,
-            'payment_type' => $payment_type,
+            'payment_type' => $payment_type, 'company' => Company::get()->first(),
         ]);
     }
 
@@ -319,7 +320,7 @@ class InvoicesController extends Controller
             'users' => $users,
             'orderDetails' => InvoiceDetail::join('invoice_master as om','om.invoice_no','=','invoice_detail.invoice_no')->join('product_sku as ps','ps.id','=','invoice_detail.product_id')->join('product_uom as u','u.product_id','=','invoice_detail.product_id')->join('uom as um','um.id','=','u.uom_id')->leftjoin('users as us','us.id','=','invoice_detail.assigned_to')->where('invoice_detail.invoice_no',$invoice->invoice_no)->get(['us.name as assigned_to','um.remark as uom','invoice_detail.qty','invoice_detail.price','invoice_detail.total','ps.id','ps.remark as product_name','invoice_detail.discount']),
             'usersReferrals' => $usersReferral,
-            'payment_type' => $payment_type,
+            'payment_type' => $payment_type, 'company' => Company::get()->first(),
         ]);
     }
 

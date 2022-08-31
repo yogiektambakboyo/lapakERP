@@ -22,6 +22,8 @@ use App\Http\Controllers\Controller;
 use Yajra\Datatables\Datatables;
 use Auth;
 use Illuminate\Support\Facades\DB;
+use App\Models\Company;
+
 
 
 class ProductsBrandController extends Controller
@@ -61,7 +63,7 @@ class ProductsBrandController extends Controller
         $act_permission = $this->act_permission[0];
         $brands = ProductBrand::orderBy('product_brand.remark', 'ASC')
                     ->paginate(10,['product_brand.id','product_brand.remark']);
-        return view('pages.productsbrand.index', compact('brands','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
+        return view('pages.productsbrand.index', ['company' => Company::get()->first()],compact('brands','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
     }
 
     public function search(Request $request) 
@@ -84,7 +86,7 @@ class ProductsBrandController extends Controller
                         ->join('product_brand as pb','pb.id','=','product_sku.brand_id')
                         ->whereRaw($whereclause)
                         ->paginate(10,['product_sku.id','product_sku.remark as product_name','pt.remark as product_type','pc.remark as product_category','pb.remark as product_brand']);            
-            return view('pages.productsbrand.index', compact('products','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
+            return view('pages.productsbrand.index',['company' => Company::get()->first()], compact('products','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
         }
     }
 
@@ -107,7 +109,7 @@ class ProductsBrandController extends Controller
 
         $data = $this->data;
         return view('pages.productsbrand.create',[
-            'data' => $data,
+            'data' => $data, 'company' => Company::get()->first(),
         ]);
     }
 
@@ -157,7 +159,7 @@ class ProductsBrandController extends Controller
 
         return view('pages.productsbrand.show', [
             'product' => $products ,
-            'data' => $data,
+            'data' => $data, 'company' => Company::get()->first(),
         ]);
     }
 
@@ -179,7 +181,7 @@ class ProductsBrandController extends Controller
         ->get(['product_brand.id as id','product_brand.remark'])->first();
         return view('pages.productsbrand.edit', [
             'data' => $data,
-            'brand' => $brand,
+            'brand' => $brand, 'company' => Company::get()->first(),
         ]);
     }
 

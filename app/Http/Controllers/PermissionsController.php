@@ -9,6 +9,8 @@ use Auth;
 use DB;
 use Spatie\Permission\Models\Role;
 use App\Http\Controllers\Controller;
+use App\Models\Company;
+
 
 
 class PermissionsController extends Controller
@@ -47,7 +49,7 @@ class PermissionsController extends Controller
         $data = $this->data;
 
         return view('pages.permissions.index', [
-            'permissions' => $permissions,'data' => $data
+            'permissions' => $permissions,'data' => $data, 'company' => Company::get()->first()
         ])->with('i', ($request->input('page', 1) - 1) * 5);
     }
 
@@ -63,7 +65,7 @@ class PermissionsController extends Controller
         $this->getpermissions($id);
 
         $data = $this->data;
-        return view('pages.permissions.create',['data'=>$data]);
+        return view('pages.permissions.create',['data'=>$data, 'company' => Company::get()->first()]);
     }
 
     /**
@@ -98,7 +100,7 @@ class PermissionsController extends Controller
 
         $data = $this->data;
         return view('pages.permissions.edit', [
-            'permission' => $permission ,'data' => $data
+            'permission' => $permission ,'data' => $data, 'company' => Company::get()->first()
         ]);
     }
 

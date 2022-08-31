@@ -9,6 +9,8 @@ use App\Models\Customer;
 use App\Models\Branch;
 use Auth;
 use Illuminate\Support\Facades\DB;
+use App\Models\Company;
+
 
 
 class CustomersController extends Controller
@@ -52,7 +54,7 @@ class CustomersController extends Controller
         $data = $this->data;
 
         return view('pages.customers.index', [
-            'customers' => $Customers,'data' => $data 
+            'customers' => $Customers,'data' => $data , 'company' => Company::get()->first()
             
         ]);
     }
@@ -69,7 +71,7 @@ class CustomersController extends Controller
         $this->getpermissions($id);
  
         $data = $this->data;
-        return view('pages.customers.create',['data'=>$data,'branchs' => Branch::latest()->get(),
+        return view('pages.customers.create',['data'=>$data,'branchs' => Branch::latest()->get(), 'company' => Company::get()->first(),
         'userBranchs' => Branch::latest()->get()->pluck('remark')->toArray(),]);
     }
 
@@ -133,7 +135,7 @@ class CustomersController extends Controller
         $this->getpermissions($id);
         $data = $this->data;
         return view('pages.customers.edit', [
-            'customer' => $Customer ,'data' => $data ,'branchs' => Branch::latest()->get(),
+            'customer' => $Customer ,'data' => $data ,'branchs' => Branch::latest()->get(), 'company' => Company::get()->first(),
             'userBranchs' => Branch::latest()->get()->pluck('remark')->toArray()
         ]);
     }
@@ -158,9 +160,6 @@ class CustomersController extends Controller
                 ['branch_id' => $request->get('branch_id') ],
             )
         );
-
-       
-
 
         return redirect()->route('customers.index')
             ->withSuccess(__('Customer updated successfully.'));

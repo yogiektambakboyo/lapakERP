@@ -10,6 +10,8 @@ use App\Models\Type;
 use App\Models\Branch;
 use Illuminate\Support\Facades\DB;
 use Auth;
+use App\Models\Company;
+
 
 
 
@@ -48,8 +50,8 @@ class TypeController extends Controller
         $types = Type::paginate(10,['product_type.id','product_type.remark']);
         $data = $this->data;
 
-        return view('pages.types.index', [
-            'types' => $types,'data' => $data
+        return view('pages.types.index',[
+            'types' => $types,'data' => $data,'company' => Company::get()->first()
         ])->with('i', ($request->input('page', 1) - 1) * 5);
     }
 
@@ -66,7 +68,7 @@ class TypeController extends Controller
 
         $data = $this->data;
         return view('pages.types.create',[
-            'data' => $data,
+            'data' => $data,'company' => Company::get()->first()
         ]);
     }
 
@@ -102,7 +104,7 @@ class TypeController extends Controller
 
         $data = $this->data;
         return view('pages.types.edit', [
-            'type' => $type ,'data' => $data 
+            'type' => $type ,'data' => $data ,'company' => Company::get()->first()
         ]);
     }
 

@@ -8,6 +8,7 @@ use Spatie\Permission\Models\Permission;
 use App\Models\Category;
 use App\Models\Branch;
 use Illuminate\Support\Facades\DB;
+use App\Models\Company;
 use Auth;
 
 
@@ -46,7 +47,7 @@ class CategoriesController extends Controller
         $data = $this->data;
 
         return view('pages.categories.index', [
-            'categories' => $categories,'data' => $data
+            'categories' => $categories,'data' => $data, 'company' => Company::get()->first()
         ])->with('i', ($request->input('page', 1) - 1) * 5);
     }
 
@@ -63,7 +64,7 @@ class CategoriesController extends Controller
 
         $data = $this->data;
         return view('pages.categories.create',[
-            'data' => $data,
+            'data' => $data, 'company' => Company::get()->first(),
         ]);
     }
 
@@ -82,7 +83,7 @@ class CategoriesController extends Controller
         Category::create($request->all());
 
         return redirect()->route('categories.index')
-            ->withSuccess(__('CATEGORY created successfully.'));
+            ->withSuccess(__('Category created successfully.'));
     }
 
     /**
@@ -99,7 +100,7 @@ class CategoriesController extends Controller
 
         $data = $this->data;
         return view('pages.categories.edit', [
-            'category' => $category ,'data' => $data 
+            'category' => $category ,'data' => $data , 'company' => Company::get()->first()
         ]);
     }
 

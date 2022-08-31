@@ -9,6 +9,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Route;
 use Spatie\Permission\Models\Permission;
 use Auth;
+use App\Models\Company;
+
 
 class RolesController extends Controller
 {
@@ -40,7 +42,7 @@ class RolesController extends Controller
 
         $data = $this->data;
         $roles = Role::orderBy('id','DESC')->paginate(10);
-        return view('pages.roles.index',compact('roles','data'))
+        return view('pages.roles.index',['company' => Company::get()->first()],compact('roles','data'))
             ->with('i', ($request->input('page', 1) - 1) * 5);
     }
     
@@ -57,7 +59,7 @@ class RolesController extends Controller
 
         $data = $this->data;
         $permissions = Permission::get();
-        return view('pages.roles.create', compact('permissions','data'));
+        return view('pages.roles.create',['company' => Company::get()->first()], compact('permissions','data'));
     }
     
     /**
@@ -96,7 +98,7 @@ class RolesController extends Controller
         $role = $role;
         $rolePermissions = $role->permissions;
     
-        return view('pages.roles.show', compact('role', 'rolePermissions','data'));
+        return view('pages.roles.show', ['company' => Company::get()->first()],compact('role', 'rolePermissions','data'));
     }
     
     /**
@@ -116,7 +118,7 @@ class RolesController extends Controller
         $rolePermissions = $role->permissions->pluck('name')->toArray();
         $permissions = Permission::get();
     
-        return view('pages.roles.edit', compact('data','role', 'rolePermissions', 'permissions'));
+        return view('pages.roles.edit', ['company' => Company::get()->first()],compact('data','role', 'rolePermissions', 'permissions'));
     }
     
     /**

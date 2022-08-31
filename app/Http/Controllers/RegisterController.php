@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\Http\Requests\RegisterRequest;
+use App\Models\Company;
+
 
 class RegisterController extends Controller
 {

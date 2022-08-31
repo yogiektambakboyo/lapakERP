@@ -84,9 +84,20 @@
             </table> 
             
             
+            <br>
             <div class="row mb-3">
-              <label class="form-label col-form-label col-md-2"><h1>Total</h1></label>
-              <div class="col-md-10">
+              <label class="form-label col-form-label col-md-9 text-end"><h2>Sub Total </h2></label>
+              <div class="col-md-3">
+                <h3 class="text-end"><label id="sub-total">{{ number_format(($purchase->total-$purchase->total_vat),0,',','.') }}</label></h3>
+              </div>
+
+              <label class="form-label col-form-label col-md-9 text-end"><h2>Tax </h2></label>
+              <div class="col-md-3">
+                <h3 class="text-end"><label id="vat-total">{{ number_format($purchase->total_vat,0,',','.') }}</label></h3>
+              </div>
+
+              <label class="form-label col-form-label col-md-9 text-end"><h1>Total</h1></label>
+              <div class="col-md-3">
                 <h1 class="display-5 text-end"><label id="order-total">Rp. 0</label></h1>
               </div>
             </div>

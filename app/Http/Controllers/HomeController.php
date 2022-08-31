@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Spatie\Permission\Models\Permission;
 use Auth;
 use App\Models\Settings;
+use App\Models\Company;
 use Illuminate\Support\Facades\DB;
 
 class HomeController extends Controller
@@ -104,10 +105,10 @@ class HomeController extends Controller
                 }
             }
             $data = $this->data;
-            return view('pages.home-index')->with('data',$data);
+            return view('pages.home-index')->with('data',$data)->with('company',Company::get()->first());
         }else{
             $data = [];
-            return view('pages.auth.login')->with('data',$data)->with('settings',Settings::get()->first());
+            return view('pages.auth.login')->with('data',$data)->with('settings',Settings::get()->first())->with('company',Company::get()->first());
         }
     }
 

@@ -22,6 +22,8 @@ use App\Http\Controllers\Controller;
 use Yajra\Datatables\Datatables;
 use Auth;
 use Illuminate\Support\Facades\DB;
+use App\Models\Company;
+
 
 
 class ReportCashierComController extends Controller
@@ -81,7 +83,7 @@ class ReportCashierComController extends Controller
         $act_permission = $this->act_permission[0];
         $brands = ProductBrand::orderBy('product_brand.remark', 'ASC')
                     ->paginate(10,['product_brand.id','product_brand.remark']);
-        return view('pages.reports.commision_cashier', compact('brands','data','keyword','act_permission','report_data'))->with('i', ($request->input('page', 1) - 1) * 5);
+        return view('pages.reports.commision_cashier',['company' => Company::get()->first()] ,compact('brands','data','keyword','act_permission','report_data'))->with('i', ($request->input('page', 1) - 1) * 5);
     }
 
     public function search(Request $request) 
@@ -117,7 +119,7 @@ class ReportCashierComController extends Controller
                 join users u on u.id = im.created_by and u.job_id = 1 and u.id = id.referral_by 
                 where pc.created_by_fee <= 0 and pc.referral_fee > 0 and ".$whereclause."       
             ");          
-            return view('pages.reports.commision_cashier', compact('report_data','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
+            return view('pages.reports.commision_cashier',['company' => Company::get()->first()], compact('report_data','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
         }
     }
 
@@ -140,7 +142,7 @@ class ReportCashierComController extends Controller
 
         $data = $this->data;
         return view('pages.productsbrand.create',[
-            'data' => $data,
+            'data' => $data, 'company' => Company::get()->first(),
         ]);
     }
 
@@ -190,7 +192,7 @@ class ReportCashierComController extends Controller
 
         return view('pages.productsbrand.show', [
             'product' => $products ,
-            'data' => $data,
+            'data' => $data, 'company' => Company::get()->first(),
         ]);
     }
 
@@ -212,7 +214,7 @@ class ReportCashierComController extends Controller
         ->get(['product_brand.id as id','product_brand.remark'])->first();
         return view('pages.productsbrand.edit', [
             'data' => $data,
-            'brand' => $brand,
+            'brand' => $brand, 'company' => Company::get()->first(),
         ]);
     }
 

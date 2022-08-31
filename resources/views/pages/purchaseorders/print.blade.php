@@ -22,12 +22,12 @@
 
       <table style="width: 100%">
         <tbody>
-          <tr style="text-align: center;height: 70px;background-color:#FFA726;">
-            <td style="text-align: left;padding:20px;">
+          <tr style="text-align: center;height: 50px;background-color:#FFA726;">
+            <td style="text-align: left;padding:15px;">
               <img src="http://localhost:8000/images/user-files/{{ $settings[0]->icon_file }}" width="100px"><br>
               <label>{{ $purchaseDetails[0]->branch_name }}</label><br>
               <label>{{ $purchaseDetails[0]->address }}</label></td>
-            <td style="width: 50%;font-size:40px;"><p style="color: #212121;">Purchase Order</p></td>
+            <td style="width: 50%;font-size:30px;"><p style="color: #212121;">Purchase Order</p></td>
           </tr>
           <tr style="background-color: chocolate;">
             <td colspan="2"><br></td>
@@ -37,14 +37,14 @@
       <table style="width: 100%">
         <tbody>
           <tr style="text-align: center;height: 70px">
-            <td style="text-align: left;padding:20px;width:15%;vertical-align: text-top;">        
+            <td style="text-align: left;padding:20px;width:20%;vertical-align: text-top;">        
               <label style="font-weight: bold;">Supplier :</label><br>
               <label>{{ $suppliers[0]->name }}</label><br>
               <label>{{ $suppliers[0]->address }}</label><br>
               <label>{{ $suppliers[0]->email }}</label><br>
               <label>{{ $suppliers[0]->handphone }}</label><br>
             </td>
-            <td style="text-align: left;padding:20px;width:45%;vertical-align: text-top;">        
+            <td style="text-align: left;padding:20px;width:35%;vertical-align: text-top;">        
               <label style="font-weight: bold;">Shipto :</label><br>
               <label>{{ $purchaseDetails[0]->branch_name }}</label><br>
               <label>{{ $purchaseDetails[0]->address }}</label></td>
@@ -55,15 +55,13 @@
               <label>Remark :</label><br>
             </td>
             <td style="text-align: left;width: 50%;font-size:15px;width:15%;padding-left:10px;vertical-align: text-top;">
-              <label>{{ substr(explode(" ",$purchase->dated)[0],8,2) }}/{{substr(explode(" ",$purchase->dated)[0],5,2) }}/{{ substr(explode(" ",$purchase->dated)[0],0,4) }}</label><br>
+              <label>{{ substr(explode(" ",$purchase->dated)[0],8,2) }}-{{substr(explode(" ",$purchase->dated)[0],5,2) }}-{{ substr(explode(" ",$purchase->dated)[0],0,4) }}</label><br>
               <label>{{ $purchase->purchase_no }}</label><br>
               <label>{{ $purchase->remark }}</label><br>
             </td>
           </tr>
         </tbody>
       </table>
-
-      <br>
 
       <table class="table table-striped" id="order_table" width="100%">
         <thead>
@@ -80,9 +78,9 @@
               <tr>
                   <td style="text-align: left;">{{ $purchaseDetail->product_name }}</th>
                   <td style="text-align: center;">{{ $purchaseDetail->uom }}</td>
-                  <td style="text-align: center;">{{ $purchaseDetail->price }}</td>
-                  <td style="text-align: center;">{{ $purchaseDetail->qty }}</td>
-                  <td style="text-align: right;">{{ $purchaseDetail->total }}</td>
+                  <td style="text-align: center;">{{ number_format($purchaseDetail->price,0,',','.') }}</td>
+                  <td style="text-align: center;">{{ number_format($purchaseDetail->qty,0,',','.') }}</td>
+                  <td style="text-align: right;">{{ number_format($purchaseDetail->total,0,',','.') }}</td>
               </tr>
           @endforeach
 
@@ -105,10 +103,20 @@
         </thead>
         <tbody>
           <tr>
-            <td style="text-align: left;width:70%;"></th>
+            <td style="text-align: left;width:70%;"></td>
+            <td style="text-align: right;width:20%;background-color:#FFA726;">Sub Total</td>
+            <td style="text-align: right;width:10%;background-color:#FFA726;">Rp. {{ number_format(($purchase->total-$purchase->total_vat),0,',','.') }}</td>
+          </tr>
+          <tr>
+            <td style="text-align: left;width:70%;"></td>
+            <td style="text-align: right;width:20%;background-color:#FFA726;">Tax</th>
+            <td style="text-align: right;width:10%;background-color:#FFA726;">Rp. {{ number_format($purchase->total_vat,0,',','.') }}</th>
+          </tr>
+          <tr>
+            <th style="text-align: left;width:70%;"></th>
             <th style="text-align: right;width:20%;background-color:#FFA726;">Total</th>
-            <th style="text-align: right;width:10%;background-color:#FFA726;">{{ $purchase->total}}</th>
-        </tr>
+            <th style="text-align: right;width:10%;background-color:#FFA726;">Rp. {{ number_format($purchase->total,0,',','.') }}</th>
+          </tr>
         </tbody>
       </table> 
    </body> 

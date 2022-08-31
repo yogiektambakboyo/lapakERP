@@ -23,6 +23,8 @@ use Yajra\Datatables\Datatables;
 use Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
+use App\Models\Company;
+
 
 class OrdersController extends Controller
 {
@@ -66,7 +68,7 @@ class OrdersController extends Controller
                     ->whereColumn('ub.branch_id', 'jt.branch_id');
                 })->where('ub.user_id', $user->id)  
               ->paginate(10,['order_master.id','b.remark as branch_name','order_master.order_no','order_master.dated','jt.name as customer','order_master.total','order_master.total_discount','order_master.total_payment' ]);
-        return view('pages.orders.index', compact('orders','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
+        return view('pages.orders.index',['company' => Company::get()->first()], compact('orders','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
     }
 
     public function search(Request $request) 
@@ -82,7 +84,7 @@ class OrdersController extends Controller
             return Excel::download(new UsersExport($keyword), 'users_'.Carbon::now()->format('YmdHis').'.xlsx');
         }else{
             $users = User::orderBy('id', 'ASC')->join('branch as b','b.id','=','users.branch_id')->join('job_title as jt','jt.id','=','users.job_id')->where('users.name','!=','Admin')->where('users.name','LIKE','%'.$keyword.'%')->paginate(10,['users.id','users.employee_id','users.name','jt.remark as job_title','b.remark as branch_name','users.join_date' ]);
-            return view('pages.orders.index', compact('users','data','keyword'))->with('i', ($request->input('page', 1) - 1) * 5);
+            return view('pages.orders.index',['company' => Company::get()->first()], compact('users','data','keyword'))->with('i', ($request->input('page', 1) - 1) * 5);
         }
     }
 
@@ -112,7 +114,7 @@ class OrdersController extends Controller
             'data' => $data,
             'users' => $users,
             'branchs' => Branch::join('users_branch as ub','ub.branch_id', '=', 'branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']),
-            'payment_type' => $payment_type,
+            'payment_type' => $payment_type, 'company' => Company::get()->first(),
             'rooms' => Room::join('users_branch as ub','ub.branch_id', '=', 'branch_room.branch_id')->where('ub.user_id','=',$user->id)->get(['branch_room.id','branch_room.remark']),
         ]);
     }
@@ -268,7 +270,7 @@ class OrdersController extends Controller
             'room' => $room,
             'orderDetails' => OrderDetail::join('order_master as om','om.order_no','=','order_detail.order_no')->join('product_sku as ps','ps.id','=','order_detail.product_id')->join('product_uom as u','u.product_id','=','order_detail.product_id')->join('uom as um','um.id','=','u.uom_id')->leftjoin('users as us','us.id','=','order_detail.assigned_to')->where('order_detail.order_no',$order->order_no)->get(['us.name as assigned_to','um.remark as uom','order_detail.qty','order_detail.price','order_detail.total','ps.id','ps.remark as product_name','order_detail.discount']),
             'usersReferrals' => $usersReferral,
-            'payment_type' => $payment_type,
+            'payment_type' => $payment_type, 'company' => Company::get()->first(),
         ]);
     }
 
@@ -300,7 +302,7 @@ class OrdersController extends Controller
             'users' => $users,
             'orderDetails' => OrderDetail::join('order_master as om','om.order_no','=','order_detail.order_no')->join('product_sku as ps','ps.id','=','order_detail.product_id')->join('product_uom as u','u.product_id','=','order_detail.product_id')->join('uom as um','um.id','=','u.uom_id')->leftjoin('users as us','us.id','=','order_detail.assigned_to')->where('order_detail.order_no',$order->order_no)->get(['us.name as assigned_to','um.remark as uom','order_detail.qty','order_detail.price','order_detail.total','ps.id','ps.remark as product_name','order_detail.discount']),
             'usersReferrals' => $usersReferral,
-            'payment_type' => $payment_type,
+            'payment_type' => $payment_type, 'company' => Company::get()->first(),
         ]);
     }
 

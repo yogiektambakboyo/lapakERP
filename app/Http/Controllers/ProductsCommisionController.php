@@ -24,6 +24,8 @@ use App\Http\Controllers\Controller;
 use Yajra\Datatables\Datatables;
 use Auth;
 use Illuminate\Support\Facades\DB;
+use App\Models\Company;
+
 
 
 class ProductsCommisionController extends Controller
@@ -69,7 +71,7 @@ class ProductsCommisionController extends Controller
                     ->join('product_commisions as pr','pr.product_id','=','product_sku.id')
                     ->join('branch as bc','bc.id','=','pr.branch_id')
                     ->paginate(10,['created_by_fee', 'assigned_to_fee', 'referral_fee','product_sku.id','product_sku.remark as product_name','pr.branch_id','bc.remark as branch_name','pb.remark as product_brand']);
-        return view('pages.productscommision.index', compact('products','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
+        return view('pages.productscommision.index', ['company' => Company::get()->first()],compact('products','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
     }
 
     public function search(Request $request) 
@@ -94,7 +96,7 @@ class ProductsCommisionController extends Controller
                         ->join('branch as bc','bc.id','=','pr.branch_id')
                         ->whereRaw($whereclause)
                         ->paginate(10,['created_by_fee', 'assigned_to_fee', 'referral_fee','product_sku.id','product_sku.remark as product_name','pr.branch_id','bc.remark as branch_name','pb.remark as product_brand']);       
-            return view('pages.productscommision.index', compact('products','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
+            return view('pages.productscommision.index',['company' => Company::get()->first()], compact('products','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
         }
     }
 
@@ -119,7 +121,7 @@ class ProductsCommisionController extends Controller
         $data = $this->data;
         return view('pages.productscommision.create',[
             'products' => DB::select('select ps.id,ps.remark from product_sku as ps;'),
-            'data' => $data,
+            'data' => $data, 'company' => Company::get()->first(),
             'branchs' => Branch::join('users_branch as ub','ub.branch_id','=','branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']),
         ]);
     }
@@ -175,7 +177,7 @@ class ProductsCommisionController extends Controller
 
         return view('pages.productscommision.show', [
             'product' => $products ,
-            'data' => $data,
+            'data' => $data, 'company' => Company::get()->first(),
         ]);
     }
 
@@ -203,7 +205,7 @@ class ProductsCommisionController extends Controller
         return view('pages.productscommision.edit', [
             'branchs' => Branch::join('users_branch as ub','ub.branch_id','=','branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']),
             'data' => $data,
-            'product' => $product,
+            'product' => $product, 'company' => Company::get()->first(),
             'products' => Product::get(),
         ]);
     }

@@ -10,6 +10,7 @@ use App\Models\Branch;
 use App\Exports\BranchsExport;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
+use App\Models\Company;
 use Auth;
 
 
@@ -47,9 +48,9 @@ class BranchsController extends Controller
         $branchs = Branch::all();
         $data = $this->data;
         $keyword = "";
-
+        $act_permission = $this->act_permission[0];
         return view('pages.branchs.index', [
-            'branchs' => $branchs,'data' => $data , 'keyword' => $keyword
+            'branchs' => $branchs,'data' => $data , 'keyword' => $keyword,'company' => Company::get()->first() ,'act_permission' => $act_permission
         ]);
     }
 
@@ -67,7 +68,7 @@ class BranchsController extends Controller
             return Excel::download(new BranchsExport($keyword), 'branchs_'.Carbon::now()->format('YmdHis').'.xlsx');
         }else{
             $branchs = Branch::orderBy('id', 'ASC')->where('branch.remark','LIKE','%'.$keyword.'%')->get();
-            return view('pages.branchs.index', compact('branchs','data','keyword'))->with('i', ($request->input('page', 1) - 1) * 5);
+            return view('pages.branchs.index', ['company' => Company::get()->first()],compact('branchs','data','keyword'))->with('i', ($request->input('page', 1) - 1) * 5);
         }
     }
 
@@ -83,7 +84,7 @@ class BranchsController extends Controller
         $this->getpermissions($id);
  
         $data = $this->data;
-        return view('pages.branchs.create',['data'=>$data]);
+        return view('pages.branchs.create',['data'=>$data ,'company' => Company::get()->first()]);
     }
 
     /**
@@ -101,7 +102,7 @@ class BranchsController extends Controller
         Branch::create($request->all());
 
         return redirect()->route('branchs.index')
-            ->withSuccess(__('Branch created successfully.'));
+            ->withSuccess(__('Branch '.$request->remark.' created successfully.'));
     }
 
     /**
@@ -118,7 +119,7 @@ class BranchsController extends Controller
 
         $data = $this->data;
         return view('pages.branchs.edit', [
-            'branch' => $branch ,'data' => $data
+            'branch' => $branch ,'data' => $data, 'company' => Company::get()->first()
         ]);
     }
 
@@ -150,10 +151,20 @@ class BranchsController extends Controller
      */
     public function destroy(Branch $branch)
     {
-        $branch->delete();
-
-        return redirect()->route('branchs.index')
-            ->withSuccess(__('Branch deleted successfully.'));
+        if($branch->delete()){
+            $result = array_merge(
+                ['status' => 'success'],
+                ['data' => $branch->remark],
+                ['message' => 'Delete Successfully'],
+            );    
+        }else{
+            $result = array_merge(
+                ['status' => 'failed'],
+                ['data' => $branch->remark],
+                ['message' => 'Delete failed'],
+            );   
+        }
+        return $result;
     }
 
     public function getpermissions($role_id){

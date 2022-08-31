@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Route;
 use Spatie\Permission\Models\Permission;
 use App\Models\Room;
 use App\Models\Branch;
+use App\Models\Company;
 use Illuminate\Support\Facades\DB;
 use Auth;
 
@@ -46,13 +47,34 @@ class BranchRoomsController extends Controller
         $user = Auth::user();
         $id = $user->roles->first()->id;
         $this->getpermissions($id);
+        $keyword = "";
 
         $rooms = Room::join('branch','branch.id','=','branch_room.branch_id')->paginate(10,['branch_room.id','branch_room.remark','branch_room.branch_id','branch.remark as branch_name']);
         $data = $this->data;
+        $act_permission = $this->act_permission[0];
 
         return view('pages.rooms.index', [
-            'rooms' => $rooms,'data' => $data
+            'rooms' => $rooms,'data' => $data,'company' => Company::get()->first(),'act_permission' => $act_permission, 'keyword' => $keyword,
         ])->with('i', ($request->input('page', 1) - 1) * 5);
+    }
+
+
+    public function search(Request $request) 
+    {
+        $user = Auth::user();
+        $id = $user->roles->first()->id;
+        $this->getpermissions($id);
+
+        $keyword = $request->search;
+        $data = $this->data;
+        $act_permission = $this->act_permission[0];
+
+        if($request->export=='Export Excel'){
+            return Excel::download(new BranchsExport($keyword), 'branchs_'.Carbon::now()->format('YmdHis').'.xlsx');
+        }else{
+            $rooms = Room::join('branch','branch.id','=','branch_room.branch_id')->orderBy('id', 'ASC')->where('branch_room.remark','LIKE','%'.$keyword.'%')->paginate(10,['branch_room.id','branch_room.remark','branch_room.branch_id','branch.remark as branch_name']);
+            return view('pages.rooms.index', ['company' => Company::get()->first(),'act_permission' => $act_permission],compact('rooms','data','keyword'))->with('i', ($request->input('page', 1) - 1) * 5);
+        }
     }
 
     /**
@@ -70,6 +92,7 @@ class BranchRoomsController extends Controller
         return view('pages.rooms.create',[
             'data' => $data,
             'branchs' => Branch::latest()->get(),
+            'company' => Company::get()->first()
         ]);
     }
 
@@ -88,7 +111,7 @@ class BranchRoomsController extends Controller
         Room::create($request->all());
 
         return redirect()->route('rooms.index')
-            ->withSuccess(__('Room created successfully.'));
+            ->withSuccess(__('Room '.$request->remark.' created successfully.'));
     }
 
     /**
@@ -105,7 +128,7 @@ class BranchRoomsController extends Controller
 
         $data = $this->data;
         return view('pages.rooms.edit', [
-            'room' => $room ,'data' => $data ,'branchs' => Branch::latest()->get()
+            'room' => $room ,'data' => $data ,'branchs' => Branch::latest()->get(),'company' => Company::get()->first()
         ]);
     }
 
@@ -136,10 +159,20 @@ class BranchRoomsController extends Controller
      */
     public function destroy(Room $room)
     {
-        $room->delete();
-
-        return redirect()->route('rooms.index')
-            ->withSuccess(__('Room deleted successfully.'));
+        if($room->delete()){
+            $result = array_merge(
+                ['status' => 'success'],
+                ['data' => $room->remark],
+                ['message' => 'Delete Successfully'],
+            );    
+        }else{
+            $result = array_merge(
+                ['status' => 'failed'],
+                ['data' => $room->remark],
+                ['message' => 'Delete failed'],
+            );   
+        }
+        return $result;
     }
 
     public function getpermissions($role_id){

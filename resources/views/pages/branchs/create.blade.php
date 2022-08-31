@@ -4,9 +4,9 @@
 
 @section('content')
     <div class="bg-light p-4 rounded">
-        <h2>Add new Branch</h2>
+        <h2>Create Branch</h2>
         <div class="lead">
-            Add new Branch.
+            Add New Branch.
         </div>
 
         <div class="container mt-4">
@@ -19,7 +19,7 @@
                         type="text" 
                         class="form-control" 
                         name="remark" 
-                        placeholder="Remark" required>
+                        placeholder="Branch Name" required>
 
                     @if ($errors->has('remark'))
                         <span class="text-danger text-left">{{ $errors->first('remark') }}</span>
@@ -44,7 +44,7 @@
                         type="text" 
                         class="form-control" 
                         name="city" 
-                        placeholder="city" required>
+                        placeholder="City" required>
 
                     @if ($errors->has('city'))
                         <span class="text-danger text-left">{{ $errors->first('city') }}</span>
@@ -56,14 +56,14 @@
                         type="text" 
                         class="form-control" 
                         name="abbr" 
-                        placeholder="abbr" required>
+                        placeholder="Abbreviation" required>
 
                     @if ($errors->has('abbr'))
                         <span class="text-danger text-left">{{ $errors->first('abbr') }}</span>
                     @endif
                 </div>
 
-                <button type="submit" class="btn btn-primary">Save branch</button>
+                <button type="submit" class="btn btn-primary">Save Branch</button>
                 <a href="{{ route('branchs.index') }}" class="btn btn-default">Back</a>
             </form>
         </div>

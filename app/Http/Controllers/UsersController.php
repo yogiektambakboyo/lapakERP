@@ -25,6 +25,9 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use File;
 use Auth;
+use App\Models\Company;
+
+
 class UsersController extends Controller
 {
     /**
@@ -62,7 +65,7 @@ class UsersController extends Controller
         $keyword = "";
         $act_permission = $this->act_permission[0];
         $users = User::orderBy('id', 'ASC')->join('job_title as jt','jt.id','=','users.job_id')->where('users.name','!=','Admin')->paginate(10,['users.id','users.employee_id','users.name','jt.remark as job_title','users.join_date' ]);
-        return view('pages.users.index', compact('users','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
+        return view('pages.users.index',['company' => Company::get()->first()] ,compact('users','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
     }
 
     public function search(Request $request) 
@@ -78,7 +81,7 @@ class UsersController extends Controller
             return Excel::download(new UsersExport($keyword), 'users_'.Carbon::now()->format('YmdHis').'.xlsx');
         }else{
             $users = User::orderBy('id', 'ASC')->join('branch as b','b.id','=','users.branch_id')->join('job_title as jt','jt.id','=','users.job_id')->where('users.name','!=','Admin')->where('users.name','LIKE','%'.$keyword.'%')->paginate(10,['users.id','users.employee_id','users.name','jt.remark as job_title','b.remark as branch_name','users.join_date' ]);
-            return view('pages.users.index', compact('users','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
+            return view('pages.users.index', ['company' => Company::get()->first()],compact('users','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
         }
     }
 
@@ -117,7 +120,7 @@ class UsersController extends Controller
             'userDepartements' => Department::latest()->get()->pluck('remark')->toArray(),
             'gender' => $gender,
             'active' => $active,
-            'data' => $data,
+            'data' => $data,'company' => Company::get()->first(),
             'employeestatusx' => ['On Job Training','Permanent','Outsourcing','Contract','Probation'],
             'usersReferrals' => $usersReferral,
         ]);
@@ -363,7 +366,7 @@ class UsersController extends Controller
             'userSkills' => $user_skill,
             'userExperiences' => UserExperience::get(),
             'employeestatusx' => ['On Job Training','Permanent','Outsourcing','Contract','Probation'],
-            'usersReferrals' => $usersReferral,
+            'usersReferrals' => $usersReferral,'company' => Company::get()->first(),
             'usersMutations' => UserMutation::join('job_title as j','j.id','=','users_mutation.job_id')->join('departments as d','d.id','=','users_mutation.department_id')->join('branch as b','b.id','=','users_mutation.branch_id')->where('users_mutation.user_id',$user->id)->orderBy('users_mutation.created_at','ASC')->get(['users_mutation.*','j.remark as job_name','b.remark as branch_name','d.remark as department_name']),
         ],compact('data'));
     }
@@ -402,7 +405,7 @@ class UsersController extends Controller
             'userBranchs' => Branch::join('users_branch as ub','ub.branch_id','=','branch.id')->where('ub.user_id','=',$user->id)->get()->pluck('remark')->toArray(),
             'departments' => Department::latest()->get(),
             'userDepartements' => Department::latest()->get()->pluck('remark')->toArray(),
-            'jobTitles' => JobTitle::latest()->get(),
+            'jobTitles' => JobTitle::latest()->get(),'company' => Company::get()->first(),
             'userJobTitles' => JobTitle::latest()->get()->pluck('remark')->toArray(),
             'gender' => $gender,
             'active' => $active,

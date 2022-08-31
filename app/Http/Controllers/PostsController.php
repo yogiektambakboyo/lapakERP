@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Post;
 use Illuminate\Http\Request;
+use App\Models\Company;
 
 class PostsController extends Controller
 {
@@ -16,7 +17,7 @@ class PostsController extends Controller
     {
         $posts = Post::latest()->paginate(10);
 
-        return view('pages.posts.index', compact('posts'));
+        return view('pages.posts.index', ['company' => Company::get()->first()],compact('posts'));
     }
 
     /**
@@ -26,7 +27,7 @@ class PostsController extends Controller
      */
     public function create()
     {
-        return view('pages.posts.create');
+        return view('pages.posts.create',['company' => Company::get()->first()]);
     }
 
     /**
@@ -54,7 +55,7 @@ class PostsController extends Controller
     public function show(Post $post)
     {
         return view('pages.posts.show', [
-            'post' => $post
+            'post' => $post, 'company' => Company::get()->first()
         ]);
     }
 
@@ -67,7 +68,7 @@ class PostsController extends Controller
     public function edit(Post $post)
     {
         return view('pages.posts.edit', [
-            'post' => $post
+            'post' => $post, 'company' => Company::get()->first()
         ]);
     }
 

@@ -24,6 +24,8 @@ use App\Http\Controllers\Controller;
 use Yajra\Datatables\Datatables;
 use Auth;
 use Illuminate\Support\Facades\DB;
+use App\Models\Company;
+
 
 
 class ProductsCommisionByYearController extends Controller
@@ -66,7 +68,7 @@ class ProductsCommisionByYearController extends Controller
                     ->join('branch as bc','bc.id','=','pr.branch_id')
                     ->join('job_title as jt','jt.id','=','pr.jobs_id')
                     ->paginate(10,['jt.remark as job_title','years', 'values', 'pr.jobs_id','product_sku.id','product_sku.remark as product_name','pr.branch_id','bc.remark as branch_name']);
-        return view('pages.productscommisionbyyear.index', compact('data','keyword','act_permission','products'))->with('i', ($request->input('page', 1) - 1) * 5);
+        return view('pages.productscommisionbyyear.index', ['company' => Company::get()->first()],compact('data','keyword','act_permission','products'))->with('i', ($request->input('page', 1) - 1) * 5);
     }
 
     public function search(Request $request) 
@@ -89,7 +91,7 @@ class ProductsCommisionByYearController extends Controller
                         ->join('job_title as jt','jt.id','=','pr.jobs_id')
                         ->whereRaw($whereclause)
                         ->paginate(10,['jt.remark as job_title','years', 'values', 'pr.jobs_id','product_sku.id','product_sku.remark as product_name','pr.branch_id','bc.remark as branch_name']);       
-            return view('pages.productscommisionbyyear.index', compact('products','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
+            return view('pages.productscommisionbyyear.index', ['company' => Company::get()->first()],compact('products','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
         }
     }
 
@@ -118,7 +120,7 @@ class ProductsCommisionByYearController extends Controller
             'products' => DB::select('select ps.id,ps.remark from product_sku as ps;'),
             'data' => $data,
             'jobs' => $jobs,
-            'years' => $years,
+            'years' => $years, 'company' => Company::get()->first(),
             'branchs' => Branch::join('users_branch as ub','ub.branch_id','=','branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']),
         ]);
     }
@@ -174,7 +176,7 @@ class ProductsCommisionByYearController extends Controller
 
         return view('pages.productscommisionbyyear.show', [
             'product' => $products ,
-            'data' => $data,
+            'data' => $data, 'company' => Company::get()->first(),
         ]);
     }
 
@@ -207,7 +209,7 @@ class ProductsCommisionByYearController extends Controller
             'years' => $years,
             'jobs' => JobTitle::get(['id','remark']),
             'product' => $product,
-            'products' => Product::get(),
+            'products' => Product::get(), 'company' => Company::get()->first(),
         ]);
     }
 

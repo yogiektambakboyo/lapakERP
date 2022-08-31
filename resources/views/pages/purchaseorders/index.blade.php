@@ -171,45 +171,45 @@
             cancelButtonColor: '#d33',
             confirmButtonText: 'Yes, delete it!'
             }).then((result) => {
-            if (result.isConfirmed) {
-                var url = "{{ route('purchaseorders.destroy','XX') }}";
-                var lastvalurl = "XX";
-                console.log(url);
-                url = url.replace(lastvalurl, id)
-                const res = axios.delete(url, {}, {
-                    headers: {
-                        // Overwrite Axios's automatically set Content-Type
-                        'Content-Type': 'application/json'
-                    }
-                    }).then(resp => {
-                        if(resp.data.status=="success"){
-                            Swal.fire({
-                                title: 'Deleted!',
-                                text: 'Your data has been deleted.',
-                                icon: 'success',
-                                showCancelButton: false,
-                                confirmButtonColor: '#3085d6',
-                                cancelButtonColor: '#d33',
-                                confirmButtonText: 'Close'
-                                }).then((result) => {
-                                    window.location.href = "{{ route('purchaseorders.index') }}"; 
-                                })
-                        }else{
-                            Swal.fire(
-                            {
-                                position: 'top-end',
-                                icon: 'warning',
-                                text: 'Something went wrong - '+resp.data.message,
-                                showConfirmButton: false,
-                                imageHeight: 30, 
-                                imageWidth: 30,   
-                                timer: 1500
-                            }
-                            );
+                if (result.isConfirmed) {
+                    var url = "{{ route('purchaseorders.destroy','XX') }}";
+                    var lastvalurl = "XX";
+                    console.log(url);
+                    url = url.replace(lastvalurl, id)
+                    const res = axios.delete(url, {}, {
+                        headers: {
+                            // Overwrite Axios's automatically set Content-Type
+                            'Content-Type': 'application/json'
                         }
-                    });
-            }
-            })
+                        }).then(
+                            resp => {
+                                if(resp.data.status=="success"){
+                                    Swal.fire({
+                                        title: 'Deleted!',
+                                        text: 'Your data has been deleted.',
+                                        icon: 'success',
+                                        showCancelButton: false,
+                                        confirmButtonColor: '#3085d6',
+                                        cancelButtonColor: '#d33',
+                                        confirmButtonText: 'Close'
+                                        }).then((result) => {
+                                            window.location.href = "{{ route('purchaseorders.index') }}"; 
+                                        })
+                                }else{
+                                    Swal.fire(
+                                    {
+                                        position: 'top-end',
+                                        icon: 'warning',
+                                        text: 'Something went wrong - '+resp.data.message,
+                                        showConfirmButton: false,
+                                        imageHeight: 30, 
+                                        imageWidth: 30,   
+                                        timer: 1500
+                                    });
+                            }
+                        });
+                    }
+                })
         }
     </script>
 @endpush

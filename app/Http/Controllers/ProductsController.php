@@ -22,6 +22,8 @@ use App\Http\Controllers\Controller;
 use Yajra\Datatables\Datatables;
 use Auth;
 use Illuminate\Support\Facades\DB;
+use App\Models\Company;
+
 
 
 class ProductsController extends Controller
@@ -64,7 +66,7 @@ class ProductsController extends Controller
                     ->join('product_category as pc','pc.id','=','product_sku.category_id')
                     ->join('product_brand as pb','pb.id','=','product_sku.brand_id')
                     ->paginate(10,['product_sku.id','product_sku.remark as product_name','pt.remark as product_type','pc.remark as product_category','pb.remark as product_brand']);
-        return view('pages.products.index', compact('products','data','keyword'))->with('i', ($request->input('page', 1) - 1) * 5);
+        return view('pages.products.index', ['company' => Company::get()->first()],compact('products','data','keyword'))->with('i', ($request->input('page', 1) - 1) * 5);
     }
 
     public function search(Request $request) 
@@ -87,7 +89,7 @@ class ProductsController extends Controller
                         ->join('product_brand as pb','pb.id','=','product_sku.brand_id')
                         ->whereRaw($whereclause)
                         ->paginate(10,['product_sku.id','product_sku.remark as product_name','pt.remark as product_type','pc.remark as product_category','pb.remark as product_brand']);            
-            return view('pages.products.index', compact('products','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
+            return view('pages.products.index',['company' => Company::get()->first()], compact('products','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
         }
     }
 
@@ -116,7 +118,7 @@ class ProductsController extends Controller
             'productBrandsRemark' => ProductBrand::latest()->get()->pluck('remark')->toArray(),
             'productTypes' => ProductType::latest()->get(),
             'productTypesRemark' => ProductType::latest()->get()->pluck('remark')->toArray(),
-            'data' => $data,
+            'data' => $data, 'company' => Company::get()->first(),
         ]);
     }
 
@@ -171,7 +173,7 @@ class ProductsController extends Controller
 
         return view('pages.products.show', [
             'product' => $products ,
-            'data' => $data,
+            'data' => $data, 'company' => Company::get()->first(),
         ]);
     }
 
@@ -202,7 +204,7 @@ class ProductsController extends Controller
             'productTypes' => ProductType::latest()->get(),
             'productTypesRemark' => ProductType::latest()->get()->pluck('remark')->toArray(),
             'data' => $data,
-            'product' => $products,
+            'product' => $products, 'company' => Company::get()->first(),
         ]);
     }
 

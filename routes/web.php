@@ -335,6 +335,8 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
             Route::get('/{room}/edit', 'BranchRoomsController@edit')->name('rooms.edit');
             Route::patch('/{room}/update', 'BranchRoomsController@update')->name('rooms.update');
             Route::delete('/{room}/delete', 'BranchRoomsController@destroy')->name('rooms.destroy');
+            Route::get('/export', 'BranchRoomsController@export')->name('rooms.export');
+            Route::get('/search', 'BranchRoomsController@search')->name('rooms.search');
         });
 
 

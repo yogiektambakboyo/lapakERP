@@ -166,135 +166,6 @@
                 <h1 class="display-5 text-end"><label id="order-total">Rp. 0</label></h1>
               </div>
             </div>
-
-            <div class="modal fade" id="modal-filter" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-              <div class="modal-dialog">
-              <div class="modal-content">
-                  <div class="modal-header">
-                  <h5 class="modal-title" id="staticBackdropLabel">Assign Task</h5>
-                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                  </div>
-                  <div class="modal-body">
-                    <label class="form-label col-form-label col-md-8" id="product_id_selected_lbl">Choose Terapist </label>
-                    <input type="hidden" id="product_id_selected" value="">
-                    <div class="col-md-8">
-                      <select class="form-control" 
-                          name="assign_id" id="assign_id" required>
-                          <option value="">Select Staff</option>
-                      </select>
-                    </div>
-                  </div>
-                  <div class="modal-footer">
-                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                  <button type="button" class="btn btn-primary"  data-bs-dismiss="modal" id="btn_assigned">Apply</button>
-                  </div>
-              </div>
-              </div>
-            </div>
-
-            <div class="modal fade" id="modal-referral" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-              <div class="modal-dialog">
-              <div class="modal-content">
-                  <div class="modal-header">
-                  <h5 class="modal-title" id="staticBackdropLabel">Referral By</h5>
-                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                  </div>
-                  <div class="modal-body">
-                    <label class="form-label col-form-label col-md-8" id="referral_selected_lbl">Choose User </label>
-                    <input type="hidden" id="referral_selected" value="">
-                    <div class="col-md-8">
-                      <select class="form-control" 
-                          name="referral_by" id="referral_by">
-                          <option value="">Select Staff</option>
-                          @foreach($usersall as $userall)
-                              <option value="{{ $userall->id }}">{{ $userall->name }}</option>
-                          @endforeach
-                      </select>
-                    </div>
-                  </div>
-                  <div class="modal-footer">
-                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                  <button type="button" class="btn btn-primary"  data-bs-dismiss="modal" id="btn_referred">Apply</button>
-                  </div>
-              </div>
-              </div>
-            </div>
-
-            <div class="modal fade" id="modal-scheduled" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-              <div class="modal-dialog modal-lg">
-              <div class="modal-content">
-                  <div class="modal-header">
-                  <h5 class="modal-title" id="staticBackdropLabel">Choose Schedule</h5>
-                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                  </div>
-                  <div class="modal-body">
-
-                    <div class="row mb-3">
-                      <div class="col-md-1">
-                        <label class="form-label col-form-label col-md-8">Room </label>
-                      </div>
-                      <div class="col-md-2">
-                          <select class="form-control" 
-                              name="room_id" id="room_id" required>
-                              <option value="">Select Rooms</option>
-                              @foreach($rooms as $room)
-                                  <option value="{{ $room->id }}">{{ $room->remark }}</option>
-                              @endforeach
-                          </select>
-                      </div>
-                      <div class="col-md-1">
-                        <label class="form-label col-form-label col-md-4">Date</label>
-                      </div>
-                      <div class="col-md-2">
-                        <input type="text" 
-                        name="schedule_date"
-                        id="schedule_date"
-                        class="form-control" 
-                        value="{{ old('invoice_date') }}" required/>
-                        @if ($errors->has('invoice_date'))
-                                  <span class="text-danger text-left">{{ $errors->first('join_date') }}</span>
-                              @endif
-                      </div>
-                      <div class="col-md-1">
-                        <label class="form-label col-form-label col-md-8">Time </label>
-                      </div>
-                      <div class="col-md-2">
-                        <div class="input-group bootstrap-timepicker timepicker">
-                            <input id="timepicker1" type="text" class="form-control input-small">
-                            <span class="btn btn-indigo input-group-addon"><i class="fas fa-clock"></i></span>
-                        </div>    
-                      </div>
-                    </div>
-                   
-                    <div class="panel-heading bg-teal-600 text-white"><strong>Time Table</strong></div>
-                    </br>
-      
-                    <div class="col-md-12">
-                      <table class="table table-striped" id="order_time_table" style="width:100%">
-                        <thead>
-                        <tr>
-                            <th>Room</th>
-                            <th scope="col" width="25%">Order No</th>
-                            <th scope="col" width="15%">Customer</th>
-                            <th scope="col" width="15%">Schedule At</th>
-                            <th scope="col" width="5%">Duration</th>  
-                            <th scope="col" width="15%">End Estimate</th>   
-                        </tr>
-                        </thead>
-                        <tbody>
-                        </tbody>
-                      </table> 
-                    </div>
-                  </div>
-                  <div class="modal-footer">
-                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                  <button type="button" class="btn btn-primary"  data-bs-dismiss="modal" id="btn_scheduled">Apply</button>
-                  </div>
-              </div>
-              </div>
-            </div>
-
-
           </div>
 
           <div class="col-md-12">
@@ -497,7 +368,7 @@
                 timer: 1500
               }
             );
-          }else if(order_total<=0){
+          }else if(order_total<=0&&disc_total<=0){
             Swal.fire(
               {
                 position: 'top-end',

@@ -10,6 +10,8 @@ use App\Models\Uom;
 use App\Models\Branch;
 use Illuminate\Support\Facades\DB;
 use Auth;
+use App\Models\Company;
+
 
 
 class UomController extends Controller
@@ -48,7 +50,7 @@ class UomController extends Controller
         $data = $this->data;
 
         return view('pages.uoms.index', [
-            'uoms' => $uoms,'data' => $data
+            'uoms' => $uoms,'data' => $data,'company' => Company::get()->first()
         ])->with('i', ($request->input('page', 1) - 1) * 5);
     }
 
@@ -65,7 +67,7 @@ class UomController extends Controller
 
         $data = $this->data;
         return view('pages.uoms.create',[
-            'data' => $data,
+            'data' => $data,'company' => Company::get()->first()
         ]);
     }
 
@@ -101,7 +103,7 @@ class UomController extends Controller
 
         $data = $this->data;
         return view('pages.uoms.edit', [
-            'uom' => $uom ,'data' => $data 
+            'uom' => $uom ,'data' => $data ,'company' => Company::get()->first()
         ]);
     }
 

@@ -23,6 +23,8 @@ use App\Http\Controllers\Controller;
 use Yajra\Datatables\Datatables;
 use Auth;
 use Illuminate\Support\Facades\DB;
+use App\Models\Company;
+
 
 
 class ProductsPriceController extends Controller
@@ -68,7 +70,7 @@ class ProductsPriceController extends Controller
                     ->join('product_price as pr','pr.product_id','=','product_sku.id')
                     ->join('branch as bc','bc.id','=','pr.branch_id')
                     ->paginate(10,['product_sku.id','product_sku.remark as product_name','pr.branch_id','bc.remark as branch_name','pr.price as product_price','pb.remark as product_brand']);
-        return view('pages.productsprice.index', compact('products','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
+        return view('pages.productsprice.index',['company' => Company::get()->first()] ,compact('products','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
     }
 
     public function search(Request $request) 
@@ -93,7 +95,7 @@ class ProductsPriceController extends Controller
                         ->join('branch as bc','bc.id','=','pr.branch_id')
                         ->whereRaw($whereclause)
                         ->paginate(10,['product_sku.id','product_sku.remark as product_name','pr.branch_id','bc.remark as branch_name','pr.price as product_price','pb.remark as product_brand']);           
-            return view('pages.productsprice.index', compact('products','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
+            return view('pages.productsprice.index',['company' => Company::get()->first()], compact('products','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
         }
     }
 
@@ -118,7 +120,7 @@ class ProductsPriceController extends Controller
         $data = $this->data;
         return view('pages.productsprice.create',[
             'products' => DB::select('select ps.id,ps.remark from product_sku as ps;'),
-            'data' => $data,
+            'data' => $data, 'company' => Company::get()->first(),
             'branchs' => Branch::join('users_branch as ub','ub.branch_id','=','branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']),
         ]);
     }
@@ -172,7 +174,7 @@ class ProductsPriceController extends Controller
 
         return view('pages.productsprice.show', [
             'product' => $products ,
-            'data' => $data,
+            'data' => $data, 'company' => Company::get()->first(),
         ]);
     }
 
@@ -208,7 +210,7 @@ class ProductsPriceController extends Controller
             'productTypesRemark' => ProductType::latest()->get()->pluck('remark')->toArray(),
             'branchs' => Branch::join('users_branch as ub','ub.branch_id','=','branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']),
             'data' => $data,
-            'product' => $product,
+            'product' => $product, 'company' => Company::get()->first(),
             'products' => Product::get(),
         ]);
     }
