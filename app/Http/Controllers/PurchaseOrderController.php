@@ -220,7 +220,7 @@ class PurchaseOrderController extends Controller
             $result = array_merge(
                 ['status' => 'failed'],
                 ['data' => ''],
-                ['message' => 'Save invoice failed'],
+                ['message' => 'Save purchase failed'],
             );
     
             return $result;
@@ -250,7 +250,7 @@ class PurchaseOrderController extends Controller
                 $result = array_merge(
                     ['status' => 'failed'],
                     ['data' => ''],
-                    ['message' => 'Save invoice detail failed'],
+                    ['message' => 'Save purchase detail failed'],
                 );
         
                 return $result;
@@ -373,7 +373,7 @@ class PurchaseOrderController extends Controller
     {
         $data = $this->data;
         $user = Auth::user();
-        $product = DB::select(" select od.qty,od.product_id,od.discount,od.price,od.subtotal_vat,od.subtotal,ps.remark,ps.abbr,um.remark as uom,om.dated,om.supplier_id,om.branch_id,om.remark as d_remark
+        $product = DB::select(" select od.vat,od.qty,od.product_id,od.discount,od.price,od.subtotal_vat,od.subtotal,ps.remark,ps.abbr,um.remark as uom,om.dated,om.supplier_id,om.branch_id,om.remark as d_remark
         from purchase_detail od 
         join purchase_master om on om.purchase_no = od.purchase_no
         join product_sku ps on ps.id=od.product_id
@@ -411,9 +411,13 @@ class PurchaseOrderController extends Controller
                 ['updated_by'   => $user->id],
                 ['dated' => Carbon::parse($request->get('dated'))->format('d/m/Y') ],
                 ['supplier_id' => $request->get('supplier_id') ],
+                ['supplier_name' => $request->get('supplier_name') ],
                 ['total' => $request->get('total_order') ],
+                ['total_vat' => $request->get('total_vat') ],
                 ['remark' => $request->get('remark') ],
-                ['branch_id' => $request->get('branch_id')]
+                ['branch_id' => $request->get('branch_id')],
+                ['total_discount' => $request->get('total_discount') ],
+                ['branch_name' => $request->get('branch_name')],
             )
         );
 
@@ -435,7 +439,13 @@ class PurchaseOrderController extends Controller
                     ['product_id' => $request->get('product')[$i]["id"]],
                     ['qty' => $request->get('product')[$i]["qty"]],
                     ['price' => $request->get('product')[$i]["price"]],
-                    ['total' => $request->get('product')[$i]["total"]],
+                    ['subtotal' => $request->get('product')[$i]["total"]],
+                    ['subtotal_vat' => floatval($request->get('product')[$i]["total"])*(1+(floatval($request->get('product')[$i]["vat_total"])/100))],
+                    ['vat' => $request->get('product')[$i]["vat_total"]],
+                    ['discount' => $request->get('product')[$i]["disc"]],
+                    ['vat_total' => (floatval($request->get('product')[$i]["vat_total"])*floatval($request->get('product')[$i]["total"]))/100],
+                    ['product_remark' => $request->get('product')[$i]["abbr"]],
+                    ['uom' => $request->get('product')[$i]["uom"]],
                     ['seq' => $i ],
                 )
             );

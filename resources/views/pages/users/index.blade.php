@@ -36,7 +36,7 @@
                 <th scope="col" width="5%">Employee ID</th>
                 <th scope="col" width="15%">Job Title</th>
                 <th scope="col" width="5%">App Access</th>
-                <th scope="col" width="6%">Join Date</th>
+                <th scope="col" width="7%">Join Date</th>
                 <th scope="col" width="2%">Action</th>   
                 <th scope="col" width="2%"></th>
                 <th scope="col" width="2%"></th>    

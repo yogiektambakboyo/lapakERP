@@ -312,6 +312,15 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
         });
 
         /**
+         *  Company
+         */
+        Route::group(['prefix' => 'company'], function() {
+            Route::get('/', 'CompanyController@index')->name('company.index');
+            Route::get('/{company}/edit', 'CompanyController@edit')->name('company.edit');
+            Route::patch('/{company}/update', 'CompanyController@update')->name('company.update');
+        });
+
+        /**
          *  Departement
          */
         Route::group(['prefix' => 'departments'], function() {

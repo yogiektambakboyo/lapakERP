@@ -7,7 +7,7 @@
   @csrf
   <div class="panel text-white">
     <div class="panel-heading  bg-teal-600">
-      <div class="panel-title"><h4 class="">Purchase Order</h4></div>
+      <div class="panel-title"><h4 class="">New Purchase Order</h4></div>
       <div class="">
         <a href="{{ route('purchaseorders.index') }}" class="btn btn-default">Cancel</a>
         <button type="button" id="save-btn" class="btn btn-info">Save</button>
@@ -135,7 +135,7 @@
             <table class="table table-striped" id="order_table">
               <thead>
               <tr>
-                  <th>Product Code</th>
+                  <th>Product Name</th>
                   <th scope="col" width="10%">UOM</th>
                   <th scope="col" width="10%">Price</th>
                   <th scope="col" width="5%">Qty</th>
@@ -517,7 +517,7 @@
               if($(this).attr("id")=="add_row"){
                 if(data["id"]==obj["id"]){
                   orderList[i]["total"] = ((parseInt(orderList[i]["qty"])+1)*parseFloat(orderList[i]["price"]))-(parseFloat(orderList[i]["disc"])); 
-                  orderList[i]["total_vat"] = (((parseInt(orderList[i]["qty"])+1)*parseFloat(orderList[i]["price"]))-(parseFloat(orderList[i]["disc"])+disc))*(1+(parseFloat(orderList[i]["vat_total"])/100)); 
+                  orderList[i]["total_vat"] = (((parseInt(orderList[i]["qty"])+1)*parseFloat(orderList[i]["price"]))-(parseFloat(orderList[i]["disc"])))*(1+(parseFloat(orderList[i]["vat_total"])/100)); 
                   orderList[i]["qty"] = parseInt(orderList[i]["qty"])+1;
                 }
               }
@@ -525,7 +525,7 @@
               if($(this).attr("id")=="minus_row"){
                 if(data["id"]==obj["id"]&&parseInt(orderList[i]["qty"])>1){
                   orderList[i]["total"] = ((parseInt(orderList[i]["qty"])-1)*parseFloat(orderList[i]["price"]))-(parseFloat(orderList[i]["disc"])); 
-                  orderList[i]["total_vat"] = (((parseInt(orderList[i]["qty"])-1)*parseFloat(orderList[i]["price"]))-(parseFloat(orderList[i]["disc"])+disc))*(1+(parseFloat(orderList[i]["vat_total"])/100)); 
+                  orderList[i]["total_vat"] = (((parseInt(orderList[i]["qty"])-1)*parseFloat(orderList[i]["price"]))-(parseFloat(orderList[i]["disc"])))*(1+(parseFloat(orderList[i]["vat_total"])/100)); 
                  orderList[i]["qty"] = parseInt(orderList[i]["qty"])-1;
                 } else if(data["id"]==obj["id"]&&parseInt(orderList[i]["qty"])==1) {
                   orderList.splice(i,1);

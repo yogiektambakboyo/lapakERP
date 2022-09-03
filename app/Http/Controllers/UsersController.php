@@ -51,8 +51,6 @@ class UsersController extends Controller
                 select 0 as allow_create,0 as allow_delete,0 as allow_show,count(1) as allow_edit from permissions p  join role_has_permissions rp on rp.permission_id = p.id where rp.role_id = 1 and p.name like '%.edit' and p.name like '".$this->module.".%'
             ) a
         ");
-
-
     }
 
     public function index(Request $request) 
@@ -161,8 +159,6 @@ class UsersController extends Controller
         );
 
         $my_id = User::orderBy('id', 'desc')->first()->id;
-
-
 
         if($request->file('photo_netizen_id') == null){
 
@@ -387,7 +383,6 @@ class UsersController extends Controller
         $data = $this->data;
         $gender = ['Male','Female'];
         $active = [1,0];
-        //$users = User::join('branch as b','b.id','=','users.branch_id')->join('department as dt','dt.id','=','users.department_id')->join('job_title as jt','jt.id','=','users.job_id')->where('users.name','!=','Admin')->where('users.id','=',$user->id)->get(['dt.remark as department','users.id','users.employee_id','users.name','jt.remark as job_title','b.remark as branch_name','users.join_date as join_date',"users.phone_no","users.email","users.username","users.address","users.netizen_id","users.photo_netizen_id","users.photo","users.join_years","users.active","users.referral_id","users.city","users.gender","users.birth_place","users.birth_date" ])->first();
         $users = DB::select("select u.employee_status,dt.remark as department,u.id,u.employee_id,u.name,jt.remark as job_title,string_agg(b.id::character varying,',') as branch_name,u.join_date,u.phone_no,u.email,u.username,u.address,u.netizen_id,u.photo_netizen_id,u.photo,u.join_years,u.active,u.referral_id,u.city,u.gender,u.birth_place,u.birth_date 
                              from users u 
                              join users_branch ub on ub.user_id=u.id

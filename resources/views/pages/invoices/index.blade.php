@@ -7,7 +7,7 @@
         <h1>Sales Invoices</h1>
         <div class="lead row mb-3">
             <div class="col-md-10">
-                <div class="col-md-2">
+                <div class="col-md-6">
                     Manage your invoices here.
                 </div>
                 <div class="col-md-10"> 	

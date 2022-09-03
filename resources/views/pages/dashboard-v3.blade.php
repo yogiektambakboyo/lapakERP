@@ -1,30 +1,45 @@
-@extends('layouts.default', ['appSidebarSearch' => true])
+@extends('layouts.default')
 
-@section('title', 'Home')
+@section('title', 'Dashboard V3')
 
-@push('scripts')
-	<script src="/assets/js/render.highlight.js"></script>
+@push('css')
+	<link href="/assets/plugins/jvectormap-next/jquery-jvectormap.css" rel="stylesheet" />
+	<link href="/assets/plugins/nvd3/build/nv.d3.css" rel="stylesheet" />
+	<link href="/assets/plugins/bootstrap-daterangepicker/daterangepicker.css" rel="stylesheet" />
 @endpush
 
-@if(!auth()->check())
-	<script>window.location = "/login";</script>
-@endif
+@push('scripts')
+	<script src="/assets/plugins/d3/d3.min.js"></script>
+	<script src="/assets/plugins/nvd3/build/nv.d3.js"></script>
+	<script src="/assets/plugins/jvectormap-next/jquery-jvectormap.min.js"></script>
+	<script src="/assets/plugins/jvectormap-next/jquery-jvectormap-world-mill.js"></script>
+	<script src="/assets/plugins/apexcharts/dist/apexcharts.min.js"></script>
+	<script src="/assets/plugins/moment/moment.js"></script>
+	<script src="/assets/plugins/bootstrap-daterangepicker/daterangepicker.js"></script>
+	<script src="/assets/js/demo/dashboard-v3.js"></script>
+@endpush
 
 @section('content')
+	<!-- BEGIN breadcrumb -->
+	<ol class="breadcrumb float-xl-end">
+		<li class="breadcrumb-item"><a href="javascript:;">Home</a></li>
+		<li class="breadcrumb-item"><a href="javascript:;">Dashboard</a></li>
+		<li class="breadcrumb-item active">Dashboard v3</li>
+	</ol>
+	<!-- END breadcrumb -->
 	<!-- BEGIN page-header -->
-	<h1 class="page-header">Welcome, @auth
-		{{auth()->user()->name}} 
-	@endauth </h1>
+	<h1 class="page-header mb-3">Dashboard v3</h1>
 	<!-- END page-header -->
 	<!-- BEGIN daterange-filter -->
 	<div class="d-sm-flex align-items-center mb-3">
-		<div class="input-group" id="default-daterange">
-			<input type="text" name="default-daterange" class="form-control" value="" placeholder="Click to select the date range" />
-			<div class="input-group-text"><i class="fa fa-calendar"></i></div>
-		</div>
+		<a href="#" class="btn btn-dark me-2 text-truncate" id="daterange-filter">
+			<i class="fa fa-calendar fa-fw text-white-transparent-5 ms-n1"></i> 
+			<span>1 Jun 2021 - 7 Jun 2021</span>
+			<b class="caret ms-1 opacity-5"></b>
+		</a>
+		<div class="text-muted fw-bold mt-2 mt-sm-0">compared to <span id="daterange-prev-date">24 Mar-30 Apr 2021</span></div>
 	</div>
 	<!-- END daterange-filter -->
-	
 	<!-- BEGIN row -->
 	<div class="row">
 		<!-- BEGIN col-6 -->
@@ -238,7 +253,6 @@
 		<!-- END col-6 -->
 	</div>
 	<!-- END row -->
-
 	<!-- BEGIN row -->
 	<div class="row">
 		<!-- BEGIN col-8 -->
@@ -597,19 +611,3 @@
 	</div>
 	<!-- END row -->
 @endsection
-
-@push('scripts')
-<script>
-	$("#default-daterange").daterangepicker({
-	  opens: "right",
-	  format: "MM/DD/YYYY",
-	  separator: " to ",
-	  startDate: moment().subtract("days", 29),
-	  endDate: moment(),
-	  minDate: "01/01/2021",
-	  maxDate: "12/31/2021",
-	}, function (start, end) {
-	  $("#default-daterange input").val(start.format("MMMM D, YYYY") + " - " + end.format("MMMM D, YYYY"));
-	});
-  </script>
-@endpush

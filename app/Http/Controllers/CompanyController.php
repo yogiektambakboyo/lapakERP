@@ -2,24 +2,28 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Spatie\Permission\Models\Permission;
-use App\Models\Department;
+use App\Models\Branch;
+use App\Exports\BranchsExport;
 use Illuminate\Support\Facades\DB;
-use Auth;
+use Maatwebsite\Excel\Facades\Excel;
 use App\Models\Company;
+use Auth;
+use Illuminate\Support\Facades\Storage;
+use File;
 
 
-
-class DepartmentsController extends Controller
+class CompanyController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    private $data,$act_permission,$module="departments",$id=1;
+    private $data,$act_permission,$module="company",$id=1;
 
     public function __construct()
     {
@@ -34,8 +38,6 @@ class DepartmentsController extends Controller
                 select 0 as allow_create,0 as allow_delete,0 as allow_show,count(1) as allow_edit from permissions p  join role_has_permissions rp on rp.permission_id = p.id where rp.role_id = 1 and p.name like '%.edit' and p.name like '".$this->module.".%'
             ) a
         ");
-
-        
     }
 
 
@@ -45,64 +47,47 @@ class DepartmentsController extends Controller
         $id = $user->roles->first()->id;
         $this->getpermissions($id);
 
-        $Departments = Department::orderBy('remark','asc')->get();
         $data = $this->data;
+        $keyword = "";
         $act_permission = $this->act_permission[0];
-
-        return view('pages.departments.index
-    ', [
-            'departments' => $Departments,'data' => $data, 'company' => Company::get()->first(),'act_permission' => $act_permission
+        return view('pages.company.show', [
+            'data' => $data , 'keyword' => $keyword,'company' => Company::get()->first() ,'act_permission' => $act_permission
         ]);
-    }
-
-    /**
-     * Show form for creating Department
-     * 
-     * @return \Illuminate\Http\Response
-     */
-    public function create() 
-    {   
-        $user = Auth::user();
-        $id = $user->roles->first()->id;
-        $this->getpermissions($id);
-
-        $data = $this->data;
-        return view('pages.departments.create',['data'=>$data , 'company' => Company::get()->first()]);
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {   
-        $request->validate([
-            'remark' => 'required|unique:departments'
-        ]);
-
-        Department::create($request->only('remark'));
-
-        return redirect()->route('departments.index')
-            ->withSuccess(__('Department created successfully.'));
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  Department  $Department
+     * @param  Company  $company
      * @return \Illuminate\Http\Response
      */
-    public function edit(Department $Department)
+    public function edit(Company $company)
     {
         $user = Auth::user();
         $id = $user->roles->first()->id;
         $this->getpermissions($id);
 
         $data = $this->data;
-        return view('pages.departments.edit', [
-            'department' => $Department ,'data' => $data, 'company' => Company::get()->first()
+        return view('pages.company.edit', [
+            'data' => $data, 'company' => $company
+        ]);
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  Company  $company
+     * @return \Illuminate\Http\Response
+     */
+    public function show(Company $company)
+    {
+        $user = Auth::user();
+        $id = $user->roles->first()->id;
+        $this->getpermissions($id);
+
+        $data = $this->data;
+        return view('pages.company.show', [
+            'data' => $data, 'company' => $company
         ]);
     }
 
@@ -110,42 +95,48 @@ class DepartmentsController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  Department  $Department
+     * @param  Company  $company
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Department $department)
+    public function update(Request $request, Company $company)
     {
-        Department::where('id', $department->id)
-        ->update(['remark' => $request->get('remark')]);
+        $request->validate([
+            'remark' => 'required|unique:company,remark,'.$company->id
+        ]);
 
-        return redirect()->route('departments.index')
-            ->withSuccess(__('Department updated successfully.'));
-    }
+        $company->update([
+            "remark" => $request->get('remark'),
+            "address" => $request->get('address'),
+            "city" => $request->get('city'),
+            "email" => $request->get('email'),
+            "phone_no" => $request->get('phone_no'),
+        ]);
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Post  $post
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Department $Department)
-    {
         
-        if($Department->delete()){
-            $result = array_merge(
-                ['status' => 'success'],
-                ['data' => $Department->remark],
-                ['message' => 'Delete Successfully'],
-            );    
+
+        if($request->file('icon_file') == null){
+
         }else{
-            $result = array_merge(
-                ['status' => 'failed'],
-                ['data' => $Department->remark],
-                ['message' => 'Delete failed'],
-            );   
+            $file = $request->file('icon_file');
+            $img_file = $file->getClientOriginalName();
+            $final_fileimg = md5($img_file).'.'.$file->getClientOriginalExtension();
+            // upload file
+            $folder_upload = 'images/user-files';
+            $file->move($folder_upload,$img_file);
+
+            $destination = '/images/user-files/'.$img_file;//or any extension such as jpeg,png
+            $newdestination =  '/images/user-files/'.$final_fileimg;
+            File::move(public_path($destination), public_path($newdestination));
+
+            $company->update(array_merge(
+                    ['icon_file' => $final_fileimg],
+            ));
         }
-        return $result;
+
+        return redirect()->route('company.index')
+            ->withSuccess(__('Company updated successfully.'));
     }
+
 
     public function getpermissions($role_id){
         $id = $role_id;
