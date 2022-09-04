@@ -11,7 +11,7 @@
                 </div>
             </div>
             <div class="col-md-2">
-                <a href="{{ route('roles.create') }}" class="btn btn-primary btn-sm float-right">Add role</a>
+                <a href="{{ route('roles.create') }}" class="btn btn-primary btn-sm float-right"><span class="fa fa-plus-circle"></span>  Add role</a>
             </div>
         </div>
         

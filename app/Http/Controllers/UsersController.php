@@ -62,8 +62,9 @@ class UsersController extends Controller
         $data = $this->data;
         $keyword = "";
         $act_permission = $this->act_permission[0];
+        $branchs = Branch::join('users_branch as ub','ub.branch_id', '=', 'branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']);
         $users = User::orderBy('id', 'ASC')->join('job_title as jt','jt.id','=','users.job_id')->where('users.name','!=','Admin')->paginate(10,['users.id','users.employee_id','users.name','jt.remark as job_title','users.join_date' ]);
-        return view('pages.users.index',['company' => Company::get()->first()] ,compact('users','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
+        return view('pages.users.index',['company' => Company::get()->first(),'jobtitles'=>JobTitle::orderBy('remark','asc')->get(['id','remark'])] ,compact('request','branchs','users','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
     }
 
     public function search(Request $request) 
@@ -75,11 +76,34 @@ class UsersController extends Controller
         $keyword = $request->search;
         $data = $this->data;
         $act_permission = $this->act_permission[0];
+        $enddate = date(Carbon::parse($request->filter_end_date)->format('Y-m-d'));
+        $branchx = $request->filter_branch_id;
+        $branchs = Branch::join('users_branch as ub','ub.branch_id', '=', 'branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']);
+        $jobtitlex = $request->filter_job_id;
         if($request->export=='Export Excel'){
-            return Excel::download(new UsersExport($keyword), 'users_'.Carbon::now()->format('YmdHis').'.xlsx');
+            $strencode = base64_encode($keyword.'#'.$jobtitlex.'#'.$enddate.'#'.$branchx);
+            return Excel::download(new UsersExport($strencode), 'users_'.Carbon::now()->format('YmdHis').'.xlsx');
+        }else if($request->src=='Search'){
+            $branchx = "";
+            $enddate = "";
+            $jobtitlex = "";
+            $users = User::orderBy('id', 'ASC')->join('branch as b','b.id','=','users.branch_id')
+            ->join('job_title as jt','jt.id','=','users.job_id')
+            ->where('users.name','!=','Admin')->where('users.name','ILIKE','%'.$keyword.'%')
+            ->paginate(10,['users.id','users.employee_id','users.name','jt.remark as job_title','b.remark as branch_name','users.join_date' ]);
+            $request->filter_branch_id = "";
+            $request->filter_end_date = "";
+            $request->filter_job_id = "";
+            return view('pages.users.index', ['company' => Company::get()->first(),'jobtitles'=>JobTitle::orderBy('remark','asc')->get(['id','remark'])],compact('request','branchs','users','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
         }else{
-            $users = User::orderBy('id', 'ASC')->join('branch as b','b.id','=','users.branch_id')->join('job_title as jt','jt.id','=','users.job_id')->where('users.name','!=','Admin')->where('users.name','LIKE','%'.$keyword.'%')->paginate(10,['users.id','users.employee_id','users.name','jt.remark as job_title','b.remark as branch_name','users.join_date' ]);
-            return view('pages.users.index', ['company' => Company::get()->first()],compact('users','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
+            $users = User::orderBy('id', 'ASC')->join('branch as b','b.id','=','users.branch_id')
+            ->join('job_title as jt','jt.id','=','users.job_id')
+            ->where('users.name','!=','Admin')->where('users.name','ILIKE','%'.$keyword.'%')
+            ->where('b.id','like','%'.$branchx.'%')
+            ->where('jt.id','like','%'.$jobtitlex.'%')
+            ->where('users.join_date','<=',$enddate)
+            ->paginate(10,['users.id','users.employee_id','users.name','jt.remark as job_title','b.remark as branch_name','users.join_date' ]);
+            return view('pages.users.index', ['company' => Company::get()->first(),'jobtitles'=>JobTitle::orderBy('remark','asc')->get(['id','remark'])],compact('request','branchs','users','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
         }
     }
 
@@ -500,10 +524,20 @@ class UsersController extends Controller
      */
     public function destroy(User $user) 
     {
-        $user->delete();
-
-        return redirect()->route('users.index')
-            ->withSuccess(__('User deleted successfully.'));
+        if($user->delete()){
+            $result = array_merge(
+                ['status' => 'success'],
+                ['data' => $user->remark],
+                ['message' => 'Delete Successfully'],
+            );    
+        }else{
+            $result = array_merge(
+                ['status' => 'failed'],
+                ['data' => $user->remark],
+                ['message' => 'Delete failed'],
+            );   
+        }
+        return $result;
     }
 
     public function getpermissions($role_id){

@@ -20,7 +20,7 @@
                 </div>
             </div>
             <div class="col-md-2">
-                <a href="{{ route('productscommisionbyyear.create') }}" class="btn btn-primary float-right  {{ $act_permission->allow_create==1?'':'d-none' }}">Add commision by year</a>
+                <a href="{{ route('productscommisionbyyear.create') }}" class="btn btn-primary float-right  {{ $act_permission->allow_create==1?'':'d-none' }}"><span class="fa fa-plus-circle"></span>  Add commision by year</a>
             </div>
         </div>
         

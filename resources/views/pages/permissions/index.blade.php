@@ -12,7 +12,7 @@
                 </div>
             </div>
             <div class="col-md-2">
-                <a href="{{ route('permissions.create') }}" class="btn btn-primary btn-sm float-right">Add permissions</a>
+                <a href="{{ route('permissions.create') }}" class="btn btn-primary btn-sm float-right"><span class="fa fa-plus-circle"></span>  Add permissions</a>
             </div>
         </div>
 

@@ -404,7 +404,26 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
             Route::get('/{customer}/edit', 'CustomersController@edit')->name('customers.edit');
             Route::patch('/{customer}/update', 'CustomersController@update')->name('customers.update');
             Route::delete('/{customer}/delete', 'CustomersController@destroy')->name('customers.destroy');
+            Route::get('/search', 'CustomersController@search')->name('customers.search');
+            Route::get('/export', 'CustomersController@export')->name('customers.export');
         });
+
+        /**
+         *  Customers
+         */
+        Route::group(['prefix' => 'suppliers'], function() {
+            Route::get('/', 'SuppliersController@index')->name('suppliers.index');
+            Route::get('/create', 'SuppliersController@create')->name('suppliers.create');
+            Route::post('/create', 'SuppliersController@store')->name('suppliers.store');
+            Route::post('/createapi', 'SuppliersController@storeapi')->name('suppliers.storeapi');
+            Route::get('/{supplier}/show', 'SuppliersController@show')->name('suppliers.show');
+            Route::get('/{supplier}/edit', 'SuppliersController@edit')->name('suppliers.edit');
+            Route::patch('/{supplier}/update', 'SuppliersController@update')->name('suppliers.update');
+            Route::delete('/{supplier}/delete', 'SuppliersController@destroy')->name('suppliers.destroy');
+            Route::get('/search', 'SuppliersController@search')->name('suppliers.search');
+            Route::get('/export', 'SuppliersController@export')->name('suppliers.export');
+        });
+
 
         /**
          *  Report

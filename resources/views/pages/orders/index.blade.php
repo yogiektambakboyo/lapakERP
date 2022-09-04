@@ -20,7 +20,7 @@
                 </div>
             </div>
             <div class="col-md-2">
-                <a href="{{ route('orders.create') }}" class="btn btn-primary float-right {{ $act_permission->allow_create==1?'':'d-none' }}">Add new order</a>
+                <a href="{{ route('orders.create') }}" class="btn btn-primary float-right {{ $act_permission->allow_create==1?'':'d-none' }}"><span class="fa fa-plus-circle"></span>  Add new order</a>
             </div>
         </div>
         

@@ -9,7 +9,7 @@
     <div class="bg-light p-4 rounded">
         <div class="row">
           <div class="col-md-10">
-            <h1>Product #{{ $product->product_id }}</h1>
+            <h1>Product #{{ $product->id }}</h1>
           </div>
           <div class="col-md-2">
             <div class="mt-4">
@@ -18,6 +18,8 @@
             </div>
           </div>
         </div>
+
+        <br>
       
         <div class="panel text-white">
           <div class="panel-heading bg-teal-600"><h4></h4></div>

@@ -12,7 +12,7 @@
                 </div>
             </div>
             <div class="col-md-2">
-                <a href="{{ route('categories.create') }}" class="btn btn-primary btn-sm float-right">Add category</a>
+                <a href="{{ route('categories.create') }}" class="btn btn-primary btn-sm float-right"><span class="fa fa-plus-circle"></span>  Add category</a>
             </div>
         </div>
         

@@ -26,7 +26,7 @@ use App\Models\Company;
 
 
 
-class ProductsController extends Controller
+class ProductsIngredientsController extends Controller
 {
     /**
      * Display all products

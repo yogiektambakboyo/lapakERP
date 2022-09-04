@@ -12,7 +12,7 @@
                 </div>
             </div>
             <div class="col-md-2">
-                <a href="{{ route('uoms.create') }}" class="btn btn-primary btn-sm float-right">Add uom</a>
+                <a href="{{ route('uoms.create') }}" class="btn btn-primary btn-sm float-right"><span class="fa fa-plus-circle"></span>  Add uom</a>
             </div>
         </div>
         

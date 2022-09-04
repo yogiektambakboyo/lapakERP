@@ -12,7 +12,7 @@
                 </div>
             </div>
             <div class="col-md-2">
-                <a href="{{ route('types.create') }}" class="btn btn-primary btn-sm float-right">Add type</a>
+                <a href="{{ route('types.create') }}" class="btn btn-primary btn-sm float-right"><span class="fa fa-plus-circle"></span>  Add type</a>
             </div>
         </div>
         

@@ -5,10 +5,10 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Spatie\Permission\Models\Permission;
-use App\Models\Customer;
+use App\Models\Supplier;
 use App\Models\Branch;
 use Auth;
-use App\Exports\CustomersExport;
+use App\Exports\SuppliersExport;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
 use Carbon\Carbon;
@@ -16,14 +16,14 @@ use App\Models\Company;
 
 
 
-class CustomersController extends Controller
+class SuppliersController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    private $data,$act_permission,$module="customers",$id=1;
+    private $data,$act_permission,$module="suppliers",$id=1;
 
     public function __construct()
     {
@@ -50,10 +50,10 @@ class CustomersController extends Controller
         $this->getpermissions($id);
 
         $user = Auth::user();
-        $Customers = Customer::join('branch as b','b.id','customers.branch_id')
+        $Suppliers = Supplier::join('branch as b','b.id','suppliers.branch_id')
                             ->join('users_branch as ub', function($join){
                                 $join->on('ub.branch_id', '=', 'b.id');
-                            })->where('ub.user_id', $user->id)->paginate(10,['customers.*','b.remark as branch_name']);
+                            })->where('ub.user_id', $user->id)->paginate(10,['suppliers.*','b.remark as branch_name']);
         $data = $this->data;
 
         $request->search = "";
@@ -63,8 +63,8 @@ class CustomersController extends Controller
         $branchs = Branch::join('users_branch as ub','ub.branch_id', '=', 'branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']);
 
         $act_permission = $this->act_permission[0];
-        return view('pages.customers.index', [
-            'customers' => $Customers,'data' => $data , 'company' => Company::get()->first(), 'request' => $request, 'branchs' => $branchs , 'act_permission' => $act_permission
+        return view('pages.suppliers.index', [
+            'suppliers' => $Suppliers,'data' => $data , 'company' => Company::get()->first(), 'request' => $request, 'branchs' => $branchs , 'act_permission' => $act_permission
             
         ]);
     }
@@ -82,27 +82,27 @@ class CustomersController extends Controller
         $branchs = Branch::join('users_branch as ub','ub.branch_id', '=', 'branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']);
         if($request->export=='Export Excel'){
             $strencode = base64_encode($keyword.'#'.$branchx.'#'.$user->id);
-            return Excel::download(new CustomersExport($strencode), 'customers_'.Carbon::now()->format('YmdHis').'.xlsx');
+            return Excel::download(new SuppliersExport($strencode), 'suppliers_'.Carbon::now()->format('YmdHis').'.xlsx');
         }else if($request->src=='Search'){
-            $Customers = Customer::join('branch as b','b.id','customers.branch_id')
+            $Suppliers = Supplier::join('branch as b','b.id','suppliers.branch_id')
                             ->join('users_branch as ub', function($join){
                                 $join->on('ub.branch_id', '=', 'b.id');
-                            })->where('ub.user_id', $user->id)->where('customers.branch_id','like','%'.$branchx.'%')->where('customers.name','ILIKE','%'.$keyword.'%')->paginate(10,['customers.*','b.remark as branch_name']);
+                            })->where('ub.user_id', $user->id)->where('suppliers.branch_id','like','%'.$branchx.'%')->where('suppliers.name','ILIKE','%'.$keyword.'%')->paginate(10,['suppliers.*','b.remark as branch_name']);
             $request->filter_branch_id = "";
-            return view('pages.customers.index', [
-                'customers' => $Customers,'data' => $data , 
+            return view('pages.suppliers.index', [
+                'suppliers' => $Suppliers,'data' => $data , 
                 'company' => Company::get()->first(),
                 'request' => $request,
                 'branchs' => $branchs,
                 'act_permission' => $act_permission
             ]);
         }else{
-            $Customers = Customer::join('branch as b','b.id','customers.branch_id')
+            $Suppliers = Supplier::join('branch as b','b.id','suppliers.branch_id')
                             ->join('users_branch as ub', function($join){
                                 $join->on('ub.branch_id', '=', 'b.id');
-                            })->where('ub.user_id', $user->id)->where('customers.branch_id','like','%'.$branchx.'%')->where('customers.name','ILIKE','%'.$keyword.'%')->paginate(10,['customers.*','b.remark as branch_name']);
-            return view('pages.customers.index', [
-                'customers' => $Customers,'data' => $data , 
+                            })->where('ub.user_id', $user->id)->where('suppliers.branch_id','like','%'.$branchx.'%')->where('suppliers.name','ILIKE','%'.$keyword.'%')->paginate(10,['suppliers.*','b.remark as branch_name']);
+            return view('pages.suppliers.index', [
+                'suppliers' => $Suppliers,'data' => $data , 
                 'company' => Company::get()->first(),
                 'request' => $request,
                 'branchs' => $branchs,
@@ -113,7 +113,7 @@ class CustomersController extends Controller
 
 
     /**
-     * Show form for creating Customer
+     * Show form for creating Supplier
      * 
      * @return \Illuminate\Http\Response
      */
@@ -124,7 +124,7 @@ class CustomersController extends Controller
         $this->getpermissions($id);
  
         $data = $this->data;
-        return view('pages.customers.create',['data'=>$data,'branchs' => Branch::latest()->get(), 'company' => Company::get()->first(),
+        return view('pages.suppliers.create',['data'=>$data,'branchs' => Branch::latest()->get(), 'company' => Company::get()->first(),
         'userBranchs' => Branch::latest()->get()->pluck('remark')->toArray(),]);
     }
 
@@ -137,24 +137,23 @@ class CustomersController extends Controller
     public function store(Request $request)
     {   
     
-        Customer::create(
+        Supplier::create(
             array_merge( 
-                ['phone_no' => $request->get('phone_no') ],
+                ['handphone' => $request->get('handphone') ],
                 ['name' => $request->get('name') ],
                 ['address' => $request->get('address') ],
-                ['membership_id' => '1' ],
-                ['abbr' => '1' ],
+                ['email' => $request->get('email') ],
                 ['branch_id' => $request->get('branch_id') ],
             )
         );
-        return redirect()->route('customers.index')
-            ->withSuccess(__('Customer created successfully.'));
+        return redirect()->route('suppliers.index')
+            ->withSuccess(__('Supplier created successfully.'));
     }
 
     public function storeapi(Request $request)
     {   
     
-        Customer::create(
+        Supplier::create(
             array_merge( 
                 ['phone_no' => $request->get('phone_no') ],
                 ['name' => $request->get('name') ],
@@ -165,7 +164,7 @@ class CustomersController extends Controller
             )
         );
 
-        $id = Customer::where('name','=',$request->get('name'))->max('id');
+        $id = Supplier::where('name','=',$request->get('name'))->max('id');
         $result = array_merge(
             ['status' => 'success'],
             ['data' => $id],
@@ -178,17 +177,17 @@ class CustomersController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  Customer  $Customer
+     * @param  Supplier  $Supplier
      * @return \Illuminate\Http\Response
      */
-    public function edit(Customer $Customer)
+    public function edit(Supplier $supplier)
     {
         $user = Auth::user();
         $id = $user->roles->first()->id;
         $this->getpermissions($id);
         $data = $this->data;
-        return view('pages.customers.edit', [
-            'customer' => $Customer ,'data' => $data ,'branchs' => Branch::latest()->get(), 'company' => Company::get()->first(),
+        return view('pages.suppliers.edit', [
+            'supplier' => $supplier ,'data' => $data ,'branchs' => Branch::latest()->get(), 'company' => Company::get()->first(),
             'userBranchs' => Branch::latest()->get()->pluck('remark')->toArray()
         ]);
     }
@@ -197,25 +196,24 @@ class CustomersController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  Customer  $Customer
+     * @param  Supplier  $Supplier
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Customer $customer)
+    public function update(Request $request, Supplier $supplier)
     {
-        Customer::where('id', $customer->id)
+        Supplier::where('id', $supplier->id)
         ->update(
             array_merge( 
-                ['phone_no' => $request->get('phone_no') ],
+                ['handphone' => $request->get('handphone') ],
                 ['name' => $request->get('name') ],
+                ['email' => $request->get('email') ],
                 ['address' => $request->get('address') ],
-                ['membership_id' => '1' ],
-                ['abbr' => '1' ],
                 ['branch_id' => $request->get('branch_id') ],
             )
         );
 
-        return redirect()->route('customers.index')
-            ->withSuccess(__('Customer updated successfully.'));
+        return redirect()->route('suppliers.index')
+            ->withSuccess(__('Supplier updated successfully.'));
     }
 
     /**
@@ -224,18 +222,18 @@ class CustomersController extends Controller
      * @param  \App\Models\Post  $post
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Customer $Customer)
+    public function destroy(Supplier $supplier)
     {
-        if($Customer->delete()){
+        if($supplier->delete()){
             $result = array_merge(
                 ['status' => 'success'],
-                ['data' => $Customer->name],
+                ['data' => $supplier->name],
                 ['message' => 'Delete Successfully'],
             );    
         }else{
             $result = array_merge(
                 ['status' => 'failed'],
-                ['data' => $Customer->name],
+                ['data' => $supplier->name],
                 ['message' => 'Delete failed'],
             );   
         }

@@ -39,13 +39,12 @@
             <tbody>
                 @foreach($rooms as $key => $room)
                     <tr>
-                        <th>{{ ++$key }}</th>
+                        <th>{{ $room->id }}</th>
                         <td>{{ $room->branch_name }}</td>
                         <td>{{ $room->remark }}</td>
                         <td><a href="{{ route('rooms.edit', $room->id) }}" class="btn btn-info btn-sm  {{ $act_permission->allow_edit==1?'':'d-none' }} ">Edit</a></td>
                         <td>
                             <a onclick="showConfirm({{ $room->id }}, '{{ $room->remark }}')" class="btn btn-danger btn-sm  {{ $act_permission->allow_delete==1?'':'d-none' }} ">Delete</a>
-
                         </td>
                     </tr>
                 @endforeach
