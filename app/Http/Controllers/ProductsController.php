@@ -219,7 +219,7 @@ class ProductsController extends Controller
             'products' => $productsw ,
             'uoms' => Uom::get(),
             'data' => $data, 'company' => Company::get()->first(), 
-            'ingredients' => ProductIngredients::join('product_sku as ps','ps.id','product_ingredients.product_id_material')->join('uom as u','u.id','product_ingredients.uom_id')->get(['product_ingredients.product_id','product_ingredients.product_id_material','u.remark as uom_name','ps.remark as product_name','product_ingredients.qty']),
+            'ingredients' => ProductIngredients::join('product_sku as ps','ps.id','product_ingredients.product_id_material')->join('uom as u','u.id','product_ingredients.uom_id')->where('product_ingredients.product_id',$product->id)->get(['product_ingredients.product_id','product_ingredients.product_id_material','u.remark as uom_name','ps.remark as product_name','product_ingredients.qty']),
         ]);
     }
 
