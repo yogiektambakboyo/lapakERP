@@ -10,7 +10,9 @@ use Spatie\Permission\Models\Role;
 use App\Models\Branch;
 use App\Models\JobTitle;
 use App\Models\Department;
+use App\Models\ProductIngredients;
 use App\Models\Type;
+use App\Models\Uom;
 use App\Models\ProductBrand;
 use App\Models\Category;
 use App\Http\Requests\StoreUserRequest;
@@ -131,7 +133,7 @@ class ProductsController extends Controller
      * 
      * @return \Illuminate\Http\Response
      */
-    public function store(Product $product, Request $request) 
+    public function store(Product $product,Request $request) 
     {
         //For demo purposes only. When creating user or inviting a user
         // you should create a generated random password and email it to the user
@@ -152,9 +154,42 @@ class ProductsController extends Controller
     }
 
     /**
+     * Store a newly created user
+     * 
+     * @param Product $product
+     * @param Request $request
+     * 
+     * @return \Illuminate\Http\Response
+     */
+    public function storeIngredients(Request $request) 
+    {
+        //For demo purposes only. When creating user or inviting a user
+        // you should create a generated random password and email it to the user
+    
+        $user = Auth::user();
+        ProductIngredients::create(
+            array_merge(
+                ['product_id_material' => $request->get('input_product_id_material') ],
+                ['created_by' => $user->id],
+                ['qty' => $request->get('input_qty') ],
+                ['product_id' => $request->get('input_product_id') ],
+                ['uom_id' => $request->get('input_uom') ],
+            )
+        );
+
+        $result = array_merge(
+            ['status' => 'success'],
+            ['data' => $request->get('input_product_id')],
+            ['message' => 'Delete Successfully'],
+        );  
+
+        return $result;
+    }
+
+    /**
      * Show user data
      * 
-     * @param User $user
+     * @param Product $product
      * 
      * @return \Illuminate\Http\Response
      */
@@ -165,16 +200,26 @@ class ProductsController extends Controller
         $this->getpermissions($id);
 
         $data = $this->data;
-        //return $product->id;
+
         $products = Product::join('product_type as pt','pt.id','=','product_sku.type_id')
         ->join('product_category as pc','pc.id','=','product_sku.category_id')
         ->join('product_brand as pb','pb.id','=','product_sku.brand_id')
         ->where('product_sku.id',$product->id)
         ->get(['product_sku.id as product_id','product_sku.abbr','product_sku.remark as product_name','pt.remark as product_type','pc.remark as product_category','pb.remark as product_brand'])->first();
 
+        $productsw = Product::join('product_type as pt','pt.id','=','product_sku.type_id')
+        ->join('product_category as pc','pc.id','=','product_sku.category_id')
+        ->join('product_brand as pb','pb.id','=','product_sku.brand_id')
+        ->where('product_sku.id','!=',$product->id)
+        ->get(['product_sku.id','product_sku.remark']);
+
+
         return view('pages.products.show', [
             'product' => $products ,
-            'data' => $data, 'company' => Company::get()->first(),
+            'products' => $productsw ,
+            'uoms' => Uom::get(),
+            'data' => $data, 'company' => Company::get()->first(), 
+            'ingredients' => ProductIngredients::join('product_sku as ps','ps.id','product_ingredients.product_id_material')->join('uom as u','u.id','product_ingredients.uom_id')->get(['product_ingredients.product_id','product_ingredients.product_id_material','u.remark as uom_name','ps.remark as product_name','product_ingredients.qty']),
         ]);
     }
 
@@ -233,6 +278,29 @@ class ProductsController extends Controller
         
         return redirect()->route('products.index')
             ->withSuccess(__('Product updated successfully.'));
+    }
+
+
+    /**
+     * Store a newly created user skill
+     * 
+     *
+     * @param Request $request
+     * 
+     * @return \Illuminate\Http\Response
+     */
+    public function deleteIngredients(Request $request) 
+    {
+
+        DB::insert("DELETE FROM public.product_ingredients
+        where product_id=".$request->get('input_product_id')." and product_id_material=".$request->get('input_product_material')." ;");
+            
+        $result = array_merge(
+            ['status' => 'success'],
+            ['data' => ''],
+            ['message' => 'Save Successfully'],
+        );    
+        return $result;
     }
 
     /**

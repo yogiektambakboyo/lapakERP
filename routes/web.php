@@ -164,12 +164,15 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
             Route::get('/', 'ProductsController@index')->name('products.index');
             Route::get('/create', 'ProductsController@create')->name('products.create');
             Route::post('/create', 'ProductsController@store')->name('products.store');
+            Route::post('/create', 'ProductsController@storeIngredients')->name('products.addingredients');
             Route::get('/search', 'ProductsController@search')->name('products.search');
             Route::get('/{product}/show', 'ProductsController@show')->name('products.show');
             Route::get('/{product}/edit', 'ProductsController@edit')->name('products.edit');
             Route::patch('/{product}/update', 'ProductsController@update')->name('products.update');
             Route::delete('/{product}/delete', 'ProductsController@destroy')->name('products.destroy');
             Route::get('/export', 'ProductsController@export')->name('products.export');
+            Route::post('/deleteingredients', 'ProductsController@deleteIngredients')->name('products.deleteingredients');
+
         });
 
         /**

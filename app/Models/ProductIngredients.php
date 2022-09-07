@@ -8,6 +8,8 @@ class ProductIngredients extends Model
 {
 
     protected $table = 'product_ingredients';
+    public $incrementing = false;
+
 
     
     /**
