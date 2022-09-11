@@ -412,7 +412,39 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
         });
 
         /**
-         *  Customers
+         *  Shift
+         */
+        Route::group(['prefix' => 'shift'], function() {
+            Route::get('/', 'ShiftController@index')->name('shift.index');
+            Route::get('/create', 'ShiftController@create')->name('shift.create');
+            Route::post('/create', 'ShiftController@store')->name('shift.store');
+            Route::post('/createapi', 'ShiftController@storeapi')->name('shift.storeapi');
+            Route::get('/{shift}/show', 'ShiftController@show')->name('shift.show');
+            Route::get('/{shift}/edit', 'ShiftController@edit')->name('shift.edit');
+            Route::patch('/{shift}/update', 'ShiftController@update')->name('shift.update');
+            Route::delete('/{shift}/delete', 'ShiftController@destroy')->name('shift.destroy');
+            Route::get('/search', 'ShiftController@search')->name('shift.search');
+            Route::get('/export', 'ShiftController@export')->name('shift.export');
+        });
+
+        /**
+         *  Users Shift
+         */
+        Route::group(['prefix' => 'usersshift'], function() {
+            Route::get('/', 'UserShiftController@index')->name('usersshift.index');
+            Route::get('/create', 'UserShiftController@create')->name('usersshift.create');
+            Route::post('/create', 'UserShiftController@store')->name('usersshift.store');
+            Route::post('/createapi', 'UserShiftController@storeapi')->name('usersshift.storeapi');
+            Route::get('/{usersshift}/show', 'UserShiftController@show')->name('usersshift.show');
+            Route::get('/{usersshift}/edit', 'UserShiftController@edit')->name('usersshift.edit');
+            Route::patch('/{usersshift}/update', 'UserShiftController@update')->name('usersshift.update');
+            Route::delete('/{usersshift}/delete', 'UserShiftController@destroy')->name('usersshift.destroy');
+            Route::get('/search', 'UserShiftController@search')->name('usersshift.search');
+            Route::get('/export', 'UserShiftController@export')->name('usersshift.export');
+        });
+
+        /**
+         *  Supllier
          */
         Route::group(['prefix' => 'suppliers'], function() {
             Route::get('/', 'SuppliersController@index')->name('suppliers.index');
