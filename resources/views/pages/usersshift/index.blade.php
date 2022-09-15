@@ -4,17 +4,17 @@
 
 @section('content')
     <div class="bg-light p-4 rounded">
-        <h2>Customers</h2>
+        <h2>Users Shift</h2>
 
         <div class="lead row mb-3">
             <div class="col-md-10">
                 <div class="col-md-4">
-                    Manage your customers here.
+                    Manage your User Shift here.
                 </div>
 
                 <div class="col-md-10"> 	
-                    <form action="{{ route('customers.search') }}" method="GET" class="row row-cols-lg-auto g-3 align-items-center">
-                        <div class="col-2"><input type="text" class="form-control  form-control-sm" name="search" placeholder="Find Customer.." value="{{ $request->search }}"></div>
+                    <form action="{{ route('usersshift.search') }}" method="GET" class="row row-cols-lg-auto g-3 align-items-center">
+                        <div class="col-2"><input type="text" class="form-control  form-control-sm" name="search" placeholder="Find User Shift.." value="{{ $request->search }}"></div>
                         <input type="hidden" name="filter_branch_id" value="{{ $request->filter_branch_id }}">
                         <div class="col-2"><input type="submit" class="btn btn-sm btn-secondary" value="Search" name="src"></div>   
                         <div class="col-2"><a href="#modal-filter"  data-bs-toggle="modal" data-bs-target="#modal-filter" class="btn btn-sm btn-lime">Filter</a></div>   
@@ -23,7 +23,7 @@
                 </div>
             </div>
             <div class="col-md-2">
-                <a href="{{ route('customers.create') }}" class="btn btn-primary btn-sm float-right"><span class="fa fa-plus-circle"></span>  Add Customers</a>
+                <a href="{{ route('usersshift.create') }}" class="btn btn-primary btn-sm float-right"><span class="fa fa-plus-circle"></span>  Add User Shift</a>
             </div>
         </div>
         <div class="mt-2">
@@ -33,25 +33,29 @@
         <table class="table table-striped">
             <thead>
             <tr>
-                <th scope="col" width="1%">#</th>
-                <th scope="col" width="7%">Branch</th>
+                <th scope="col" width="10%">Branch</th>
+                <th scope="col" width="7%">Dated</th>
                 <th scope="col">Name</th>
-                <th scope="col" width="15%">Address</th>
-                <th scope="col" width="5%">Phone No</th>
+                <th scope="col" width="15%">Shift Name</th>
+                <th scope="col" width="10%">Start Time</th>
+                <th scope="col" width="10%">End Time</th>
+                <th scope="col" width="5%">Remark</th>
                 <th scope="col" colspan="3" width="1%"></th> 
             </tr>
             </thead>
             <tbody>
-                @foreach($customers as $customer)
+                @foreach($usersshifts as $usersshift)
                     <tr>
-                        <th scope="row">{{ $customer->id }}</th>
-                        <td>{{ $customer->branch_name }}</td>
-                        <td>{{ $customer->name }}</td>
-                        <td>{{ $customer->address }}</td>
-                        <td>{{ $customer->phone_no }}</td>
-                        <td><a href="{{ route('customers.edit', $customer->id) }}" class="btn btn-info btn-sm  {{ $act_permission->allow_edit==1?'':'d-none' }} ">Edit</a></td>
+                        <th scope="row">{{ $usersshift->branch_name }}</th>
+                        <td>{{ $usersshift->dated }}</td>
+                        <td>{{ $usersshift->name }}</td>
+                        <td>{{ $usersshift->shift_remark }}</td>
+                        <td>{{ $usersshift->shift_time_start }}</td>
+                        <td>{{ $usersshift->shift_time_end }}</td>
+                        <td>{{ $usersshift->remark }}</td>
+                        <td><a href="{{ route('usersshift.edit', $usersshift->id) }}" class="btn btn-info btn-sm  {{ $act_permission->allow_edit==1?'':'d-none' }} ">Edit</a></td>
                         <td>
-                            <a onclick="showConfirm({{ $customer->id }}, '{{ $customer->name }}')" class="btn btn-danger btn-sm  {{ $act_permission->allow_delete==1?'':'d-none' }} ">Delete</a>
+                            <a onclick="showConfirm({{ $usersshift->id }}, '{{ $usersshift->name }}', '{{ $usersshift->dated }}')" class="btn btn-danger btn-sm  {{ $act_permission->allow_delete==1?'':'d-none' }} ">Delete</a>
                         </td>
                     </tr>
                 @endforeach
@@ -66,7 +70,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form action="{{ route('customers.search') }}" method="GET">   
+                    <form action="{{ route('usersshift.search') }}" method="GET">   
                         @csrf 
                         <div class="col-md-10">
                             <label class="form-label col-form-label col-md-4">Branch</label>
@@ -91,7 +95,7 @@
           </div>
 
         <div class="d-flex">
-            {!! $customers->links() !!}
+            {!! $usersshifts->links() !!}
         </div>
 
     </div>
@@ -124,10 +128,10 @@
           });
           $('#filter_end_date').val(formattedToday);
 
-          function showConfirm(id,data){
+          function showConfirm(id,data,dated){
             Swal.fire({
             title: 'Are you sure?',
-            text: "You will delete document "+data+" !",
+            text: "You will delete document "+data+" at "+dated+" !",
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#3085d6',
@@ -135,7 +139,7 @@
             confirmButtonText: 'Yes, delete it!'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    var url = "{{ route('customers.destroy','XX') }}";
+                    var url = "{{ route('usersshift.destroy','XX') }}";
                     var lastvalurl = "XX";
                     url = url.replace(lastvalurl, id)
                     const res = axios.delete(url, {}, {
@@ -154,7 +158,7 @@
                                         cancelButtonColor: '#d33',
                                         confirmButtonText: 'Close'
                                         }).then((result) => {
-                                            window.location.href = "{{ route('customers.index') }}"; 
+                                            window.location.href = "{{ route('usersshift.index') }}"; 
                                         })
                                 }else{
                                     Swal.fire(

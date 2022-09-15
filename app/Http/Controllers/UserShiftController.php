@@ -7,8 +7,11 @@ use Illuminate\Support\Facades\Route;
 use Spatie\Permission\Models\Permission;
 use App\Models\Customer;
 use App\Models\Branch;
+use App\Models\Shift;
+use App\Models\UserShift;
+use App\Models\User;
 use Auth;
-use App\Exports\CustomersExport;
+use App\Exports\UserShiftExport;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
 use Carbon\Carbon;
@@ -50,10 +53,11 @@ class UserShiftController extends Controller
         $this->getpermissions($id);
 
         $user = Auth::user();
-        $Customers = Customer::join('branch as b','b.id','customers.branch_id')
+        $UsersShift = UserShift::join('branch as b','b.id','users_shift.branch_id')
+                            ->join('users as u','u.id','=','users_shift.users_id')
                             ->join('users_branch as ub', function($join){
                                 $join->on('ub.branch_id', '=', 'b.id');
-                            })->where('ub.user_id', $user->id)->paginate(10,['customers.*','b.remark as branch_name']);
+                            })->where('ub.user_id', $user->id)->where('users_shift.dated','>=',Carbon::now()->startOfMonth())->paginate(10,['users_shift.branch_id','users_shift.users_id','users_shift.dated','users_shift.shift_id','users_shift.shift_remark','users_shift.shift_time_start','users_shift.shift_time_end','users_shift.remark','b.remark as branch_name','u.name','users_shift.id']);
         $data = $this->data;
 
         $request->search = "";
@@ -64,8 +68,7 @@ class UserShiftController extends Controller
 
         $act_permission = $this->act_permission[0];
         return view('pages.usersshift.index', [
-            'customers' => $Customers,'data' => $data , 'company' => Company::get()->first(), 'request' => $request, 'branchs' => $branchs , 'act_permission' => $act_permission
-            
+            'usersshifts' => $UsersShift,'data' => $data , 'company' => Company::get()->first(), 'request' => $request, 'branchs' => $branchs , 'act_permission' => $act_permission         
         ]);
     }
 
@@ -79,34 +82,30 @@ class UserShiftController extends Controller
         $data = $this->data;
         $act_permission = $this->act_permission[0];
         $branchx = $request->filter_branch_id;
+        $begindate = Carbon::now()->startOfMonth();
+        $enddate = Carbon::now();
         $branchs = Branch::join('users_branch as ub','ub.branch_id', '=', 'branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']);
         if($request->export=='Export Excel'){
-            $strencode = base64_encode($keyword.'#'.$branchx.'#'.$user->id);
-            return Excel::download(new CustomersExport($strencode), 'customers_'.Carbon::now()->format('YmdHis').'.xlsx');
+            $strencode = base64_encode($keyword.'#'.$begindate.'#'.$enddate.'#'.$branchx.'#'.$user->id);
+            return Excel::download(new UserShiftExport($strencode), 'usershift_'.Carbon::now()->format('YmdHis').'.xlsx');
         }else if($request->src=='Search'){
-            $Customers = Customer::join('branch as b','b.id','customers.branch_id')
+            $UsersShift = UserShift::join('branch as b','b.id','users_shift.branch_id')
+                            ->join('users as u','u.id','=','users_shift.users_id')
                             ->join('users_branch as ub', function($join){
                                 $join->on('ub.branch_id', '=', 'b.id');
-                            })->where('ub.user_id', $user->id)->where('customers.branch_id','like','%'.$branchx.'%')->where('customers.name','ILIKE','%'.$keyword.'%')->paginate(10,['customers.*','b.remark as branch_name']);
+                            })->where('ub.user_id', $user->id)->where('u.name','ilike','%'.$keyword.'%')->where('users_shift.dated','>=',Carbon::now()->startOfMonth())->paginate(10,['users_shift.branch_id','users_shift.users_id','users_shift.dated','users_shift.shift_id','users_shift.shift_remark','users_shift.shift_time_start','users_shift.shift_time_end','users_shift.remark','b.remark as branch_name','u.name','users_shift.id']);        
             $request->filter_branch_id = "";
             return view('pages.usersshift.index', [
-                'customers' => $Customers,'data' => $data , 
-                'company' => Company::get()->first(),
-                'request' => $request,
-                'branchs' => $branchs,
-                'act_permission' => $act_permission
+                'usersshifts' => $UsersShift,'data' => $data , 'company' => Company::get()->first(), 'request' => $request, 'branchs' => $branchs , 'act_permission' => $act_permission         
             ]);
         }else{
-            $Customers = Customer::join('branch as b','b.id','customers.branch_id')
-                            ->join('users_branch as ub', function($join){
-                                $join->on('ub.branch_id', '=', 'b.id');
-                            })->where('ub.user_id', $user->id)->where('customers.branch_id','like','%'.$branchx.'%')->where('customers.name','ILIKE','%'.$keyword.'%')->paginate(10,['customers.*','b.remark as branch_name']);
+            $UsersShift = UserShift::join('branch as b','b.id','users_shift.branch_id')
+            ->join('users as u','u.id','=','users_shift.users_id')
+            ->join('users_branch as ub', function($join){
+                $join->on('ub.branch_id', '=', 'b.id');
+            })->where('ub.user_id', $user->id)->where('ub.branch_id','ilike','%'.$branchx.'%')->where('users_shift.dated','>=',Carbon::now()->startOfMonth())->paginate(10,['users_shift.branch_id','users_shift.users_id','users_shift.dated','users_shift.shift_id','users_shift.shift_remark','users_shift.shift_time_start','users_shift.shift_time_end','users_shift.remark','b.remark as branch_name','u.name','users_shift.id']);        
             return view('pages.usersshift.index', [
-                'customers' => $Customers,'data' => $data , 
-                'company' => Company::get()->first(),
-                'request' => $request,
-                'branchs' => $branchs,
-                'act_permission' => $act_permission
+            'usersshifts' => $UsersShift,'data' => $data , 'company' => Company::get()->first(), 'request' => $request, 'branchs' => $branchs , 'act_permission' => $act_permission         
             ]);
         }
     }
@@ -124,8 +123,23 @@ class UserShiftController extends Controller
         $this->getpermissions($id);
  
         $data = $this->data;
-        return view('pages.usersshift.create',['data'=>$data,'branchs' => Branch::latest()->get(), 'company' => Company::get()->first(),
-        'userBranchs' => Branch::latest()->get()->pluck('remark')->toArray(),]);
+        $users = DB::select("
+            select distinct u2.id,u2.name  from users_branch ub2 
+            join users u2 on u2.id = ub2.user_id 
+            where ub2.branch_id in (
+            select ub.branch_id  from users u 
+            join users_branch ub on ub.user_id = u.id 
+            where u.id = 1) order by 2
+        ");
+
+        return view('pages.usersshift.create',[
+            'data'=>$data,
+            'branchs' => Branch::latest()->get(), 
+            'company' => Company::get()->first(),
+            'userBranchs' => Branch::latest()->get()->pluck('remark')->toArray(),
+            'users' => $users,
+            'shifts' => Shift::latest()->get(),
+        ]);
     }
 
     /**
@@ -137,18 +151,32 @@ class UserShiftController extends Controller
     public function store(Request $request)
     {   
     
-        Customer::create(
+        UserShift::create(
             array_merge( 
-                ['phone_no' => $request->get('phone_no') ],
-                ['name' => $request->get('name') ],
-                ['address' => $request->get('address') ],
-                ['membership_id' => '1' ],
-                ['abbr' => '1' ],
                 ['branch_id' => $request->get('branch_id') ],
+                ['users_id' => $request->get('users_id') ],
+                ['dated' => Carbon::parse($request->get('dated'))->format('d/m/Y') ],
+                ['shift_id' => $request->get('shift_id') ],
+                ['remark' => $request->get('remark') ],
             )
         );
-        return redirect()->route('customers.index')
-            ->withSuccess(__('Customer created successfully.'));
+
+        $usershift = UserShift::where('branch_id','=',$request->get('branch_id'))
+                                ->where('users_id','=',$request->get('users_id'))
+                                ->where('dated','=',Carbon::parse($request->get('dated'))->format('d/m/Y'))
+                                ->where('shift_id','=',$request->get('shift_id'));
+        $shift_data = Shift::where('id','=',$request->get('shift_id'))->first();
+        $usershift->update(
+            array_merge(
+                ['shift_remark' => $shift_data->remark ],
+                ['shift_time_start' => $shift_data->time_start ],
+                ['shift_time_end' => $shift_data->time_end ],
+            )
+        );
+
+
+        return redirect()->route('usersshift.index')
+            ->withSuccess(__('User Shift created successfully.'));
     }
 
     public function storeapi(Request $request)
@@ -181,14 +209,27 @@ class UserShiftController extends Controller
      * @param  Customer  $Customer
      * @return \Illuminate\Http\Response
      */
-    public function edit(Customer $Customer)
+    public function edit(UserShift $usersshift)
     {
         $user = Auth::user();
         $id = $user->roles->first()->id;
         $this->getpermissions($id);
         $data = $this->data;
+        $users = DB::select("
+            select distinct u2.id,u2.name  from users_branch ub2 
+            join users u2 on u2.id = ub2.user_id 
+            where ub2.branch_id in (
+            select ub.branch_id  from users u 
+            join users_branch ub on ub.user_id = u.id 
+            where u.id = 1) order by 2
+        ");
         return view('pages.usersshift.edit', [
-            'customer' => $Customer ,'data' => $data ,'branchs' => Branch::latest()->get(), 'company' => Company::get()->first(),
+            'usershift' => $usersshift ,
+            'data' => $data ,
+            'users' => $users,
+            'branchs' => Branch::latest()->get(),
+            'company' => Company::get()->first(),
+            'shifts' => Shift::latest()->get(),
             'userBranchs' => Branch::latest()->get()->pluck('remark')->toArray()
         ]);
     }
@@ -200,21 +241,34 @@ class UserShiftController extends Controller
      * @param  Customer  $Customer
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Customer $customer)
+    public function update(Request $request, UserShift $usersshift)
     {
-        Customer::where('id', $customer->id)
+        UserShift::where('id', $usersshift->id)
         ->update(
             array_merge( 
-                ['phone_no' => $request->get('phone_no') ],
-                ['name' => $request->get('name') ],
-                ['address' => $request->get('address') ],
-                ['membership_id' => '1' ],
-                ['abbr' => '1' ],
                 ['branch_id' => $request->get('branch_id') ],
+                ['users_id' => $request->get('users_id') ],
+                ['dated' => Carbon::parse($request->get('dated'))->format('d/m/Y') ],
+                ['shift_id' => $request->get('shift_id') ],
+                ['remark' => $request->get('remark') ],
             )
         );
 
-        return redirect()->route('customers.index')
+        $usershift = UserShift::where('branch_id','=',$request->get('branch_id'))
+                                ->where('users_id','=',$request->get('users_id'))
+                                ->where('dated','=',Carbon::parse($request->get('dated'))->format('d/m/Y'))
+                                ->where('shift_id','=',$request->get('shift_id'));
+        
+        $shift_data = Shift::where('id','=',$request->get('shift_id'))->first();
+        $usershift->update(
+            array_merge(
+                ['shift_remark' => $shift_data->remark ],
+                ['shift_time_start' => $shift_data->time_start ],
+                ['shift_time_end' => $shift_data->time_end ],
+            )
+        );
+
+        return redirect()->route('usersshift.index')
             ->withSuccess(__('Customer updated successfully.'));
     }
 
@@ -224,18 +278,18 @@ class UserShiftController extends Controller
      * @param  \App\Models\Post  $post
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Customer $Customer)
+    public function destroy(UserShift $usersshift)
     {
-        if($Customer->delete()){
+        if($usersshift->delete()){
             $result = array_merge(
                 ['status' => 'success'],
-                ['data' => $Customer->name],
+                ['data' => $usersshift->name],
                 ['message' => 'Delete Successfully'],
             );    
         }else{
             $result = array_merge(
                 ['status' => 'failed'],
-                ['data' => $Customer->name],
+                ['data' => $usersshift->name],
                 ['message' => 'Delete failed'],
             );   
         }
