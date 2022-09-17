@@ -73,13 +73,14 @@
             </div>
             
 
-            <table class="table table-striped" id="order_table">
+            <table class="table table-striped" id="data_table">
               <thead>
               <tr>
                   <th>Product</th>
                   <th scope="col" width="10%">UOM</th>
                   <th scope="col" width="10%">Price</th>
                   <th scope="col" width="5%">Qty</th>
+                  <th scope="col" width="10%">Disc</th>
                   <th scope="col" width="10%">Expired</th>
                   <th scope="col" width="10%">Batch No</th>
                   <th scope="col" width="10%">Total</th>
@@ -89,11 +90,21 @@
               </tbody>
             </table> 
             
-            
+            <br>
             <div class="row mb-3">
-              <label class="form-label col-form-label col-md-2"><h1>Total</h1></label>
-              <div class="col-md-10">
-                <h1 class="display-5 text-end"><label id="order-total">Rp. 0</label></h1>
+              <label class="form-label col-form-label col-md-9 text-end"><h2>Sub Total </h2></label>
+              <div class="col-md-3">
+                <h3 class="text-end"><label id="sub-total">0</label></h3>
+              </div>
+
+              <label class="form-label col-form-label col-md-9 text-end"><h2>Tax </h2></label>
+              <div class="col-md-3">
+                <h3 class="text-end"><label id="vat-total">0</label></h3>
+              </div>
+
+              <label class="form-label col-form-label col-md-9 text-end"><h1>Total</h1></label>
+              <div class="col-md-3">
+                <h1 class="display-5 text-end"><label id="result-total">Rp. 0</label></h1>
               </div>
             </div>
           <div class="col-md-12">
@@ -133,6 +144,10 @@
                 'Content-Type': 'application/json'
               }
           }).then(resp => {
+                sub_total = 0;
+                var total = resp.data[0]["result_total"];
+                var total_vat = resp.data[0]["total_vat"]; 
+
                 for(var i=0;i<resp.data.length;i++){
                     var product = {
                           "id"          : resp.data[i]["product_id"],
@@ -143,12 +158,11 @@
                           "exp"         : resp.data[i]["exp"],
                           "bno"         : resp.data[i]["bno"],
                           "total"       : resp.data[i]["total"],
+                          "disc"    : resp.data[i]["discount"],
                           "price"       : resp.data[i]["price"]
                     }
 
                     orderList.push(product);
-
-                    console.log(resp.data[i]["id"]);
                 }
 
                 for (var i = 0; i < orderList.length; i++){
@@ -158,21 +172,25 @@
                    "id"           : obj["id"],
                     "remark"      : obj["remark"],
                     "uom"         : obj["uom"],
-                    "price"       : obj["price"],
-                    "qty"         : obj["qty"],
+                    "price"       : currency(obj["price"], { separator: ".", decimal: ",", symbol: "", precision: 0 }).format(),
+                    "qty"         : currency(obj["qty"], { separator: ".", decimal: ",", symbol: "", precision: 0 }).format(),
+                    "disc"         : currency(obj["disc"], { separator: ".", decimal: ",", symbol: "", precision: 0 }).format(),
                     "exp"         : obj["exp"],
                     "bno"         : obj["bno"],
-                    "total"       : obj["total"],
+                    "total"       : currency(obj["total"], { separator: ".", decimal: ",", symbol: "", precision: 0 }).format(),
                   }).draw(false);
-                  order_total = order_total + ((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"]));
+                  sub_total = sub_total + (((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"]))-(parseFloat(orderList[i]["disc"])));
+                       
                 }
 
-                $('#order-total').text(currency(order_total, { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
+                $('#result-total').text(currency(total, { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
+                $('#vat-total').text(currency(total_vat, { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
+                $('#sub-total').text(currency(sub_total, { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
 
           });
       });
 
-        var table = $('#order_table').DataTable({
+        var table = $('#data_table').DataTable({
           columnDefs: [{ 
             targets: -1, 
             data: null, 
@@ -184,62 +202,14 @@
             { data: 'uom' },
             { data: 'price' },
             { data: 'qty' },
+            { data: 'disc' },
             { data: 'exp' },
             { data: 'bno' },
             { data: 'total' },
         ],
         });
 
-        function addProduct(id,abbr, price, total, qty, uom,remark,exp,bno){
-          table.clear().draw(false);
-          order_total = 0;
-          var product = {
-                "id"        : id,
-                "abbr"      : abbr,
-                "remark"    : remark,
-                "qty"       : qty,
-                "exp"       : exp,
-                "bno"       : bno,
-                "price"     : price,
-                "total"     : total,
-                "uom" : uom
-          }
-
-          var isExist = 0;
-          for (var i = 0; i < orderList.length; i++){
-            var obj = orderList[i];
-            var value = obj["id"];
-            if(id==obj["id"]){
-              isExist = 1;
-              orderList[i]["total"] = (parseInt(orderList[i]["qty"])+parseInt(qty))*parseFloat(orderList[i]["price"]); 
-              orderList[i]["qty"] = parseInt(orderList[i]["qty"])+parseInt(qty);
-            }
-          }
-
-          if(isExist==0){
-            orderList.push(product);
-          }
-
-
-          for (var i = 0; i < orderList.length; i++){
-            var obj = orderList[i];
-            var value = obj["abbr"];
-            table.row.add( {
-                   "id"        : obj["id"],
-                    "remark"      : obj["remark"],
-                    "uom"       : obj["uom"],
-                    "price"       : obj["price"],
-                    "qty"       : obj["qty"],
-                    "exp"       : obj["exp"],
-                    "bno"       : obj["bno"],
-                    "total"       : obj["total"],
-              }).draw(false);
-              order_total = order_total + ((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"]));
-              
-          }
-
-          $('#order-total').text(currency(order_total, { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
-        }
+        
  
     </script>
 @endpush

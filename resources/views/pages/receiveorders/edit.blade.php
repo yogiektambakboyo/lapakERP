@@ -5,7 +5,7 @@
 @section('content')
   <div class="panel text-white">
     <div class="panel-heading  bg-teal-600">
-      <div class="panel-title"><h4 class="">Purchase Order {{ $receive->receive_no }}</h4></div>
+      <div class="panel-title"><h4 class="">Receive Order {{ $receive->receive_no }}</h4></div>
       <div class="">
         <a href="{{ route('receiveorders.index') }}" class="btn btn-default">Cancel</a>
         <button type="button" id="save-btn" class="btn btn-info">Save</button>
@@ -21,13 +21,13 @@
               <div class="col-md-1">
                 <input id="receive_no" name="receive_no" type="hidden" value="{{ $receive->receive_no }}">
                 <input type="text" 
-                name="receive_date"
-                id="receive_date"
+                name="doc_dated"
+                id="doc_dated"
                 class="form-control" 
                 value="{{ substr(explode(" ",$receive->dated)[0],5,2) }}/{{ substr(explode(" ",$receive->dated)[0],8,2) }}/{{ substr(explode(" ",$receive->dated)[0],0,4) }}"
                 required/>
-                @if ($errors->has('receive_date'))
-                          <span class="text-danger text-left">{{ $errors->first('receive_date') }}</span>
+                @if ($errors->has('doc_dated'))
+                          <span class="text-danger text-left">{{ $errors->first('doc_dated') }}</span>
                       @endif
               </div>
 
@@ -38,7 +38,7 @@
 
 
               <label class="form-label col-form-label col-md-1">Shipto</label>
-              <div class="col-md-1">
+              <div class="col-md-2">
                 <select class="form-control" 
                     name="branch_id" id="branch_id" required>
                     <option value="">Select Branch</option>
@@ -128,7 +128,21 @@
                 value="{{ old('input_batch_no') }}"/>
               </div>
 
-              <div class="col-md-2">
+              <div class="col-md-1">
+                <label class="form-label col-form-label">Disc (Rp.)</label>
+                <input type="text" 
+                name="input_product_disc"
+                id="input_product_disc"
+                class="form-control" 
+                value="{{ old('input_product_disc') }}" required/>
+                <input type="hidden" 
+                name="input_product_vat_total"
+                id="input_product_vat_total"
+                class="form-control" 
+                value="{{ old('input_product_vat_total') }}" required disabled/>
+              </div>
+
+              <div class="col-md-1">
                 <label class="form-label col-form-label">Total</label>
                 <input type="text" 
                 name="input_product_total"
@@ -137,7 +151,7 @@
                 value="{{ old('input_product_total') }}" required disabled/>
               </div>
 
-              <div class="col-md-1">
+              <div class="col-md-2">
                 <div class="col-md-12"><label class="form-label col-form-label">_</label></div>
                 <a href="#" id="input_product_submit" class="btn btn-green"><div class="fa-1x"><i class="fas fa-plus fa-fw"></i>Add Product</div></a>
               </div>
@@ -152,6 +166,7 @@
                   <th scope="col" width="10%">UOM</th>
                   <th scope="col" width="10%">Price</th>
                   <th scope="col" width="5%">Qty</th>
+                  <th scope="col" width="10%">Disc</th>
                   <th scope="col" width="10%">Expired</th>
                   <th scope="col" width="10%">Batch No</th>
                   <th scope="col" width="10%">Total</th>
@@ -163,10 +178,21 @@
             </table> 
             
             
+            <br>
             <div class="row mb-3">
-              <label class="form-label col-form-label col-md-2"><h1>Total</h1></label>
-              <div class="col-md-10">
-                <h1 class="display-5 text-end"><label id="order-total">Rp. 0</label></h1>
+              <label class="form-label col-form-label col-md-9 text-end"><h2>Sub Total </h2></label>
+              <div class="col-md-3">
+                <h3 class="text-end"><label id="sub-total">0</label></h3>
+              </div>
+
+              <label class="form-label col-form-label col-md-9 text-end"><h2>Tax </h2></label>
+              <div class="col-md-3">
+                <h3 class="text-end"><label id="vat-total">0</label></h3>
+              </div>
+
+              <label class="form-label col-form-label col-md-9 text-end"><h1>Total</h1></label>
+              <div class="col-md-3">
+                <h1 class="display-5 text-end"><label id="result-total">Rp. 0</label></h1>
               </div>
             </div>
           <div class="col-md-12">
@@ -223,7 +249,7 @@
          
       $(function () {
           $('#app').removeClass('app app-sidebar-fixed app-header-fixed-minified').addClass('app app-sidebar-fixed app-header-fixed-minified app-sidebar-minified');          
-          $('#receive_date').datepicker({
+          $('#doc_dated').datepicker({
               format : 'yyyy-mm-dd',
               todayHighlight: true,
           });
@@ -254,11 +280,12 @@
               
                 for(var i=0;i<resp.data.length;i++){
                     var product = {
-                          "id"          : resp.data[i]["id"],
-                          "abbr"        : resp.data[i]["abbr"],
+                          "id"        : resp.data[i]["id"],
+                          "abbr"      : resp.data[i]["abbr"],
                           "remark"      : resp.data[i]["remark"],
-                          "uom"         : resp.data[i]["uom"],
-                          "price"       : resp.data[i]["price"]
+                          "uom"      : resp.data[i]["uom"],
+                          "price"     : resp.data[i]["price"],
+                          "vat_total"     : resp.data[i]["vat_total"]
                     }
 
                     productList.push(product);
@@ -277,6 +304,8 @@
                         $('#input_product_price').val(v.price);
                         $('#input_product_qty').val(1);
                         $('#input_product_total').val(v.price);
+                        $('#input_product_disc').val(0);
+                        $('#input_product_vat_total').val(v.vat_total);
                         return;
                     }
                 });
@@ -288,6 +317,11 @@
 
               $('#input_product_qty').on('input', function(){
                 $('#input_product_total').val(($('#input_product_price').val()*$('#input_product_qty').val()))
+              });
+
+
+              $('#input_product_disc').on('input', function(){
+                $('#input_product_total').val(($('#input_product_price').val()*$('#input_product_qty').val())-$('#input_product_disc').val());
               });
 
               $('#input_product_submit').on('click', function(){
@@ -327,8 +361,20 @@
                       timer: 1500
                     }
                   );
+                }else if($('#input_product_disc').val()==''){
+                  Swal.fire(
+                    {
+                      position: 'top-end',
+                      icon: 'warning',
+                      text: 'Please input disc',
+                      showConfirmButton: false,
+                      imageHeight: 30, 
+                      imageWidth: 30,   
+                      timer: 1500
+                    }
+                  );
                 }else{
-                  addProduct($('#input_product_id').val(),$('#input_product_id option:selected').text(), $('#input_product_price').val(), $('#input_product_total').val(), $('#input_product_qty').val(), $('#input_product_uom').val(),$('#input_product_id option:selected').text(),$('#input_expired_at').val(),$('#input_batch_no').val());
+                  addProduct($('#input_product_id').val(),$('#input_product_id option:selected').text(), $('#input_product_price').val(), $('#input_product_total').val(), $('#input_product_qty').val(), $('#input_product_uom').val(),$('#input_product_id option:selected').text(),$('#input_expired_at').val(),$('#input_batch_no').val(), $('#input_product_vat_total').val(),$('#input_product_disc').val());
                 }
               });
               
@@ -342,6 +388,11 @@
                 'Content-Type': 'application/json'
               }
           }).then(resp => {
+                table.clear().draw(false);
+                order_total = 0;
+                disc_total = 0;
+                _vat_total = 0;
+                sub_total = 0;
                 for(var i=0;i<resp.data.length;i++){
                     var product = {
                           "id"          : resp.data[i]["product_id"],
@@ -352,7 +403,11 @@
                           "exp"         : resp.data[i]["exp"],
                           "bno"         : resp.data[i]["bno"],
                           "total"       : resp.data[i]["total"],
-                          "price"       : resp.data[i]["price"]
+                          "price"       : resp.data[i]["price"],
+                          "total"     : resp.data[i]["subtotal"],
+                          "disc"     : resp.data[i]["discount"],
+                          "total_vat"     : resp.data[i]["total_vat"],
+                          "vat_total"     : resp.data[i]["vat"],
                     }
 
                     orderList.push(product);
@@ -365,23 +420,34 @@
                    "id"           : obj["id"],
                     "remark"      : obj["remark"],
                     "uom"         : obj["uom"],
-                    "price"       : obj["price"],
-                    "qty"         : obj["qty"],
+                    "price"     : currency(obj["price"], { separator: ".", decimal: ",", symbol: "", precision: 0 }).format(),
+                    "qty"       : currency(obj["qty"], { separator: ".", decimal: ",", symbol: "", precision: 0 }).format(),
+                    "disc"       : currency(obj["disc"], { separator: ".", decimal: ",", symbol: "", precision: 0 }).format(),
                     "exp"         : obj["exp"],
                     "bno"         : obj["bno"],
-                    "total"       : obj["total"],
+                    "total"     : currency(obj["total"], { separator: ".", decimal: ",", symbol: "", precision: 0 }).format(),
                     "action"      : "",
                   }).draw(false);
-                  order_total = order_total + ((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"]));
-              
+                  disc_total = disc_total + (parseFloat(orderList[i]["disc"]));
+                  sub_total = sub_total + (((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"]))-(parseFloat(orderList[i]["disc"])));
+                  _vat_total = _vat_total + ((((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"]))-(parseFloat(orderList[i]["disc"])))*(parseFloat(orderList[i]["vat_total"])/100));
+                  order_total = order_total + ((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"])+((((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"]))-(parseFloat(orderList[i]["disc"])))*(parseFloat(orderList[i]["vat_total"])/100)))-(parseFloat(orderList[i]["disc"]));
                 }
+
+                $('#result-total').text(currency(order_total, { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
+                $('#vat-total').text(currency(_vat_total, { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
+                $('#sub-total').text(currency(sub_total, { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
+
           });
       });
 
       $('#btn_apply_exp').on('click', function(){
         table.clear().draw(false);
         order_total = 0;
-          
+        disc_total = 0;
+        _vat_total = 0;
+        sub_total = 0;
+        
         for (var i = 0; i < orderList.length; i++){
             var obj = orderList[i];
             var value = obj["id"];
@@ -397,17 +463,23 @@
                       "id"        : obj["id"],
                       "remark"      : obj["remark"],
                       "uom"       : obj["uom"],
-                      "price"      : obj["price"],
-                      "qty"       : obj["qty"],
-                      "exp"       : obj["exp"],
+                      "price"     : currency(obj["price"], { separator: ".", decimal: ",", symbol: "", precision: 0 }).format(),
+                      "qty"       : currency(obj["qty"], { separator: ".", decimal: ",", symbol: "", precision: 0 }).format(),
+                      "disc"       : currency(obj["disc"], { separator: ".", decimal: ",", symbol: "", precision: 0 }).format(),
+                      "exp"         : obj["exp"],
                       "bno"       : obj["bno"],
-                      "total"       : obj["total"],
+                      "total"     : currency(obj["total"], { separator: ".", decimal: ",", symbol: "", precision: 0 }).format(),
                       "action"    : "",
                 }).draw(false);
-              order_total = order_total + ((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"]));
+                disc_total = disc_total + (parseFloat(orderList[i]["disc"]));
+                sub_total = sub_total + (((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"]))-(parseFloat(orderList[i]["disc"])));
+                _vat_total = _vat_total + ((((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"]))-(parseFloat(orderList[i]["disc"])))*(parseFloat(orderList[i]["vat_total"])/100));
+                order_total = order_total + ((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"])+((((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"]))-(parseFloat(orderList[i]["disc"])))*(parseFloat(orderList[i]["vat_total"])/100)))-(parseFloat(orderList[i]["disc"]));
             }
 
-            $('#order-total').text(currency(order_total, { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
+            $('#result-total').text(currency(order_total, { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
+            $('#vat-total').text(currency(_vat_total, { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
+            $('#sub-total').text(currency(sub_total, { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
 
       });
       
@@ -439,8 +511,8 @@
                 timer: 1500
               }
             );
-          }else if($('#receive_date').val()==''){
-            $('#receive_date').focus();
+          }else if($('#doc_dated').val()==''){
+            $('#doc_dated').focus();
             Swal.fire(
               {
                 position: 'top-end',
@@ -467,12 +539,17 @@
           }else{
               const json = JSON.stringify({
                 branch_id : $('#branch_id').val(),
+                branch_name : $('#branch_id option:selected').text(),
                 product : orderList,
                 supplier_id : $('#supplier_id').val(),
+                supplier_name : $('#supplier_id option:selected').text(),
                 remark : $('#remark').val(),
+                ref_no : $('#ref_no').val(),
                 total_order : order_total,
-                dated : $('#receive_date').val(),
-                receive_no : $('#receive_no').val()
+                dated : $('#doc_dated').val(),
+                total_vat : _vat_total,
+                total_discount : disc_total,
+                receive_no : $('#receive_no').val(),
               }
             );
             const res = axios.patch("{{ route('receiveorders.update',$receive->id) }}", json, {
@@ -515,6 +592,7 @@
             { data: 'uom' },
             { data: 'price' },
             { data: 'qty' },
+            { data: 'disc' },
             { data: 'exp' },
             { data: 'bno' },
             { data: 'total' },
@@ -522,9 +600,12 @@
         ],
         });
 
-        function addProduct(id,abbr, price, total, qty, uom,remark,exp,bno){
+        function addProduct(id,abbr, price, total, qty, uom,remark,exp,bno, vat_total,disc){
           table.clear().draw(false);
           order_total = 0;
+            _vat_total = 0;
+            sub_total = 0;
+            disc_total = 0;
           var product = {
                 "id"        : id,
                 "abbr"      : abbr,
@@ -534,6 +615,9 @@
                 "bno"       : bno,
                 "price"     : price,
                 "total"     : total,
+                "total_vat"     : total_vat,
+                "disc"      : disc,
+                "vat_total"     : vat_total,
                 "uom" : uom
           }
 
@@ -545,6 +629,9 @@
               isExist = 1;
               orderList[i]["total"] = (parseInt(orderList[i]["qty"])+parseInt(qty))*parseFloat(orderList[i]["price"]); 
               orderList[i]["qty"] = parseInt(orderList[i]["qty"])+parseInt(qty);
+              orderList[i]["total_vat"] = (((parseInt(orderList[i]["qty"])+parseInt(qty))*parseFloat(orderList[i]["price"]))-(parseFloat(orderList[i]["disc"])+disc))*(1+(parseFloat(vat_total)/100)); 
+              orderList[i]["disc"] = parseFloat(orderList[i]["disc"])+parseFloat(disc);
+            
             }
           }
 
@@ -560,23 +647,31 @@
                    "id"        : obj["id"],
                     "remark"      : obj["remark"],
                     "uom"       : obj["uom"],
-                    "price"       : obj["price"],
-                    "qty"       : obj["qty"],
+                    "price"     : currency(obj["price"], { separator: ".", decimal: ",", symbol: "", precision: 0 }).format(),
+                    "qty"       : currency(obj["qty"], { separator: ".", decimal: ",", symbol: "", precision: 0 }).format(),
+                    "disc"       : currency(obj["disc"], { separator: ".", decimal: ",", symbol: "", precision: 0 }).format(),
                     "exp"       : obj["exp"],
                     "bno"       : obj["bno"],
-                    "total"       : obj["total"],
+                    "total"     : currency(obj["total"], { separator: ".", decimal: ",", symbol: "", precision: 0 }).format(),
                     "action"    : "",
               }).draw(false);
-              order_total = order_total + ((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"]));
-              
-          }
+              disc_total = disc_total + (parseFloat(orderList[i]["disc"]));
+              sub_total = sub_total + (((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"]))-(parseFloat(orderList[i]["disc"])));
+              _vat_total = _vat_total + ((((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"]))-(parseFloat(orderList[i]["disc"])))*(parseFloat(orderList[i]["vat_total"])/100));
+              order_total = order_total + ((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"])+((((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"]))-(parseFloat(orderList[i]["disc"])))*(parseFloat(orderList[i]["vat_total"])/100)))-(parseFloat(orderList[i]["disc"]));
 
-          $('#order-total').text(currency(order_total, { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
+          }
+          $('#result-total').text(currency(order_total, { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
+          $('#vat-total').text(currency(_vat_total, { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
+          $('#sub-total').text(currency(sub_total, { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
         }
 
         $('#order_table tbody').on('click', 'a', function () {
             var data = table.row($(this).parents('tr')).data();
             order_total = 0;
+            _vat_total = 0;
+            sub_total = 0;
+            disc_total = 0;
             table.clear().draw(false);
             
             for (var i = 0; i < orderList.length; i++){
@@ -587,6 +682,7 @@
                 if(data["id"]==obj["id"]){
                   orderList[i]["total"] = (parseInt(orderList[i]["qty"])+1)*parseFloat(orderList[i]["price"]); 
                   orderList[i]["qty"] = parseInt(orderList[i]["qty"])+1;
+                  orderList[i]["total_vat"] = (((parseInt(orderList[i]["qty"])+1)*parseFloat(orderList[i]["price"]))-(parseFloat(orderList[i]["disc"])))*(1+(parseFloat(orderList[i]["vat_total"])/100)); 
                 }
               }
               
@@ -594,6 +690,7 @@
                 if(data["id"]==obj["id"]&&parseInt(orderList[i]["qty"])>1){
                   orderList[i]["total"] = (parseInt(orderList[i]["qty"])-1)*parseFloat(orderList[i]["price"]); 
                   orderList[i]["qty"] = parseInt(orderList[i]["qty"])-1;
+                  orderList[i]["total_vat"] = (((parseInt(orderList[i]["qty"])-1)*parseFloat(orderList[i]["price"]))-(parseFloat(orderList[i]["disc"])))*(1+(parseFloat(orderList[i]["vat_total"])/100)); 
                 } else if(data["id"]==obj["id"]&&parseInt(orderList[i]["qty"])==1) {
                   orderList.splice(i,1);
                 }
@@ -622,17 +719,25 @@
                       "id"        : obj["id"],
                       "remark"      : obj["remark"],
                       "uom"       : obj["uom"],
-                      "price"      : obj["price"],
-                      "qty"       : obj["qty"],
+                      "price"      : currency(obj["price"], { separator: ".", decimal: ",", symbol: "", precision: 0 }).format(),
+                      "qty"       : currency(obj["qty"], { separator: ".", decimal: ",", symbol: "", precision: 0 }).format(),
+                      "disc"       : currency(obj["disc"], { separator: ".", decimal: ",", symbol: "", precision: 0 }).format(),
                       "exp"       : obj["exp"],
                       "bno"       : obj["bno"],
-                      "total"       : obj["total"],
+                      "total"       : currency(obj["total"], { separator: ".", decimal: ",", symbol: "", precision: 0 }).format(),
                       "action"    : "",
                 }).draw(false);
-              order_total = order_total + ((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"]));
+
+                disc_total = disc_total + (parseFloat(orderList[i]["disc"]));
+                sub_total = sub_total + (((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"]))-(parseFloat(orderList[i]["disc"])));
+                _vat_total = _vat_total + ((((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"]))-(parseFloat(orderList[i]["disc"])))*(parseFloat(orderList[i]["vat_total"])/100));
+                order_total = order_total + ((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"])+((((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"]))-(parseFloat(orderList[i]["disc"])))*(parseFloat(orderList[i]["vat_total"])/100)))-(parseFloat(orderList[i]["disc"]));
+
             }
 
-            $('#order-total').text(currency(order_total, { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
+            $('#sub-total').text(currency(sub_total, { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
+            $('#result-total').text(currency(order_total, { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
+            $('#vat-total').text(currency(_vat_total, { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
         });
  
     </script>

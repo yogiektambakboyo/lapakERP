@@ -22,12 +22,12 @@
               <label class="form-label col-form-label col-md-1">Date (mm/dd/YYYY)</label>
               <div class="col-md-1">
                 <input type="text" 
-                name="receive_date"
-                id="receive_date"
+                name="doc_dated"
+                id="doc_dated"
                 class="form-control" 
-                value="{{ old('purchase_date') }}" required/>
-                @if ($errors->has('purchase_date'))
-                          <span class="text-danger text-left">{{ $errors->first('purchase_date') }}</span>
+                value="{{ old('doc_dated') }}" required/>
+                @if ($errors->has('doc_dated'))
+                          <span class="text-danger text-left">{{ $errors->first('doc_dated') }}</span>
                       @endif
               </div>
 
@@ -96,7 +96,7 @@
                 value="{{ old('input_product_uom') }}" required disabled/>
               </div>
 
-              <div class="col-md-2">
+              <div class="col-md-1">
                 <label class="form-label col-form-label">Price</label>
                 <input type="text" 
                 name="input_product_price"
@@ -136,7 +136,21 @@
                 value="{{ old('input_batch_no') }}"/>
               </div>
 
-              <div class="col-md-2">
+              <div class="col-md-1">
+                <label class="form-label col-form-label">Disc (Rp.)</label>
+                <input type="text" 
+                name="input_product_disc"
+                id="input_product_disc"
+                class="form-control" 
+                value="{{ old('input_product_disc') }}" required/>
+                <input type="hidden" 
+                name="input_product_vat_total"
+                id="input_product_vat_total"
+                class="form-control" 
+                value="{{ old('input_product_vat_total') }}" required disabled/>
+              </div>
+
+              <div class="col-md-1">
                 <label class="form-label col-form-label">Total</label>
                 <input type="text" 
                 name="input_product_total"
@@ -145,7 +159,7 @@
                 value="{{ old('input_product_total') }}" required disabled/>
               </div>
 
-              <div class="col-md-1">
+              <div class="col-md-2">
                 <div class="col-md-12"><label class="form-label col-form-label">_</label></div>
                 <a href="#" id="input_product_submit" class="btn btn-green"><div class="fa-1x"><i class="fas fa-plus fa-fw"></i>Add Product</div></a>
               </div>
@@ -153,13 +167,14 @@
             </div>
             
 
-            <table class="table table-striped" id="order_table">
+            <table class="table table-striped" id="data_table">
               <thead>
               <tr>
                   <th>Product Code</th>
                   <th scope="col" width="10%">UOM</th>
                   <th scope="col" width="10%">Price</th>
                   <th scope="col" width="5%">Qty</th>
+                  <th scope="col" width="10%">Disc</th>
                   <th scope="col" width="10%">Expired</th>
                   <th scope="col" width="10%">Batch No</th>
                   <th scope="col" width="10%">Total</th>
@@ -171,141 +186,23 @@
             </table> 
             
             
+            <br>
             <div class="row mb-3">
-              <label class="form-label col-form-label col-md-2"><h1>Total</h1></label>
-              <div class="col-md-10">
-                <h1 class="display-5 text-end"><label id="order-total">Rp. 0</label></h1>
+              <label class="form-label col-form-label col-md-9 text-end"><h2>Sub Total </h2></label>
+              <div class="col-md-3">
+                <h3 class="text-end"><label id="sub-total">0</label></h3>
+              </div>
+
+              <label class="form-label col-form-label col-md-9 text-end"><h2>Tax </h2></label>
+              <div class="col-md-3">
+                <h3 class="text-end"><label id="vat-total">0</label></h3>
+              </div>
+
+              <label class="form-label col-form-label col-md-9 text-end"><h1>Total</h1></label>
+              <div class="col-md-3">
+                <h1 class="display-5 text-end"><label id="result-total">Rp. 0</label></h1>
               </div>
             </div>
-
-            <div class="modal fade" id="modal-filter" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-              <div class="modal-dialog">
-              <div class="modal-content">
-                  <div class="modal-header">
-                  <h5 class="modal-title" id="staticBackdropLabel">Assign Task</h5>
-                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                  </div>
-                  <div class="modal-body">
-                    <label class="form-label col-form-label col-md-8" id="product_id_selected_lbl">Choose Terapist </label>
-                    <input type="hidden" id="product_id_selected" value="">
-                    <div class="col-md-8">
-                      <select class="form-control" 
-                          name="assign_id" id="assign_id" required>
-                          <option value="">Select Staff</option>
-                      </select>
-                    </div>
-                  </div>
-                  <div class="modal-footer">
-                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                  <button type="button" class="btn btn-primary"  data-bs-dismiss="modal" id="btn_assigned">Apply</button>
-                  </div>
-              </div>
-              </div>
-            </div>
-
-            <div class="modal fade" id="modal-referral" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-              <div class="modal-dialog">
-              <div class="modal-content">
-                  <div class="modal-header">
-                  <h5 class="modal-title" id="staticBackdropLabel">Referral By</h5>
-                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                  </div>
-                  <div class="modal-body">
-                    <label class="form-label col-form-label col-md-8" id="referral_selected_lbl">Choose User </label>
-                    <input type="hidden" id="referral_selected" value="">
-                    <div class="col-md-8">
-                      <select class="form-control" 
-                          name="referral_by" id="referral_by">
-                          <option value="">Select Staff</option>
-                          @foreach($usersall as $userall)
-                              <option value="{{ $userall->id }}">{{ $userall->name }}</option>
-                          @endforeach
-                      </select>
-                    </div>
-                  </div>
-                  <div class="modal-footer">
-                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                  <button type="button" class="btn btn-primary"  data-bs-dismiss="modal" id="btn_referred">Apply</button>
-                  </div>
-              </div>
-              </div>
-            </div>
-
-            <div class="modal fade" id="modal-scheduled" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-              <div class="modal-dialog modal-lg">
-              <div class="modal-content">
-                  <div class="modal-header">
-                  <h5 class="modal-title" id="staticBackdropLabel">Choose Schedule</h5>
-                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                  </div>
-                  <div class="modal-body">
-
-                    <div class="row mb-3">
-                      <div class="col-md-1">
-                        <label class="form-label col-form-label col-md-8">Room </label>
-                      </div>
-                      <div class="col-md-2">
-                          <select class="form-control" 
-                              name="room_id" id="room_id" required>
-                              <option value="">Select Rooms</option>
-                              @foreach($rooms as $room)
-                                  <option value="{{ $room->id }}">{{ $room->remark }}</option>
-                              @endforeach
-                          </select>
-                      </div>
-                      <div class="col-md-1">
-                        <label class="form-label col-form-label col-md-4">Date</label>
-                      </div>
-                      <div class="col-md-2">
-                        <input type="text" 
-                        name="schedule_date"
-                        id="schedule_date"
-                        class="form-control" 
-                        value="{{ old('receive_date') }}" required/>
-                        @if ($errors->has('receive_date'))
-                                  <span class="text-danger text-left">{{ $errors->first('join_date') }}</span>
-                              @endif
-                      </div>
-                      <div class="col-md-1">
-                        <label class="form-label col-form-label col-md-8">Time </label>
-                      </div>
-                      <div class="col-md-2">
-                        <div class="input-group bootstrap-timepicker timepicker">
-                            <input id="timepicker1" type="text" class="form-control input-small">
-                            <span class="btn btn-indigo input-group-addon"><i class="fas fa-clock"></i></span>
-                        </div>    
-                      </div>
-                    </div>
-                   
-                    <div class="panel-heading bg-teal-600 text-white"><strong>Time Table</strong></div>
-                    </br>
-      
-                    <div class="col-md-12">
-                      <table class="table table-striped" id="order_time_table" style="width:100%">
-                        <thead>
-                        <tr>
-                            <th>Room</th>
-                            <th scope="col" width="25%">Order No</th>
-                            <th scope="col" width="15%">Customer</th>
-                            <th scope="col" width="15%">Schedule At</th>
-                            <th scope="col" width="5%">Duration</th>  
-                            <th scope="col" width="15%">End Estimate</th>   
-                        </tr>
-                        </thead>
-                        <tbody>
-                        </tbody>
-                      </table> 
-                    </div>
-                  </div>
-                  <div class="modal-footer">
-                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                  <button type="button" class="btn btn-primary"  data-bs-dismiss="modal" id="btn_scheduled">Apply</button>
-                  </div>
-              </div>
-              </div>
-            </div>
-
-
           </div>
 
           <div class="col-md-12">
@@ -361,11 +258,11 @@
           
           
           
-          $('#receive_date').datepicker({
+          $('#doc_dated').datepicker({
               format : 'yyyy-mm-dd',
               todayHighlight: true,
           });
-          $('#receive_date').val(formattedToday);
+          $('#doc_dated').val(formattedToday);
           $('#input_expired_at').datepicker({
               format : 'yyyy-mm-dd',
               todayHighlight: true,
@@ -398,7 +295,8 @@
                           "abbr"      : resp.data[i]["abbr"],
                           "remark"      : resp.data[i]["remark"],
                           "uom"      : resp.data[i]["uom"],
-                          "price"     : resp.data[i]["price"]
+                          "price"     : resp.data[i]["price"],
+                          "vat_total"     : resp.data[i]["vat_total"]
                     }
 
                     productList.push(product);
@@ -417,17 +315,23 @@
                         $('#input_product_price').val(v.price);
                         $('#input_product_qty').val(1);
                         $('#input_product_total').val(v.price);
+                        $('#input_product_disc').val(0);
+                        $('#input_product_vat_total').val(v.vat_total);
                         return;
                     }
                 });
               });
 
               $('#input_product_price').on('input', function(){
-                $('#input_product_total').val(($('#input_product_price').val()*$('#input_product_qty').val()))
+                $('#input_product_total').val(($('#input_product_price').val()*$('#input_product_qty').val())-$('#input_product_disc').val());
               });
 
               $('#input_product_qty').on('input', function(){
-                $('#input_product_total').val(($('#input_product_price').val()*$('#input_product_qty').val()))
+                $('#input_product_total').val(($('#input_product_price').val()*$('#input_product_qty').val())-$('#input_product_disc').val());
+              });
+
+              $('#input_product_disc').on('input', function(){
+                $('#input_product_total').val(($('#input_product_price').val()*$('#input_product_qty').val())-$('#input_product_disc').val());
               });
 
               $('#input_product_submit').on('click', function(){
@@ -467,8 +371,20 @@
                       timer: 1500
                     }
                   );
+                }else if($('#input_product_disc').val()==''){
+                  Swal.fire(
+                    {
+                      position: 'top-end',
+                      icon: 'warning',
+                      text: 'Please input disc',
+                      showConfirmButton: false,
+                      imageHeight: 30, 
+                      imageWidth: 30,   
+                      timer: 1500
+                    }
+                  );
                 }else{
-                  addProduct($('#input_product_id').val(),$('#input_product_id option:selected').text(), $('#input_product_price').val(), $('#input_product_total').val(), $('#input_product_qty').val(), $('#input_product_uom').val(),$('#input_expired_at').val(),$('#input_batch_no').val());
+                  addProduct($('#input_product_id').val(),$('#input_product_id option:selected').text(), $('#input_product_price').val(), $('#input_product_total').val(), $('#input_product_qty').val(), $('#input_product_uom').val(),$('#input_expired_at').val(),$('#input_batch_no').val(), $('#input_product_vat_total').val(),$('#input_product_disc').val());
                 }
               });
               
@@ -482,12 +398,12 @@
           var lastvalurl = "XX";
           console.log(url);
           $('#ref_no').change(function(){
+              orderList = [];
               if($(this).val()==""){
                       table.clear().draw(false);
                       order_total = 0;
-                      orderList = [];
                       $('#order_charge').text("Rp. 0");
-                      $('#order-total').text("Rp. 0");
+                      $('#result-total').text("Rp. 0");
 
               }else{
                 url = url.replace(lastvalurl, $(this).val())
@@ -499,6 +415,10 @@
                 }).then(resp => {
                       table.clear().draw(false);
                       order_total = 0;
+                      disc_total = 0;
+                      _vat_total = 0;
+                      sub_total = 0;
+                      //var total_vat = parseFloat(total) * (parseFloat(vat_total)/100); 
 
                       for(var i=0;i<resp.data.length;i++){
                           var product = {
@@ -506,33 +426,44 @@
                                 "abbr"      : resp.data[i]["remark"],
                                 "uom"      : resp.data[i]["uom"],
                                 "price"     : resp.data[i]["price"],
-                                "discount"  : resp.data[i]["discount"],
+                                "disc"  : resp.data[i]["discount"],
                                 "qty"       : resp.data[i]["qty"],
                                 "exp"       : formattedNextYear,
                                 "bno"       : "",
-                                "total"     : resp.data[i]["total"],
+                                "total"     : resp.data[i]["subtotal"],
+                                "total_vat"     : resp.data[i]["total_vat"],
+                                "vat_total"     : resp.data[i]["vat"],
                           }
 
                           orderList.push(product);
                       }
 
                       for (var i = 0; i < orderList.length; i++){
-                      var obj = orderList[i];
-                      var value = obj["abbr"];
-                      table.row.add( {
-                          "abbr"      : obj["abbr"],
-                          "uom"       : obj["uom"],
-                          "price"     : obj["price"],
-                          "qty"       : obj["qty"],
-                          "exp"       : formattedNextYear,
-                          "bno"       : '',
-                          "total"     : obj["total"],
-                          "action"    : "",
-                        }).draw(false);
-                        order_total = order_total + ((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"]));                        
+                        var obj = orderList[i];
+                        var value = obj["abbr"];
+                        
+                        table.row.add( {
+                          "id"         : obj["id"],
+                            "abbr"      : obj["abbr"],
+                            "uom"       : obj["uom"],
+                            "price"     : currency(obj["price"], { separator: ".", decimal: ",", symbol: "", precision: 0 }).format(),
+                            "qty"       : currency(obj["qty"], { separator: ".", decimal: ",", symbol: "", precision: 0 }).format(),
+                            "disc"       : currency(obj["disc"], { separator: ".", decimal: ",", symbol: "", precision: 0 }).format(),
+                            "exp"       : formattedNextYear,
+                            "bno"       : '',
+                            "total"     : currency(obj["total"], { separator: ".", decimal: ",", symbol: "", precision: 0 }).format(),
+                            "action"    : "",
+                          }).draw(false);
+                          
+                          disc_total = disc_total + (parseFloat(orderList[i]["disc"]));
+                          sub_total = sub_total + (((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"]))-(parseFloat(orderList[i]["disc"])));
+                          _vat_total = _vat_total + ((((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"]))-(parseFloat(orderList[i]["disc"])))*(parseFloat(orderList[i]["vat_total"])/100));
+                          order_total = order_total + ((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"])+((((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"]))-(parseFloat(orderList[i]["disc"])))*(parseFloat(orderList[i]["vat_total"])/100)))-(parseFloat(orderList[i]["disc"]));
                     }
 
-                    $('#order-total').text(currency(order_total, { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
+                    $('#result-total').text(currency(order_total, { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
+                    $('#vat-total').text(currency(_vat_total, { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
+                    $('#sub-total').text(currency(sub_total, { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
 
                     $('#supplier_id').val(resp.data[0]["supplier_id"]);
                     $('#remark').val(resp.data[0]["d_remark"]);
@@ -552,6 +483,9 @@
       $('#btn_apply_exp').on('click', function(){
         table.clear().draw(false);
         order_total = 0;
+        disc_total = 0;
+        _vat_total = 0;
+        sub_total = 0;
           
         for (var i = 0; i < orderList.length; i++){
             var obj = orderList[i];
@@ -565,20 +499,27 @@
           for (var i = 0; i < orderList.length; i++){
               var obj = orderList[i];
               table.row.add( {
-                      "id"        : obj["id"],
-                      "abbr"      : obj["abbr"],
-                      "uom"       : obj["uom"],
-                      "price"      : obj["price"],
-                      "qty"       : obj["qty"],
-                      "exp"       : obj["exp"],
-                      "bno"       : obj["bno"],
-                      "total"       : obj["total"],
-                      "action"    : "",
-                }).draw(false);
-              order_total = order_total + ((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"]));
+                "id"         : obj["id"],
+                "abbr"      : obj["abbr"],
+                "uom"       : obj["uom"],
+                "price"     : currency(obj["price"], { separator: ".", decimal: ",", symbol: "", precision: 0 }).format(),
+                "qty"       : currency(obj["qty"], { separator: ".", decimal: ",", symbol: "", precision: 0 }).format(),
+                "disc"       : currency(obj["disc"], { separator: ".", decimal: ",", symbol: "", precision: 0 }).format(),
+                "exp"       : formattedNextYear,
+                "bno"       : obj["bno"],
+                "total"     : currency(obj["total"], { separator: ".", decimal: ",", symbol: "", precision: 0 }).format(),
+                "action"    : "",
+              }).draw(false);
+                
+                disc_total = disc_total + (parseFloat(orderList[i]["disc"]));
+                sub_total = sub_total + (((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"]))-(parseFloat(orderList[i]["disc"])));
+                _vat_total = _vat_total + ((((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"]))-(parseFloat(orderList[i]["disc"])))*(parseFloat(orderList[i]["vat_total"])/100));
+                order_total = order_total + ((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"])+((((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"]))-(parseFloat(orderList[i]["disc"])))*(parseFloat(orderList[i]["vat_total"])/100)))-(parseFloat(orderList[i]["disc"]));
             }
 
-            $('#order-total').text(currency(order_total, { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
+            $('#result-total').text(currency(order_total, { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
+            $('#vat-total').text(currency(_vat_total, { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
+            $('#sub-total').text(currency(sub_total, { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
 
       });
         
@@ -637,12 +578,16 @@
           }else{
               const json = JSON.stringify({
                 branch_id : $('#branch_id').val(),
+                branch_name : $('#branch_id option:selected').text(),
                 product : orderList,
                 supplier_id : $('#supplier_id').val(),
+                supplier_name : $('#supplier_id option:selected').text(),
                 remark : $('#remark').val(),
                 ref_no : $('#ref_no').val(),
                 total_order : order_total,
-                dated : $('#receive_date').val(),
+                dated : $('#doc_dated').val(),
+                total_vat : _vat_total,
+                total_discount : disc_total,
               }
             );
             const res = axios.post("{{ route('receiveorders.store') }}", json, {
@@ -670,7 +615,7 @@
           }
         });
 
-        var table = $('#order_table').DataTable({
+        var table = $('#data_table').DataTable({
           columnDefs: [{ 
             targets: -1, 
             data: null, 
@@ -685,6 +630,7 @@
             { data: 'uom' },
             { data: 'price' },
             { data: 'qty' },
+            { data: 'disc' },
             { data: 'exp' },
             { data: 'bno' },
             { data: 'total' },
@@ -692,9 +638,14 @@
         ],
         });
 
-        function addProduct(id,abbr, price, total, qty, uom,exp, bno){
+        function addProduct(id,abbr, price, total, qty, uom,exp, bno, vat_total,disc){
           table.clear().draw(false);
           order_total = 0;
+          disc_total = 0;
+          _vat_total = 0;
+          sub_total = 0;
+          var total_vat = parseFloat(total) * (parseFloat(vat_total)/100); 
+        
           var product = {
                 "id"        : id,
                 "abbr"      : abbr,
@@ -703,6 +654,9 @@
                 "bno"       : bno,
                 "price"     : price,
                 "total"     : total,
+                "total_vat"     : total_vat,
+                "disc"      : disc,
+                "vat_total"     : vat_total,
                 "uom" : uom
           }
 
@@ -714,6 +668,8 @@
               isExist = 1;
               orderList[i]["total"] = (parseInt(orderList[i]["qty"])+parseInt(qty))*parseFloat(orderList[i]["price"]); 
               orderList[i]["qty"] = parseInt(orderList[i]["qty"])+parseInt(qty);
+              orderList[i]["total_vat"] = (((parseInt(orderList[i]["qty"])+parseInt(qty))*parseFloat(orderList[i]["price"]))-(parseFloat(orderList[i]["disc"])+disc))*(1+(parseFloat(vat_total)/100)); 
+              orderList[i]["disc"] = parseFloat(orderList[i]["disc"])+parseFloat(disc);
             }
           }
 
@@ -729,23 +685,34 @@
                    "id"         : obj["id"],
                     "abbr"      : obj["abbr"],
                     "uom"       : obj["uom"],
-                    "price"     : obj["price"],
-                    "qty"       : obj["qty"],
+                    "price"     : currency(obj["price"], { separator: ".", decimal: ",", symbol: "", precision: 0 }).format(),
+                    "qty"       : currency(obj["qty"], { separator: ".", decimal: ",", symbol: "", precision: 0 }).format(),
+                    "disc"       : currency(obj["disc"], { separator: ".", decimal: ",", symbol: "", precision: 0 }).format(),
                     "exp"       : obj["exp"],
                     "bno"       : obj["bno"],
-                    "total"     : obj["total"],
+                    "total"     : currency(obj["total"], { separator: ".", decimal: ",", symbol: "", precision: 0 }).format(),
                     "action"    : "",
-              }).draw(false);
-              order_total = order_total + ((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"]));
-              
+              }).draw(false);           
+              disc_total = disc_total + (parseFloat(orderList[i]["disc"]));
+              sub_total = sub_total + (((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"]))-(parseFloat(orderList[i]["disc"])));
+              _vat_total = _vat_total + ((((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"]))-(parseFloat(orderList[i]["disc"])))*(parseFloat(orderList[i]["vat_total"])/100));
+              order_total = order_total + ((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"])+((((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"]))-(parseFloat(orderList[i]["disc"])))*(parseFloat(orderList[i]["vat_total"])/100)))-(parseFloat(orderList[i]["disc"]));
+
           }
 
-          $('#order-total').text(currency(order_total, { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
+          $('#result-total').text(currency(order_total, { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
+          $('#vat-total').text(currency(_vat_total, { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
+          $('#sub-total').text(currency(sub_total, { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
+
+
         }
 
-        $('#order_table tbody').on('click', 'a', function () {
+        $('#data_table tbody').on('click', 'a', function () {
             var data = table.row($(this).parents('tr')).data();
             order_total = 0;
+            _vat_total = 0;
+            sub_total = 0;
+            disc_total = 0;
             table.clear().draw(false);
             
             for (var i = 0; i < orderList.length; i++){
@@ -756,13 +723,15 @@
                 if(data["id"]==obj["id"]){
                   orderList[i]["total"] = (parseInt(orderList[i]["qty"])+1)*parseFloat(orderList[i]["price"]); 
                   orderList[i]["qty"] = parseInt(orderList[i]["qty"])+1;
+                  orderList[i]["total_vat"] = (((parseInt(orderList[i]["qty"])+1)*parseFloat(orderList[i]["price"]))-(parseFloat(orderList[i]["disc"])))*(1+(parseFloat(orderList[i]["vat_total"])/100)); 
                 }
               }
               
               if($(this).attr("id")=="minus_row"){
                 if(data["id"]==obj["id"]&&parseInt(orderList[i]["qty"])>1){
-                  orderList[i]["total"] = (parseInt(orderList[i]["qty"])-1)*parseFloat(orderList[i]["price"]); 
-                  orderList[i]["qty"] = parseInt(orderList[i]["qty"])-1;
+                  orderList[i]["total"] = ((parseInt(orderList[i]["qty"])-1)*parseFloat(orderList[i]["price"]))-(parseFloat(orderList[i]["disc"])); 
+                  orderList[i]["total_vat"] = (((parseInt(orderList[i]["qty"])-1)*parseFloat(orderList[i]["price"]))-(parseFloat(orderList[i]["disc"])))*(1+(parseFloat(orderList[i]["vat_total"])/100)); 
+                 orderList[i]["qty"] = parseInt(orderList[i]["qty"])-1;
                 } else if(data["id"]==obj["id"]&&parseInt(orderList[i]["qty"])==1) {
                   orderList.splice(i,1);
                 }
@@ -791,17 +760,27 @@
                       "id"        : obj["id"],
                       "abbr"      : obj["abbr"],
                       "uom"       : obj["uom"],
-                      "price"      : obj["price"],
-                      "qty"       : obj["qty"],
+                      "price"      : currency(obj["price"], { separator: ".", decimal: ",", symbol: "", precision: 0 }).format(),
+                      "qty"       : currency(obj["qty"], { separator: ".", decimal: ",", symbol: "", precision: 0 }).format(),
+                      "disc"       : currency(obj["disc"], { separator: ".", decimal: ",", symbol: "", precision: 0 }).format(),
                       "exp"       : obj["exp"],
                       "bno"       : obj["bno"],
-                      "total"       : obj["total"],
+                      "total"       : currency(obj["total"], { separator: ".", decimal: ",", symbol: "", precision: 0 }).format(),
                       "action"    : "",
                 }).draw(false);
-              order_total = order_total + ((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"]));
+                disc_total = disc_total + (parseFloat(orderList[i]["disc"]));
+                sub_total = sub_total + (((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"]))-(parseFloat(orderList[i]["disc"])));
+                _vat_total = _vat_total + ((((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"]))-(parseFloat(orderList[i]["disc"])))*(parseFloat(orderList[i]["vat_total"])/100));
+                order_total = order_total + ((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"])+((((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"]))-(parseFloat(orderList[i]["disc"])))*(parseFloat(orderList[i]["vat_total"])/100)))-(parseFloat(orderList[i]["disc"]));
+
+              
             }
 
-            $('#order-total').text(currency(order_total, { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
+            $('#sub-total').text(currency(sub_total, { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
+            $('#result-total').text(currency(order_total, { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
+            $('#vat-total').text(currency(_vat_total, { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
+
+            
         });
 
     </script>

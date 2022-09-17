@@ -28,6 +28,9 @@ class ReceiveDetail extends Model
         'discount',
         'expired_at',
         'batch_no',
-        'seq'
+        'product_remark',
+        'discount',
+        'seq',
+        'uom'
     ];
 }

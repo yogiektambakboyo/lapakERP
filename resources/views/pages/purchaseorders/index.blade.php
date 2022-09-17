@@ -127,7 +127,7 @@
                 </div>
             </div>
             </div>
-          </div>
+        </div>
 
 
         
@@ -136,7 +136,7 @@
 
 @push('scripts')
     <script type="text/javascript">
-        const today = new Date();
+          const today = new Date();
           const yyyy = today.getFullYear();
           const yyyy1 = today.getFullYear()+1;
           let mm = today.getMonth() + 1; // Months start at 0!

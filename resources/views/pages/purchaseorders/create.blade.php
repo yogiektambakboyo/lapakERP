@@ -22,8 +22,8 @@
               <label class="form-label col-form-label col-md-1">Date (mm/dd/YYYY)</label>
               <div class="col-md-2">
                 <input type="text" 
-                name="invoice_date"
-                id="invoice_date"
+                name="doc_dated"
+                id="doc_dated"
                 class="form-control" 
                 value="{{ old('purchase_date') }}" required/>
                 @if ($errors->has('purchase_date'))
@@ -163,7 +163,7 @@
 
               <label class="form-label col-form-label col-md-9 text-end"><h1>Total</h1></label>
               <div class="col-md-3">
-                <h1 class="display-5 text-end"><label id="order-total">Rp. 0</label></h1>
+                <h1 class="display-5 text-end"><label id="result-total">Rp. 0</label></h1>
               </div>
             </div>
           </div>
@@ -191,11 +191,11 @@
 
           const formattedToday = mm + '/' + dd + '/' + yyyy;
           
-          $('#invoice_date').datepicker({
+          $('#doc_dated').datepicker({
               format : 'yyyy-mm-dd',
               todayHighlight: true,
           });
-          $('#invoice_date').val(formattedToday);
+          $('#doc_dated').val(formattedToday);
           $('#schedule_date').datepicker({
               format : 'yyyy-mm-dd',
               todayHighlight: true,
@@ -391,7 +391,7 @@
                 total_order : order_total,
                 total_vat : _vat_total,
                 total_discount : disc_total,
-                dated : $('#dated').val(),
+                dated : $('#doc_dated').val(),
               }
             );
             const res = axios.post("{{ route('purchaseorders.store') }}", json, {
@@ -496,7 +496,7 @@
 
           }
 
-          $('#order-total').text(currency(order_total, { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
+          $('#result-total').text(currency(order_total, { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
           $('#vat-total').text(currency(_vat_total, { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
           $('#sub-total').text(currency(sub_total, { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
 
@@ -560,7 +560,7 @@
             }
 
             $('#sub-total').text(currency(sub_total, { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
-            $('#order-total').text(currency(order_total, { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
+            $('#result-total').text(currency(order_total, { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
             $('#vat-total').text(currency(_vat_total, { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
         });
  

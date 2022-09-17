@@ -100,7 +100,9 @@ class PurchaseOrderController extends Controller
                 ->join('users_branch as ub', function($join){
                     $join->on('ub.branch_id', '=', 'b.id')
                     ->whereColumn('ub.branch_id', 'jt.branch_id');
-                })->where('ub.user_id', $user->id)->where('purchase_master.purchase_no','like','%'.$keyword.'%')
+                })
+                ->where('ub.user_id', $user->id)
+                ->where('purchase_master.purchase_no','like','%'.$keyword.'%')
                 ->where('b.id','like','%'.$branchx.'%')  
                 ->whereBetween('purchase_master.dated',$fil)  
               ->paginate(10,['purchase_master.id','b.remark as branch_name','purchase_master.purchase_no','purchase_master.dated','jt.name as supplier','purchase_master.total','purchase_master.total_discount','purchase_master.total_payment' ]);
@@ -204,7 +206,7 @@ class PurchaseOrderController extends Controller
             array_merge(
                 ['purchase_no' => $purchase_no ],
                 ['created_by' => $user->id],
-                ['dated' => Carbon::parse($request->get('order_date'))->format('d/m/Y') ],
+                ['dated' => Carbon::parse($request->get('dated'))->format('d/m/Y') ],
                 ['supplier_id' => $request->get('supplier_id') ],
                 ['supplier_name' => $request->get('supplier_name') ],
                 ['total' => $request->get('total_order') ],
