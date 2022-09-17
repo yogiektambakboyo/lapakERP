@@ -27,7 +27,7 @@ use App\Models\Company;
 
 
 
-class ProductsPriceController extends Controller
+class VoucherController extends Controller
 {
     /**
      * Display all products

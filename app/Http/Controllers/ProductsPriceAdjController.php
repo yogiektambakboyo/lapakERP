@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Carbon\Carbon;
 use App\Models\User;
 use App\Models\Product;
-use App\Models\ProductPrice;
+use App\Models\ProductPriceAdj;
 use Illuminate\Http\Request;
 use Spatie\Permission\Models\Role;
 use App\Models\Branch;
@@ -18,7 +18,7 @@ use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
 use Spatie\Permission\Models\Permission;
 use Maatwebsite\Excel\Facades\Excel;
-use App\Exports\ProductsPriceExport;
+use App\Exports\ProductsPriceAdjExport;
 use App\Http\Controllers\Controller;
 use Yajra\Datatables\Datatables;
 use Auth;
@@ -27,7 +27,7 @@ use App\Models\Company;
 
 
 
-class ProductsPriceController extends Controller
+class ProductsPriceAdjController extends Controller
 {
     /**
      * Display all products
@@ -35,7 +35,7 @@ class ProductsPriceController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-    private $data,$act_permission,$module="productsprice",$id=1;
+    private $data,$act_permission,$module="productspriceadj",$id=1;
 
     public function __construct()
     {
@@ -68,10 +68,10 @@ class ProductsPriceController extends Controller
                     ->join('product_type as pt','pt.id','=','product_sku.type_id')
                     ->join('product_category as pc','pc.id','=','product_sku.category_id')
                     ->join('product_brand as pb','pb.id','=','product_sku.brand_id')
-                    ->join('product_price as pr','pr.product_id','=','product_sku.id')
+                    ->join('price_adjustment as pr','pr.product_id','=','product_sku.id')
                     ->join('branch as bc','bc.id','=','pr.branch_id')
-                    ->paginate(10,['product_sku.id','product_sku.remark as product_name','pr.branch_id','bc.remark as branch_name','pr.price as product_price','pb.remark as product_brand']);
-        return view('pages.productsprice.index',['company' => Company::get()->first()] ,compact('request','branchs','products','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
+                    ->paginate(10,['product_sku.id','product_sku.remark as product_name','pr.branch_id','bc.remark as branch_name','pr.value as value','pr.dated_start','pr.dated_end','pb.remark as product_brand']);
+        return view('pages.productspriceadj.index',['company' => Company::get()->first()] ,compact('request','branchs','products','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
     }
 
     public function search(Request $request) 
@@ -84,36 +84,41 @@ class ProductsPriceController extends Controller
         $keyword = $request->search;
         $data = $this->data;
         $act_permission = $this->act_permission[0];
+        $begindate = date(Carbon::parse($request->filter_begin_date)->format('Y-m-d'));
+        $enddate = date(Carbon::parse($request->filter_end_date)->format('Y-m-d'));
         $branchx = $request->filter_branch_id;
-
+        $fil = [ $begindate , $enddate ];
+        
         if($request->export=='Export Excel'){
-            $strencode = base64_encode($keyword.'#'.$branchx);
-            return Excel::download(new ProductsPriceExport($strencode), 'productsprice_'.Carbon::now()->format('YmdHis').'.xlsx');
+            $strencode = base64_encode($keyword.'#'.$begindate.'#'.$enddate.'#'.$branchx);
+            return Excel::download(new ProductsPriceAdjExport($strencode), 'productspriceadjustment_'.Carbon::now()->format('YmdHis').'.xlsx');
         }else if($request->src=='Search'){
             $branchx = "";
-            $whereclause = " upper(product_sku.remark) like '%".strtoupper($keyword)."%'";
+            $whereclause = " upper(product_sku.remark) like '%".strtoupper($keyword)."%' and now()::date between '".$begindate."' and '".$enddate."' ";
             $products = Product::orderBy('product_sku.remark', 'ASC')
                         ->join('product_type as pt','pt.id','=','product_sku.type_id')
                         ->join('product_category as pc','pc.id','=','product_sku.category_id')
                         ->join('product_brand as pb','pb.id','=','product_sku.brand_id')
-                        ->join('product_price as pr','pr.product_id','=','product_sku.id')
+                        ->join('price_adjustment as pr','pr.product_id','=','product_sku.id')
                         ->join('branch as bc','bc.id','=','pr.branch_id')
                         ->whereRaw($whereclause)
                         ->where('bc.id','like','%'.$branchx.'%')  
-                        ->paginate(10,['product_sku.id','product_sku.remark as product_name','pr.branch_id','bc.remark as branch_name','pr.price as product_price','pb.remark as product_brand']);           
-            return view('pages.productsprice.index',['company' => Company::get()->first()], compact('request','branchs','products','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
+                        ->paginate(10,['product_sku.id','product_sku.remark as product_name','pr.branch_id','bc.remark as branch_name','pr.value as value','pr.dated_start','pr.dated_end','pb.remark as product_brand']); 
+                        $request->filter_branch_id = "";
+                        $request->filter_end_date = "";       
+            return view('pages.productspriceadj.index',['company' => Company::get()->first()], compact('request','branchs','products','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
         }else{
-            $whereclause = " upper(product_sku.remark) like '%".strtoupper($keyword)."%'";
+            $whereclause = " upper(product_sku.remark) like '%".strtoupper($keyword)."%' and now()::date between '".$begindate."' and '".$enddate."' ";
             $products = Product::orderBy('product_sku.remark', 'ASC')
                         ->join('product_type as pt','pt.id','=','product_sku.type_id')
                         ->join('product_category as pc','pc.id','=','product_sku.category_id')
                         ->join('product_brand as pb','pb.id','=','product_sku.brand_id')
-                        ->join('product_price as pr','pr.product_id','=','product_sku.id')
+                        ->join('price_adjustment as pr','pr.product_id','=','product_sku.id')
                         ->join('branch as bc','bc.id','=','pr.branch_id')
                         ->whereRaw($whereclause)
                         ->where('bc.id','like','%'.$branchx.'%')  
-                        ->paginate(10,['product_sku.id','product_sku.remark as product_name','pr.branch_id','bc.remark as branch_name','pr.price as product_price','pb.remark as product_brand']);           
-            return view('pages.productsprice.index',['company' => Company::get()->first()], compact('request','branchs','products','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
+                        ->paginate(10,['product_sku.id','product_sku.remark as product_name','pr.branch_id','bc.remark as branch_name','pr.value as value','pr.dated_start','pr.dated_end','pb.remark as product_brand']);                 
+            return view('pages.productspriceadj.index',['company' => Company::get()->first()], compact('request','branchs','products','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
         }
     }
 
@@ -136,7 +141,7 @@ class ProductsPriceController extends Controller
 
         $user  = Auth::user();
         $data = $this->data;
-        return view('pages.productsprice.create',[
+        return view('pages.productspriceadj.create',[
             'products' => DB::select('select ps.id,ps.remark from product_sku as ps;'),
             'data' => $data, 'company' => Company::get()->first(),
             'branchs' => Branch::join('users_branch as ub','ub.branch_id','=','branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']),
@@ -151,22 +156,24 @@ class ProductsPriceController extends Controller
      * 
      * @return \Illuminate\Http\Response
      */
-    public function store(ProductPrice $productprice, Request $request) 
+    public function store(ProductPriceAdj $productpriceadj, Request $request) 
     {
         //For demo purposes only. When creating user or inviting a user
         // you should create a generated random password and email it to the user
     
         $user = Auth::user();
-        $productprice->create(
+        $productpriceadj->create(
             array_merge(
-                ['price' => $request->get('price') ],
+                ['value' => $request->get('value') ],
+                ['dated_start' => Carbon::parse($request->get('dated_start'))->format('d/m/Y') ],
+                ['dated_end' => Carbon::parse($request->get('dated_end'))->format('d/m/Y') ],
                 ['product_id' => $request->get('product_id') ],
                 ['branch_id' => $request->get('branch_id') ],
                 ['created_by' => $user->id ],
             )
         );
-        return redirect()->route('productsprice.index')
-            ->withSuccess(__('Product price created successfully.'));
+        return redirect()->route('productspriceadj.index')
+            ->withSuccess(__('Product price adjustment created successfully.'));
     }
 
     /**
@@ -190,7 +197,7 @@ class ProductsPriceController extends Controller
         ->where('product_sku.id',$product->id)
         ->get(['product_sku.id as product_id','product_sku.abbr','product_sku.remark as product_name','pt.remark as product_type','pc.remark as product_category','pb.remark as product_brand'])->first();
 
-        return view('pages.productsprice.show', [
+        return view('pages.productspriceadj.show', [
             'product' => $products ,
             'data' => $data, 'company' => Company::get()->first(),
         ]);
@@ -214,18 +221,12 @@ class ProductsPriceController extends Controller
         $product = Product::join('product_type as pt','pt.id','=','product_sku.type_id')
         ->join('product_category as pc','pc.id','=','product_sku.category_id')
         ->join('product_brand as pb','pb.id','=','product_sku.brand_id')
-        ->join('product_price as pr','pr.product_id','=','product_sku.id')
+        ->join('price_adjustment as pr','pr.product_id','=','product_sku.id')
         ->join('branch as bc','bc.id','=','pr.branch_id')
         ->where('product_sku.id',$product_id)
         ->where('bc.id','=',$branch_id)
-        ->get(['product_sku.id as id','product_sku.abbr','product_sku.brand_id','product_sku.category_id','product_sku.type_id','product_sku.remark as product_name','pt.remark as product_type','pc.remark as product_category','pb.remark as product_brand','pr.branch_id','bc.remark as branch_name','pr.price as product_price'])->first();
-        return view('pages.productsprice.edit', [
-            'productCategorys' => ProductCategory::latest()->get(),
-            'productCategorysRemark' => ProductCategory::latest()->get()->pluck('remark')->toArray(),
-            'productBrands' => ProductBrand::latest()->get(),
-            'productBrandsRemark' => ProductBrand::latest()->get()->pluck('remark')->toArray(),
-            'productTypes' => ProductType::latest()->get(),
-            'productTypesRemark' => ProductType::latest()->get()->pluck('remark')->toArray(),
+        ->get(['product_sku.id','product_sku.remark as product_name','pr.branch_id','bc.remark as branch_name','pr.value as value','pr.dated_start','pr.dated_end','pb.remark as product_brand'])->first(); 
+        return view('pages.productspriceadj.edit', [
             'branchs' => Branch::join('users_branch as ub','ub.branch_id','=','branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']),
             'data' => $data,
             'product' => $product, 'company' => Company::get()->first(),
@@ -236,22 +237,26 @@ class ProductsPriceController extends Controller
     /**
      * Update user data
      * 
-     * @param ProductPrice $product
+     * @param ProductPriceAdj $product
      * @param Request $request
      * 
      * @return \Illuminate\Http\Response
      */
-    public function update(String $branch,String $product, Request $request) 
+    public function update(String $branch,String $product,String $dated_start,String $dated_end, Request $request) 
     {
         $user = Auth::user();
-        ProductPrice::where('product_id','=',$product)->where('branch_id','=',$branch)->update(
-            array_merge(
-                ['price' => $request->get('price') ],
-            )
-        );
+        ProductPriceAdj::where('product_id','=',$product)
+                        ->where('branch_id','=',$branch)
+                        ->where('dated_start','=',Carbon::parse($dated_start)->format('Y-m-d'))
+                        ->where('dated_end','=',Carbon::parse($dated_end)->format('Y-m-d'))
+                        ->update(
+                            array_merge(
+                                ['value' => $request->get('value') ],
+                            )
+                        );
         
-        return redirect()->route('productsprice.index')
-            ->withSuccess(__('Product price updated successfully.'));
+        return redirect()->route('productspriceadj.index')
+            ->withSuccess(__('Price Adjustment updated successfully.'));
     }
 
     /**
@@ -261,9 +266,12 @@ class ProductsPriceController extends Controller
      * 
      * @return \Illuminate\Http\Response
      */
-    public function destroy(String $branch,String $product) 
+    public function destroy(String $branch,String $product,String $dated_start,String $dated_end) 
     {
-        ProductPrice::where('product_id','=',$product)->where('branch_id','=',$branch)->delete();
+        ProductPriceAdj::where('product_id','=',$product)
+                        ->where('branch_id','=',$branch)
+                        ->where('dated_start','=',Carbon::parse($dated_start)->format('Y-m-d'))
+                        ->where('dated_end','=',Carbon::parse($dated_end)->format('Y-m-d'))->delete();
         $result = array_merge(
             ['status' => 'success'],
             ['data' => $product],

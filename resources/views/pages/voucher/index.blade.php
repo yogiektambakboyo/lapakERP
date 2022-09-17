@@ -46,7 +46,7 @@
                     <tr>
                         <td>{{ $product->product_name }}</td>
                         <td>{{ $product->branch_name }}</td>
-                        <td>{{ number_format($product->product_price,0,',','.') }}</td>
+                        <td>{{ $product->product_price }}</td>
                         <td><a href="{{ route('productsprice.edit', [$product->branch_id,$product->id]) }}" class="btn btn-info btn-sm  {{ $act_permission->allow_edit==1?'':'d-none' }}">Edit</a></td>
                         <td class=" {{ $act_permission->allow_delete==1?'':'d-none' }}">
                             <a onclick="showConfirm( '{{ $product->branch_id }}','{{ $product->id }}','{{ $product->product_name }}' )" class="btn btn-danger btn-sm  {{ $act_permission->allow_delete==1?'':'d-none' }} ">Delete</a>

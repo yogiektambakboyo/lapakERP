@@ -208,6 +208,36 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
 
 
         /**
+         * Product Price Adjustment
+         */
+        Route::group(['prefix' => 'productspriceadj'], function() {
+            Route::get('/', 'ProductsPriceAdjController@index')->name('productspriceadj.index');
+            Route::get('/create', 'ProductsPriceAdjController@create')->name('productspriceadj.create');
+            Route::post('/create', 'ProductsPriceAdjController@store')->name('productspriceadj.store');
+            Route::get('/search', 'ProductsPriceAdjController@search')->name('productspriceadj.search');
+            Route::get('/{branch}/{product}/show', 'ProductsPriceAdjController@show')->name('productspriceadj.show');
+            Route::get('/{branch}/{product}/edit', 'ProductsPriceAdjController@edit')->name('productspriceadj.edit');
+            Route::patch('/{branch}/{product}/{dated_start}/{dated_end}/update', 'ProductsPriceAdjController@update')->name('productspriceadj.update');
+            Route::delete('/{branch}/{product}/{dated_start}/{dated_end}/delete', 'ProductsPriceAdjController@destroy')->name('productspriceadj.destroy');
+            Route::get('/export', 'ProductsPriceAdjController@export')->name('productspriceadj.export');
+        });
+
+        /**
+         * Product Voucher
+         */
+        Route::group(['prefix' => 'voucher'], function() {
+            Route::get('/', 'VoucherController@index')->name('voucher.index');
+            Route::get('/create', 'VoucherController@create')->name('voucher.create');
+            Route::post('/create', 'VoucherController@store')->name('voucher.store');
+            Route::get('/search', 'VoucherController@search')->name('voucher.search');
+            Route::get('/{branch}/{product}/show', 'VoucherController@show')->name('voucher.show');
+            Route::get('/{branch}/{product}/edit', 'VoucherController@edit')->name('voucher.edit');
+            Route::patch('/{branch}/{product}/update', 'VoucherController@update')->name('voucher.update');
+            Route::delete('/{branch}/{product}/delete', 'VoucherController@destroy')->name('voucher.destroy');
+            Route::get('/export', 'VoucherController@export')->name('voucher.export');
+        });
+
+        /**
          * Product Distribution
          */
         Route::group(['prefix' => 'productsdistribution'], function() {

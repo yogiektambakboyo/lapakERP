@@ -4,15 +4,16 @@
 
 @section('content')
     <div class="bg-light p-4 rounded">
-        <h1>Products Price</h1>
+        <h1>Price Adjustment</h1>
         <div class="lead row mb-3">
             <div class="col-md-10">
                 <div class="col-md-4">
-                    Manage your products price here.
+                    Manage your price adjusment here.
                 </div>
                 <div class="col-md-10"> 	
-                    <form action="{{ route('productsprice.search') }}" method="GET" class="row row-cols-lg-auto g-3 align-items-center">
+                    <form action="{{ route('productspriceadj.search') }}" method="GET" class="row row-cols-lg-auto g-3 align-items-center">
                         <input type="hidden" class="form-control  form-control-sm" name="filter_branch_id" value="{{ $request->filter_branch_id }}">
+                        <input type="hidden" name="filter_begin_date" value="2022-01-01"><input type="hidden" name="filter_end_date" value="2035-01-01">
                         <div class="col-2"><input type="text" class="form-control  form-control-sm" name="search" placeholder="Find Product.." value="{{ $keyword }}"></div>
                         <div class="col-2"><input type="submit" class="btn btn-sm btn-secondary" value="Search" name="submit"></div>   
                         <div class="col-2"><a href="#modal-filter"  data-bs-toggle="modal" data-bs-target="#modal-filter" class="btn btn-sm btn-lime">Filter</a></div>   
@@ -21,7 +22,7 @@
                 </div>
             </div>
             <div class="col-md-2">
-                <a href="{{ route('productsprice.create') }}" class="btn btn-primary float-right  {{ $act_permission->allow_create==1?'':'d-none' }}"><span class="fa fa-plus-circle"></span>  Add new product price</a>
+                <a href="{{ route('productspriceadj.create') }}" class="btn btn-primary float-right  {{ $act_permission->allow_create==1?'':'d-none' }}"><span class="fa fa-plus-circle"></span>  Add price adjustment</a>
             </div>
         </div>
         
@@ -34,7 +35,9 @@
             <tr>
                 <th>Name</th>
                 <th scope="col" width="15%">Branch</th>
-                <th scope="col" width="10%">Price</th>
+                <th scope="col" width="10%">Date Start</th>
+                <th scope="col" width="10%">Date End</th>
+                <th scope="col" width="10%">Value</th>
                 <th scope="col" width="2%">Action</th>   
                 <th scope="col" width="2%"></th>
                 <th scope="col" width="2%"></th>    
@@ -46,10 +49,12 @@
                     <tr>
                         <td>{{ $product->product_name }}</td>
                         <td>{{ $product->branch_name }}</td>
-                        <td>{{ number_format($product->product_price,0,',','.') }}</td>
-                        <td><a href="{{ route('productsprice.edit', [$product->branch_id,$product->id]) }}" class="btn btn-info btn-sm  {{ $act_permission->allow_edit==1?'':'d-none' }}">Edit</a></td>
+                        <td>{{ $product->dated_start }}</td>
+                        <td>{{ $product->dated_end }}</td>
+                        <td>{{ number_format($product->value,0,',','.') }}</td>
+                        <td><a href="{{ route('productspriceadj.edit', [$product->branch_id,$product->id]) }}" class="btn btn-info btn-sm  {{ $act_permission->allow_edit==1?'':'d-none' }}">Edit</a></td>
                         <td class=" {{ $act_permission->allow_delete==1?'':'d-none' }}">
-                            <a onclick="showConfirm( '{{ $product->branch_id }}','{{ $product->id }}','{{ $product->product_name }}' )" class="btn btn-danger btn-sm  {{ $act_permission->allow_delete==1?'':'d-none' }} ">Delete</a>
+                            <a onclick="showConfirm( '{{ $product->branch_id }}','{{ $product->id }}','{{ $product->dated_start }}','{{ $product->dated_end }}','{{ $product->product_name }}' )" class="btn btn-danger btn-sm  {{ $act_permission->allow_delete==1?'':'d-none' }} ">Delete</a>
                         </td>
                     </tr>
                 @endforeach
@@ -70,7 +75,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form action="{{ route('productsprice.search') }}" method="GET">   
+                    <form action="{{ route('productspriceadj.search') }}" method="GET">   
                         @csrf 
                         <div class="col-md-10">
                             <label class="form-label col-form-label col-md-4">Branch</label>
@@ -83,6 +88,33 @@
                                     <option value="{{ $branchx->id }}">{{ $branchx->remark }} </option>
                                 @endforeach
                             </select>
+                        </div>
+                        <div class="col-md-12">
+                            <label class="form-label col-form-label col-md-4">Begin Date</label>
+                        </div>
+                        <div class="col-md-12">
+                            <input type="text" 
+                            name="filter_begin_date"
+                            id="filter_begin_date"
+                            class="form-control" 
+                            value="{{ old('filter_begin_date') }}" required/>
+                            @if ($errors->has('filter_begin_date'))
+                                    <span class="text-danger text-left">{{ $errors->first('filter_begin_date') }}</span>
+                                @endif
+                        </div>
+
+                        <div class="col-md-10">
+                            <label class="form-label col-form-label col-md-4">End Date</label>
+                        </div>
+                        <div class="col-md-12">
+                            <input type="text" 
+                            name="filter_end_date"
+                            id="filter_end_date"
+                            class="form-control" 
+                            value="{{ old('filter_end_date') }}" required/>
+                            @if ($errors->has('filter_end_date'))
+                                    <span class="text-danger text-left">{{ $errors->first('filter_end_date') }}</span>
+                                @endif
                         </div>
                         <br>
                         <div class="col-md-12">
@@ -125,7 +157,7 @@
           });
           $('#filter_end_date').val(formattedToday);
 
-        function showConfirm(branch_id,product_id,data){
+        function showConfirm(branch_id,product_id,dated_start,dated_end,data){
             Swal.fire({
             title: 'Are you sure?',
             text: "You will delete document "+data+" !",
@@ -136,12 +168,15 @@
             confirmButtonText: 'Yes, delete it!'
             }).then((result) => {
             if (result.isConfirmed) {
-                var url = "{{ route('productsprice.destroy',['XX','YY']) }}";
-                var lastvalurl = "XX";
-                var lastvalurl2 = "YY";
-                console.log(url);
+                var url = "{{ route('productspriceadj.destroy',['AA','BB','CC','DD']) }}";
+                var lastvalurl = "AA";
+                var lastvalurl2 = "BB";
+                var lastvalurl3 = "CC";
+                var lastvalurl4 = "DD";
                 url = url.replace(lastvalurl, branch_id)
                 url = url.replace(lastvalurl2, product_id)
+                url = url.replace(lastvalurl3, dated_start)
+                url = url.replace(lastvalurl4, dated_end)
                 const res = axios.delete(url, {}, {
                     headers: {
                         // Overwrite Axios's automatically set Content-Type
@@ -158,7 +193,7 @@
                                 cancelButtonColor: '#d33',
                                 confirmButtonText: 'Close'
                                 }).then((result) => {
-                                    window.location.href = "{{ route('productsprice.index') }}"; 
+                                    window.location.href = "{{ route('productspriceadj.index') }}"; 
                                 })
                         }else{
                             Swal.fire(
