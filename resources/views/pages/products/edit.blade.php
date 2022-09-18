@@ -80,6 +80,13 @@
                   </select>
             </div>
           </div>
+          <div class="row mb-3">
+              <label class="form-label col-form-label col-md-2">Photo</label>
+              <div class="col-md-8">
+                <a href="/images/user-files/{{ $product->photo }}" target="_blank"><img src="/images/user-files/{{ $product->photo }}" width="100" height="100" class="rounded float-start"></a>
+              </div>
+          </div> 
+
           </div>
         </div>
     </div>

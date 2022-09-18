@@ -70,6 +70,7 @@ class ProductsPriceAdjController extends Controller
                     ->join('product_brand as pb','pb.id','=','product_sku.brand_id')
                     ->join('price_adjustment as pr','pr.product_id','=','product_sku.id')
                     ->join('branch as bc','bc.id','=','pr.branch_id')
+                    ->whereRaw('now()::date between pr.dated_start and pr.dated_end')
                     ->paginate(10,['product_sku.id','product_sku.remark as product_name','pr.branch_id','bc.remark as branch_name','pr.value as value','pr.dated_start','pr.dated_end','pb.remark as product_brand']);
         return view('pages.productspriceadj.index',['company' => Company::get()->first()] ,compact('request','branchs','products','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
     }
@@ -87,6 +88,10 @@ class ProductsPriceAdjController extends Controller
         $begindate = date(Carbon::parse($request->filter_begin_date)->format('Y-m-d'));
         $enddate = date(Carbon::parse($request->filter_end_date)->format('Y-m-d'));
         $branchx = $request->filter_branch_id;
+        if($begindate=='2022-01-01'){
+            $begindate = Carbon::now()->format('Y-m-d');
+        }
+        
         $fil = [ $begindate , $enddate ];
         
         if($request->export=='Export Excel'){
@@ -94,7 +99,7 @@ class ProductsPriceAdjController extends Controller
             return Excel::download(new ProductsPriceAdjExport($strencode), 'productspriceadjustment_'.Carbon::now()->format('YmdHis').'.xlsx');
         }else if($request->src=='Search'){
             $branchx = "";
-            $whereclause = " upper(product_sku.remark) like '%".strtoupper($keyword)."%' and now()::date between '".$begindate."' and '".$enddate."' ";
+            $whereclause = " upper(product_sku.remark) like '%".strtoupper($keyword)."%' and '".$begindate."' between pr.dated_start and pr.dated_end ";
             $products = Product::orderBy('product_sku.remark', 'ASC')
                         ->join('product_type as pt','pt.id','=','product_sku.type_id')
                         ->join('product_category as pc','pc.id','=','product_sku.category_id')
@@ -108,7 +113,7 @@ class ProductsPriceAdjController extends Controller
                         $request->filter_end_date = "";       
             return view('pages.productspriceadj.index',['company' => Company::get()->first()], compact('request','branchs','products','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
         }else{
-            $whereclause = " upper(product_sku.remark) like '%".strtoupper($keyword)."%' and now()::date between '".$begindate."' and '".$enddate."' ";
+            $whereclause = " upper(product_sku.remark) like '%".strtoupper($keyword)."%' and '".$begindate."' between pr.dated_start and pr.dated_end ";
             $products = Product::orderBy('product_sku.remark', 'ASC')
                         ->join('product_type as pt','pt.id','=','product_sku.type_id')
                         ->join('product_category as pc','pc.id','=','product_sku.category_id')

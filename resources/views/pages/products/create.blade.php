@@ -17,6 +17,7 @@
             </div>
           </div>
         </div>
+        <br>
       
         <div class="panel text-white">
           <div class="panel-heading bg-teal-600"><h4></h4></div>
@@ -71,7 +72,37 @@
                   </select>
             </div>
           </div>
+
+          <div class="row mb-3">
+            <label class="form-label col-form-label col-md-2">Photo</label>
+            <div class="col-md-8">
+              <a href="/images/user-files/goods.png" target="_blank"><img  id="photo_preview" src="/images/user-files/goods.png" width="100" height="100" class="rounded float-start" alt="..."></a>
+              <input type="file" 
+              name="photo"  id="photo" onchange="previewFile(this);"
+              class="form-control"  />
+              <span></span>
+            </div>
+          </div>
+
           </div>
         </div>
     </div>
 @endsection
+
+@push('scripts')
+<script type="text/javascript">
+    function previewFile(input){
+        var file = $("#photo").get(0).files[0];
+ 
+        if(file){
+            var reader = new FileReader();
+ 
+            reader.onload = function(){
+                $("#photo_preview").attr("src", reader.result);
+            }
+ 
+            reader.readAsDataURL(file);
+        }
+    }
+</script>
+@endpush

@@ -103,19 +103,6 @@
                                 @endif
                         </div>
 
-                        <div class="col-md-10">
-                            <label class="form-label col-form-label col-md-4">End Date</label>
-                        </div>
-                        <div class="col-md-12">
-                            <input type="text" 
-                            name="filter_end_date"
-                            id="filter_end_date"
-                            class="form-control" 
-                            value="{{ old('filter_end_date') }}" required/>
-                            @if ($errors->has('filter_end_date'))
-                                    <span class="text-danger text-left">{{ $errors->first('filter_end_date') }}</span>
-                                @endif
-                        </div>
                         <br>
                         <div class="col-md-12">
                             <button type="submit" class="btn btn-primary form-control">Apply</button>

@@ -9,7 +9,7 @@ use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 use Maatwebsite\Excel\Concerns\WithColumnFormatting;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 
-class ProductsPriceAdjExport implements FromCollection,WithColumnFormatting, WithHeadings
+class VoucherExport implements FromCollection,WithColumnFormatting, WithHeadings
 {
     /**
     * @return \Illuminate\Support\Collection
@@ -30,6 +30,8 @@ class ProductsPriceAdjExport implements FromCollection,WithColumnFormatting, Wit
     public function headings(): array
     {
         return [
+            'Voucher Name',
+            'Voucher Code',
             'Branch Name',
             'Product Name',
             'Value',
@@ -39,17 +41,17 @@ class ProductsPriceAdjExport implements FromCollection,WithColumnFormatting, Wit
     }
     public function collection()
     {
-        $whereclause = " upper(product_sku.remark) like '%".strtoupper($this->keyword)."%' and '".$this->begindate."' between pr.dated_start and pr.dated_end ";
+        $whereclause = " upper(pr.voucher_code) like '%".strtoupper($this->keyword)."%' and '".$this->begindate."' between pr.dated_start and pr.dated_end ";
         return 
         Product::orderBy('product_sku.remark', 'ASC')
                         ->join('product_type as pt','pt.id','=','product_sku.type_id')
                         ->join('product_category as pc','pc.id','=','product_sku.category_id')
                         ->join('product_brand as pb','pb.id','=','product_sku.brand_id')
-                        ->join('price_adjustment as pr','pr.product_id','=','product_sku.id')
+                        ->join('voucher as pr','pr.product_id','=','product_sku.id')
                         ->join('branch as bc','bc.id','=','pr.branch_id')
                         ->whereRaw($whereclause)
                         ->where('bc.id','like','%'.$this->branch.'%')  
-                        ->get(['bc.remark as branch_name','product_sku.remark as product_name','pr.value as value','pr.dated_start','pr.dated_end']);           
+                        ->get(['pr.remark as voucher_remark','pr.voucher_code','product_sku.remark as product_name','bc.remark as branch_name','pr.value as value','pr.dated_start','pr.dated_end']);           
         
     }
 

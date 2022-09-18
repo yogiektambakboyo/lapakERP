@@ -22,5 +22,6 @@ class Product extends Model
         'brand_id',
         'category_id',
         'created_by',
+        'photo'
     ];
 }
