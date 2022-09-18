@@ -153,6 +153,7 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
             Route::get('/{receive}/getdocdata', 'ReceiveOrderController@getdocdata')->name('receiveorders.getdocdata');
             Route::delete('/{receive}/delete', 'ReceiveOrderController@destroy')->name('receiveorders.destroy');
             Route::get('/export', 'ReceiveOrderController@export')->name('receiveorders.export');
+            Route::get('/{receive}/print', 'ReceiveOrderController@print')->name('receiveorders.print');
         });
 
 

@@ -5,8 +5,9 @@
 @section('content')
   <div class="panel text-white">
     <div class="panel-heading  bg-teal-600">
-      <div class="panel-title"><h4 class="">Purchase Order {{ $receive->receive_no }}</h4></div>
+      <div class="panel-title"><h4 class="">Receive Order {{ $receive->receive_no }}</h4></div>
       <div class="">
+        <a href="{{ route('receiveorders.print', $receive->id) }}" class="btn btn-warning">Print</a>
         <a href="{{ route('receiveorders.index') }}" class="btn btn-default">Back</a>
       </div>
     </div>

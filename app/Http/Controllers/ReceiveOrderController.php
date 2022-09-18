@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Spatie\Permission\Models\Role;
 use App\Models\Branch;
 use App\Models\Room;
+use App\Models\Settings;
 use App\Models\JobTitle;
 use App\Models\Order;
 use App\Models\Supplier;
@@ -29,6 +30,7 @@ use Yajra\Datatables\Datatables;
 use Auth;
 use Illuminate\Support\Facades\DB;
 use App\Models\Company;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 
 
@@ -315,6 +317,45 @@ class ReceiveOrderController extends Controller
             'payment_type' => $payment_type, 'company' => Company::get()->first(),
         ]);
     }
+
+
+    public function print(Receive $receive) 
+    {
+        $user = Auth::user();
+        $id = $user->roles->first()->id;
+        $this->getpermissions($id);
+
+
+        $data = $this->data;
+        $suppliers = Supplier::join('users_branch as ub','ub.branch_id', '=', 'suppliers.branch_id')->where('ub.user_id','=',$user->id)->get(['suppliers.id','suppliers.name','suppliers.address','suppliers.email','suppliers.handphone']);
+        $payment_type = ['Cash','Debit Card'];
+        $users = User::join('users_branch as ub','ub.branch_id', '=', 'users.branch_id')->where('ub.user_id','=',$user->id)->where('users.job_id','=',2)->get(['users.id','users.name']);
+
+        $pdf = Pdf::loadView('pages.receiveorders.print', [
+            'data' => $data,
+            'suppliers' => $suppliers,
+            'branchs' => Branch::join('users_branch as ub','ub.branch_id', '=', 'branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']),
+            'users' => $users,
+            'settings' => Settings::get(),
+            'receive' => $receive,
+            'receiveDetails' => ReceiveDetail::join('receive_master as om','om.receive_no','=','receive_detail.receive_no')->join('branch as bh','bh.id','=','om.branch_id')->join('product_sku as ps','ps.id','=','receive_detail.product_id')->join('product_uom as u','u.product_id','=','receive_detail.product_id')->join('uom as um','um.id','=','u.uom_id')->where('receive_detail.receive_no',$receive->receive_no)->get(['um.remark as uom','receive_detail.qty','receive_detail.price','receive_detail.total','ps.id','ps.remark as product_name','receive_detail.discount','bh.remark as branch_name','bh.address']),
+            'usersReferrals' => User::get(['users.id','users.name']),
+            'payment_type' => $payment_type,
+        ])->setOptions(['defaultFont' => 'sans-serif'])->setPaper('a4', 'landscape');
+        return $pdf->stream('receive.pdf');
+        return view('pages.receiveorders.print',[
+            'data' => $data,
+            'suppliers' => $suppliers,
+            'branchs' => Branch::join('users_branch as ub','ub.branch_id', '=', 'branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']),
+            'users' => $users,
+            'settings' => Settings::get(),
+            'receive' => $receive,
+            'receiveDetails' => ReceiveDetail::join('receive_master as om','om.receive_no','=','receive_detail.receive_no')->join('branch as bh','bh.id','=','om.branch_id')->join('product_sku as ps','ps.id','=','receive_detail.product_id')->join('product_uom as u','u.product_id','=','receive_detail.product_id')->join('uom as um','um.id','=','u.uom_id')->where('receive_detail.receive_no',$receive->receive_no)->get(['um.remark as uom','receive_detail.qty','receive_detail.price','receive_detail.total','ps.id','ps.remark as product_name','receive_detail.discount','bh.remark as branch_name','bh.address']),
+            'usersReferrals' => User::get(['users.id','users.name']),
+            'payment_type' => $payment_type, 'company' => Company::get()->first(),
+        ]);
+    }
+
 
     /**
      * Edit user data
