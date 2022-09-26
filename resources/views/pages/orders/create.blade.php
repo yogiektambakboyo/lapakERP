@@ -1045,8 +1045,6 @@
                           imageWidth: 30,   
                           timer: 1500
                       });
-
-                      $("#apply-voucher-btn").hide();
                     }else{
                       Swal.fire(
                       {

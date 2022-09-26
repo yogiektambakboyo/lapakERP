@@ -169,6 +169,7 @@ class OrdersController extends Controller
                     ->join('users_branch as ub','ub.branch_id', '=', 'voucher.branch_id')
                     ->join('branch as b','b.id','=','ub.branch_id')
                     ->where('ub.user_id',$user->id)
+                    ->where('voucher.is_used',0)
                     ->where('voucher.voucher_code','=',$request->get('voucher_code'))
                     ->get(['voucher.product_id','voucher.remark','voucher.value']);
         return $voucher; 
@@ -227,6 +228,16 @@ class OrdersController extends Controller
                 ['tax' => $request->get('total_vat')],
             )
         );
+
+        if($request->get('voucher_code')!=""){
+            Voucher::where('voucher.voucher_code','=',$request->get('voucher_code'))
+            ->update(
+                array_merge(
+                    ['is_used' => 1]
+                )
+            );
+        }
+
 
         if(!$res_order){
             $result = array_merge(
