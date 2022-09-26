@@ -14,7 +14,6 @@
       </div>
     </div>
     <div class="panel-body bg-white text-black">
-
         <div class="row mb-3">
           <div class="row mb-3">
           <div class="col-md-12">
@@ -128,7 +127,6 @@
                 <div class="col-md-12"><label class="form-label col-form-label">_</label></div>
                 <a href="#" id="input_product_submit" class="btn btn-green"><div class="fa-1x"><i class="fas fa-plus fa-fw"></i>Add Product</div></a>
               </div>
-
             </div>
             
 

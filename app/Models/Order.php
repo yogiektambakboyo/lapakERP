@@ -32,6 +32,7 @@ class Order extends Model
         'created_by',
         'updated_by',
         'scheduled_at',
-        'branch_room_id'
+        'branch_room_id',
+        'voucher_code'
     ];
 }

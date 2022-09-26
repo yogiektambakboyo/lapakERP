@@ -85,6 +85,7 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
         Route::group(['prefix' => 'orders'], function() {
             Route::get('/', 'OrdersController@index')->name('orders.index');
             Route::get('/create', 'OrdersController@create')->name('orders.create');
+            Route::get('/checkvoucher', 'OrdersController@checkvoucher')->name('orders.checkvoucher');
             Route::post('/create', 'OrdersController@store')->name('orders.store');
             Route::get('/search', 'OrdersController@search')->name('orders.search');
             Route::get('/{order}/show', 'OrdersController@show')->name('orders.show');

@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Spatie\Permission\Models\Role;
 use App\Models\Branch;
 use App\Models\Room;
+use App\Models\Voucher;
 use App\Models\JobTitle;
 use App\Models\Order;
 use App\Models\OrderDetail;
@@ -17,7 +18,7 @@ use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
 use Spatie\Permission\Models\Permission;
 use Maatwebsite\Excel\Facades\Excel;
-use App\Exports\UsersExport;
+use App\Exports\OrdersExport;
 use App\Http\Controllers\Controller;
 use Yajra\Datatables\Datatables;
 use Auth;
@@ -60,6 +61,7 @@ class OrdersController extends Controller
         $data = $this->data;
         $keyword = "";
         $act_permission = $this->act_permission[0];
+        $branchs = Branch::join('users_branch as ub','ub.branch_id', '=', 'branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']);
         $orders = Order::orderBy('id', 'ASC')
                 ->join('customers as jt','jt.id','=','order_master.customers_id')
                 ->join('branch as b','b.id','=','jt.branch_id')
@@ -68,7 +70,7 @@ class OrdersController extends Controller
                     ->whereColumn('ub.branch_id', 'jt.branch_id');
                 })->where('ub.user_id', $user->id)  
               ->paginate(10,['order_master.id','b.remark as branch_name','order_master.order_no','order_master.dated','jt.name as customer','order_master.total','order_master.total_discount','order_master.total_payment' ]);
-        return view('pages.orders.index',['company' => Company::get()->first()], compact('orders','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
+        return view('pages.orders.index',['company' => Company::get()->first()], compact('orders','data','keyword','act_permission','branchs'))->with('i', ($request->input('page', 1) - 1) * 5);
     }
 
     public function search(Request $request) 
@@ -79,12 +81,31 @@ class OrdersController extends Controller
 
         $keyword = $request->search;
         $data = $this->data;
+        $act_permission = $this->act_permission[0];
+        $branchs = Branch::join('users_branch as ub','ub.branch_id', '=', 'branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']);
+        
+        $begindate = date(Carbon::parse($request->filter_begin_date)->format('Y-m-d'));
+        $enddate = date(Carbon::parse($request->filter_end_date)->format('Y-m-d'));
+        $branchx = $request->filter_branch_id;
+        $fil = [ $begindate , $enddate ];
 
+    
         if($request->export=='Export Excel'){
-            return Excel::download(new UsersExport($keyword), 'users_'.Carbon::now()->format('YmdHis').'.xlsx');
+            $strencode = base64_encode($keyword.'#'.$begindate.'#'.$enddate.'#'.$branchx.'#'.Auth::user()->id);
+            return Excel::download(new OrdersExport($strencode), 'orders_'.Carbon::now()->format('YmdHis').'.xlsx');
         }else{
-            $users = User::orderBy('id', 'ASC')->join('branch as b','b.id','=','users.branch_id')->join('job_title as jt','jt.id','=','users.job_id')->where('users.name','!=','Admin')->where('users.name','LIKE','%'.$keyword.'%')->paginate(10,['users.id','users.employee_id','users.name','jt.remark as job_title','b.remark as branch_name','users.join_date' ]);
-            return view('pages.orders.index',['company' => Company::get()->first()], compact('users','data','keyword'))->with('i', ($request->input('page', 1) - 1) * 5);
+            $orders = Order::orderBy('id', 'ASC')
+                ->join('customers as jt','jt.id','=','order_master.customers_id')
+                ->join('branch as b','b.id','=','jt.branch_id')
+                ->join('users_branch as ub', function($join){
+                    $join->on('ub.branch_id', '=', 'b.id')
+                    ->whereColumn('ub.branch_id', 'jt.branch_id');
+                })->where('ub.user_id', $user->id)
+                ->where('order_master.order_no','ilike','%'.$keyword.'%')  
+                ->where('b.id','like','%'.$branchx.'%')  
+                ->whereBetween('order_master.dated',$fil)  
+              ->paginate(10,['order_master.id','b.remark as branch_name','order_master.order_no','order_master.dated','jt.name as customer','order_master.total','order_master.total_discount','order_master.total_payment' ]);
+        return view('pages.orders.index',['company' => Company::get()->first()], compact('orders','data','keyword','act_permission','branchs'))->with('i', ($request->input('page', 1) - 1) * 5);
         }
     }
 
@@ -106,7 +127,6 @@ class OrdersController extends Controller
         $this->getpermissions($id);
 
         $data = $this->data;
-        $user = Auth::user();
         $payment_type = ['Cash','Debit Card'];
         $users = User::join('users_branch as ub','ub.branch_id', '=', 'users.branch_id')->where('ub.user_id','=',$user->id)->where('users.job_id','=',2)->get(['users.id','users.name']);
         return view('pages.orders.create',[
@@ -127,7 +147,7 @@ class OrdersController extends Controller
 
         $data = $this->data;
         $user = Auth::user();
-        $product = DB::select("select m.remark as uom,product_sku.id,product_sku.remark,product_sku.abbr,pt.remark as type,pc.remark as category_name,pb.remark as brand_name,pp.price,'0' as discount,'0' as qty,'0' as total
+        $product = DB::select("select m.remark as uom,product_sku.vat as vat_total,product_sku.id,product_sku.remark,product_sku.abbr,pt.remark as type,pc.remark as category_name,pb.remark as brand_name,pp.price+coalesce(pa.value,0) as price,'0' as discount,'0' as qty,'0' as total
         from product_sku
         join product_distribution pd  on pd.product_id = product_sku.id  and pd.active = '1'
         join product_category pc on pc.id = product_sku.category_id 
@@ -137,11 +157,21 @@ class OrdersController extends Controller
         join product_uom pu on pu.product_id = product_sku.id
         join uom m on m.id = pu.uom_id
         join (select * from users_branch u where u.user_id = '".$user->id."' order by branch_id desc limit 1 ) ub on ub.branch_id = pp.branch_id and ub.branch_id=pd.branch_id 
+        left join price_adjustment pa on pa.product_id = pd.product_id and pa.branch_id = pd.branch_id and now()::date between pa.dated_start and pa.dated_end
         where product_sku.active = '1' ");
-        return Datatables::of($product)
-        ->addColumn('action', function ($product) {
-            return '<a href="#"  onclick="addProduct(\''.$product->id.'\',\''.$product->abbr.'\', \''.$product->price.'\', \'0\', \'1\', \''.$product->uom.'\');" class="btn btn-xs btn-primary"><div class="fa-1x"><i class="fas fa-basket-shopping fa-fw"></i></div></a>';
-        })->make();
+        return $product;
+    }
+
+    public function checkvoucher(Request $request){
+        $user = Auth::user();
+        $where = " now() between voucher.dated_start and voucher.dated_end";
+        $voucher = Voucher::whereRaw($where)
+                    ->join('users_branch as ub','ub.branch_id', '=', 'voucher.branch_id')
+                    ->join('branch as b','b.id','=','ub.branch_id')
+                    ->where('ub.user_id',$user->id)
+                    ->where('voucher.voucher_code','=',$request->get('voucher_code'))
+                    ->get(['voucher.product_id','voucher.remark','voucher.value']);
+        return $voucher; 
     }
 
     public function gettimetable() 
@@ -174,7 +204,6 @@ class OrdersController extends Controller
      */
     public function store(Request $request) 
     {
-
         $user = Auth::user();
         $branch = Customer::where('id','=',$request->get('customer_id'))->get(['branch_id'])->first();
         $count_no = DB::select("select max(id) as id from order_master om where to_char(om.dated,'YYYY')=to_char(now(),'YYYY') ");
@@ -193,6 +222,9 @@ class OrdersController extends Controller
                 ['total_payment' => $request->get('total_order') ],
                 ['scheduled_at' => Carbon::parse($request->get('scheduled_at'))->format('d/m/Y H:i:s.u') ],
                 ['branch_room_id' => $request->get('branch_room_id')],
+                ['voucher_code' => $request->get('voucher_code')],
+                ['total_discount' => $request->get('total_discount')],
+                ['tax' => $request->get('total_vat')],
             )
         );
 
@@ -430,9 +462,20 @@ class OrdersController extends Controller
     public function destroy(Order $order) 
     {
         OrderDetail::where('order_no', $order->order_no)->delete();
-        $order->delete();
-        return redirect()->route('orders.index')
-            ->withSuccess(__('Order deleted successfully.'));
+        if($order->delete()){
+            $result = array_merge(
+                ['status' => 'success'],
+                ['data' => $order->order_no],
+                ['message' => 'Delete Successfully'],
+            );    
+        }else{
+            $result = array_merge(
+                ['status' => 'failed'],
+                ['data' => $order->order_no],
+                ['message' => 'Delete failed'],
+            );   
+        }
+        return $result;
     }
 
     public function getpermissions($role_id){

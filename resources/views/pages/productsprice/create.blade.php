@@ -1,6 +1,6 @@
 @extends('layouts.default', ['appSidebarSearch' => true])
 
-@section('title', 'Profile Users')
+@section('title','Product Price')
 
 @section('content')
 <form method="POST" action="{{ route('productsprice.store') }}"  enctype="multipart/form-data">
@@ -17,6 +17,8 @@
             </div>
           </div>
         </div>
+
+        <br>
       
         <div class="panel text-white">
           <div class="panel text-white">

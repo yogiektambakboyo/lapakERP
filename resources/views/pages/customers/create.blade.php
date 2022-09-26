@@ -4,7 +4,7 @@
 
 @section('content')
     <div class="bg-light p-4 rounded">
-        <h2>Add new Customer</h2>
+        <h2>Create Customer</h2>
         <div class="lead">
             Add new Customer.
         </div>
