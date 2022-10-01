@@ -24,7 +24,7 @@
         <tbody>
           <tr style="text-align: center;height: 50px;background-color:#FFA726;">
             <td style="text-align: left;padding:15px;">
-              <img src="http://localhost:8000/images/user-files/{{ $settings[0]->icon_file }}" width="100px"><br>
+              <img src="data:image/png;base64,{{ base64_encode(file_get_contents(url("images/user-files/".$settings[0]->icon_file))) }}" width="180px"><br>
               <label>{{ $receiveDetails[0]->branch_name }}</label><br>
               <label>{{ $receiveDetails[0]->address }}</label></td>
             <td style="width: 50%;font-size:30px;"><p style="color: #212121;">Receive Order</p></td>

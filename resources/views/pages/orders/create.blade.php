@@ -94,7 +94,7 @@
             </div>
 
             <div class="panel-heading bg-teal-600 text-white"><strong>Order List</strong></div>
-            </br>
+            <br>
 
             <div class="row mb-3">
               <div class="col-md-3">
@@ -570,6 +570,9 @@
         }else{
           table.clear().draw(false);
           order_total = 0;
+          disc_total = 0;
+          _vat_total = 0;
+          sub_total = 0;
           for (var i = 0; i < orderList.length; i++){
             var obj = orderList[i];
             var value = obj["id"];
@@ -697,43 +700,65 @@
               }
             );
           }else{
-              const json = JSON.stringify({
-                order_date : $('#order_date').val(),
-                product : orderList,
-                customer_id : $('#customer_id').val(),
-                remark : $('#remark').val(),
-                payment_type : $('#payment_type').val(),
-                payment_nominal : $('#payment_nominal').val(),
-                total_order : order_total,
-                scheduled_at : $('#schedule_date').val()+" "+$('#timepicker1').val(),
-                branch_room_id : $('#room_id').val(),
-                total_discount : disc_total,
-                total_vat : _vat_total,
-                voucher_code :  $("#voucher_code").val()
-              }
-            );
-            const res = axios.post("{{ route('orders.store') }}", json, {
-              headers: {
-                // Overwrite Axios's automatically set Content-Type
-                'Content-Type': 'application/json'
-              }
-            }).then(resp => {
-                  if(resp.data.status=="success"){
-                    window.location.href = "{{ route('orders.index') }}"; 
-                  }else{
-                    Swal.fire(
-                      {
-                        position: 'top-end',
-                        icon: 'warning',
-                        text: 'Something went wrong - '+resp.data.message,
-                        showConfirmButton: false,
-                        imageHeight: 30, 
-                        imageWidth: 30,   
-                        timer: 1500
-                      }
-                    );
-                  }
-            });
+
+            counterBlank = 0;
+            for (var i=0;i<orderList.length;i++){
+                if(orderList[i]["assignedto"]==""){
+                  counterBlank++;
+                }
+            }
+
+            if(counterBlank>0){
+              Swal.fire(
+              {
+                  position: 'top-end',
+                  icon: 'warning',
+                  text: 'Please choose terapist for service',
+                  showConfirmButton: false,
+                  imageHeight: 30, 
+                  imageWidth: 30,   
+                  timer: 1500
+                }
+              );
+            }else{
+                const json = JSON.stringify({
+                  order_date : $('#order_date').val(),
+                  product : orderList,
+                  customer_id : $('#customer_id').val(),
+                  remark : $('#remark').val(),
+                  payment_type : $('#payment_type').val(),
+                  payment_nominal : $('#payment_nominal').val(),
+                  total_order : order_total,
+                  scheduled_at : $('#schedule_date').val()+" "+$('#timepicker1').val(),
+                  branch_room_id : $('#room_id').val(),
+                  total_discount : disc_total,
+                  total_vat : _vat_total,
+                  voucher_code :  $("#voucher_code").val()
+                }
+              );
+              const res = axios.post("{{ route('orders.store') }}", json, {
+                headers: {
+                  // Overwrite Axios's automatically set Content-Type
+                  'Content-Type': 'application/json'
+                }
+              }).then(resp => {
+                    if(resp.data.status=="success"){
+                      window.location.href = "{{ route('orders.index') }}"; 
+                    }else{
+                      Swal.fire(
+                        {
+                          position: 'top-end',
+                          icon: 'warning',
+                          text: 'Something went wrong - '+resp.data.message,
+                          showConfirmButton: false,
+                          imageHeight: 30, 
+                          imageWidth: 30,   
+                          timer: 1500
+                        }
+                      );
+                    }
+              });
+            }
           }
         });
         
@@ -849,6 +874,9 @@
         $('#order_table tbody').on('click', 'a', function () {
             var data = table.row($(this).parents('tr')).data();
             order_total = 0;
+            disc_total = 0;
+            _vat_total = 0;
+            sub_total = 0;
             table.clear().draw(false);
             
             for (var i = 0; i < orderList.length; i++){
@@ -902,7 +930,7 @@
                       "assignedto" : obj["assignedto"],
                       "action"    : "",
                 }).draw(false);
-                disc_total = disc_total + (parseFloat(orderList[i]["discount"]));
+              disc_total = disc_total + (parseFloat(orderList[i]["discount"]));
               sub_total = sub_total + (((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"]))-(parseFloat(orderList[i]["discount"])));
               _vat_total = _vat_total + ((((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"]))-(parseFloat(orderList[i]["discount"])))*(parseFloat(orderList[i]["vat_total"])/100));
               order_total = order_total + ((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"])+((((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"]))-(parseFloat(orderList[i]["discount"])))*(parseFloat(orderList[i]["vat_total"])/100)))-(parseFloat(orderList[i]["discount"]));

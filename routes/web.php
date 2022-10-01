@@ -90,6 +90,7 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
             Route::get('/search', 'OrdersController@search')->name('orders.search');
             Route::get('/{order}/show', 'OrdersController@show')->name('orders.show');
             Route::get('/{order}/edit', 'OrdersController@edit')->name('orders.edit');
+            Route::get('/{order}/print', 'OrdersController@print')->name('orders.print');
             Route::get('/getproduct', 'OrdersController@getproduct')->name('orders.getproduct');
             Route::get('/gettimetable', 'OrdersController@gettimetable')->name('orders.gettimetable');
             Route::get('/{order}/getorder', 'OrdersController@getorder')->name('orders.getorder');

@@ -7,9 +7,9 @@
   @csrf
   <div class="panel text-white">
     <div class="panel-heading  bg-teal-600">
-      <div class="panel-title"><h4 class="">Sales Order {{ $order->order_no }}</h4></div>
+      <div class="panel-title"><h4 class="">SPK No : {{ $order->order_no }}</h4></div>
       <div class="">
-        <a href="{{ route('orders.edit', $order->id) }}" class="btn btn-info">Edit</a>
+        <a href="{{ route('orders.print', $order->id) }}" class="btn btn-warning">Print</a>
         <a href="{{ route('orders.index') }}" class="btn btn-default">Back</a>
       </div>
     </div>
@@ -18,7 +18,7 @@
         <div class="row mb-3">
           <div class="col-md-4">
             <div class="row mb-3">
-              <label class="form-label col-form-label col-md-4">Date (mm/dd/YYYY)</label>
+              <label class="form-label col-form-label col-md-4">Date</label>
               <div class="col-md-8">
                 <input type="text" 
                 name="order_date"
@@ -92,7 +92,7 @@
 
                   <label class="form-label col-form-label col-md-1">Charge</label>
                   <div class="col-md-3">
-                    <h2 class="text-end"><label id="order_charge">Rp. {{ number_format(($order->payment_nominal-$order->total), 2, ',', '.') }}</label></h2>
+                    <h2 class="text-end"><label id="order_charge">Rp. {{ number_format(($order->payment_nominal-$order->total), 0, ',', '.') }}</label></h2>
                   </div>
                 
             </div>
@@ -119,24 +119,48 @@
                     <tr>
                         <th scope="row">{{ $orderDetail->product_name }}</th>
                         <td>{{ $orderDetail->uom }}</td>
-                        <td>{{ number_format($orderDetail->price, 2, ',', '.') }}</td>
-                        <td>{{ $orderDetail->discount }}</td>
+                        <td>{{ number_format($orderDetail->price, 0, ',', '.') }}</td>
+                        <td>{{ number_format(($orderDetail->discount), 0, ',', '.') }}</td>
                         <td>{{ $orderDetail->qty }}</td>
-                        <td>{{ number_format($orderDetail->total, 2, ',', '.') }}</td>
+                        <td>{{ number_format($orderDetail->total, 0, ',', '.') }}</td>
                         <td>{{ $orderDetail->assigned_to }}</td>
                     </tr>
                 @endforeach
               </tbody>
             </table> 
             
-            
             <div class="row mb-3">
-              <label class="form-label col-form-label col-md-2"><h1>Total</h1></label>
-              <div class="col-md-10">
-                <h1 class="display-5 text-end"><label id="order-total">Rp. {{ number_format($order->total, 2, ',', '.') }}</label></h1>
-              </div>
+              <div class="col-md-6">
+                <div class="row mb-3">
+                    <label class="form-label col-form-label col-md-3" id="label-voucher">Voucher</label>
+                    <br>
+                    <div class="col-md-5">
+                      <input type="text" class="form-control" id="input-apply-voucher" value="{{ $order->voucher_code }}" disabled>
+                    </div>
+                </div>
             </div>
 
+            
+            <div class="col-md-6">
+              <div class="col-md-12">
+                <div class="col-auto text-end">
+                  <label class="col-md-2"><h2>Sub Total </h2></label>
+                  <label class="col-md-8" id="sub-total"> <h3>Rp. {{ number_format(($order->total-$order->tax), 0, ',', '.') }}</h3></label>
+                </div>
+              </div>
+              <div class="col-md-12">
+                <div class="col-auto text-end">
+                  <label class="col-md-2"><h2>Tax </h2></label>
+                  <label class="col-md-8" id="vat-total"> <h3>Rp. {{ number_format($order->tax, 0, ',', '.') }}</h3></label>
+                </div>
+              </div>
+              <div class="col-md-12">
+                <div class="col-auto text-end">
+                  <label class="col-md-2"><h1>Total </h1></label>
+                  <label class="col-md-8 display-5" id="result-total"> <h1>Rp. {{ number_format($order->total, 0, ',', '.') }}</h1></label>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
     </div>

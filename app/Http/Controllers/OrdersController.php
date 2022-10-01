@@ -13,6 +13,7 @@ use App\Models\JobTitle;
 use App\Models\Order;
 use App\Models\OrderDetail;
 use App\Models\Customer;
+use App\Models\Settings;
 use App\Models\Department;
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
@@ -25,6 +26,8 @@ use Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
 use App\Models\Company;
+use Barryvdh\DomPDF\Facade\Pdf;
+
 
 
 class OrdersController extends Controller
@@ -68,7 +71,7 @@ class OrdersController extends Controller
                 ->join('users_branch as ub', function($join){
                     $join->on('ub.branch_id', '=', 'b.id')
                     ->whereColumn('ub.branch_id', 'jt.branch_id');
-                })->where('ub.user_id', $user->id)  
+                })->where('ub.user_id', $user->id)->where('order_master.dated','>=',Carbon::now()->subDay(7)) 
               ->paginate(10,['order_master.id','b.remark as branch_name','order_master.order_no','order_master.dated','jt.name as customer','order_master.total','order_master.total_discount','order_master.total_payment' ]);
         return view('pages.orders.index',['company' => Company::get()->first()], compact('orders','data','keyword','act_permission','branchs'))->with('i', ($request->input('page', 1) - 1) * 5);
     }
@@ -175,6 +178,37 @@ class OrdersController extends Controller
         return $voucher; 
     }
 
+    public function print(Order $order) 
+    {
+        $user = Auth::user();
+        $id = $user->roles->first()->id;
+        $this->getpermissions($id);
+
+        $order->update(
+            array_merge(
+                ["printed_at" => Carbon::now()],
+                ["printed_count" => $order->printed_count+1]
+            )
+        );
+
+        $data = $this->data;
+        $payment_type = ['Cash','Debit Card'];
+        $users = User::join('users_branch as ub','ub.branch_id', '=', 'users.branch_id')->where('ub.user_id','=',$user->id)->where('users.job_id','=',2)->get(['users.id','users.name']);
+
+        $pdf = PDF::setOptions(['isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true])->loadView('pages.orders.print', [
+            'data' => $data,
+            'customers' => Customer::join('order_master as om','om.customers_id','customers.id')->join('branch_room as br','br.id','om.branch_room_id')->join('branch as b','b.id','=','customers.branch_id')->get(['br.remark as room_name','b.remark as branch_name','customers.id','customers.name']),
+            'branchs' => Branch::join('users_branch as ub','ub.branch_id', '=', 'branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']),
+            'users' => $users,
+            'settings' => Settings::get(),
+            'order' => $order,
+            'orderDetails' => OrderDetail::join('order_master as om','om.order_no','=','order_detail.order_no')->join('product_sku as ps','ps.id','=','order_detail.product_id')->join('product_uom as u','u.product_id','=','order_detail.product_id')->join('uom as um','um.id','=','u.uom_id')->leftjoin('users as us','us.id','=','order_detail.assigned_to')->where('order_detail.order_no',$order->order_no)->get(['om.tax','om.voucher_code','us.name as assigned_to','um.remark as uom','order_detail.qty','order_detail.price','order_detail.total','ps.id','order_detail.product_name','order_detail.discount','ps.type_id','om.scheduled_at','um.conversion']),
+            'usersReferrals' => User::get(['users.id','users.name']),
+            'payment_type' => $payment_type,
+        ])->setOptions(['defaultFont' => 'sans-serif'])->setPaper('a5', 'potrait');
+        return $pdf->stream('invoice.pdf');
+    }
+
     public function gettimetable() 
     {
         $data = $this->data;
@@ -226,6 +260,7 @@ class OrdersController extends Controller
                 ['voucher_code' => $request->get('voucher_code')],
                 ['total_discount' => $request->get('total_discount')],
                 ['tax' => $request->get('total_vat')],
+                ['customers_name' => Customer::where('id','=',$request->get('customer_id'))->get(['name'])->first()->name ],
             )
         );
 
@@ -257,11 +292,17 @@ class OrdersController extends Controller
                     ['product_id' => $request->get('product')[$i]["id"]],
                     ['qty' => $request->get('product')[$i]["qty"]],
                     ['price' => $request->get('product')[$i]["price"]],
+                    ['product_name' => $request->get('product')[$i]["abbr"]],
                     ['total' => $request->get('product')[$i]["total"]],
                     ['discount' => $request->get('product')[$i]["discount"]],
+                    ['uom' => $request->get('product')[$i]["uom"]],
+                    ['vat' => $request->get('product')[$i]["vat_total"]],
+                    ['vat_total' => $request->get('product')[$i]["total_vat"]],
                     ['seq' => $i ],
                     ['assigned_to' => $request->get('product')[$i]["assignedtoid"]],
+                    ['assigned_to_name' => User::where('id','=',$request->get('product')[$i]["assignedtoid"])->get(['name'])->first()->name ],
                     ['referral_by' => $user->id],
+                    ['referral_by_name' => User::where('id','=', $user->id)->get(['name'])->first()->name],
                 )
             );
 
@@ -311,7 +352,7 @@ class OrdersController extends Controller
             'data' => $data,
             'order' => $order,
             'room' => $room,
-            'orderDetails' => OrderDetail::join('order_master as om','om.order_no','=','order_detail.order_no')->join('product_sku as ps','ps.id','=','order_detail.product_id')->join('product_uom as u','u.product_id','=','order_detail.product_id')->join('uom as um','um.id','=','u.uom_id')->leftjoin('users as us','us.id','=','order_detail.assigned_to')->where('order_detail.order_no',$order->order_no)->get(['us.name as assigned_to','um.remark as uom','order_detail.qty','order_detail.price','order_detail.total','ps.id','ps.remark as product_name','order_detail.discount']),
+            'orderDetails' => OrderDetail::join('order_master as om','om.order_no','=','order_detail.order_no')->join('product_sku as ps','ps.id','=','order_detail.product_id')->join('product_uom as u','u.product_id','=','order_detail.product_id')->join('uom as um','um.id','=','u.uom_id')->leftjoin('users as us','us.id','=','order_detail.assigned_to')->where('order_detail.order_no',$order->order_no)->get(['om.tax','om.voucher_code','us.name as assigned_to','um.remark as uom','order_detail.qty','order_detail.price','order_detail.total','ps.id','ps.remark as product_name','order_detail.discount']),
             'usersReferrals' => $usersReferral,
             'payment_type' => $payment_type, 'company' => Company::get()->first(),
         ]);
@@ -343,7 +384,7 @@ class OrdersController extends Controller
             'room' => $room,
             'rooms' => Room::join('users_branch as ub','ub.branch_id', '=', 'branch_room.branch_id')->where('ub.user_id','=',$user->id)->get(['branch_room.id','branch_room.remark']),
             'users' => $users,
-            'orderDetails' => OrderDetail::join('order_master as om','om.order_no','=','order_detail.order_no')->join('product_sku as ps','ps.id','=','order_detail.product_id')->join('product_uom as u','u.product_id','=','order_detail.product_id')->join('uom as um','um.id','=','u.uom_id')->leftjoin('users as us','us.id','=','order_detail.assigned_to')->where('order_detail.order_no',$order->order_no)->get(['us.name as assigned_to','um.remark as uom','order_detail.qty','order_detail.price','order_detail.total','ps.id','ps.remark as product_name','order_detail.discount']),
+            'orderDetails' => OrderDetail::join('order_master as om','om.order_no','=','order_detail.order_no')->join('product_sku as ps','ps.id','=','order_detail.product_id')->join('product_uom as u','u.product_id','=','order_detail.product_id')->join('uom as um','um.id','=','u.uom_id')->leftjoin('users as us','us.id','=','order_detail.assigned_to')->where('order_detail.order_no',$order->order_no)->get(['us.name as assigned_to','um.remark as uom','order_detail.qty','order_detail.price','order_detail.total as sub_total','om.total as total','ps.id','ps.remark as product_name','order_detail.discount']),
             'usersReferrals' => $usersReferral,
             'payment_type' => $payment_type, 'company' => Company::get()->first(),
         ]);
@@ -360,7 +401,7 @@ class OrdersController extends Controller
     {
         $data = $this->data;
         $user = Auth::user();
-        $product = DB::select(" select to_char(om.scheduled_at,'mm/dd/YYYY') as scheduled_date,to_char(om.scheduled_at,'HH24:MI') as scheduled_time,rm.remark as room_name,om.customers_id,om.remark as order_remark,to_char(om.dated,'mm/dd/YYYY') as dated,om.payment_type,om.payment_nominal,om.scheduled_at,om.branch_room_id,od.qty,od.product_id,od.discount,od.price,od.total,ps.remark,ps.abbr,um.remark as uom,us.name as assignedto,us.id as assignedtoid,
+        $product = DB::select(" select od.vat,od.vat_total,to_char(om.scheduled_at,'mm/dd/YYYY') as scheduled_date,to_char(om.scheduled_at,'HH24:MI') as scheduled_time,rm.remark as room_name,om.customers_id,om.remark as order_remark,to_char(om.dated,'mm/dd/YYYY') as dated,om.payment_type,om.payment_nominal,om.scheduled_at,om.branch_room_id,od.qty,od.product_id,od.discount,od.price,od.total,ps.remark,ps.abbr,um.remark as uom,us.name as assignedto,us.id as assignedtoid,
         usr.name as referralby,usr.id as referralbyid   
         from order_detail od 
         join order_master om on om.order_no = od.order_no
@@ -398,8 +439,7 @@ class OrdersController extends Controller
         $order_no = $request->get('order_no');
 
         OrderDetail::where('order_no', $order_no)->delete();
-        //$order->delete();
-
+        
         $res_order = $order->update(
             array_merge(
                 ['updated_by'   => $user->id],
@@ -412,8 +452,21 @@ class OrdersController extends Controller
                 ['total_payment' => $request->get('total_order') ],
                 ['scheduled_at' => Carbon::parse($request->get('scheduled_at'))->format('d/m/Y H:i:s.u') ],
                 ['branch_room_id' => $request->get('branch_room_id')],
+                ['customers_name' => Customer::where('id','=',$request->get('customer_id'))->get(['name'])->first()->name ],
+                ['voucher_code' => $request->get('voucher_code')],
+                ['tax' => $request->get('total_vat')],
+                ['total_discount' => $request->get('total_discount')],
             )
         );
+
+        if($request->get('voucher_code')!=""){
+            Voucher::where('voucher.voucher_code','=',$request->get('voucher_code'))
+            ->update(
+                array_merge(
+                    ['is_used' => 1]
+                )
+            );
+        }
 
         if(!$res_order){
             $result = array_merge(
@@ -433,11 +486,17 @@ class OrdersController extends Controller
                     ['product_id' => $request->get('product')[$i]["id"]],
                     ['qty' => $request->get('product')[$i]["qty"]],
                     ['price' => $request->get('product')[$i]["price"]],
+                    ['product_name' => $request->get('product')[$i]["abbr"]],
                     ['total' => $request->get('product')[$i]["total"]],
                     ['discount' => $request->get('product')[$i]["discount"]],
+                    ['uom' => $request->get('product')[$i]["uom"]],
+                    ['vat' => $request->get('product')[$i]["vat_total"]],
+                    ['vat_total' => $request->get('product')[$i]["total_vat"]],
                     ['seq' => $i ],
                     ['assigned_to' => $request->get('product')[$i]["assignedtoid"]],
+                    ['assigned_to_name' => User::where('id','=',$request->get('product')[$i]["assignedtoid"])->get(['name'])->first()->name ],
                     ['referral_by' => $user->id],
+                    ['referral_by_name' => User::where('id','=', $user->id)->get(['name'])->first()->name],
                 )
             );
 
