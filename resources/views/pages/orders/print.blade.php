@@ -3,7 +3,7 @@
 <html>  
    <head> 
       <meta charset = "utf-8"> 
-      <title>SPK</title>
+      <title>Print SPK</title>
       <style>
         body {background-color: whitesmoke;}
         h1   {color: blue;}

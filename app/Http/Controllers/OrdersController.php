@@ -206,7 +206,7 @@ class OrdersController extends Controller
             'usersReferrals' => User::get(['users.id','users.name']),
             'payment_type' => $payment_type,
         ])->setOptions(['defaultFont' => 'sans-serif'])->setPaper('a5', 'potrait');
-        return $pdf->stream('invoice.pdf');
+        return $pdf->stream('spk.pdf');
     }
 
     public function gettimetable() 

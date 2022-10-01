@@ -19,7 +19,7 @@ use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
 use Spatie\Permission\Models\Permission;
 use Maatwebsite\Excel\Facades\Excel;
-use App\Exports\UsersExport;
+use App\Exports\InvoicesExport;
 use App\Http\Controllers\Controller;
 use Yajra\Datatables\Datatables;
 use Auth;
@@ -59,6 +59,8 @@ class InvoicesController extends Controller
         $user = Auth::user();
         $id = $user->roles->first()->id;
         $this->getpermissions($id);
+        $branchs = Branch::join('users_branch as ub','ub.branch_id', '=', 'branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']);        
+
 
         $data = $this->data;
         $keyword = "";
@@ -71,9 +73,9 @@ class InvoicesController extends Controller
                 ->join('users_branch as ub', function($join){
                     $join->on('ub.branch_id', '=', 'b.id')
                     ->whereColumn('ub.branch_id', 'jt.branch_id');
-                })->where('ub.user_id', $user->id)  
+                })->where('ub.user_id', $user->id)->where('invoice_master.dated','>=',Carbon::now()->subDay(7)) 
               ->paginate(10,['invoice_master.id','b.remark as branch_name','invoice_master.invoice_no','invoice_master.dated','jt.name as customer','invoice_master.total','invoice_master.total_discount','invoice_master.total_payment' ]);
-        return view('pages.invoices.index',['company' => Company::get()->first()], compact('invoices','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
+        return view('pages.invoices.index',['company' => Company::get()->first()], compact('invoices','data','keyword','act_permission','branchs'))->with('i', ($request->input('page', 1) - 1) * 5);
     }
 
     public function search(Request $request) 
@@ -84,12 +86,30 @@ class InvoicesController extends Controller
 
         $keyword = $request->search;
         $data = $this->data;
+        $act_permission = $this->act_permission[0];
+        $branchs = Branch::join('users_branch as ub','ub.branch_id', '=', 'branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']);        
+
+        $begindate = date(Carbon::parse($request->filter_begin_date)->format('Y-m-d'));
+        $enddate = date(Carbon::parse($request->filter_end_date)->format('Y-m-d'));
+        $branchx = $request->filter_branch_id;
+        $fil = [ $begindate , $enddate ];
 
         if($request->export=='Export Excel'){
-            return Excel::download(new UsersExport($keyword), 'users_'.Carbon::now()->format('YmdHis').'.xlsx');
+            $strencode = base64_encode($keyword.'#'.$begindate.'#'.$enddate.'#'.$branchx.'#'.Auth::user()->id);
+            return Excel::download(new InvoicesExport($strencode), 'invoices_'.Carbon::now()->format('YmdHis').'.xlsx');
         }else{
-            $users = User::orderBy('id', 'ASC')->join('branch as b','b.id','=','users.branch_id')->join('job_title as jt','jt.id','=','users.job_id')->where('users.name','!=','Admin')->where('users.name','LIKE','%'.$keyword.'%')->paginate(10,['users.id','users.employee_id','users.name','jt.remark as job_title','b.remark as branch_name','users.join_date' ]);
-            return view('pages.invoices.index',['company' => Company::get()->first()], compact('users','data','keyword'))->with('i', ($request->input('page', 1) - 1) * 5);
+            $invoices = Invoice::orderBy('id', 'ASC')
+                ->join('customers as jt','jt.id','=','invoice_master.customers_id')
+                ->join('branch as b','b.id','=','jt.branch_id')
+                ->join('users_branch as ub', function($join){
+                    $join->on('ub.branch_id', '=', 'b.id')
+                    ->whereColumn('ub.branch_id', 'jt.branch_id');
+                })->where('ub.user_id', $user->id)  
+                ->where('invoice_master.invoice_no','ilike','%'.$keyword.'%') 
+                ->where('b.id','like','%'.$branchx.'%') 
+                ->whereBetween('invoice_master.dated',$fil) 
+              ->paginate(10,['invoice_master.id','b.remark as branch_name','invoice_master.invoice_no','invoice_master.dated','jt.name as customer','invoice_master.total','invoice_master.total_discount','invoice_master.total_payment' ]);
+        return view('pages.invoices.index',['company' => Company::get()->first()], compact('invoices','data','keyword','act_permission','branchs'))->with('i', ($request->input('page', 1) - 1) * 5);
         }
     }
 
@@ -448,10 +468,20 @@ class InvoicesController extends Controller
     {
         InvoiceDetail::where('invoice_no', $invoice->invoice_no)->delete();
 
-        $invoice->delete();
-
-        return redirect()->route('invoices.index')
-            ->withSuccess(__('Invoice deleted successfully.'));
+        if($invoice->delete()){
+            $result = array_merge(
+                ['status' => 'success'],
+                ['data' => $invoice->invoice_no],
+                ['message' => 'Delete Successfully'],
+            );    
+        }else{
+            $result = array_merge(
+                ['status' => 'failed'],
+                ['data' => $invoice->invoice_no],
+                ['message' => 'Delete failed'],
+            );   
+        }
+        return $result;
     }
 
     public function getpermissions($role_id){

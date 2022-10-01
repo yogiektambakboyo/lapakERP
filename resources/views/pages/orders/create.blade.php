@@ -814,7 +814,7 @@
                 "abbr"      : abbr,
                 "price"     : price,
                 "discount"  : discount,
-                "qty"       : "1",
+                "qty"       : qty,
                 "total"     : price,
                 "total_vat"     : total_vat,
                 "assignedto" : "",
@@ -1190,6 +1190,18 @@
                       position: 'top-end',
                       icon: 'warning',
                       text: 'Please input disc',
+                      showConfirmButton: false,
+                      imageHeight: 30, 
+                      imageWidth: 30,   
+                      timer: 1500
+                    }
+                  );
+                }else if($('#input_product_total').val()<0){
+                  Swal.fire(
+                    {
+                      position: 'top-end',
+                      icon: 'warning',
+                      text: 'Please input disc less than total',
                       showConfirmButton: false,
                       imageHeight: 30, 
                       imageWidth: 30,   
