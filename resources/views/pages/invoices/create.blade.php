@@ -316,7 +316,7 @@
         <table class="table table-striped" id="order_table">
           <thead>
           <tr>
-              <th scope="col" width="25%">Product</th>
+              <th scope="col" width="20%">Product</th>
               <th scope="col" width="10%">UOM</th>
               <th scope="col" width="10%">Price</th>
               <th scope="col" width="5%">Discount</th>
@@ -324,7 +324,7 @@
               <th scope="col" width="10%">Total</th>  
               <th scope="col" width="10%">Assigned to</th>  
               <th scope="col" width="10%">Referral to</th>  
-              <th scope="col" width="15%">Action</th>  
+              <th scope="col" width="20%">Action</th>  
           </tr>
           </thead>
           <tbody>
@@ -726,41 +726,63 @@
               }
             );
           }else{
+
+            counterBlank = 0;
+            for (var i=0;i<orderList.length;i++){
+                if(orderList[i]["assignedto"]==""){
+                  counterBlank++;
+                }
+            }
+
+            if(counterBlank>0){
+              Swal.fire(
+              {
+                  position: 'top-end',
+                  icon: 'warning',
+                  text: 'Please choose terapist for service',
+                  showConfirmButton: false,
+                  imageHeight: 30, 
+                  imageWidth: 30,   
+                  timer: 1500
+                }
+              );
+            }else{
               const json = JSON.stringify({
-                invoice_date : $('#invoice_date').val(),
-                product : orderList,
-                customer_id : $('#customer_id').val(),
-                remark : $('#remark').val(),
-                payment_type : $('#payment_type').val(),
-                payment_nominal : $('#payment_nominal').val(),
-                total_order : order_total,
-                scheduled_at : $('#schedule_date').val()+" "+$('#timepicker1').val(),
-                branch_room_id : $('#room_id').val(),
-                ref_no : $('#ref_no').val(),
-              }
-            );
-            const res = axios.post("{{ route('invoices.store') }}", json, {
-              headers: {
-                // Overwrite Axios's automatically set Content-Type
-                'Content-Type': 'application/json'
-              }
-            }).then(resp => {
-                  if(resp.data.status=="success"){
-                    window.location.href = "{{ route('invoices.index') }}"; 
-                  }else{
-                    Swal.fire(
-                      {
-                        position: 'top-end',
-                        icon: 'warning',
-                        text: 'Something went wrong - '+resp.data.message,
-                        showConfirmButton: false,
-                        imageHeight: 30, 
-                        imageWidth: 30,   
-                        timer: 1500
-                      }
-                    );
-                  }
-            });
+                  invoice_date : $('#invoice_date').val(),
+                  product : orderList,
+                  customer_id : $('#customer_id').val(),
+                  remark : $('#remark').val(),
+                  payment_type : $('#payment_type').val(),
+                  payment_nominal : $('#payment_nominal').val(),
+                  total_order : order_total,
+                  scheduled_at : $('#schedule_date').val()+" "+$('#timepicker1').val(),
+                  branch_room_id : $('#room_id').val(),
+                  ref_no : $('#ref_no').val(),
+                }
+              );
+              const res = axios.post("{{ route('invoices.store') }}", json, {
+                headers: {
+                  // Overwrite Axios's automatically set Content-Type
+                  'Content-Type': 'application/json'
+                }
+              }).then(resp => {
+                    if(resp.data.status=="success"){
+                      window.location.href = "{{ route('invoices.index') }}"; 
+                    }else{
+                      Swal.fire(
+                        {
+                          position: 'top-end',
+                          icon: 'warning',
+                          text: 'Something went wrong - '+resp.data.message,
+                          showConfirmButton: false,
+                          imageHeight: 30, 
+                          imageWidth: 30,   
+                          timer: 1500
+                        }
+                      );
+                    }
+              });
+            }
           }
         });
         
@@ -800,11 +822,11 @@
             targets: -1, 
             data: null, 
             defaultContent: 
-            '<a href="#" id="add_row" class="btn btn-xs btn-green"><div class="fa-1x"><i class="fas fa-circle-plus fa-fw"></i></div></a>'+
-            '<a href="#" id="minus_row" class="btn btn-xs btn-yellow"><div class="fa-1x"><i class="fas fa-circle-minus fa-fw"></i></div></a>'+
-            '<a href="#" id="delete_row" class="btn btn-xs btn-danger"><div class="fa-1x"><i class="fas fa-circle-xmark fa-fw"></i></div></a>'+
-            '<a href="#" href="#modal-filter" data-bs-toggle="modal" data-bs-target="#modal-filter" id="assign_row" class="btn btn-xs btn-gray"><div class="fa-1x"><i class="fas fa-user-tag fa-fw"></i></div></a>'+
-            '<a href="#" href="#modal-referral" data-bs-toggle="modal" data-bs-target="#modal-referral" id="referral_row" class="btn btn-xs btn-purple"><div class="fa-1x"><i class="fas fa-users fa-fw"></i></div></a>',
+            '<a href="#" id="add_row" class="btn btn-sm btn-green"><div class="fa-1x"><i class="fas fa-circle-plus fa-fw"></i></div></a>'+
+            '<a href="#" id="minus_row" class="btn btn-sm btn-yellow"><div class="fa-1x"><i class="fas fa-circle-minus fa-fw"></i></div></a>'+
+            '<a href="#" id="delete_row" class="btn btn-sm btn-danger"><div class="fa-1x"><i class="fas fa-circle-xmark fa-fw"></i></div></a>'+
+            '<a href="#" href="#modal-filter" data-bs-toggle="modal" data-bs-target="#modal-filter" id="assign_row" class="btn btn-sm btn-gray"><div class="fa-1x"><i class="fas fa-user-tag fa-fw"></i></div></a>'+
+            '<a href="#" href="#modal-referral" data-bs-toggle="modal" data-bs-target="#modal-referral" id="referral_row" class="btn btn-sm btn-purple"><div class="fa-1x"><i class="fas fa-users fa-fw"></i></div></a>',
           }],
           columns: [
             { data: 'abbr' },

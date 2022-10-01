@@ -29,5 +29,11 @@ class InvoiceDetail extends Model
         'seq',
         'assigned_to',
         'referral_by',
+        'assigned_to_name',
+        'referral_by_name',
+        'vat',
+        'vat_total',
+        'product_name',
+        'uom'
     ];
 }

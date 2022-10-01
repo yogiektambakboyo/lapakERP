@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Spatie\Permission\Models\Role;
 use App\Models\Branch;
 use App\Models\Room;
+use App\Models\Product;
 use App\Models\JobTitle;
 use App\Models\Order;
 use App\Models\OrderDetail;
@@ -218,9 +219,10 @@ class InvoicesController extends Controller
                 ['customers_id' => $request->get('customer_id') ],
                 ['total' => $request->get('total_order') ],
                 ['remark' => $request->get('remark') ],
+                ['customers_name' => Customer::where('id','=',$request->get('customer_id'))->get(['name'])->first()->name],
                 ['payment_nominal' => $request->get('payment_nominal') ],
                 ['payment_type' => $request->get('payment_type') ],
-                ['total_payment' => $request->get('total_order') ],
+                ['total_payment' => (int)$request->get('payment_nominal')>=(int)$request->get('total_order')?(int)$request->get('total_order'):$request->get('payment_nominal') ],
                 ['scheduled_at' => Carbon::parse($request->get('scheduled_at'))->format('d/m/Y H:i:s.u') ],
                 ['branch_room_id' => $request->get('branch_room_id')],
                 ['ref_no' => $request->get('ref_no')],
@@ -252,6 +254,12 @@ class InvoicesController extends Controller
                     ['seq' => $i ],
                     ['assigned_to' => $request->get('product')[$i]["assignedtoid"]],
                     ['referral_by' => $request->get('product')[$i]["referralbyid"]],
+                    ['assigned_to_name' => $request->get('product')[$i]["assignedtoid"]==""?"":User::where('id','=',$request->get('product')[$i]["assignedtoid"])->get('name')->first()->name ],
+                    ['referral_by_name' => $request->get('product')[$i]["referralbyid"]==""?"":User::where('id','=',$request->get('product')[$i]["referralbyid"])->get('name')->first()->name],
+                    ['vat' => $request->get('product')[$i]["vat_total"]],
+                    ['vat_total' => ((((int)$request->get('product')[$i]["qty"]*(int)$request->get('product')[$i]["price"])-(int)$request->get('product')[$i]["discount"])/100)*(int)$request->get('product')[$i]["vat_total"]],
+                    ['product_name' => Product::where('id','=',$request->get('product')[$i]["id"])->get('remark')->first()->remark],
+                    ['uom' => $request->get('product')[$i]["uom"]]
                 )
             );
 
@@ -399,7 +407,8 @@ class InvoicesController extends Controller
                 ['remark' => $request->get('remark') ],
                 ['payment_nominal' => $request->get('payment_nominal') ],
                 ['payment_type' => $request->get('payment_type') ],
-                ['total_payment' => $request->get('total_order') ],
+                ['customers_name' => Customer::where('id','=',$request->get('customer_id'))->get(['name'])->first()->name  ],
+                ['total_payment' => (int)$request->get('payment_nominal')>=(int)$request->get('total_order')?(int)$request->get('total_order'):$request->get('payment_nominal') ],
                 ['scheduled_at' => Carbon::parse($request->get('scheduled_at'))->format('d/m/Y H:i:s.u') ],
                 ['branch_room_id' => $request->get('branch_room_id')],
                 ['ref_no' => $request->get('ref_no')],
@@ -431,6 +440,12 @@ class InvoicesController extends Controller
                     ['seq' => $i ],
                     ['assigned_to' => $request->get('product')[$i]["assignedtoid"]],
                     ['referral_by' => $request->get('product')[$i]["referralbyid"]],
+                    ['assigned_to_name' => $request->get('product')[$i]["assignedtoid"]==""?"":User::where('id','=',$request->get('product')[$i]["assignedtoid"])->get('name')->first()->name ],
+                    ['referral_by_name' => $request->get('product')[$i]["referralbyid"]==""?"":User::where('id','=',$request->get('product')[$i]["referralbyid"])->get('name')->first()->name],
+                    ['vat' => $request->get('product')[$i]["vat_total"]],
+                    ['vat_total' => $request->get('product')[$i]["total_vat"]],
+                    ['product_name' => Product::where('id','=',$request->get('product')[$i]["id"])->get('remark')->first()->name],
+                    ['uom' => $request->get('product')[$i]["uom"]]
                 )
             );
 

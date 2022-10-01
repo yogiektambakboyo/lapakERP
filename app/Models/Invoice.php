@@ -33,6 +33,8 @@ class Invoice extends Model
         'updated_by',
         'scheduled_at',
         'branch_room_id',
-        'ref_no'
+        'ref_no',
+        'customers_name',
+        'printed_count'
     ];
 }
