@@ -45,11 +45,11 @@
           <div class="col-md-8">
             <div class="row mb-3">
 
-              <label class="form-label col-form-label col-md-2">Sales Order</label>
+              <label class="form-label col-form-label col-md-2">SPK</label>
               <div class="col-md-3">
                 <select class="form-control" 
                     name="ref_no" id="ref_no" required>
-                    <option value="">Select Sales Order</option>
+                    <option value="">Select SPK</option>
                     @foreach($orders as $order)
                         <option value="{{ $order->order_no }}">{{ $order->order_no }} </option>
                     @endforeach
@@ -758,6 +758,7 @@
                   scheduled_at : $('#schedule_date').val()+" "+$('#timepicker1').val(),
                   branch_room_id : $('#room_id').val(),
                   ref_no : $('#ref_no').val(),
+                  tax : _vat_total,
                 }
               );
               const res = axios.post("{{ route('invoices.store') }}", json, {

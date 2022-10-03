@@ -10,9 +10,13 @@ use App\Models\Branch;
 use App\Models\Room;
 use App\Models\Product;
 use App\Models\JobTitle;
+use App\Models\Settings;
+use App\Models\Supplier;
 use App\Models\Order;
 use App\Models\OrderDetail;
+use App\Models\PurchaseDetail;
 use App\Models\Invoice;
+use Barryvdh\DomPDF\Facade\Pdf;
 use App\Models\InvoiceDetail;
 use App\Models\Customer;
 use App\Models\Department;
@@ -226,6 +230,7 @@ class InvoicesController extends Controller
                 ['scheduled_at' => Carbon::parse($request->get('scheduled_at'))->format('d/m/Y H:i:s.u') ],
                 ['branch_room_id' => $request->get('branch_room_id')],
                 ['ref_no' => $request->get('ref_no')],
+                ['tax' => $request->get('tax')],
             )
         );
 
@@ -318,11 +323,39 @@ class InvoicesController extends Controller
             'data' => $data,
             'invoice' => $invoice,
             'room' => $room,
-            'orderDetails' =>InvoiceDetail::join('invoice_master as om','om.invoice_no','=','invoice_detail.invoice_no')->join('product_sku as ps','ps.id','=','invoice_detail.product_id')->join('product_uom as u','u.product_id','=','invoice_detail.product_id')->join('uom as um','um.id','=','u.uom_id')->leftjoin('users as us','us.id','=','invoice_detail.assigned_to')->leftjoin('users as usm','usm.id','=','invoice_detail.referral_by')->where('invoice_detail.invoice_no',$invoice->invoice_no)->get(['usm.name as referral_by','us.name as assigned_to','um.remark as uom','invoice_detail.qty','invoice_detail.price','invoice_detail.total','ps.id','ps.remark as product_name','invoice_detail.discount']),
+            'orderDetails' => InvoiceDetail::join('invoice_master as om','om.invoice_no','=','invoice_detail.invoice_no')->join('product_sku as ps','ps.id','=','invoice_detail.product_id')->join('product_uom as u','u.product_id','=','invoice_detail.product_id')->join('uom as um','um.id','=','u.uom_id')->leftjoin('users as us','us.id','=','invoice_detail.assigned_to')->leftjoin('users as usm','usm.id','=','invoice_detail.referral_by')->where('invoice_detail.invoice_no',$invoice->invoice_no)->get(['usm.name as referral_by','us.name as assigned_to','um.remark as uom','invoice_detail.qty','invoice_detail.price','invoice_detail.total','ps.id','ps.remark as product_name','invoice_detail.discount','om.tax','om.voucher_code']),
             'usersReferrals' => $usersReferral,
             'payment_type' => $payment_type, 'company' => Company::get()->first(),
         ]);
     }
+
+
+    public function print(Invoice $invoice) 
+    {
+        $user = Auth::user();
+        $id = $user->roles->first()->id;
+        $this->getpermissions($id);
+
+        $data = $this->data;
+        $users = User::join('users_branch as ub','ub.branch_id', '=', 'users.branch_id')->where('ub.user_id','=',$user->id)->where('users.job_id','=',2)->get(['users.id','users.name']);
+
+        $invoice->update(
+            array_merge(
+                ["printed_at" => Carbon::now()],
+                ["printed_count" => $invoice->printed_count+1]
+            )
+        );
+        
+        $pdf = PDF::setOptions(['isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true])->loadView('pages.invoices.print', [
+            'data' => $data,
+            'settings' => Settings::get(),
+            'invoice' => Invoice::join('users as u','u.id','=','invoice_master.created_by')->where('invoice_master.id',$invoice->id)->get(['invoice_master.*','u.name'])->first(),
+            'customers' => Customer::where('id',$invoice->customers_id)->get(['customers.*']),
+            'invoiceDetails' => InvoiceDetail::join('invoice_master as om','om.invoice_no','=','invoice_detail.invoice_no')->join('product_sku as ps','ps.id','=','invoice_detail.product_id')->join('product_uom as u','u.product_id','=','invoice_detail.product_id')->join('uom as um','um.id','=','u.uom_id')->leftjoin('users as us','us.id','=','invoice_detail.assigned_to')->leftjoin('users as usm','usm.id','=','invoice_detail.referral_by')->where('invoice_detail.invoice_no',$invoice->invoice_no)->get(['usm.name as referral_by','us.name as assigned_to','um.remark as uom','invoice_detail.qty','invoice_detail.price','invoice_detail.total','ps.id','ps.remark as product_name','invoice_detail.discount','om.tax','om.voucher_code']),
+        ])->setOptions(['defaultFont' => 'sans-serif'])->setPaper('a4', 'landscape');
+        return $pdf->stream('invoice.pdf');
+    }
+
 
     /**
      * Edit user data
@@ -333,10 +366,15 @@ class InvoicesController extends Controller
      */
     public function edit(Invoice $invoice) 
     {
-        $data = $this->data;
         $user = Auth::user();
+        $id = $user->roles->first()->id;
+        $this->getpermissions($id);
+        $data = $this->data;
+
+
         $room = Room::where('branch_room.id','=',$invoice->branch_room_id)->get(['branch_room.remark'])->first();
         $payment_type = ['Cash','Debit Card'];
+        $usersall = User::join('users_branch as ub','ub.branch_id', '=', 'users.branch_id')->where('ub.user_id','=',$user->id)->whereIn('users.job_id',[1,2])->get(['users.id','users.name']);
         $users = User::join('users_branch as ub','ub.branch_id', '=', 'users.branch_id')->where('ub.user_id','=',$user->id)->where('users.job_id','=',2)->get(['users.id','users.name']);
         $usersReferral = User::get(['users.id','users.name']);
         return view('pages.invoices.edit',[
@@ -344,6 +382,8 @@ class InvoicesController extends Controller
             'data' => $data,
             'invoice' => $invoice,
             'room' => $room,
+            'usersall' => $usersall,
+            'orders' => Order::where('is_checkout','0')->get(),
             'rooms' => Room::join('users_branch as ub','ub.branch_id', '=', 'branch_room.branch_id')->where('ub.user_id','=',$user->id)->get(['branch_room.id','branch_room.remark']),
             'users' => $users,
             'orderDetails' => InvoiceDetail::join('invoice_master as om','om.invoice_no','=','invoice_detail.invoice_no')->join('product_sku as ps','ps.id','=','invoice_detail.product_id')->join('product_uom as u','u.product_id','=','invoice_detail.product_id')->join('uom as um','um.id','=','u.uom_id')->leftjoin('users as us','us.id','=','invoice_detail.assigned_to')->where('invoice_detail.invoice_no',$invoice->invoice_no)->get(['us.name as assigned_to','um.remark as uom','invoice_detail.qty','invoice_detail.price','invoice_detail.total','ps.id','ps.remark as product_name','invoice_detail.discount']),
@@ -412,6 +452,7 @@ class InvoicesController extends Controller
                 ['scheduled_at' => Carbon::parse($request->get('scheduled_at'))->format('d/m/Y H:i:s.u') ],
                 ['branch_room_id' => $request->get('branch_room_id')],
                 ['ref_no' => $request->get('ref_no')],
+                ['tax' => $request->get('tax')],
             )
         );
 

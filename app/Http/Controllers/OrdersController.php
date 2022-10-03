@@ -242,7 +242,7 @@ class OrdersController extends Controller
         $user = Auth::user();
         $branch = Customer::where('id','=',$request->get('customer_id'))->get(['branch_id'])->first();
         $count_no = DB::select("select max(id) as id from order_master om where to_char(om.dated,'YYYY')=to_char(now(),'YYYY') ");
-        $order_no = 'ORD-'.substr(('000'.$branch->branch_id),-3).'-'.date("Y").'-'.substr(('00000000'.((int)($count_no[0]->id) + 1)),-8);
+        $order_no = 'SPK-'.substr(('000'.$branch->branch_id),-3).'-'.date("Y").'-'.substr(('00000000'.((int)($count_no[0]->id) + 1)),-8);
 
         $res_order = Order::create(
             array_merge(

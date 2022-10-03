@@ -109,6 +109,7 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
             Route::get('/search', 'InvoicesController@search')->name('invoices.search');
             Route::get('/{invoice}/show', 'InvoicesController@show')->name('invoices.show');
             Route::get('/{invoice}/edit', 'InvoicesController@edit')->name('invoices.edit');
+            Route::get('/{invoice}/print', 'InvoicesController@print')->name('invoices.print');
             Route::get('/getproduct', 'InvoicesController@getproduct')->name('invoices.getproduct');
             Route::get('/gettimetable', 'InvoicesController@gettimetable')->name('invoices.gettimetable');
             Route::get('/{invoice}/getinvoice', 'InvoicesController@getinvoice')->name('invoices.getinvoice');
