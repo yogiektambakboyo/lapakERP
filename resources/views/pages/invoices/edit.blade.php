@@ -21,6 +21,11 @@
               <label class="form-label col-form-label col-md-4">Date</label>
               <div class="col-md-8">
                 <input type="text" 
+                name="invoice_no"
+                id="invoice_no"
+                class="form-control" 
+                value="{{ $invoice->invoice_no }}"/>
+                <input type="text" 
                 name="invoice_date"
                 id="invoice_date"
                 class="form-control" 
@@ -178,7 +183,9 @@
                               name="room_id" id="room_id" required>
                               <option value="">Select Rooms</option>
                               @foreach($rooms as $room)
-                                  <option value="{{ $room->id }}">{{ $room->remark }}</option>
+                                  <option value="{{ $room->id }}" {{ ($room->id == $invoice->branch_room_id) 
+                                    ? 'selected'
+                                    : ''}}>{{ $room->remark }}</option>
                               @endforeach
                           </select>
                       </div>
@@ -337,7 +344,7 @@
                 <label class="form-label col-form-label col-md-3" id="label-voucher">Voucher</label>
                 <br>
                 <div class="col-md-5">
-                  <input type="text" class="form-control" id="input-apply-voucher">
+                  <input type="text" class="form-control" id="input-apply-voucher" value="{{ $invoice->voucher_code==null?"":$invoice->voucher_code }}">
                 </div>
                 <div class="col-md-3">
                   <button type="button" id="apply-voucher-btn" class="btn btn-warning">Apply Voucher</button>
@@ -748,6 +755,7 @@
             }else{
               const json = JSON.stringify({
                   invoice_date : $('#invoice_date').val(),
+                  invoice_no : $('#invoice_no').val(),
                   product : orderList,
                   customer_id : $('#customer_id').val(),
                   remark : $('#remark').val(),
@@ -760,7 +768,7 @@
                   tax : _vat_total,
                 }
               );
-              const res = axios.post("{{ route('invoices.store') }}", json, {
+              const res = axios.patch("{{ route('invoices.update',$invoice->id) }}", json, {
                 headers: {
                   // Overwrite Axios's automatically set Content-Type
                   'Content-Type': 'application/json'
@@ -1277,6 +1285,74 @@
 
               }
             });
+
+
+            //Get Invoice 
+            const resInvoice = axios.get("{{ route('invoices.getinvoice',$invoice->invoice_no) }}", {
+              headers: {
+                // Overwrite Axios's automatically set Content-Type
+                'Content-Type': 'application/json'
+              }
+            }).then(resp => {
+                  console.log(resp.data);
+                  table.clear().draw(false);
+                  order_total = 0;
+                  disc_total = 0;
+                  _vat_total = 0;
+                  sub_total = 0;
+
+                  for(var i=0;i<resp.data.length;i++){
+                      var product = {
+                            "id"        : resp.data[i]["product_id"],
+                            "abbr"      : resp.data[i]["abbr"],
+                            "uom"      : resp.data[i]["uom"],
+                            "price"     : resp.data[i]["price"],
+                            "discount"  : resp.data[i]["discount"],
+                            "qty"       : resp.data[i]["qty"],
+                            "total"     : resp.data[i]["total"],
+                            "assignedto"     : resp.data[i]["assignedto"],
+                            "assignedtoid"     : resp.data[i]["assignedtoid"],
+                            "referralby" : resp.data[i]["referral_by_name"],
+                            "referralbyid" : resp.data[i]["referral_by"],
+                            "uom" : resp.data[i]["uom"],
+                            "vat_total"     : resp.data[i]["vat"], 
+                      }
+
+                      orderList.push(product);
+                  }
+
+                  for (var i = 0; i < orderList.length; i++){
+                  var obj = orderList[i];
+                  var value = obj["abbr"];
+                  table.row.add( {
+                      "id"        : obj["id"],
+                      "abbr"      : obj["abbr"],
+                      "uom"       : obj["uom"],
+                      "price"     : obj["price"],
+                      "discount"  : obj["discount"],
+                      "qty"       : obj["qty"],
+                      "total"     : obj["total"],
+                      "assignedto" : obj["assignedto"],
+                      "referralby" : obj["referralby"],
+                      "action"    : "",
+                    }).draw(false);
+                    disc_total = disc_total + (parseFloat(orderList[i]["discount"]));
+                    sub_total = sub_total + (((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"]))-(parseFloat(orderList[i]["discount"])));
+                    _vat_total = _vat_total + ((((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"]))-(parseFloat(orderList[i]["discount"])))*(parseFloat(orderList[i]["vat_total"])/100));
+                    order_total = order_total + ((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"])+((((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"]))-(parseFloat(orderList[i]["discount"])))*(parseFloat(orderList[i]["vat_total"])/100)))-(parseFloat(orderList[i]["discount"]));
+
+                    if(($('#payment_nominal').val())>order_total){
+                      $('#order_charge').text(currency((($('#payment_nominal').val())-order_total), { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
+                    }else{
+                      $('#order_charge').text("Rp. 0");
+                    }
+                }
+
+                $('#result-total').text(currency(order_total, { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
+                $('#vat-total').text(currency(_vat_total, { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
+                $('#sub-total').text(currency(sub_total, { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());              
+            });
+
 
  
     </script>
