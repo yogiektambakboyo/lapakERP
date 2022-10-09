@@ -64,6 +64,17 @@ class PurchaseOrderController extends Controller
         $id = $user->roles->first()->id;
         $this->getpermissions($id);
 
+        $has_period_stock = DB::select("
+            select periode  from period_stock ps where ps.periode = to_char(now()::date,'YYYYMM')::int;
+        ");
+
+        if(count($has_period_stock)<=0){
+            DB::select("insert into period_stock(periode,branch_id,product_id,balance_begin,balance_end,qty_in,qty_out,updated_at ,created_by,created_at)
+            select to_char(now()::date,'YYYYMM')::int,ps.branch_id,product_id,ps.balance_begin,ps.balance_end,ps.qty_in,ps.qty_out,null,1,now()  
+            from period_stock ps where ps.periode = to_char(now()::date,'YYYYMM')::int-1;");
+        }
+
+        
         $data = $this->data;
         $keyword = "";
         $user = Auth::user();
@@ -129,7 +140,7 @@ class PurchaseOrderController extends Controller
 
         $data = $this->data;
         $user = Auth::user();
-        $payment_type = ['Cash','Debit Card'];
+        $payment_type = ['Cash','BCA - Debit','BCA - Kredit','Mandiri - Debit','Mandiri - Kredit'];
         $suppliers = Supplier::join('users_branch as ub','ub.branch_id', '=', 'suppliers.branch_id')->where('ub.user_id','=',$user->id)->get(['suppliers.id','suppliers.name']);
         $usersall = User::join('users_branch as ub','ub.branch_id', '=', 'users.branch_id')->where('ub.user_id','=',$user->id)->whereIn('users.job_id',[1,2])->get(['users.id','users.name']);
         return view('pages.purchaseorders.create',[
@@ -283,7 +294,7 @@ class PurchaseOrderController extends Controller
 
         $data = $this->data;
         $suppliers = Supplier::join('users_branch as ub','ub.branch_id', '=', 'suppliers.branch_id')->where('ub.user_id','=',$user->id)->get(['suppliers.id','suppliers.name']);
-        $payment_type = ['Cash','Debit Card'];
+        $payment_type = ['Cash','BCA - Debit','BCA - Kredit','Mandiri - Debit','Mandiri - Kredit'];
         $users = User::join('users_branch as ub','ub.branch_id', '=', 'users.branch_id')->where('ub.user_id','=',$user->id)->where('users.job_id','=',2)->get(['users.id','users.name']);
         return view('pages.purchaseorders.show',[
             'data' => $data,
@@ -306,7 +317,7 @@ class PurchaseOrderController extends Controller
 
         $data = $this->data;
         $suppliers = Supplier::join('users_branch as ub','ub.branch_id', '=', 'suppliers.branch_id')->where('ub.user_id','=',$user->id)->get(['suppliers.id','suppliers.name','suppliers.address','suppliers.email','suppliers.handphone']);
-        $payment_type = ['Cash','Debit Card'];
+        $payment_type = ['Cash','BCA - Debit','BCA - Kredit','Mandiri - Debit','Mandiri - Kredit'];
         $users = User::join('users_branch as ub','ub.branch_id', '=', 'users.branch_id')->where('ub.user_id','=',$user->id)->where('users.job_id','=',2)->get(['users.id','users.name']);
 
         $pdf = PDF::setOptions(['isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true])->loadView('pages.purchaseorders.print', [
@@ -349,7 +360,7 @@ class PurchaseOrderController extends Controller
 
         $data = $this->data;
         $suppliers = Supplier::join('users_branch as ub','ub.branch_id', '=', 'suppliers.branch_id')->where('ub.user_id','=',$user->id)->get(['suppliers.id','suppliers.name']);
-        $payment_type = ['Cash','Debit Card'];
+        $payment_type = ['Cash','BCA - Debit','BCA - Kredit','Mandiri - Debit','Mandiri - Kredit'];
         $users = User::join('users_branch as ub','ub.branch_id', '=', 'users.branch_id')->where('ub.user_id','=',$user->id)->where('users.job_id','=',2)->get(['users.id','users.name']);
         $usersReferral = User::get(['users.id','users.name']);
         return view('pages.purchaseorders.edit',[

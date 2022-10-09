@@ -20,7 +20,7 @@
             <div class="row mb-3">
               <label class="form-label col-form-label col-md-4">Date</label>
               <div class="col-md-8">
-                <input type="text" 
+                <input type="hidden" 
                 name="invoice_no"
                 id="invoice_no"
                 class="form-control" 

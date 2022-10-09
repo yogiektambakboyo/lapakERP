@@ -66,6 +66,15 @@ class InvoicesController extends Controller
         $this->getpermissions($id);
         $branchs = Branch::join('users_branch as ub','ub.branch_id', '=', 'branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']);        
 
+        $has_period_stock = DB::select("
+            select periode  from period_stock ps where ps.periode = to_char(now()::date,'YYYYMM')::int;
+        ");
+
+        if(count($has_period_stock)<=0){
+            DB::select("insert into period_stock(periode,branch_id,product_id,balance_begin,balance_end,qty_in,qty_out,updated_at ,created_by,created_at)
+            select to_char(now()::date,'YYYYMM')::int,ps.branch_id,product_id,ps.balance_begin,ps.balance_end,ps.qty_in,ps.qty_out,null,1,now()  
+            from period_stock ps where ps.periode = to_char(now()::date,'YYYYMM')::int-1;");
+        }
 
         $data = $this->data;
         $keyword = "";
@@ -137,7 +146,7 @@ class InvoicesController extends Controller
 
         $data = $this->data;
         $user = Auth::user();
-        $payment_type = ['Cash','Debit Card'];
+        $payment_type = ['Cash','BCA - Debit','BCA - Kredit','Mandiri - Debit','Mandiri - Kredit'];
         $users = User::join('users_branch as ub','ub.branch_id', '=', 'users.branch_id')->where('ub.user_id','=',$user->id)->where('users.job_id','=',2)->get(['users.id','users.name']);
         $usersall = User::join('users_branch as ub','ub.branch_id', '=', 'users.branch_id')->where('ub.user_id','=',$user->id)->whereIn('users.job_id',[1,2])->get(['users.id','users.name']);
         return view('pages.invoices.create',[
@@ -317,7 +326,7 @@ class InvoicesController extends Controller
         $data = $this->data;
         $user = Auth::user();
         $room = Room::where('branch_room.id','=',$invoice->branch_room_id)->get(['branch_room.remark'])->first();
-        $payment_type = ['Cash','Debit Card'];
+        $payment_type = ['Cash','BCA - Debit','BCA - Kredit','Mandiri - Debit','Mandiri - Kredit'];
         $usersReferral = User::get(['users.id','users.name']);
         return view('pages.invoices.show',[
             'customers' => Customer::join('users_branch as ub','ub.branch_id', '=', 'customers.branch_id')->join('branch as b','b.id','=','ub.branch_id')->where('ub.user_id',$user->id)->get(['customers.id','customers.name','b.remark']),
@@ -374,7 +383,7 @@ class InvoicesController extends Controller
 
 
         $room = Room::where('branch_room.id','=',$invoice->branch_room_id)->get(['branch_room.remark'])->first();
-        $payment_type = ['Cash','Debit Card'];
+        $payment_type = ['Cash','BCA - Debit','BCA - Kredit','Mandiri - Debit','Mandiri - Kredit'];
         $usersall = User::join('users_branch as ub','ub.branch_id', '=', 'users.branch_id')->where('ub.user_id','=',$user->id)->whereIn('users.job_id',[1,2])->get(['users.id','users.name']);
         $users = User::join('users_branch as ub','ub.branch_id', '=', 'users.branch_id')->where('ub.user_id','=',$user->id)->where('users.job_id','=',2)->get(['users.id','users.name']);
         $usersReferral = User::get(['users.id','users.name']);
@@ -437,6 +446,14 @@ class InvoicesController extends Controller
         $user = Auth::user();
         $invoice_no = $request->get('invoice_no');
 
+        $last_data = InvoiceDetail::where('invoice_detail.invoice_no','=',$invoice_no)->get('invoice_detail.*');
+        $branch_id = Room::where('id',$request->get('branch_room_id'))->get(['branch_id'])->first();
+
+
+        for ($i=0; $i < count($last_data); $i++) { 
+            DB::update("UPDATE product_stock set qty = qty+".$last_data[$i]['qty']." WHERE branch_id = ".$branch_id['branch_id']." and product_id = ".$last_data[$i]["product_id"].";");
+        }
+
         InvoiceDetail::where('invoice_no', $invoice_no)->delete();
 
         $res_invoice = $invoice->update(
@@ -456,8 +473,6 @@ class InvoicesController extends Controller
                 ['tax' => $request->get('tax')],
             )
         );
-
-        $branch_id = Room::where('id',$request->get('branch_room_id'))->get(['branch_id'])->first();
 
         if(!$res_invoice){
             $result = array_merge(
@@ -492,6 +507,8 @@ class InvoicesController extends Controller
             );
 
 
+            DB::update("UPDATE product_stock set qty = qty-".$request->get('product')[$i]['qty']." WHERE branch_id = ".$branch_id['branch_id']." and product_id = ".$request->get('product')[$i]["id"]);
+
             if(!$res_invoice_detail){
                 $result = array_merge(
                     ['status' => 'failed'],
@@ -500,9 +517,7 @@ class InvoicesController extends Controller
                 );
         
                 return $result;
-            }
-           
-            DB::update("UPDATE product_stock set qty = qty-".$request->get('product')[$i]['qty']." WHERE branch_id = ".$branch_id['branch_id']." and product_id = ".$request->get('product')[$i]["id"]);
+            }           
         }
 
         $result = array_merge(

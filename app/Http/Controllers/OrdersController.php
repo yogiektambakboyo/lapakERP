@@ -61,6 +61,17 @@ class OrdersController extends Controller
         $id = $user->roles->first()->id;
         $this->getpermissions($id);
 
+        $has_period_stock = DB::select("
+            select periode  from period_stock ps where ps.periode = to_char(now()::date,'YYYYMM')::int;
+        ");
+
+        if(count($has_period_stock)<=0){
+            DB::select("insert into period_stock(periode,branch_id,product_id,balance_begin,balance_end,qty_in,qty_out,updated_at ,created_by,created_at)
+            select to_char(now()::date,'YYYYMM')::int,ps.branch_id,product_id,ps.balance_begin,ps.balance_end,ps.qty_in,ps.qty_out,null,1,now()  
+            from period_stock ps where ps.periode = to_char(now()::date,'YYYYMM')::int-1;");
+        }
+
+
         $data = $this->data;
         $keyword = "";
         $act_permission = $this->act_permission[0];
@@ -130,7 +141,7 @@ class OrdersController extends Controller
         $this->getpermissions($id);
 
         $data = $this->data;
-        $payment_type = ['Cash','Debit Card'];
+        $payment_type = ['Cash','BCA - Debit','BCA - Kredit','Mandiri - Debit','Mandiri - Kredit'];
         $users = User::join('users_branch as ub','ub.branch_id', '=', 'users.branch_id')->where('ub.user_id','=',$user->id)->where('users.job_id','=',2)->get(['users.id','users.name']);
         return view('pages.orders.create',[
             'customers' => Customer::join('users_branch as ub','ub.branch_id', '=', 'customers.branch_id')->join('branch as b','b.id','=','ub.branch_id')->where('ub.user_id',$user->id)->get(['customers.id','customers.name','b.remark']),
@@ -192,7 +203,7 @@ class OrdersController extends Controller
         );
 
         $data = $this->data;
-        $payment_type = ['Cash','Debit Card'];
+        $payment_type = ['Cash','BCA - Debit','BCA - Kredit','Mandiri - Debit','Mandiri - Kredit'];
         $users = User::join('users_branch as ub','ub.branch_id', '=', 'users.branch_id')->where('ub.user_id','=',$user->id)->where('users.job_id','=',2)->get(['users.id','users.name']);
 
         $pdf = PDF::setOptions(['isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true])->loadView('pages.orders.print', [
@@ -345,7 +356,7 @@ class OrdersController extends Controller
         $data = $this->data;
         $user = Auth::user();
         $room = Room::where('branch_room.id','=',$order->branch_room_id)->get(['branch_room.remark'])->first();
-        $payment_type = ['Cash','Debit Card'];
+        $payment_type = ['Cash','BCA - Debit','BCA - Kredit','Mandiri - Debit','Mandiri - Kredit'];
         $usersReferral = User::get(['users.id','users.name']);
         return view('pages.orders.show',[
             'customers' => Customer::join('users_branch as ub','ub.branch_id', '=', 'customers.branch_id')->join('branch as b','b.id','=','ub.branch_id')->where('ub.user_id',$user->id)->get(['customers.id','customers.name','b.remark']),
@@ -374,7 +385,7 @@ class OrdersController extends Controller
         $data = $this->data;
         $user = Auth::user();
         $room = Room::where('branch_room.id','=',$order->branch_room_id)->get(['branch_room.remark'])->first();
-        $payment_type = ['Cash','Debit Card'];
+        $payment_type = ['Cash','BCA - Debit','BCA - Kredit','Mandiri - Debit','Mandiri - Kredit'];
         $users = User::join('users_branch as ub','ub.branch_id', '=', 'users.branch_id')->where('ub.user_id','=',$user->id)->where('users.job_id','=',2)->get(['users.id','users.name']);
         $usersReferral = User::get(['users.id','users.name']);
         return view('pages.orders.edit',[
