@@ -74,6 +74,19 @@
           </div>
 
           <div class="row mb-3">
+            <label class="form-label col-form-label col-md-2">UOM</label>
+            <div class="col-md-8">
+              <select class="form-control" 
+                      name="uom_id" required>
+                      <option value="">Select UOM</option>
+                      @foreach($productUoms as $productUom)
+                          <option value="{{ $productUom->id }}">{{ $productUom->remark }}</option>
+                      @endforeach
+                  </select>
+            </div>
+          </div>
+
+          <div class="row mb-3">
             <label class="form-label col-form-label col-md-2">Photo</label>
             <div class="col-md-8">
               <a href="/images/user-files/goods.png" target="_blank"><img  id="photo_preview" src="/images/user-files/goods.png" width="100" height="100" class="rounded float-start" alt="..."></a>

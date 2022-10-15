@@ -10,8 +10,10 @@
         p    {color: red;}
         #header_inv { column-count: 2}
         table, th, td {
-          border: 0px inset black;
           padding: 2px;
+        }
+        td, th {
+            border: .01px solid black;
         }
         div{
           padding:2px;
@@ -28,9 +30,9 @@
             <td colspan="2" style="width: 50%;">Laporan Serah Terima</td>
           </tr>
           <tr style="background-color: chocolate;">
-            <td>Tanggal : {{ $report_datas[0]->dated }}</td>
-            <td>Cabang  : {{ $report_datas[0]->branch_name }}</td>
-            <td>Shift   : {{ $report_datas[0]->shift_name }}</td>
+            <td>Tanggal : {{ count($report_datas)>0?$report_datas[0]->dated:"" }}</td>
+            <td>Cabang  : {{ count($report_datas)>0?$report_datas[0]->branch_name:"" }}</td>
+            <td>Shift   : {{ count($report_datas)>0?$report_datas[0]->shift_name:"" }}</td>
           </tr>
         </tbody>
       </table>
@@ -54,6 +56,7 @@
                     $total_qty = 0;
                     $total_service = 0; 
                     $counter = 0;   
+                    $counter_spk = 0;
                   @endphp
                   @foreach($report_datas as $report_data)
                       @if($report_data->type_id==2)
@@ -69,6 +72,12 @@
                           $total_qty = $total_qty + $report_data->qty;
                         @endphp
                       @endif
+                  @endforeach
+
+                  @foreach($payment_datas as $payment_data)
+                        @php
+                          $counter_spk = $counter_spk + $payment_data->qty_payment;
+                        @endphp
                   @endforeach
         
                   @if ($counter<15)
@@ -89,14 +98,18 @@
                   </tr>
                   <tr>
                     <th colspan="3" style="text-align: left">Tamu</th>
-                    <th  style="text-align: right">{{ $report_datas[0]->qty_customer }}</th>
+                    <th  style="text-align: right">{{ count($report_datas)>0?$report_datas[0]->qty_customer:"" }}</th>
+                  </tr>
+                  <tr>
+                    <th colspan="3" style="text-align: left">SPK</th>
+                    <th  style="text-align: right">{{ $counter_spk }}</th>
                   </tr>
                 </tbody>
               </table>
               
 
             </td>
-            <td style="width: 30%; vertical-align:top;">
+            <td style="width: 28%; vertical-align:top;">
               <table class="table table-striped" id="service_table">
                 <thead>
                 <tr style="background-color:#FFA726;color:white;">
@@ -113,7 +126,7 @@
                     $total_qty = 0;
                   @endphp
                   @foreach($report_datas as $report_data)
-                      @if($report_data->type_id==1)
+                      @if($report_data->type_id==1&&$report_data->category_id!=12)
                         <tr>
                             <td style="text-align: left;">{{ $report_data->abbr }}</td>
                             <td style="text-align: center;">{{ number_format($report_data->price,0,',','.') }}</td>
@@ -154,7 +167,7 @@
                     $counter = 0;    
                   @endphp
                   @foreach($report_datas as $report_data)
-                      @if($report_data->type_id==7)
+                      @if($report_data->category_id==12)
                         <tr>
                             <td style="text-align: left;">{{ $report_data->abbr }}</td>
                             <td style="text-align: center;">{{ number_format($report_data->price,0,',','.') }}</td>
@@ -241,20 +254,24 @@
                     <td colspan="2" style="text-align: right;">{{ number_format($total_product,0,',','.') }}</td>
                   </tr>
                   <tr>
+                    <td colspan="2" style="text-align: left;">Minuman</td>
+                    <td colspan="2" style="text-align: right;">{{ number_format($total_misc,0,',','.') }}</td>
+                  </tr>
+                  <tr>
                     <td colspan="2" style="text-align: left;">Extra</td>
                     <td colspan="2" style="text-align: right;">{{ number_format($total_extra,0,',','.') }}</td>
                   </tr>
 
                   <tr>
                     <th colspan="2" style="text-align: left;width:20%;">Total</th>
-                    <th colspan="2" style="text-align: right;">{{ number_format($total_product+$total_service+$total_extra,0,',','.') }} </th>
+                    <th colspan="2" style="text-align: right;">{{ number_format($total_product+$total_misc+$total_service+$total_extra,0,',','.') }} </th>
                   </tr>
                 </tbody>
               </table>
 
             </td>
 
-            <td style="width: 30%; vertical-align:top;">
+            <td style="width: 25%; vertical-align:top;">
               <table class="table table-striped" id="service_table">
                 <thead>
                 <tr>
@@ -274,17 +291,37 @@
                 <tbody>
                   @php
                     $total_payment = 0;
-                    $counter = 0;  
+                    $counter = 0;
+                    
+                    $payment_cash = 0;
+                    $payment_bca_debit = 0;
+                    $payment_bca_kredit = 0;
+                    $payment_mandiri_debit = 0;
+                    $payment_mandiri_kredit = 0;
+
                   @endphp
                   @foreach($payment_datas as $payment_data)
-                        <tr>
-                            <td style="text-align: left;">{{ $payment_data->payment_type=='BCA - Debit'?number_format($payment_data->total_payment,0,',','.'):0 }}</td>
-                            <td style="text-align: center;">{{ $payment_data->payment_type=='BCA - Kredit'?number_format($payment_data->total_payment,0,',','.'):0 }}</td>
-                            <td style="text-align: left;">{{ $payment_data->payment_type=='Mandiri - Debit'?number_format($payment_data->total_payment,0,',','.'):0 }}</td>
-                            <td style="text-align: center;">{{ $payment_data->payment_type=='Mandiri - Kredit'?number_format($payment_data->total_payment,0,',','.'):0 }}</td>
-                        </tr>
+                        @if($payment_data->payment_type!='Cash')
+                          <tr>
+                              <td style="text-align: left;">{{ $payment_data->payment_type=='BCA - Debit'?number_format($payment_data->total_payment,0,',','.'):0 }}</td>
+                              <td style="text-align: center;">{{ $payment_data->payment_type=='BCA - Kredit'?number_format($payment_data->total_payment,0,',','.'):0 }}</td>
+                              <td style="text-align: left;">{{ $payment_data->payment_type=='Mandiri - Debit'?number_format($payment_data->total_payment,0,',','.'):0 }}</td>
+                              <td style="text-align: center;">{{ $payment_data->payment_type=='Mandiri - Kredit'?number_format($payment_data->total_payment,0,',','.'):0 }}</td>
+                          </tr>    
+                        @endif
                         @php
                           $total_payment = $total_payment+$payment_data->total_payment; 
+                          if($payment_data->payment_type=='Cash'){
+                            $payment_cash = $payment_cash + $payment_data->total_payment;
+                          }else if($payment_data->payment_type=='BCA - Debit'){
+                            $payment_bca_debit = $payment_bca_debit + $payment_data->total_payment;
+                          }else if($payment_data->payment_type=='BCA - Kredit'){
+                            $payment_bca_kredit = $payment_bca_kredit + $payment_data->total_payment;
+                          }else if($payment_data->payment_type=='Mandiri - Debit'){
+                            $payment_mandiri_debit = $payment_mandiri_debit + $payment_data->total_payment;
+                          }else if($payment_data->payment_type=='Mandiri - Kredit'){
+                            $payment_mandiri_kredit = $payment_mandiri_kredit + $payment_data->total_payment;
+                          }
                           $counter++;
                         @endphp
                   @endforeach
@@ -303,23 +340,23 @@
                   
                   <tr>
                     <td colspan="2" style="text-align: left;">Cash</td>
-                    <td colspan="2" style="text-align: right;">{{ number_format($total_service,0,',','.') }}</td>
+                    <td colspan="2" style="text-align: right;">{{ number_format($payment_cash,0,',','.') }}</td>
                   </tr>
                   <tr>
                     <td colspan="2" style="text-align: left;">BCA - Debit</td>
-                    <td colspan="2" style="text-align: right;">{{ number_format($total_product,0,',','.') }}</td>
+                    <td colspan="2" style="text-align: right;">{{ number_format($payment_bca_debit,0,',','.') }}</td>
                   </tr>
                   <tr>
                     <td colspan="2" style="text-align: left;">BCA - Kredit</td>
-                    <td colspan="2" style="text-align: right;">{{ number_format($total_extra,0,',','.') }}</td>
+                    <td colspan="2" style="text-align: right;">{{ number_format($payment_bca_kredit,0,',','.') }}</td>
                   </tr>
                   <tr>
                     <td colspan="2" style="text-align: left;">Mandiri - Debit</td>
-                    <td colspan="2" style="text-align: right;">{{ number_format($total_product,0,',','.') }}</td>
+                    <td colspan="2" style="text-align: right;">{{ number_format($payment_mandiri_debit,0,',','.') }}</td>
                   </tr>
                   <tr>
                     <td colspan="2" style="text-align: left;">Mandiri - Kredit</td>
-                    <td colspan="2" style="text-align: right;">{{ number_format($total_extra,0,',','.') }}</td>
+                    <td colspan="2" style="text-align: right;">{{ number_format($payment_mandiri_kredit,0,',','.') }}</td>
                   </tr>
 
                   <tr>
@@ -329,6 +366,71 @@
                 </tbody>
               </table>           
             </td>
+
+            <td style="vertical-align:top;">
+              <table class="table table-striped" id="service_table">
+                <thead>
+                <tr>
+                  <th colspan="2" style="text-align: center;width:20%;background-color:#FFA726;">Pengeluaran</th>
+                </tr>
+                <tr>
+                  <th colspan="1" style="text-align: center;width:20%;background-color:#FFA726;">Kas Masuk</th>
+                  <th colspan="1" style="text-align: center;width:20%;background-color:#FFA726;"></th>
+                </tr>
+                <tr>
+                  <th colspan="1" style="width:80px;text-align: center;background-color:#FFA726;">Jenis</th>
+                  <th colspan="1" style="width:80px;text-align: center;background-color:#FFA726;">Harga</th>
+                </tr>
+                </thead>
+                <tbody>        
+                      @for($i=0;$i<10;$i++)
+                        <tr>
+                            <td style="text-align: left;"><br></th>
+                            <td style="text-align: center;"> </td>
+                        </tr>
+                      @endfor
+               
+                  
+                  <tr>
+                    <th colspan="1" style="text-align: left;width:20%;">Total</th>
+                    <th colspan="1" style="text-align: right;"> </th>
+                  </tr>
+                  <tr>
+                    <th colspan="1" style="text-align: left;width:20%;">Sisa Kas</th>
+                    <th colspan="1" style="text-align: right;"> </th>
+                  </tr>
+                </tbody>
+              </table>           
+            </td>
+
+            <td style="vertical-align:top;">
+              <table class="table table-striped" id="service_table">
+                <thead>
+                <tr>
+                  <th colspan="1" style="text-align: center;background-color:#FFA726;">Ket. Produk Terpakai</th>
+                </tr>
+                </thead>
+                <tbody>   
+                      <tr>
+                        <td style="text-align: left;width:80px;">Keluar : </th>
+                      </tr>     
+                      @for($i=0;$i<10;$i++)
+                        <tr>
+                            <td style="text-align: left;width:80px;"><br></th>
+                        </tr>
+                      @endfor
+                      <tr>
+                        <td style="text-align: left;width:80px;">Masuk : </th>
+                      </tr>     
+                      @for($i=0;$i<10;$i++)
+                        <tr>
+                            <td style="text-align: left;width:80px;"><br></th>
+                        </tr>
+                      @endfor
+                </tbody>
+              </table>           
+            </td>
+
           </tr>
           <tr>
             <th colspan="2" style="text-align: center;">TTD Kasir<br><br><br>( . . . . . . . . . )</th>

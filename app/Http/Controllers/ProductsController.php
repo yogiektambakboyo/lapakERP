@@ -13,6 +13,7 @@ use App\Models\Department;
 use App\Models\ProductIngredients;
 use App\Models\Type;
 use App\Models\Uom;
+use App\Models\ProductUom;
 use App\Models\ProductBrand;
 use App\Models\Category;
 use App\Http\Requests\StoreUserRequest;
@@ -123,6 +124,7 @@ class ProductsController extends Controller
             'productBrandsRemark' => ProductBrand::latest()->get()->pluck('remark')->toArray(),
             'productTypes' => Type::latest()->get(),
             'productTypesRemark' => Type::latest()->get()->pluck('remark')->toArray(),
+            'productUoms' => Uom::latest()->orderBy('remark')->get(),
             'data' => $data, 'company' => Company::get()->first(),
         ]);
     }
@@ -153,6 +155,13 @@ class ProductsController extends Controller
         );
 
         $my_id = Product::orderBy('id', 'desc')->first()->id;
+
+        ProductUom::create(array_merge(
+            ['product_id'=> $my_id],
+            ['uom_id' => $request->get('uom_id')],
+        ));
+
+
 
         if($request->file('photo') == null){
             Product::where(['id' => $my_id])->update( array_merge(
@@ -267,8 +276,9 @@ class ProductsController extends Controller
         $products = Product::join('product_type as pt','pt.id','=','product_sku.type_id')
         ->join('product_category as pc','pc.id','=','product_sku.category_id')
         ->join('product_brand as pb','pb.id','=','product_sku.brand_id')
+        ->join('product_uom as uo','uo.productid','=','product_sku.id')
         ->where('product_sku.id',$product->id)
-        ->get(['product_sku.photo','product_sku.id as id','product_sku.abbr','product_sku.brand_id','product_sku.category_id','product_sku.type_id','product_sku.remark as product_name','pt.remark as product_type','pc.remark as product_category','pb.remark as product_brand'])->first();
+        ->get(['uo.id as uom_id','product_sku.photo','product_sku.id as id','product_sku.abbr','product_sku.brand_id','product_sku.category_id','product_sku.type_id','product_sku.remark as product_name','pt.remark as product_type','pc.remark as product_category','pb.remark as product_brand'])->first();
         return view('pages.products.edit', [
             'productCategorys' => Category::latest()->get(),
             'productCategorysRemark' => Category::latest()->get()->pluck('remark')->toArray(),
@@ -276,6 +286,7 @@ class ProductsController extends Controller
             'productBrandsRemark' => ProductBrand::latest()->get()->pluck('remark')->toArray(),
             'productTypes' => Type::latest()->get(),
             'productTypesRemark' => Type::latest()->get()->pluck('remark')->toArray(),
+            'productUoms' => Uom::latest()->orderBy('remark')->get(),
             'data' => $data,
             'product' => $products, 'company' => Company::get()->first(),
         ]);
@@ -302,6 +313,11 @@ class ProductsController extends Controller
                 ['brand_id' => $request->get('brand_id') ],
             )
         );
+
+        ProductUom::where('product_id','=',$request->id)->update(array_merge(
+            ['uom_id' => $request->get('uom_id')],
+        ));
+
         
         return redirect()->route('products.index')
             ->withSuccess(__('Product updated successfully.'));

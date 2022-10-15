@@ -110,7 +110,7 @@ class ReportCloseShiftController extends Controller
         $filter_shift = $request->get('filter_shift')==null?'%':$request->get('filter_shift');
         $filter_branch_id =  $request->get('filter_branch_id')==null?'%':$request->get('filter_branch_id');
         $report_data = DB::select("
-                select s.remark as shift_name,b.remark as branch_name,im.dated,id.product_name,ps.abbr,ps.type_id,id.price,sum(id.qty) as qty,sum(id.total) as total,count(c.id) as qty_customer
+                select ps.category_id,s.remark as shift_name,b.remark as branch_name,im.dated,id.product_name,ps.abbr,ps.type_id,id.price,sum(id.qty) as qty,sum(id.total+id.vat_total) as total,count(distinct c.id) as qty_customer
                 from invoice_master im 
                 join invoice_detail id on id.invoice_no = im.invoice_no 
                 join customers c on c.id = im.customers_id 
@@ -118,15 +118,15 @@ class ReportCloseShiftController extends Controller
                 join product_sku ps on ps.id = id.product_id 
                 join shift s on s.id = ".$filter_shift."
                 where im.dated = '".$filter_begin_date."' and im.created_at::time  between s.time_start and s.time_end  and c.branch_id = ".$filter_branch_id."
-                group by s.remark,b.remark,im.dated,id.product_name,ps.abbr,id.price,ps.type_id,im.created_at                          
+                group by ps.category_id,s.remark,b.remark,im.dated,id.product_name,ps.abbr,id.price,ps.type_id                         
         ");
         $payment_data = DB::select("
-                select im.total_payment,im.payment_type
+                select im.total_payment,im.payment_type,count(distinct im.invoice_no) as qty_payment
                 from invoice_master im 
                 join customers c on c.id = im.customers_id 
                 join branch b on b.id=c.branch_id 
                 join shift s on s.id = ".$filter_shift."
-                where im.dated = '".$filter_begin_date."' and im.created_at::time  between s.time_start and s.time_end  and c.branch_id = ".$filter_branch_id."                         
+                where im.dated = '".$filter_begin_date."' and im.created_at::time  between s.time_start and s.time_end  and c.branch_id = ".$filter_branch_id."  group by im.total_payment,im.payment_type                       
         ");
         $payment_type = ['Cash','BCA - Debit','BCA - Kredit','Mandiri - Debit','Mandiri - Kredit'];
         $users = User::join('users_branch as ub','ub.branch_id', '=', 'users.branch_id')->where('ub.user_id','=',$user->id)->where('users.job_id','=',2)->get(['users.id','users.name']);
