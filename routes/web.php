@@ -504,6 +504,11 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
             Route::get('/search_terapist', 'ReportTerapistComController@search')->name('reports.terapist.search');
             Route::get('/closeshift', 'ReportCloseShiftController@index')->name('reports.closeshift.index');
             Route::get('/closeshift_getdata', 'ReportCloseShiftController@getdata')->name('reports.closeshift.getdata');
+            Route::get('/closeshift_search', 'ReportCloseShiftController@search')->name('reports.closeshift.search');
+            Route::get('/invoice', 'ReportInvoiceController@index')->name('reports.invoice.index');
+            Route::get('/invoice_search', 'ReportInvoiceController@search')->name('reports.invoice.search');
+            Route::get('/invoicedetail', 'ReportInvoiceDetailController@index')->name('reports.invoicedetail.index');
+            Route::get('/invoicedetail_search', 'ReportInvoiceDetailController@search')->name('reports.invoicedetail.search');
         });
 
 

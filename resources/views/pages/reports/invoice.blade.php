@@ -4,7 +4,7 @@
 
 @section('content')
     <div class="bg-light p-4 rounded">
-        <h1>Laporan - Serah Terima</h1>
+        <h1>Laporan - Sales</h1>
         <div class="lead row mb-3">
             <div class="col-md-10">
                 <div class="col-md-8">
@@ -27,19 +27,14 @@
                 <th scope="col" width="10%">Branch</th>
                 <th scope="col" width="6%">Dated</th>
                 <th>Shift</th>
-                <th scope="col">Service</th>    
-                <th scope="col">Product</th>    
-                <th scope="col">Drink</th>    
-                <th scope="col">Extra</th>    
+                <th scope="col">Invoice No</th>    
+                <th scope="col">Customer</th>    
                 <th scope="col">Total</th>    
-                <th scope="col">Cash</th>    
-                <th scope="col">BCA D</th>    
-                <th scope="col">BCA K</th>    
-                <th scope="col">Mandiri D</th>    
-                <th scope="col">Mandiri K</th> 
-                <th scope="col">#SPK</th> 
-                <th scope="col">#Tamu</th>  
-                <th scope="col" width="2%">Action</th>  
+                <th scope="col">Total Payment</th>    
+                <th scope="col">Payment Type</th>    
+                <th scope="col">Ref No</th>    
+                <th scope="col">Created By</th>    
+                <th scope="col">Created At</th>    
             </tr>
             </thead>
             <tbody>
@@ -49,19 +44,14 @@
                         <th scope="row">{{ $rdata->branch_name }}</th>
                         <td>{{ $rdata->dated }}</td>
                         <td>{{ $rdata->shift_name }}</td>
-                        <td>{{ number_format($rdata->total_service,0,',','.') }}</td>
-                        <td>{{ number_format($rdata->total_product,0,',','.') }}</td>
-                        <td>{{ number_format($rdata->total_drink,0,',','.') }}</td>
-                        <td>{{ number_format($rdata->total_extra,0,',','.') }}</td>
-                        <td>{{ number_format($rdata->total_all,0,',','.') }}</td>
-                        <td>{{ number_format($rdata->total_cash,0,',','.') }}</td>
-                        <td>{{ number_format($rdata->total_b_d,0,',','.') }}</td>
-                        <td>{{ number_format($rdata->total_b_k,0,',','.') }}</td>
-                        <td>{{ number_format($rdata->total_m_d,0,',','.') }}</td>
-                        <td>{{ number_format($rdata->total_m_k,0,',','.') }}</td>
-                        <td>{{ number_format($rdata->qty_transaction,0,',','.') }}</td>
-                        <td>{{ number_format($rdata->qty_customers,0,',','.') }}</td>
-                        <td><button onclick="openDialog('{{ $rdata->branch_id }}','{{ $rdata->dated }}','{{ $rdata->shift_id }}');" class="btn btn-warning btn-sm">Print</button></td>
+                        <td>{{ $rdata->invoice_no }}</td>
+                        <td>{{ $rdata->customers_name }}</td>
+                        <td>{{ number_format($rdata->total,0,',','.') }}</td>
+                        <td>{{ number_format($rdata->total_payment,0,',','.') }}</td>
+                        <td>{{ $rdata->payment_type }}</td>
+                        <td>{{ $rdata->ref_no }}</td>
+                        <td>{{ $rdata->created_by_name }}</td>
+                        <td>{{ $rdata->created_at }}</td>
                     </tr>
                 @endforeach
             </tbody>
@@ -81,7 +71,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form action="{{ route('reports.closeshift.search') }}" method="GET">   
+                    <form action="{{ route('reports.invoice.search') }}" method="GET">   
                         @csrf 
                         <div class="col-md-10">
                             <label class="form-label col-form-label col-md-4">Branch</label>
