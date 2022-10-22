@@ -509,6 +509,16 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
             Route::get('/invoice_search', 'ReportInvoiceController@search')->name('reports.invoice.search');
             Route::get('/invoicedetail', 'ReportInvoiceDetailController@index')->name('reports.invoicedetail.index');
             Route::get('/invoicedetail_search', 'ReportInvoiceDetailController@search')->name('reports.invoicedetail.search');
+            Route::get('/purchase', 'ReportPurchaseController@index')->name('reports.purchase.index');
+            Route::get('/purchase_search', 'ReportPurchaseController@search')->name('reports.purchase.search');
+            Route::get('/receive', 'ReportReceiveController@index')->name('reports.receive.index');
+            Route::get('/receive_search', 'ReportReceiveController@search')->name('reports.receive.search');
+            Route::get('/stock', 'ReportStockController@index')->name('reports.stock.index');
+            Route::get('/stock_search', 'ReportStockController@search')->name('reports.stock.search');
+            Route::get('/stockmutation', 'ReportStockMutationController@index')->name('reports.stockmutation.index');
+            Route::get('/stockmutation_search', 'ReportStockMutationController@search')->name('reports.stockmutation.search');
+            Route::get('/customer', 'ReportCustomerController@index')->name('reports.customer.index');
+            Route::get('/customer_search', 'ReportCustomerController@search')->name('reports.customer.search');
         });
 
 
