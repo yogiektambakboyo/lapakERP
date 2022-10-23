@@ -19,7 +19,7 @@ use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
 use Spatie\Permission\Models\Permission;
 use Maatwebsite\Excel\Facades\Excel;
-use App\Exports\ReportPurchaseExport;
+use App\Exports\ReportStockExport;
 use App\Http\Controllers\Controller;
 use Yajra\Datatables\Datatables;
 use Auth;
@@ -65,22 +65,17 @@ class ReportStockController extends Controller
 
         $shifts = Shift::orderBy('shift.id')->get(['shift.id','shift.remark','shift.id','shift.time_start','shift.time_end']); 
         $report_data = DB::select("
-        select b.remark as branch_name,im.dated,im.purchase_no,id.product_remark as product_name ,pc.remark as category_name,id.qty,id.uom,
-        id.subtotal_vat+id.subtotal  as total
-       from purchase_master im 
-       join purchase_detail id on id.purchase_no = im.purchase_no 
-       join product_sku ps on ps.id = id.product_id 
-       join product_category pc on pc.id = ps.category_id 
-       join suppliers c on c.id = im.supplier_id 
-       join users u on u.id=im.created_by
-       join branch b on b.id = c.branch_id
-       join shift s on im.created_at::time  between s.time_start and s.time_end
-       where im.dated>now()-interval'7 days' order by im.purchase_no               
+        select b.remark as branch_name,ps.remark as product_name,psd.qty  from users u 
+        join users_branch ub on ub.user_id = u.id 
+        join product_stock psd on psd.branch_id = ub.branch_id 
+        join product_sku ps on ps.id = psd.product_id and ps.type_id = 1
+        join branch b on b.id = ub.branch_id 
+        where u.id = ".$user->id." order by 1,2             
         ");
         $data = $this->data;
         $keyword = "";
         $act_permission = $this->act_permission[0];
-        return view('pages.reports.purchase',['company' => Company::get()->first()], compact('shifts','branchs','data','keyword','act_permission','report_data'))->with('i', ($request->input('page', 1) - 1) * 5);
+        return view('pages.reports.stock',['company' => Company::get()->first()], compact('shifts','branchs','data','keyword','act_permission','report_data'))->with('i', ($request->input('page', 1) - 1) * 5);
     }
 
    
@@ -102,23 +97,18 @@ class ReportStockController extends Controller
         $branchx = $request->filter_branch_id_in;
 
         if($request->export=='Export Excel'){
-             $strencode = base64_encode($begindate.'#'.$enddate.'#'.$branchx);
-            return Excel::download(new ReportPurchaseExport($strencode), 'report_purchase_'.Carbon::now()->format('YmdHis').'.xlsx');
+             $strencode = base64_encode($begindate.'#'.$enddate.'#'.$branchx.'#'.$user->id);
+            return Excel::download(new ReportStockExport($strencode), 'report_stock_'.Carbon::now()->format('YmdHis').'.xlsx');
         }else{
             $report_data = DB::select("
-            select b.remark as branch_name,im.dated,im.purchase_no,id.product_remark as product_name ,pc.remark as category_name,id.qty,id.uom,
-            id.subtotal_vat+id.subtotal  as total
-           from purchase_master im 
-           join purchase_detail id on id.purchase_no = im.purchase_no 
-           join product_sku ps on ps.id = id.product_id 
-           join product_category pc on pc.id = ps.category_id 
-           join suppliers c on c.id = im.supplier_id  and im.branch_id::character varying like '%".$branchx."%'
-           join users u on u.id=im.created_by
-           join branch b on b.id = c.branch_id
-           join shift s on im.created_at::time  between s.time_start and s.time_end
-           where im.dated between '".$begindate."' and '".$enddate."'                  
+                select b.remark as branch_name,ps.remark as product_name,psd.qty  from users u 
+                join users_branch ub on ub.user_id = u.id 
+                join product_stock psd on psd.branch_id = ub.branch_id and psd.branch_id::character varying like '%".$branchx."%'
+                join product_sku ps on ps.id = psd.product_id and ps.type_id = 1
+                join branch b on b.id = ub.branch_id 
+                where u.id = ".$user->id." order by 1,2                 
             ");         
-            return view('pages.reports.purchase',['company' => Company::get()->first()], compact('shifts','branchs','data','keyword','act_permission','report_data'))->with('i', ($request->input('page', 1) - 1) * 5);
+            return view('pages.reports.stock',['company' => Company::get()->first()], compact('shifts','branchs','data','keyword','act_permission','report_data'))->with('i', ($request->input('page', 1) - 1) * 5);
         }
     }
 

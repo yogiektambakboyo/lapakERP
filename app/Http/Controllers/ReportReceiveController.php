@@ -65,22 +65,21 @@ class ReportReceiveController extends Controller
 
         $shifts = Shift::orderBy('shift.id')->get(['shift.id','shift.remark','shift.id','shift.time_start','shift.time_end']); 
         $report_data = DB::select("
-        select b.remark as branch_name,im.dated,im.purchase_no,id.product_remark as product_name ,pc.remark as category_name,id.qty,id.uom,
-        id.subtotal_vat+id.subtotal  as total
-       from purchase_master im 
-       join purchase_detail id on id.purchase_no = im.purchase_no 
+        select b.remark as branch_name,im.dated,im.receive_no,id.product_remark as product_name ,pc.remark as category_name,id.qty,id.uom,
+        id.total+((id.total*id.vat)/100)  as total
+       from receive_master im 
+       join receive_detail id on id.receive_no = im.receive_no 
        join product_sku ps on ps.id = id.product_id 
        join product_category pc on pc.id = ps.category_id 
        join suppliers c on c.id = im.supplier_id 
        join users u on u.id=im.created_by
        join branch b on b.id = c.branch_id
-       join shift s on im.created_at::time  between s.time_start and s.time_end
-       where im.dated>now()-interval'7 days' order by im.purchase_no               
+       where im.dated>now()-interval'7 days' order by im.receive_no               
         ");
         $data = $this->data;
         $keyword = "";
         $act_permission = $this->act_permission[0];
-        return view('pages.reports.purchase',['company' => Company::get()->first()], compact('shifts','branchs','data','keyword','act_permission','report_data'))->with('i', ($request->input('page', 1) - 1) * 5);
+        return view('pages.reports.receive',['company' => Company::get()->first()], compact('shifts','branchs','data','keyword','act_permission','report_data'))->with('i', ($request->input('page', 1) - 1) * 5);
     }
 
    
@@ -103,22 +102,21 @@ class ReportReceiveController extends Controller
 
         if($request->export=='Export Excel'){
              $strencode = base64_encode($begindate.'#'.$enddate.'#'.$branchx);
-            return Excel::download(new ReportPurchaseExport($strencode), 'report_purchase_'.Carbon::now()->format('YmdHis').'.xlsx');
+            return Excel::download(new ReportPurchaseExport($strencode), 'report_receive_'.Carbon::now()->format('YmdHis').'.xlsx');
         }else{
             $report_data = DB::select("
-            select b.remark as branch_name,im.dated,im.purchase_no,id.product_remark as product_name ,pc.remark as category_name,id.qty,id.uom,
-            id.subtotal_vat+id.subtotal  as total
-           from purchase_master im 
-           join purchase_detail id on id.purchase_no = im.purchase_no 
+            select b.remark as branch_name,im.dated,im.receive_no,id.product_remark as product_name ,pc.remark as category_name,id.qty,id.uom,
+            id.total+((id.total*id.vat)/100)  as total
+           from receive_master im 
+           join receive_detail id on id.receive_no = im.receive_no 
            join product_sku ps on ps.id = id.product_id 
            join product_category pc on pc.id = ps.category_id 
            join suppliers c on c.id = im.supplier_id  and im.branch_id::character varying like '%".$branchx."%'
            join users u on u.id=im.created_by
            join branch b on b.id = c.branch_id
-           join shift s on im.created_at::time  between s.time_start and s.time_end
            where im.dated between '".$begindate."' and '".$enddate."'                  
             ");         
-            return view('pages.reports.purchase',['company' => Company::get()->first()], compact('shifts','branchs','data','keyword','act_permission','report_data'))->with('i', ($request->input('page', 1) - 1) * 5);
+            return view('pages.reports.receive',['company' => Company::get()->first()], compact('shifts','branchs','data','keyword','act_permission','report_data'))->with('i', ($request->input('page', 1) - 1) * 5);
         }
     }
 
