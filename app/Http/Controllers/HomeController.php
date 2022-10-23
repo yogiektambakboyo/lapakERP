@@ -105,7 +105,81 @@ class HomeController extends Controller
                 }
             }
             $data = $this->data;
-            return view('pages.home-index')->with('data',$data)->with('company',Company::get()->first());
+
+            $d_data = DB::select("
+                select coalesce(sum(coalesce(im.total,0)),0) as total from users_branch ub 
+                join customers c on c.branch_id = ub.branch_id 
+                join invoice_master im on im.customers_id = c.id 
+                where ub.user_id = ".$user->id."  and im.dated = now()::date                      
+            ");
+
+            $d_data_c = DB::select("
+                select count(distinct im.invoice_no) as count_sales from users_branch ub 
+                join customers c on c.branch_id = ub.branch_id 
+                join invoice_master im on im.customers_id = c.id 
+                where ub.user_id = ".$user->id."  and im.dated = now()::date                       
+            ");
+
+            $d_data_p = DB::select("
+                select coalesce(sum(id.total+id.vat_total),0) as total_product  from users_branch ub 
+                join customers c on c.branch_id = ub.branch_id 
+                join invoice_master im on im.customers_id = c.id
+                join invoice_detail id on id.invoice_no = im.invoice_no
+                join product_sku ps on ps.id = id.product_id and ps.type_id = 1
+                where ub.user_id = ".$user->id."  and im.dated = now()::date                       
+            ");
+
+            $d_data_t = DB::select("
+                select u.name as user_name,sum(id.qty)  as counter
+                from users_branch ub 
+                join customers c on c.branch_id = ub.branch_id 
+                join invoice_master im on im.customers_id = c.id
+                join invoice_detail id on id.invoice_no = im.invoice_no
+                join users u on u.id = id.assigned_to 
+                where ub.user_id = ".$user->id."  and im.dated = now()::date 
+                group by u.name order by 2 desc                    
+            ");
+
+            $d_data_s = DB::select("
+                select coalesce(sum(id.total+id.vat_total),0) as total_service  from users_branch ub 
+                join customers c on c.branch_id = ub.branch_id 
+                join invoice_master im on im.customers_id = c.id
+                join invoice_detail id on id.invoice_no = im.invoice_no
+                join product_sku ps on ps.id = id.product_id and ps.type_id = 2
+                where ub.user_id = ".$user->id."  and im.dated = now()::date                     
+            ");
+
+            $d_data_r_p = DB::select("
+                select ps.remark  as product_name,sum(id.qty)  as counter
+                from users_branch ub 
+                join customers c on c.branch_id = ub.branch_id 
+                join invoice_master im on im.customers_id = c.id
+                join invoice_detail id on id.invoice_no = im.invoice_no
+                join product_sku ps on ps.id = id.product_id and ps.type_id = 1
+                where ub.user_id = ".$user->id."  and im.dated = now()::date  
+                group by ps.remark  order by 2 desc
+            ");
+
+            $d_data_r_s = DB::select("
+                select ps.remark  as product_name,sum(id.qty)  as counter
+                from users_branch ub 
+                join customers c on c.branch_id = ub.branch_id 
+                join invoice_master im on im.customers_id = c.id
+                join invoice_detail id on id.invoice_no = im.invoice_no
+                join product_sku ps on ps.id = id.product_id and ps.type_id = 2
+                where ub.user_id = ".$user->id."  and im.dated = now()::date  
+                group by ps.remark  order by 2 desc
+            ");
+
+            return view('pages.home-index',[
+                'd_data' => $d_data,
+                'd_data_c' => $d_data_c,
+                'd_data_p' => $d_data_p,
+                'd_data_s' => $d_data_s,
+                'd_data_t' => $d_data_t,
+                'd_data_r_p' => $d_data_r_p,
+                'd_data_r_s' => $d_data_r_s,
+            ])->with('data',$data)->with('company',Company::get()->first());
         }else{
             $data = [];
             return view('pages.auth.login')->with('data',$data)->with('settings',Settings::get()->first())->with('company',Company::get()->first());

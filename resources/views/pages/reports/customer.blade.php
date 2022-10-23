@@ -1,6 +1,6 @@
 @extends('layouts.default', ['appSidebarSearch' => true])
 
-@section('title', 'Laporan - Penerimaan')
+@section('title', 'Laporan - Customer')
 
 @section('content')
     <div class="bg-light p-4 rounded">
@@ -25,13 +25,9 @@
             <thead>
             <tr>
                 <th scope="col" width="10%">Branch</th>
-                <th scope="col" width="10%">Dated</th>
-                <th scope="col">Receive No</th>    
-                <th scope="col">Product Name</th>    
-                <th scope="col">Category</th>    
-                <th scope="col">Qty</th>    
-                <th scope="col">UOM</th>    
-                <th scope="col">Total</th>    
+                <th scope="col">Customer Name</th>    
+                <th scope="col">Address</th>    
+                <th scope="col">Phone No</th>    
             </tr>
             </thead>
             <tbody>
@@ -39,13 +35,9 @@
                 @foreach($report_data as $rdata)
                     <tr>
                         <th scope="row">{{ $rdata->branch_name }}</th>
-                        <td>{{ $rdata->dated }}</td>
-                        <td>{{ $rdata->receive_no }}</td>
-                        <td>{{ $rdata->product_name }}</td>
-                        <td>{{ $rdata->category_name }}</td>
-                        <td>{{ $rdata->qty }}</td>
-                        <td>{{ $rdata->uom }}</td>
-                        <td>{{ number_format($rdata->total,0,',','.') }}</td>
+                        <td>{{ $rdata->customers_name }}</td>
+                        <td>{{ $rdata->address }}</td>
+                        <td>{{ $rdata->phone_no }}</td>
                     </tr>
                 @endforeach
             </tbody>
@@ -65,10 +57,11 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form action="{{ route('reports.purchase.search') }}" method="GET">   
+                    <form action="{{ route('reports.customer.search') }}" method="GET">   
                         @csrf 
                         <div class="col-md-10">
                             <label class="form-label col-form-label col-md-4">Branch</label>
+                            <input type="hidden" name="export" id="export" value="Search">
                         </div>
                         <div class="col-md-12">
                             <select class="form-control" 
@@ -80,34 +73,6 @@
                             </select>
                         </div>
 
-                        <div class="col-md-12">
-                            <label class="form-label col-form-label col-md-4">Begin Date</label>
-                        </div>
-                        <div class="col-md-12">
-                            <input type="hidden" name="export" id="export" value="Search">
-                            <input type="text" 
-                            name="filter_begin_date_in"
-                            id="filter_begin_date_in"
-                            class="form-control" 
-                            value="{{ old('filter_begin_date_in') }}" required/>
-                            @if ($errors->has('filter_begin_date_in'))
-                                    <span class="text-danger text-left">{{ $errors->first('filter_begin_date_in') }}</span>
-                                @endif
-                        </div>
-
-                        <div class="col-md-12">
-                            <label class="form-label col-form-label col-md-4">End Date</label>
-                        </div>
-                        <div class="col-md-12">
-                            <input type="text" 
-                            name="filter_end_date_in"
-                            id="filter_end_date_in"
-                            class="form-control" 
-                            value="{{ old('filter_end_date_in') }}" required/>
-                            @if ($errors->has('filter_end_date_in'))
-                                    <span class="text-danger text-left">{{ $errors->first('filter_end_date_in') }}</span>
-                                @endif
-                        </div>
 
                         <br>
                         <div class="col-md-12">

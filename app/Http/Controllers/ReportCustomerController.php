@@ -19,7 +19,7 @@ use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
 use Spatie\Permission\Models\Permission;
 use Maatwebsite\Excel\Facades\Excel;
-use App\Exports\ReportPurchaseExport;
+use App\Exports\ReportCustomerExport;
 use App\Http\Controllers\Controller;
 use Yajra\Datatables\Datatables;
 use Auth;
@@ -37,7 +37,7 @@ class ReportCustomerController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-    private $data,$act_permission,$module="reports.purchase",$id=1;
+    private $data,$act_permission,$module="reports.customer",$id=1;
 
     public function __construct()
     {
@@ -65,22 +65,14 @@ class ReportCustomerController extends Controller
 
         $shifts = Shift::orderBy('shift.id')->get(['shift.id','shift.remark','shift.id','shift.time_start','shift.time_end']); 
         $report_data = DB::select("
-        select b.remark as branch_name,im.dated,im.purchase_no,id.product_remark as product_name ,pc.remark as category_name,id.qty,id.uom,
-        id.subtotal_vat+id.subtotal  as total
-       from purchase_master im 
-       join purchase_detail id on id.purchase_no = im.purchase_no 
-       join product_sku ps on ps.id = id.product_id 
-       join product_category pc on pc.id = ps.category_id 
-       join suppliers c on c.id = im.supplier_id 
-       join users u on u.id=im.created_by
-       join branch b on b.id = c.branch_id
-       join shift s on im.created_at::time  between s.time_start and s.time_end
-       where im.dated>now()-interval'7 days' order by im.purchase_no               
+            select b.remark as branch_name,c.name as customers_name,c.address,c.phone_no  from customers c
+            join branch b on b.id = c.branch_id 
+            join users_branch ub on ub.branch_id = b.id and ub.user_id = 1              
         ");
         $data = $this->data;
         $keyword = "";
         $act_permission = $this->act_permission[0];
-        return view('pages.reports.purchase',['company' => Company::get()->first()], compact('shifts','branchs','data','keyword','act_permission','report_data'))->with('i', ($request->input('page', 1) - 1) * 5);
+        return view('pages.reports.customer',['company' => Company::get()->first()], compact('shifts','branchs','data','keyword','act_permission','report_data'))->with('i', ($request->input('page', 1) - 1) * 5);
     }
 
    
@@ -102,23 +94,15 @@ class ReportCustomerController extends Controller
         $branchx = $request->filter_branch_id_in;
 
         if($request->export=='Export Excel'){
-             $strencode = base64_encode($begindate.'#'.$enddate.'#'.$branchx);
-            return Excel::download(new ReportPurchaseExport($strencode), 'report_purchase_'.Carbon::now()->format('YmdHis').'.xlsx');
+             $strencode = base64_encode($begindate.'#'.$enddate.'#'.$branchx.'#'.$user->id);
+            return Excel::download(new ReportCustomerExport($strencode), 'report_customer_'.Carbon::now()->format('YmdHis').'.xlsx');
         }else{
             $report_data = DB::select("
-            select b.remark as branch_name,im.dated,im.purchase_no,id.product_remark as product_name ,pc.remark as category_name,id.qty,id.uom,
-            id.subtotal_vat+id.subtotal  as total
-           from purchase_master im 
-           join purchase_detail id on id.purchase_no = im.purchase_no 
-           join product_sku ps on ps.id = id.product_id 
-           join product_category pc on pc.id = ps.category_id 
-           join suppliers c on c.id = im.supplier_id  and im.branch_id::character varying like '%".$branchx."%'
-           join users u on u.id=im.created_by
-           join branch b on b.id = c.branch_id
-           join shift s on im.created_at::time  between s.time_start and s.time_end
-           where im.dated between '".$begindate."' and '".$enddate."'                  
+            select b.remark as branch_name,c.name as customers_name,c.address,c.phone_no  from customers c
+            join branch b on b.id = c.branch_id 
+            join users_branch ub on ub.branch_id = b.id and ub.user_id = ".$user->id." and ub.branch_id::character varying like '%".$branchx."%'           
             ");         
-            return view('pages.reports.purchase',['company' => Company::get()->first()], compact('shifts','branchs','data','keyword','act_permission','report_data'))->with('i', ($request->input('page', 1) - 1) * 5);
+            return view('pages.reports.customer',['company' => Company::get()->first()], compact('shifts','branchs','data','keyword','act_permission','report_data'))->with('i', ($request->input('page', 1) - 1) * 5);
         }
     }
 

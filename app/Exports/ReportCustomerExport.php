@@ -20,39 +20,31 @@ class ReportCustomerExport implements FromCollection,WithColumnFormatting, WithH
     private $begindate;
     private $enddate;
     private $branch;
+    private $userid;
     public function __construct($arg1){
         //base64_encode($keyword.'#'.$begindate.'#'.$enddate.'#'.$branchx);
         $arr = explode('#',base64_decode($arg1));
         $this->begindate    = $arr[0];
         $this->enddate      = $arr[1];
         $this->branch       = $arr[2];
+        $this->userid       = $arr[3];
     } 
 
     public function headings(): array
     {
         return [
             'Branch',
-            'Dated',
-            'Purchase No',
-            'Product Name',
-            'Category Name',
-            'Qty',
-            'UOM',
-            'Total'
+            'Customer Name',
+            'Address',
+            'Phone No',
         ];
     }
     public function collection()
     {
         return collect(DB::select("
-                select b.remark as branch_name,im.dated,im.purchase_no,id.product_remark as product_name,pc.remark as category_name,id.qty,id.uom,id.subtotal_vat+id.subtotal as total
-                from purchase_master im 
-                join purchase_detail id on id.purchase_no = im.purchase_no 
-                join product_sku ps on ps.id = id.product_id 
-                join product_category pc on pc.id = ps.category_id 
-                join suppliers c on c.id = im.supplier_id  and c.branch_id::character varying like '%".$this->branch."%'
-                join users u on u.id = im.created_by
-                join branch b on b.id = c.branch_id
-                where im.dated between '".$this->begindate."' and '".$this->enddate."'             
+            select b.remark as branch_name,c.name as customers_name,c.address,c.phone_no  from customers c
+            join branch b on b.id = c.branch_id 
+            join users_branch ub on ub.branch_id = b.id and ub.user_id = ".$this->userid." and ub.branch_id::character varying like '%".$this->branch."%'                       
         ")); 
     }
 

@@ -1,10 +1,10 @@
 @extends('layouts.default', ['appSidebarSearch' => true])
 
-@section('title', 'Laporan - Stock')
+@section('title', 'Laporan - Mutasi Stok')
 
 @section('content')
     <div class="bg-light p-4 rounded">
-        <h1>Laporan - Stock Mutation</h1>
+        <h1>Laporan - Mutasi Stok</h1>
         <div class="lead row mb-3">
             <div class="col-md-10">
                 <div class="col-md-8">
