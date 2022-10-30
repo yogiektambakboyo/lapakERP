@@ -46,11 +46,7 @@
                 @endforeach
             </tbody>
         </table>
-
-        <div class="d-flex">
-           
-        </div>
-
+        
         <!-- Vertically centered modal -->
         <!-- Modal -->
         <div class="modal fade" id="modal-filter2" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
@@ -135,8 +131,6 @@
 
     </div>
 @endsection
-
-
 @push('scripts')
     <script type="text/javascript">
           const today = new Date();
@@ -177,9 +171,6 @@
             $('#filter_branch_id').val(branch_id);
             $('#filter_shift').val(shift_id);
             $('#filter_begin_date').val(dated.substr(5,2)+"/"+dated.substr(8,2)+"/"+dated.substr(0,4));
-            //$('#filter_branch_id').prop('disabled', true);
-            //$('#filter_shift').prop('disabled', true);
-            //$('#filter_begin_date').prop('disabled', true);
             myModal.show();
           }
 

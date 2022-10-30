@@ -505,6 +505,9 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
             Route::get('/closeshift', 'ReportCloseShiftController@index')->name('reports.closeshift.index');
             Route::get('/closeshift_getdata', 'ReportCloseShiftController@getdata')->name('reports.closeshift.getdata');
             Route::get('/closeshift_search', 'ReportCloseShiftController@search')->name('reports.closeshift.search');
+            Route::get('/closeday', 'ReportCloseDayController@index')->name('reports.closeday.index');
+            Route::get('/closeday_getdata', 'ReportCloseDayController@getdata')->name('reports.closeday.getdata');
+            Route::get('/closeday_search', 'ReportCloseDayController@search')->name('reports.closeday.search');
             Route::get('/invoice', 'ReportInvoiceController@index')->name('reports.invoice.index');
             Route::get('/invoice_search', 'ReportInvoiceController@search')->name('reports.invoice.search');
             Route::get('/invoicedetail', 'ReportInvoiceDetailController@index')->name('reports.invoicedetail.index');
@@ -521,6 +524,8 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
             Route::get('/customer_search', 'ReportCustomerController@search')->name('reports.customer.search');
             Route::get('/referral', 'ReportReferralController@index')->name('reports.referral.index');
             Route::get('/referral_search', 'ReportReferralController@search')->name('reports.referral.search');
+            Route::get('/usertracking', 'ReportUserTrackingController@index')->name('reports.usertracking.index');
+            Route::get('/usertracking_search', 'ReportUserTrackingController@search')->name('reports.usertracking.search');
         });
 
 

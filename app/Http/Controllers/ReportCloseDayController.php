@@ -11,22 +11,25 @@ use App\Models\Branch;
 use App\Models\JobTitle;
 use App\Models\Department;
 use App\Models\ProductType;
+use App\Models\Settings;
 use App\Models\ProductBrand;
+use App\Models\Shift;
 use App\Models\ProductCategory;
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
 use Spatie\Permission\Models\Permission;
 use Maatwebsite\Excel\Facades\Excel;
-use App\Exports\ReportCommisionCashierExport;
+use App\Exports\CloseDayExport;
 use App\Http\Controllers\Controller;
 use Yajra\Datatables\Datatables;
 use Auth;
 use Illuminate\Support\Facades\DB;
+use Barryvdh\DomPDF\Facade\Pdf;
 use App\Models\Company;
 
 
 
-class ReportCashierComController extends Controller
+class ReportCloseDayController extends Controller
 {
     /**
      * Display all products
@@ -34,7 +37,7 @@ class ReportCashierComController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-    private $data,$act_permission,$module="productsbrand",$id=1;
+    private $data,$act_permission,$module="reports.closeday",$id=1;
 
     public function __construct()
     {
@@ -49,7 +52,7 @@ class ReportCashierComController extends Controller
                 select 0 as allow_create,0 as allow_delete,0 as allow_show,count(1) as allow_edit from permissions p  join role_has_permissions rp on rp.permission_id = p.id where rp.role_id = 1 and p.name like '%.edit' and p.name like '".$this->module.".%'
             ) a
         ");
-        
+        // Closure as callback
         
     }
 
@@ -60,31 +63,76 @@ class ReportCashierComController extends Controller
         $this->getpermissions($id);
         $branchs = Branch::join('users_branch as ub','ub.branch_id', '=', 'branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']);        
 
+        $shifts = Shift::orderBy('shift.id')->get(['shift.id','shift.remark','shift.id','shift.time_start','shift.time_end']); 
         $report_data = DB::select("
-            select  'work_commission' as com_type,im.dated,im.invoice_no,ps.abbr,ps.remark,im.created_by,u.name,id.price,id.qty,id.total,pc.created_by_fee base_commision,pc.created_by_fee * id.qty as commisions  
-            from invoice_master im 
-            join invoice_detail id on id.invoice_no = im.invoice_no 
-            join product_sku ps on ps.id = id.product_id 
-            join customers c on c.id = im.customers_id 
-            join product_commisions pc on pc.product_id = id.product_id and pc.branch_id = c.branch_id
-            join users u on u.id = im.created_by and u.job_id = 1  and u.id = im.created_by  
-            where pc.created_by_fee > 0
-            union 
-            select  'referral' as com_type,im.dated,im.invoice_no,ps.abbr,ps.remark,im.created_by,u.name,id.price,id.qty,id.total,pc.referral_fee base_commision,pc.referral_fee  * id.qty as commisions  
-            from invoice_master im 
-            join invoice_detail id on id.invoice_no = im.invoice_no
-            join product_sku ps on ps.id = id.product_id 
-            join customers c on c.id = im.customers_id 
-            join product_commisions pc on pc.product_id = id.product_id and pc.branch_id = c.branch_id
-            join users u on u.id = im.created_by and u.job_id = 1 and u.id = id.referral_by 
-            where pc.created_by_fee <= 0 and pc.referral_fee > 0        
+                select b.id as branch_id,b.remark as branch_name,im.dated,sum(id.total+id.vat_total) as total_all,
+                sum(case when ps.type_id = 2 then id.total+id.vat_total else 0 end) as total_service,
+                sum(case when ps.type_id = 1 and ps.category_id !=12 then id.total+id.vat_total else 0 end) as total_product,
+                sum(case when ps.type_id = 1 and ps.category_id =12 then id.total+id.vat_total else 0 end) as total_drink,
+                sum(case when ps.type_id = 8 then id.total+id.vat_total else 0 end) as total_extra,
+                sum(case when im.payment_type = 'Cash' then id.total+id.vat_total else 0 end) as total_cash,
+                sum(case when im.payment_type = 'BCA - Debit' then id.total+id.vat_total else 0 end) as total_b_d,
+                sum(case when im.payment_type = 'BCA - Kredit' then id.total+id.vat_total else 0 end) as total_b_k,
+                sum(case when im.payment_type = 'Mandiri - Debit' then id.total+id.vat_total else 0 end) as total_m_d,
+                sum(case when im.payment_type = 'Mandiri - Kredit' then id.total+id.vat_total else 0 end) as total_m_k,
+                count(distinct im.invoice_no) qty_transaction,count(distinct im.customers_id) qty_customers
+                from invoice_master im 
+                join invoice_detail id on id.invoice_no  = im.invoice_no 
+                join product_sku ps on ps.id = id.product_id 
+                join customers c on c.id = im.customers_id 
+                join branch b on b.id = c.branch_id
+                where im.dated>now()-interval'7 days'
+                group by b.remark,im.dated,b.id       
         ");
         $data = $this->data;
         $keyword = "";
         $act_permission = $this->act_permission[0];
-        $brands = ProductBrand::orderBy('product_brand.remark', 'ASC')
-                    ->paginate(10,['product_brand.id','product_brand.remark']);
-        return view('pages.reports.commision_cashier',['company' => Company::get()->first()] ,compact('brands','branchs','data','keyword','act_permission','report_data'))->with('i', ($request->input('page', 1) - 1) * 5);
+        return view('pages.reports.close_day',['company' => Company::get()->first()], compact('shifts','branchs','data','keyword','act_permission','report_data'))->with('i', ($request->input('page', 1) - 1) * 5);
+    }
+
+    public function getdata(Request $request) 
+    {
+        $user = Auth::user();
+        $id = $user->roles->first()->id;
+        $this->getpermissions($id);
+
+        $data = $this->data;
+        $keyword = "";
+        $act_permission = $this->act_permission[0];
+        $branchs = Branch::join('users_branch as ub','ub.branch_id', '=', 'branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']);        
+
+        $shifts = Shift::orderBy('shift.id')->get(['shift.id','shift.remark','shift.id','shift.time_start','shift.time_end']); 
+        $filter_begin_date = date(Carbon::parse($request->filter_begin_date)->format('Y-m-d'));
+        $filter_branch_id =  $request->get('filter_branch_id')==null?'%':$request->get('filter_branch_id');
+        $report_data = DB::select("
+                select ps.category_id,b.remark as branch_name,im.dated,id.product_name,ps.abbr,ps.type_id,id.price,sum(id.qty) as qty,sum(id.total+id.vat_total) as total,count(distinct c.id) as qty_customer
+                from invoice_master im 
+                join invoice_detail id on id.invoice_no = im.invoice_no 
+                join customers c on c.id = im.customers_id 
+                join branch b on b.id=c.branch_id
+                join product_sku ps on ps.id = id.product_id 
+                where im.dated = '".$filter_begin_date."'  and c.branch_id = ".$filter_branch_id."
+                group by ps.category_id,b.remark,im.dated,id.product_name,ps.abbr,id.price,ps.type_id                         
+        ");
+        $payment_data = DB::select("
+                select im.total_payment,im.payment_type,count(distinct im.invoice_no) as qty_payment
+                from invoice_master im 
+                join customers c on c.id = im.customers_id 
+                join branch b on b.id=c.branch_id 
+                where im.dated = '".$filter_begin_date."'  and c.branch_id = ".$filter_branch_id."  group by im.total_payment,im.payment_type                       
+        ");
+        $payment_type = ['Cash','BCA - Debit','BCA - Kredit','Mandiri - Debit','Mandiri - Kredit'];
+        $users = User::join('users_branch as ub','ub.branch_id', '=', 'users.branch_id')->where('ub.user_id','=',$user->id)->where('users.job_id','=',2)->get(['users.id','users.name']);
+
+        $pdf = PDF::setOptions(['isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true])->loadView('pages.reports.close_day_print', [
+            'data' => $data,
+            'payment_datas' => $payment_data,
+            'report_datas' => $report_data,
+            'settings' => Settings::get(),
+        ])->setOptions(['defaultFont' => 'sans-serif'])->setPaper('a4', 'landscape');
+        return $pdf->stream('invoice.pdf');
+
+        return view('pages.reports.print',['company' => Company::get()->first()], compact('shifts','branchs','data','keyword','act_permission','report_data'))->with('i', ($request->input('page', 1) - 1) * 5);
     }
 
     public function search(Request $request) 
@@ -96,36 +144,40 @@ class ReportCashierComController extends Controller
         $keyword = $request->search;
         $data = $this->data;
         $act_permission = $this->act_permission[0];
+        
         $branchs = Branch::join('users_branch as ub','ub.branch_id', '=', 'branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']);        
-
+        $shifts = Shift::orderBy('shift.id')->get(['shift.id','shift.remark','shift.id','shift.time_start','shift.time_end']); 
+        
         $begindate = date(Carbon::parse($request->filter_begin_date_in)->format('Y-m-d'));
         $enddate = date(Carbon::parse($request->filter_end_date_in)->format('Y-m-d'));
         $branchx = $request->filter_branch_id_in;
+        $shift_id = $request->filter_shift_id_in;
 
         if($request->export=='Export Excel'){
-            $strencode = base64_encode($begindate.'#'.$enddate.'#'.$branchx.'#'.$user->id);
-            return Excel::download(new ReportCommisionCashierExport($strencode), 'report_commision_cashier_'.Carbon::now()->format('YmdHis').'.xlsx');
+             $strencode = base64_encode($shift_id.'#'.$begindate.'#'.$enddate.'#'.$branchx);
+            return Excel::download(new CloseDayExport($strencode), 'closesday_'.Carbon::now()->format('YmdHis').'.xlsx');
         }else{
             $report_data = DB::select("
-                select  'work_commission' as com_type,im.dated,im.invoice_no,ps.abbr,ps.remark,im.created_by,u.name,id.price,id.qty,id.total,pc.created_by_fee base_commision,pc.created_by_fee * id.qty as commisions  
-                from invoice_master im 
-                join invoice_detail id on id.invoice_no = im.invoice_no 
-                join product_sku ps on ps.id = id.product_id 
-                join customers c on c.id = im.customers_id  and c.branch_id::character varying like '%".$branchx."%' 
-                join product_commisions pc on pc.product_id = id.product_id and pc.branch_id = c.branch_id
-                join users u on u.id = im.created_by and u.job_id = 1  and u.id = im.created_by  
-                where pc.created_by_fee > 0 and im.dated between '".$begindate."' and '".$enddate."' 
-                union 
-                select  'referral' as com_type,im.dated,im.invoice_no,ps.abbr,ps.remark,im.created_by,u.name,id.price,id.qty,id.total,pc.referral_fee base_commision,pc.referral_fee  * id.qty as commisions  
-                from invoice_master im 
-                join invoice_detail id on id.invoice_no = im.invoice_no
-                join product_sku ps on ps.id = id.product_id 
-                join customers c on c.id = im.customers_id  and c.branch_id::character varying like '%".$branchx."%' 
-                join product_commisions pc on pc.product_id = id.product_id and pc.branch_id = c.branch_id
-                join users u on u.id = im.created_by and u.job_id = 1 and u.id = id.referral_by 
-                where pc.created_by_fee <= 0 and pc.referral_fee > 0 and im.dated between '".$begindate."' and '".$enddate."'        
-            ");          
-            return view('pages.reports.commision_cashier',['company' => Company::get()->first()], compact('report_data','branchs','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
+                    select b.id as branch_id,b.remark as branch_name,im.dated,sum(id.total+id.vat_total) as total_all,
+                    sum(case when ps.type_id = 2 then id.total+id.vat_total else 0 end) as total_service,
+                    sum(case when ps.type_id = 1 and ps.category_id !=12 then id.total+id.vat_total else 0 end) as total_product,
+                    sum(case when ps.type_id = 1 and ps.category_id =12 then id.total+id.vat_total else 0 end) as total_drink,
+                    sum(case when ps.type_id = 8 then id.total+id.vat_total else 0 end) as total_extra,
+                    sum(case when im.payment_type = 'Cash' then id.total+id.vat_total else 0 end) as total_cash,
+                    sum(case when im.payment_type = 'BCA - Debit' then id.total+id.vat_total else 0 end) as total_b_d,
+                    sum(case when im.payment_type = 'BCA - Kredit' then id.total+id.vat_total else 0 end) as total_b_k,
+                    sum(case when im.payment_type = 'Mandiri - Debit' then id.total+id.vat_total else 0 end) as total_m_d,
+                    sum(case when im.payment_type = 'Mandiri - Kredit' then id.total+id.vat_total else 0 end) as total_m_k,
+                    count(distinct im.invoice_no) qty_transaction,count(distinct im.customers_id) qty_customers
+                    from invoice_master im 
+                    join invoice_detail id on id.invoice_no  = im.invoice_no 
+                    join product_sku ps on ps.id = id.product_id 
+                    join customers c on c.id = im.customers_id and c.branch_id::character varying like '%".$branchx."%'
+                    join branch b on b.id = c.branch_id
+                    where im.dated between '".$begindate."' and '".$enddate."'
+                    group by b.remark,im.dated,b.id         
+            ");         
+            return view('pages.reports.close_day',['company' => Company::get()->first()], compact('shifts','branchs','data','keyword','act_permission','report_data'))->with('i', ($request->input('page', 1) - 1) * 5);
         }
     }
 
@@ -184,10 +236,6 @@ class ReportCashierComController extends Controller
      */
     public function show(Product $product) 
     {
-        $user = Auth::user();
-        $id = $user->roles->first()->id;
-        $this->getpermissions($id);
-
         $data = $this->data;
         //return $product->id;
         $products = Product::join('product_type as pt','pt.id','=','product_sku.type_id')
@@ -211,10 +259,6 @@ class ReportCashierComController extends Controller
      */
     public function edit(ProductBrand $productbrand) 
     {
-        $user = Auth::user();
-        $id = $user->roles->first()->id;
-        $this->getpermissions($id);
-
         $data = $this->data;
         $brand = ProductBrand::where('product_brand.id',$productbrand->id)
         ->get(['product_brand.id as id','product_brand.remark'])->first();

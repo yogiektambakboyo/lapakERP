@@ -1,10 +1,10 @@
 @extends('layouts.default', ['appSidebarSearch' => true])
 
-@section('title', 'Laporan - Referral')
+@section('title', 'Laporan - Serah Terima')
 
 @section('content')
     <div class="bg-light p-4 rounded">
-        <h1>Laporan - Commision Terapist</h1>
+        <h1>Laporan - Closing Harian</h1>
         <div class="lead row mb-3">
             <div class="col-md-10">
                 <div class="col-md-8">
@@ -23,41 +23,51 @@
 
         <table class="table table-striped" id="example">
             <thead>
-                <tr>
-                    <th scope="col" width="8%">Branch</th>
-                    <th scope="col" width="8%">Dated</th>
-                    <th>Invoice No</th>
-                    <th scope="col" width="17%">Product</th>
-                    <th scope="col" width="15%">Name</th>
-                    <th scope="col" width="5%">Price</th>
-                    <th scope="col" width="4%">Qty</th>
-                    <th scope="col" width="8%">Total</th>  
-                    <th scope="col" width="8%">Base Comm.</th>
-                    <th scope="col" width="12%">Total Comm</th>    
-                    <th scope="col" width="8%">Point</th>    
-                    <th scope="col" width="12%">Point Value</th>    
-                </tr>
-                </thead>
-                <tbody>
-    
-                    @foreach($report_data as $user)
-                        <tr>
-                            <th scope="row">{{ $user->branch_name }}</th>
-                            <th scope="row">{{ $user->dated }}</th>
-                            <td>{{ $user->invoice_no }}</td>
-                            <td>{{ $user->abbr }}</td>
-                            <td>{{ $user->name }}</td>
-                            <td>{{ number_format($user->price,0,',','.') }}</td>
-                            <td>{{ $user->qty }}</td>
-                            <td>{{ number_format($user->total,0,',','.') }}</td>
-                            <td>{{ number_format($user->base_commision,0,',','.') }}</td>
-                            <td>{{ number_format($user->commisions,0,',','.') }}</td>
-                            <td>{{ number_format($user->point_qty,0,',','.') }}</td>
-                            <td>{{ number_format($user->point_value,0,',','.') }}</td>
-                        </tr>
-                    @endforeach
-                </tbody>
+            <tr>
+                <th scope="col" width="10%">Branch</th>
+                <th scope="col" width="6%">Dated</th>
+                <th scope="col">Service</th>    
+                <th scope="col">Product</th>    
+                <th scope="col">Drink</th>    
+                <th scope="col">Extra</th>    
+                <th scope="col">Total</th>    
+                <th scope="col">Cash</th>    
+                <th scope="col">BCA D</th>    
+                <th scope="col">BCA K</th>    
+                <th scope="col">Mandiri D</th>    
+                <th scope="col">Mandiri K</th> 
+                <th scope="col">#SPK</th> 
+                <th scope="col">#Tamu</th>  
+                <th scope="col" width="2%">Action</th>  
+            </tr>
+            </thead>
+            <tbody>
+
+                @foreach($report_data as $rdata)
+                    <tr>
+                        <th scope="row">{{ $rdata->branch_name }}</th>
+                        <td>{{ $rdata->dated }}</td>
+                        <td>{{ number_format($rdata->total_service,0,',','.') }}</td>
+                        <td>{{ number_format($rdata->total_product,0,',','.') }}</td>
+                        <td>{{ number_format($rdata->total_drink,0,',','.') }}</td>
+                        <td>{{ number_format($rdata->total_extra,0,',','.') }}</td>
+                        <td>{{ number_format($rdata->total_all,0,',','.') }}</td>
+                        <td>{{ number_format($rdata->total_cash,0,',','.') }}</td>
+                        <td>{{ number_format($rdata->total_b_d,0,',','.') }}</td>
+                        <td>{{ number_format($rdata->total_b_k,0,',','.') }}</td>
+                        <td>{{ number_format($rdata->total_m_d,0,',','.') }}</td>
+                        <td>{{ number_format($rdata->total_m_k,0,',','.') }}</td>
+                        <td>{{ number_format($rdata->qty_transaction,0,',','.') }}</td>
+                        <td>{{ number_format($rdata->qty_customers,0,',','.') }}</td>
+                        <td><button onclick="openDialog('{{ $rdata->branch_id }}','{{ $rdata->dated }}','0');" class="btn btn-warning btn-sm">Print</button></td>
+                    </tr>
+                @endforeach
+            </tbody>
         </table>
+
+        <div class="d-flex">
+           
+        </div>
 
         <!-- Vertically centered modal -->
         <!-- Modal -->
@@ -69,11 +79,10 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form action="{{ route('reports.terapist.search') }}" method="GET">   
+                    <form action="{{ route('reports.closeday.search') }}" method="GET">   
                         @csrf 
                         <div class="col-md-10">
                             <label class="form-label col-form-label col-md-4">Branch</label>
-                            <input type="hidden" name="export" id="export" value="Search">
                         </div>
                         <div class="col-md-12">
                             <select class="form-control" 
@@ -89,6 +98,7 @@
                             <label class="form-label col-form-label col-md-4">Begin Date</label>
                         </div>
                         <div class="col-md-12">
+                            <input type="hidden" name="export" id="export" value="Search">
                             <input type="text" 
                             name="filter_begin_date_in"
                             id="filter_begin_date_in"
@@ -133,7 +143,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form action="" method="GET">   
+                    <form action="{{ route('reports.closeday.getdata') }}" method="GET">   
                         @csrf 
                         <div class="col-md-12">
                             <select class="form-control" 
@@ -145,7 +155,7 @@
                         </div>
 
                         <div class="col-md-12">
-                            Apakah anda yakin akan mencetak laporan serah terima?
+                            Apakah anda yakin akan mencetak laporan closing harian?
                         </div>
                         <div class="col-md-12">
                             <input type="text" 
@@ -158,7 +168,6 @@
                                 @endif
                         </div>
 
-                    
                         <br>
                         <div class="col-md-12">
                             <button type="submit" class="btn btn-primary form-control">Apply</button>
@@ -213,6 +222,9 @@
             $('#filter_branch_id').val(branch_id);
             $('#filter_shift').val(shift_id);
             $('#filter_begin_date').val(dated.substr(5,2)+"/"+dated.substr(8,2)+"/"+dated.substr(0,4));
+            //$('#filter_branch_id').prop('disabled', true);
+            //$('#filter_shift').prop('disabled', true);
+            //$('#filter_begin_date').prop('disabled', true);
             myModal.show();
           }
 
@@ -221,6 +233,56 @@
             myModal2.show();
           }
 
+          function showConfirm(id,data){
+            Swal.fire({
+            title: 'Are you sure?',
+            text: "You will delete document "+data+" !",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    var url = "{{ route('invoices.destroy','XX') }}";
+                    var lastvalurl = "XX";
+                    console.log(url);
+                    url = url.replace(lastvalurl, id)
+                    const res = axios.delete(url, {}, {
+                        headers: {
+                            // Overwrite Axios's automatically set Content-Type
+                            'Content-Type': 'application/json'
+                        }
+                        }).then(
+                            resp => {
+                                if(resp.data.status=="success"){
+                                    Swal.fire({
+                                        title: 'Deleted!',
+                                        text: 'Your data has been deleted.',
+                                        icon: 'success',
+                                        showCancelButton: false,
+                                        confirmButtonColor: '#3085d6',
+                                        cancelButtonColor: '#d33',
+                                        confirmButtonText: 'Close'
+                                        }).then((result) => {
+                                            window.location.href = "{{ route('invoices.index') }}"; 
+                                        })
+                                }else{
+                                    Swal.fire(
+                                    {
+                                        position: 'top-end',
+                                        icon: 'warning',
+                                        text: 'Something went wrong - '+resp.data.message,
+                                        showConfirmButton: false,
+                                        imageHeight: 30, 
+                                        imageWidth: 30,   
+                                        timer: 1500
+                                    });
+                            }
+                        });
+                    }
+                })
+        }
 
         $('#app').removeClass('app app-sidebar-fixed app-header-fixed-minified').addClass('app app-sidebar-fixed app-header-fixed-minified app-sidebar-minified');
 

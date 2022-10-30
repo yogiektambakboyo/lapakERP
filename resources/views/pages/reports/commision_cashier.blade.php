@@ -7,16 +7,12 @@
         <h1>Reports - Commision Cashier</h1>
         <div class="lead row mb-3">
             <div class="col-md-10">
-                <div class="col-md-2">
+                <div class="col-md-8">
                     Manage your report here.
                 </div>
                 <div class="col-md-10"> 	
-                    <form action="{{ route('reports.cashier.search') }}" method="GET" class="row row-cols-lg-auto g-3 align-items-center">
-                        <div class="col-2"><input type="text" class="form-control  form-control-sm" name="search" placeholder="Find Cashier.." value="{{ $keyword }}"></div>
-                        <div class="col-2"><input type="submit" class="btn btn-sm btn-secondary" value="Search" name="submit"></div>   
-                        <div class="col-2"><a href="#modal-filter"  data-bs-toggle="modal" data-bs-target="#modal-filter" class="btn btn-sm btn-lime">Filter</a></div>   
-                        <div class="col-2"><input type="submit" class="btn btn-sm btn-success" value="Export Excel" name="export"></div>  
-                    </form>
+                        <button onclick="openDialogFilterSearch('Filter');" class="btn btn-sm btn-lime">Filter</button>  
+                        <button onclick="openDialogFilterSearch('Export Excel');" class="btn btn-sm btn-success">Export</button>  
                 </div>
             </div>
         </div>
@@ -83,5 +79,169 @@
             </div>
         </div>
 
+                <!-- Vertically centered modal -->
+        <!-- Modal -->
+        <div class="modal fade" id="modal-filter2" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+            <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                <h5 class="modal-title"  id="input_expired_list_at_lbl">Filter Data</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form action="{{ route('reports.cashier.search') }}" method="GET">   
+                        @csrf 
+                        <div class="col-md-10">
+                            <label class="form-label col-form-label col-md-4">Branch</label>
+                            <input type="hidden" name="export" id="export" value="Search">
+                        </div>
+                        <div class="col-md-12">
+                            <select class="form-control" 
+                                name="filter_branch_id_in" id="filter_branch_id_in">
+                                <option value="%">-- All -- </option>
+                                @foreach($branchs as $branchx)
+                                    <option value="{{ $branchx->id }}">{{ $branchx->remark }} </option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <div class="col-md-12">
+                            <label class="form-label col-form-label col-md-4">Begin Date</label>
+                        </div>
+                        <div class="col-md-12">
+                            <input type="text" 
+                            name="filter_begin_date_in"
+                            id="filter_begin_date_in"
+                            class="form-control" 
+                            value="{{ old('filter_begin_date_in') }}" required/>
+                            @if ($errors->has('filter_begin_date_in'))
+                                    <span class="text-danger text-left">{{ $errors->first('filter_begin_date_in') }}</span>
+                                @endif
+                        </div>
+
+                        <div class="col-md-12">
+                            <label class="form-label col-form-label col-md-4">End Date</label>
+                        </div>
+                        <div class="col-md-12">
+                            <input type="text" 
+                            name="filter_end_date_in"
+                            id="filter_end_date_in"
+                            class="form-control" 
+                            value="{{ old('filter_end_date_in') }}" required/>
+                            @if ($errors->has('filter_end_date_in'))
+                                    <span class="text-danger text-left">{{ $errors->first('filter_end_date_in') }}</span>
+                                @endif
+                        </div>
+
+                        <br>
+                        <div class="col-md-12">
+                            <button type="submit" class="btn btn-primary form-control">Apply</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            </div>
+        </div>
+
+        <!-- Vertically centered modal -->
+        <!-- Modal -->
+        <div class="modal fade" id="modal-filter" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+            <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                <h5 class="modal-title"  id="input_expired_list_at_lbl">Konfirmasi</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form action="" method="GET">   
+                        @csrf 
+                        <div class="col-md-12">
+                            <select class="form-control" 
+                                name="filter_branch_id" id="filter_branch_id" hidden>
+                                @foreach($branchs as $branchx)
+                                    <option value="{{ $branchx->id }}">{{ $branchx->remark }} </option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <div class="col-md-12">
+                            Apakah anda yakin akan mencetak laporan serah terima?
+                        </div>
+                        <div class="col-md-12">
+                            <input type="text" 
+                            name="filter_begin_date"
+                            id="filter_begin_date"
+                            class="form-control" 
+                            value="{{ old('filter_begin_date') }}" required hidden/>
+                            @if ($errors->has('filter_begin_date'))
+                                    <span class="text-danger text-left">{{ $errors->first('filter_begin_date') }}</span>
+                                @endif
+                        </div>
+
+                    
+                        <br>
+                        <div class="col-md-12">
+                            <button type="submit" class="btn btn-primary form-control">Apply</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            </div>
+        </div>
+
+
     </div>
 @endsection
+@push('scripts')
+    <script type="text/javascript">
+          const today = new Date();
+          const yyyy = today.getFullYear();
+          const yyyy1 = today.getFullYear()+1;
+          let mm = today.getMonth() + 1; // Months start at 0!
+          let dd = today.getDate();
+
+          if (dd < 10) dd = '0' + dd;
+          if (mm < 10) mm = '0' + mm;
+
+          const formattedToday = mm + '/' + dd + '/' + yyyy;
+          const formattedNextYear = mm + '/' + dd + '/' + yyyy1;
+
+          $('#filter_begin_date').datepicker({
+              format : 'yyyy-mm-dd',
+              todayHighlight: true,
+          });
+          $('#filter_begin_date').val(formattedToday);
+
+          $('#filter_begin_date_in').datepicker({
+              format : 'yyyy-mm-dd',
+              todayHighlight: true,
+          });
+          $('#filter_begin_date_in').val(formattedToday);
+
+
+          $('#filter_end_date_in').datepicker({
+              format : 'yyyy-mm-dd',
+              todayHighlight: true,
+          });
+          $('#filter_end_date_in').val(formattedToday);
+
+          var myModal = new bootstrap.Modal(document.getElementById('modal-filter'));
+          var myModal2 = new bootstrap.Modal(document.getElementById('modal-filter2'));
+
+          function openDialog(branch_id,dated,shift_id){
+            $('#filter_branch_id').val(branch_id);
+            $('#filter_shift').val(shift_id);
+            $('#filter_begin_date').val(dated.substr(5,2)+"/"+dated.substr(8,2)+"/"+dated.substr(0,4));
+            myModal.show();
+          }
+
+          function openDialogFilterSearch(command){
+            $('#export').val(command);
+            myModal2.show();
+          }
+
+
+        $('#app').removeClass('app app-sidebar-fixed app-header-fixed-minified').addClass('app app-sidebar-fixed app-header-fixed-minified app-sidebar-minified');
+
+    </script>
+@endpush

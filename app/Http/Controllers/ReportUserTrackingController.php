@@ -17,7 +17,7 @@ use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
 use Spatie\Permission\Models\Permission;
 use Maatwebsite\Excel\Facades\Excel;
-use App\Exports\ReportCommisionCashierExport;
+use App\Exports\ReportUserTrackingExport;
 use App\Http\Controllers\Controller;
 use Yajra\Datatables\Datatables;
 use Auth;
@@ -26,7 +26,7 @@ use App\Models\Company;
 
 
 
-class ReportCashierComController extends Controller
+class ReportUserTrackingController extends Controller
 {
     /**
      * Display all products
@@ -61,30 +61,19 @@ class ReportCashierComController extends Controller
         $branchs = Branch::join('users_branch as ub','ub.branch_id', '=', 'branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']);        
 
         $report_data = DB::select("
-            select  'work_commission' as com_type,im.dated,im.invoice_no,ps.abbr,ps.remark,im.created_by,u.name,id.price,id.qty,id.total,pc.created_by_fee base_commision,pc.created_by_fee * id.qty as commisions  
-            from invoice_master im 
-            join invoice_detail id on id.invoice_no = im.invoice_no 
-            join product_sku ps on ps.id = id.product_id 
-            join customers c on c.id = im.customers_id 
-            join product_commisions pc on pc.product_id = id.product_id and pc.branch_id = c.branch_id
-            join users u on u.id = im.created_by and u.job_id = 1  and u.id = im.created_by  
-            where pc.created_by_fee > 0
-            union 
-            select  'referral' as com_type,im.dated,im.invoice_no,ps.abbr,ps.remark,im.created_by,u.name,id.price,id.qty,id.total,pc.referral_fee base_commision,pc.referral_fee  * id.qty as commisions  
-            from invoice_master im 
-            join invoice_detail id on id.invoice_no = im.invoice_no
-            join product_sku ps on ps.id = id.product_id 
-            join customers c on c.id = im.customers_id 
-            join product_commisions pc on pc.product_id = id.product_id and pc.branch_id = c.branch_id
-            join users u on u.id = im.created_by and u.job_id = 1 and u.id = id.referral_by 
-            where pc.created_by_fee <= 0 and pc.referral_fee > 0        
+            select u.name,b.remark as branch_name,jt.remark  as job_title ,um.created_at  from users_mutation um 
+            join users u on u.id = um.user_id 
+            join users_branch ub on ub.user_id = u.id
+            join branch b on b.id = um.branch_id 
+            join job_title jt on jt.id = um.job_id where um.created_at > now()-interval'7 days'
+            order by created_at      
         ");
         $data = $this->data;
         $keyword = "";
         $act_permission = $this->act_permission[0];
         $brands = ProductBrand::orderBy('product_brand.remark', 'ASC')
                     ->paginate(10,['product_brand.id','product_brand.remark']);
-        return view('pages.reports.commision_cashier',['company' => Company::get()->first()] ,compact('brands','branchs','data','keyword','act_permission','report_data'))->with('i', ($request->input('page', 1) - 1) * 5);
+        return view('pages.reports.usertracking',['company' => Company::get()->first()] ,compact('brands','branchs','data','keyword','act_permission','report_data'))->with('i', ($request->input('page', 1) - 1) * 5);
     }
 
     public function search(Request $request) 
@@ -104,28 +93,18 @@ class ReportCashierComController extends Controller
 
         if($request->export=='Export Excel'){
             $strencode = base64_encode($begindate.'#'.$enddate.'#'.$branchx.'#'.$user->id);
-            return Excel::download(new ReportCommisionCashierExport($strencode), 'report_commision_cashier_'.Carbon::now()->format('YmdHis').'.xlsx');
+            return Excel::download(new ReportUserTrackingExport($strencode), 'report_usertracking_cashier_'.Carbon::now()->format('YmdHis').'.xlsx');
         }else{
             $report_data = DB::select("
-                select  'work_commission' as com_type,im.dated,im.invoice_no,ps.abbr,ps.remark,im.created_by,u.name,id.price,id.qty,id.total,pc.created_by_fee base_commision,pc.created_by_fee * id.qty as commisions  
-                from invoice_master im 
-                join invoice_detail id on id.invoice_no = im.invoice_no 
-                join product_sku ps on ps.id = id.product_id 
-                join customers c on c.id = im.customers_id  and c.branch_id::character varying like '%".$branchx."%' 
-                join product_commisions pc on pc.product_id = id.product_id and pc.branch_id = c.branch_id
-                join users u on u.id = im.created_by and u.job_id = 1  and u.id = im.created_by  
-                where pc.created_by_fee > 0 and im.dated between '".$begindate."' and '".$enddate."' 
-                union 
-                select  'referral' as com_type,im.dated,im.invoice_no,ps.abbr,ps.remark,im.created_by,u.name,id.price,id.qty,id.total,pc.referral_fee base_commision,pc.referral_fee  * id.qty as commisions  
-                from invoice_master im 
-                join invoice_detail id on id.invoice_no = im.invoice_no
-                join product_sku ps on ps.id = id.product_id 
-                join customers c on c.id = im.customers_id  and c.branch_id::character varying like '%".$branchx."%' 
-                join product_commisions pc on pc.product_id = id.product_id and pc.branch_id = c.branch_id
-                join users u on u.id = im.created_by and u.job_id = 1 and u.id = id.referral_by 
-                where pc.created_by_fee <= 0 and pc.referral_fee > 0 and im.dated between '".$begindate."' and '".$enddate."'        
+                select u.name,b.remark as branch_name,jt.remark  as job_title ,um.created_at  from users_mutation um 
+                join users u on u.id = um.user_id 
+                join users_branch ub on ub.user_id = u.id and ub.branch_id::character varying like '%".$branchx."%' 
+                join branch b on b.id = um.branch_id 
+                join job_title jt on jt.id = um.job_id 
+                where um.created_at between '".$begindate."' and '".$enddate."' 
+                order by um.created_at      
             ");          
-            return view('pages.reports.commision_cashier',['company' => Company::get()->first()], compact('report_data','branchs','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
+            return view('pages.reports.usertracking',['company' => Company::get()->first()], compact('report_data','branchs','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
         }
     }
 

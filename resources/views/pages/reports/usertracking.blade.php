@@ -1,14 +1,14 @@
 @extends('layouts.default', ['appSidebarSearch' => true])
 
-@section('title', 'Laporan - Referral')
+@section('title', 'Reports - Commision Cashier')
 
 @section('content')
     <div class="bg-light p-4 rounded">
-        <h1>Laporan - Commision Terapist</h1>
+        <h1>Reports - User Tracking</h1>
         <div class="lead row mb-3">
             <div class="col-md-10">
                 <div class="col-md-8">
-                    Manage your report here.
+                    Manage your report here. 
                 </div>
                 <div class="col-md-10"> 	
                         <button onclick="openDialogFilterSearch('Filter');" class="btn btn-sm btn-lime">Filter</button>  
@@ -24,42 +24,50 @@
         <table class="table table-striped" id="example">
             <thead>
                 <tr>
-                    <th scope="col" width="8%">Branch</th>
-                    <th scope="col" width="8%">Dated</th>
-                    <th>Invoice No</th>
-                    <th scope="col" width="17%">Product</th>
                     <th scope="col" width="15%">Name</th>
-                    <th scope="col" width="5%">Price</th>
-                    <th scope="col" width="4%">Qty</th>
-                    <th scope="col" width="8%">Total</th>  
-                    <th scope="col" width="8%">Base Comm.</th>
-                    <th scope="col" width="12%">Total Comm</th>    
-                    <th scope="col" width="8%">Point</th>    
-                    <th scope="col" width="12%">Point Value</th>    
+                    <th>Branch</th>
+                    <th scope="col" width="17%">Job Title</th>
+                    <th scope="col" width="15%">Create At</th>  
                 </tr>
                 </thead>
                 <tbody>
     
                     @foreach($report_data as $user)
                         <tr>
-                            <th scope="row">{{ $user->branch_name }}</th>
-                            <th scope="row">{{ $user->dated }}</th>
-                            <td>{{ $user->invoice_no }}</td>
-                            <td>{{ $user->abbr }}</td>
-                            <td>{{ $user->name }}</td>
-                            <td>{{ number_format($user->price,0,',','.') }}</td>
-                            <td>{{ $user->qty }}</td>
-                            <td>{{ number_format($user->total,0,',','.') }}</td>
-                            <td>{{ number_format($user->base_commision,0,',','.') }}</td>
-                            <td>{{ number_format($user->commisions,0,',','.') }}</td>
-                            <td>{{ number_format($user->point_qty,0,',','.') }}</td>
-                            <td>{{ number_format($user->point_value,0,',','.') }}</td>
+                            <th scope="row">{{ $user->name }}</th>
+                            <td>{{ $user->branch_name }}</td>
+                            <td>{{ $user->job_title }}</td>
+                            <td>{{ $user->created_at }}</td>
                         </tr>
                     @endforeach
                 </tbody>
         </table>
 
+        <div class="d-flex">
+           
+        </div>
+
         <!-- Vertically centered modal -->
+        <!-- Modal -->
+        <div class="modal fade" id="modal-filter" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+            <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">Filter Data</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                ...
+                </div>
+                <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Apply</button>
+                </div>
+            </div>
+            </div>
+        </div>
+
+                <!-- Vertically centered modal -->
         <!-- Modal -->
         <div class="modal fade" id="modal-filter2" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
             <div class="modal-dialog">
@@ -69,7 +77,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form action="{{ route('reports.terapist.search') }}" method="GET">   
+                    <form action="{{ route('reports.usertracking.search') }}" method="GET">   
                         @csrf 
                         <div class="col-md-10">
                             <label class="form-label col-form-label col-md-4">Branch</label>
@@ -169,10 +177,9 @@
             </div>
         </div>
 
+
     </div>
 @endsection
-
-
 @push('scripts')
     <script type="text/javascript">
           const today = new Date();
