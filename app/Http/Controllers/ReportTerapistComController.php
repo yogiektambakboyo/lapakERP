@@ -17,7 +17,7 @@ use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
 use Spatie\Permission\Models\Permission;
 use Maatwebsite\Excel\Facades\Excel;
-use App\Exports\ProductsExport;
+use App\Exports\ReportCommisionTerapistExport;
 use App\Http\Controllers\Controller;
 use Yajra\Datatables\Datatables;
 use Auth;
@@ -34,7 +34,7 @@ class ReportTerapistComController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-    private $data,$act_permission,$module="productsbrand",$id=1;
+    private $data,$act_permission,$module="report.terapist",$id=1;
 
     public function __construct()
     {
@@ -58,6 +58,7 @@ class ReportTerapistComController extends Controller
         $user = Auth::user();
         $id = $user->roles->first()->id;
         $this->getpermissions($id);
+        $branchs = Branch::join('users_branch as ub','ub.branch_id', '=', 'branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']);        
 
         $report_data = DB::select("
                                     select  'work_commission' as com_type,im.dated,im.invoice_no,ps.abbr,ps.remark,u.work_year,u.name,id.price,id.qty,id.total,pc.values base_commision,pc.values  * id.qty as commisions  
@@ -86,7 +87,7 @@ class ReportTerapistComController extends Controller
         $act_permission = $this->act_permission[0];
         $brands = ProductBrand::orderBy('product_brand.remark', 'ASC')
                     ->paginate(10,['product_brand.id','product_brand.remark']);
-        return view('pages.reports.commision_terapist',['company' => Company::get()->first()], compact('brands','data','keyword','act_permission','report_data'))->with('i', ($request->input('page', 1) - 1) * 5);
+        return view('pages.reports.commision_terapist',['company' => Company::get()->first()], compact('brands','branchs','data','keyword','act_permission','report_data'))->with('i', ($request->input('page', 1) - 1) * 5);
     }
 
     public function search(Request $request) 
@@ -99,35 +100,43 @@ class ReportTerapistComController extends Controller
         $data = $this->data;
         $act_permission = $this->act_permission[0];
 
+        $branchs = Branch::join('users_branch as ub','ub.branch_id', '=', 'branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']);        
+        
+        $begindate = date(Carbon::parse($request->filter_begin_date_in)->format('Y-m-d'));
+        $enddate = date(Carbon::parse($request->filter_end_date_in)->format('Y-m-d'));
+        $branchx = $request->filter_branch_id_in;
+
         if($request->export=='Export Excel'){
-            return Excel::download(new ProductsExport($keyword), 'products_'.Carbon::now()->format('YmdHis').'.xlsx');
+            $strencode = base64_encode($begindate.'#'.$enddate.'#'.$branchx.'#'.$user->id);
+            return Excel::download(new ReportCommisionTerapistExport($strencode), 'report_commision_terapist_'.Carbon::now()->format('YmdHis').'.xlsx');
         }else{
-            $whereclause = " upper(u.name) like '%".strtoupper($keyword)."%'";
             $brands = ProductBrand::orderBy('product_brand.remark', 'ASC')
                     ->paginate(10,['product_brand.id','product_brand.remark']);
             $report_data = DB::select("
-                                    select  'work_commission' as com_type,im.dated,im.invoice_no,ps.abbr,ps.remark,u.work_year,u.name,id.price,id.qty,id.total,pc.values base_commision,pc.values  * id.qty as commisions  
+                                    select  b.remark as branch_name,'work_commission' as com_type,im.dated,im.invoice_no,ps.abbr,ps.remark,u.work_year,u.name,id.price,id.qty,id.total,pc.values base_commision,pc.values  * id.qty as commisions  
                                     from invoice_master im 
                                     join invoice_detail id on id.invoice_no = im.invoice_no
                                     join product_sku ps on ps.id = id.product_id 
-                                    join customers c on c.id = im.customers_id 
+                                    join customers c on c.id = im.customers_id and c.branch_id::character varying like '%".$branchx."%' 
+                                    join branch b on b.id = c.branch_id
                                     join product_commision_by_year pc on pc.product_id = id.product_id and pc.branch_id = c.branch_id
                                     join (
                                         select r.id,r.name,r.job_id,case when date_part('year', age(now(),join_date))::int=0 then 1 else date_part('year', age(now(),join_date)) end as work_year 
                                         from users r
-                                        ) u on u.id = id.assigned_to and u.job_id = pc.jobs_id  and u.id = id.assigned_to  and u.work_year = pc.years  and ".$whereclause."
-                                    where pc.values > 0 
+                                        ) u on u.id = id.assigned_to and u.job_id = pc.jobs_id  and u.id = id.assigned_to  and u.work_year = pc.years 
+                                    where pc.values > 0 and im.dated between '".$begindate."' and '".$enddate."'  
                                     union all            
-                                    select  'referral' as com_type,im.dated,im.invoice_no,ps.abbr,ps.remark,case when date_part('year', age(now(),join_date))::int=0 then 1 else date_part('year', age(now(),join_date)) end as work_year,u.name,id.price,id.qty,id.total,pc.referral_fee base_commision,pc.referral_fee * id.qty as commisions   
+                                    select  b.remark as branch_name,'referral' as com_type,im.dated,im.invoice_no,ps.abbr,ps.remark,case when date_part('year', age(now(),join_date))::int=0 then 1 else date_part('year', age(now(),join_date)) end as work_year,u.name,id.price,id.qty,id.total,pc.referral_fee base_commision,pc.referral_fee * id.qty as commisions   
                                     from invoice_master im 
                                     join invoice_detail id on id.invoice_no = im.invoice_no 
                                     join product_sku ps on ps.id = id.product_id 
-                                    join customers c on c.id = im.customers_id 
+                                    join customers c on c.id = im.customers_id and c.branch_id::character varying like '%".$branchx."%'
+                                    join branch b on b.id = c.branch_id
                                     join product_commisions pc on pc.product_id = id.product_id and pc.branch_id = c.branch_id
-                                    join users u on u.job_id = 2  and u.id = id.referral_by   and ".$whereclause."
-                                    where pc.referral_fee  > 0              
+                                    join users u on u.job_id = 2  and u.id = id.referral_by  
+                                    where pc.referral_fee  > 0  and im.dated between '".$begindate."' and '".$enddate."'              
         ");            
-            return view('pages.reports.commision_terapist',['company' => Company::get()->first()], compact('report_data','brands','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
+            return view('pages.reports.commision_terapist',['company' => Company::get()->first()], compact('report_data','branchs','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
         }
     }
 

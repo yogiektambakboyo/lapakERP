@@ -23,36 +23,28 @@
 
         <table class="table table-striped" id="example">
             <thead>
-                <tr>
-                    <th scope="col" width="8%">Branch</th>
-                    <th scope="col" width="8%">Dated</th>
-                    <th>Invoice No</th>
-                    <th scope="col" width="17%">Product</th>
-                    <th scope="col" width="15%">Name</th>
-                    <th scope="col" width="5%">Price</th>
-                    <th scope="col" width="4%">Qty</th>
-                    <th scope="col" width="8%">Total</th>  
-                    <th scope="col" width="8%">Base Comm.</th>
-                    <th scope="col" width="12%">Total Commission</th>    
-                </tr>
-                </thead>
-                <tbody>
-    
-                    @foreach($report_data as $user)
-                        <tr>
-                            <th scope="row">{{ $user->branch_name }}</th>
-                            <th scope="row">{{ $user->dated }}</th>
-                            <td>{{ $user->invoice_no }}</td>
-                            <td>{{ $user->abbr }}</td>
-                            <td>{{ $user->name }}</td>
-                            <td>{{ number_format($user->price,0,',','.') }}</td>
-                            <td>{{ $user->qty }}</td>
-                            <td>{{ number_format($user->total,0,',','.') }}</td>
-                            <td>{{ number_format($user->base_commision,0,',','.') }}</td>
-                            <td>{{ number_format($user->commisions,0,',','.') }}</td>
-                        </tr>
-                    @endforeach
-                </tbody>
+            <tr>
+                <th scope="col" width="10%">Branch</th>
+                <th scope="col">Employee ID</th>    
+                <th scope="col">Name</th>    
+                <th scope="col">Join Date</th>    
+                <th scope="col">Join Years</th>    
+                <th scope="col">Referral Name</th>    
+            </tr>
+            </thead>
+            <tbody>
+
+                @foreach($report_data as $rdata)
+                    <tr>
+                        <th scope="row">{{ $rdata->branch_name }}</th>
+                        <td>{{ $rdata->employee_id }}</td>
+                        <td>{{ $rdata->join_date }}</td>
+                        <td>{{ $rdata->employee_id }}</td>
+                        <td>{{ $rdata->join_years }}</td>
+                        <td>{{ $rdata->referral_name }}</td>
+                    </tr>
+                @endforeach
+            </tbody>
         </table>
 
         <div class="d-flex">
@@ -69,7 +61,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form action="{{ route('reports.terapist.search') }}" method="GET">   
+                    <form action="{{ route('reports.referral.search') }}" method="GET">   
                         @csrf 
                         <div class="col-md-10">
                             <label class="form-label col-form-label col-md-4">Branch</label>
@@ -83,34 +75,6 @@
                                     <option value="{{ $branchx->id }}">{{ $branchx->remark }} </option>
                                 @endforeach
                             </select>
-                        </div>
-
-                        <div class="col-md-12">
-                            <label class="form-label col-form-label col-md-4">Begin Date</label>
-                        </div>
-                        <div class="col-md-12">
-                            <input type="text" 
-                            name="filter_begin_date_in"
-                            id="filter_begin_date_in"
-                            class="form-control" 
-                            value="{{ old('filter_begin_date_in') }}" required/>
-                            @if ($errors->has('filter_begin_date_in'))
-                                    <span class="text-danger text-left">{{ $errors->first('filter_begin_date_in') }}</span>
-                                @endif
-                        </div>
-
-                        <div class="col-md-12">
-                            <label class="form-label col-form-label col-md-4">End Date</label>
-                        </div>
-                        <div class="col-md-12">
-                            <input type="text" 
-                            name="filter_end_date_in"
-                            id="filter_end_date_in"
-                            class="form-control" 
-                            value="{{ old('filter_end_date_in') }}" required/>
-                            @if ($errors->has('filter_end_date_in'))
-                                    <span class="text-danger text-left">{{ $errors->first('filter_end_date_in') }}</span>
-                                @endif
                         </div>
 
                         <br>
