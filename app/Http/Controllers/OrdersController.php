@@ -189,7 +189,7 @@ class OrdersController extends Controller
         return $voucher; 
     }
 
-    public function print(Order $order) 
+    public function printThermal(Order $order) 
     {
         $user = Auth::user();
         $id = $user->roles->first()->id;
@@ -286,7 +286,7 @@ class OrdersController extends Controller
         return $printer->printRequest();
     }
 
-    public function printOut(Order $order) 
+    public function print(Order $order) 
     {
         $user = Auth::user();
         $id = $user->roles->first()->id;
@@ -465,6 +465,24 @@ class OrdersController extends Controller
             'payment_type' => $payment_type, 'company' => Company::get()->first(),
         ]);
     }
+
+    public function grid(){
+        $user = Auth::user();
+        $id = $user->roles->first()->id;
+        $this->getpermissions($id);
+
+        $data = $this->data;
+        $user = Auth::user();
+        $room = Room::where('branch_room.id','=',$order->branch_room_id)->get(['branch_room.remark'])->first();
+        $users = User::join('users_branch as ub','ub.branch_id', '=', 'users.branch_id')->where('ub.user_id','=',$user->id)->where('users.job_id','=',2)->get(['users.id','users.name']);
+        return view('pages.orders.grid',[
+            'customers' => Customer::join('users_branch as ub','ub.branch_id', '=', 'customers.branch_id')->join('branch as b','b.id','=','ub.branch_id')->where('ub.user_id',$user->id)->get(['customers.id','customers.name','b.remark']),
+            'data' => $data,
+            'room' => $room,
+            'rooms' => Room::join('users_branch as ub','ub.branch_id', '=', 'branch_room.branch_id')->where('ub.user_id','=',$user->id)->get(['branch_room.id','branch_room.remark']),
+            'users' => $users,
+        ]);
+    } 
 
     /**
      * Edit user data
