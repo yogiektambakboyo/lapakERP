@@ -19,7 +19,7 @@ return [
     | Typically printer name or IP address.
     |
     */
-    'connector_descriptor' => 'BlueTooth Printer',
+    'connector_descriptor' => 'POS-58',
     /*
     |--------------------------------------------------------------------------
     | Printer port

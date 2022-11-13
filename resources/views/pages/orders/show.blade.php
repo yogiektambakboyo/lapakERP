@@ -9,11 +9,13 @@
     <div class="panel-heading  bg-teal-600">
       <div class="panel-title"><h4 class="">SPK No : {{ $order->order_no }}</h4></div>
       <div class="">
+        <a href="{{ route('orders.printthermal', $order->id) }}" class="btn btn-warning">Print Thermal</a>
         <a href="{{ route('orders.print', $order->id) }}" class="btn btn-warning">Print</a>
         <a href="{{ route('orders.index') }}" class="btn btn-default">Back</a>
       </div>
     </div>
     <div class="panel-body bg-white text-black">
+      
 
         <div class="row mb-3">
           <div class="col-md-4">

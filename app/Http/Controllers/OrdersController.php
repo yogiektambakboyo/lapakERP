@@ -189,7 +189,7 @@ class OrdersController extends Controller
         return $voucher; 
     }
 
-    public function printThermal(Order $order) 
+    public function printthermal(Order $order) 
     {
         $user = Auth::user();
         $id = $user->roles->first()->id;
@@ -206,41 +206,12 @@ class OrdersController extends Controller
         $payment_type = ['Cash','BCA - Debit','BCA - Kredit','Mandiri - Debit','Mandiri - Kredit'];
         $users = User::join('users_branch as ub','ub.branch_id', '=', 'users.branch_id')->where('ub.user_id','=',$user->id)->where('users.job_id','=',2)->get(['users.id','users.name']);
 
-        // Set params
-        $mid = '123123456';
-        $store_name = 'YOURMART';
-        $store_address = 'Mart Address';
-        $store_phone = '1234567890';
-        $store_email = 'yourmart@email.com';
-        $store_website = 'yourmart.com';
-        $tax_percentage = 10;
-        $transaction_id = 'TX123ABC456';
-        $currency = 'Rp';
-        $image_path = 'logo.png';
-
-        // Set items
-        $items = [
-            [
-                'name' => 'French Fries (tera)',
-                'qty' => 2,
-                'price' => 65000,
-            ],
-            [
-                'name' => 'Roasted Milk Tea (large)',
-                'qty' => 1,
-                'price' => 24000,
-            ],
-            [
-                'name' => 'Honey Lime (large)',
-                'qty' => 3,
-                'price' => 10000,
-            ],
-            [
-                'name' => 'Jasmine Tea (grande)',
-                'qty' => 3,
-                'price' => 8000,
-            ],
-        ];
+        // Set data
+        $settings = Settings::get()->first();
+        $branch = Branch::join('customers','customers.branch_id','=','branch.id')
+                    ->join('order_master','order_master.customers_id','=','customers.id')->where('order_master.order_no','=',$order->order_no)->get('branch.*')->first();
+        $orderdetail = OrderDetail::join('uom','uom.remark','=','order_detail.uom')->join('product_sku','product_sku.id','=','order_detail.product_id')->where('order_no','=',$order->order_no)->get(['uom.conversion','product_name','qty','price','order_detail.vat','type_id']);
+        $terapists = OrderDetail::where('order_no','=',$order->order_no)->distinct()->get(['assigned_to_name']);
 
         // Init printer
         $printer = new ReceiptPrinter;
@@ -248,42 +219,77 @@ class OrdersController extends Controller
             config('receiptprinter.connector_type'),
             config('receiptprinter.connector_descriptor')
         );
+        
+        $currency = 'Rp';
+        $image_path = 'logo.png';
+        $tax_percentage = $orderdetail[0]->vat;
+
+        // Header
+        $store_name = $branch->remark;
+        $store_address = $branch->address;
 
         // Set store info
-        $printer->setStore($mid, $store_name, $store_address, $store_phone, $store_email, $store_website);
+        //$printer->setStore($mid, $store_name, $store_address, $store_phone, $store_email, $store_website);
+        $printer->setStore('', $store_name, $store_address, '', '', '');
 
         // Set currency
         $printer->setCurrency($currency);
 
-        // Add items
-        foreach ($items as $item) {
-            $printer->addItem(
-                $item['name'],
-                $item['qty'],
-                $item['price']
-            );
-        }
-        // Set tax
-        $printer->setTax($tax_percentage);
+        // Recipet Information
+        $printer->setDated(substr(explode(" ",$order->dated)[0],5,2)."-".substr(explode(" ",$order->dated)[0],8,2)."-".substr(explode(" ",$order->dated)[0],0,4));
+        $customer_name = $order->customers_name;
+        $room_name = Room::where('id','=',$order->branch_room_id)->get()->first()->remark;
+        $transaction_id = $order->order_no;
 
-        // Calculate total
-        $printer->calculateSubTotal();
-        $printer->calculateGrandTotal();
-
+        $printer->setCustomerName($customer_name);
+        $printer->setRoomName($room_name);
+        $printer->setOperator(User::where('id','=',$order->created_by)->get('name')->first()->name);
+        
         // Set transaction ID
         $printer->setTransactionID($transaction_id);
+
+        foreach ($terapists as $terapist) {
+            $printer->addTerapist(
+                $terapist['assigned_to_name']
+            );
+        }
+
+        // Add items
+        $scheduled_at = $order->scheduled_at;
+        $sum_scheduled_at = $scheduled_at;
+        foreach ($orderdetail as $item) {
+            if($item['type_id']=="1"){
+                $printer->addItem(
+                    $item['product_name'],
+                    $item['qty'],
+                    $item['price']
+                );
+            }else{
+                $printer->addItem(
+                    $item['product_name'],
+                    $item['qty'],
+                    $item['type_id']
+                );
+            }
+
+            $printer->addTimeExec(Carbon::parse($sum_scheduled_at)->isoFormat('H:mm').' - '.(Carbon::parse($sum_scheduled_at)->add($item['conversion'].' minutes')->isoFormat('H:mm')));
+            $sum_scheduled_at = Carbon::parse($sum_scheduled_at)->add($item['conversion'].' minutes')->isoFormat('H:mm');
+        }
+
+        // Set tax
+        //$printer->setTax($tax_percentage);
+
+        // Calculate total
+        //$printer->calculateSubTotal();
+        //$printer->calculateGrandTotal();
 
         // Set logo
         // Uncomment the line below if $image_path is defined
         //$printer->setLogo($image_path);
 
-        // Set QR code
-        $printer->setQRcode([
-            'tid' => $transaction_id,
-        ]);
 
         // Print receipt
-        return $printer->printRequest();
+        return $printer->printReceiptSPK();
     }
 
     public function print(Order $order) 
