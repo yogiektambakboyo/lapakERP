@@ -276,9 +276,9 @@ class ProductsController extends Controller
         $products = Product::join('product_type as pt','pt.id','=','product_sku.type_id')
         ->join('product_category as pc','pc.id','=','product_sku.category_id')
         ->join('product_brand as pb','pb.id','=','product_sku.brand_id')
-        ->join('product_uom as uo','uo.productid','=','product_sku.id')
+        ->join('product_uom','product_uom.product_id','=','product_sku.id')
         ->where('product_sku.id',$product->id)
-        ->get(['uo.id as uom_id','product_sku.photo','product_sku.id as id','product_sku.abbr','product_sku.brand_id','product_sku.category_id','product_sku.type_id','product_sku.remark as product_name','pt.remark as product_type','pc.remark as product_category','pb.remark as product_brand'])->first();
+        ->get(['product_uom.uom_id as uom_id','product_sku.photo','product_sku.id as id','product_sku.abbr','product_sku.brand_id','product_sku.category_id','product_sku.type_id','product_sku.remark as product_name','pt.remark as product_type','pc.remark as product_category','pb.remark as product_brand'])->first();
         return view('pages.products.edit', [
             'productCategorys' => Category::latest()->get(),
             'productCategorysRemark' => Category::latest()->get()->pluck('remark')->toArray(),

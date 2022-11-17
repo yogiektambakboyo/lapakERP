@@ -11,9 +11,9 @@ use Spatie\Permission\Models\Role;
 use App\Models\Branch;
 use App\Models\JobTitle;
 use App\Models\Department;
-use App\Models\ProductType;
+use App\Models\Type;
 use App\Models\ProductBrand;
-use App\Models\ProductCategory;
+use App\Models\Category;
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
 use Spatie\Permission\Models\Permission;
@@ -220,12 +220,12 @@ class ProductsPriceController extends Controller
         ->where('bc.id','=',$branch_id)
         ->get(['product_sku.id as id','product_sku.abbr','product_sku.brand_id','product_sku.category_id','product_sku.type_id','product_sku.remark as product_name','pt.remark as product_type','pc.remark as product_category','pb.remark as product_brand','pr.branch_id','bc.remark as branch_name','pr.price as product_price'])->first();
         return view('pages.productsprice.edit', [
-            'productCategorys' => ProductCategory::latest()->get(),
-            'productCategorysRemark' => ProductCategory::latest()->get()->pluck('remark')->toArray(),
+            'productCategorys' => Category::latest()->get(),
+            'productCategorysRemark' => Category::latest()->get()->pluck('remark')->toArray(),
             'productBrands' => ProductBrand::latest()->get(),
             'productBrandsRemark' => ProductBrand::latest()->get()->pluck('remark')->toArray(),
-            'productTypes' => ProductType::latest()->get(),
-            'productTypesRemark' => ProductType::latest()->get()->pluck('remark')->toArray(),
+            'productTypes' => Type::latest()->get(),
+            'productTypesRemark' => Type::latest()->get()->pluck('remark')->toArray(),
             'branchs' => Branch::join('users_branch as ub','ub.branch_id','=','branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']),
             'data' => $data,
             'product' => $product, 'company' => Company::get()->first(),
