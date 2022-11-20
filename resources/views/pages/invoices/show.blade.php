@@ -9,6 +9,7 @@
     <div class="panel-heading  bg-teal-600">
       <div class="panel-title"><h4 class="">Sales Invoice {{ $invoice->invoice_no }}</h4></div>
       <div class="">
+        <a href="{{ route('invoices.printthermal', $invoice->id) }}" class="btn btn-warning">Print Thermal</a>
         <a href="{{ route('invoices.print', $invoice->id) }}" class="btn btn-warning">Print</a>
         <a href="{{ route('invoices.index') }}" class="btn btn-default">Back</a>
       </div>

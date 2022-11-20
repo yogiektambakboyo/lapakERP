@@ -98,6 +98,7 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
             Route::patch('/{order}/update', 'OrdersController@update')->name('orders.update');
             Route::delete('/{order}/delete', 'OrdersController@destroy')->name('orders.destroy');
             Route::get('/export', 'OrdersController@export')->name('orders.export');
+            Route::get('/{order}/grid', 'OrdersController@grid')->name('orders.grid');
         });
 
          /**
@@ -111,6 +112,7 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
             Route::get('/{invoice}/show', 'InvoicesController@show')->name('invoices.show');
             Route::get('/{invoice}/edit', 'InvoicesController@edit')->name('invoices.edit');
             Route::get('/{invoice}/print', 'InvoicesController@print')->name('invoices.print');
+            Route::get('/{invoice}/printthermal', 'InvoicesController@printthermal')->name('invoices.printthermal');
             Route::get('/getproduct', 'InvoicesController@getproduct')->name('invoices.getproduct');
             Route::get('/gettimetable', 'InvoicesController@gettimetable')->name('invoices.gettimetable');
             Route::get('/{invoice}/getinvoice', 'InvoicesController@getinvoice')->name('invoices.getinvoice');

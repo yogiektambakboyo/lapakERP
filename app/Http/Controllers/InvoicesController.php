@@ -30,6 +30,7 @@ use Yajra\Datatables\Datatables;
 use Auth;
 use App\Models\Company;
 use Illuminate\Support\Facades\DB;
+use charlieuki\ReceiptPrinter\ReceiptPrinter as ReceiptPrinter;
 
 
 class InvoicesController extends Controller
@@ -364,6 +365,96 @@ class InvoicesController extends Controller
             'invoiceDetails' => InvoiceDetail::join('invoice_master as om','om.invoice_no','=','invoice_detail.invoice_no')->join('product_sku as ps','ps.id','=','invoice_detail.product_id')->join('product_uom as u','u.product_id','=','invoice_detail.product_id')->join('uom as um','um.id','=','u.uom_id')->leftjoin('users as us','us.id','=','invoice_detail.assigned_to')->leftjoin('users as usm','usm.id','=','invoice_detail.referral_by')->where('invoice_detail.invoice_no',$invoice->invoice_no)->get(['usm.name as referral_by','us.name as assigned_to','um.remark as uom','invoice_detail.qty','invoice_detail.price','invoice_detail.total','ps.id','ps.remark as product_name','invoice_detail.discount','om.tax','om.voucher_code']),
         ])->setOptions(['defaultFont' => 'sans-serif'])->setPaper('a4', 'landscape');
         return $pdf->stream('invoice.pdf');
+    }
+
+    public function printthermal(Invoice $invoice) 
+    {
+        $user = Auth::user();
+        $id = $user->roles->first()->id;
+        $this->getpermissions($id);
+
+        $invoice->update(
+            array_merge(
+                ["printed_at" => Carbon::now()],
+                ["printed_count" => $invoice->printed_count+1]
+            )
+        );
+
+        $data = $this->data;
+        $payment_type = ['Cash','BCA - Debit','BCA - Kredit','Mandiri - Debit','Mandiri - Kredit'];
+        $users = User::join('users_branch as ub','ub.branch_id', '=', 'users.branch_id')->where('ub.user_id','=',$user->id)->where('users.job_id','=',2)->get(['users.id','users.name']);
+
+        // Set data
+        $settings = Settings::get()->first();
+        $branch = Branch::join('customers','customers.branch_id','=','branch.id')
+                    ->join('invoice_master','invoice_master.customers_id','=','customers.id')->where('invoice_master.invoice_no','=',$invoice->invoice_no)->get('branch.*')->first();
+        $invoicedetail = InvoiceDetail::join('uom','uom.remark','=','invoice_detail.uom')->join('product_sku','product_sku.id','=','invoice_detail.product_id')->where('invoice_no','=',$invoice->invoice_no)->get(['uom.conversion','product_name','qty','price','invoice_detail.vat','type_id']);
+        $terapists = InvoiceDetail::where('invoice_no','=',$invoice->invoice_no)->distinct()->get(['assigned_to_name']);
+
+        // Init printer
+        $printer = new ReceiptPrinter;
+        $printer->init(
+            config('receiptprinter.connector_type'),
+            config('receiptprinter.connector_descriptor')
+        );
+        
+        $currency = 'Rp';
+        $image_path = 'logo.png';
+        $tax_percentage = $invoicedetail[0]->vat;
+
+        // Header
+        $store_name = $branch->remark;
+        $store_address = $branch->address;
+
+        // Set store info
+        //$printer->setStore($mid, $store_name, $store_address, $store_phone, $store_email, $store_website);
+        $printer->setStore('', $store_name, $store_address, '', '', '');
+
+        // Set currency
+        $printer->setCurrency($currency);
+
+        // Recipet Information
+        $printer->setDated(substr(explode(" ",$invoice->dated)[0],5,2)."-".substr(explode(" ",$invoice->dated)[0],8,2)."-".substr(explode(" ",$invoice->dated)[0],0,4));
+        $customer_name = $invoice->customers_name;
+        $room_name = Room::where('id','=',$invoice->branch_room_id)->get()->first()->remark;
+        $transaction_id = $invoice->invoice_no;
+
+        $printer->setCustomerName($customer_name);
+        $printer->setRoomName($room_name);
+        $printer->setOperator(User::where('id','=',$invoice->created_by)->get('name')->first()->name);
+        
+        // Set transaction ID
+        $printer->setTransactionID($transaction_id);
+
+        foreach ($terapists as $terapist) {
+            $printer->addTerapist(
+                $terapist['assigned_to_name']
+            );
+        }
+
+        // Total
+        $printer->setPaymentType($invoice->payment_type);
+        $printer->setTotalPayment($invoice->total_payment);
+        $printer->setTotal($invoice->total);
+
+
+        // Add items
+        $scheduled_at = $invoice->scheduled_at;
+        $sum_scheduled_at = $scheduled_at;
+        foreach ($invoicedetail as $item) {
+            $printer->addItem(
+                $item['product_name'],
+                $item['qty'],
+                $item['price'],
+                $item['type_id']
+            );
+            $printer->addTimeExec(Carbon::parse($sum_scheduled_at)->isoFormat('H:mm').' - '.(Carbon::parse($sum_scheduled_at)->add($item['conversion'].' minutes')->isoFormat('H:mm')));
+            $sum_scheduled_at = Carbon::parse($sum_scheduled_at)->add($item['conversion'].' minutes')->isoFormat('H:mm');
+        }
+
+
+        // Print receipt
+        return $printer->printReceiptInvoice();
     }
 
 

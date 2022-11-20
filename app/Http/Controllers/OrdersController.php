@@ -262,12 +262,14 @@ class OrdersController extends Controller
                 $printer->addItem(
                     $item['product_name'],
                     $item['qty'],
-                    $item['price']
+                    $item['price'],
+                    $item['type_id']
                 );
             }else{
                 $printer->addItem(
                     $item['product_name'],
                     $item['qty'],
+                    $item['type_id'],
                     $item['type_id']
                 );
             }
@@ -472,7 +474,7 @@ class OrdersController extends Controller
         ]);
     }
 
-    public function grid(){
+    public function grid(Order $order){
         $user = Auth::user();
         $id = $user->roles->first()->id;
         $this->getpermissions($id);
@@ -480,13 +482,19 @@ class OrdersController extends Controller
         $data = $this->data;
         $user = Auth::user();
         $room = Room::where('branch_room.id','=',$order->branch_room_id)->get(['branch_room.remark'])->first();
+        $payment_type = ['Cash','BCA - Debit','BCA - Kredit','Mandiri - Debit','Mandiri - Kredit'];
         $users = User::join('users_branch as ub','ub.branch_id', '=', 'users.branch_id')->where('ub.user_id','=',$user->id)->where('users.job_id','=',2)->get(['users.id','users.name']);
+        $usersReferral = User::get(['users.id','users.name']);
         return view('pages.orders.grid',[
             'customers' => Customer::join('users_branch as ub','ub.branch_id', '=', 'customers.branch_id')->join('branch as b','b.id','=','ub.branch_id')->where('ub.user_id',$user->id)->get(['customers.id','customers.name','b.remark']),
             'data' => $data,
+            'order' => $order,
             'room' => $room,
             'rooms' => Room::join('users_branch as ub','ub.branch_id', '=', 'branch_room.branch_id')->where('ub.user_id','=',$user->id)->get(['branch_room.id','branch_room.remark']),
             'users' => $users,
+            'orderDetails' => OrderDetail::join('order_master as om','om.order_no','=','order_detail.order_no')->join('product_sku as ps','ps.id','=','order_detail.product_id')->join('product_uom as u','u.product_id','=','order_detail.product_id')->join('uom as um','um.id','=','u.uom_id')->leftjoin('users as us','us.id','=','order_detail.assigned_to')->where('order_detail.order_no',$order->order_no)->get(['us.name as assigned_to','um.remark as uom','order_detail.qty','order_detail.price','order_detail.total as sub_total','om.total as total','ps.id','ps.remark as product_name','order_detail.discount']),
+            'usersReferrals' => $usersReferral,
+            'payment_type' => $payment_type, 'company' => Company::get()->first(),
         ]);
     } 
 
