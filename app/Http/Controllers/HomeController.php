@@ -171,6 +171,16 @@ class HomeController extends Controller
                 group by ps.remark  order by 2 desc
             ");
 
+            $has_period_stock = DB::select("
+                select periode  from period_stock ps where ps.periode = to_char(now()::date,'YYYYMM')::int;
+            ");
+
+            if(count($has_period_stock)<=0){
+                DB::select("insert into period_stock(periode,branch_id,product_id,balance_begin,balance_end,qty_in,qty_out,updated_at ,created_by,created_at)
+                select to_char(now()::date,'YYYYMM')::int,ps.branch_id,product_id,ps.balance_end,ps.balance_end,0 as qty_in,0 as qty_out,null,1,now()  
+                from period_stock ps where ps.periode = to_char(now()::date,'YYYYMM')::int-1;");
+            }
+
             return view('pages.home-index',[
                 'd_data' => $d_data,
                 'd_data_c' => $d_data_c,

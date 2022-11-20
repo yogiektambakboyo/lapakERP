@@ -32,7 +32,7 @@ class ProductsExport implements FromCollection,WithColumnFormatting, WithHeading
     }
     public function collection()
     {
-        $whereclause = " upper(product_sku.remark) like '%".strtoupper($this->keyword)."%'";
+        $whereclause =  " upper(product_sku.remark) ilike '%".strtoupper($this->keyword)."%' or pt.remark ilike '%".strtoupper($this->keyword)."%' ";
         return 
         Product::orderBy('product_sku.remark', 'ASC')
                     ->join('product_type as pt','pt.id','=','product_sku.type_id')

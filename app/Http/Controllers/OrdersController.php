@@ -67,10 +67,9 @@ class OrdersController extends Controller
 
         if(count($has_period_stock)<=0){
             DB::select("insert into period_stock(periode,branch_id,product_id,balance_begin,balance_end,qty_in,qty_out,updated_at ,created_by,created_at)
-            select to_char(now()::date,'YYYYMM')::int,ps.branch_id,product_id,ps.balance_begin,ps.balance_end,ps.qty_in,ps.qty_out,null,1,now()  
+            select to_char(now()::date,'YYYYMM')::int,ps.branch_id,product_id,ps.balance_end,ps.balance_end,0 as qty_in,0 as qty_out,null,1,now()  
             from period_stock ps where ps.periode = to_char(now()::date,'YYYYMM')::int-1;");
         }
-
 
         $data = $this->data;
         $keyword = "";
@@ -258,40 +257,31 @@ class OrdersController extends Controller
         $scheduled_at = $order->scheduled_at;
         $sum_scheduled_at = $scheduled_at;
         foreach ($orderdetail as $item) {
-            if($item['type_id']=="1"){
-                $printer->addItem(
-                    $item['product_name'],
-                    $item['qty'],
-                    $item['price'],
-                    $item['type_id']
-                );
-            }else{
-                $printer->addItem(
-                    $item['product_name'],
-                    $item['qty'],
-                    $item['type_id'],
-                    $item['type_id']
-                );
-            }
+            $printer->addItem(
+                $item['product_name'],
+                $item['qty'],
+                $item['price'],
+                $item['type_id']
+            );
 
             $printer->addTimeExec(Carbon::parse($sum_scheduled_at)->isoFormat('H:mm').' - '.(Carbon::parse($sum_scheduled_at)->add($item['conversion'].' minutes')->isoFormat('H:mm')));
             $sum_scheduled_at = Carbon::parse($sum_scheduled_at)->add($item['conversion'].' minutes')->isoFormat('H:mm');
         }
 
-        // Set tax
-        //$printer->setTax($tax_percentage);
+        $printer->printReceiptSPK();
 
-        // Calculate total
-        //$printer->calculateSubTotal();
-        //$printer->calculateGrandTotal();
-
-        // Set logo
-        // Uncomment the line below if $image_path is defined
-        //$printer->setLogo($image_path);
-
-
-        // Print receipt
-        return $printer->printReceiptSPK();
+        $room = Room::where('branch_room.id','=',$order->branch_room_id)->get(['branch_room.remark'])->first();
+        $payment_type = ['Cash','BCA - Debit','BCA - Kredit','Mandiri - Debit','Mandiri - Kredit'];
+        $usersReferral = User::get(['users.id','users.name']);
+        return view('pages.orders.show',[
+            'customers' => Customer::join('users_branch as ub','ub.branch_id', '=', 'customers.branch_id')->join('branch as b','b.id','=','ub.branch_id')->where('ub.user_id',$user->id)->get(['customers.id','customers.name','b.remark']),
+            'data' => $data,
+            'order' => $order,
+            'room' => $room,
+            'orderDetails' => OrderDetail::join('order_master as om','om.order_no','=','order_detail.order_no')->join('product_sku as ps','ps.id','=','order_detail.product_id')->join('product_uom as u','u.product_id','=','order_detail.product_id')->join('uom as um','um.id','=','u.uom_id')->leftjoin('users as us','us.id','=','order_detail.assigned_to')->where('order_detail.order_no',$order->order_no)->get(['om.tax','om.voucher_code','us.name as assigned_to','um.remark as uom','order_detail.qty','order_detail.price','order_detail.total','ps.id','ps.remark as product_name','order_detail.discount']),
+            'usersReferrals' => $usersReferral,
+            'payment_type' => $payment_type, 'company' => Company::get()->first(),
+        ]); 
     }
 
     public function print(Order $order) 

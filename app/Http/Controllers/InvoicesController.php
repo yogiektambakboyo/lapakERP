@@ -73,7 +73,7 @@ class InvoicesController extends Controller
 
         if(count($has_period_stock)<=0){
             DB::select("insert into period_stock(periode,branch_id,product_id,balance_begin,balance_end,qty_in,qty_out,updated_at ,created_by,created_at)
-            select to_char(now()::date,'YYYYMM')::int,ps.branch_id,product_id,ps.balance_begin,ps.balance_end,ps.qty_in,ps.qty_out,null,1,now()  
+            select to_char(now()::date,'YYYYMM')::int,ps.branch_id,product_id,ps.balance_end,ps.balance_end,0 as qty_in,0 as qty_out,null,1,now()  
             from period_stock ps where ps.periode = to_char(now()::date,'YYYYMM')::int-1;");
         }
 
@@ -454,7 +454,20 @@ class InvoicesController extends Controller
 
 
         // Print receipt
-        return $printer->printReceiptInvoice();
+        $printer->printReceiptInvoice();
+
+        $room = Room::where('branch_room.id','=',$invoice->branch_room_id)->get(['branch_room.remark'])->first();
+        $payment_type = ['Cash','BCA - Debit','BCA - Kredit','Mandiri - Debit','Mandiri - Kredit'];
+        $usersReferral = User::get(['users.id','users.name']);
+        return view('pages.invoices.show',[
+            'customers' => Customer::join('users_branch as ub','ub.branch_id', '=', 'customers.branch_id')->join('branch as b','b.id','=','ub.branch_id')->where('ub.user_id',$user->id)->get(['customers.id','customers.name','b.remark']),
+            'data' => $data,
+            'invoice' => $invoice,
+            'room' => $room,
+            'orderDetails' => InvoiceDetail::join('invoice_master as om','om.invoice_no','=','invoice_detail.invoice_no')->join('product_sku as ps','ps.id','=','invoice_detail.product_id')->join('product_uom as u','u.product_id','=','invoice_detail.product_id')->join('uom as um','um.id','=','u.uom_id')->leftjoin('users as us','us.id','=','invoice_detail.assigned_to')->leftjoin('users as usm','usm.id','=','invoice_detail.referral_by')->where('invoice_detail.invoice_no',$invoice->invoice_no)->get(['usm.name as referral_by','us.name as assigned_to','um.remark as uom','invoice_detail.qty','invoice_detail.price','invoice_detail.total','ps.id','ps.remark as product_name','invoice_detail.discount','om.tax','om.voucher_code']),
+            'usersReferrals' => $usersReferral,
+            'payment_type' => $payment_type, 'company' => Company::get()->first(),
+        ]);
     }
 
 

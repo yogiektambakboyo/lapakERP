@@ -88,7 +88,7 @@ class ProductsController extends Controller
         if($request->export=='Export Excel'){
             return Excel::download(new ProductsExport($keyword), 'products_'.Carbon::now()->format('YmdHis').'.xlsx');
         }else{
-            $whereclause = " upper(product_sku.remark) like '%".strtoupper($keyword)."%'";
+            $whereclause = " upper(product_sku.remark) ilike '%".strtoupper($keyword)."%' or pt.remark ilike '%".strtoupper($keyword)."%' ";
             $products = Product::orderBy('product_sku.remark', 'ASC')
                         ->join('product_type as pt','pt.id','=','product_sku.type_id')
                         ->join('product_category as pc','pc.id','=','product_sku.category_id')
