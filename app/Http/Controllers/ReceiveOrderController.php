@@ -17,6 +17,7 @@ use App\Models\Invoice;
 use App\Models\InvoiceDetail;
 use App\Models\Purchase;
 use App\Models\Receive;
+use App\Models\SettingsDocumentNumber;
 use App\Models\ReceiveDetail;
 use App\Models\Customer;
 use App\Models\Department;
@@ -76,6 +77,13 @@ class ReceiveOrderController extends Controller
             select to_char(now()::date,'YYYYMM')::int,ps.branch_id,product_id,ps.balance_end,ps.balance_end,0 as qty_in,0 as qty_out,null,1,now()  
             from period_stock ps where ps.periode = to_char(now()::date,'YYYYMM')::int-1;");
         }
+
+        SettingsDocumentNumber::where('doc_type','=','Receive')->whereRaw("to_char(updated_at,'YYYYY')!=to_char(now(),'YYYYY') ")->where('period','=','Yearly')->update(
+            array_merge(
+                ['current_value' => 0 ],
+                ['updated_at' => Carbon::now() ]
+            )
+        );
 
 
         $data = $this->data;
@@ -221,11 +229,9 @@ class ReceiveOrderController extends Controller
         // you should create a generated random password and email it to the user
         
         $user = Auth::user();
-        $count_no = DB::select("select max(id) as id from receive_master om where to_char(om.dated,'YYYY')=to_char(now(),'YYYY') ");
-        $receive_no = 'RC-'.substr(
-            ('000'.$request->get('branch_id')),-3).
-            '-'.date("Y").'-'.
-            substr(('00000000'.((int)($count_no[0]->id) + 1)),-8);
+        //$count_no = DB::select("select max(id) as id from receive_master om where to_char(om.dated,'YYYY')=to_char(now(),'YYYY') ");
+        $count_no = SettingsDocumentNumber::where('doc_type','=','Receive')->where('branch_id','=',$branch->branch_id)->where('period','=','Yearly')->get(['current_value','abbr']);
+        $receive_no = $count_no[0]->abbr.'-'.substr(('000'.$branch->branch_id),-3).'-'.date("Y").'-'.substr(('00000000'.((int)($count_no[0]->current_value) + 1)),-8);
 
         $res_receive = Receive::create(
             array_merge(
@@ -294,6 +300,12 @@ class ReceiveOrderController extends Controller
             ['status' => 'success'],
             ['data' => $receive_no],
             ['message' => 'Save Successfully'],
+        );
+
+        SettingsDocumentNumber::where('doc_type','=','Receive')->where('branch_id','=',$branch->branch_id)->where('period','=','Yearly')->update(
+            array_merge(
+                ['current_value' => ((int)($count_no[0]->current_value) + 1)]
+            )
         );
 
         return $result;

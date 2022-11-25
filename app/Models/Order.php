@@ -36,6 +36,7 @@ class Order extends Model
         'branch_room_id',
         'voucher_code',
         'printed_at',
-        'printed_count'
+        'printed_count',
+        'queue_no'
     ];
 }

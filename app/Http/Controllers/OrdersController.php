@@ -14,6 +14,7 @@ use App\Models\Order;
 use App\Models\OrderDetail;
 use App\Models\Customer;
 use App\Models\Settings;
+use App\Models\SettingsDocumentNumber;
 use App\Models\Department;
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
@@ -70,6 +71,20 @@ class OrdersController extends Controller
             select to_char(now()::date,'YYYYMM')::int,ps.branch_id,product_id,ps.balance_end,ps.balance_end,0 as qty_in,0 as qty_out,null,1,now()  
             from period_stock ps where ps.periode = to_char(now()::date,'YYYYMM')::int-1;");
         }
+
+        SettingsDocumentNumber::where('doc_type','=','Order_Queue')->whereRaw('updated_at::date!=now()::date')->where('period','=','Daily')->update(
+            array_merge(
+                ['current_value' => 0 ],
+                ['updated_at' => Carbon::now() ]
+            )
+        );
+
+        SettingsDocumentNumber::where('doc_type','=','Order')->whereRaw("to_char(updated_at,'YYYYY')!=to_char(now(),'YYYYY') ")->where('period','=','Yearly')->update(
+            array_merge(
+                ['current_value' => 0 ],
+                ['updated_at' => Carbon::now() ]
+            )
+        );
 
         $data = $this->data;
         $keyword = "";
@@ -347,8 +362,10 @@ class OrdersController extends Controller
     {
         $user = Auth::user();
         $branch = Customer::where('id','=',$request->get('customer_id'))->get(['branch_id'])->first();
-        $count_no = DB::select("select max(id) as id from order_master om where to_char(om.dated,'YYYY')=to_char(now(),'YYYY') ");
-        $order_no = 'SPK-'.substr(('000'.$branch->branch_id),-3).'-'.date("Y").'-'.substr(('00000000'.((int)($count_no[0]->id) + 1)),-8);
+        //$count_no = DB::select("select max(id) as id from order_master om where to_char(om.dated,'YYYY')=to_char(now(),'YYYY') ");
+        $count_no = SettingsDocumentNumber::where('doc_type','=','Order')->where('branch_id','=',$branch->branch_id)->where('period','=','Yearly')->get(['current_value','abbr']);
+        $count_no_daily = SettingsDocumentNumber::where('doc_type','=','Order_Queue')->where('branch_id','=',$branch->branch_id)->where('period','=','Daily')->get(['current_value','abbr']);
+        $order_no = $count_no[0]->abbr.'-'.substr(('000'.$branch->branch_id),-3).'-'.date("Y").'-'.substr(('00000000'.((int)($count_no[0]->current_value) + 1)),-8);
 
         $res_order = Order::create(
             array_merge(
@@ -366,6 +383,7 @@ class OrdersController extends Controller
                 ['voucher_code' => $request->get('voucher_code')],
                 ['total_discount' => $request->get('total_discount')],
                 ['tax' => $request->get('total_vat')],
+                ['queue_no' => (int)($count_no_daily[0]->current_value+1)],
                 ['customers_name' => Customer::where('id','=',$request->get('customer_id'))->get(['name'])->first()->name ],
             )
         );
@@ -429,6 +447,18 @@ class OrdersController extends Controller
             ['status' => 'success'],
             ['data' => $order_no],
             ['message' => 'Save Successfully'],
+        );
+
+        SettingsDocumentNumber::where('doc_type','=','Order')->where('branch_id','=',$branch->branch_id)->where('period','=','Yearly')->update(
+            array_merge(
+                ['current_value' => ((int)($count_no[0]->current_value) + 1)]
+            )
+        );
+
+        SettingsDocumentNumber::where('doc_type','=','Order_Queue')->where('branch_id','=',$branch->branch_id)->where('period','=','Daily')->update(
+            array_merge(
+                ['current_value' => ((int)($count_no_daily[0]->current_value) + 1)]
+            )
         );
 
         return $result;
