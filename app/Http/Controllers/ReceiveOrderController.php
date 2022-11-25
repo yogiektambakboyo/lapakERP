@@ -230,8 +230,8 @@ class ReceiveOrderController extends Controller
         
         $user = Auth::user();
         //$count_no = DB::select("select max(id) as id from receive_master om where to_char(om.dated,'YYYY')=to_char(now(),'YYYY') ");
-        $count_no = SettingsDocumentNumber::where('doc_type','=','Receive')->where('branch_id','=',$branch->branch_id)->where('period','=','Yearly')->get(['current_value','abbr']);
-        $receive_no = $count_no[0]->abbr.'-'.substr(('000'.$branch->branch_id),-3).'-'.date("Y").'-'.substr(('00000000'.((int)($count_no[0]->current_value) + 1)),-8);
+        $count_no = SettingsDocumentNumber::where('doc_type','=','Receive')->where('branch_id','=',$request->get('branch_id'))->where('period','=','Yearly')->get(['current_value','abbr']);
+        $receive_no = $count_no[0]->abbr.'-'.substr(('000'.$request->get('branch_id')),-3).'-'.date("Y").'-'.substr(('00000000'.((int)($count_no[0]->current_value) + 1)),-8);
 
         $res_receive = Receive::create(
             array_merge(
@@ -302,7 +302,7 @@ class ReceiveOrderController extends Controller
             ['message' => 'Save Successfully'],
         );
 
-        SettingsDocumentNumber::where('doc_type','=','Receive')->where('branch_id','=',$branch->branch_id)->where('period','=','Yearly')->update(
+        SettingsDocumentNumber::where('doc_type','=','Receive')->where('branch_id','=',$request->get('branch_id'))->where('period','=','Yearly')->update(
             array_merge(
                 ['current_value' => ((int)($count_no[0]->current_value) + 1)]
             )
