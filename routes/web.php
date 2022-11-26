@@ -121,6 +121,27 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
             Route::get('/export', 'InvoicesController@export')->name('invoices.export');
         });
 
+        /**
+         * Return Sell Routes
+         */
+        Route::group(['prefix' => 'returnsell'], function() {
+            Route::get('/', 'ReturnSellController@index')->name('returnsell.index');
+            Route::get('/create', 'ReturnSellController@create')->name('returnsell.create');
+            Route::post('/create', 'ReturnSellController@store')->name('returnsell.store');
+            Route::get('/search', 'ReturnSellController@search')->name('returnsell.search');
+            Route::get('/{returnsell}/show', 'ReturnSellController@show')->name('returnsell.show');
+            Route::get('/{returnsell}/edit', 'ReturnSellController@edit')->name('returnsell.edit');
+            Route::get('/{returnsell}/print', 'ReturnSellController@print')->name('returnsell.print');
+            Route::get('/{returnsell}/printthermal', 'ReturnSellController@printthermal')->name('returnsell.printthermal');
+            Route::get('/getproduct', 'ReturnSellController@getproduct')->name('returnsell.getproduct');
+            Route::get('/gettimetable', 'ReturnSellController@gettimetable')->name('returnsell.gettimetable');
+            Route::get('/{returnsell}/getinvoice', 'ReturnSellController@getinvoice')->name('returnsell.getinvoice');
+            Route::patch('/{returnsell}/update', 'ReturnSellController@update')->name('returnsell.update');
+            Route::delete('/{returnsell}/delete', 'ReturnSellController@destroy')->name('returnsell.destroy');
+            Route::get('/export', 'ReturnSellController@export')->name('returnsell.export');
+        });
+
+
 
          /**
          * Order Routes
