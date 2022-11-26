@@ -11,6 +11,7 @@ use App\Models\Room;
 use App\Models\Settings;
 use App\Models\JobTitle;
 use App\Models\Order;
+use App\Models\PeriodSellPrice;
 use App\Models\Supplier;
 use App\Models\OrderDetail;
 use App\Models\Invoice;
@@ -85,6 +86,15 @@ class ReceiveOrderController extends Controller
             )
         );
 
+        $has_period_sell_price = DB::select("
+            select period  from period_price_sell ps where ps.period = to_char(now()::date,'YYYYMM')::int;
+        ");
+
+        if(count($has_period_sell_price)<=0){
+            DB::select("insert into public.period_price_sell(period, product_id, value, updated_at, updated_by, created_by, created_at, branch_id)
+            SELECT to_char(now(),'YYYYMM')::int, product_id, value, null, null, 1, now(), branch_id
+            FROM public.period_price_sell where period=to_char(now(),'YYYYMM')::int-1;");
+        }
 
         $data = $this->data;
         $keyword = "";
@@ -289,6 +299,11 @@ class ReceiveOrderController extends Controller
         
                 return $result;
             }
+
+            PeriodSellPrice::where('branch_id','=',$request->get('branch_id'))->where('product_id','=',$request->get('product')[$i]["id"])->update(array_merge(
+                [ 'value' => $request->get('product')[$i]["price"]],
+                [ 'updated_at' => Carbon::now() ]
+            ));
 
             DB::update("UPDATE product_stock set updated_at=now(),qty = qty+".$request->get('product')[$i]['qty']." WHERE branch_id = ".$request->get('branch_id')." and product_id = ".$request->get('product')[$i]["id"]);
 
