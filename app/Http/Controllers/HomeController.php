@@ -181,6 +181,23 @@ class HomeController extends Controller
                 from period_stock ps where ps.periode = to_char(now()::date,'YYYYMM')::int-1;");
             }
 
+
+            $has_shift_counter = DB::select("
+                select users_id from shift_counter where created_at::date=now()::date;
+            ");
+
+            if(count($has_shift_counter)<=0){
+                DB::select("insert into shift_counter(users_id,queue_no,created_by,created_at,branch_id)
+                select u.id,row_number() over(partition by u.branch_id  order by u.name),1,now(),u.branch_id  from users u 
+                join users_shift us on us.users_id = u.id and us.dated = now()::date
+                where u.job_id = 2
+                group by u.id,u.name;");
+            }else{
+                DB::select("
+                    delete from shift_counter where created_at::date<now()::date;
+                ");
+            }
+            
             return view('pages.home-index',[
                 'd_data' => $d_data,
                 'd_data_c' => $d_data_c,

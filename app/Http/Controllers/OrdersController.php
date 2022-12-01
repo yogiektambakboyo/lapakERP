@@ -430,6 +430,10 @@ class OrdersController extends Controller
                 )
             );
 
+            $counters_ = DB::select("select count(users_id)+1 as c from shift_counter where branch_id='".$branch->branch_id."';"); 
+            DB::select("update shift_counter set queue_no=".$counters_[0]->c.",updated_at=now() where users_id=".$request->get('product')[$i]['assignedtoid']."; ");
+            DB::select("update shift_counter set queue_no=queue_no-1,updated_at=now() where  branch_id='".$branch->branch_id."'; ");
+
 
             if(!$res_order_detail){
                 $result = array_merge(
