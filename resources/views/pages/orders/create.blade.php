@@ -83,7 +83,7 @@
                   id="payment_nominal"
                   name="payment_nominal"
                   class="form-control" 
-                  value="{{ old('remark') }}" required/>
+                  value="{{ old('remark') }}"/>
                   </div>
 
                   <label class="form-label col-form-label col-md-1">Charge</label>
@@ -622,6 +622,10 @@
       var order_total = 0;
         
         $('#save-btn').on('click',function(){
+          if($('#payment_nominal').val()==''){
+            $('#payment_nominal').val('0');
+          }
+
           if($('#order_date').val()==''){
             $('#order_date').focus();
             Swal.fire(
@@ -655,19 +659,6 @@
                 position: 'top-end',
                 icon: 'warning',
                 text: 'Please choose payment type',
-                showConfirmButton: false,
-                imageHeight: 30, 
-                imageWidth: 30,   
-                timer: 1500
-              }
-            );
-          }else if($('#payment_nominal').val()==''){
-            $('#payment_nominal').focus();
-            Swal.fire(
-              {
-                position: 'top-end',
-                icon: 'warning',
-                text: 'Please choose payment nominal',
                 showConfirmButton: false,
                 imageHeight: 30, 
                 imageWidth: 30,   

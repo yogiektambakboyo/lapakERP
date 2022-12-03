@@ -156,7 +156,17 @@ class OrdersController extends Controller
 
         $data = $this->data;
         $payment_type = ['Cash','BCA - Debit','BCA - Kredit','Mandiri - Debit','Mandiri - Kredit'];
-        $users = User::join('users_branch as ub','ub.branch_id', '=', 'users.branch_id')->where('ub.user_id','=',$user->id)->where('users.job_id','=',2)->get(['users.id','users.name']);
+        $users = User::join('users_branch','users_branch.branch_id', '=', 'users.branch_id')
+                        //->join('shift_counter','shift_counter.users_id','=','users.id')
+                        ->join('shift_counter', function($join)
+                         {
+                             $join->on('shift_counter.users_id','=','users.id');
+                             $join->on('shift_counter.branch_id','=','users_branch.branch_id');
+                         })
+                        ->where([
+                            ['users_branch.user_id','=',$user->id],
+                            ['users.job_id','=',2]
+                        ])->orderBy('shift_counter.queue_no','asc')->get(['users.id','users.name','shift_counter.queue_no']);
         return view('pages.orders.create',[
             'customers' => Customer::join('users_branch as ub','ub.branch_id', '=', 'customers.branch_id')->join('branch as b','b.id','=','ub.branch_id')->where('ub.user_id',$user->id)->get(['customers.id','customers.name','b.remark']),
             'data' => $data,
