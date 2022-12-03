@@ -197,6 +197,16 @@ class HomeController extends Controller
                     delete from shift_counter where created_at::date<now()::date;
                 ");
             }
+
+            $has_period_sell_price = DB::select("
+                select period  from period_price_sell ps where ps.period = to_char(now()::date,'YYYYMM')::int;
+            ");
+
+            if(count($has_period_sell_price)<=0){
+                DB::select("insert into public.period_price_sell(period, product_id, value, updated_at, updated_by, created_by, created_at, branch_id)
+                SELECT to_char(now(),'YYYYMM')::int, product_id, value, null, null, 1, now(), branch_id
+                FROM public.period_price_sell where period=to_char(now(),'YYYYMM')::int-1;");
+            }
             
             return view('pages.home-index',[
                 'd_data' => $d_data,

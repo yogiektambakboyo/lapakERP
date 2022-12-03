@@ -550,6 +550,8 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
             Route::get('/referral_search', 'ReportReferralController@search')->name('reports.referral.search');
             Route::get('/usertracking', 'ReportUserTrackingController@index')->name('reports.usertracking.index');
             Route::get('/usertracking_search', 'ReportUserTrackingController@search')->name('reports.usertracking.search');
+            Route::get('/omsetdetail', 'ReportOmsetDetailController@index')->name('reports.omsetdetail.index');
+            Route::get('/omsetdetaildetail_search', 'ReportOmsetDetailController@search')->name('reports.omsetdetail.search');
         });
 
 
