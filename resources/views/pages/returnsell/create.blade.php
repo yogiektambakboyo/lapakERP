@@ -1,13 +1,13 @@
 @extends('layouts.default', ['appSidebarSearch' => true])
 
-@section('title', 'Create New Invoice')
+@section('title', 'Create New Return Sell')
 
 @section('content')
 <form method="POST" action="{{ route('invoices.store') }}"  enctype="multipart/form-data">
   @csrf
   <div class="panel text-white">
     <div class="panel-heading  bg-teal-600">
-      <div class="panel-title"><h4 class="">Sales Invoice</h4></div>
+      <div class="panel-title"><h4 class="">Return Invoice</h4></div>
       <div class="">
         <a href="{{ route('invoices.index') }}" class="btn btn-default">Cancel</a>
         <button type="button" id="save-btn" class="btn btn-info">Save</button>
@@ -45,13 +45,13 @@
           <div class="col-md-8">
             <div class="row mb-3">
 
-              <label class="form-label col-form-label col-md-2">SPK</label>
+              <label class="form-label col-form-label col-md-2">Invoice</label>
               <div class="col-md-3">
                 <select class="form-control" 
                     name="ref_no" id="ref_no" required>
-                    <option value="">Select SPK</option>
-                    @foreach($orders as $order)
-                        <option value="{{ $order->order_no }}">{{ $order->order_no }} </option>
+                    <option value="">Select Invoice</option>
+                    @foreach($invoices as $invoice)
+                        <option value="{{ $invoice->invoice_no }}">{{ $invoice->invoice_no }} </option>
                     @endforeach
                 </select>
               </div>
@@ -59,7 +59,7 @@
 
 
               <label class="form-label col-form-label col-md-1">Customer</label>
-              <div class="col-md-2">
+              <div class="col-md-4">
                 <select class="form-control" 
                     name="customer_id" id="customer_id" required>
                     <option value="">Select Customers</option>
@@ -68,43 +68,8 @@
                     @endforeach
                 </select>
               </div>
-              <label class="form-label col-form-label col-md-1">Schedule</label>
-              <div class="col-md-3">
-                  <div class="input-group">
-                    <input type="text" class="form-control" id="scheduled" disabled>
-                    <button type="button" class="btn btn-indigo" data-bs-toggle="modal" data-bs-target="#modal-scheduled" >
-                      <span class="fas fa-calendar-days"></span>
-                    </button>
-                  </div>
-              </div>
             </div>
-            <div class="row mb-3">
-              <label class="form-label col-form-label col-md-2">Type Payment</label>
-              <div class="col-md-2">
-                <select class="form-control" 
-                      name="payment_type" id ="payment_type" required>
-                      <option value="">Select Payment</option>
-                      @foreach($payment_type as $value)
-                          <option value="{{ $value }}">{{ $value }}</option>
-                      @endforeach
-                  </select>
-              </div>
 
-                <label class="form-label col-form-label col-md-2">Nominal Payment</label>
-                <div class="col-md-2">
-                  <input type="text" 
-                  id="payment_nominal"
-                  name="payment_nominal"
-                  class="form-control" 
-                  value="{{ old('payment_nominal') }}" required/>
-                  </div>
-
-                  <label class="form-label col-form-label col-md-1">Charge</label>
-                  <div class="col-md-3">
-                    <h2 class="text-end"><label id="order_charge">Rp. 0</label></h2>
-                  </div>
-                
-            </div>
             <div class="modal fade" id="modal-filter" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
               <div class="modal-dialog">
               <div class="modal-content">
@@ -241,7 +206,7 @@
 
 
 
-        <div class="panel-heading bg-teal-600 text-white"><strong>Order List</strong></div>
+        <div class="panel-heading bg-teal-600 text-white"><strong>Product List</strong></div>
         <br>
 
         <div class="row mb-3">
@@ -322,8 +287,6 @@
               <th scope="col" width="5%">Discount</th>
               <th scope="col" width="5%">Qty</th>
               <th scope="col" width="10%">Total</th>  
-              <th scope="col" width="10%">Assigned to</th>  
-              <th scope="col" width="10%">Referral to</th>  
               <th scope="col" width="20%">Action</th>  
           </tr>
           </thead>
@@ -334,16 +297,7 @@
         
         <div class="row mb-3">
           <div class="col-md-6">
-            <div class="row mb-3">
-                <label class="form-label col-form-label col-md-3" id="label-voucher">Voucher</label>
-                <br>
-                <div class="col-md-5">
-                  <input type="text" class="form-control" id="input-apply-voucher">
-                </div>
-                <div class="col-md-3">
-                  <button type="button" id="apply-voucher-btn" class="btn btn-warning">Apply Voucher</button>
-                </div>
-            </div>
+            
           </div>
 
 
@@ -399,11 +353,11 @@
           });
           $('#schedule_date').val(formattedToday);
 
-          var url = "{{ route('orders.getorder','XX') }}";
+          var url = "{{ route('returnsell.getinvoice','XX') }}";
           var lastvalurl = "XX";
           console.log(url);
           $('#ref_no').change(function(){
-              if($(this).val()==""){
+             if($(this).val()==""){
 
               table.clear().draw(false);
               order_total = 0;
@@ -416,9 +370,9 @@
               $('#result-total').text("Rp. 0");
               $('#vat-total').text("Rp. 0");
               $('#sub-total').text("Rp. 0");
+              $('#customer_id').prop('selectedIndex',0).trigger( "change" );
 
-
-              }else{
+            }else{
                 url = url.replace(lastvalurl, $(this).val())
                 lastvalurl = $(this).val();
                 const res = axios.get(url, {
@@ -440,13 +394,17 @@
                                 "total"     : resp.data[i]["total"],
                                 "assignedto"     : resp.data[i]["assignedto"],
                                 "assignedtoid"     : resp.data[i]["assignedtoid"],
-                                "referralby"     : resp.data[i]["referralby"],
-                                "referralbyid"     : resp.data[i]["referralbyid"],
+                                "referralby"     : resp.data[i]["referral_by_name"],
+                                "referralbyid"     : resp.data[i]["referral_by"],
                                 "total_vat"     : resp.data[i]["vat_total"],
                                 "vat_total"     : resp.data[i]["vat"],  
                           }
 
                           orderList.push(product);
+                      }
+
+                      if(resp.data.length>0){
+                        $('#customer_id').val(resp.data[0]["customers_id"]).change();
                       }
 
                       for (var i = 0; i < orderList.length; i++){
@@ -460,8 +418,6 @@
                           "discount"  : obj["discount"],
                           "qty"       : obj["qty"],
                           "total"     : obj["total"],
-                          "assignedto" : obj["assignedto"],
-                          "referralby" : obj["referralby"],
                           "action"    : "",
                         }).draw(false);
                         disc_total = disc_total + (parseFloat(orderList[i]["discount"]));
@@ -478,17 +434,6 @@
                     $('#result-total').text(currency(order_total, { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
                     $('#vat-total').text(currency(_vat_total, { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
                     $('#sub-total').text(currency(sub_total, { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
-
-                    $('#invoice_date').val(resp.data[0]["dated"]);
-                    $('#customer_id').val(resp.data[0]["customers_id"]);
-                    $('#remark').val(resp.data[0]["order_remark"]);
-                    $('#payment_type').val(resp.data[0]["payment_type"]);
-                    $('#payment_nominal').val(resp.data[0]["payment_nominal"]);
-                    $('#schedule_date').val(resp.data[0]["scheduled_date"]);
-                    $('#timepicker1').val(resp.data[0]["scheduled_time"]);
-                    $('#room_id').val(resp.data[0]["branch_room_id"]);
-                    $('#scheduled').val($('#room_id option:selected').text()+" - "+$('#schedule_date').val()+" "+$('#timepicker1').val());
-
 
                 });
 
@@ -555,10 +500,6 @@
                     "discount"  : obj["discount"],
                     "qty"       : obj["qty"],
                     "total"     : obj["total"],
-                    "assignedto": obj["assignedto"],
-                    "assignedtoid": obj["assignedtoid"],
-                    "referralby" : obj["referralby"],
-                    "referralbyid" : obj["referralbyid"],
                     "action"    : "",
               }).draw(false);
               disc_total = disc_total + (parseFloat(orderList[i]["discount"]));
@@ -615,10 +556,6 @@
                     "discount"  : obj["discount"],
                     "qty"       : obj["qty"],
                     "total"     : obj["total"],
-                    "assignedto": obj["assignedto"],
-                    "assignedtoid": obj["assignedtoid"],
-                    "referralby" : obj["referralby"],
-                    "referralbyid" : obj["referralbyid"],
                     "action"    : "",
               }).draw(false);
               disc_total = disc_total + (parseFloat(orderList[i]["discount"]));
@@ -790,7 +727,7 @@
         $('#product-table').DataTable({
           "bInfo" : false,
           pagingType: 'numbers',
-          ajax: "{{ route('invoices.getproduct') }}",
+          ajax: "{{ route('returnsell.getproduct') }}",
           columns: [
             { data: 'abbr' },
             { data: 'remark' },
@@ -825,9 +762,7 @@
             defaultContent: 
             '<a href="#" id="add_row" class="btn btn-sm btn-green"><div class="fa-1x"><i class="fas fa-circle-plus fa-fw"></i></div></a>'+
             '<a href="#" id="minus_row" class="btn btn-sm btn-yellow"><div class="fa-1x"><i class="fas fa-circle-minus fa-fw"></i></div></a>'+
-            '<a href="#" id="delete_row" class="btn btn-sm btn-danger"><div class="fa-1x"><i class="fas fa-circle-xmark fa-fw"></i></div></a>'+
-            '<a href="#" href="#modal-filter" data-bs-toggle="modal" data-bs-target="#modal-filter" id="assign_row" class="btn btn-sm btn-gray"><div class="fa-1x"><i class="fas fa-user-tag fa-fw"></i></div></a>'+
-            '<a href="#" href="#modal-referral" data-bs-toggle="modal" data-bs-target="#modal-referral" id="referral_row" class="btn btn-sm btn-purple"><div class="fa-1x"><i class="fas fa-users fa-fw"></i></div></a>',
+            '<a href="#" id="delete_row" class="btn btn-sm btn-danger"><div class="fa-1x"><i class="fas fa-circle-xmark fa-fw"></i></div></a>',
           }],
           columns: [
             { data: 'abbr' },
@@ -836,8 +771,6 @@
             { data: 'discount',render: DataTable.render.number( '.', null, 0, '' ) },
             { data: 'qty' },
             { data: 'total',render: DataTable.render.number( '.', null, 0, '' ) },
-            { data: 'assignedto' },
-            { data: 'referralby' },
             { data: null},
         ],
         });
@@ -857,10 +790,6 @@
                 "discount"  : discount,
                 "qty"       : qty,
                 "total"     : total,
-                "assignedto" : "",
-                "assignedtoid" : "",
-                "referralby" : "",
-                "referralbyid" : "",
                 "uom" : uom,
                 "vat_total"     : vat_total, 
           }
@@ -892,8 +821,6 @@
                     "discount"  : obj["discount"],
                     "qty"       : obj["qty"],
                     "total"     : obj["total"],
-                    "assignedto": obj["assignedto"],
-                    "referralby" : obj["referralby"],
                     "action"    : "",
               }).draw(false);
               disc_total = disc_total + (parseFloat(orderList[i]["discount"]));
@@ -973,8 +900,6 @@
                       "discount"  : obj["discount"],
                       "qty"       : obj["qty"],
                       "total"     : obj["total"],
-                      "assignedto" : obj["assignedto"],
-                      "referralby" : obj["referralby"],
                       "action"    : "",
                 }).draw(false);
                 disc_total = disc_total + (parseFloat(orderList[i]["discount"]));
@@ -1010,7 +935,7 @@
               });
 
 
-              var url = "{{ route('orders.getproduct') }}";
+              var url = "{{ route('returnsell.getproducts') }}";
             var lastvalurl = "XX";
             console.log(url);
             const res = axios.get(url, {
@@ -1228,8 +1153,6 @@
                               "discount"  : obj["discount"],
                               "qty"       : obj["qty"],
                               "total"     : obj["total"],
-                              "assignedto" : obj["assignedto"],
-                              "referralby" : obj["referralby"],
                               "action"    : "",
                         }).draw(false);
                         disc_total = disc_total + (parseFloat(orderList[i]["discount"]));

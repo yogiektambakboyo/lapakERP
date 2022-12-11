@@ -134,6 +134,7 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
             Route::get('/{returnsell}/print', 'ReturnSellController@print')->name('returnsell.print');
             Route::get('/{returnsell}/printthermal', 'ReturnSellController@printthermal')->name('returnsell.printthermal');
             Route::get('/getproduct', 'ReturnSellController@getproduct')->name('returnsell.getproduct');
+            Route::get('/getproducts', 'ReturnSellController@getproducts')->name('returnsell.getproducts');
             Route::get('/gettimetable', 'ReturnSellController@gettimetable')->name('returnsell.gettimetable');
             Route::get('/{returnsell}/getinvoice', 'ReturnSellController@getinvoice')->name('returnsell.getinvoice');
             Route::patch('/{returnsell}/update', 'ReturnSellController@update')->name('returnsell.update');

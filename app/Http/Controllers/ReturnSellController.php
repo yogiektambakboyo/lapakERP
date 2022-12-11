@@ -165,7 +165,7 @@ class ReturnSellController extends Controller
             'data' => $data,
             'users' => $users,
             'usersall' => $usersall,
-            'orders' => Order::where('is_checkout','0')->get(),
+            'invoices' => Invoice::where('is_canceled','0')->where('dated','>=',Carbon::now()->subDays(7))->get(),
             'payment_type' => $payment_type, 'company' => Company::get()->first(),
             'rooms' => Room::join('users_branch as ub','ub.branch_id', '=', 'branch_room.branch_id')->where('ub.user_id','=',$user->id)->get(['branch_room.id','branch_room.remark']),
         ]);
@@ -190,11 +190,34 @@ class ReturnSellController extends Controller
         join uom m on m.id = pu.uom_id
         join (select * from users_branch u where u.user_id = '".$user->id."' order by branch_id desc limit 1 ) ub on ub.branch_id = pp.branch_id and ub.branch_id=pd.branch_id 
         join product_stock pk on pk.product_id = product_sku.id and pk.branch_id = ub.branch_id
-        where product_sku.active = '1' ");
+        where product_sku.active = '1' and product_sku.type_id=1 order by product_sku.remark ");
         return Datatables::of($product)
         ->addColumn('action', function ($product) {
             return '<a href="#"  onclick="addProduct(\''.$product->id.'\',\''.$product->abbr.'\', \''.$product->price.'\', \'0\', \'1\', \''.$product->uom.'\');" class="btn btn-xs btn-primary"><div class="fa-1x"><i class="fas fa-basket-shopping fa-fw"></i></div></a>';
         })->make();
+    }
+
+    public function getproducts() 
+    {
+        $user = Auth::user();
+        $id = $user->roles->first()->id;
+        $this->getpermissions($id);
+
+        $data = $this->data;
+        $user = Auth::user();
+        $product = DB::select("select m.remark as uom,product_sku.vat as vat_total,product_sku.id,product_sku.remark,product_sku.abbr,pt.remark as type,pc.remark as category_name,pb.remark as brand_name,pp.price+coalesce(pa.value,0) as price,'0' as discount,'0' as qty,'0' as total
+        from product_sku
+        join product_distribution pd  on pd.product_id = product_sku.id  and pd.active = '1'
+        join product_category pc on pc.id = product_sku.category_id 
+        join product_type pt on pt.id = product_sku.type_id 
+        join product_brand pb on pb.id = product_sku.brand_id 
+        join product_price pp on pp.product_id = pd.product_id and pp.branch_id = pd.branch_id
+        join product_uom pu on pu.product_id = product_sku.id
+        join uom m on m.id = pu.uom_id
+        join (select * from users_branch u where u.user_id = '".$user->id."' order by branch_id desc limit 1 ) ub on ub.branch_id = pp.branch_id and ub.branch_id=pd.branch_id 
+        left join price_adjustment pa on pa.product_id = pd.product_id and pa.branch_id = pd.branch_id and now()::date between pa.dated_start and pa.dated_end
+        where product_sku.active = '1' and product_sku.type_id=1 order by product_sku.remark");
+        return $product;
     }
 
     public function gettimetable() 
@@ -232,24 +255,18 @@ class ReturnSellController extends Controller
         
         $user = Auth::user();
         $branch = Customer::where('id','=',$request->get('customer_id'))->get(['branch_id'])->first();
-        //$count_no = DB::select("select max(id) as id from invoice_master om where to_char(om.dated,'YYYY')=to_char(now(),'YYYY') ");
-        $count_no = SettingsDocumentNumber::where('doc_type','=','Invoice')->where('branch_id','=',$branch->branch_id)->where('period','=','Yearly')->get(['current_value','abbr']);
-        $invoice_no = $count_no[0]->abbr.'-'.substr(('000'.$branch->branch_id),-3).'-'.date("Y").'-'.substr(('00000000'.((int)($count_no[0]->current_value) + 1)),-8);
+         $count_no = SettingsDocumentNumber::where('doc_type','=','Return Invoice')->where('branch_id','=',$branch->branch_id)->where('period','=','Yearly')->get(['current_value','abbr']);
+        $return_sell_no = $count_no[0]->abbr.'-'.substr(('000'.$branch->branch_id),-3).'-'.date("Y").'-'.substr(('00000000'.((int)($count_no[0]->current_value) + 1)),-8);
 
-        $res_invoice = Invoice::create(
+        $res_return_sell = ReturnSell::create(
             array_merge(
-                ['invoice_no' => $invoice_no ],
+                ['return_sell_no' => $return_sell_no ],
                 ['created_by' => $user->id],
                 ['dated' => Carbon::parse($request->get('order_date'))->format('d/m/Y') ],
                 ['customers_id' => $request->get('customer_id') ],
                 ['total' => $request->get('total_order') ],
                 ['remark' => $request->get('remark') ],
                 ['customers_name' => Customer::where('id','=',$request->get('customer_id'))->get(['name'])->first()->name],
-                ['payment_nominal' => $request->get('payment_nominal') ],
-                ['payment_type' => $request->get('payment_type') ],
-                ['total_payment' => (int)$request->get('payment_nominal')>=(int)$request->get('total_order')?(int)$request->get('total_order'):$request->get('payment_nominal') ],
-                ['scheduled_at' => Carbon::parse($request->get('scheduled_at'))->format('d/m/Y H:i:s.u') ],
-                ['branch_room_id' => $request->get('branch_room_id')],
                 ['ref_no' => $request->get('ref_no')],
                 ['tax' => $request->get('tax')],
             )
@@ -257,11 +274,11 @@ class ReturnSellController extends Controller
 
         $branch_id = Room::where('id',$request->get('branch_room_id'))->get(['branch_id'])->first();
 
-        if(!$res_invoice){
+        if(!$res_return_sell){
             $result = array_merge(
                 ['status' => 'failed'],
                 ['data' => ''],
-                ['message' => 'Save invoice failed'],
+                ['message' => 'Save Return Sell Failed'],
             );
     
             return $result;
@@ -269,19 +286,15 @@ class ReturnSellController extends Controller
 
 
         for ($i=0; $i < count($request->get('product')); $i++) { 
-            $res_invoice_detail = InvoiceDetail::create(
+            $res_returnsell_detail = ReturnSellDetail::create(
                 array_merge(
-                    ['invoice_no' => $invoice_no],
+                    ['return_sell_no' => $return_sell_no],
                     ['product_id' => $request->get('product')[$i]["id"]],
                     ['qty' => $request->get('product')[$i]["qty"]],
                     ['price' => $request->get('product')[$i]["price"]],
                     ['total' => $request->get('product')[$i]["total"]],
                     ['discount' => $request->get('product')[$i]["discount"]],
                     ['seq' => $i ],
-                    ['assigned_to' => $request->get('product')[$i]["assignedtoid"]],
-                    ['referral_by' => $request->get('product')[$i]["referralbyid"]],
-                    ['assigned_to_name' => $request->get('product')[$i]["assignedtoid"]==""?"":User::where('id','=',$request->get('product')[$i]["assignedtoid"])->get('name')->first()->name ],
-                    ['referral_by_name' => $request->get('product')[$i]["referralbyid"]==""?"":User::where('id','=',$request->get('product')[$i]["referralbyid"])->get('name')->first()->name],
                     ['vat' => $request->get('product')[$i]["vat_total"]],
                     ['vat_total' => ((((int)$request->get('product')[$i]["qty"]*(int)$request->get('product')[$i]["price"])-(int)$request->get('product')[$i]["discount"])/100)*(int)$request->get('product')[$i]["vat_total"]],
                     ['product_name' => Product::where('id','=',$request->get('product')[$i]["id"])->get('remark')->first()->remark],
@@ -294,32 +307,24 @@ class ReturnSellController extends Controller
                 $result = array_merge(
                     ['status' => 'failed'],
                     ['data' => ''],
-                    ['message' => 'Save invoice detail failed'],
+                    ['message' => 'Save Return Detail Failed'],
                 );
         
                 return $result;
             }
 
-            DB::update("UPDATE product_stock set qty = qty-".$request->get('product')[$i]['qty']." WHERE branch_id = ".$branch_id['branch_id']." and product_id = ".$request->get('product')[$i]["id"]);
-            DB::update("update public.period_stock set qty_out=qty_out+".$request->get('product')[$i]['qty']." ,updated_at = now(), balance_end = balance_end - ".$request->get('product')[$i]['qty']." where branch_id = ".$branch_id['branch_id']." and product_id = ".$request->get('product')[$i]['id']." and periode = to_char(now(),'YYYYMM')::int;");
+            //DB::update("UPDATE product_stock set qty = qty+".$request->get('product')[$i]['qty']." WHERE branch_id = ".$branch_id['branch_id']." and product_id = ".$request->get('product')[$i]["id"]);
+            //DB::update("UPDATE period_stock set qty_out=qty_out+".$request->get('product')[$i]['qty']." ,updated_at = now(), balance_end = balance_end - ".$request->get('product')[$i]['qty']." where branch_id = ".$branch_id['branch_id']." and product_id = ".$request->get('product')[$i]['id']." and periode = to_char(now(),'YYYYMM')::int;");
 
         }
 
-
-        Order::where('order_no',$request->get('ref_no'))->update(
-            array_merge(
-                ['is_checkout'   => '1'],
-            )
-        );
-
-
         $result = array_merge(
             ['status' => 'success'],
-            ['data' => $invoice_no],
+            ['data' => $return_sell_no],
             ['message' => 'Save Successfully'],
         );
 
-        SettingsDocumentNumber::where('doc_type','=','Invoice')->where('branch_id','=',$branch->branch_id)->where('period','=','Yearly')->update(
+        SettingsDocumentNumber::where('doc_type','=','Return Invoice')->where('branch_id','=',$branch->branch_id)->where('period','=','Yearly')->update(
             array_merge(
                 ['current_value' => ((int)($count_no[0]->current_value) + 1)]
             )
@@ -535,7 +540,7 @@ class ReturnSellController extends Controller
     {
         $data = $this->data;
         $user = Auth::user();
-        $product = DB::select(" select od.qty,od.product_id,od.discount,od.price,od.total,ps.remark,ps.abbr,um.remark as uom,od.assigned_to_name as assignedto,od.assigned_to as assignedtoid,od.vat,od.vat_total,od.referral_by,od.referral_by_name
+        $product = DB::select(" select om.customers_id,od.qty,od.product_id,od.discount,od.price,od.total,ps.remark,ps.abbr,um.remark as uom,od.assigned_to_name as assignedto,od.assigned_to as assignedtoid,od.vat,od.vat_total,od.referral_by,od.referral_by_name
         from invoice_detail od 
         join invoice_master om on om.invoice_no = od.invoice_no
         join product_sku ps on ps.id=od.product_id
@@ -544,13 +549,6 @@ class ReturnSellController extends Controller
         where od.invoice_no='".$invoice_no."' ");
         
         return $product;
-        return Datatables::of($product)
-        ->addColumn('action', function ($product) {
-            return  '<a href="#" id="add_row" class="btn btn-xs btn-green"><div class="fa-1x"><i class="fas fa-circle-plus fa-fw"></i></div></a>'.
-            '<a href="#" id="minus_row" class="btn btn-xs btn-yellow"><div class="fa-1x"><i class="fas fa-circle-minus fa-fw"></i></div></a>'.
-            '<a href="#" id="delete_row" class="btn btn-xs btn-danger"><div class="fa-1x"><i class="fas fa-circle-xmark fa-fw"></i></div></a>'.
-            '<a href="#" id="assign_row" class="btn btn-xs btn-gray"><div class="fa-1x"><i class="fas fa-user-tag fa-fw"></i></div></a>';
-        })->make();
     }
 
     /**
