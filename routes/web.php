@@ -205,6 +205,24 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
         });
 
         /**
+         * Service Routes
+         */
+        Route::group(['prefix' => 'services'], function() {
+            Route::get('/', 'ServicesController@index')->name('services.index');
+            Route::get('/create', 'ServicesController@create')->name('services.create');
+            Route::post('/create', 'ServicesController@store')->name('services.store');
+            Route::post('/createingredient', 'ServicesController@storeIngredients')->name('services.addingredients');
+            Route::get('/search', 'ServicesController@search')->name('services.search');
+            Route::get('/{product}/show', 'ServicesController@show')->name('services.show');
+            Route::get('/{product}/edit', 'ServicesController@edit')->name('services.edit');
+            Route::patch('/{product}/update', 'ServicesController@update')->name('services.update');
+            Route::delete('/{product}/delete', 'ServicesController@destroy')->name('services.destroy');
+            Route::get('/export', 'ServicesController@export')->name('services.export');
+            Route::post('/deleteingredients', 'ServicesController@deleteIngredients')->name('services.deleteingredients');
+
+        });
+
+        /**
          * Product Brand
          */
         Route::group(['prefix' => 'productsbrand'], function() {
@@ -217,6 +235,21 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
             Route::patch('/{productbrand}/update', 'ProductsBrandController@update')->name('productsbrand.update');
             Route::delete('/{productbrand}/delete', 'ProductsBrandController@destroy')->name('productsbrand.destroy');
             Route::get('/export', 'ProductsBrandController@export')->name('productsbrand.export');
+        });
+
+        /**
+         * Service Brand
+         */
+        Route::group(['prefix' => 'servicesbrand'], function() {
+            Route::get('/', 'ServicesBrandController@index')->name('servicesbrand.index');
+            Route::get('/create', 'ServicesBrandController@create')->name('servicesbrand.create');
+            Route::post('/create', 'ServicesBrandController@store')->name('servicesbrand.store');
+            Route::get('/search', 'ServicesBrandController@search')->name('servicesbrand.search');
+            Route::get('/{productbrand}/show', 'ServicesBrandController@show')->name('servicesbrand.show');
+            Route::get('/{productbrand}/edit', 'ServicesBrandController@edit')->name('servicesbrand.edit');
+            Route::patch('/{productbrand}/update', 'ServicesBrandController@update')->name('servicesbrand.update');
+            Route::delete('/{productbrand}/delete', 'ServicesBrandController@destroy')->name('servicesbrand.destroy');
+            Route::get('/export', 'ServicesBrandController@export')->name('servicesbrand.export');
         });
 
 
@@ -233,6 +266,21 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
             Route::patch('/{branch}/{product}/update', 'ProductsPriceController@update')->name('productsprice.update');
             Route::delete('/{branch}/{product}/delete', 'ProductsPriceController@destroy')->name('productsprice.destroy');
             Route::get('/export', 'ProductsPriceController@export')->name('productsprice.export');
+        });
+
+        /**
+         * Service Price
+         */
+        Route::group(['prefix' => 'servicesprice'], function() {
+            Route::get('/', 'ServicesPriceController@index')->name('servicesprice.index');
+            Route::get('/create', 'ServicesPriceController@create')->name('servicesprice.create');
+            Route::post('/create', 'ServicesPriceController@store')->name('servicesprice.store');
+            Route::get('/search', 'ServicesPriceController@search')->name('servicesprice.search');
+            Route::get('/{branch}/{product}/show', 'ServicesPriceController@show')->name('servicesprice.show');
+            Route::get('/{branch}/{product}/edit', 'ServicesPriceController@edit')->name('servicesprice.edit');
+            Route::patch('/{branch}/{product}/update', 'ServicesPriceController@update')->name('servicesprice.update');
+            Route::delete('/{branch}/{product}/delete', 'ServicesPriceController@destroy')->name('servicesprice.destroy');
+            Route::get('/export', 'ServicesPriceController@export')->name('servicesprice.export');
         });
 
 

@@ -1,19 +1,19 @@
 @extends('layouts.default', ['appSidebarSearch' => true])
 
-@section('title',' New Product Price')
+@section('title',' New Service Price')
 
 @section('content')
-<form method="POST" action="{{ route('productsprice.store') }}"  enctype="multipart/form-data">
+<form method="POST" action="{{ route('servicesprice.store') }}"  enctype="multipart/form-data">
   @csrf
     <div class="bg-light p-4 rounded">
         <div class="row">
           <div class="col-md-8">
-            <h1>@lang('general.lbl_add_price_new')</h1>
+            <h1>@lang('general.lbl_add_service_new')</h1>
           </div>
           <div class="col-md-2">
             <div class="mt-2">
               <button type="submit" class="btn btn-info">@lang('general.lbl_save')</button>
-              <a href="{{ route('productsprice.index') }}" class="btn btn-default">@lang('general.lbl_cancel')</a>
+              <a href="{{ route('servicesprice.index') }}" class="btn btn-default">@lang('general.lbl_cancel')</a>
             </div>
           </div>
           <br>

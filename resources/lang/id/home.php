@@ -22,5 +22,4 @@ return [
     "transaction" => "Transaksi",
     "reports" => "Laporan",
     "settings" => "Pengaturan",
-
 ];

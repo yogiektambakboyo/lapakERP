@@ -1,17 +1,17 @@
 @extends('layouts.default', ['appSidebarSearch' => true])
 
-@section('title', 'Products')
+@section('title', "Service")
 
 @section('content')
     <div class="bg-light p-4 rounded">
-        <h1>@lang('general.product')</h1>
+        <h1>@lang('general.service')</h1>
         <div class="lead row mb-3">
             <div class="col-md-10">
                 <div class="col-md-4">
                     @lang('general.label')
                 </div>
                 <div class="col-md-10"> 	
-                    <form action="{{ route('products.search') }}" method="GET" class="row row-cols-lg-auto g-3 align-items-center">
+                    <form action="{{ route('services.search') }}" method="GET" class="row row-cols-lg-auto g-3 align-items-center">
                         <div class="col-2"><input type="text" class="form-control  form-control-sm" name="search" placeholder="@lang('general.label_search')" value="{{ $keyword }}"></div>
                         <div class="col-2"><input type="submit" class="btn btn-sm btn-secondary" value="@lang('general.btn_search')" name="submit"></div>   
                         <div class="col-2"><input type="submit" class="btn btn-sm btn-success" value="@lang('general.btn_export')" name="export"></div>  
@@ -19,7 +19,7 @@
                 </div>
             </div>
             <div class="col-md-2">
-                <a href="{{ route('products.create') }}" class="btn btn-primary float-right"><span class="fa fa-plus-circle"></span> @lang('general.btn_create')</a>
+                <a href="{{ route('services.create') }}" class="btn btn-primary float-right"><span class="fa fa-plus-circle"></span> @lang('general.btn_create')</a>
             </div>
         </div>
         
@@ -49,8 +49,8 @@
                         <td>{{ $product->product_category }}</td>
                         <td>{{ $product->product_brand }}</td>
                         <td>{{ $product->product_type }}</td>
-                        <td><a href="{{ route('products.show', $product->id) }}" class="btn btn-warning btn-sm">@lang('general.lbl_show')</a></td>
-                        <td><a href="{{ route('products.edit', $product->id) }}" class="btn btn-info btn-sm {{ $act_permission->allow_edit==1?'':'d-none' }} ">@lang('general.lbl_edit')</a></td>
+                        <td><a href="{{ route('services.show', $product->id) }}" class="btn btn-warning btn-sm">@lang('general.lbl_show')</a></td>
+                        <td><a href="{{ route('services.edit', $product->id) }}" class="btn btn-info btn-sm {{ $act_permission->allow_edit==1?'':'d-none' }} ">@lang('general.lbl_edit')</a></td>
                         <td>
                             <a onclick="showConfirm({{ $product->id }}, '{{ $product->product_name }}')" class="btn btn-danger btn-sm  {{ $act_permission->allow_delete==1?'':'d-none' }} ">@lang('general.lbl_delete')</a>
                         </td>
@@ -106,7 +106,7 @@
             cancelButtonText: "@lang('general.lbl_cancel')"
             }).then((result) => {
                 if (result.isConfirmed) {
-                    var url = "{{ route('products.destroy','XX') }}";
+                    var url = "{{ route('services.destroy','XX') }}";
                     var lastvalurl = "XX";
                     url = url.replace(lastvalurl, id)
                     const res = axios.delete(url, {}, {
@@ -125,7 +125,7 @@
                                         cancelButtonColor: '#d33',
                                         confirmButtonText: "@lang('general.lbl_close')"
                                         }).then((result) => {
-                                            window.location.href = "{{ route('products.index') }}"; 
+                                            window.location.href = "{{ route('services.index') }}"; 
                                         })
                                 }else{
                                     Swal.fire(

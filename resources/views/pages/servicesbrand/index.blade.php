@@ -11,14 +11,14 @@
                     @lang('general.label')
                 </div>
                 <div class="col-md-10"> 	
-                    <form action="{{ route('productsbrand.search') }}" method="GET" class="row row-cols-lg-auto g-3 align-items-center">
+                    <form action="{{ route('servicesbrand.search') }}" method="GET" class="row row-cols-lg-auto g-3 align-items-center">
                         <div class="col-2"><input type="text" class="form-control  form-control-sm" name="search" placeholder="@lang('general.label_search')" value="{{ $keyword }}"></div>
                         <div class="col-2"><input type="submit" class="btn btn-sm btn-secondary" value="@lang('general.btn_search')" name="submit"></div>   
                     </form>
                 </div>
             </div>
             <div class="col-md-2">
-                <a href="{{ route('productsbrand.create') }}" class="btn btn-primary float-right {{ $act_permission->allow_create==1?'':'d-none' }}"><span class="fa fa-plus-circle"></span>  @lang('general.btn_create')</a>
+                <a href="{{ route('servicesbrand.create') }}" class="btn btn-primary float-right {{ $act_permission->allow_create==1?'':'d-none' }}"><span class="fa fa-plus-circle"></span>  @lang('general.btn_create')</a>
             </div>
         </div>
         
@@ -42,9 +42,9 @@
                     <tr>
                         <th scope="row">{{ $brand->id }}</th>
                         <td>{{ $brand->remark }}</td>
-                        <td><a href="{{ route('productsbrand.edit', $brand->id) }}" class="btn btn-info btn-sm  {{ $act_permission->allow_edit==1?'':'d-none' }}">@lang('general.lbl_edit')</a></td>
+                        <td><a href="{{ route('servicesbrand.edit', $brand->id) }}" class="btn btn-info btn-sm  {{ $act_permission->allow_edit==1?'':'d-none' }}">@lang('general.lbl_edit')</a></td>
                         <td class=" {{ $act_permission->allow_delete==1?'':'d-none' }}">
-                            {!! Form::open(['method' => 'DELETE','route' => ['productsbrand.destroy', $brand->id],'style'=>'display:inline']) !!}
+                            {!! Form::open(['method' => 'DELETE','route' => ['servicesbrand.destroy', $brand->id],'style'=>'display:inline']) !!}
                             {!! Form::submit('Hapus', ['class' => 'btn btn-danger btn-sm']) !!}
                             {!! Form::close() !!}
                         </td>

@@ -4,14 +4,14 @@
 
 @section('content')
     <div class="bg-light p-4 rounded">
-        <h1>@lang('general.lbl_product_price')</h1>
+        <h1>@lang('general.lbl_service_price')</h1>
         <div class="lead row mb-3">
             <div class="col-md-10">
                 <div class="col-md-4">
                     @lang('general.label')
                 </div>
                 <div class="col-md-10"> 	
-                    <form action="{{ route('productsprice.search') }}" method="GET" class="row row-cols-lg-auto g-3 align-items-center">
+                    <form action="{{ route('servicesprice.search') }}" method="GET" class="row row-cols-lg-auto g-3 align-items-center">
                         <input type="hidden" class="form-control  form-control-sm" name="filter_branch_id" value="{{ $request->filter_branch_id }}">
                         <div class="col-2"><input type="text" class="form-control  form-control-sm" name="search" placeholder="@lang('general.label_search')" value="{{ $keyword }}"></div>
                         <div class="col-2"><input type="submit" class="btn btn-sm btn-secondary" value="@lang('general.btn_search')" name="submit"></div>   
@@ -21,7 +21,7 @@
                 </div>
             </div>
             <div class="col-md-2">
-                <a href="{{ route('productsprice.create') }}" class="btn btn-primary float-right  {{ $act_permission->allow_create==1?'':'d-none' }}"><span class="fa fa-plus-circle"></span>  @lang('general.btn_create')</a>
+                <a href="{{ route('servicesprice.create') }}" class="btn btn-primary float-right  {{ $act_permission->allow_create==1?'':'d-none' }}"><span class="fa fa-plus-circle"></span>  @lang('general.btn_create')</a>
             </div>
         </div>
         
@@ -47,7 +47,7 @@
                         <td>{{ $product->product_name }}</td>
                         <td>{{ $product->branch_name }}</td>
                         <td>{{ number_format($product->product_price,0,',','.') }}</td>
-                        <td><a href="{{ route('productsprice.edit', [$product->branch_id,$product->id]) }}" class="btn btn-info btn-sm  {{ $act_permission->allow_edit==1?'':'d-none' }}">@lang('general.lbl_edit')</a></td>
+                        <td><a href="{{ route('servicesprice.edit', [$product->branch_id,$product->id]) }}" class="btn btn-info btn-sm  {{ $act_permission->allow_edit==1?'':'d-none' }}">@lang('general.lbl_edit')</a></td>
                         <td class=" {{ $act_permission->allow_delete==1?'':'d-none' }}">
                             <a onclick="showConfirm( '{{ $product->branch_id }}','{{ $product->id }}','{{ $product->product_name }}' )" class="btn btn-danger btn-sm  {{ $act_permission->allow_delete==1?'':'d-none' }} ">@lang('general.lbl_delete')</a>
                         </td>
@@ -70,7 +70,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form action="{{ route('productsprice.search') }}" method="GET">   
+                    <form action="{{ route('servicesprice.search') }}" method="GET">   
                         @csrf 
                         <div class="col-md-10">
                             <label class="form-label col-form-label col-md-4">@lang('general.lbl_branch')</label>
@@ -137,7 +137,7 @@
             cancelButtonText: "@lang('general.lbl_cancel')"
             }).then((result) => {
             if (result.isConfirmed) {
-                var url = "{{ route('productsprice.destroy',['XX','YY']) }}";
+                var url = "{{ route('servicesprice.destroy',['XX','YY']) }}";
                 var lastvalurl = "XX";
                 var lastvalurl2 = "YY";
                 console.log(url);
@@ -159,7 +159,7 @@
                                 cancelButtonColor: '#d33',
                                 confirmButtonText: "@lang('general.lbl_close')"
                                 }).then((result) => {
-                                    window.location.href = "{{ route('productsprice.index') }}"; 
+                                    window.location.href = "{{ route('servicesprice.index') }}"; 
                                 })
                         }else{
                             Swal.fire(

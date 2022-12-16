@@ -1,17 +1,17 @@
 @extends('layouts.default', ['appSidebarSearch' => true])
 
-@section('title', 'Show Product')
+@section('title', 'Show Service')
 
 @section('content')
     <div class="bg-light p-4 rounded">
         <div class="row">
           <div class="col-md-10">
-            <h1>@lang('general.product') #{{ $product->product_id }}</h1>
+            <h1>@lang('general.service') #{{ $product->product_id }}</h1>
           </div>
           <div class="col-md-2">
             <div class="mt-4">
-                <a href="{{ route('products.edit', $product->product_id) }}" class="btn btn-info">@lang('general.lbl_edit')</a>
-                <a href="{{ route('products.index') }}" class="btn btn-default">@lang('general.lbl_back')</a>
+                <a href="{{ route('services.edit', $product->product_id) }}" class="btn btn-info">@lang('general.lbl_edit')</a>
+                <a href="{{ route('services.index') }}" class="btn btn-default">@lang('general.lbl_back')</a>
             </div>
           </div>
         </div>
@@ -75,7 +75,7 @@
                 value="{{ $product->product_id }}" required/>
                 <select class="form-control" 
                   name="input_product_id_material" id="input_product_id_material" required>
-                  <option value="">@lang('general.productselect')</option>
+                  <option value="">@lang('general.serviceselect')</option>
                   @foreach($products as $pd)
                       <option value="{{ $pd->id }}" {{ ($pd->id==old('input_product_id_material') ) 
                         ? 'selected'
@@ -120,10 +120,10 @@
                 <table class="table table-striped" id="example">
                     <thead>
                     <tr>
-                      <th scope="col">@lang('general.lbl_name')</th>
-                      <th scope="col" width="10%">@lang('general.lbl_uom')</th>
-                      <th scope="col" width="10%">@lang('general.lbl_qty')</th>
-                      <th scope="col" width="10%">@lang('general.lbl_action')</th>
+                        <th scope="col">@lang('general.lbl_name')</th>
+                        <th scope="col" width="10%">@lang('general.lbl_uom')</th>
+                        <th scope="col" width="10%">@lang('general.lbl_qty')</th>
+                        <th scope="col" width="10%">@lang('general.lbl_action')</th>
                     </tr>
                     </thead>
                     <tbody>            
@@ -215,7 +215,7 @@
                 input_qty : $('#input_qty').val(),
               }
             );
-            const res = axios.post("{{ route('products.addingredients') }}", json, {
+            const res = axios.post("{{ route('services.addingredients') }}", json, {
               headers: {
                 // Overwrite Axios's automatically set Content-Type
                 'Content-Type': 'application/json'
@@ -247,7 +247,7 @@
                 input_product_material : product_id_material, 
               }
             );
-            const resDeleteExp = axios.post("{{ route('products.deleteingredients') }}", jsonDelete, {
+            const resDeleteExp = axios.post("{{ route('services.deleteingredients') }}", jsonDelete, {
               headers: {
                 // Overwrite Axios's automatically set Content-Type
                 'Content-Type': 'application/json'

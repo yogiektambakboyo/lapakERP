@@ -5,19 +5,20 @@ namespace App\Http\Controllers;
 use Carbon\Carbon;
 use App\Models\User;
 use App\Models\Product;
+use App\Models\ProductPrice;
 use Illuminate\Http\Request;
 use Spatie\Permission\Models\Role;
 use App\Models\Branch;
 use App\Models\JobTitle;
 use App\Models\Department;
-use App\Models\ProductType;
+use App\Models\Type;
 use App\Models\ProductBrand;
-use App\Models\ProductCategory;
+use App\Models\Category;
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
 use Spatie\Permission\Models\Permission;
 use Maatwebsite\Excel\Facades\Excel;
-use App\Exports\ProductsExport;
+use App\Exports\ProductsPriceExport;
 use App\Http\Controllers\Controller;
 use Yajra\Datatables\Datatables;
 use Auth;
@@ -27,7 +28,7 @@ use App\Http\Controllers\Lang;
 
 
 
-class ProductsBrandController extends Controller
+class ServicesPriceController extends Controller
 {
     /**
      * Display all products
@@ -35,7 +36,7 @@ class ProductsBrandController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-    private $data,$act_permission,$module="productsbrand",$id=1;
+    private $data,$act_permission,$module="productsprice",$id=1;
 
     public function __construct()
     {
@@ -50,7 +51,8 @@ class ProductsBrandController extends Controller
                 select 0 as allow_create,0 as allow_delete,0 as allow_show,count(1) as allow_edit from permissions p  join role_has_permissions rp on rp.permission_id = p.id where rp.role_id = 1 and p.name like '%.edit' and p.name like '".$this->module.".%'
             ) a
         ");
-      
+        
+        
     }
 
     public function index(Request $request) 
@@ -58,13 +60,20 @@ class ProductsBrandController extends Controller
         $user = Auth::user();
         $id = $user->roles->first()->id;
         $this->getpermissions($id);
+        $branchs = Branch::join('users_branch as ub','ub.branch_id', '=', 'branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']);
 
         $data = $this->data;
         $keyword = "";
         $act_permission = $this->act_permission[0];
-        $brands = ProductBrand::where('type_id','=','1')->orderBy('product_brand.remark', 'ASC')
-                    ->paginate(10,['product_brand.id','product_brand.remark']);
-        return view('pages.productsbrand.index', ['company' => Company::get()->first()],compact('brands','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
+        $products = Product::orderBy('product_sku.remark', 'ASC')
+                    ->join('product_type as pt','pt.id','=','product_sku.type_id')
+                    ->join('product_category as pc','pc.id','=','product_sku.category_id')
+                    ->join('product_brand as pb','pb.id','=','product_sku.brand_id')
+                    ->join('product_price as pr','pr.product_id','=','product_sku.id')
+                    ->join('branch as bc','bc.id','=','pr.branch_id')
+                    ->where('pt.id','=','2')
+                    ->paginate(10,['product_sku.id','product_sku.remark as product_name','pr.branch_id','bc.remark as branch_name','pr.price as product_price','pb.remark as product_brand']);
+        return view('pages.servicesprice.index',['company' => Company::get()->first()] ,compact('request','branchs','products','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
     }
 
     public function search(Request $request) 
@@ -72,23 +81,43 @@ class ProductsBrandController extends Controller
         $user = Auth::user();
         $id = $user->roles->first()->id;
         $this->getpermissions($id);
+        $branchs = Branch::join('users_branch as ub','ub.branch_id', '=', 'branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']);
 
         $keyword = $request->search;
         $data = $this->data;
         $act_permission = $this->act_permission[0];
+        $branchx = $request->filter_branch_id;
 
         if($request->export=='Export Excel'){
-            return Excel::download(new ProductsExport($keyword), 'products_'.Carbon::now()->format('YmdHis').'.xlsx');
+            $strencode = base64_encode($keyword.'#'.$branchx);
+            return Excel::download(new ProductsPriceExport($strencode), 'productsprice_'.Carbon::now()->format('YmdHis').'.xlsx');
+        }else if($request->src=='Search'){
+            $branchx = "";
+            $whereclause = " upper(product_sku.remark) like '%".strtoupper($keyword)."%'";
+            $products = Product::orderBy('product_sku.remark', 'ASC')
+                        ->join('product_type as pt','pt.id','=','product_sku.type_id')
+                        ->join('product_category as pc','pc.id','=','product_sku.category_id')
+                        ->join('product_brand as pb','pb.id','=','product_sku.brand_id')
+                        ->join('product_price as pr','pr.product_id','=','product_sku.id')
+                        ->join('branch as bc','bc.id','=','pr.branch_id')
+                        ->whereRaw($whereclause)
+                        ->where('pt.id','=','2')
+                        ->where('bc.id','like','%'.$branchx.'%')  
+                        ->paginate(10,['product_sku.id','product_sku.remark as product_name','pr.branch_id','bc.remark as branch_name','pr.price as product_price','pb.remark as product_brand']);           
+            return view('pages.servicesprice.index',['company' => Company::get()->first()], compact('request','branchs','products','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
         }else{
             $whereclause = " upper(product_sku.remark) like '%".strtoupper($keyword)."%'";
             $products = Product::orderBy('product_sku.remark', 'ASC')
                         ->join('product_type as pt','pt.id','=','product_sku.type_id')
                         ->join('product_category as pc','pc.id','=','product_sku.category_id')
                         ->join('product_brand as pb','pb.id','=','product_sku.brand_id')
+                        ->join('product_price as pr','pr.product_id','=','product_sku.id')
+                        ->join('branch as bc','bc.id','=','pr.branch_id')
+                        ->where('pt.id','=','2')
                         ->whereRaw($whereclause)
-                        ->where('pt.type_id','=','1')
-                        ->paginate(10,['product_sku.id','product_sku.remark as product_name','pt.remark as product_type','pc.remark as product_category','pb.remark as product_brand']);            
-            return view('pages.productsbrand.index',['company' => Company::get()->first()], compact('products','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
+                        ->where('bc.id','like','%'.$branchx.'%')  
+                        ->paginate(10,['product_sku.id','product_sku.remark as product_name','pr.branch_id','bc.remark as branch_name','pr.price as product_price','pb.remark as product_brand']);           
+            return view('pages.servicesprice.index',['company' => Company::get()->first()], compact('request','branchs','products','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
         }
     }
 
@@ -109,33 +138,39 @@ class ProductsBrandController extends Controller
         $id = $user->roles->first()->id;
         $this->getpermissions($id);
 
+        $user  = Auth::user();
         $data = $this->data;
-        return view('pages.productsbrand.create',[
+        return view('pages.servicesprice.create',[
+            'products' => DB::select('select ps.id,ps.remark from product_sku as ps where ps.type_id=2;'),
             'data' => $data, 'company' => Company::get()->first(),
+            'branchs' => Branch::join('users_branch as ub','ub.branch_id','=','branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']),
         ]);
     }
 
     /**
      * Store a newly created user
      * 
-     * @param ProductBrand $product
+     * @param ProductPrice $productprice
      * @param Request $request
      * 
      * @return \Illuminate\Http\Response
      */
-    public function store(ProductBrand $productbrand, Request $request) 
+    public function store(ProductPrice $productprice, Request $request) 
     {
         //For demo purposes only. When creating user or inviting a user
         // you should create a generated random password and email it to the user
-
+    
         $user = Auth::user();
-        $productbrand->create(
+        $productprice->create(
             array_merge(
-                ['remark' => $request->get('remark') ],
+                ['price' => $request->get('price') ],
+                ['product_id' => $request->get('product_id') ],
+                ['branch_id' => $request->get('branch_id') ],
+                ['created_by' => $user->id ],
             )
         );
-        return redirect()->route('productsbrand.index')
-            ->withSuccess(__('Brand created successfully.'));
+        return redirect()->route('productsprice.index')
+            ->withSuccess(__('Product price created successfully.'));
     }
 
     /**
@@ -159,7 +194,7 @@ class ProductsBrandController extends Controller
         ->where('product_sku.id',$product->id)
         ->get(['product_sku.id as product_id','product_sku.abbr','product_sku.remark as product_name','pt.remark as product_type','pc.remark as product_category','pb.remark as product_brand'])->first();
 
-        return view('pages.productsbrand.show', [
+        return view('pages.servicesprice.show', [
             'product' => $products ,
             'data' => $data, 'company' => Company::get()->first(),
         ]);
@@ -168,59 +203,77 @@ class ProductsBrandController extends Controller
     /**
      * Edit user data
      * 
-     * @param Product $product
+     * @param ProductPrice $product
      * 
      * @return \Illuminate\Http\Response
      */
-    public function edit(ProductBrand $productbrand) 
+    public function edit(String $branch_id,String $product_id) 
     {
         $user = Auth::user();
         $id = $user->roles->first()->id;
         $this->getpermissions($id);
 
+        $user  = Auth::user();
         $data = $this->data;
-        $brand = ProductBrand::where('product_brand.id',$productbrand->id)
-        ->get(['product_brand.id as id','product_brand.remark'])->first();
-        return view('pages.productsbrand.edit', [
+        $product = Product::join('product_type as pt','pt.id','=','product_sku.type_id')
+        ->join('product_category as pc','pc.id','=','product_sku.category_id')
+        ->join('product_brand as pb','pb.id','=','product_sku.brand_id')
+        ->join('product_price as pr','pr.product_id','=','product_sku.id')
+        ->join('branch as bc','bc.id','=','pr.branch_id')
+        ->where('product_sku.id',$product_id)
+        ->where('bc.id','=',$branch_id)
+        ->get(['product_sku.id as id','product_sku.abbr','product_sku.brand_id','product_sku.category_id','product_sku.type_id','product_sku.remark as product_name','pt.remark as product_type','pc.remark as product_category','pb.remark as product_brand','pr.branch_id','bc.remark as branch_name','pr.price as product_price'])->first();
+        return view('pages.servicesprice.edit', [
+            'productCategorys' => Category::where('type_id','=','2')->latest()->get(),
+            'productCategorysRemark' => Category::where('type_id','=','2')->latest()->get()->pluck('remark')->toArray(),
+            'productBrands' => ProductBrand::where('type_id','=','2')->latest()->get(),
+            'productBrandsRemark' => ProductBrand::where('type_id','=','2')->latest()->get()->pluck('remark')->toArray(),
+            'productTypes' => Type::where('id','=','2')->latest()->get(),
+            'productTypesRemark' => Type::where('id','=','2')->latest()->get()->pluck('remark')->toArray(),
+            'branchs' => Branch::join('users_branch as ub','ub.branch_id','=','branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']),
             'data' => $data,
-            'brand' => $brand, 'company' => Company::get()->first(),
+            'product' => $product, 'company' => Company::get()->first(),
+            'products' => Product::get(),
         ]);
     }
 
     /**
      * Update user data
      * 
-     * @param ProductBrand $productbrand
+     * @param ProductPrice $product
      * @param Request $request
      * 
      * @return \Illuminate\Http\Response
      */
-    public function update(ProductBrand $productbrand, Request $request) 
+    public function update(String $branch,String $product, Request $request) 
     {
         $user = Auth::user();
-        $productbrand->update(
+        ProductPrice::where('product_id','=',$product)->where('branch_id','=',$branch)->update(
             array_merge(
-                ['remark' => $request->get('remark') ],
+                ['price' => $request->get('price') ],
             )
         );
         
-        return redirect()->route('productsbrand.index')
-            ->withSuccess(__('Product updated successfully.'));
+        return redirect()->route('productsprice.index')
+            ->withSuccess(__('Product price updated successfully.'));
     }
 
     /**
      * Delete user data
      * 
-     * @param ProductBrand $productbrand
+     * @param ProductPrice $user
      * 
      * @return \Illuminate\Http\Response
      */
-    public function destroy(ProductBrand $productbrand) 
+    public function destroy(String $branch,String $product) 
     {
-        $productbrand->delete();
-
-        return redirect()->route('productsbrand.index')
-            ->withSuccess(__('Brand deleted successfully.'));
+        ProductPrice::where('product_id','=',$product)->where('branch_id','=',$branch)->delete();
+        $result = array_merge(
+            ['status' => 'success'],
+            ['data' => $product],
+            ['message' => 'Delete Successfully'],
+        );  
+        return $result;
     }
 
     public function getpermissions($role_id){
@@ -279,6 +332,7 @@ class ProductsBrandController extends Controller
                     ]  
                 ]      
         ];
+
         foreach ($permissions as $key => $menu) {
             if($menu['parent']=='Users'){
                 array_push($this->data['menu'][0]['sub_menu'], array(

@@ -3,7 +3,7 @@
 @section('title', 'Edit Brand')
 
 @section('content')
-<form method="POST" action="{{ route('productsbrand.update', $brand->id) }}"  enctype="multipart/form-data">
+<form method="POST" action="{{ route('servicesbrand.update', $brand->id) }}"  enctype="multipart/form-data">
   @method('patch')
   @csrf
     <div class="bg-light p-4 rounded">
@@ -14,7 +14,7 @@
           <div class="col-md-2">
             <div class="mt-4">
               <button type="submit" class="btn btn-info">@lang('general.lbl_save')</button>
-              <a href="{{ route('productsbrand.index') }}" class="btn btn-default">@lang('general.lbl_cancel')</a>
+              <a href="{{ route('servicesbrand.index') }}" class="btn btn-default">@lang('general.lbl_cancel')</a>
             </div>
           </div>
         </div>

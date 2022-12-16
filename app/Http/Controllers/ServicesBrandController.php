@@ -27,7 +27,7 @@ use App\Http\Controllers\Lang;
 
 
 
-class ProductsBrandController extends Controller
+class ServicesBrandController extends Controller
 {
     /**
      * Display all products
@@ -62,9 +62,9 @@ class ProductsBrandController extends Controller
         $data = $this->data;
         $keyword = "";
         $act_permission = $this->act_permission[0];
-        $brands = ProductBrand::where('type_id','=','1')->orderBy('product_brand.remark', 'ASC')
+        $brands = ProductBrand::where('type_id','=','2')->orderBy('product_brand.remark', 'ASC')
                     ->paginate(10,['product_brand.id','product_brand.remark']);
-        return view('pages.productsbrand.index', ['company' => Company::get()->first()],compact('brands','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
+        return view('pages.servicesbrand.index', ['company' => Company::get()->first()],compact('brands','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
     }
 
     public function search(Request $request) 
@@ -86,9 +86,9 @@ class ProductsBrandController extends Controller
                         ->join('product_category as pc','pc.id','=','product_sku.category_id')
                         ->join('product_brand as pb','pb.id','=','product_sku.brand_id')
                         ->whereRaw($whereclause)
-                        ->where('pt.type_id','=','1')
+                        ->where('pt.type_id','=','2')
                         ->paginate(10,['product_sku.id','product_sku.remark as product_name','pt.remark as product_type','pc.remark as product_category','pb.remark as product_brand']);            
-            return view('pages.productsbrand.index',['company' => Company::get()->first()], compact('products','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
+            return view('pages.servicesbrand.index',['company' => Company::get()->first()], compact('products','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
         }
     }
 
@@ -110,7 +110,7 @@ class ProductsBrandController extends Controller
         $this->getpermissions($id);
 
         $data = $this->data;
-        return view('pages.productsbrand.create',[
+        return view('pages.servicesbrand.create',[
             'data' => $data, 'company' => Company::get()->first(),
         ]);
     }
@@ -159,7 +159,7 @@ class ProductsBrandController extends Controller
         ->where('product_sku.id',$product->id)
         ->get(['product_sku.id as product_id','product_sku.abbr','product_sku.remark as product_name','pt.remark as product_type','pc.remark as product_category','pb.remark as product_brand'])->first();
 
-        return view('pages.productsbrand.show', [
+        return view('pages.servicesbrand.show', [
             'product' => $products ,
             'data' => $data, 'company' => Company::get()->first(),
         ]);
@@ -181,7 +181,7 @@ class ProductsBrandController extends Controller
         $data = $this->data;
         $brand = ProductBrand::where('product_brand.id',$productbrand->id)
         ->get(['product_brand.id as id','product_brand.remark'])->first();
-        return view('pages.productsbrand.edit', [
+        return view('pages.servicesbrand.edit', [
             'data' => $data,
             'brand' => $brand, 'company' => Company::get()->first(),
         ]);

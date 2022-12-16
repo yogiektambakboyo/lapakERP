@@ -1,20 +1,20 @@
 @extends('layouts.default', ['appSidebarSearch' => true])
 
-@section('title', 'Edit Product Price')
+@section('title', 'Edit Service Price')
 
 @section('content')
-<form method="POST" action="{{ route('productsprice.update', [$product->branch_id,$product->id]) }}"  enctype="multipart/form-data">
+<form method="POST" action="{{ route('servicesprice.update', [$product->branch_id,$product->id]) }}"  enctype="multipart/form-data">
   @method('patch')
   @csrf
     <div class="bg-light p-4 rounded">
         <div class="row">
           <div class="col-md-10">
-            <h1>@lang('general.product') {{ $product->product_name }}</h1>
+            <h1>@lang('general.service') {{ $product->product_name }}</h1>
           </div>
           <div class="col-md-2">
             <div class="mt-4">
               <button type="submit" class="btn btn-info">@lang('general.lbl_save')</button>
-              <a href="{{ route('productsprice.index') }}" class="btn btn-default">@lang('general.lbl_cancel')</a>
+              <a href="{{ route('servicesprice.index') }}" class="btn btn-default">@lang('general.lbl_cancel')</a>
             </div>
           </div>
         </div>
