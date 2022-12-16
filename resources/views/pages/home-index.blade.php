@@ -12,7 +12,7 @@
 
 @section('content')
 	<!-- BEGIN page-header -->
-	<h1 class="page-header">Welcome, @auth
+	<h1 class="page-header">@lang('home.welcome'), @auth
 		{{auth()->user()->name}} 
 	@endauth </h1>
 	<!-- END page-header -->
@@ -31,7 +31,7 @@
 						<div class="col-xl-7 col-lg-8">
 							<!-- BEGIN title -->
 							<div class="mb-3 text-gray-500">
-								<b>TOTAL SALES</b>
+								<b>@lang('home.total_sales')</b>
 								<span class="ms-2">
 									<i class="fa fa-info-circle" data-bs-toggle="popover" data-bs-trigger="hover" data-bs-title="Total sales" data-bs-placement="top" data-bs-content="Net sales (gross sales minus discounts and returns) plus taxes. Includes orders from all sales channels."></i>
 								</span>
@@ -48,7 +48,7 @@
 							<div class="row text-truncate">
 								<!-- BEGIN col-6 -->
 								<div class="col-6">
-									<div class="fs-12px text-gray-500">Total sales order</div>
+									<div class="fs-12px text-gray-500">@lang('home.qty_sales')</div>
 									<div class="fs-18px mb-5px fw-bold" data-animation="number" data-value="{{  $d_data_c[0]->count_sales }}">0</div>
 									<div class="progress h-5px rounded-3 bg-gray-900 mb-5px">
 										<div class="progress-bar progress-bar-striped rounded-right bg-teal" data-animation="width" data-value="{{ ($d_data_c[0]->count_sales/100)*100  }}" style="width: 0%"></div>
@@ -57,7 +57,7 @@
 								<!-- END col-6 -->
 								<!-- BEGIN col-6 -->
 								<div class="col-6">
-									<div class="fs-12px text-gray-500">Avg. sales per order</div>
+									<div class="fs-12px text-gray-500">@lang('home.avg_sales')</div>
 									<div class="fs-18px mb-5px fw-bold">Rp. <span data-animation="number" data-value="@if($d_data_c[0]->count_sales>0) {{  $d_data[0]->total/$d_data_c[0]->count_sales }} @else {{ '0' }} @endif">0.00</span></div>
 									<div class="progress h-5px rounded-3 bg-gray-900 mb-5px">
 										<div class="progress-bar progress-bar-striped rounded-right" data-animation="width" data-value="{{ ($d_data[0]->total/5000000)*100  }}" style="width: 0%"></div>
@@ -93,7 +93,7 @@
 						<div class="card-body">
 							<!-- BEGIN title -->
 							<div class="mb-3 text-gray-500">
-								<b class="mb-3">SALES OF PRODUCT</b> 
+								<b class="mb-3">@lang('home.sales_product')</b> 
 								<span class="ms-2"><i class="fa fa-info-circle" data-bs-toggle="popover" data-bs-trigger="hover" data-bs-title="Sales of Product" data-bs-placement="top" data-bs-content="Total sales from product" data-original-title="" title=""></i></span>
 							</div>
 							<!-- END title -->
@@ -120,7 +120,7 @@
 						<div class="card-body">
 							<!-- BEGIN title -->
 							<div class="mb-3 text-gray-500">
-								<b class="mb-3">SALES OF SERVICES</b> 
+								<b class="mb-3">@lang('home.sales_service')</b> 
 								<span class="ms-2"><i class="fa fa-info-circle" data-bs-toggle="popover" data-bs-trigger="hover" data-bs-title="Sales of Service" data-bs-placement="top" data-bs-content="Total sales from services." data-original-title="" title=""></i></span>
 							</div>
 							<!-- END title -->
@@ -154,7 +154,7 @@
 				<div class="card-body" style="background: no-repeat bottom right; background-image: url(/assets/img/svg/img-4.svg); background-size: auto 60%;">
 					<!-- BEGIN title -->
 					<div class="mb-3 text-gray-500 ">
-						<b>TOP TERAPIST BY EXECUTION</b>
+						<b>@lang('home.top_terapist')</b>
 						<span class="text-gray-500 ms-2"><i class="fa fa-info-circle" data-bs-toggle="popover" data-bs-trigger="hover" data-bs-title="Top Active Terapist" data-bs-placement="top" data-bs-content="Rangking most active terapist from execution"></i></span>
 					</div>
 					<!-- END title -->
@@ -200,7 +200,7 @@
 				<div class="card-body">
 					<!-- BEGIN title -->
 					<div class="mb-3 text-gray-500">
-						<b>TOP PRODUCTS BY UNITS SOLD</b>
+						<b>@lang('home.top_product')</b>
 						<span class="ms-2 "><i class="fa fa-info-circle" data-bs-toggle="popover" data-bs-trigger="hover" data-bs-title="Top products with units sold" data-bs-placement="top" data-bs-content="Products with the most individual units sold. Includes orders from all sales channels."></i></span>
 					</div>
 					<!-- END title -->
@@ -237,7 +237,7 @@
 				<div class="card-body">
 					<!-- BEGIN title -->
 					<div class="mb-3 text-gray-500">
-						<b>TOP SERVICES BY UNITS SOLD</b>
+						<b>@lang('home.top_service')</b>
 						<span class="ms-2 "><i class="fa fa-info-circle" data-bs-toggle="popover" data-bs-trigger="hover" data-bs-title="Top service with units sold" data-bs-placement="top" data-bs-content="Services with the most individual units sold. Includes orders from all sales channels."></i></span>
 					</div>
 					<!-- END title -->

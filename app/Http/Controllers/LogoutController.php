@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use App\Models\Company;
+use App\Http\Controllers\Lang;
 
 class LogoutController extends Controller
 {

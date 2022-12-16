@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
 use Carbon\Carbon;
 use App\Models\Company;
+use App\Http\Controllers\Lang;
 
 
 
@@ -305,40 +306,47 @@ class UserShiftController extends Controller
             });
            })->get(['permissions.name','permissions.url','permissions.remark','permissions.parent']);
 
-        $this->data = [
+           $this->data = [
             'menu' => 
                 [
                     [
                         'icon' => 'fa fa-user-gear',
-                        'title' => 'User Management',
+                        'title' => \Lang::get('home.user_management'),
                         'url' => 'javascript:;',
                         'caret' => true,
                         'sub_menu' => []
                     ],
                     [
                         'icon' => 'fa fa-box',
-                        'title' => 'Product Management',
+                        'title' => \Lang::get('home.product_management'),
+                        'url' => 'javascript:;',
+                        'caret' => true,
+                        'sub_menu' => []
+                    ],
+		   [
+                        'icon' => 'fa fa-box',
+                        'title' => \Lang::get('home.service_management'),
                         'url' => 'javascript:;',
                         'caret' => true,
                         'sub_menu' => []
                     ],
                     [
                         'icon' => 'fa fa-table',
-                        'title' => 'Transactions',
+                        'title' => \Lang::get('home.transaction'),
                         'url' => 'javascript:;',
                         'caret' => true,
                         'sub_menu' => []
                     ],
                     [
                         'icon' => 'fa fa-chart-column',
-                        'title' => 'Reports',
+                        'title' => \Lang::get('home.reports'),
                         'url' => 'javascript:;',
                         'caret' => true,
                         'sub_menu' => []
                     ],
                     [
                         'icon' => 'fa fa-screwdriver-wrench',
-                        'title' => 'Settings',
+                        'title' => \Lang::get('home.settings'),
                         'url' => 'javascript:;',
                         'caret' => true,
                         'sub_menu' => []
@@ -361,22 +369,29 @@ class UserShiftController extends Controller
                     'route-name' => $menu['name']
                 ));
             }
-            if($menu['parent']=='Transactions'){
+            if($menu['parent']=='Services'){
                 array_push($this->data['menu'][2]['sub_menu'], array(
                     'url' => $menu['url'],
                     'title' => $menu['remark'],
                     'route-name' => $menu['name']
                 ));
             }
-            if($menu['parent']=='Reports'){
+            if($menu['parent']=='Transactions'){
                 array_push($this->data['menu'][3]['sub_menu'], array(
+                    'url' => $menu['url'],
+                    'title' => $menu['remark'],
+                    'route-name' => $menu['name']
+                ));
+            }	
+            if($menu['parent']=='Reports'){
+                array_push($this->data['menu'][4]['sub_menu'], array(
                     'url' => $menu['url'],
                     'title' => $menu['remark'],
                     'route-name' => $menu['name']
                 ));
             }
             if($menu['parent']=='Settings'){
-                array_push($this->data['menu'][4]['sub_menu'], array(
+                array_push($this->data['menu'][5]['sub_menu'], array(
                     'url' => $menu['url'],
                     'title' => $menu['remark'],
                     'route-name' => $menu['name']

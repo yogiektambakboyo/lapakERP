@@ -1,0 +1,21 @@
+<?php
+return [
+    "welcome" => "Welcome",
+    "total_sales" => "TOTAL SALES",
+    "qty_sales" => "Total Qty Sales Order",
+    "avg_sales" => "Avg. Sales per Order",
+    "sales_product" => "SALES OF PRODUCT",
+    "sales_service" => "SALES OF SERVICES",
+    "top_terapist" => "TOP TERAPIST BY EXECUTION",
+    "top_product" => "TOP PRODUCTS BY UNITS SOLD",
+    "top_service" => "TOP SERVICES BY UNITS SOLD",
+    "search" => "Search Menu",
+    "logout" => "Log Out",
+    "profile" => "Edit Profile",
+    "user_management" => "User Management",
+    "product_management" => "Product Management",
+    "service_management" => "Service Management",
+    "transaction" => "Transaction",
+    "reports" => "Reports",
+    "settings" => "Settings",
+];

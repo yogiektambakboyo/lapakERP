@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use App\Http\Requests\RegisterRequest;
 use App\Models\Company;
+use App\Http\Controllers\Lang;
 
 
 class RegisterController extends Controller

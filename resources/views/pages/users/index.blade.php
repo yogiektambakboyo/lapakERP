@@ -4,26 +4,26 @@
 
 @section('content')
     <div class="bg-light p-4 rounded">
-        <h1>Users</h1>
+        <h1>@lang('user.title')</h1>
         <div class="lead row mb-3">
             <div class="col-md-10">
                 <div class="col-md-4">
-                    Manage your users here.
+                    @lang('user.label')
                 </div>
                 <div class="col-md-10"> 	
                     <form action="{{ route('users.search') }}" method="GET" class="row row-cols-lg-auto g-3 align-items-center">
-                        <div class="col-2"><input type="text" class="form-control  form-control-sm" name="search" placeholder="Find User.." value="{{ $request->search }}"></div>
+                        <div class="col-2"><input type="text" class="form-control  form-control-sm" name="search" placeholder="@lang('user.label_search')" value="{{ $request->search }}"></div>
                         <input type="hidden" class="form-control  form-control-sm" name="filter_branch_id" value="{{ $request->filter_branch_id }}">
                         <input type="hidden" name="filter_job_id" value="{{ $request->filter_job_id }}">
                         <input type="hidden" name="filter_enddate" value="{{ $request->filter_end_date }}">
-                        <div class="col-2"><input type="submit" class="btn btn-sm btn-secondary" value="Search" name="src"></div>   
-                        <div class="col-2"><a href="#modal-filter"  data-bs-toggle="modal" data-bs-target="#modal-filter" class="btn btn-sm btn-lime">Filter</a></div>   
-                        <div class="col-2"><input type="submit" class="btn btn-sm btn-success" value="Export Excel" name="export"></div>  
+                        <div class="col-2"><input type="submit" class="btn btn-sm btn-secondary" value="@lang('user.btn_search')" name="src"></div>   
+                        <div class="col-2"><a href="#modal-filter"  data-bs-toggle="modal" data-bs-target="#modal-filter" class="btn btn-sm btn-lime">@lang('user.btn_filter')</a></div>   
+                        <div class="col-2"><input type="submit" class="btn btn-sm btn-success" value="@lang('user.btn_export')" name="export"></div>  
                     </form>
                 </div>
             </div>
             <div class="col-md-2">
-                <a href="{{ route('users.create') }}" class="btn btn-primary float-right {{ $act_permission->allow_create==1?'':'d-none' }}"><span class="fa fa-plus-circle"></span>  Add new user</a>
+                <a href="{{ route('users.create') }}" class="btn btn-primary float-right {{ $act_permission->allow_create==1?'':'d-none' }}"><span class="fa fa-plus-circle"></span>  @lang('user.btn_create')</a>
             </div>
         </div>
         
@@ -35,12 +35,12 @@
             <thead>
             <tr>
                 <th scope="col" width="1%">#</th>
-                <th>Name</th>
-                <th scope="col" width="7%">Employee ID</th>
-                <th scope="col" width="15%">Job Title</th>
-                <th scope="col" width="7%">App Access</th>
-                <th scope="col" width="7%">Join Date</th>
-                <th scope="col" width="2%">Action</th>   
+                <th>@lang('user.lbl_name')</th>
+                <th scope="col" width="7%">@lang('user.lbl_employeeid')</th>
+                <th scope="col" width="15%">@lang('user.lbl_jobtitle')</th>
+                <th scope="col" width="7%">@lang('user.lbl_appaccess')</th>
+                <th scope="col" width="7%">@lang('user.lbl_joindate')</th>
+                <th scope="col" width="2%">@lang('user.lbl_action')</th>   
                 <th scope="col" width="2%"></th>
                 <th scope="col" width="2%"></th>    
             </tr>
@@ -59,10 +59,10 @@
                             @endforeach
                         </td>
                         <td>{{ $user->join_date }}</td>
-                        <td><a href="{{ route('users.show', $user->id) }}" class="btn btn-warning btn-sm {{ $act_permission->allow_show==1?'':'d-none' }}">Show</a></td>
-                        <td><a href="{{ route('users.edit', $user->id) }}" class="btn btn-info btn-sm {{ $act_permission->allow_edit==1?'':'d-none' }}">Edit</a></td>
+                        <td><a href="{{ route('users.show', $user->id) }}" class="btn btn-warning btn-sm {{ $act_permission->allow_show==1?'':'d-none' }}">@lang('user.lbl_show')</a></td>
+                        <td><a href="{{ route('users.edit', $user->id) }}" class="btn btn-info btn-sm {{ $act_permission->allow_edit==1?'':'d-none' }}">@lang('user.lbl_edit')</a></td>
                         <td>
-                            <a onclick="showConfirm({{ $user->id }}, '{{ $user->remark }}')" class="btn btn-danger btn-sm  {{ $act_permission->allow_delete==1?'':'d-none' }} ">Delete</a>
+                            <a onclick="showConfirm({{ $user->id }}, '{{ $user->remark }}')" class="btn btn-danger btn-sm  {{ $act_permission->allow_delete==1?'':'d-none' }} ">@lang('user.lbl_delete')</a>
                         </td>
 
                     </tr>
@@ -78,19 +78,19 @@
             <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                <h5 class="modal-title"  id="input_expired_list_at_lbl">Filter Data</h5>
+                <h5 class="modal-title"  id="input_expired_list_at_lbl">@lang('user.lbl_filterdata')</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <form action="{{ route('users.search') }}" method="GET">   
                         @csrf 
                         <div class="col-md-10">
-                            <label class="form-label col-form-label col-md-4">Branch</label>
+                            <label class="form-label col-form-label col-md-4">@lang('user.lbl_branch')</label>
                         </div>
                         <div class="col-md-12">
                             <select class="form-control" 
                                 name="filter_branch_id" id="filter_branch_id">
-                                <option value="">All Branch</option>
+                                <option value="">@lang('user.lbl_allbranch')</option>
                                 @foreach($branchs as $branchx)
                                     <option value="{{ $branchx->id }}">{{ $branchx->remark }} </option>
                                 @endforeach
@@ -98,12 +98,12 @@
                         </div>
 
                         <div class="col-md-12">
-                            <label class="form-label col-form-label col-md-4">Job Title</label>
+                            <label class="form-label col-form-label col-md-4">@lang('user.lbl_jobtitle')</label>
                         </div>
                         <div class="col-md-12">
                             <select class="form-control" 
                                 name="filter_job_id" id="filter_job_id">
-                                <option value="">All Job Title</option>
+                                <option value="">@lang('user.lbl_alljobtitle')</option>
                                 @foreach($jobtitles as $jobtitle)
                                     <option value="{{ $jobtitle->id }}">{{ $jobtitle->remark }} </option>
                                 @endforeach
@@ -111,7 +111,7 @@
                         </div>
 
                         <div class="col-md-10">
-                            <label class="form-label col-form-label col-md-4">Join Date (Before)</label>
+                            <label class="form-label col-form-label col-md-6">@lang('user.lbl_joindatebefore')</label>
                         </div>
                         <div class="col-md-12">
                             <input type="text" 
@@ -125,7 +125,7 @@
                         </div>
                         <br>
                         <div class="col-md-12">
-                            <button type="submit" class="btn btn-primary form-control">Apply</button>
+                            <button type="submit" class="btn btn-primary form-control">@lang('user.lbl_apply')</button>
                         </div>
                     </form>
                 </div>

@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Services\Login\RememberMeExpiration;
 use App\Models\Settings;
 use App\Models\Company;
+use App\Http\Controllers\Lang;
 
 class LoginController extends Controller
 {
