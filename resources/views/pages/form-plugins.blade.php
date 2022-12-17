@@ -480,7 +480,7 @@
 							</div>
 						</div>
 						<div class="form-group row">
-							<label class="form-label col-form-label col-lg-4">Custom Values</label>
+							<label class="form-label col-form-label col-lg-4">Custom @lang('general.lbl_values')</label>
 							<div class="col-lg-8">
 								<input type="text" id="customValue_rangeSlider" name="customValue_rangeSlider" value="" />
 							</div>

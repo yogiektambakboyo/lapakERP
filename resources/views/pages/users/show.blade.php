@@ -61,7 +61,7 @@
               <div class="panel-heading bg-teal-600"><h4>Employee Info</h4></div>
               <div class="panel-body bg-white text-black">
                 <div class="row mb-3">
-                  <label class="form-label col-form-label col-md-2">Job Title</label>
+                  <label class="form-label col-form-label col-md-2">@lang('general.lbl_jobtitleselect')</label>
                   <div class="col-md-8">
                     <input type="text" class="form-control" value="{{ $users->job_title }}" readonly />
                   </div>
@@ -81,7 +81,7 @@
                 </div>
               </div>
               <div class="row mb-3">
-                <label class="form-label col-form-label col-md-2">Branch</label>
+                <label class="form-label col-form-label col-md-2">@lang('general.lbl_branch')</label>
                 <div class="col-md-8">
                   <input type="text" class="form-control" value="{{ $users->branch_name }}" readonly />
                 </div>
@@ -99,7 +99,7 @@
                 </div>
               </div>
               <div class="row mb-3">
-                <label class="form-label col-form-label col-md-2">Join Years</label>
+                <label class="form-label col-form-label col-md-2">Join @lang('general.lbl_years')</label>
                 <div class="col-md-8">
                   <input type="text" class="form-control" value="{{ $users->join_years }}" readonly />
                 </div>
@@ -226,7 +226,7 @@
                     <table class="table table-striped" id="example">
                         <thead>
                         <tr>
-                            <th>Branch</th>
+                            <th>@lang('general.lbl_branch')</th>
                             <th scope="col" width="10%">Department</th>
                             <th scope="col" width="20%">Job Title</th>
                             <th scope="col" width="15%">Date</th> 
@@ -367,7 +367,7 @@
                   </div>
 
                   <div class="col-md-2">
-                    <label class="form-label col-form-label">Years</label>
+                    <label class="form-label col-form-label">@lang('general.lbl_years')</label>
                     <input type="text" 
                     name="input_exp_years"
                     id="input_exp_years"

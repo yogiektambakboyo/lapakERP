@@ -9,8 +9,8 @@
     <div class="panel-heading  bg-teal-600">
       <div class="panel-title"><h4 class="">Sales Order</h4></div>
       <div class="">
-        <a href="{{ route('orders.index') }}" class="btn btn-default">Cancel</a>
-        <button type="button" id="save-btn" class="btn btn-info">Save</button>
+        <a href="{{ route('orders.index') }}" class="btn btn-default">@lang('general.lbl_cancel')</a>
+        <button type="button" id="save-btn" class="btn btn-info">@lang('general.lbl_save')</button>
       </div>
     </div>
     <div class="panel-body bg-white text-black">
@@ -51,7 +51,7 @@
                     <th scope="col" width="20%">Code</th>
                     <th>Product</th>
                     <th scope="col" width="5%">Type</th>
-                    <th scope="col" width="5%">Action</th>  
+                    <th scope="col" width="5%">@lang('general.lbl_action')</th> 
                 </tr>
                 </thead>
                 <tbody>
@@ -112,7 +112,7 @@
                   <th scope="col" width="5%">Discount</th>
                   <th scope="col" width="5%">Qty</th>
                   <th scope="col" width="15%">Total</th>  
-                  <th scope="col" width="15%">Action</th>  
+                  <th scope="col" width="15%">@lang('general.lbl_action')</th> 
               </tr>
               </thead>
               <tbody>

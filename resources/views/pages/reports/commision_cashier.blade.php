@@ -24,8 +24,8 @@
         <table class="table table-striped" id="example">
             <thead>
                 <tr>
-                    <th scope="col" width="6%">Dated</th>
-                    <th>Invoice No</th>
+                    <th scope="col" width="6%">@lang('general.lbl_dated')</th>
+                    <th>@lang('general.invoice_no')</th>
                     <th scope="col" width="17%">Product</th>
                     <th scope="col" width="15%">Name</th>
                     <th scope="col" width="5%">Price</th>
@@ -65,7 +65,7 @@
             <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                <h5 class="modal-title" id="staticBackdropLabel">Filter Data</h5>
+                <h5 class="modal-title" id="staticBackdropLabel">@lang('general.lbl_filterdata')</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -73,7 +73,7 @@
                 </div>
                 <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary">Apply</button>
+                <button type="button" class="btn btn-primary">@lang('general.lbl_apply')</button>
                 </div>
             </div>
             </div>
@@ -85,15 +85,15 @@
             <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                <h5 class="modal-title"  id="input_expired_list_at_lbl">Filter Data</h5>
+                <h5 class="modal-title"  id="input_expired_list_at_lbl">@lang('general.lbl_filterdata')</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <form action="{{ route('reports.cashier.search') }}" method="GET">   
                         @csrf 
                         <div class="col-md-10">
-                            <label class="form-label col-form-label col-md-4">Branch</label>
-                            <input type="hidden" name="export" id="export" value="Search">
+                            <label class="form-label col-form-label col-md-4">@lang('general.lbl_branch')</label>
+                            <input type="hidden" name="export" id="export" value="@lang('general.btn_search')">
                         </div>
                         <div class="col-md-12">
                             <select class="form-control" 
@@ -106,7 +106,7 @@
                         </div>
 
                         <div class="col-md-12">
-                            <label class="form-label col-form-label col-md-4">Begin Date</label>
+                            <label class="form-label col-form-label col-md-4">@lang('general.lbl_date_start')</label>
                         </div>
                         <div class="col-md-12">
                             <input type="text" 
@@ -120,7 +120,7 @@
                         </div>
 
                         <div class="col-md-12">
-                            <label class="form-label col-form-label col-md-4">End Date</label>
+                            <label class="form-label col-form-label col-md-4">@lang('general.lbl_date_end')</label>
                         </div>
                         <div class="col-md-12">
                             <input type="text" 
@@ -135,7 +135,7 @@
 
                         <br>
                         <div class="col-md-12">
-                            <button type="submit" class="btn btn-primary form-control">Apply</button>
+                            <button type="submit" class="btn btn-primary form-control">@lang('general.lbl_apply')</button>
                         </div>
                     </form>
                 </div>
@@ -181,7 +181,7 @@
                     
                         <br>
                         <div class="col-md-12">
-                            <button type="submit" class="btn btn-primary form-control">Apply</button>
+                            <button type="submit" class="btn btn-primary form-control">@lang('general.lbl_apply')</button>
                         </div>
                     </form>
                 </div>

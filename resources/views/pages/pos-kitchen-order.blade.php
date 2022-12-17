@@ -89,7 +89,7 @@
 								</div>
 								<div class="pos-task-product-action">
 									<a href="#" class="btn btn-success">Complete</a>
-									<a href="#" class="btn btn-outline-inverse">Cancel</a>
+									<a href="#" class="btn btn-outline-inverse">@lang('general.lbl_cancel')</a>
 								</div>
 							</div>
 							<div class="pos-task-product">
@@ -109,7 +109,7 @@
 								</div>
 								<div class="pos-task-product-action">
 									<a href="#" class="btn btn-success">Complete</a>
-									<a href="#" class="btn btn-outline-inverse">Cancel</a>
+									<a href="#" class="btn btn-outline-inverse">@lang('general.lbl_cancel')</a>
 								</div>
 							</div>
 							<div class="pos-task-product completed">
@@ -133,7 +133,7 @@
 								</div>
 								<div class="pos-task-product-action">
 									<a href="#" class="btn btn-success disabled">Complete</a>
-									<a href="#" class="btn btn-outline-inverse disabled">Cancel</a>
+									<a href="#" class="btn btn-outline-inverse disabled">@lang('general.lbl_cancel')</a>
 								</div>
 							</div>
 						</div>
@@ -177,7 +177,7 @@
 								</div>
 								<div class="pos-task-product-action">
 									<a href="#" class="btn btn-success">Complete</a>
-									<a href="#" class="btn btn-outline-inverse">Cancel</a>
+									<a href="#" class="btn btn-outline-inverse">@lang('general.lbl_cancel')</a>
 								</div>
 							</div>
 							<div class="pos-task-product completed">
@@ -201,7 +201,7 @@
 								</div>
 								<div class="pos-task-product-action">
 									<a href="#" class="btn btn-success disabled">Complete</a>
-									<a href="#" class="btn btn-outline-inverse disabled">Cancel</a>
+									<a href="#" class="btn btn-outline-inverse disabled">@lang('general.lbl_cancel')</a>
 								</div>
 							</div>
 							<div class="pos-task-product completed">
@@ -225,7 +225,7 @@
 								</div>
 								<div class="pos-task-product-action">
 									<a href="#" class="btn btn-success disabled">Complete</a>
-									<a href="#" class="btn btn-outline-inverse disabled">Cancel</a>
+									<a href="#" class="btn btn-outline-inverse disabled">@lang('general.lbl_cancel')</a>
 								</div>
 							</div>
 							<div class="pos-task-product completed">
@@ -248,7 +248,7 @@
 								</div>
 								<div class="pos-task-product-action">
 									<a href="#" class="btn btn-success disabled">Complete</a>
-									<a href="#" class="btn btn-outline-inverse disabled">Cancel</a>
+									<a href="#" class="btn btn-outline-inverse disabled">@lang('general.lbl_cancel')</a>
 								</div>
 							</div>
 						</div>
@@ -295,7 +295,7 @@
 								</div>
 								<div class="pos-task-product-action">
 									<a href="#" class="btn btn-success disabled">Complete</a>
-									<a href="#" class="btn btn-outline-inverse disabled">Cancel</a>
+									<a href="#" class="btn btn-outline-inverse disabled">@lang('general.lbl_cancel')</a>
 								</div>
 							</div>
 							<div class="pos-task-product completed">
@@ -319,7 +319,7 @@
 								</div>
 								<div class="pos-task-product-action">
 									<a href="#" class="btn btn-success disabled">Complete</a>
-									<a href="#" class="btn btn-outline-inverse disabled">Cancel</a>
+									<a href="#" class="btn btn-outline-inverse disabled">@lang('general.lbl_cancel')</a>
 								</div>
 							</div>
 							<div class="pos-task-product completed">
@@ -343,7 +343,7 @@
 								</div>
 								<div class="pos-task-product-action">
 									<a href="#" class="btn btn-success disabled">Complete</a>
-									<a href="#" class="btn btn-outline-inverse disabled">Cancel</a>
+									<a href="#" class="btn btn-outline-inverse disabled">@lang('general.lbl_cancel')</a>
 								</div>
 							</div>
 						</div>
@@ -389,7 +389,7 @@
 								</div>
 								<div class="pos-task-product-action">
 									<a href="#" class="btn btn-success disabled">Complete</a>
-									<a href="#" class="btn btn-outline-inverse disabled">Cancel</a>
+									<a href="#" class="btn btn-outline-inverse disabled">@lang('general.lbl_cancel')</a>
 								</div>
 							</div>
 							<div class="pos-task-product completed">
@@ -412,7 +412,7 @@
 								</div>
 								<div class="pos-task-product-action">
 									<a href="#" class="btn btn-success disabled">Complete</a>
-									<a href="#" class="btn btn-outline-inverse disabled">Cancel</a>
+									<a href="#" class="btn btn-outline-inverse disabled">@lang('general.lbl_cancel')</a>
 								</div>
 							</div>
 						</div>
@@ -458,7 +458,7 @@
 								</div>
 								<div class="pos-task-product-action">
 									<a href="#" class="btn btn-success disabled">Complete</a>
-									<a href="#" class="btn btn-outline-inverse disabled">Cancel</a>
+									<a href="#" class="btn btn-outline-inverse disabled">@lang('general.lbl_cancel')</a>
 								</div>
 							</div>
 							<div class="pos-task-product completed">
@@ -481,7 +481,7 @@
 								</div>
 								<div class="pos-task-product-action">
 									<a href="#" class="btn btn-success disabled">Complete</a>
-									<a href="#" class="btn btn-outline-inverse disabled">Cancel</a>
+									<a href="#" class="btn btn-outline-inverse disabled">@lang('general.lbl_cancel')</a>
 								</div>
 							</div>
 							<div class="pos-task-product completed">
@@ -504,7 +504,7 @@
 								</div>
 								<div class="pos-task-product-action">
 									<a href="#" class="btn btn-success disabled">Complete</a>
-									<a href="#" class="btn btn-outline-inverse disabled">Cancel</a>
+									<a href="#" class="btn btn-outline-inverse disabled">@lang('general.lbl_cancel')</a>
 								</div>
 							</div>
 						</div>

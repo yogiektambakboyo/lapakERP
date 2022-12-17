@@ -14,7 +14,7 @@
           <div class="col-md-2">
             <div class="mt-4">
                 <button type="submit" class="btn btn-info">Update</button>
-                <a href="{{ route('users.index') }}" class="btn btn-default">Cancel</a>
+                <a href="{{ route('users.index') }}" class="btn btn-default">@lang('general.lbl_cancel')</a>
             </div>
           </div>
         </div>
@@ -47,7 +47,7 @@
                 </div>
             </div>
             <div class="row mb-3">
-              <label class="form-label col-form-label col-md-2">Job Title</label>
+              <label class="form-label col-form-label col-md-2">@lang('general.lbl_jobtitleselect')</label>
               <div class="col-md-8">
                 <select class="form-control" 
                     name="job_id" required>
@@ -76,12 +76,12 @@
               </div>
             </div>
             <div class="row mb-3">
-              <label class="form-label col-form-label col-md-2">Branch</label>
+              <label class="form-label col-form-label col-md-2">@lang('general.lbl_branch')</label>
               <div class="col-md-8">
                 <input type="hidden" id="hide_val" class="form-control" value="{{ $user->branch_name }}"  />
                 <select class="form-control" id="branch_id" 
                       name="branch_id[]" required multiple="multiple">
-                      <option value="">Select Branch</option>
+                      <option value="">@lang('general.lbl_branchselect')</option>
                       @foreach($branchs as $branch)
                           <option value="{{ $branch->id }}">{{  $branch->remark }}</option>
                       @endforeach
@@ -116,7 +116,7 @@
             </div>
           </div>
           <div class="row mb-3">
-            <label class="form-label col-form-label col-md-2">Join Years</label>
+            <label class="form-label col-form-label col-md-2">Join @lang('general.lbl_years')</label>
             <div class="col-md-8">
               <input type="text" name="join_years" class="form-control" value="{{ $user->join_years }}"  readonly/>
             </div>

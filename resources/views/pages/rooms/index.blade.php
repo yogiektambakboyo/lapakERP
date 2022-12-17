@@ -13,8 +13,8 @@
                 <div class="col-md-8"> 	
                     <form action="{{ route('rooms.search') }}" method="GET" class="row row-cols-lg-auto g-3 align-items-center">
                         <div class="col-12"><input type="text" class="form-control  form-control-lg" name="search" placeholder="Find Room . . ." value="{{ $keyword }}"></div>
-                        <div class="col-12"><input type="submit" class="btn btn-secondary" value="Search" name="submit"></div>   
-                        <div class="col-12"><input type="submit" class="btn btn-success" value="Export Excel" name="export"></div>   
+                        <div class="col-12"><input type="submit" class="btn btn-secondary" value="@lang('general.btn_search')" name="submit"></div>   
+                        <div class="col-12"><input type="submit" class="btn btn-success" value="@lang('general.btn_export')" name="export"></div>   
                     </form>
                 </div>
             </div>
@@ -31,7 +31,7 @@
             <thead>
             <tr>
                 <th scope="col" width="5%">#</th>
-                <th scope="col" width="15%">Branch</th>
+                <th scope="col" width="15%">@lang('general.lbl_branch')</th>
                 <th scope="col" width="15%">Name</th>
                 <th scope="col" colspan="3" width="1%"></th> 
             </tr>
@@ -42,7 +42,7 @@
                         <th>{{ $room->id }}</th>
                         <td>{{ $room->branch_name }}</td>
                         <td>{{ $room->remark }}</td>
-                        <td><a href="{{ route('rooms.edit', $room->id) }}" class="btn btn-info btn-sm  {{ $act_permission->allow_edit==1?'':'d-none' }} ">Edit</a></td>
+                        <td><a href="{{ route('rooms.edit', $room->id) }}" class="btn btn-info btn-sm  {{ $act_permission->allow_edit==1?'':'d-none' }} ">@lang('general.lbl_edit')</a></td>
                         <td>
                             <a onclick="showConfirm({{ $room->id }}, '{{ $room->remark }}')" class="btn btn-danger btn-sm  {{ $act_permission->allow_delete==1?'':'d-none' }} ">Delete</a>
                         </td>

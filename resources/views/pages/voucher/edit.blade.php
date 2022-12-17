@@ -13,8 +13,8 @@
           </div>
           <div class="col-md-2">
             <div class="mt-4">
-              <button type="submit" class="btn btn-info">Save</button>
-              <a href="{{ route('voucher.index') }}" class="btn btn-default">Cancel</a>
+              <button type="submit" class="btn btn-info">@lang('general.lbl_save')</button>
+              <a href="{{ route('voucher.index') }}" class="btn btn-default">@lang('general.lbl_cancel')</a>
             </div>
           </div>
         </div>
@@ -39,11 +39,11 @@
            </div>
 
             <div class="row mb-3">
-              <label class="form-label col-form-label col-md-2">Product Name</label>
+              <label class="form-label col-form-label col-md-2">@lang('general.lbl_product_name')</label>
               <div class="col-md-8">
                 <select class="form-control" 
                 name="product_id" disabled>
-                <option value="">Select Product</option>
+                <option value="">@lang('general.lbl_productselect')</option>
                 @foreach($products as $productx)
                     <option value="{{ $productx->id }}"  {{ ($productx->id == $product->id) 
                       ? 'selected'
@@ -53,11 +53,11 @@
               </div>
           </div>
           <div class="row mb-3">
-            <label class="form-label col-form-label col-md-2">Branch</label>
+            <label class="form-label col-form-label col-md-2">@lang('general.lbl_branch')</label>
             <div class="col-md-8">
               <select class="form-control" 
                     name="branch_id" disabled>
-                    <option value="">Select Branch</option>
+                    <option value="">@lang('general.lbl_branchselect')</option>
                     @foreach($branchs as $branch)
                         <option value="{{ $branch->id }}"   {{ ($product->branch_id == $branch->id) 
                           ? 'selected'
@@ -68,7 +68,7 @@
           </div>
 
           <div class="row mb-3">
-            <label class="form-label col-form-label col-md-2">Begin Date</label>
+            <label class="form-label col-form-label col-md-2">@lang('general.lbl_date_start')</label>
             <div class="col-md-8">
               <input type="text" 
               name="dated_start"
@@ -83,7 +83,7 @@
           </div>
 
           <div class="row mb-3">
-            <label class="form-label col-form-label col-md-2">End Date</label>
+            <label class="form-label col-form-label col-md-2">@lang('general.lbl_date_end')</label>
             <div class="col-md-8">
                 <input type="text" 
                 name="dated_end"

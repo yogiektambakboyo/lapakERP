@@ -28,11 +28,11 @@
                 </div>
                 
                 <div class="row mb-3">
-                    <label class="form-label col-form-label">Branch</label>
+                    <label class="form-label col-form-label">@lang('general.lbl_branch')</label>
                     <div>
                       <select class="form-control" 
                             name="branch_id" required>
-                            <option value="">Select Branch</option>
+                            <option value="">@lang('general.lbl_branchselect')</option>
                             @foreach($branchs as $branch)
                                 <option value="{{ $branch->id }}"
                                     {{ ($room->branch_id == $branch->id) 

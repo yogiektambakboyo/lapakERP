@@ -33,7 +33,7 @@
                     <tr>
                         <th scope="row">{{ ++$key }}</th>
                         <td>{{ $department->remark }}</td>
-                        <td><a href="{{ route('departments.edit', $department->id) }}" class="btn btn-info btn-sm">Edit</a></td>
+                        <td><a href="{{ route('departments.edit', $department->id) }}" class="btn btn-info btn-sm">@lang('general.lbl_edit')</a></td>
                         <td>
                             <a onclick="showConfirm({{ $department->id }}, '{{ $department->remark }}')" class="btn btn-danger btn-sm  {{ $act_permission->allow_delete==1?'':'d-none' }} ">Delete</a>
                         </td>

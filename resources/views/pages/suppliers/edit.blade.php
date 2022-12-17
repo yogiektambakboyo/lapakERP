@@ -67,11 +67,11 @@
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label">Branch</label>
+                    <label class="form-label">@lang('general.lbl_branch')</label>
                     <div class="col-md-12">
                       <select class="form-control" 
                             name="branch_id">
-                            <option value="">Select Branch</option>
+                            <option value="">@lang('general.lbl_branchselect')</option>
                             @foreach($branchs as $branch)
                                 <option value="{{ $branch->id }}"  @if($branch->id == $supplier->branch_id) selected @endif>{{  $branch->remark }}</option>
                             @endforeach

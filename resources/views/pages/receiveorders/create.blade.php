@@ -9,8 +9,8 @@
     <div class="panel-heading  bg-teal-600">
       <div class="panel-title"><h4 class="">Receive Order</h4></div>
       <div class="">
-        <a href="{{ route('receiveorders.index') }}" class="btn btn-default">Cancel</a>
-        <button type="button" id="save-btn" class="btn btn-info">Save</button>
+        <a href="{{ route('receiveorders.index') }}" class="btn btn-default">@lang('general.lbl_cancel')</a>
+        <button type="button" id="save-btn" class="btn btn-info">@lang('general.lbl_save')</button>
       </div>
     </div>
     <div class="panel-body bg-white text-black">
@@ -48,7 +48,7 @@
               <div class="col-md-2">
                 <select class="form-control" 
                     name="branch_id" id="branch_id" required>
-                    <option value="">Select Branch</option>
+                    <option value="">@lang('general.lbl_branchselect')</option>
                     @foreach($branchs as $branch)
                         <option value="{{ $branch->id }}">{{ $branch->remark }} </option>
                     @endforeach
@@ -82,7 +82,7 @@
                 <label class="form-label col-form-label">Product</label>
                 <select class="form-control" 
                       name="input_product_id" id="input_product_id" required>
-                      <option value="">Select Product</option>
+                      <option value="">@lang('general.lbl_productselect')</option>
                   </select>
               </div>
 
@@ -178,7 +178,7 @@
                   <th scope="col" width="10%">Expired</th>
                   <th scope="col" width="10%">Batch No</th>
                   <th scope="col" width="10%">Total</th>
-                  <th scope="col" width="15%">Action</th>  
+                  <th scope="col" width="15%">@lang('general.lbl_action')</th> 
               </tr>
               </thead>
               <tbody>
@@ -228,7 +228,7 @@
                 </div>
                 <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary"  data-bs-dismiss="modal" id="btn_apply_exp">Apply</button>
+                <button type="button" class="btn btn-primary"  data-bs-dismiss="modal" id="btn_apply_exp">@lang('general.lbl_apply')</button>
                 </div>
             </div>
             </div>

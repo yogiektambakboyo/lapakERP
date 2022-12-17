@@ -16,9 +16,9 @@
                     <form action="{{ route('suppliers.search') }}" method="GET" class="row row-cols-lg-auto g-3 align-items-center">
                         <div class="col-2"><input type="text" class="form-control  form-control-sm" name="search" placeholder="Find Suppliers.." value="{{ $request->search }}"></div>
                         <input type="hidden" name="filter_branch_id" value="{{ $request->filter_branch_id }}">
-                        <div class="col-2"><input type="submit" class="btn btn-sm btn-secondary" value="Search" name="src"></div>   
-                        <div class="col-2"><a href="#modal-filter"  data-bs-toggle="modal" data-bs-target="#modal-filter" class="btn btn-sm btn-lime">Filter</a></div>   
-                        <div class="col-2"><input type="submit" class="btn btn-sm btn-success" value="Export Excel" name="export"></div>  
+                        <div class="col-2"><input type="submit" class="btn btn-sm btn-secondary" value="@lang('general.btn_search')" name="src"></div>   
+                        <div class="col-2"><a href="#modal-filter"  data-bs-toggle="modal" data-bs-target="#modal-filter" class="btn btn-sm btn-lime">@lang('general.btn_filter')</a></div>   
+                        <div class="col-2"><input type="submit" class="btn btn-sm btn-success" value="@lang('general.btn_export')" name="export"></div>  
                     </form>
                 </div>
             </div>
@@ -34,7 +34,7 @@
             <thead>
             <tr>
                 <th scope="col" width="1%">#</th>
-                <th scope="col" width="10%">Branch</th>
+                <th scope="col" width="10%">@lang('general.lbl_branch')</th>
                 <th scope="col">Name</th>
                 <th scope="col" width="15%">Address</th>
                 <th scope="col" width="10%">Phone No</th>
@@ -51,7 +51,7 @@
                         <td>{{ $supplier->address }}</td>
                         <td>{{ $supplier->handphone }}</td>
                         <td>{{ $supplier->email }}</td>
-                        <td><a href="{{ route('suppliers.edit', $supplier->id) }}" class="btn btn-info btn-sm">Edit</a></td>
+                        <td><a href="{{ route('suppliers.edit', $supplier->id) }}" class="btn btn-info btn-sm">@lang('general.lbl_edit')</a></td>
                         <td>
                             <a onclick="showConfirm({{ $supplier->id }}, '{{ $supplier->name }}')" class="btn btn-danger btn-sm  {{ $act_permission->allow_delete==1?'':'d-none' }} ">Delete</a>
                         </td>
@@ -64,19 +64,19 @@
             <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                <h5 class="modal-title"  id="input_expired_list_at_lbl">Filter Data</h5>
+                <h5 class="modal-title"  id="input_expired_list_at_lbl">@lang('general.lbl_filterdata')</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <form action="{{ route('suppliers.search') }}" method="GET">   
                         @csrf 
                         <div class="col-md-10">
-                            <label class="form-label col-form-label col-md-4">Branch</label>
+                            <label class="form-label col-form-label col-md-4">@lang('general.lbl_branch')</label>
                         </div>
                         <div class="col-md-12">
                             <select class="form-control" 
                                 name="filter_branch_id" id="filter_branch_id">
-                                <option value="">All Branch</option>
+                                <option value="">@lang('general.lbl_allbranch')</option>
                                 @foreach($branchs as $branchx)
                                     <option value="{{ $branchx->id }}">{{ $branchx->remark }} </option>
                                 @endforeach
@@ -84,7 +84,7 @@
                         </div>
                         <br>
                         <div class="col-md-12">
-                            <button type="submit" class="btn btn-primary form-control">Apply</button>
+                            <button type="submit" class="btn btn-primary form-control">@lang('general.lbl_apply')</button>
                         </div>
                     </form>
                 </div>

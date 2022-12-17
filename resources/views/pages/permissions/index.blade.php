@@ -35,7 +35,7 @@
                         <th>{{ $permission->id }}</th>
                         <td>{{ $permission->name }}</td>
                         <td>{{ $permission->guard_name }}</td>
-                        <td><a href="{{ route('permissions.edit', $permission->id) }}" class="btn btn-info btn-sm">Edit</a></td>
+                        <td><a href="{{ route('permissions.edit', $permission->id) }}" class="btn btn-info btn-sm">@lang('general.lbl_edit')</a></td>
                         <td>
                             {!! Form::open(['method' => 'DELETE','route' => ['permissions.destroy', $permission->id],'style'=>'display:inline']) !!}
                             {!! Form::submit('Delete', ['class' => 'btn btn-danger btn-sm']) !!}

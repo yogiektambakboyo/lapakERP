@@ -34,7 +34,7 @@
               <div class="col-md-2">
                 <select class="form-control" 
                     name="branch_id" id="branch_id" required disabled>
-                    <option value="">Select Branch</option>
+                    <option value="">@lang('general.lbl_branchselect')</option>
                     @foreach($branchs as $branch)
                         <option value="{{ $branch->id }}"  {{ $purchase->branch_id == $branch->id ? 'selected' : '' }}>{{ $branch->remark }} </option>
                     @endforeach

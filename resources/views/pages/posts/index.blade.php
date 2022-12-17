@@ -18,7 +18,7 @@
         <table class="table table-bordered">
           <tr>
              <th width="1%">No</th>
-             <th>Name</th>
+             <th>@lang('general.lbl_name')</th>
              <th width="3%" colspan="3">Action</th>
           </tr>
             @foreach ($posts as $key => $post)

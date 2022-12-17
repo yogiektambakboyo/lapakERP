@@ -2166,7 +2166,7 @@
 					</div>
 				</div>
 				<div class="modal-footer">
-					<a href="#" class="btn btn-default w-100px" data-bs-dismiss="modal">Cancel</a>
+					<a href="#" class="btn btn-default w-100px" data-bs-dismiss="modal">@lang('general.lbl_cancel')</a>
 					<button type="submit" class="btn btn-success w-100px">Book</button>
 				</div>
 			</div>

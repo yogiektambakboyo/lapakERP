@@ -14,9 +14,9 @@
                     <form action="{{ route('returnsell.search') }}" method="GET" class="row row-cols-lg-auto g-3 align-items-center">
                         <input type="hidden" name="filter_begin_date" value="2022-01-01"><input type="hidden" name="filter_end_date" value="2035-01-01">
                         <div class="col-2"><input type="text" class="form-control  form-control-sm" name="search" placeholder="Find return . ." value="{{ $keyword }}"></div>
-                        <div class="col-2"><input type="submit" class="btn btn-sm btn-secondary" value="Search" name="submit"></div>   
-                        <div class="col-2"><a href="#modal-filter"  data-bs-toggle="modal" data-bs-target="#modal-filter" class="btn btn-sm btn-lime">Filter</a></div>   
-                        <div class="col-2"><input type="submit" class="btn btn-sm btn-success" value="Export Excel" name="export"></div>  
+                        <div class="col-2"><input type="submit" class="btn btn-sm btn-secondary" value="@lang('general.btn_search')" name="submit"></div>   
+                        <div class="col-2"><a href="#modal-filter"  data-bs-toggle="modal" data-bs-target="#modal-filter" class="btn btn-sm btn-lime">@lang('general.btn_filter')</a></div>   
+                        <div class="col-2"><input type="submit" class="btn btn-sm btn-success" value="@lang('general.btn_export')" name="export"></div>  
                     </form>
                 </div>
             </div>
@@ -33,14 +33,14 @@
             <thead>
             <tr>
                 <th scope="col" width="1%">#</th>
-                <th scope="col" width="10%">Branch</th>
+                <th scope="col" width="10%">@lang('general.lbl_branch')</th>
                 <th>Return No</th>
-                <th scope="col" width="8%">Dated</th>
-                <th scope="col" width="15%">Customer</th>
+                <th scope="col" width="8%">@lang('general.lbl_dated')</th>
+                <th scope="col" width="15%">@lang('general.lbl_total_customer')</th>
                 <th scope="col" width="10%">Total</th>
-                <th scope="col" width="10%">Total Discount</th>
-                <th scope="col" width="10%">Total Payment</th>
-                <th scope="col" width="2%">Action</th>   
+                <th scope="col" width="10%">@lang('general.lbl_total_discount')</th>
+                <th scope="col" width="10%">@lang('general.lbl_total_payment')</th>
+                <th scope="col" width="2%">@lang('general.lbl_action')</th>  
                 <th scope="col" width="2%"></th>
                 <th scope="col" width="2%"></th>    
             </tr>
@@ -58,7 +58,7 @@
                         <td>{{ number_format($returnsell->total_discount,0,',','.') }}</td>
                         <td>{{ number_format($returnsell->total_payment,0,',','.') }}</td>
                         <td><a href="{{ route('returnsell.show', $returnsell->id) }}" class="btn btn-warning btn-sm  {{ $act_permission->allow_show==1?'':'d-none' }}">Show</a></td>
-                        <td><a href="{{ route('returnsell.edit', $returnsell->id) }}" class="btn btn-info btn-sm  {{ $act_permission->allow_edit==1?'':'d-none' }} ">Edit</a></td>
+                        <td><a href="{{ route('returnsell.edit', $returnsell->id) }}" class="btn btn-info btn-sm  {{ $act_permission->allow_edit==1?'':'d-none' }} ">@lang('general.lbl_edit')</a></td>
                         <td class=" {{ $act_permission->allow_delete==1?'':'d-none' }}">
                             <a onclick="showConfirm({{ $returnsell->id }}, '{{ $returnsell->return_sell_no }}')" class="btn btn-danger btn-sm  {{ $act_permission->allow_delete==1?'':'d-none' }} ">Delete</a>
                         </td>
@@ -75,19 +75,19 @@
             <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                <h5 class="modal-title"  id="input_expired_list_at_lbl">Filter Data</h5>
+                <h5 class="modal-title"  id="input_expired_list_at_lbl">@lang('general.lbl_filterdata')</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <form action="{{ route('returnsell.search') }}" method="GET">   
                         @csrf 
                         <div class="col-md-10">
-                            <label class="form-label col-form-label col-md-4">Branch</label>
+                            <label class="form-label col-form-label col-md-4">@lang('general.lbl_branch')</label>
                         </div>
                         <div class="col-md-12">
                             <select class="form-control" 
                                 name="filter_branch_id" id="filter_branch_id">
-                                <option value="">All Branch</option>
+                                <option value="">@lang('general.lbl_allbranch')</option>
                                 @foreach($branchs as $branchx)
                                     <option value="{{ $branchx->id }}">{{ $branchx->remark }} </option>
                                 @endforeach
@@ -95,7 +95,7 @@
                         </div>
 
                         <div class="col-md-12">
-                            <label class="form-label col-form-label col-md-4">Begin Date</label>
+                            <label class="form-label col-form-label col-md-4">@lang('general.lbl_date_start')</label>
                         </div>
                         <div class="col-md-12">
                             <input type="text" 
@@ -109,7 +109,7 @@
                         </div>
 
                         <div class="col-md-10">
-                            <label class="form-label col-form-label col-md-4">End Date</label>
+                            <label class="form-label col-form-label col-md-4">@lang('general.lbl_date_end')</label>
                         </div>
                         <div class="col-md-12">
                             <input type="text" 
@@ -123,7 +123,7 @@
                         </div>
                         <br>
                         <div class="col-md-12">
-                            <button type="submit" class="btn btn-primary form-control">Apply</button>
+                            <button type="submit" class="btn btn-primary form-control">@lang('general.lbl_apply')</button>
                         </div>
                     </form>
                 </div>

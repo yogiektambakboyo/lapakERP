@@ -7,8 +7,8 @@
     <div class="panel-heading  bg-teal-600">
       <div class="panel-title"><h4 class="">Purchase Order {{ $purchase->purchase_no }}</h4></div>
       <div class="">
-        <a href="{{ route('purchaseorders.index') }}" class="btn btn-default">Cancel</a>
-        <button type="button" id="save-btn" class="btn btn-info">Save</button>
+        <a href="{{ route('purchaseorders.index') }}" class="btn btn-default">@lang('general.lbl_cancel')</a>
+        <button type="button" id="save-btn" class="btn btn-info">@lang('general.lbl_save')</button>
       </div>
     </div>
     <div class="panel-body bg-white text-black">
@@ -35,7 +35,7 @@
               <div class="col-md-2">
                 <select class="form-control" 
                     name="branch_id" id="branch_id" required>
-                    <option value="">Select Branch</option>
+                    <option value="">@lang('general.lbl_branchselect')</option>
                     @foreach($branchs as $branch)
                         <option value="{{ $branch->id }}"  {{ $purchase->branch_id == $branch->id ? 'selected' : '' }}>{{ $branch->remark }} </option>
                     @endforeach
@@ -69,7 +69,7 @@
                 <label class="form-label col-form-label">Product</label>
                 <select class="form-control" 
                       name="input_product_id" id="input_product_id" required>
-                      <option value="">Select Product</option>
+                      <option value="">@lang('general.lbl_productselect')</option>
                   </select>
               </div>
 
@@ -141,7 +141,7 @@
                 <th scope="col" width="5%">Qty</th>
                 <th scope="col" width="10%">Disc</th>
                 <th scope="col" width="10%">Total</th>
-                <th scope="col" width="20%">Action</th>   
+                <th scope="col" width="20%">@lang('general.lbl_action')</th>  
               </tr>
               </thead>
               <tbody>

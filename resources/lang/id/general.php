@@ -27,6 +27,10 @@ return [
     "lbl_joindate" => "Tgl Bergabung",
     "lbl_joindatebefore" => "Tgl Bergabung (Sebelum)",
     "lbl_action" => "Aksi",
+    "lbl_year" => "Tahun",
+    "lbl_years" => "Tahun",
+    "lbl_yearselect" => "Pilih Tahun",
+    "lbl_values" => "Nilai",
 
     "lbl_show" => "Lihat",
     "lbl_edit" => "Ubah",
@@ -57,6 +61,7 @@ return [
     "lbl_branchselect" => "Pilih Cabang",
     "lbl_allbranch" => "Semua Cabang",
     "lbl_alljobtitle" => "Semua Jabatan",
+    "lbl_jobtitleselect" => "Pilih Jabatan",
     "lbl_apply" => "Terapkan",
 
     "lbl_product_new" => "Produk Baru",
@@ -71,6 +76,7 @@ return [
     "lbl_add_category_new" => "Tambah Kategori Baru",
     "lbl_add_distribution_new" => "Tambah Distribusi Baru",
     "lbl_add_point_new" => "Tambah Poin Baru",
+    "lbl_add_point_new" => "Tambah Poin Baru",
 
     "lbl_sure" => "Apakah anda yakin?",
     "lbl_sure_title" => "Anda akan menghapus data ",
@@ -80,6 +86,9 @@ return [
     "lbl_msg_failed" => "Ada sesuatu yang salah",
     "lbl_ingredient" => "Bahan Baku",
     "lbl_ingredient_add" => "Tambah Bahan Baku",
+    "lbl_commision_add" => "Tambah Komisi Baru",
+    "lbl_price_adj_add" => "Tambah Penyesuaian Harga Baru",
+    "lbl_commision_year_add" => "Tambah Komisi Tahun Baru",
 
     "lbl_product_price" => "Harga Produk",
     "lbl_product_name" => "Nama Produk",
@@ -90,7 +99,25 @@ return [
     "lbl_product_stock" => "Stok Produk",
 
     "lbl_uom" => "Satuan",
+    "lbl_price_adjustment" => "Penyesuaian Harga",
+    "lbl_date_start" => "Tgl Mulai",
+    "lbl_date_end" => "Tgl Berakhir",
 
     "lbl_product_distribution" => "Distribusi",
     "lbl_point" => "Poin",
+    "lbl_commision" => "Komisi",
+    "lbl_creator_fee" => "Komisi Kasir",
+    "lbl_terapist_fee" => "Komisi Terapis",
+    "lbl_referral_fee" => "Komisi Penjual",
+    "lbl_commision_year" => "Komisi Berdasarkan Tahun",
+
+    "lbl_invoice" => "Faktur Jual",
+    "lbl_invoice_no" => "No. Faktur Jual",
+    "invoice_no" => "No. Faktur Jual",
+    "lbl_dated" => "Tanggal",
+    "lbl_total_discount" => "Total Diskon",
+    "lbl_total_payment" => "Total Payment",
+    "lbl_total_customer" => "Total Pelanggan",
+    "lbl_invoice_title" => "Atur data faktur anda disini, data yang tampil adalah 7 hari kebelakang. Silahkan gunakan Saring untuk data lebih lengkap",
+
 ];

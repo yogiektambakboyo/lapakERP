@@ -13,8 +13,8 @@
                 <div class="col-md-8"> 	
                     <form action="{{ route('branchs.search') }}" method="GET" class="row row-cols-lg-auto g-3 align-items-center">
                         <div class="col-12"><input type="text" class="form-control  form-control-lg" name="search" placeholder="Find Branch . . ." value="{{ $keyword }}"></div>
-                        <div class="col-12"><input type="submit" class="btn btn-secondary" value="Search" name="submit"></div>   
-                        <div class="col-12"><input type="submit" class="btn btn-success" value="Export Excel" name="export"></div>   
+                        <div class="col-12"><input type="submit" class="btn btn-secondary" value="@lang('general.btn_search')" name="submit"></div>   
+                        <div class="col-12"><input type="submit" class="btn btn-success" value="@lang('general.btn_export')" name="export"></div>   
                     </form>
                 </div>
             </div>
@@ -46,7 +46,7 @@
                         <td>{{ $branch->address }}</td>
                         <td>{{ $branch->city }}</td>
                         <td>{{ $branch->abbr }}</td>
-                        <td><a href="{{ route('branchs.edit', $branch->id) }}" class="btn btn-info btn-sm  {{ $act_permission->allow_edit==1?'':'d-none' }} ">Edit</a></td>
+                        <td><a href="{{ route('branchs.edit', $branch->id) }}" class="btn btn-info btn-sm  {{ $act_permission->allow_edit==1?'':'d-none' }} ">@lang('general.lbl_edit')</a></td>
                         <td>
                             <a onclick="showConfirm({{ $branch->id }}, '{{ $branch->remark }}')" class="btn btn-danger btn-sm  {{ $act_permission->allow_delete==1?'':'d-none' }} ">Delete</a>
                         </td>

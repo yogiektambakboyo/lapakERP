@@ -33,7 +33,7 @@
                     <tr>
                         <th>{{ $type->id }}</th>
                         <td>{{ $type->remark }}</td>
-                        <td><a href="{{ route('types.edit', $type->id) }}" class="btn btn-info btn-sm">Edit</a></td>
+                        <td><a href="{{ route('types.edit', $type->id) }}" class="btn btn-info btn-sm">@lang('general.lbl_edit')</a></td>
                         <td>
                             {!! Form::open(['method' => 'DELETE','route' => ['types.destroy', $type->id],'style'=>'display:inline']) !!}
                             {!! Form::submit('Delete', ['class' => 'btn btn-danger btn-sm']) !!}

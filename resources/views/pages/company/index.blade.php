@@ -35,7 +35,7 @@
                         <td>{{ $company->city }}</td>
                         <td>{{ $company->email }}</td>
                         <td>{{ $company->phone_no }}</td>
-                        <td><a href="{{ route('company.edit', $company->id) }}" class="btn btn-info btn-sm  {{ $act_permission->allow_edit==1?'':'d-none' }} ">Edit</a></td> 
+                        <td><a href="{{ route('company.edit', $company->id) }}" class="btn btn-info btn-sm  {{ $act_permission->allow_edit==1?'':'d-none' }} ">@lang('general.lbl_edit')</a></td> 
                     </tr>
             </tbody>
         </table>
