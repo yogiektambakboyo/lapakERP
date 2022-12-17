@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Carbon\Carbon;
 use App\Models\User;
 use App\Models\Product;
-use App\Models\ProductPoint;
+use App\Models\ProductDistribution;
 use Illuminate\Http\Request;
 use Spatie\Permission\Models\Role;
 use App\Models\Branch;
@@ -14,6 +14,7 @@ use App\Models\Department;
 use App\Models\ProductType;
 use App\Models\ProductBrand;
 use App\Models\ProductPrice;
+use App\Models\ProductCategory;
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
 use Spatie\Permission\Models\Permission;
@@ -27,7 +28,8 @@ use App\Models\Company;
 use App\Http\Controllers\Lang;
 
 
-class ProductsPointController extends Controller
+
+class ServicesDistributionController extends Controller
 {
     /**
      * Display all products
@@ -35,7 +37,7 @@ class ProductsPointController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-    private $data,$act_permission,$module="productspoint",$id=1;
+    private $data,$act_permission,$module="servicesdistribution",$id=1;
 
     public function __construct()
     {
@@ -50,8 +52,7 @@ class ProductsPointController extends Controller
                 select 0 as allow_create,0 as allow_delete,0 as allow_show,count(1) as allow_edit from permissions p  join role_has_permissions rp on rp.permission_id = p.id where rp.role_id = 1 and p.name like '%.edit' and p.name like '".$this->module.".%'
             ) a
         ");
-        
-        
+
     }
 
     public function index(Request $request) 
@@ -67,11 +68,11 @@ class ProductsPointController extends Controller
                     ->join('product_type as pt','pt.id','=','product_sku.type_id')
                     ->join('product_category as pc','pc.id','=','product_sku.category_id')
                     ->join('product_brand as pb','pb.id','=','product_sku.brand_id')
-                    ->join('product_point as pr','pr.product_id','=','product_sku.id')
+                    ->join('product_distribution as pr','pr.product_id','=','product_sku.id')
                     ->join('branch as bc','bc.id','=','pr.branch_id')
-                    ->where('pt.id','=','1')
-                    ->paginate(10,['product_sku.id','product_sku.remark as product_name','pr.branch_id','bc.remark as branch_name','pb.remark as product_brand','pr.point']);
-        return view('pages.productspoint.index',['company' => Company::get()->first()], compact('products','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
+                    ->where('pt.id','=','2')
+                    ->paginate(10,['product_sku.id','product_sku.remark as product_name','pr.branch_id','bc.remark as branch_name','pb.remark as product_brand','pr.active']);
+        return view('pages.servicesdistribution.index', ['company' => Company::get()->first()],compact('products','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
     }
 
     public function search(Request $request) 
@@ -92,12 +93,12 @@ class ProductsPointController extends Controller
                         ->join('product_type as pt','pt.id','=','product_sku.type_id')
                         ->join('product_category as pc','pc.id','=','product_sku.category_id')
                         ->join('product_brand as pb','pb.id','=','product_sku.brand_id')
-                        ->join('product_point as pr','pr.product_id','=','product_sku.id')
+                        ->join('product_price as pr','pr.product_id','=','product_sku.id')
                         ->join('branch as bc','bc.id','=','pr.branch_id')
                         ->whereRaw($whereclause)
-                        ->where('pt.id','=','1')
-                        ->paginate(10,['product_sku.id','product_sku.remark as product_name','pr.branch_id','bc.remark as branch_name','pr.point as point','pb.remark as product_brand']);           
-            return view('pages.productspoint.index',['company' => Company::get()->first()], compact('products','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
+                        ->where('pt.id','=','2')
+                        ->paginate(10,['product_sku.id','product_sku.remark as product_name','pr.branch_id','bc.remark as branch_name','pr.price as product_price','pb.remark as product_brand']);           
+            return view('pages.servicesdistribution.index',['company' => Company::get()->first()], compact('products','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
         }
     }
 
@@ -120,9 +121,11 @@ class ProductsPointController extends Controller
 
         $user  = Auth::user();
         $data = $this->data;
-        return view('pages.productspoint.create',[
-            'products' => DB::select('select ps.id,ps.remark from product_sku as ps where ps.type_id=1 order by remark;'),
-            'data' => $data, 'company' => Company::get()->first(),
+        $active = ['1','0'];
+        return view('pages.servicesdistribution.create',[
+            'products' => DB::select('select ps.id,ps.remark from product_sku as ps where ps.type_id=2 order by remark;'),
+            'data' => $data,
+            'active' => $active, 'company' => Company::get()->first(),
             'branchs' => Branch::join('users_branch as ub','ub.branch_id','=','branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']),
         ]);
     }
@@ -130,26 +133,26 @@ class ProductsPointController extends Controller
     /**
      * Store a newly created user
      * 
-     * @param ProductPoint $productpoint
+     * @param ProductDistribution $productdistribution
      * @param Request $request
      * 
      * @return \Illuminate\Http\Response
      */
-    public function store(ProductPoint $productpoint, Request $request) 
+    public function store(ProductDistribution $productdistribution, Request $request) 
     {
         //For demo purposes only. When creating user or inviting a user
         // you should create a generated random password and email it to the user
     
         $user = Auth::user();
-        $productpoint->create(
+        $productdistribution->create(
             array_merge(
-                ['point' => $request->get('point') ],
+                ['active' => $request->get('active') ],
                 ['product_id' => $request->get('product_id') ],
                 ['branch_id' => $request->get('branch_id') ],
                 ['created_by' => $user->id ],
             )
         );
-        return redirect()->route('productspoint.index')
+        return redirect()->route('productsdistribution.index')
             ->withSuccess(__('Product distribution created successfully.'));
     }
 
@@ -174,7 +177,7 @@ class ProductsPointController extends Controller
         ->where('product_sku.id',$product->id)
         ->get(['product_sku.id as product_id','product_sku.abbr','product_sku.remark as product_name','pt.remark as product_type','pc.remark as product_category','pb.remark as product_brand'])->first();
 
-        return view('pages.productspoint.show', [
+        return view('pages.servicesdistribution.show', [
             'product' => $products ,
             'data' => $data, 'company' => Company::get()->first(),
         ]);
@@ -183,7 +186,7 @@ class ProductsPointController extends Controller
     /**
      * Edit user data
      * 
-     * @param ProductPoint $product
+     * @param ProductDistribution $product
      * 
      * @return \Illuminate\Http\Response
      */
@@ -199,23 +202,24 @@ class ProductsPointController extends Controller
         $product = Product::join('product_type as pt','pt.id','=','product_sku.type_id')
         ->join('product_category as pc','pc.id','=','product_sku.category_id')
         ->join('product_brand as pb','pb.id','=','product_sku.brand_id')
-        ->join('product_point as pr','pr.product_id','=','product_sku.id')
+        ->join('product_distribution as pr','pr.product_id','=','product_sku.id')
         ->join('branch as bc','bc.id','=','pr.branch_id')
         ->where('product_sku.id',$product_id)
         ->where('bc.id','=',$branch_id)
-        ->get(['product_sku.id as id','product_sku.abbr','product_sku.brand_id','product_sku.category_id','product_sku.type_id','product_sku.remark as product_name','pt.remark as product_type','pc.remark as product_category','pb.remark as product_brand','pr.branch_id','bc.remark as branch_name','pr.point'])->first();
-        return view('pages.productspoint.edit', [
+        ->get(['product_sku.id as id','product_sku.abbr','product_sku.brand_id','product_sku.category_id','product_sku.type_id','product_sku.remark as product_name','pt.remark as product_type','pc.remark as product_category','pb.remark as product_brand','pr.branch_id','bc.remark as branch_name','pr.active as active'])->first();
+        return view('pages.servicesdistribution.edit', [
             'branchs' => Branch::join('users_branch as ub','ub.branch_id','=','branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']),
             'data' => $data,
-            'product' => $product, 'company' => Company::get()->first(),
-            'products' => Product::get(),
+            'active' => $active,
+            'product' => $product,
+            'products' => Product::where('type_id','=','1')->get(), 'company' => Company::get()->first(),
         ]);
     }
 
     /**
      * Update user data
      * 
-     * @param ProductPoint $product
+     * @param ProductDistribution $product
      * @param Request $request
      * 
      * @return \Illuminate\Http\Response
@@ -223,28 +227,28 @@ class ProductsPointController extends Controller
     public function update(String $branch,String $product, Request $request) 
     {
         $user = Auth::user();
-        ProductPoint::where('product_id','=',$product)->where('branch_id','=',$branch)->update(
+        ProductDistribution::where('product_id','=',$product)->where('branch_id','=',$branch)->update(
             array_merge(
-                ['point' => $request->get('point') ],
+                ['active' => $request->get('active') ],
             )
         );
         
-        return redirect()->route('productspoint.index')
+        return redirect()->route('productsdistribution.index')
             ->withSuccess(__('Product distribution updated successfully.'));
     }
 
     /**
      * Delete user data
      * 
-     * @param ProductPoint $user
+     * @param ProductDistribution $user
      * 
      * @return \Illuminate\Http\Response
      */
     public function destroy(String $branch,String $product) 
     {
-        ProductPoint::where('product_id','=',$product)->where('branch_id','=',$branch)->delete();
-        return redirect()->route('productspoint.index')
-            ->withSuccess(__('Product point deleted successfully.'));
+        ProductDistribution::where('product_id','=',$product)->where('branch_id','=',$branch)->delete();
+        return redirect()->route('productsdistribution.index')
+            ->withSuccess(__('Product distribution deleted successfully.'));
     }
 
     public function getpermissions($role_id){
@@ -273,7 +277,7 @@ class ProductsPointController extends Controller
                         'caret' => true,
                         'sub_menu' => []
                     ],
-		   [
+		            [
                         'icon' => 'fa fa-box',
                         'title' => \Lang::get('home.service_management'),
                         'url' => 'javascript:;',

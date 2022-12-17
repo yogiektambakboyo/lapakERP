@@ -5,24 +5,22 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Spatie\Permission\Models\Permission;
-use App\Models\Room;
-use App\Models\Uom;
+use App\Models\Category;
 use App\Models\Branch;
 use Illuminate\Support\Facades\DB;
-use Auth;
 use App\Models\Company;
+use Auth;
 use App\Http\Controllers\Lang;
 
 
-
-class UomController extends Controller
+class CategoriesServiceController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    private $data,$act_permission,$module="uom",$id=1;
+    private $data,$act_permission,$module="categoriesservice",$id=1;
 
     public function __construct()
     {
@@ -37,7 +35,6 @@ class UomController extends Controller
                 select 0 as allow_create,0 as allow_delete,0 as allow_show,count(1) as allow_edit from permissions p  join role_has_permissions rp on rp.permission_id = p.id where rp.role_id = 1 and p.name like '%.edit' and p.name like '".$this->module.".%'
             ) a
         ");
-        
     }
 
 
@@ -47,11 +44,11 @@ class UomController extends Controller
         $id = $user->roles->first()->id;
         $this->getpermissions($id);
 
-        $uoms = Uom::where('type_id','=','1')->paginate(10,['uom.id','uom.remark']);
+        $categories = Category::where('type_id','=','2')->orderBy('remark')->paginate(10,['product_category.id','product_category.remark']);
         $data = $this->data;
 
-        return view('pages.uoms.index', [
-            'uoms' => $uoms,'data' => $data,'company' => Company::get()->first()
+        return view('pages.categoriesservice.index', [
+            'categories' => $categories,'data' => $data, 'company' => Company::get()->first()
         ])->with('i', ($request->input('page', 1) - 1) * 5);
     }
 
@@ -67,8 +64,8 @@ class UomController extends Controller
         $this->getpermissions($id);
 
         $data = $this->data;
-        return view('pages.uoms.create',[
-            'data' => $data,'company' => Company::get()->first()
+        return view('pages.categoriesservice.create',[
+            'data' => $data, 'company' => Company::get()->first(),
         ]);
     }
 
@@ -81,30 +78,30 @@ class UomController extends Controller
     public function store(Request $request)
     {   
         $request->validate([
-            'remark' => 'required|unique:uom'
+            'remark' => 'required|unique:product_category'
         ]);
 
-        Uom::create($request->all());
+        Category::create($request->all());
 
-        return redirect()->route('uoms.index')
-            ->withSuccess(__('UOM created successfully.'));
+        return redirect()->route('categories.index')
+            ->withSuccess(__('Category created successfully.'));
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  Uom  $uom
+     * @param  Category  $category
      * @return \Illuminate\Http\Response
      */
-    public function edit(Uom $uom)
+    public function edit(Category $category)
     {
         $user = Auth::user();
         $id = $user->roles->first()->id;
         $this->getpermissions($id);
 
         $data = $this->data;
-        return view('pages.uoms.edit', [
-            'uom' => $uom ,'data' => $data ,'company' => Company::get()->first()
+        return view('pages.categoriesservice.edit', [
+            'category' => $category ,'data' => $data , 'company' => Company::get()->first()
         ]);
     }
 
@@ -112,19 +109,19 @@ class UomController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  Uom  $uom
+     * @param  Category  $category
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Uom $uom)
+    public function update(Request $request, Category $category)
     {
         $request->validate([
-            'remark' => 'required|unique:uom,remark,'.$uom->id
+            'remark' => 'required|unique:product_category,remark,'.$category->id
         ]);
 
-        $uom->update($request->all());
+        $category->update($request->all());
 
-        return redirect()->route('uoms.index')
-            ->withSuccess(__('UOM updated successfully.'));
+        return redirect()->route('categories.index')
+            ->withSuccess(__('Category updated successfully.'));
     }
 
     /**
@@ -133,12 +130,12 @@ class UomController extends Controller
      * @param  \App\Models\Post  $post
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Uom $uom)
+    public function destroy(Category $category)
     {
-        $uom->delete();
+        $category->delete();
 
-        return redirect()->route('uoms.index')
-            ->withSuccess(__('UOM deleted successfully.'));
+        return redirect()->route('categories.index')
+            ->withSuccess(__('Category deleted successfully.'));
     }
 
     public function getpermissions($role_id){
@@ -167,7 +164,7 @@ class UomController extends Controller
                         'caret' => true,
                         'sub_menu' => []
                     ],
-		            [
+		   [
                         'icon' => 'fa fa-box',
                         'title' => \Lang::get('home.service_management'),
                         'url' => 'javascript:;',

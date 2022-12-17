@@ -330,6 +330,21 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
         });
 
         /**
+         * Service Distribution
+         */
+        Route::group(['prefix' => 'servicesdistribution'], function() {
+            Route::get('/', 'ServicesDistributionController@index')->name('servicesdistribution.index');
+            Route::get('/create', 'ServicesDistributionController@create')->name('servicesdistribution.create');
+            Route::post('/create', 'ServicesDistributionController@store')->name('servicesdistribution.store');
+            Route::get('/search', 'ServicesDistributionController@search')->name('servicesdistribution.search');
+            Route::get('/{branch}/{product}/show', 'ServicesDistributionController@show')->name('servicesdistribution.show');
+            Route::get('/{branch}/{product}/edit', 'ServicesDistributionController@edit')->name('servicesdistribution.edit');
+            Route::patch('/{branch}/{product}/update', 'ServicesDistributionController@update')->name('servicesdistribution.update');
+            Route::delete('/{branch}/{product}/delete', 'ServicesDistributionController@destroy')->name('servicesdistribution.destroy');
+            Route::get('/export', 'ServicesDistributionController@export')->name('servicesdistribution.export');
+        });
+
+        /**
          * Product Commisions
          */
         Route::group(['prefix' => 'productscommision'], function() {
@@ -374,6 +389,21 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
             Route::patch('/{branch}/{product}/update', 'ProductsPointController@update')->name('productspoint.update');
             Route::delete('/{branch}/{product}/delete', 'ProductsPointController@destroy')->name('productspoint.destroy');
             Route::get('/export', 'ProductsPointController@export')->name('productspoint.export');
+        });
+
+                /**
+         * Product Point
+         */
+        Route::group(['prefix' => 'servicespoint'], function() {
+            Route::get('/', 'ServicesPointController@index')->name('servicespoint.index');
+            Route::get('/create', 'ServicesPointController@create')->name('servicespoint.create');
+            Route::post('/create', 'ServicesPointController@store')->name('servicespoint.store');
+            Route::get('/search', 'ServicesPointController@search')->name('servicespoint.search');
+            Route::get('/{branch}/{product}/show', 'ServicesPointController@show')->name('servicespoint.show');
+            Route::get('/{branch}/{product}/edit', 'ServicesPointController@edit')->name('servicespoint.edit');
+            Route::patch('/{branch}/{product}/update', 'ServicesPointController@update')->name('servicespoint.update');
+            Route::delete('/{branch}/{product}/delete', 'ServicesPointController@destroy')->name('servicespoint.destroy');
+            Route::get('/export', 'ServicesPointController@export')->name('servicespoint.export');
         });
 
 
@@ -472,6 +502,19 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
             Route::delete('/{uom}/delete', 'UomController@destroy')->name('uoms.destroy');
         });
 
+        /**
+         *  UOM Service
+         */
+        Route::group(['prefix' => 'uomservice'], function() {
+            Route::get('/', 'UomServiceController@index')->name('uomservice.index');
+            Route::get('/create', 'UomServiceController@create')->name('uomservice.create');
+            Route::post('/create', 'UomServiceController@store')->name('uomservice.store');
+            Route::get('/{uom}/show', 'UomServiceController@show')->name('uomservice.show');
+            Route::get('/{uom}/edit', 'UomServiceController@edit')->name('uomservice.edit');
+            Route::patch('/{uom}/update', 'UomServiceController@update')->name('uomservice.update');
+            Route::delete('/{uom}/delete', 'UomServiceController@destroy')->name('uomservice.destroy');
+        });
+
 
         /**
          *  Category
@@ -484,6 +527,19 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
             Route::get('/{category}/edit', 'CategoriesController@edit')->name('categories.edit');
             Route::patch('/{category}/update', 'CategoriesController@update')->name('categories.update');
             Route::delete('/{category}/delete', 'CategoriesController@destroy')->name('categories.destroy');
+        });
+
+        /**
+         *  Category Service
+         */
+        Route::group(['prefix' => 'categoriesservice'], function() {
+            Route::get('/', 'CategoriesServiceController@index')->name('categoriesservice.index');
+            Route::get('/create', 'CategoriesServiceController@create')->name('categoriesservice.create');
+            Route::post('/create', 'CategoriesServiceController@store')->name('categoriesservice.store');
+            Route::get('/{category}/show', 'CategoriesServiceController@show')->name('categoriesservice.show');
+            Route::get('/{category}/edit', 'CategoriesServiceController@edit')->name('categoriesservice.edit');
+            Route::patch('/{category}/update', 'CategoriesServiceController@update')->name('categoriesservice.update');
+            Route::delete('/{category}/delete', 'CategoriesServiceController@destroy')->name('categoriesservice.destroy');
         });
 
 

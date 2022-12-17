@@ -27,7 +27,7 @@ use App\Models\Company;
 use App\Http\Controllers\Lang;
 
 
-class ProductsPointController extends Controller
+class ServicesPointController extends Controller
 {
     /**
      * Display all products
@@ -35,7 +35,7 @@ class ProductsPointController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-    private $data,$act_permission,$module="productspoint",$id=1;
+    private $data,$act_permission,$module="servicespoint",$id=1;
 
     public function __construct()
     {
@@ -69,9 +69,9 @@ class ProductsPointController extends Controller
                     ->join('product_brand as pb','pb.id','=','product_sku.brand_id')
                     ->join('product_point as pr','pr.product_id','=','product_sku.id')
                     ->join('branch as bc','bc.id','=','pr.branch_id')
-                    ->where('pt.id','=','1')
+                    ->where('pt.id','=','2')
                     ->paginate(10,['product_sku.id','product_sku.remark as product_name','pr.branch_id','bc.remark as branch_name','pb.remark as product_brand','pr.point']);
-        return view('pages.productspoint.index',['company' => Company::get()->first()], compact('products','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
+        return view('pages.servicespoint.index',['company' => Company::get()->first()], compact('products','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
     }
 
     public function search(Request $request) 
@@ -95,9 +95,9 @@ class ProductsPointController extends Controller
                         ->join('product_point as pr','pr.product_id','=','product_sku.id')
                         ->join('branch as bc','bc.id','=','pr.branch_id')
                         ->whereRaw($whereclause)
-                        ->where('pt.id','=','1')
+                        ->where('pt.id','=','2')
                         ->paginate(10,['product_sku.id','product_sku.remark as product_name','pr.branch_id','bc.remark as branch_name','pr.point as point','pb.remark as product_brand']);           
-            return view('pages.productspoint.index',['company' => Company::get()->first()], compact('products','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
+            return view('pages.servicespoint.index',['company' => Company::get()->first()], compact('products','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
         }
     }
 
@@ -120,8 +120,8 @@ class ProductsPointController extends Controller
 
         $user  = Auth::user();
         $data = $this->data;
-        return view('pages.productspoint.create',[
-            'products' => DB::select('select ps.id,ps.remark from product_sku as ps where ps.type_id=1 order by remark;'),
+        return view('pages.servicespoint.create',[
+            'products' => DB::select('select ps.id,ps.remark from product_sku as ps where ps.type_id=2 order by remark;'),
             'data' => $data, 'company' => Company::get()->first(),
             'branchs' => Branch::join('users_branch as ub','ub.branch_id','=','branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']),
         ]);
@@ -174,7 +174,7 @@ class ProductsPointController extends Controller
         ->where('product_sku.id',$product->id)
         ->get(['product_sku.id as product_id','product_sku.abbr','product_sku.remark as product_name','pt.remark as product_type','pc.remark as product_category','pb.remark as product_brand'])->first();
 
-        return view('pages.productspoint.show', [
+        return view('pages.servicespoint.show', [
             'product' => $products ,
             'data' => $data, 'company' => Company::get()->first(),
         ]);
@@ -204,7 +204,7 @@ class ProductsPointController extends Controller
         ->where('product_sku.id',$product_id)
         ->where('bc.id','=',$branch_id)
         ->get(['product_sku.id as id','product_sku.abbr','product_sku.brand_id','product_sku.category_id','product_sku.type_id','product_sku.remark as product_name','pt.remark as product_type','pc.remark as product_category','pb.remark as product_brand','pr.branch_id','bc.remark as branch_name','pr.point'])->first();
-        return view('pages.productspoint.edit', [
+        return view('pages.servicespoint.edit', [
             'branchs' => Branch::join('users_branch as ub','ub.branch_id','=','branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']),
             'data' => $data,
             'product' => $product, 'company' => Company::get()->first(),

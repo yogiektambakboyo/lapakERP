@@ -70,6 +70,7 @@ class ProductsStockController extends Controller
                     ->join('product_brand as pb','pb.id','=','product_sku.brand_id')
                     ->join('product_stock as pr','pr.product_id','=','product_sku.id')
                     ->join('branch as bc','bc.id','=','pr.branch_id')
+                    ->where('pt.id','=','1')
                     ->paginate(10,['product_sku.id','product_sku.remark as product_name','pr.branch_id','bc.remark as branch_name','pr.qty as product_qty','pb.remark as product_brand']);
         return view('pages.productsstock.index', ['company' => Company::get()->first()],compact('products','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
     }
@@ -95,6 +96,7 @@ class ProductsStockController extends Controller
                         ->join('product_price as pr','pr.product_id','=','product_sku.id')
                         ->join('branch as bc','bc.id','=','pr.branch_id')
                         ->whereRaw($whereclause)
+                        ->where('pt.id','=','1')
                         ->paginate(10,['product_sku.id','product_sku.remark as product_name','pr.branch_id','bc.remark as branch_name','pr.price as product_price','pb.remark as product_brand']);           
             return view('pages.productsstock.index',['company' => Company::get()->first()], compact('products','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
         }
@@ -120,7 +122,7 @@ class ProductsStockController extends Controller
         $user  = Auth::user();
         $data = $this->data;
         return view('pages.productsstock.create',[
-            'products' => DB::select('select ps.id,ps.remark from product_sku as ps;'),
+            'products' => DB::select('select ps.id,ps.remark from product_sku as ps where type_id = 1 order by ps.remark;'),
             'data' => $data, 'company' => Company::get()->first(),
             'branchs' => Branch::join('users_branch as ub','ub.branch_id','=','branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']),
         ]);
@@ -205,7 +207,7 @@ class ProductsStockController extends Controller
             'branchs' => Branch::join('users_branch as ub','ub.branch_id','=','branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']),
             'data' => $data,
             'product' => $product, 'company' => Company::get()->first(),
-            'products' => Product::get(),
+            'products' => Product::where('type_id','=','1')->get(),
         ]);
     }
 
@@ -270,7 +272,7 @@ class ProductsStockController extends Controller
                         'caret' => true,
                         'sub_menu' => []
                     ],
-		   [
+		            [
                         'icon' => 'fa fa-box',
                         'title' => \Lang::get('home.service_management'),
                         'url' => 'javascript:;',

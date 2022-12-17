@@ -15,14 +15,14 @@ use App\Http\Controllers\Lang;
 
 
 
-class UomController extends Controller
+class UomServiceController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    private $data,$act_permission,$module="uom",$id=1;
+    private $data,$act_permission,$module="uomservice",$id=1;
 
     public function __construct()
     {
@@ -47,10 +47,10 @@ class UomController extends Controller
         $id = $user->roles->first()->id;
         $this->getpermissions($id);
 
-        $uoms = Uom::where('type_id','=','1')->paginate(10,['uom.id','uom.remark']);
+        $uoms = Uom::where('type_id','=','2')->paginate(10,['uom.id','uom.remark']);
         $data = $this->data;
 
-        return view('pages.uoms.index', [
+        return view('pages.uomservice.index', [
             'uoms' => $uoms,'data' => $data,'company' => Company::get()->first()
         ])->with('i', ($request->input('page', 1) - 1) * 5);
     }
@@ -67,7 +67,7 @@ class UomController extends Controller
         $this->getpermissions($id);
 
         $data = $this->data;
-        return view('pages.uoms.create',[
+        return view('pages.uomservice.create',[
             'data' => $data,'company' => Company::get()->first()
         ]);
     }
@@ -86,7 +86,7 @@ class UomController extends Controller
 
         Uom::create($request->all());
 
-        return redirect()->route('uoms.index')
+        return redirect()->route('uomservice.index')
             ->withSuccess(__('UOM created successfully.'));
     }
 
@@ -103,7 +103,7 @@ class UomController extends Controller
         $this->getpermissions($id);
 
         $data = $this->data;
-        return view('pages.uoms.edit', [
+        return view('pages.uomservice.edit', [
             'uom' => $uom ,'data' => $data ,'company' => Company::get()->first()
         ]);
     }
@@ -123,7 +123,7 @@ class UomController extends Controller
 
         $uom->update($request->all());
 
-        return redirect()->route('uoms.index')
+        return redirect()->route('uomservice.index')
             ->withSuccess(__('UOM updated successfully.'));
     }
 
@@ -137,7 +137,7 @@ class UomController extends Controller
     {
         $uom->delete();
 
-        return redirect()->route('uoms.index')
+        return redirect()->route('uomservice.index')
             ->withSuccess(__('UOM deleted successfully.'));
     }
 

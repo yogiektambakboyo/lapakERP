@@ -2,7 +2,9 @@
 return [
     "title" => "Pengguna",
     "label" => "Kelola data anda disini",
+    "lbl_title" => "Kelola data anda disini",
     "label_search" => "Cari. . .",
+    "lbl_search" => "Cari. . .",
     "btn_search" => "Cari",
     "btn_filter" => "Saring",
     "btn_export" => "Export Excel",
@@ -10,6 +12,7 @@ return [
 
     "product" => "Produk",
     "productselect" => "Pilih Produk",
+    "lbl_productselect" => "Pilih Produk",
     "service" => "Perawatan",
     "serviceselect" => "Pilih Perawatan",
     "category" => "Kategori",
@@ -17,6 +20,7 @@ return [
     "tipe" => "Tipe",
 
     "lbl_name" => "Nama",
+    "lbl_active" => "Aktif",
     "lbl_employeeid" => "ID Staff",
     "lbl_jobtitle" => "Jabatan",
     "lbl_appaccess" => "Hak Akses",
@@ -41,6 +45,9 @@ return [
     "lbl_brandselect" => "Pilih Merek",
     "lbl_uom" => "Satuan",
     "lbl_uomselect" => "Pilih Satuan",
+    "lbl_statusselect" => "Pilih Status",
+    "lbl_uomedit" => "Ubah Satuan",
+    "lbl_categoryedit" => "Ubah Kategori",
     "lbl_photo" => "Foto",
     "lbl_qty" => "Jumlah",
     "lbl_information" => "Informasi",
@@ -59,6 +66,11 @@ return [
     "lbl_add_price_new" => "Tambah Harga Produk Baru",
     "lbl_add_service_new" => "Tambah Harga Perawatan Baru",
     "lbl_add_brand_new" => "Tambah Merek Baru",
+    "lbl_add_stock_new" => "Tambah Stok Produk Baru",
+    "lbl_add_uom_new" => "Tambah Satuan Baru",
+    "lbl_add_category_new" => "Tambah Kategori Baru",
+    "lbl_add_distribution_new" => "Tambah Distribusi Baru",
+    "lbl_add_point_new" => "Tambah Poin Baru",
 
     "lbl_sure" => "Apakah anda yakin?",
     "lbl_sure_title" => "Anda akan menghapus data ",
@@ -75,6 +87,10 @@ return [
     "lbl_service_price" => "Harga Perawatan",
     "lbl_service_name" => "Nama Perawatan",
 
-    
+    "lbl_product_stock" => "Stok Produk",
 
+    "lbl_uom" => "Satuan",
+
+    "lbl_product_distribution" => "Distribusi",
+    "lbl_point" => "Poin",
 ];

@@ -12,7 +12,7 @@
                 </div>
             </div>
             <div class="col-md-2">
-                <a href="{{ route('uoms.create') }}" class="btn btn-primary btn-sm float-right"><span class="fa fa-plus-circle"></span>  @lang('general.btn_create')</a>
+                <a href="{{ route('uomservice.create') }}" class="btn btn-primary btn-sm float-right"><span class="fa fa-plus-circle"></span>  @lang('general.btn_create')</a>
             </div>
         </div>
         
@@ -33,9 +33,9 @@
                     <tr>
                         <th>{{ $uom->id }}</th>
                         <td>{{ $uom->remark }}</td>
-                        <td><a href="{{ route('uoms.edit', $uom->id) }}" class="btn btn-info btn-sm">@lang('general.lbl_edit')</a></td>
+                        <td><a href="{{ route('uomservice.edit', $uom->id) }}" class="btn btn-info btn-sm">@lang('general.lbl_edit')</a></td>
                         <td>
-                            {!! Form::open(['method' => 'DELETE','route' => ['uoms.destroy', $uom->id],'style'=>'display:inline']) !!}
+                            {!! Form::open(['method' => 'DELETE','route' => ['uomservice.destroy', $uom->id],'style'=>'display:inline']) !!}
                             {!! Form::submit('Hapus', ['class' => 'btn btn-danger btn-sm']) !!}
                             {!! Form::close() !!}
                         </td>

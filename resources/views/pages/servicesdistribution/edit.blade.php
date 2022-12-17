@@ -1,20 +1,20 @@
 @extends('layouts.default', ['appSidebarSearch' => true])
 
-@section('title', 'Edit Product Point')
+@section('title', 'Edit Distribution')
 
 @section('content')
-<form method="POST" action="{{ route('productspoint.update', [$product->branch_id,$product->id]) }}"  enctype="multipart/form-data">
+<form method="POST" action="{{ route('servicesdistribution.update', [$product->branch_id,$product->id]) }}"  enctype="multipart/form-data">
   @method('patch')
   @csrf
     <div class="bg-light p-4 rounded">
         <div class="row">
           <div class="col-md-10">
-            <h1>@lang('general.product') {{ $product->product_name }}</h1>
+            <h1>@lang('general.lbl_product') {{ $product->product_name }}</h1>
           </div>
           <div class="col-md-2">
             <div class="mt-4">
               <button type="submit" class="btn btn-info">@lang('general.lbl_save')</button>
-              <a href="{{ route('productspoint.index') }}" class="btn btn-default">@lang('general.lbl_cancel')</a>
+              <a href="{{ route('servicesdistribution.index') }}" class="btn btn-default">@lang('general.lbl_cancel')</a>
             </div>
           </div>
         </div>
@@ -51,10 +51,17 @@
             </div>
           </div>
           <div class="row mb-3">
-            <label class="form-label col-form-label col-md-2">@lang('general.lbl_point')</label>
+            <label class="form-label col-form-label col-md-2">@lang('general.lbl_active')</label>
             <div class="col-md-8">
-              <input class="form-control" 
-                    name="point" type="text" value="{{ $product->point }}">
+              <select class="form-control" 
+                    name="active">
+                    <option value="">@lang('general.lbl_activeselect')</option>
+                    @foreach($active as $act)
+                        <option value="{{ $act}}"   {{ ($act == $product->active) 
+                          ? 'selected'
+                          : '' }}>{{  $act }}</option>
+                    @endforeach
+                </select>
             </div>
           </div>
           </div>

@@ -4,10 +4,10 @@
 
 @section('content')
     <div class="bg-light p-4 rounded">
-        <h2>@lang('general.lbl_add_category_new')</h2>
+        <h2>@lang('general.lbl_add_uom_new')</h2>
         <div class="container mt-4">
 
-            <form method="POST" action="{{ route('categories.store') }}">
+            <form method="POST" action="{{ route('uomservice.store') }}">
                 @csrf
                 <div class="mb-3">
                     <label for="remark" class="form-label">@lang('general.lbl_name')</label>
@@ -23,7 +23,7 @@
                 </div>
 
                 <button type="submit" class="btn btn-primary">@lang('general.lbl_save')</button>
-                <a href="{{ route('categories.index') }}" class="btn btn-default">@lang('general.lbl_cancel')</a>
+                <a href="{{ route('uomservice.index') }}" class="btn btn-default">@lang('general.lbl_cancel')</a>
             </form>
         </div>
 

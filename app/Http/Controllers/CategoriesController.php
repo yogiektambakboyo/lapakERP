@@ -20,7 +20,7 @@ class CategoriesController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    private $data,$act_permission,$module="categories",$id=1;
+    private $data,$act_permission,$module="categoriesservice",$id=1;
 
     public function __construct()
     {
@@ -44,7 +44,7 @@ class CategoriesController extends Controller
         $id = $user->roles->first()->id;
         $this->getpermissions($id);
 
-        $categories = Category::paginate(10,['product_category.id','product_category.remark']);
+        $categories = Category::where('type_id','=','1')->orderBy('remark')->paginate(10,['product_category.id','product_category.remark']);
         $data = $this->data;
 
         return view('pages.categories.index', [
