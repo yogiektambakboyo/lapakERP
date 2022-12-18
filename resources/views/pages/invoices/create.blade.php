@@ -354,7 +354,7 @@
                 <label class="col-md-8" id="sub-total"> <h3>0</h3></label>
               </div>
             </div>
-            <div class="col-md-12">
+            <div class="col-md-12 d-none">
               <div class="col-auto text-end">
                 <label class="col-md-2"><h2>@lang('general.lbl_tax') </h2></label>
                 <label class="col-md-8" id="vat-total"> <h3>0</h3></label>
@@ -468,11 +468,16 @@
                         sub_total = sub_total + (((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"]))-(parseFloat(orderList[i]["discount"])));
                         _vat_total = _vat_total + ((((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"]))-(parseFloat(orderList[i]["discount"])))*(parseFloat(orderList[i]["vat_total"])/100));
                         order_total = order_total + ((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"])+((((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"]))-(parseFloat(orderList[i]["discount"])))*(parseFloat(orderList[i]["vat_total"])/100)))-(parseFloat(orderList[i]["discount"]));
-                    if(($('#payment_nominal').val())>order_total){
+                        
+                        if(($('#payment_nominal').val())>order_total){
+                          $('#order_charge').css('color', 'black');
                           $('#order_charge').text(currency((($('#payment_nominal').val())-order_total), { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
                         }else{
                           $('#order_charge').text("Rp. 0");
+                          $('#order_charge').css('color', 'red');
+                          $('#order_charge').text(currency((($('#payment_nominal').val())-order_total), { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
                         }
+
                     }
 
                     $('#result-total').text(currency(order_total, { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
@@ -567,9 +572,12 @@
               order_total = order_total + ((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"])+((((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"]))-(parseFloat(orderList[i]["discount"])))*(parseFloat(orderList[i]["vat_total"])/100)))-(parseFloat(orderList[i]["discount"]));
               
               if(($('#payment_nominal').val())>order_total){
+                $('#order_charge').css('color', 'black');
                 $('#order_charge').text(currency((($('#payment_nominal').val())-order_total), { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
               }else{
                 $('#order_charge').text("Rp. 0");
+                $('#order_charge').css('color', 'red');
+                $('#order_charge').text(currency((($('#payment_nominal').val())-order_total), { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
               }
           }
           $('#result-total').text(currency(order_total, { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
@@ -626,9 +634,12 @@
               _vat_total = _vat_total + ((((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"]))-(parseFloat(orderList[i]["discount"])))*(parseFloat(orderList[i]["vat_total"])/100));
               order_total = order_total + ((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"])+((((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"]))-(parseFloat(orderList[i]["discount"])))*(parseFloat(orderList[i]["vat_total"])/100)))-(parseFloat(orderList[i]["discount"]));
               if(($('#payment_nominal').val())>order_total){
+                $('#order_charge').css('color', 'black');
                 $('#order_charge').text(currency((($('#payment_nominal').val())-order_total), { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
               }else{
                 $('#order_charge').text("Rp. 0");
+                $('#order_charge').css('color', 'red');
+                $('#order_charge').text(currency((($('#payment_nominal').val())-order_total), { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
               }
           }
 
@@ -768,7 +779,40 @@
                 }
               }).then(resp => {
                     if(resp.data.status=="success"){
-                      window.location.href = "{{ route('invoices.index') }}"; 
+                      Swal.fire({
+                        text: "@lang('general.lbl_msg_success_invoice') "+resp.data.message,
+                        title : "@lang('general.lbl_success')",
+                        icon: 'success',
+                        showDenyButton: true,
+                        showCancelButton: true,
+                        cancelButtonColor: '#d33',
+                        denyButtonColor: '#0072b3',
+                        cancelButtonText: "@lang('general.lbl_close')",
+                        confirmButtonText: "@lang('general.lbl_print')",
+                        denyButtonText: "@lang('general.lbl_printspk')",
+                      }).then((result) => {
+                        /* Read more about isConfirmed, isDenied below */
+                        if (result.isConfirmed) {
+                          burl ="{{ route('invoices.print', 'WWWW') }}";
+                          burl = burl.replace('WWWW', resp.data.data)
+                          //window.location.href = burl; 
+                          window.open(
+                            burl,
+                            '_blank' // <- This is what makes it open in a new window.
+                          );
+                          window.location.href = "{{ route('invoices.index') }}"; 
+                        } else if (result.isDenied) {
+                          burl = "{{ route('invoices.printspk', 'WWWW') }}";
+                          burl = burl.replace('WWWW', resp.data.data)
+                          window.open(
+                            burl,
+                            '_blank' // <- This is what makes it open in a new window.
+                          );
+                          window.location.href = "{{ route('invoices.index') }}"; 
+                        }else{
+                          window.location.href = "{{ route('invoices.index') }}"; 
+                        }
+                      })
                     }else{
                       Swal.fire(
                         {
@@ -902,10 +946,15 @@
               order_total = order_total + ((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"])+((((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"]))-(parseFloat(orderList[i]["discount"])))*(parseFloat(orderList[i]["vat_total"])/100)))-(parseFloat(orderList[i]["discount"]));
 
               if(($('#payment_nominal').val())>order_total){
+                $('#order_charge').css('color', 'black');
                 $('#order_charge').text(currency((($('#payment_nominal').val())-order_total), { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
               }else{
                 $('#order_charge').text("Rp. 0");
+                $('#order_charge').css('color', 'red');
+                $('#order_charge').text(currency((($('#payment_nominal').val())-order_total), { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
               }
+
+
           }
 
           $('#result-total').text(currency(order_total, { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
@@ -983,10 +1032,15 @@
               order_total = order_total + ((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"])+((((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"]))-(parseFloat(orderList[i]["discount"])))*(parseFloat(orderList[i]["vat_total"])/100)))-(parseFloat(orderList[i]["discount"]));
 
               if(($('#payment_nominal').val())>order_total){
+                $('#order_charge').css('color', 'black');
                 $('#order_charge').text(currency((($('#payment_nominal').val())-order_total), { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
               }else{
                 $('#order_charge').text("Rp. 0");
+                $('#order_charge').css('color', 'red');
+                $('#order_charge').text(currency((($('#payment_nominal').val())-order_total), { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
               }
+
+
             }
 
             $('#result-total').text(currency(order_total, { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
@@ -1002,10 +1056,15 @@
                   order_total = order_total + ((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"])+((((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"]))-(parseFloat(orderList[i]["discount"])))*(parseFloat(orderList[i]["vat_total"])/100)))-(parseFloat(orderList[i]["discount"]));
 
                   if(($('#payment_nominal').val())>order_total){
+                    $('#order_charge').css('color', 'black');
                     $('#order_charge').text(currency((($('#payment_nominal').val())-order_total), { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
                   }else{
                     $('#order_charge').text("Rp. 0");
+                    $('#order_charge').css('color', 'red');
+                    $('#order_charge').text(currency((($('#payment_nominal').val())-order_total), { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
                   }
+
+
                 }
               });
 
@@ -1238,10 +1297,15 @@
                         order_total = order_total + ((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"])+((((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"]))-(parseFloat(orderList[i]["discount"])))*(parseFloat(orderList[i]["vat_total"])/100)))-(parseFloat(orderList[i]["discount"]));
 
                         if(($('#payment_nominal').val())>order_total){
+                          $('#order_charge').css('color', 'black');
                           $('#order_charge').text(currency((($('#payment_nominal').val())-order_total), { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
                         }else{
                           $('#order_charge').text("Rp. 0");
+                          $('#order_charge').css('color', 'red');
+                          $('#order_charge').text(currency((($('#payment_nominal').val())-order_total), { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
                         }
+
+
                     }
 
                     $('#result-total').text(currency(order_total, { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());

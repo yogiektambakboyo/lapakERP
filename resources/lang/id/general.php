@@ -71,6 +71,7 @@ return [
     "lbl_terapist" => "Terapis",
     "lbl_tax" => "Pajak",
     "lbl_print" => "Cetak",
+    "lbl_printspk" => "Cetak SPK",
 
     "lbl_product_new" => "Produk Baru",
     "lbl_add_product_new" => "Tambah Produk Baru",
@@ -101,6 +102,8 @@ return [
 
     "lbl_product_price" => "Harga Produk",
     "lbl_product_name" => "Nama Produk",
+    "lbl_success" => "Berhasil",
+    "lbl_msg_success_invoice" => "Faktur berhasil dibuat dengan nomor ",
 
     "lbl_service_price" => "Harga Perawatan",
     "lbl_service_name" => "Nama Perawatan",

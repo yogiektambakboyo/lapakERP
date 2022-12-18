@@ -158,7 +158,7 @@
                     <label class="col-md-8" id="sub-total"> <h3>Rp. {{ number_format($invoice->total-$invoice->tax, 0, ',', '.') }}</h3></label>
                   </div>
                 </div>
-                <div class="col-md-12  d-none">
+                <div class="col-md-12">
                   <div class="col-auto text-end">
                     <label class="col-md-2"><h2>@lang('general.lbl_tax') </h2></label>
                     <label class="col-md-8" id="vat-total"> <h3>Rp. {{ number_format($invoice->tax, 0, ',', '.') }}</h3></label>

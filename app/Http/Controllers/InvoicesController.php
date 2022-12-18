@@ -190,7 +190,7 @@ class InvoicesController extends Controller
         join uom m on m.id = pu.uom_id
         join (select * from users_branch u where u.user_id = '".$user->id."' order by branch_id desc limit 1 ) ub on ub.branch_id = pp.branch_id and ub.branch_id=pd.branch_id 
         join product_stock pk on pk.product_id = product_sku.id and pk.branch_id = ub.branch_id
-        where product_sku.active = '1' ");
+        where product_sku.active = '1' order by product_sku.remark");
         return Datatables::of($product)
         ->addColumn('action', function ($product) {
             return '<a href="#"  onclick="addProduct(\''.$product->id.'\',\''.$product->abbr.'\', \''.$product->price.'\', \'0\', \'1\', \''.$product->uom.'\');" class="btn btn-xs btn-primary"><div class="fa-1x"><i class="fas fa-basket-shopping fa-fw"></i></div></a>';
@@ -318,8 +318,8 @@ class InvoicesController extends Controller
 
         $result = array_merge(
             ['status' => 'success'],
-            ['data' => $invoice_no],
-            ['message' => 'Save Successfully'],
+            ['data' => Invoice::where('invoice_no','=',$invoice_no)->get('id')->first()->id ],
+            ['message' => $invoice_no],
         );
 
         SettingsDocumentNumber::where('doc_type','=','Invoice')->where('branch_id','=',$branch->branch_id)->where('period','=','Yearly')->update(
@@ -385,6 +385,32 @@ class InvoicesController extends Controller
             'invoiceDetails' => InvoiceDetail::join('invoice_master as om','om.invoice_no','=','invoice_detail.invoice_no')->join('product_sku as ps','ps.id','=','invoice_detail.product_id')->join('product_uom as u','u.product_id','=','invoice_detail.product_id')->join('uom as um','um.id','=','u.uom_id')->leftjoin('users as us','us.id','=','invoice_detail.assigned_to')->leftjoin('users as usm','usm.id','=','invoice_detail.referral_by')->where('invoice_detail.invoice_no',$invoice->invoice_no)->get(['usm.name as referral_by','us.name as assigned_to','um.remark as uom','invoice_detail.qty','invoice_detail.price','invoice_detail.total','ps.id','ps.remark as product_name','invoice_detail.discount','om.tax','om.voucher_code']),
         ])->setOptions(['defaultFont' => 'sans-serif'])->setPaper('a4', 'landscape');
         return $pdf->stream('invoice.pdf');
+    }
+
+    public function printspk(Invoice $invoice) 
+    {
+        $user = Auth::user();
+        $id = $user->roles->first()->id;
+        $this->getpermissions($id);
+
+        //return InvoiceDetail::join('invoice_master as om','om.invoice_no','=','invoice_detail.invoice_no')->join('product_sku as ps','ps.id','=','invoice_detail.product_id')->join('product_uom as u','u.product_id','=','invoice_detail.product_id')->join('uom as um','um.id','=','u.uom_id')->leftjoin('users as us','us.id','=','invoice_detail.assigned_to')->where('invoice_detail.invoice_no',$invoice->invoice_no)->get(['om.tax','om.voucher_code','us.name as assigned_to','um.remark as uom','invoice_detail.qty','invoice_detail.price','invoice_detail.total','ps.id','invoice_detail.product_name','invoice_detail.discount','ps.type_id','om.scheduled_at','um.conversion']);
+
+        $data = $this->data;
+        $payment_type = ['Cash','BCA - Debit','BCA - Kredit','Mandiri - Debit','Mandiri - Kredit','QRIS'];
+        $users = User::join('users_branch as ub','ub.branch_id', '=', 'users.branch_id')->where('ub.user_id','=',$user->id)->where('users.job_id','=',2)->get(['users.id','users.name']);
+
+        $pdf = PDF::setOptions(['isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true])->loadView('pages.invoices.printspk', [
+            'data' => $data,
+            'customers' => Customer::join('order_master as om','om.customers_id','customers.id')->join('branch_room as br','br.id','om.branch_room_id')->join('branch as b','b.id','=','customers.branch_id')->get(['br.remark as room_name','b.remark as branch_name','customers.id','customers.name']),
+            'branchs' => Branch::join('users_branch as ub','ub.branch_id', '=', 'branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']),
+            'users' => $users,
+            'settings' => Settings::get(),
+            'invoice' => $invoice,
+            'invoiceDetails' => InvoiceDetail::join('invoice_master as om','om.invoice_no','=','invoice_detail.invoice_no')->join('product_sku as ps','ps.id','=','invoice_detail.product_id')->join('product_uom as u','u.product_id','=','invoice_detail.product_id')->join('uom as um','um.id','=','u.uom_id')->leftjoin('users as us','us.id','=','invoice_detail.assigned_to')->where('invoice_detail.invoice_no',$invoice->invoice_no)->get(['om.tax','om.voucher_code','us.name as assigned_to','um.remark as uom','invoice_detail.qty','invoice_detail.price','invoice_detail.total','ps.id','invoice_detail.product_name','invoice_detail.discount','ps.type_id','om.scheduled_at','um.conversion']),
+            'usersReferrals' => User::get(['users.id','users.name']),
+            'payment_type' => $payment_type,
+        ])->setOptions(['defaultFont' => 'sans-serif'])->setPaper('a5', 'potrait');
+        return $pdf->stream('spk.pdf');
     }
 
     public function printthermal(Invoice $invoice) 
@@ -608,7 +634,6 @@ class InvoicesController extends Controller
             return $result;
         }
 
-
         for ($i=0; $i < count($request->get('product')); $i++) { 
             $res_invoice_detail = InvoiceDetail::create(
                 array_merge(
@@ -625,7 +650,7 @@ class InvoicesController extends Controller
                     ['referral_by_name' => $request->get('product')[$i]["referralbyid"]==""?"":User::where('id','=',$request->get('product')[$i]["referralbyid"])->get('name')->first()->name],
                     ['vat' => $request->get('product')[$i]["vat_total"]],
                     ['vat_total' => ((((int)$request->get('product')[$i]["qty"]*(int)$request->get('product')[$i]["price"])-(int)$request->get('product')[$i]["discount"])/100)*(int)$request->get('product')[$i]["vat_total"]],
-                    ['product_name' => Product::where('id','=',$request->get('product')[$i]["id"])->get('remark')->first()->name],
+                    ['product_name' => $request->get('product')[$i]["abbr"]],
                     ['uom' => $request->get('product')[$i]["uom"]]
                 )
             );
