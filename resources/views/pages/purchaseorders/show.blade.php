@@ -7,8 +7,8 @@
     <div class="panel-heading  bg-teal-600">
       <div class="panel-title"><h4 class="">Purchase Order {{ $purchase->purchase_no }}</h4></div>
       <div class="">
-        <a href="{{ route('purchaseorders.print', $purchase->id) }}" class="btn btn-warning">Print</a>
-        <a href="{{ route('purchaseorders.index') }}" class="btn btn-default">Back</a>
+        <a href="{{ route('purchaseorders.print', $purchase->id) }}" class="btn btn-warning">@lang('general.lbl_print') </a>
+        <a href="{{ route('purchaseorders.index') }}" class="btn btn-default">@lang('general.lbl_back') </a>
       </div>
     </div>
     <div class="panel-body bg-white text-black">

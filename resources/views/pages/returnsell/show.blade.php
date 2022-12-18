@@ -10,8 +10,8 @@
       <div class="panel-title"><h4 class="">@lang('general.lbl_invoice')  {{ $invoice->invoice_no }}</h4></div>
       <div class="">
         <a href="{{ route('invoices.printthermal', $invoice->id) }}" class="btn btn-warning">Print Thermal</a>
-        <a href="{{ route('invoices.print', $invoice->id) }}" class="btn btn-warning">Print</a>
-        <a href="{{ route('invoices.index') }}" class="btn btn-default">Back</a>
+        <a href="{{ route('invoices.print', $invoice->id) }}" class="btn btn-warning">@lang('general.lbl_print') </a>
+        <a href="{{ route('invoices.index') }}" class="btn btn-default">@lang('general.lbl_back') </a>
       </div>
     </div>
     <div class="panel-body bg-white text-black">

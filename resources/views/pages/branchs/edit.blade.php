@@ -64,7 +64,7 @@
                 </div>
 
                 <button type="submit" class="btn btn-primary">Save branch</button>
-                <a href="{{ route('branchs.index') }}" class="btn btn-default">Back</a>
+                <a href="{{ route('branchs.index') }}" class="btn btn-default">@lang('general.lbl_back') </a>
             </form>
         </div>
 

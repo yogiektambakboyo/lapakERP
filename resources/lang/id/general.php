@@ -70,6 +70,7 @@ return [
     "lbl_apply_voucher" => "Gunakan Voucher",
     "lbl_terapist" => "Terapis",
     "lbl_tax" => "Pajak",
+    "lbl_print" => "Cetak",
 
     "lbl_product_new" => "Produk Baru",
     "lbl_add_product_new" => "Tambah Produk Baru",
@@ -139,6 +140,8 @@ return [
     "lbl_end_estimation" => "Perkiraan Selesai",
     "lbl_schedule_list" => "Daftar Jadwal",
     "lbl_scheduleselect" => "Pilih Jadwal",
+    "lbl_payment" => "Pembayaran",
+    "lbl_cashier" => "Kasir",
     "lbl_type_payment" => "Tipe Pembayaran",
     "lbl_nominal_payment" => "Nominal Pembayaran",
     "lbl_type_paymentselect" => "Pilih Pembayaran",

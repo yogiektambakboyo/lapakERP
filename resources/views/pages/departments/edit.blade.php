@@ -27,7 +27,7 @@
                     @endif
                 </div>
                 <button type="submit" class="btn btn-primary">Save department</button>
-                <a href="{{ route('departments.index') }}" class="btn btn-default">Back</a>
+                <a href="{{ route('departments.index') }}" class="btn btn-default">@lang('general.lbl_back') </a>
             </form>
         </div>
 

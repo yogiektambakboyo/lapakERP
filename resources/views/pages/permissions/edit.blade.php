@@ -28,7 +28,7 @@
                 </div>
 
                 <button type="submit" class="btn btn-primary">Save permission</button>
-                <a href="{{ route('permissions.index') }}" class="btn btn-default">Back</a>
+                <a href="{{ route('permissions.index') }}" class="btn btn-default">@lang('general.lbl_back') </a>
             </form>
         </div>
 

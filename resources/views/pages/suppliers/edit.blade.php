@@ -80,7 +80,7 @@
                   </div>
            
                 <button type="submit" class="btn btn-primary">Save supplier</button>
-                <a href="{{ route('suppliers.index') }}" class="btn btn-default">Back</a>
+                <a href="{{ route('suppliers.index') }}" class="btn btn-default">@lang('general.lbl_back') </a>
             </form>
         </div>
 

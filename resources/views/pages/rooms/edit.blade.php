@@ -44,7 +44,7 @@
                 </div>
 
                 <button type="submit" class="btn btn-primary">Save rooms</button>
-                <a href="{{ route('rooms.index') }}" class="btn btn-default">Back</a>
+                <a href="{{ route('rooms.index') }}" class="btn btn-default">@lang('general.lbl_back') </a>
             </form>
         </div>
 

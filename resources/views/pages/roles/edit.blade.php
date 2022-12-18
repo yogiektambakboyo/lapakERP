@@ -61,7 +61,7 @@
                 </table>
 
                 <button type="submit" class="btn btn-primary">Save changes</button>
-                <a href="{{ route('roles.index') }}" class="btn btn-default">Back</a>
+                <a href="{{ route('roles.index') }}" class="btn btn-default">@lang('general.lbl_back') </a>
             </form>
         </div>
 

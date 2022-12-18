@@ -22,6 +22,6 @@
     </div>
     <div class="mt-4">
         <a href="{{ route('posts.edit', $post->id) }}" class="btn btn-info">Edit</a>
-        <a href="{{ route('posts.index') }}" class="btn btn-default">Back</a>
+        <a href="{{ route('posts.index') }}" class="btn btn-default">@lang('general.lbl_back') </a>
     </div>
 @endsection

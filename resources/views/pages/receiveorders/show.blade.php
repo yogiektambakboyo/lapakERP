@@ -7,8 +7,8 @@
     <div class="panel-heading  bg-teal-600">
       <div class="panel-title"><h4 class="">Receive Order {{ $receive->receive_no }}</h4></div>
       <div class="">
-        <a href="{{ route('receiveorders.print', $receive->id) }}" class="btn btn-warning">Print</a>
-        <a href="{{ route('receiveorders.index') }}" class="btn btn-default">Back</a>
+        <a href="{{ route('receiveorders.print', $receive->id) }}" class="btn btn-warning">@lang('general.lbl_print') </a>
+        <a href="{{ route('receiveorders.index') }}" class="btn btn-default">@lang('general.lbl_back') </a>
       </div>
     </div>
     <div class="panel-body bg-white text-black">

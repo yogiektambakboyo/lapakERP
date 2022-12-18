@@ -95,7 +95,7 @@
                 </div>
 
                 <button type="submit" class="btn btn-primary">Save company</button>
-                <a href="{{ route('company.index') }}" class="btn btn-default">Back</a>
+                <a href="{{ route('company.index') }}" class="btn btn-default">@lang('general.lbl_back') </a>
             </form>
         </div>
 
