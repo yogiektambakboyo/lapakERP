@@ -738,18 +738,18 @@
                       var obj = orderList[i];
                       var value = obj["abbr"];
                       if(obj["type_id"]=="Services"){
-                      table.row.add( {
-                            "id"        : obj["id"],
-                              "abbr"      : obj["abbr"],
-                              "uom"       : obj["uom"],
-                              "price"     : obj["price"],
-                              "discount"  : obj["discount"],
-                              "qty"       : obj["qty"],
-                              "total"     : obj["total"],
-                              "assignedto": obj["assignedto"],
-                              "referralby" : obj["referralby"],
-                              "action"    : "",
-                        }).draw(false);
+                        table.row.add( {
+                              "id"        : obj["id"],
+                                "abbr"      : obj["abbr"],
+                                "uom"       : obj["uom"],
+                                "price"     : obj["price"],
+                                "discount"  : obj["discount"],
+                                "qty"       : obj["qty"],
+                                "total"     : obj["total"],
+                                "assignedto": obj["assignedto"],
+                                "referralby" : obj["referralby"],
+                                "action"    : "",
+                          }).draw(false);
                       }else{
                         table_product.row.add( {
                             "id"        : obj["id"],
@@ -1880,18 +1880,33 @@
 
                       var obj = orderList[i];
                       var value = obj["abbr"];
-                      table.row.add( {
+                      if(obj["type_id"]=="Services"){
+                        table.row.add( {
                               "id"        : obj["id"],
-                              "abbr"      : obj["abbr"],
-                              "uom"       : obj["uom"],
-                              "price"     : obj["price"],
-                              "discount"  : obj["discount"],
-                              "qty"       : obj["qty"],
-                              "total"     : obj["total"],
-                              "assignedto" : obj["assignedto"],
-                              "referralby" : obj["referralby"],
-                              "action"    : "",
-                        }).draw(false);
+                                "abbr"      : obj["abbr"],
+                                "uom"       : obj["uom"],
+                                "price"     : obj["price"],
+                                "discount"  : obj["discount"],
+                                "qty"       : obj["qty"],
+                                "total"     : obj["total"],
+                                "assignedto": obj["assignedto"],
+                                "referralby" : obj["referralby"],
+                                "action"    : "",
+                          }).draw(false);
+                        }else{
+                          table_product.row.add( {
+                              "id"        : obj["id"],
+                                "abbr"      : obj["abbr"],
+                                "uom"       : obj["uom"],
+                                "price"     : obj["price"],
+                                "discount"  : obj["discount"],
+                                "qty"       : obj["qty"],
+                                "total"     : obj["total"],
+                                "assignedto": obj["assignedto"],
+                                "referralby" : obj["referralby"],
+                                "action"    : "",
+                          }).draw(false);
+                        }
                         disc_total = disc_total + (parseFloat(orderList[i]["discount"]));
                         sub_total = sub_total + (((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"]))-(parseFloat(orderList[i]["discount"])));
                         _vat_total = _vat_total + ((((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"]))-(parseFloat(orderList[i]["discount"])))*(parseFloat(orderList[i]["vat_total"])/100));

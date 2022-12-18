@@ -265,6 +265,99 @@
         <div class="panel-heading bg-teal-600 text-white"><strong>@lang('general.lbl_order_list')</strong></div>
         <br>
 
+        <div class="card text-center font-weight-bold my-3 p-1"><h3><i class="fas fa-fw fa-hands-praying"></i> @lang('general.service')</h3></div>
+
+        <div class="row mb-3">
+          
+          <div class="col-md-3">
+            <label class="form-label col-form-label">@lang('general.service')</label>
+            <select class="form-control" 
+                  name="input_service_id" id="input_service_id" required>
+                  <option value="">@lang('general.serviceselect')</option>
+              </select>
+          </div>
+
+
+          <div class="col-md-1">
+            <label class="form-label col-form-label">@lang('general.lbl_uom')</label>
+            <input type="text" 
+            name="input_service_uom"
+            id="input_service_uom"
+            class="form-control" 
+            value="{{ old('input_service_uom') }}" required disabled/>
+          </div>
+
+          <div class="col-md-2">
+            <label class="form-label col-form-label">@lang('general.lbl_price')</label>
+            <input type="text" 
+            name="input_service_price"
+            id="input_service_price"
+            class="form-control" 
+            value="{{ old('input_service_price') }}" required disabled/>
+          </div>
+
+
+          <div class="col-md-1">
+            <label class="form-label col-form-label">@lang('general.lbl_discountrp')</label>
+            <input type="text" 
+            name="input_service_disc"
+            id="input_service_disc"
+            class="form-control" 
+            value="{{ old('input_service_disc') }}" required/>
+          </div>
+
+
+          <div class="col-md-1">
+            <label class="form-label col-form-label">@lang('general.lbl_qty')</label>
+            <input type="text" 
+            name="input_service_qty"
+            id="input_service_qty"
+            class="form-control" 
+            value="{{ old('input_service_qty') }}" required/>
+          </div>
+
+          <div class="col-md-2">
+            <label class="form-label col-form-label">Total</label>
+            <input type="hidden" 
+            name="input_service_vat_total"
+            id="input_service_vat_total"
+            class="form-control" 
+            value="{{ old('input_service_vat_total') }}" required disabled/>
+            <input type="text" 
+            name="input_service_total"
+            id="input_service_total"
+            class="form-control" 
+            value="{{ old('input_service_total') }}" required disabled/>
+          </div>
+
+          <div class="col-md-2">
+            <div class="col-md-12"><label class="form-label col-form-label">_</label></div>
+            <a href="#" id="input_service_submit" class="btn btn-green"><div class="fa-1x"><i class="fas fa-plus fa-fw"></i>@lang('general.lbl_add_service')</div></a>
+          </div>
+
+        </div>
+
+        <table class="table table-striped" id="order_table">
+          <thead>
+          <tr>
+              <th scope="col" width="20%">@lang('general.service')</th>
+              <th scope="col" width="10%">@lang('general.lbl_uom')</th>
+              <th scope="col" width="10%">@lang('general.lbl_price')</th>
+              <th scope="col" width="5%">@lang('general.lbl_discount')</th>
+              <th scope="col" width="5%">@lang('general.lbl_qty')</th>
+              <th scope="col" width="10%">Total</th>  
+              <th scope="col" width="10%">@lang('general.lbl_terapist')</th>  
+              <th scope="col" width="10%">@lang('general.lbl_ref_by')</th>
+              <th scope="col" width="20%">@lang('general.lbl_action')</th> 
+          </tr>
+          </thead>
+          <tbody>
+          </tbody>
+        </table> 
+
+
+        <div class="card text-center font-weight-bold my-3 p-1"><h3><i class="fas fa-fw fa-box"></i> @lang('general.product')</h3></div>
+
         <div class="row mb-3">
           <div class="col-md-3">
             <label class="form-label col-form-label">@lang('general.product')</label>
@@ -334,7 +427,7 @@
 
         </div>
 
-        <table class="table table-striped" id="order_table">
+         <table class="table table-striped" id="order_product_table">
           <thead>
           <tr>
               <th scope="col" width="20%">@lang('general.product')</th>
@@ -448,6 +541,7 @@
                     }
                 }).then(resp => {
                       table.clear().draw(false);
+                      table_product.clear().draw(false);
                       order_total = 0;
 
                       for(var i=0;i<resp.data.length;i++){
@@ -473,18 +567,33 @@
                       for (var i = 0; i < orderList.length; i++){
                       var obj = orderList[i];
                       var value = obj["abbr"];
-                      table.row.add( {
-                          "id"        : obj["id"],
-                          "abbr"      : obj["abbr"],
-                          "uom"       : obj["uom"],
-                          "price"     : obj["price"],
-                          "discount"  : obj["discount"],
-                          "qty"       : obj["qty"],
-                          "total"     : obj["total"],
-                          "assignedto" : obj["assignedto"],
-                          "referralby" : obj["referralby"],
-                          "action"    : "",
+                      if(obj["type_id"]=="Services"){
+                        table.row.add( {
+                              "id"        : obj["id"],
+                                "abbr"      : obj["abbr"],
+                                "uom"       : obj["uom"],
+                                "price"     : obj["price"],
+                                "discount"  : obj["discount"],
+                                "qty"       : obj["qty"],
+                                "total"     : obj["total"],
+                                "assignedto": obj["assignedto"],
+                                "referralby" : obj["referralby"],
+                                "action"    : "",
+                          }).draw(false);
+                      }else{
+                        table_product.row.add( {
+                            "id"        : obj["id"],
+                              "abbr"      : obj["abbr"],
+                              "uom"       : obj["uom"],
+                              "price"     : obj["price"],
+                              "discount"  : obj["discount"],
+                              "qty"       : obj["qty"],
+                              "total"     : obj["total"],
+                              "assignedto": obj["assignedto"],
+                              "referralby" : obj["referralby"],
+                              "action"    : "",
                         }).draw(false);
+                      }
                         disc_total = disc_total + (parseFloat(orderList[i]["discount"]));
                         sub_total = sub_total + (((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"]))-(parseFloat(orderList[i]["discount"])));
                         _vat_total = _vat_total + ((((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"]))-(parseFloat(orderList[i]["discount"])))*(parseFloat(orderList[i]["vat_total"])/100));
@@ -559,6 +668,7 @@
             );
         }else{
           table.clear().draw(false);
+          table_product.clear().draw(false);
           order_total = 0;
           for (var i = 0; i < orderList.length; i++){
             var obj = orderList[i];
@@ -573,20 +683,33 @@
           for (var i = 0; i < orderList.length; i++){
             var obj = orderList[i];
             var value = obj["abbr"];
-            table.row.add( {
-                   "id"        : obj["id"],
-                    "abbr"      : obj["abbr"],
-                    "uom"       : obj["uom"],
-                    "price"     : obj["price"],
-                    "discount"  : obj["discount"],
-                    "qty"       : obj["qty"],
-                    "total"     : obj["total"],
-                    "assignedto": obj["assignedto"],
-                    "assignedtoid": obj["assignedtoid"],
-                    "referralby" : obj["referralby"],
-                    "referralbyid" : obj["referralbyid"],
-                    "action"    : "",
-              }).draw(false);
+            if(obj["type_id"]=="Services"){
+              table.row.add( {
+                    "id"        : obj["id"],
+                      "abbr"      : obj["abbr"],
+                      "uom"       : obj["uom"],
+                      "price"     : obj["price"],
+                      "discount"  : obj["discount"],
+                      "qty"       : obj["qty"],
+                      "total"     : obj["total"],
+                      "assignedto": obj["assignedto"],
+                      "referralby" : obj["referralby"],
+                      "action"    : "",
+                }).draw(false);
+              }else{
+                table_product.row.add( {
+                    "id"        : obj["id"],
+                      "abbr"      : obj["abbr"],
+                      "uom"       : obj["uom"],
+                      "price"     : obj["price"],
+                      "discount"  : obj["discount"],
+                      "qty"       : obj["qty"],
+                      "total"     : obj["total"],
+                      "assignedto": obj["assignedto"],
+                      "referralby" : obj["referralby"],
+                      "action"    : "",
+                }).draw(false);
+              }
               disc_total = disc_total + (parseFloat(orderList[i]["discount"]));
               sub_total = sub_total + (((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"]))-(parseFloat(orderList[i]["discount"])));
               _vat_total = _vat_total + ((((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"]))-(parseFloat(orderList[i]["discount"])))*(parseFloat(orderList[i]["vat_total"])/100));
@@ -622,6 +745,7 @@
             );
         }else{
           table.clear().draw(false);
+          table_product.clear().draw(false);
           order_total = 0;
           for (var i = 0; i < orderList.length; i++){
             var obj = orderList[i];
@@ -636,20 +760,33 @@
           for (var i = 0; i < orderList.length; i++){
             var obj = orderList[i];
             var value = obj["abbr"];
-            table.row.add( {
-                   "id"        : obj["id"],
-                    "abbr"      : obj["abbr"],
-                    "uom"       : obj["uom"],
-                    "price"     : obj["price"],
-                    "discount"  : obj["discount"],
-                    "qty"       : obj["qty"],
-                    "total"     : obj["total"],
-                    "assignedto": obj["assignedto"],
-                    "assignedtoid": obj["assignedtoid"],
-                    "referralby" : obj["referralby"],
-                    "referralbyid" : obj["referralbyid"],
-                    "action"    : "",
-              }).draw(false);
+            if(obj["type_id"]=="Services"){
+              table.row.add( {
+                    "id"        : obj["id"],
+                      "abbr"      : obj["abbr"],
+                      "uom"       : obj["uom"],
+                      "price"     : obj["price"],
+                      "discount"  : obj["discount"],
+                      "qty"       : obj["qty"],
+                      "total"     : obj["total"],
+                      "assignedto": obj["assignedto"],
+                      "referralby" : obj["referralby"],
+                      "action"    : "",
+                }).draw(false);
+              }else{
+                table_product.row.add( {
+                    "id"        : obj["id"],
+                      "abbr"      : obj["abbr"],
+                      "uom"       : obj["uom"],
+                      "price"     : obj["price"],
+                      "discount"  : obj["discount"],
+                      "qty"       : obj["qty"],
+                      "total"     : obj["total"],
+                      "assignedto": obj["assignedto"],
+                      "referralby" : obj["referralby"],
+                      "action"    : "",
+                }).draw(false);
+              }
               disc_total = disc_total + (parseFloat(orderList[i]["discount"]));
               sub_total = sub_total + (((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"]))-(parseFloat(orderList[i]["discount"])));
               _vat_total = _vat_total + ((((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"]))-(parseFloat(orderList[i]["discount"])))*(parseFloat(orderList[i]["vat_total"])/100));
@@ -878,8 +1015,33 @@
         ],
         });
 
-        function addProduct(id,abbr, price, discount, qty, uom,vat_total,total){
+        var table_product = $('#order_product_table').DataTable({
+          columnDefs: [{ 
+            targets: -1, 
+            data: null, 
+            defaultContent: 
+            '<a href="#"  data-toggle="tooltip" data-placement="top" title="Tambah"   id="add_row"  class="btn btn-sm btn-green"><div class="fa-1x"><i class="fas fa-circle-plus fa-fw"></i></div></a>'+
+            '<a href="#"  data-toggle="tooltip" data-placement="top" title="Kurangi"   id="minus_row"  class="btn btn-sm btn-yellow"><div class="fa-1x"><i class="fas fa-circle-minus fa-fw"></i></div></a>'+
+            '<a href="#" data-toggle="tooltip" data-placement="top" title="Hapus"  id="delete_row"  class="btn btn-sm btn-danger"><div class="fa-1x"><i class="fas fa-circle-xmark fa-fw"></i></div></a>'+
+            '<a href="#" href="#modal-filter" data-bs-toggle="modal" data-bs-target="#modal-filter"  data-toggle="tooltip" data-placement="top" title="Terapis"  data-toggle="tooltip" data-placement="top" title="Terapis" id="assign_row" class="btn btn-sm btn-gray"><div class="fa-1x"><i class="fas fa-user-tag fa-fw"></i></div></a>'+
+            '<a href="#" href="#modal-referral" data-bs-toggle="modal" data-bs-target="#modal-referral" data-toggle="tooltip" data-placement="top" title="Dijual Oleh"  id="referral_row" class="btn btn-sm btn-purple"><div class="fa-1x"><i class="fas fa-users fa-fw"></i></div></a>',
+          }],
+          columns: [
+            { data: 'abbr' },
+            { data: 'uom' },
+            { data: 'price',render: DataTable.render.number( '.', null, 0, '' ) },
+            { data: 'discount',render: DataTable.render.number( '.', null, 0, '' ) },
+            { data: 'qty' },
+            { data: 'total',render: DataTable.render.number( '.', null, 0, '' ) },
+            { data: 'assignedto' },
+            { data: 'referralby' },
+            { data: null},
+        ],
+        });
+
+        function addProduct(id,abbr, price, discount, qty, uom,vat_total,total,type_id){
           table.clear().draw(false);
+          table_product.clear().draw(false);
           order_total = 0;
           disc_total = 0;
           _vat_total = 0;
@@ -899,6 +1061,7 @@
                 "referralbyid" : "",
                 "uom" : uom,
                 "vat_total"     : vat_total, 
+                "type_id"     : type_id, 
           }
 
           var isExist = 0;
@@ -920,18 +1083,33 @@
           for (var i = 0; i < orderList.length; i++){
             var obj = orderList[i];
             var value = obj["abbr"];
-            table.row.add( {
-                   "id"        : obj["id"],
-                    "abbr"      : obj["abbr"],
-                    "uom"       : obj["uom"],
-                    "price"     : obj["price"],
-                    "discount"  : obj["discount"],
-                    "qty"       : obj["qty"],
-                    "total"     : obj["total"],
-                    "assignedto": obj["assignedto"],
-                    "referralby" : obj["referralby"],
-                    "action"    : "",
-              }).draw(false);
+            if(obj["type_id"]=="Services"){
+              table.row.add( {
+                    "id"        : obj["id"],
+                      "abbr"      : obj["abbr"],
+                      "uom"       : obj["uom"],
+                      "price"     : obj["price"],
+                      "discount"  : obj["discount"],
+                      "qty"       : obj["qty"],
+                      "total"     : obj["total"],
+                      "assignedto": obj["assignedto"],
+                      "referralby" : obj["referralby"],
+                      "action"    : "",
+                }).draw(false);
+              }else{
+                table_product.row.add( {
+                    "id"        : obj["id"],
+                      "abbr"      : obj["abbr"],
+                      "uom"       : obj["uom"],
+                      "price"     : obj["price"],
+                      "discount"  : obj["discount"],
+                      "qty"       : obj["qty"],
+                      "total"     : obj["total"],
+                      "assignedto": obj["assignedto"],
+                      "referralby" : obj["referralby"],
+                      "action"    : "",
+                }).draw(false);
+              }
               disc_total = disc_total + (parseFloat(orderList[i]["discount"]));
               sub_total = sub_total + (((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"]))-(parseFloat(orderList[i]["discount"])));
               _vat_total = _vat_total + ((((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"]))-(parseFloat(orderList[i]["discount"])))*(parseFloat(orderList[i]["vat_total"])/100));
@@ -960,6 +1138,7 @@
             _vat_total = 0;
             sub_total = 0;
             table.clear().draw(false);
+            table_product.clear().draw(false);
             
             for (var i = 0; i < orderList.length; i++){
               var obj = orderList[i];
@@ -1004,18 +1183,33 @@
 
             for (var i = 0; i < orderList.length; i++){
               var obj = orderList[i];
+              if(obj["type_id"]=="Services"){
               table.row.add( {
-                      "id"        : obj["id"],
+                    "id"        : obj["id"],
                       "abbr"      : obj["abbr"],
                       "uom"       : obj["uom"],
                       "price"     : obj["price"],
                       "discount"  : obj["discount"],
                       "qty"       : obj["qty"],
                       "total"     : obj["total"],
-                      "assignedto" : obj["assignedto"],
+                      "assignedto": obj["assignedto"],
                       "referralby" : obj["referralby"],
                       "action"    : "",
                 }).draw(false);
+              }else{
+                table_product.row.add( {
+                    "id"        : obj["id"],
+                      "abbr"      : obj["abbr"],
+                      "uom"       : obj["uom"],
+                      "price"     : obj["price"],
+                      "discount"  : obj["discount"],
+                      "qty"       : obj["qty"],
+                      "total"     : obj["total"],
+                      "assignedto": obj["assignedto"],
+                      "referralby" : obj["referralby"],
+                      "action"    : "",
+                }).draw(false);
+              }
                 disc_total = disc_total + (parseFloat(orderList[i]["discount"]));
               sub_total = sub_total + (((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"]))-(parseFloat(orderList[i]["discount"])));
               _vat_total = _vat_total + ((((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"]))-(parseFloat(orderList[i]["discount"])))*(parseFloat(orderList[i]["vat_total"])/100));
@@ -1058,7 +1252,7 @@
               });
 
 
-              var url = "{{ route('orders.getproduct') }}";
+            var url = "{{ route('orders.getproduct') }}";
             var lastvalurl = "XX";
             console.log(url);
             const res = axios.get(url, {
@@ -1066,7 +1260,8 @@
                 'Content-Type': 'application/json'
               }
             }).then(resp => {
-                $('#input_product_id').select2();
+              $('#input_product_id').select2();
+              $('#input_service_id').select2();
               
                 for(var i=0;i<resp.data.length;i++){
                     var product = {
@@ -1075,7 +1270,8 @@
                           "remark"      : resp.data[i]["remark"],
                           "uom"      : resp.data[i]["uom"],
                           "price"     : resp.data[i]["price"],
-                          "vat_total"     : resp.data[i]["vat_total"]
+                          "vat_total"     : resp.data[i]["vat_total"],
+                          "type"     : resp.data[i]["type"]
                     }
 
                     productList.push(product);
@@ -1084,8 +1280,115 @@
                 for (var i = 0; i < productList.length; i++){
                   var obj = productList[i];
                   var newOption = new Option(obj["remark"], obj["id"], false, false);
-                  $('#input_product_id').append(newOption).trigger('change');  
+                  if(obj["type"]=="Services"){
+                    $('#input_service_id').append(newOption).trigger('change');  
+                  }else{
+                    $('#input_product_id').append(newOption).trigger('change');  
+                  }
                 }
+
+                // Service
+            $('#input_service_id').on('change.select2', function(e){
+                $.each(productList, function(i, v) {
+                    if (v.id == $('#input_service_id').find(':selected').val()) {
+                        $('#input_service_uom').val(v.uom);
+                        $('#input_service_price').val(v.price);
+                        $('#input_service_qty').val(1);
+                        $('#input_service_disc').val(0);
+                        $('#input_service_total').val(v.price);
+                        $('#input_service_vat_total').val(v.vat_total);
+                        return;
+                    }
+                });
+              });
+
+              $('#input_service_price').on('input', function(){
+                $('#input_service_total').val(($('#input_service_price').val()*$('#input_service_qty').val())-$('#input_service_disc').val());
+              });
+
+              $('#input_service_qty').on('input', function(){
+                $('#input_service_total').val(($('#input_service_price').val()*$('#input_service_qty').val())-$('#input_service_disc').val());
+              });
+
+              $('#input_service_disc').on('input', function(){
+                $('#input_service_total').val(($('#input_service_price').val()*$('#input_service_qty').val())-$('#input_service_disc').val());
+              });
+
+              $('#input_service_submit').on('click', function(){
+                if($('#input_service_id').val()==''){
+                  Swal.fire(
+                    {
+                      position: 'top-end',
+                      icon: 'warning',
+                      text: 'Please choose product',
+                      showConfirmButton: false,
+                      imageHeight: 30, 
+                      imageWidth: 30,   
+                      timer: 1500
+                    }
+                  );
+                }else if($('#input_service_qty').val()==''){
+                  Swal.fire(
+                    {
+                      position: 'top-end',
+                      icon: 'warning',
+                      text: 'Please input qty',
+                      showConfirmButton: false,
+                      imageHeight: 30, 
+                      imageWidth: 30,   
+                      timer: 1500
+                    }
+                  );
+                }else if($('#input_service_price').val()==''){
+                  Swal.fire(
+                    {
+                      position: 'top-end',
+                      icon: 'warning',
+                      text: 'Please input price',
+                      showConfirmButton: false,
+                      imageHeight: 30, 
+                      imageWidth: 30,   
+                      timer: 1500
+                    }
+                  );
+                }else if($('#input_service_disc').val()==''){
+                  Swal.fire(
+                    {
+                      position: 'top-end',
+                      icon: 'warning',
+                      text: 'Please input disc',
+                      showConfirmButton: false,
+                      imageHeight: 30, 
+                      imageWidth: 30,   
+                      timer: 1500
+                    }
+                  );
+                }else if($('#input_service_total').val()<0){
+                  Swal.fire(
+                    {
+                      position: 'top-end',
+                      icon: 'warning',
+                      text: 'Please input disc less than total',
+                      showConfirmButton: false,
+                      imageHeight: 30, 
+                      imageWidth: 30,   
+                      timer: 1500
+                    }
+                  );
+                }else{
+                  addProduct(
+                    $('#input_service_id').val(),
+                    $('#input_service_id option:selected').text(), 
+                    $('#input_service_price').val(), 
+                    $('#input_service_disc').val(), 
+                    $('#input_service_qty').val(),
+                    $('#input_service_uom').val(),
+                    $('#input_service_vat_total').val(),
+                    $('#input_service_total').val(),
+                    "Services"
+                  )
+                }
+              });
 
               $('#input_product_id').on('change.select2', function(e){
                 $.each(productList, function(i, v) {
@@ -1183,7 +1486,7 @@
                     $('#input_product_qty').val(),
                     $('#input_product_uom').val(),
                     $('#input_product_vat_total').val(),
-                    $('#input_product_total').val()
+                    $('#input_product_total').val(),"Good"
                   )
                 }
               });
@@ -1244,6 +1547,7 @@
 
                   }else{
                     table.clear().draw(false);
+                    table_product.clear().draw(false);
                     order_total = 0;
                     disc_total = 0;
                     _vat_total = 0;
@@ -1268,18 +1572,33 @@
 
                       var obj = orderList[i];
                       var value = obj["abbr"];
-                      table.row.add( {
+                      if(obj["type_id"]=="Services"){
+                        table.row.add( {
                               "id"        : obj["id"],
-                              "abbr"      : obj["abbr"],
-                              "uom"       : obj["uom"],
-                              "price"     : obj["price"],
-                              "discount"  : obj["discount"],
-                              "qty"       : obj["qty"],
-                              "total"     : obj["total"],
-                              "assignedto" : obj["assignedto"],
-                              "referralby" : obj["referralby"],
-                              "action"    : "",
-                        }).draw(false);
+                                "abbr"      : obj["abbr"],
+                                "uom"       : obj["uom"],
+                                "price"     : obj["price"],
+                                "discount"  : obj["discount"],
+                                "qty"       : obj["qty"],
+                                "total"     : obj["total"],
+                                "assignedto": obj["assignedto"],
+                                "referralby" : obj["referralby"],
+                                "action"    : "",
+                          }).draw(false);
+                        }else{
+                          table_product.row.add( {
+                              "id"        : obj["id"],
+                                "abbr"      : obj["abbr"],
+                                "uom"       : obj["uom"],
+                                "price"     : obj["price"],
+                                "discount"  : obj["discount"],
+                                "qty"       : obj["qty"],
+                                "total"     : obj["total"],
+                                "assignedto": obj["assignedto"],
+                                "referralby" : obj["referralby"],
+                                "action"    : "",
+                          }).draw(false);
+                        }
                         disc_total = disc_total + (parseFloat(orderList[i]["discount"]));
                         sub_total = sub_total + (((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"]))-(parseFloat(orderList[i]["discount"])));
                         _vat_total = _vat_total + ((((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"]))-(parseFloat(orderList[i]["discount"])))*(parseFloat(orderList[i]["vat_total"])/100));
@@ -1340,6 +1659,7 @@
             }).then(resp => {
                   console.log(resp.data);
                   table.clear().draw(false);
+                  table_product.clear().draw(false);
                   order_total = 0;
                   disc_total = 0;
                   _vat_total = 0;
@@ -1360,6 +1680,7 @@
                             "referralbyid" : resp.data[i]["referral_by"],
                             "uom" : resp.data[i]["uom"],
                             "vat_total"     : resp.data[i]["vat"], 
+                            "type_id"     : resp.data[i]["type"], 
                       }
 
                       orderList.push(product);
@@ -1368,18 +1689,33 @@
                   for (var i = 0; i < orderList.length; i++){
                   var obj = orderList[i];
                   var value = obj["abbr"];
+                  if(obj["type_id"]=="Services"){
                   table.row.add( {
-                      "id"        : obj["id"],
-                      "abbr"      : obj["abbr"],
-                      "uom"       : obj["uom"],
-                      "price"     : obj["price"],
-                      "discount"  : obj["discount"],
-                      "qty"       : obj["qty"],
-                      "total"     : obj["total"],
-                      "assignedto" : obj["assignedto"],
-                      "referralby" : obj["referralby"],
-                      "action"    : "",
+                        "id"        : obj["id"],
+                          "abbr"      : obj["abbr"],
+                          "uom"       : obj["uom"],
+                          "price"     : obj["price"],
+                          "discount"  : obj["discount"],
+                          "qty"       : obj["qty"],
+                          "total"     : obj["total"],
+                          "assignedto": obj["assignedto"],
+                          "referralby" : obj["referralby"],
+                          "action"    : "",
                     }).draw(false);
+                  }else{
+                    table_product.row.add( {
+                        "id"        : obj["id"],
+                          "abbr"      : obj["abbr"],
+                          "uom"       : obj["uom"],
+                          "price"     : obj["price"],
+                          "discount"  : obj["discount"],
+                          "qty"       : obj["qty"],
+                          "total"     : obj["total"],
+                          "assignedto": obj["assignedto"],
+                          "referralby" : obj["referralby"],
+                          "action"    : "",
+                    }).draw(false);
+                  }
                     disc_total = disc_total + (parseFloat(orderList[i]["discount"]));
                     sub_total = sub_total + (((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"]))-(parseFloat(orderList[i]["discount"])));
                     _vat_total = _vat_total + ((((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"]))-(parseFloat(orderList[i]["discount"])))*(parseFloat(orderList[i]["vat_total"])/100));
@@ -1399,6 +1735,110 @@
                 $('#vat-total').text(currency(_vat_total, { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
                 $('#sub-total').text(currency(sub_total, { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());              
             });
+
+            $('#order_product_table tbody').on('click', 'a', function () {
+            var data = table_product.row($(this).parents('tr')).data();
+            order_total = 0;
+            disc_total = 0;
+            _vat_total = 0;
+            sub_total = 0;
+            table.clear().draw(false);
+            table_product.clear().draw(false);
+            
+            for (var i = 0; i < orderList.length; i++){
+              var obj = orderList[i];
+              var value = obj["id"];
+
+              if($(this).attr("id")=="add_row"){
+                if(data["id"]==obj["id"]){
+                  orderList[i]["total"] = (parseInt(orderList[i]["qty"])+1)*parseFloat(orderList[i]["price"]); 
+                  orderList[i]["qty"] = parseInt(orderList[i]["qty"])+1;
+                }
+              }
+              
+              if($(this).attr("id")=="minus_row"){
+                if(data["id"]==obj["id"]&&parseInt(orderList[i]["qty"])>1){
+                  orderList[i]["total"] = (parseInt(orderList[i]["qty"])-1)*parseFloat(orderList[i]["price"]); 
+                  orderList[i]["qty"] = parseInt(orderList[i]["qty"])-1;
+                } else if(data["id"]==obj["id"]&&parseInt(orderList[i]["qty"])==1) {
+                  orderList.splice(i,1);
+                }
+              }
+
+              if($(this).attr("id")=="delete_row"){
+                if(data["id"]==obj["id"]){
+                  orderList.splice(i,1);
+                }
+              }
+
+              if($(this).attr("id")=="assign_row"){
+                if(data["id"]==obj["id"]){
+                  $('#product_id_selected').val(data["id"]);
+                  $('#product_id_selected_lbl').text("Pilih terapis untuk produk/perawatan "+data["abbr"]);
+                }
+              }
+
+              if($(this).attr("id")=="referral_row"){
+                if(data["id"]==obj["id"]){
+                  $('#referral_selected').val(data["id"]);
+                  $('#referral_selected_lbl').text("Pilih penjual produk/perawatan "+data["abbr"]);
+                }
+              }
+            }
+
+            for (var i = 0; i < orderList.length; i++){
+              var obj = orderList[i];
+              if(obj["type_id"]=="Services"){
+              table.row.add( {
+                    "id"        : obj["id"],
+                      "abbr"      : obj["abbr"],
+                      "uom"       : obj["uom"],
+                      "price"     : obj["price"],
+                      "discount"  : obj["discount"],
+                      "qty"       : obj["qty"],
+                      "total"     : obj["total"],
+                      "assignedto": obj["assignedto"],
+                      "referralby" : obj["referralby"],
+                      "action"    : "",
+                }).draw(false);
+              }else{
+                table_product.row.add( {
+                    "id"        : obj["id"],
+                      "abbr"      : obj["abbr"],
+                      "uom"       : obj["uom"],
+                      "price"     : obj["price"],
+                      "discount"  : obj["discount"],
+                      "qty"       : obj["qty"],
+                      "total"     : obj["total"],
+                      "assignedto": obj["assignedto"],
+                      "referralby" : obj["referralby"],
+                      "action"    : "",
+                }).draw(false);
+              }
+                disc_total = disc_total + (parseFloat(orderList[i]["discount"]));
+              sub_total = sub_total + (((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"]))-(parseFloat(orderList[i]["discount"])));
+              _vat_total = _vat_total + ((((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"]))-(parseFloat(orderList[i]["discount"])))*(parseFloat(orderList[i]["vat_total"])/100));
+              order_total = order_total + ((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"])+((((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"]))-(parseFloat(orderList[i]["discount"])))*(parseFloat(orderList[i]["vat_total"])/100)))-(parseFloat(orderList[i]["discount"]));
+
+              if(($('#payment_nominal').val())>order_total){
+                $('#order_charge').css('color', 'black');
+                $('#order_charge').text(currency((($('#payment_nominal').val())-order_total), { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
+              }else{
+                $('#order_charge').text("Rp. 0");
+                $('#order_charge').css('color', 'red');
+                $('#order_charge').text(currency((($('#payment_nominal').val())-order_total), { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
+              }
+
+
+            }
+
+            $('#result-total').text(currency(order_total, { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
+            $('#vat-total').text(currency(_vat_total, { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
+            $('#sub-total').text(currency(sub_total, { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
+
+
+            
+        });
 
 
  
