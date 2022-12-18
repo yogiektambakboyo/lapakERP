@@ -46,8 +46,8 @@
                 <thead>
                 <tr style="background-color:#FFA726;color:white;">
                     <th>Perawatan</th>
-                    <th scope="col" width="10%">Price</th>
-                    <th scope="col" width="5%">Qty</th>
+                    <th scope="col" width="10%">@lang('general.lbl_price')</th>
+                    <th scope="col" width="5%">@lang('general.lbl_qty')</th>
                     <th scope="col" width="10%">Total</th>
                 </tr>
                 </thead>
@@ -114,8 +114,8 @@
                 <thead>
                 <tr style="background-color:#FFA726;color:white;">
                     <th>Produk</th>
-                    <th scope="col" width="10%">Price</th>
-                    <th scope="col" width="5%">Qty</th>
+                    <th scope="col" width="10%">@lang('general.lbl_price')</th>
+                    <th scope="col" width="5%">@lang('general.lbl_qty')</th>
                     <th scope="col" width="10%">Total</th>
                 </tr>
                 </thead>

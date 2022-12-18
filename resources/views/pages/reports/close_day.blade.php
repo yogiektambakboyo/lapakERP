@@ -27,7 +27,7 @@
                 <th scope="col" width="10%">@lang('general.lbl_branch')</th>
                 <th scope="col" width="6%">@lang('general.lbl_dated')</th>
                 <th scope="col">Service</th>    
-                <th scope="col">Product</th>    
+                <th scope="col">@lang('general.product')</th>    
                 <th scope="col">Drink</th>    
                 <th scope="col">Extra</th>    
                 <th scope="col">Total</th>    
@@ -235,13 +235,13 @@
 
           function showConfirm(id,data){
             Swal.fire({
-            title: 'Are you sure?',
-            text: "You will delete document "+data+" !",
+            title: "@lang('general.lbl_sure')",
+            text: "@lang('general.lbl_sure_title') "+data+" !",
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Yes, delete it!'
+            cancelButtonColor: '#d33', cancelButtonText: "@lang('general.lbl_cancel')",
+            confirmButtonText: "@lang('general.lbl_sure_delete')"
             }).then((result) => {
                 if (result.isConfirmed) {
                     var url = "{{ route('invoices.destroy','XX') }}";
@@ -258,12 +258,12 @@
                                 if(resp.data.status=="success"){
                                     Swal.fire({
                                         title: 'Deleted!',
-                                        text: 'Your data has been deleted.',
+                                        text: "@lang('general.lbl_msg_delete_title') ",
                                         icon: 'success',
                                         showCancelButton: false,
                                         confirmButtonColor: '#3085d6',
-                                        cancelButtonColor: '#d33',
-                                        confirmButtonText: 'Close'
+                                        cancelButtonColor: '#d33', cancelButtonText: "@lang('general.lbl_cancel')",
+                                        confirmButtonText: "@lang('general.lbl_close') "
                                         }).then((result) => {
                                             window.location.href = "{{ route('invoices.index') }}"; 
                                         })
@@ -272,7 +272,7 @@
                                     {
                                         position: 'top-end',
                                         icon: 'warning',
-                                        text: 'Something went wrong - '+resp.data.message,
+                                        text: "@lang('general.lbl_msg_failed')"+resp.data.message,
                                         showConfirmButton: false,
                                         imageHeight: 30, 
                                         imageWidth: 30,   

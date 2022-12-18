@@ -78,7 +78,7 @@
                 ...
                 </div>
                 <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">@lang('general.lbl_close') </button>
                 <button type="button" class="btn btn-primary">@lang('general.lbl_apply')</button>
                 </div>
             </div>

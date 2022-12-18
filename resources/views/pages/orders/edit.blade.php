@@ -18,7 +18,7 @@
         <div class="row mb-3">
           <div class="col-md-4">
             <div class="row mb-3">
-              <label class="form-label col-form-label col-md-4">Date (mm/dd/YYYY)</label>
+              <label class="form-label col-form-label col-md-4">@lang('general.lbl_dated_mmddYYYY')</label>
               <div class="col-md-8">
                 <input type="hidden" id="order_no" name="order_no" value="{{ $order->order_no }}">
                 <input type="text" 
@@ -32,7 +32,7 @@
               </div>
             </div>
             <div class="row mb-3">
-              <label class="form-label col-form-label col-md-4">Remark</label>
+              <label class="form-label col-form-label col-md-4">@lang('general.lbl_remark')</label>
               <div class="col-md-8">
                 <input type="text" 
                 name="remark"
@@ -45,11 +45,11 @@
 
           <div class="col-md-8">
             <div class="row mb-3">
-              <label class="form-label col-form-label col-md-2">Customer</label>
+              <label class="form-label col-form-label col-md-2">@lang('general.lbl_customer')</label>
               <div class="col-md-4">
                 <select class="form-control" 
                     name="customer_id" id="customer_id">
-                    <option value="">Select Customers</option>
+                    <option value="">@lang('general.lbl_customerselect')</option>
                     @foreach($customers as $customer)
                         <option value="{{ $customer->id }}" {{ ($customer->id == $order->customers_id) 
                           ? 'selected'
@@ -57,7 +57,7 @@
                     @endforeach
                 </select>
               </div>
-              <label class="form-label col-form-label col-md-2">Schedule</label>
+              <label class="form-label col-form-label col-md-2">@lang('general.lbl_schedule')</label>
               <div class="col-md-4">
 
                   <div class="input-group">
@@ -69,11 +69,11 @@
               </div>
             </div>
             <div class="row mb-3">
-              <label class="form-label col-form-label col-md-2">Type Payment</label>
+              <label class="form-label col-form-label col-md-2">@lang('general.lbl_type_payment')</label>
               <div class="col-md-2">
                 <select class="form-control" 
                       name="payment_type" id ="payment_type" >
-                      <option value="">Select Payment</option>
+                      <option value="">@lang('general.lbl_type_paymentselect')</option>
                       @foreach($payment_type as $value)
                           <option value="{{ $value }}" {{ ($order->payment_type == $value) 
                             ? 'selected'
@@ -82,7 +82,7 @@
                   </select>
               </div>
 
-                <label class="form-label col-form-label col-md-2">Nominal Payment</label>
+                <label class="form-label col-form-label col-md-2">@lang('general.lbl_nominal_payment')</label>
                 <div class="col-md-2">
                   <input type="text" 
                   id="payment_nominal"
@@ -91,7 +91,7 @@
                   value="{{ $order->payment_nominal }}" />
                   </div>
 
-                  <label class="form-label col-form-label col-md-1">Charge</label>
+                  <label class="form-label col-form-label col-md-1">@lang('general.lbl_charge')</label>
                   <div class="col-md-3">
                     <h2 class="text-end"><label id="order_charge">Rp. {{ number_format(($order->payment_nominal-$order->total), 0, ',', '.') }}</label></h2>
                   </div>
@@ -102,16 +102,16 @@
               <div class="modal-dialog">
               <div class="modal-content">
                   <div class="modal-header">
-                  <h5 class="modal-title" id="staticBackdropLabel">Assign Task</h5>
+                  <h5 class="modal-title" id="staticBackdropLabel">@lang('general.lbl_assign')</h5>
                   <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                   </div>
                   <div class="modal-body">
-                    <label class="form-label col-form-label col-md-8" id="product_id_selected_lbl">Choose Terapist </label>
+                    <label class="form-label col-form-label col-md-8" id="product_id_selected_lbl">@lang('general.lbl_assignselect') </label>
                     <input type="hidden" id="product_id_selected" value="">
                     <div class="col-md-8">
                       <select class="form-control" 
                           name="assign_id" id="assign_id" required>
-                          <option value="">Select Staff</option>
+                          <option value="">@lang('general.lbl_assignselect') </option>
                           @foreach($users as $user)
                               <option value="{{ $user->id }}">{{ $user->name }}</option>
                           @endforeach
@@ -119,7 +119,7 @@
                     </div>
                   </div>
                   <div class="modal-footer">
-                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">@lang('general.lbl_close') </button>
                   <button type="button" class="btn btn-primary"  data-bs-dismiss="modal" id="btn_assigned">@lang('general.lbl_apply')</button>
                   </div>
               </div>
@@ -130,26 +130,26 @@
               <div class="modal-dialog modal-lg">
               <div class="modal-content">
                   <div class="modal-header">
-                  <h5 class="modal-title" id="staticBackdropLabel">Choose Schedule</h5>
+                  <h5 class="modal-title" id="staticBackdropLabel">@lang('general.lbl_scheduleselect')  </h5>
                   <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                   </div>
                   <div class="modal-body">
 
                     <div class="row mb-3">
                       <div class="col-md-1">
-                        <label class="form-label col-form-label col-md-8">Room </label>
+                        <label class="form-label col-form-label col-md-8">@lang('general.lbl_room')   </label>
                       </div>
                       <div class="col-md-2">
                           <select class="form-control" 
                               name="room_id" id="room_id" required>
-                              <option value="">Select Rooms</option>
+                              <option value="">@lang('general.lbl_roomselect')   </option>
                               @foreach($rooms as $roomx)
                                   <option value="{{ $roomx->id }}"  {{ $roomx->remark==$room->remark?"selected":"" }}>{{ $roomx->remark }}</option>
                               @endforeach
                           </select>
                       </div>
                       <div class="col-md-1">
-                        <label class="form-label col-form-label col-md-4">Date</label>
+                        <label class="form-label col-form-label col-md-4">@lang('general.lbl_dated')   </label>
                       </div>
                       <div class="col-md-2">
                         <input type="text" 
@@ -162,7 +162,7 @@
                               @endif
                       </div>
                       <div class="col-md-1">
-                        <label class="form-label col-form-label col-md-8">Time </label>
+                        <label class="form-label col-form-label col-md-8">@lang('general.lbl_time')   </label>
                       </div>
                       <div class="col-md-2">
                         <div class="input-group bootstrap-timepicker timepicker">
@@ -172,19 +172,19 @@
                       </div>
                     </div>
                    
-                    <div class="panel-heading bg-teal-600 text-white"><strong>Time Table</strong></div>
+                    <div class="panel-heading bg-teal-600 text-white"><strong>@lang('general.lbl_schedule_list')   </strong></div>
                     </br>
       
                     <div class="col-md-12">
                       <table class="table table-striped" id="order_time_table" style="width:100%">
                         <thead>
                         <tr>
-                            <th>Room</th>
-                            <th scope="col" width="25%">Order No</th>
+                            <th>@lang('general.lbl_room')   </th>
+                            <th scope="col" width="25%">@lang('general.lbl_invoice_no')   </th>
                             <th scope="col" width="15%">@lang('general.lbl_total_customer')</th>
-                            <th scope="col" width="15%">Schedule At</th>
-                            <th scope="col" width="5%">Duration</th>  
-                            <th scope="col" width="15%">End Estimate</th>   
+                            <th scope="col" width="15%">@lang('general.lbl_schedule_at')   </th>
+                            <th scope="col" width="5%">@lang('general.lbl_duration')   </th>
+                            <th scope="col" width="15%">@lang('general.lbl_end_estimation') </th>
                         </tr>
                         </thead>
                         <tbody>
@@ -193,7 +193,7 @@
                     </div>
                   </div>
                   <div class="modal-footer">
-                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">@lang('general.lbl_close') </button>
                   <button type="button" class="btn btn-primary"  data-bs-dismiss="modal" id="btn_scheduled">@lang('general.lbl_apply')</button>
                   </div>
               </div>
@@ -206,11 +206,11 @@
                 
           </div>
           <div class="row mb-3">
-            <div class="panel-heading bg-teal-600 text-white"><strong>Order List</strong></div>
+            <div class="panel-heading bg-teal-600 text-white"><strong>@lang('general.lbl_order_list')</strong></div>
               <br>
               <div class="row mb-3">
                 <div class="col-md-3">
-                  <label class="form-label col-form-label">Product</label>
+                  <label class="form-label col-form-label">@lang('general.product')</label>
                   <select class="form-control" 
                         name="input_product_id" id="input_product_id" required>
                         <option value="">@lang('general.lbl_productselect')</option>
@@ -219,7 +219,7 @@
   
   
                 <div class="col-md-1">
-                  <label class="form-label col-form-label">UOM</label>
+                  <label class="form-label col-form-label">@lang('general.lbl_uom')</label>
                   <input type="text" 
                   name="input_product_uom"
                   id="input_product_uom"
@@ -228,7 +228,7 @@
                 </div>
   
                 <div class="col-md-2">
-                  <label class="form-label col-form-label">Price</label>
+                  <label class="form-label col-form-label">@lang('general.lbl_price')</label>
                   <input type="text" 
                   name="input_product_price"
                   id="input_product_price"
@@ -238,7 +238,7 @@
   
   
                 <div class="col-md-1">
-                  <label class="form-label col-form-label">Disc (Rp.)</label>
+                  <label class="form-label col-form-label">@lang('general.lbl_discountrp')</label>
                   <input type="text" 
                   name="input_product_disc"
                   id="input_product_disc"
@@ -248,7 +248,7 @@
   
   
                 <div class="col-md-1">
-                  <label class="form-label col-form-label">Qty</label>
+                  <label class="form-label col-form-label">@lang('general.lbl_qty')</label>
                   <input type="text" 
                   name="input_product_qty"
                   id="input_product_qty"
@@ -272,7 +272,7 @@
   
                 <div class="col-md-2">
                   <div class="col-md-12"><label class="form-label col-form-label">_</label></div>
-                  <a href="#" id="input_product_submit" class="btn btn-green"><div class="fa-1x"><i class="fas fa-plus fa-fw"></i>Add Product</div></a>
+                  <a href="#" id="input_product_submit" class="btn btn-green"><div class="fa-1x"><i class="fas fa-plus fa-fw"></i>@lang('general.lbl_add_product')</div></a>
                 </div>
   
               </div>
@@ -282,12 +282,12 @@
                 <thead>
                 <tr>
                   <th>Product Code</th>
-                  <th scope="col" width="10%">UOM</th>
-                  <th scope="col" width="10%">Price</th>
-                  <th scope="col" width="5%">Discount</th>
-                  <th scope="col" width="5%">Qty</th>
+                  <th scope="col" width="10%">@lang('general.lbl_uom')</th>
+                  <th scope="col" width="10%">@lang('general.lbl_price')</th>
+                  <th scope="col" width="5%">@lang('general.lbl_discount')</th>
+                  <th scope="col" width="5%">@lang('general.lbl_qty')</th>
                   <th scope="col" width="15%">Total</th>  
-                  <th scope="col" width="15%">Assigned to</th>  
+                  <th scope="col" width="15%">@lang('general.lbl_terapist')</th>  
                   <th scope="col" width="15%">@lang('general.lbl_action')</th> 
                 </tr>
                 </thead>
@@ -305,7 +305,7 @@
                     <input type="text" class="form-control" id="input-apply-voucher">
                   </div>
                   <div class="col-md-3">
-                    <button type="button" id="apply-voucher-btn" class="btn btn-warning">Apply Voucher</button>
+                    <button type="button" id="apply-voucher-btn" class="btn btn-warning">@lang('general.lbl_apply_voucher')</button>
                   </div>
                   <div class="col-md-1">
                     <button type="button" id="cancel-voucher-btn" class="btn btn-danger">@lang('general.lbl_cancel')</button>
@@ -323,7 +323,7 @@
               </div>
               <div class="col-md-12">
                 <div class="col-auto text-end">
-                  <label class="col-md-2"><h2>Tax </h2></label>
+                  <label class="col-md-2"><h2>@lang('general.lbl_tax') </h2></label>
                   <label class="col-md-8" id="vat-total"> <h3>Rp. {{ number_format($order->tax, 0, ',', '.') }}</h3></label>
                 </div>
               </div>
@@ -556,7 +556,7 @@
                         {
                           position: 'top-end',
                           icon: 'warning',
-                          text: 'Something went wrong - '+resp.data.message,
+                          text: "@lang('general.lbl_msg_failed')"+resp.data.message,
                           showConfirmButton: false,
                           imageHeight: 30, 
                           imageWidth: 30,   
@@ -602,10 +602,10 @@
             targets: -1, 
             data: null, 
             defaultContent: 
-            '<a href="#" id="add_row" class="btn btn-xs btn-green"><div class="fa-1x"><i class="fas fa-circle-plus fa-fw"></i></div></a>'+
-            '<a href="#" id="minus_row" class="btn btn-xs btn-yellow"><div class="fa-1x"><i class="fas fa-circle-minus fa-fw"></i></div></a>'+
-            '<a href="#" id="delete_row" class="btn btn-xs btn-danger"><div class="fa-1x"><i class="fas fa-circle-xmark fa-fw"></i></div></a>'+
-            '<a href="#" href="#modal-filter" data-bs-toggle="modal" data-bs-target="#modal-filter" id="assign_row" class="btn btn-xs btn-gray"><div class="fa-1x"><i class="fas fa-user-tag fa-fw"></i></div></a>',}],
+            '<a href="#"  data-toggle="tooltip" data-placement="top" title="Tambah"   id="add_row"  class="btn btn-xs btn-green"><div class="fa-1x"><i class="fas fa-circle-plus fa-fw"></i></div></a>'+
+            '<a href="#"  data-toggle="tooltip" data-placement="top" title="Kurangi"   id="minus_row"  class="btn btn-xs btn-yellow"><div class="fa-1x"><i class="fas fa-circle-minus fa-fw"></i></div></a>'+
+            '<a href="#" data-toggle="tooltip" data-placement="top" title="Hapus"  id="delete_row"  class="btn btn-xs btn-danger"><div class="fa-1x"><i class="fas fa-circle-xmark fa-fw"></i></div></a>'+
+            '<a href="#" href="#modal-filter" data-bs-toggle="modal" data-bs-target="#modal-filter"  data-toggle="tooltip" data-placement="top" title="Terapis" id="assign_row" class="btn btn-xs btn-gray"><div class="fa-1x"><i class="fas fa-user-tag fa-fw"></i></div></a>',}],
           columns: [
             { data: 'abbr' },
             { data: 'uom' },

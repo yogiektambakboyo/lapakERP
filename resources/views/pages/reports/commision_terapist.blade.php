@@ -27,10 +27,10 @@
                     <th scope="col" width="8%">@lang('general.lbl_branch')</th>
                     <th scope="col" width="8%">@lang('general.lbl_dated')</th>
                     <th>@lang('general.invoice_no')</th>
-                    <th scope="col" width="17%">Product</th>
+                    <th scope="col" width="17%">@lang('general.product')</th>
                     <th scope="col" width="15%">Name</th>
-                    <th scope="col" width="5%">Price</th>
-                    <th scope="col" width="4%">Qty</th>
+                    <th scope="col" width="5%">@lang('general.lbl_price')</th>
+                    <th scope="col" width="4%">@lang('general.lbl_qty')</th>
                     <th scope="col" width="8%">Total</th>  
                     <th scope="col" width="8%">Base Comm.</th>
                     <th scope="col" width="12%">Total Comm</th>    

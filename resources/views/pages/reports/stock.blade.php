@@ -26,7 +26,7 @@
             <tr>
                 <th scope="col" width="10%">@lang('general.lbl_branch')</th>
                 <th scope="col">Product Name</th>    
-                <th scope="col">Qty</th>    
+                <th scope="col">@lang('general.lbl_qty')</th>    
             </tr>
             </thead>
             <tbody>

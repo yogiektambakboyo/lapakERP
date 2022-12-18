@@ -29,8 +29,8 @@
                 <th scope="col">Receive No</th>    
                 <th scope="col">Product Name</th>    
                 <th scope="col">Category</th>    
-                <th scope="col">Qty</th>    
-                <th scope="col">UOM</th>    
+                <th scope="col">@lang('general.lbl_qty')</th>    
+                <th scope="col">@lang('general.lbl_uom')</th>    
                 <th scope="col">Total</th>    
             </tr>
             </thead>

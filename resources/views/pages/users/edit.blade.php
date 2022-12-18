@@ -103,7 +103,7 @@
             </div>
           </div>
           <div class="row mb-3">
-            <label class="form-label col-form-label col-md-2">Join Date (mm/dd/YYYY)</label>
+            <label class="form-label col-form-label col-md-2">Join @lang('general.lbl_dated_mmddYYYY')</label>
             <div class="col-md-8">
               <input type="text" 
               name="join_date"
@@ -183,7 +183,7 @@
               </div>
             </div>
             <div class="row mb-3">
-              <label class="form-label col-form-label col-md-2">Birth Date (mm/dd/yyyy)</label>
+              <label class="form-label col-form-label col-md-2">Birth @lang('general.lbl_dated_mmddYYYY')</label>
               <div class="col-md-8">
                 <input type="text" 
                   name="birth_date"

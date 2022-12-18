@@ -7,7 +7,7 @@
   @csrf
   <div class="panel text-white">
     <div class="panel-heading  bg-teal-600">
-      <div class="panel-title"><h4 class="">Sales Invoice {{ $invoice->invoice_no }}</h4></div>
+      <div class="panel-title"><h4 class="">@lang('general.lbl_invoice')  {{ $invoice->invoice_no }}</h4></div>
       <div class="">
         <a href="{{ route('invoices.printthermal', $invoice->id) }}" class="btn btn-warning">Print Thermal</a>
         <a href="{{ route('invoices.print', $invoice->id) }}" class="btn btn-warning">Print</a>
@@ -19,7 +19,7 @@
         <div class="row mb-3">
           <div class="col-md-4">
             <div class="row mb-3">
-              <label class="form-label col-form-label col-md-4">Date (mm/dd/YYYY)</label>
+              <label class="form-label col-form-label col-md-4">@lang('general.lbl_dated_mmddYYYY')</label>
               <div class="col-md-8">
                 <input type="text" 
                 name="order_date"
@@ -32,7 +32,7 @@
               </div>
             </div>
             <div class="row mb-3">
-              <label class="form-label col-form-label col-md-4">Remark</label>
+              <label class="form-label col-form-label col-md-4">@lang('general.lbl_remark')</label>
               <div class="col-md-8">
                 <input type="text" 
                 name="remark"
@@ -49,11 +49,11 @@
               <div class="col-md-3">
                 <input type="text" class="form-control" value="{{ $invoice->ref_no }}" id="scheduled" disabled>
               </div>
-              <label class="form-label col-form-label col-md-1">Customer</label>
+              <label class="form-label col-form-label col-md-1">@lang('general.lbl_customer')</label>
               <div class="col-md-3">
                 <select class="form-control" 
                     name="customer_id" id="customer_id" readonly>
-                    <option value="">Select Customers</option>
+                    <option value="">@lang('general.lbl_customerselect')</option>
                     @foreach($customers as $customer)
                         <option value="{{ $customer->id }}" {{ ($customer->id == $invoice->customers_id) 
                           ? 'selected'
@@ -61,7 +61,7 @@
                     @endforeach
                 </select>
               </div>
-              <label class="form-label col-form-label col-md-1">Schedule</label>
+              <label class="form-label col-form-label col-md-1">@lang('general.lbl_schedule')</label>
               <div class="col-md-3">
 
                   <div class="input-group">
@@ -73,11 +73,11 @@
               </div>
             </div>
             <div class="row mb-3">
-              <label class="form-label col-form-label col-md-2">Type Payment</label>
+              <label class="form-label col-form-label col-md-2">@lang('general.lbl_type_payment')</label>
               <div class="col-md-2">
                 <select class="form-control" 
                       name="payment_type" id ="payment_type" readonly>
-                      <option value="">Select Payment</option>
+                      <option value="">@lang('general.lbl_type_paymentselect')</option>
                       @foreach($payment_type as $value)
                           <option value="{{ $value }}" {{ ($invoice->payment_type == $value) 
                             ? 'selected'
@@ -86,7 +86,7 @@
                   </select>
               </div>
 
-                <label class="form-label col-form-label col-md-2">Nominal Payment</label>
+                <label class="form-label col-form-label col-md-2">@lang('general.lbl_nominal_payment')</label>
                 <div class="col-md-2">
                   <input type="text" 
                   id="payment_nominal"
@@ -95,7 +95,7 @@
                   value="{{ $invoice->payment_nominal }}" readonly/>
                   </div>
 
-                  <label class="form-label col-form-label col-md-1">Charge</label>
+                  <label class="form-label col-form-label col-md-1">@lang('general.lbl_charge')</label>
                   <div class="col-md-3">
                     <h2 class="text-end"><label id="order_charge">Rp. @if($invoice->payment_nominal-$invoice->total>0)
                       {{ number_format(($invoice->payment_nominal-$invoice->total), 0, ',', '.') }}
@@ -113,13 +113,13 @@
             <table class="table table-striped" id="order_table">
               <thead>
               <tr>
-                  <th>Product</th>
-                  <th scope="col" width="10%">UOM</th>
-                  <th scope="col" width="10%">Price</th>
-                  <th scope="col" width="5%">Discount</th>
-                  <th scope="col" width="5%">Qty</th>
+                  <th>@lang('general.product')</th>
+                  <th scope="col" width="10%">@lang('general.lbl_uom')</th>
+                  <th scope="col" width="10%">@lang('general.lbl_price')</th>
+                  <th scope="col" width="5%">@lang('general.lbl_discount')</th>
+                  <th scope="col" width="5%">@lang('general.lbl_qty')</th>
                   <th scope="col" width="15%">Total</th>  
-                  <th scope="col" width="15%">Assigned To</th>  
+                  <th scope="col" width="15%">@lang('general.lbl_terapist')</th>  
                   <th scope="col" width="15%">Referral By</th>  
               </tr>
               </thead>
@@ -160,7 +160,7 @@
                 </div>
                 <div class="col-md-12">
                   <div class="col-auto text-end">
-                    <label class="col-md-2"><h2>Tax </h2></label>
+                    <label class="col-md-2"><h2>@lang('general.lbl_tax') </h2></label>
                     <label class="col-md-8" id="vat-total"> <h3>Rp. {{ number_format($invoice->tax, 0, ',', '.') }}</h3></label>
                   </div>
                 </div>

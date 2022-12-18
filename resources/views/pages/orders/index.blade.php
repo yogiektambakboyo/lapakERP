@@ -34,7 +34,7 @@
             <tr>
                 <th scope="col" width="1%">#</th>
                 <th scope="col" width="10%">@lang('general.lbl_branch')</th>
-                <th>Order No</th>
+                <th>@lang('general.lbl_invoice_no')   </th>
                 <th scope="col" width="8%">@lang('general.lbl_dated')</th>
                 <th scope="col" width="15%">@lang('general.lbl_total_customer')</th>
                 <th scope="col" width="10%">Total</th>
@@ -166,13 +166,13 @@
 
           function showConfirm(id,data){
             Swal.fire({
-            title: 'Are you sure?',
-            text: "You will delete document "+data+" !",
+            title: "@lang('general.lbl_sure')",
+            text: "@lang('general.lbl_sure_title') "+data+" !",
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Yes, delete it!'
+            cancelButtonColor: '#d33', cancelButtonText: "@lang('general.lbl_cancel')",
+            confirmButtonText: "@lang('general.lbl_sure_delete')"
             }).then((result) => {
                 if (result.isConfirmed) {
                     var url = "{{ route('orders.destroy','XX') }}";
@@ -189,12 +189,12 @@
                                 if(resp.data.status=="success"){
                                     Swal.fire({
                                         title: 'Deleted!',
-                                        text: 'Your data has been deleted.',
+                                        text: "@lang('general.lbl_msg_delete_title') ",
                                         icon: 'success',
                                         showCancelButton: false,
                                         confirmButtonColor: '#3085d6',
-                                        cancelButtonColor: '#d33',
-                                        confirmButtonText: 'Close'
+                                        cancelButtonColor: '#d33', cancelButtonText: "@lang('general.lbl_cancel')",
+                                        confirmButtonText: "@lang('general.lbl_close') "
                                         }).then((result) => {
                                             window.location.href = "{{ route('orders.index') }}"; 
                                         })
@@ -203,7 +203,7 @@
                                     {
                                         position: 'top-end',
                                         icon: 'warning',
-                                        text: 'Something went wrong - '+resp.data.message,
+                                        text: "@lang('general.lbl_msg_failed')"+resp.data.message,
                                         showConfirmButton: false,
                                         imageHeight: 30, 
                                         imageWidth: 30,   

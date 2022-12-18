@@ -228,7 +228,7 @@
                       {
                         position: 'top-end',
                         icon: 'warning',
-                        text: 'Something went wrong - '+resp.data.message,
+                        text: "@lang('general.lbl_msg_failed')"+resp.data.message,
                         showConfirmButton: false,
                         imageHeight: 30, 
                         imageWidth: 30,   
@@ -260,7 +260,7 @@
                       {
                         position: 'top-end',
                         icon: 'warning',
-                        text: 'Something went wrong - '+resp.data.message,
+                        text: "@lang('general.lbl_msg_failed')"+resp.data.message,
                         showConfirmButton: false,
                         imageHeight: 30, 
                         imageWidth: 30,   

@@ -65,10 +65,10 @@
       <table class="table table-striped" id="order_table" width="100%">
         <thead>
         <tr style="background-color:#FFA726;color:white;">
-            <th>Product</th>
-            <th scope="col" width="10%">UOM</th>
-            <th scope="col" width="10%">Price</th>
-            <th scope="col" width="5%">Qty</th>
+            <th>@lang('general.product')</th>
+            <th scope="col" width="10%">@lang('general.lbl_uom')</th>
+            <th scope="col" width="10%">@lang('general.lbl_price')</th>
+            <th scope="col" width="5%">@lang('general.lbl_qty')</th>
             <th scope="col" width="10%">Disc.</th>
             <th scope="col" width="10%">Total</th>
         </tr>

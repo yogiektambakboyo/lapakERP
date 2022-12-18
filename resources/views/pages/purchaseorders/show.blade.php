@@ -17,7 +17,7 @@
           <div class="row mb-3">
           <div class="col-md-12">
             <div class="row mb-3">
-              <label class="form-label col-form-label col-md-1">Date (mm/dd/YYYY)</label>
+              <label class="form-label col-form-label col-md-1">@lang('general.lbl_dated_mmddYYYY')</label>
               <div class="col-md-2">
                 <input type="text" 
                 name="dated"
@@ -52,7 +52,7 @@
                 </select>
               </div>
 
-                <label class="form-label col-form-label col-md-1">Remark</label>
+                <label class="form-label col-form-label col-md-1">@lang('general.lbl_remark')</label>
                 <div class="col-md-2">
                   <input type="text" 
                   name="remark"
@@ -62,7 +62,7 @@
                   </div>
             </div>
 
-            <div class="panel-heading bg-teal-600 text-white"><strong>Order List</strong></div>
+            <div class="panel-heading bg-teal-600 text-white"><strong>@lang('general.lbl_order_list')</strong></div>
             <div class="row mb-3">
               
             </div>
@@ -72,9 +72,9 @@
               <thead>
               <tr>
                   <th>Product Code</th>
-                  <th scope="col" width="10%">UOM</th>
-                  <th scope="col" width="10%">Price</th>
-                  <th scope="col" width="5%">Qty</th>
+                  <th scope="col" width="10%">@lang('general.lbl_uom')</th>
+                  <th scope="col" width="10%">@lang('general.lbl_price')</th>
+                  <th scope="col" width="5%">@lang('general.lbl_qty')</th>
                   <th scope="col" width="5%">Disc</th>
                   <th scope="col" width="10%">Total</th>
               </tr>
@@ -91,7 +91,7 @@
                 <h3 class="text-end"><label id="sub-total">{{ number_format(($purchase->total-$purchase->total_vat),0,',','.') }}</label></h3>
               </div>
 
-              <label class="form-label col-form-label col-md-9 text-end"><h2>Tax </h2></label>
+              <label class="form-label col-form-label col-md-9 text-end"><h2>@lang('general.lbl_tax') </h2></label>
               <div class="col-md-3">
                 <h3 class="text-end"><label id="vat-total">{{ number_format($purchase->total_vat,0,',','.') }}</label></h3>
               </div>

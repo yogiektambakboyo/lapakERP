@@ -132,7 +132,7 @@
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
+            cancelButtonColor: '#d33', cancelButtonText: "@lang('general.lbl_cancel')",
             confirmButtonText: "@lang('general.lbl_sure_delete')",
             cancelButtonText: "@lang('general.lbl_cancel')"
             }).then((result) => {
@@ -156,7 +156,7 @@
                                 icon: 'success',
                                 showCancelButton: false,
                                 confirmButtonColor: '#3085d6',
-                                cancelButtonColor: '#d33',
+                                cancelButtonColor: '#d33', cancelButtonText: "@lang('general.lbl_cancel')",
                                 confirmButtonText: "@lang('general.lbl_close')"
                                 }).then((result) => {
                                     window.location.href = "{{ route('productsprice.index') }}"; 

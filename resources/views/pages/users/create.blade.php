@@ -91,7 +91,7 @@
             </div>
           </div>
           <div class="row mb-3">
-            <label class="form-label col-form-label col-md-2">Join Date (mm/dd/YYYY)</label>
+            <label class="form-label col-form-label col-md-2">Join @lang('general.lbl_dated_mmddYYYY')</label>
             <div class="col-md-8">
               <input type="text" 
               name="join_date"

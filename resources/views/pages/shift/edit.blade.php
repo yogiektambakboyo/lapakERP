@@ -15,7 +15,7 @@
                 @method('patch')
                 @csrf
                 <div class="mb-3">
-                    <label for="remark" class="form-label">Remark</label>
+                    <label for="remark" class="form-label">@lang('general.lbl_remark')</label>
                     <input value="{{ $shift->remark }}" 
                         type="text" 
                         class="form-control" 

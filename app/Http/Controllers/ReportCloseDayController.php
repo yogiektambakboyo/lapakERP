@@ -122,7 +122,7 @@ class ReportCloseDayController extends Controller
                 join branch b on b.id=c.branch_id 
                 where im.dated = '".$filter_begin_date."'  and c.branch_id = ".$filter_branch_id."  group by im.total_payment,im.payment_type                       
         ");
-        $payment_type = ['Cash','BCA - Debit','BCA - Kredit','Mandiri - Debit','Mandiri - Kredit'];
+        $payment_type = ['Cash','BCA - Debit','BCA - Kredit','Mandiri - Debit','Mandiri - Kredit','QRIS'];
         $users = User::join('users_branch as ub','ub.branch_id', '=', 'users.branch_id')->where('ub.user_id','=',$user->id)->where('users.job_id','=',2)->get(['users.id','users.name']);
 
         $pdf = PDF::setOptions(['isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true])->loadView('pages.reports.close_day_print', [

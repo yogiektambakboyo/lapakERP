@@ -136,7 +136,7 @@
                   </div>
                 </div>
                 <div class="row mb-3">
-                  <label class="form-label col-form-label col-md-2">Birth Date</label>
+                  <label class="form-label col-form-label col-md-2">Birth @lang('general.lbl_dated')   </label>
                   <div class="col-md-8">
                     <input type="text" class="form-control" value="{{ $users->birth_date }}" readonly />
                   </div>
@@ -256,7 +256,7 @@
               <div class="panel-body bg-white text-black">
                 <div class="row mb-3">
                   <div class="col-md-2">
-                    <label class="form-label col-form-label">Date (mm/dd/YYYY)</label>
+                    <label class="form-label col-form-label">@lang('general.lbl_dated_mmddYYYY')</label>
                     <input type="text" 
                     name="input_date"
                     id="input_date"
@@ -525,7 +525,7 @@
                       {
                         position: 'top-end',
                         icon: 'warning',
-                        text: 'Something went wrong - '+resp.data.message,
+                        text: "@lang('general.lbl_msg_failed')"+resp.data.message,
                         showConfirmButton: false,
                         imageHeight: 30, 
                         imageWidth: 30,   
@@ -599,7 +599,7 @@
                       {
                         position: 'top-end',
                         icon: 'warning',
-                        text: 'Something went wrong - '+resp.data.message,
+                        text: "@lang('general.lbl_msg_failed')"+resp.data.message,
                         showConfirmButton: false,
                         imageHeight: 30, 
                         imageWidth: 30,   
@@ -633,7 +633,7 @@
                       {
                         position: 'top-end',
                         icon: 'warning',
-                        text: 'Something went wrong - '+resp.data.message,
+                        text: "@lang('general.lbl_msg_failed')"+resp.data.message,
                         showConfirmButton: false,
                         imageHeight: 30, 
                         imageWidth: 30,   
@@ -662,7 +662,7 @@
                       {
                         position: 'top-end',
                         icon: 'warning',
-                        text: 'Something went wrong - '+resp.data.message,
+                        text: "@lang('general.lbl_msg_failed')"+resp.data.message,
                         showConfirmButton: false,
                         imageHeight: 30, 
                         imageWidth: 30,   

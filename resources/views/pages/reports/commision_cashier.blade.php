@@ -26,10 +26,10 @@
                 <tr>
                     <th scope="col" width="6%">@lang('general.lbl_dated')</th>
                     <th>@lang('general.invoice_no')</th>
-                    <th scope="col" width="17%">Product</th>
+                    <th scope="col" width="17%">@lang('general.product')</th>
                     <th scope="col" width="15%">Name</th>
-                    <th scope="col" width="5%">Price</th>
-                    <th scope="col" width="4%">Qty</th>
+                    <th scope="col" width="5%">@lang('general.lbl_price')</th>
+                    <th scope="col" width="4%">@lang('general.lbl_qty')</th>
                     <th scope="col" width="8%">Total</th>  
                     <th scope="col" width="10%">Type Commission</th>   
                     <th scope="col" width="12%">Base Commission</th>
@@ -72,7 +72,7 @@
                 ...
                 </div>
                 <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">@lang('general.lbl_close') </button>
                 <button type="button" class="btn btn-primary">@lang('general.lbl_apply')</button>
                 </div>
             </div>

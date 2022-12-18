@@ -19,7 +19,7 @@
           <div class="row mb-3">
           <div class="col-md-12">
             <div class="row mb-3">
-              <label class="form-label col-form-label col-md-1">Date (mm/dd/YYYY)</label>
+              <label class="form-label col-form-label col-md-1">@lang('general.lbl_dated_mmddYYYY')</label>
               <div class="col-md-1">
                 <input type="text" 
                 name="doc_dated"
@@ -66,7 +66,7 @@
                 </select>
               </div>
 
-                <label class="form-label col-form-label col-md-1">Remark</label>
+                <label class="form-label col-form-label col-md-1">@lang('general.lbl_remark')</label>
                 <div class="col-md-1">
                   <input type="text" 
                   name="remark"
@@ -79,7 +79,7 @@
             <div class="panel-heading bg-teal-600 text-white"><strong>Receive List</strong></div>
             <div class="row mb-3">
               <div class="col-md-2">
-                <label class="form-label col-form-label">Product</label>
+                <label class="form-label col-form-label">@lang('general.product')</label>
                 <select class="form-control" 
                       name="input_product_id" id="input_product_id" required>
                       <option value="">@lang('general.lbl_productselect')</option>
@@ -88,7 +88,7 @@
 
 
               <div class="col-md-1">
-                <label class="form-label col-form-label">UOM</label>
+                <label class="form-label col-form-label">@lang('general.lbl_uom')</label>
                 <input type="text" 
                 name="input_product_uom"
                 id="input_product_uom"
@@ -97,7 +97,7 @@
               </div>
 
               <div class="col-md-1">
-                <label class="form-label col-form-label">Price</label>
+                <label class="form-label col-form-label">@lang('general.lbl_price')</label>
                 <input type="text" 
                 name="input_product_price"
                 id="input_product_price"
@@ -106,7 +106,7 @@
               </div>
 
               <div class="col-md-1">
-                <label class="form-label col-form-label">Qty</label>
+                <label class="form-label col-form-label">@lang('general.lbl_qty')</label>
                 <input type="text" 
                 name="input_product_qty"
                 id="input_product_qty"
@@ -115,7 +115,7 @@
               </div>
 
               <div class="col-md-2">
-                <label class="form-label col-form-label">Expired Date (mm/dd/YYYY)</label>
+                <label class="form-label col-form-label">Expired @lang('general.lbl_dated_mmddYYYY')</label>
                 <input type="text" 
                 name="input_expired_at"
                 id="input_expired_at"
@@ -137,7 +137,7 @@
               </div>
 
               <div class="col-md-1">
-                <label class="form-label col-form-label">Disc (Rp.)</label>
+                <label class="form-label col-form-label">@lang('general.lbl_discountrp')</label>
                 <input type="text" 
                 name="input_product_disc"
                 id="input_product_disc"
@@ -161,7 +161,7 @@
 
               <div class="col-md-2">
                 <div class="col-md-12"><label class="form-label col-form-label">_</label></div>
-                <a href="#" id="input_product_submit" class="btn btn-green"><div class="fa-1x"><i class="fas fa-plus fa-fw"></i>Add Product</div></a>
+                <a href="#" id="input_product_submit" class="btn btn-green"><div class="fa-1x"><i class="fas fa-plus fa-fw"></i>@lang('general.lbl_add_product')</div></a>
               </div>
 
             </div>
@@ -171,9 +171,9 @@
               <thead>
               <tr>
                   <th>Product Code</th>
-                  <th scope="col" width="10%">UOM</th>
-                  <th scope="col" width="10%">Price</th>
-                  <th scope="col" width="5%">Qty</th>
+                  <th scope="col" width="10%">@lang('general.lbl_uom')</th>
+                  <th scope="col" width="10%">@lang('general.lbl_price')</th>
+                  <th scope="col" width="5%">@lang('general.lbl_qty')</th>
                   <th scope="col" width="10%">Disc</th>
                   <th scope="col" width="10%">Expired</th>
                   <th scope="col" width="10%">Batch No</th>
@@ -193,7 +193,7 @@
                 <h3 class="text-end"><label id="sub-total">0</label></h3>
               </div>
 
-              <label class="form-label col-form-label col-md-9 text-end"><h2>Tax </h2></label>
+              <label class="form-label col-form-label col-md-9 text-end"><h2>@lang('general.lbl_tax') </h2></label>
               <div class="col-md-3">
                 <h3 class="text-end"><label id="vat-total">0</label></h3>
               </div>
@@ -216,7 +216,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                  <label class="form-label col-form-label col-md-12">Expired Date</label>
+                  <label class="form-label col-form-label col-md-12">Expired @lang('general.lbl_dated')   </label>
                   <input type="hidden" id="product_id_selected" value="">
                   <div class="col-md-12">
                     <input id="input_expired_at_list" class="form-control" name="input_expired_at_list" type="text">
@@ -227,7 +227,7 @@
                   </div>
                 </div>
                 <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">@lang('general.lbl_close') </button>
                 <button type="button" class="btn btn-primary"  data-bs-dismiss="modal" id="btn_apply_exp">@lang('general.lbl_apply')</button>
                 </div>
             </div>
@@ -603,7 +603,7 @@
                       {
                         position: 'top-end',
                         icon: 'warning',
-                        text: 'Something went wrong - '+resp.data.message,
+                        text: "@lang('general.lbl_msg_failed')"+resp.data.message,
                         showConfirmButton: false,
                         imageHeight: 30, 
                         imageWidth: 30,   
@@ -620,9 +620,9 @@
             targets: -1, 
             data: null, 
             defaultContent: 
-            '<a href="#" id="add_row" class="btn btn-green"><div class="fa-1x"><i class="fas fa-circle-plus fa-lg"></i></div></a>'+
-            '  <a href="#" id="minus_row" class="btn btn-yellow ml-1"><div class="fa-1x"><i class="fas fa-circle-minus fa-lg"></i></div></a>'+
-            '  <a href="#" id="delete_row" class="btn btn-danger"><div class="fa-1x"><i class="fas fa-circle-xmark fa-lg"></i></div></a>'+
+            '<a href="#"  data-toggle="tooltip" data-placement="top" title="Tambah"   id="add_row"  class="btn btn-green"><div class="fa-1x"><i class="fas fa-circle-plus fa-lg"></i></div></a>'+
+            '  <a href="#"  data-toggle="tooltip" data-placement="top" title="Kurangi"   id="minus_row"  class="btn btn-yellow ml-1"><div class="fa-1x"><i class="fas fa-circle-minus fa-lg"></i></div></a>'+
+            '  <a href="#" data-toggle="tooltip" data-placement="top" title="Hapus"  id="delete_row"  class="btn btn-danger"><div class="fa-1x"><i class="fas fa-circle-xmark fa-lg"></i></div></a>'+
             '  <a href="#" href="#modal-exp" data-bs-toggle="modal" data-bs-target="#modal-exp" id="exp_row" class="btn btn-indigo"><div class="fa-1x"><i class="fas fa-calendar-days fa-fw"></i></div></a>'
           }],
           columns: [

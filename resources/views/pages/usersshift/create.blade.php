@@ -14,7 +14,7 @@
             <form method="POST" action="{{ route('usersshift.store') }}">
                 @csrf
                 <div class="mb-3">
-                    <label class="form-label col-form-label col-md-12">Date (mm/dd/YYYY)</label>
+                    <label class="form-label col-form-label col-md-12">@lang('general.lbl_dated_mmddYYYY')</label>
                     <div class="col-md-12">
                         <input type="text" 
                         name="dated"
@@ -68,7 +68,7 @@
                 </div>
 
                 <div class="mb-3">
-                    <label for="phone_no" class="form-label">Remark</label>
+                    <label for="phone_no" class="form-label">@lang('general.lbl_remark')</label>
                     <input value="{{ old('remark') }}" 
                         type="text" 
                         class="form-control" 
