@@ -14,7 +14,7 @@
             <form method="POST" action="{{ route('customers.store') }}">
                 @csrf
                 <div class="mb-3">
-                    <label for="name" class="form-label">Name</label>
+                    <label for="name" class="form-label">@lang('general.lbl_name')</label>
                     <input value="{{ old('name') }}" 
                         type="text" 
                         class="form-control" 
@@ -27,7 +27,7 @@
                 </div>
 
                 <div class="mb-3">
-                    <label for="address" class="form-label">Address</label>
+                    <label for="address" class="form-label">@lang('general.lbl_address')</label>
                     <input value="{{ old('address') }}" 
                         type="text" 
                         class="form-control" 
@@ -40,7 +40,7 @@
                 </div>
 
                 <div class="mb-3">
-                    <label for="phone_no" class="form-label">Phone No</label>
+                    <label for="phone_no" class="form-label">@lang('general.lbl_phoneno')</label>
                     <input value="{{ old('phone_no') }}" 
                         type="text" 
                         class="form-control" 

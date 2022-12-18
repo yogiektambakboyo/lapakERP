@@ -158,6 +158,7 @@ class InvoicesController extends Controller
         $data = $this->data;
         $user = Auth::user();
         $payment_type = ['Cash','BCA - Debit','BCA - Kredit','Mandiri - Debit','Mandiri - Kredit','QRIS'];
+        $type_customer = ['Sendiri','Berdua','Keluarga','Rombongan'];
         $users = User::join('users_branch as ub','ub.branch_id', '=', 'users.branch_id')->where('ub.user_id','=',$user->id)->where('users.job_id','=',2)->get(['users.id','users.name']);
         $usersall = User::join('users_branch as ub','ub.branch_id', '=', 'users.branch_id')->where('ub.user_id','=',$user->id)->whereIn('users.job_id',[1,2])->get(['users.id','users.name']);
         return view('pages.invoices.create',[
@@ -165,8 +166,10 @@ class InvoicesController extends Controller
             'data' => $data,
             'users' => $users,
             'usersall' => $usersall,
+            'type_customers' => $type_customer,
             'orders' => Order::where('is_checkout','0')->get(),
             'payment_type' => $payment_type, 'company' => Company::get()->first(),
+            'branchs' => Branch::join('users_branch as ub','ub.branch_id', '=', 'branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']),
             'rooms' => Room::join('users_branch as ub','ub.branch_id', '=', 'branch_room.branch_id')->where('ub.user_id','=',$user->id)->get(['branch_room.id','branch_room.remark']),
         ]);
     }
@@ -252,6 +255,7 @@ class InvoicesController extends Controller
                 ['branch_room_id' => $request->get('branch_room_id')],
                 ['ref_no' => $request->get('ref_no')],
                 ['tax' => $request->get('tax')],
+                ['customer_type' => $request->get('customer_type')],
             )
         );
 
@@ -346,6 +350,7 @@ class InvoicesController extends Controller
 
         $data = $this->data;
         $user = Auth::user();
+        $type_customer = ['Sendiri','Berdua','Keluarga','Rombongan'];
         $room = Room::where('branch_room.id','=',$invoice->branch_room_id)->get(['branch_room.remark'])->first();
         $payment_type = ['Cash','BCA - Debit','BCA - Kredit','Mandiri - Debit','Mandiri - Kredit','QRIS'];
         $usersReferral = User::get(['users.id','users.name']);
@@ -354,6 +359,7 @@ class InvoicesController extends Controller
             'data' => $data,
             'invoice' => $invoice,
             'room' => $room,
+            'type_customers' => $type_customer,
             'orderDetails' => InvoiceDetail::join('invoice_master as om','om.invoice_no','=','invoice_detail.invoice_no')->join('product_sku as ps','ps.id','=','invoice_detail.product_id')->join('product_uom as u','u.product_id','=','invoice_detail.product_id')->join('uom as um','um.id','=','u.uom_id')->leftjoin('users as us','us.id','=','invoice_detail.assigned_to')->leftjoin('users as usm','usm.id','=','invoice_detail.referral_by')->where('invoice_detail.invoice_no',$invoice->invoice_no)->get(['usm.name as referral_by','us.name as assigned_to','um.remark as uom','invoice_detail.qty','invoice_detail.price','invoice_detail.total','ps.id','ps.remark as product_name','invoice_detail.discount','om.tax','om.voucher_code']),
             'usersReferrals' => $usersReferral,
             'payment_type' => $payment_type, 'company' => Company::get()->first(),
@@ -537,6 +543,7 @@ class InvoicesController extends Controller
         $usersall = User::join('users_branch as ub','ub.branch_id', '=', 'users.branch_id')->where('ub.user_id','=',$user->id)->whereIn('users.job_id',[1,2])->get(['users.id','users.name']);
         $users = User::join('users_branch as ub','ub.branch_id', '=', 'users.branch_id')->where('ub.user_id','=',$user->id)->where('users.job_id','=',2)->get(['users.id','users.name']);
         $usersReferral = User::get(['users.id','users.name']);
+        $type_customer = ['Sendiri','Berdua','Keluarga','Rombongan'];
 
         return view('pages.invoices.edit',[
             'customers' => Customer::join('users_branch as ub','ub.branch_id', '=', 'customers.branch_id')->join('branch as b','b.id','=','ub.branch_id')->where('ub.user_id',$user->id)->get(['customers.id','customers.name','b.remark']),
@@ -544,6 +551,7 @@ class InvoicesController extends Controller
             'invoice' => $invoice,
             'room' => $room,
             'usersall' => $usersall,
+            'type_customers' => $type_customer,
             'orders' => Order::where('is_checkout','0')->get(),
             'rooms' => Room::join('users_branch as ub','ub.branch_id', '=', 'branch_room.branch_id')->where('ub.user_id','=',$user->id)->get(['branch_room.id','branch_room.remark']),
             'users' => $users,
@@ -621,6 +629,7 @@ class InvoicesController extends Controller
                 ['branch_room_id' => $request->get('branch_room_id')],
                 ['ref_no' => $request->get('ref_no')],
                 ['tax' => $request->get('tax')],
+                ['customer_type' => $request->get('customer_type')],
             )
         );
 

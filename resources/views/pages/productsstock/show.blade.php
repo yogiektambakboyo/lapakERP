@@ -20,7 +20,7 @@
           <div class="panel-heading bg-teal-600"><h4></h4></div>
           <div class="panel-body bg-white text-black">
             <div class="row mb-3">
-              <label class="form-label col-form-label col-md-2">Name</label>
+              <label class="form-label col-form-label col-md-2">@lang('general.lbl_name')</label>
               <div class="col-md-8">
                 <input type="text" class="form-control" value="{{ $product->product_name }}" readonly />
               </div>

@@ -14,7 +14,7 @@
             <form method="POST" action="{{ route('branchs.store') }}">
                 @csrf
                 <div class="mb-3">
-                    <label for="remark" class="form-label">Name</label>
+                    <label for="remark" class="form-label">@lang('general.lbl_name')</label>
                     <input value="{{ old('remark') }}" 
                         type="text" 
                         class="form-control" 
@@ -27,7 +27,7 @@
                 </div>
 
                 <div class="mb-3">
-                    <label for="address" class="form-label">Address</label>
+                    <label for="address" class="form-label">@lang('general.lbl_address')</label>
                     <input value="{{ old('address') }}" 
                         type="text" 
                         class="form-control" 

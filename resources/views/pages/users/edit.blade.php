@@ -40,7 +40,7 @@
           <div class="panel-body bg-white text-black">
           <div class="panel-body bg-white text-black">
             <div class="row mb-3">
-                <label class="form-label col-form-label col-md-2">Name</label>
+                <label class="form-label col-form-label col-md-2">@lang('general.lbl_name')</label>
                 <div class="col-md-8">
                   <input type="hidden" name="employee_id" class="form-control" value="{{ $user->employee_id }}"  />
                   <input type="text" name="name" class="form-control" value="{{ $user->name }}"  />
@@ -202,7 +202,7 @@
           <div class="panel-heading bg-teal-600"><h4>Contact</h4></div>
           <div class="panel-body bg-white text-black">
             <div class="row mb-3">
-              <label class="form-label col-form-label col-md-2">Address</label>
+              <label class="form-label col-form-label col-md-2">@lang('general.lbl_address')</label>
               <div class="col-md-8">
                 <input type="text" 
                 name="address" required
@@ -223,7 +223,7 @@
             </div>
           </div>
           <div class="row mb-3">
-            <label class="form-label col-form-label col-md-2">Phone No</label>
+            <label class="form-label col-form-label col-md-2">@lang('general.lbl_phoneno')</label>
             <div class="col-md-8">
               <input type="text" 
               name="phone_no"

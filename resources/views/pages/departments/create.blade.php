@@ -14,7 +14,7 @@
             <form method="POST" action="{{ route('departments.store') }}">
                 @csrf
                 <div class="mb-3">
-                    <label for="remark" class="form-label">Name</label>
+                    <label for="remark" class="form-label">@lang('general.lbl_name')</label>
                     <input value="{{ old('remark') }}" 
                         type="text" 
                         class="form-control" 

@@ -50,8 +50,8 @@
           <div class="col-md-10">
             <div class="row mb-3">
 
-              <label class="form-label col-form-label col-md-2">@lang('general.lbl_spk')</label>
-              <div class="col-md-3">
+              <label class="form-label col-form-label col-md-2  d-none">@lang('general.lbl_spk')</label>
+              <div class="col-md-3 d-none">
                 <input type="text" class="form-control" id="ref_no" name="ref_no" value="{{ $invoice->ref_no }}" id="scheduled" disabled>
               </div>
 
@@ -67,6 +67,21 @@
                     @endforeach
                 </select>
               </div>
+
+              <label class="form-label col-form-label col-md-2">@lang('general.lbl_customer_type')</label>
+              <div class="col-md-2">
+                <select class="form-control" 
+                    name="customer_type" id="customer_type" required>
+                    <option value="">@lang('general.lbl_tipeselect')</option>
+                    @foreach($type_customers as $type_customer)
+                        <option value="{{ $type_customer }}" {{ ($invoice->customer_type == $type_customer) 
+                          ? 'selected'
+                          : ''}}> {{ $type_customer }}</option>
+                    @endforeach
+                </select>
+              </div>
+
+              
               <label class="form-label col-form-label col-md-1">@lang('general.lbl_schedule')</label>
               <div class="col-md-3">
                   <div class="input-group">
@@ -78,7 +93,7 @@
               </div>
             </div>
             <div class="row mb-3">
-              <label class="form-label col-form-label col-md-2">@lang('general.lbl_type_payment')</label>
+              <label class="form-label col-form-label col-md-1">@lang('general.lbl_type_payment')</label>
               <div class="col-md-2">
                 <select class="form-control" 
                       name="payment_type" id ="payment_type" required>
@@ -354,7 +369,7 @@
 
 
           <div class="col-md-6">
-            <div class="col-md-12">
+            <div class="col-md-12  d-none">
               <div class="col-auto text-end">
                 <label class="col-md-2"><h2>Sub Total </h2></label>
                 <label class="col-md-8" id="sub-total"> <h3>0</h3></label>
@@ -778,6 +793,7 @@
                   scheduled_at : $('#schedule_date').val()+" "+$('#timepicker1').val(),
                   branch_room_id : $('#room_id').val(),
                   ref_no : $('#ref_no').val(),
+                  customer_type : $('#customer_type').val(),
                   tax : _vat_total,
                 }
               );

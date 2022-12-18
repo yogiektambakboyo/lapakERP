@@ -18,7 +18,7 @@
 
         <div class="container mt-4">
                 <div class="mb-3">
-                    <label for="name" class="form-label">Name</label>
+                    <label for="name" class="form-label">@lang('general.lbl_name')</label>
                     <input value="{{ $company->remark }}" 
                         type="text" 
                         class="form-control" 
@@ -30,7 +30,7 @@
                     @endif
                 </div>
                 <div class="mb-3">
-                    <label for="address" class="form-label">Address</label>
+                    <label for="address" class="form-label">@lang('general.lbl_address')</label>
                     <input value="{{ $company->address }}" 
                         type="text" 
                         class="form-control" 
@@ -66,7 +66,7 @@
                     @endif
                 </div>
                 <div class="mb-3">
-                    <label for="abbr" class="form-label">Phone No</label>
+                    <label for="abbr" class="form-label">@lang('general.lbl_phoneno')</label>
                     <input value="{{ $company->phone_no }}" 
                         type="text" 
                         class="form-control" 

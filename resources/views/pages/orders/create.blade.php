@@ -255,14 +255,14 @@
               <div class="modal-dialog">
               <div class="modal-content">
                   <div class="modal-header">
-                  <h5 class="modal-title" id="staticBackdropLabel">Add Customer</h5>
+                  <h5 class="modal-title" id="staticBackdropLabel">@lang('general.lbl_add_customer_new')</h5>
                   <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                   </div>
                   <div class="modal-body">
                     
                     <div class="container mt-4">
                             <div class="mb-3">
-                                <label for="cust_name" class="form-label">Name</label>
+                                <label for="cust_name" class="form-label">@lang('general.lbl_name')</label>
                                 <input value="{{ old('cust_name') }}" 
                                     type="text" 
                                     class="form-control" 
@@ -276,7 +276,7 @@
                             </div>
             
                             <div class="mb-3">
-                                <label for="address" class="form-label">Address</label>
+                                <label for="address" class="form-label">@lang('general.lbl_address')</label>
                                 <input value="{{ old('cust_address') }}" 
                                     type="text" 
                                     class="form-control" 
@@ -289,7 +289,7 @@
                             </div>
             
                             <div class="mb-3">
-                                <label for="cust_phone_no" class="form-label">Phone No</label>
+                                <label for="cust_phone_no" class="form-label">@lang('general.lbl_phoneno')</label>
                                 <input value="{{ old('cust_phone_no') }}" 
                                     type="text" 
                                     class="form-control" 
@@ -318,7 +318,7 @@
                   </div>
                   <div class="modal-footer">
                   <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">@lang('general.lbl_close') </button>
-                  <button type="button" class="btn btn-primary"  data-bs-dismiss="modal" id="btn_save_customer">Save Customer</button>
+                  <button type="button" class="btn btn-primary"  data-bs-dismiss="modal" id="btn_save_customer">@lang('general.lbl_save')</button>
                   </div>
               </div>
               </div>

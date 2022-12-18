@@ -149,7 +149,7 @@
               <div class="panel-heading bg-teal-600"><h4>Contact</h4></div>
               <div class="panel-body bg-white text-black">
                 <div class="row mb-3">
-                  <label class="form-label col-form-label col-md-2">Address</label>
+                  <label class="form-label col-form-label col-md-2">@lang('general.lbl_address')</label>
                   <div class="col-md-8">
                     <input type="text" class="form-control" value="{{ $users->address }}" readonly />
                   </div>
@@ -161,7 +161,7 @@
                 </div>
               </div>
               <div class="row mb-3">
-                <label class="form-label col-form-label col-md-2">Phone No</label>
+                <label class="form-label col-form-label col-md-2">@lang('general.lbl_phoneno')</label>
                 <div class="col-md-8">
                   <input type="text" class="form-control" value="{{ $users->phone_no }}" readonly />
                 </div>

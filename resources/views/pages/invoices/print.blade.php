@@ -104,13 +104,13 @@
         <tbody>
           <tr>
             <td style="text-align: left;width:70%;">Catatan : </td>
-            <td style="text-align: right;width:20%;background-color:#FFA726;">Sub Total</td>
-            <td style="text-align: right;width:10%;background-color:#FFA726;">Rp. {{ number_format(($invoice->total-$invoice->tax),0,',','.') }}</td>
+            <td style="text-align: right;width:20%;background-color:#FFA726;display: none; ">Sub Total</td>
+            <td style="text-align: right;width:10%;background-color:#FFA726;display: none; ">Rp. {{ number_format(($invoice->total-$invoice->tax),0,',','.') }}</td>
           </tr>
           <tr>
             <th style="text-align: left;width:70%;">@if($invoice->total_payment>=$invoice->total)  {{ "Lunas" }}   @endif</th>
-            <td style="text-align: right;width:20%;background-color:#FFA726;">@lang('general.lbl_tax') </th>
-            <td style="text-align: right;width:10%;background-color:#FFA726;">Rp. {{ number_format($invoice->tax,0,',','.') }}</th>
+            <td style="text-align: right;width:20%;background-color:#FFA726;display: none; ">@lang('general.lbl_tax') </th>
+            <td style="text-align: right;width:10%;background-color:#FFA726;display: none; ">Rp. {{ number_format($invoice->tax,0,',','.') }}</th>
           </tr>
           <tr>
             <th style="text-align: left;width:70%;"></th>

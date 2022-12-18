@@ -15,7 +15,7 @@
                 @method('patch')
                 @csrf
                 <div class="mb-3">
-                    <label for="name" class="form-label">Name</label>
+                    <label for="name" class="form-label">@lang('general.lbl_name')</label>
                     <input value="{{ $supplier->name }}" 
                         type="text" 
                         class="form-control" 
@@ -28,7 +28,7 @@
                 </div>
 
                 <div class="mb-3">
-                    <label for="address" class="form-label">Address</label>
+                    <label for="address" class="form-label">@lang('general.lbl_address')</label>
                     <input value="{{ $supplier->address }}" 
                         type="text" 
                         class="form-control" 

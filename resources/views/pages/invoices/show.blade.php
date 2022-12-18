@@ -45,9 +45,9 @@
 
           <div class="col-md-8">
             <div class="row mb-3">
-              <label class="form-label col-form-label col-md-1">Ref No.</label>
-              <div class="col-md-3">
-                <input type="text" class="form-control" value="{{ $invoice->ref_no }}" id="scheduled" disabled>
+              <label class="form-label col-form-label col-md-1 d-none">Ref No.</label>
+              <div class="col-md-3 d-none">
+                <input type="text" class="form-control" value="{{ $invoice->ref_no }}" id="ref_no" disabled>
               </div>
               <label class="form-label col-form-label col-md-1">@lang('general.lbl_customer')</label>
               <div class="col-md-3">
@@ -61,6 +61,20 @@
                     @endforeach
                 </select>
               </div>
+
+              <label class="form-label col-form-label col-md-2">@lang('general.lbl_customer_type')</label>
+              <div class="col-md-2">
+                <select class="form-control" 
+                    name="customer_type" id="customer_type" readonly>
+                    <option value="">@lang('general.lbl_tipeselect')</option>
+                    @foreach($type_customers as $type_customer)
+                        <option value="{{ $type_customer }}" {{ ($invoice->customer_type == $type_customer) 
+                          ? 'selected'
+                          : ''}}> {{ $type_customer }}</option>
+                    @endforeach
+                </select>
+              </div>
+
               <label class="form-label col-form-label col-md-1">@lang('general.lbl_schedule')</label>
               <div class="col-md-3">
 
@@ -152,7 +166,7 @@
 
 
               <div class="col-md-6">
-                <div class="col-md-12">
+                <div class="col-md-12  d-none">
                   <div class="col-auto text-end">
                     <label class="col-md-2"><h2>Sub Total </h2></label>
                     <label class="col-md-8" id="sub-total"> <h3>Rp. {{ number_format($invoice->total-$invoice->tax, 0, ',', '.') }}</h3></label>
