@@ -56,7 +56,7 @@
               <label style="">Nama Tamu </label><br>
             </td>
             <td style="text-align: left;width: 80%;font-size:15px;padding-left:10px;vertical-align: text-top;">
-              <label>{{ $customers[0]->name }}</label><br>
+              <label>{{ $invoiceDetails[0]->customers_name }}</label><br>
             </td>
           </tr>
         </tbody>
