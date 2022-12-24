@@ -334,7 +334,7 @@ class OrdersController extends Controller
             'users' => $users,
             'settings' => Settings::get(),
             'order' => $order,
-            'orderDetails' => OrderDetail::join('order_master as om','om.order_no','=','order_detail.order_no')->join('product_sku as ps','ps.id','=','order_detail.product_id')->join('product_uom as u','u.product_id','=','order_detail.product_id')->join('uom as um','um.id','=','u.uom_id')->leftjoin('users as us','us.id','=','order_detail.assigned_to')->where('order_detail.order_no',$order->order_no)->get(['om.tax','om.voucher_code','us.name as assigned_to','um.remark as uom','order_detail.qty','order_detail.price','order_detail.total','ps.id','order_detail.product_name','order_detail.discount','ps.type_id','om.scheduled_at','um.conversion']),
+            'orderDetails' => OrderDetail::join('order_master as om','om.order_no','=','order_detail.order_no')->join('product_sku as ps','ps.id','=','order_detail.product_id')->join('product_uom as u','u.product_id','=','order_detail.product_id')->join('uom as um','um.id','=','u.uom_id')->leftjoin('users as us','us.id','=','order_detail.assigned_to')->where('order_detail.order_no',$order->order_no)->get(['om.customers_name','om.tax','om.voucher_code','us.name as assigned_to','um.remark as uom','order_detail.qty','order_detail.price','order_detail.total','ps.id','order_detail.product_name','order_detail.discount','ps.type_id','om.scheduled_at','um.conversion']),
             'usersReferrals' => User::get(['users.id','users.name']),
             'payment_type' => $payment_type,
         ])->setOptions(['defaultFont' => 'sans-serif'])->setPaper('a5', 'potrait');
