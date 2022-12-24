@@ -7,7 +7,7 @@
   @csrf
   <div class="panel text-white">
     <div class="panel-heading  bg-teal-600">
-      <div class="panel-title"><h4 class="">SPK</h4></div>
+      <div class="panel-title"><h4 class="">@lang('general.lbl_order')</h4></div>
       <div class="">
         <a href="{{ route('orders.index') }}" class="btn btn-default">@lang('general.lbl_cancel')</a>
         <button type="button" id="save-btn" class="btn btn-info">@lang('general.lbl_save')</button>
@@ -168,7 +168,7 @@
             <table class="table table-striped" id="order_table">
               <thead>
               <tr>
-                  <th>Product Code</th>
+                  <th>@lang('general.product')</th>
                   <th scope="col" width="10%">@lang('general.lbl_uom')</th>
                   <th scope="col" width="10%">@lang('general.lbl_price')</th>
                   <th scope="col" width="5%">@lang('general.lbl_discount')</th>
@@ -268,7 +268,7 @@
                                     class="form-control" 
                                     name="cust_name" 
                                     id="cust_name" 
-                                    placeholder="Name" required>
+                                    placeholder="@lang('general.lbl_name')" required>
             
                                 @if ($errors->has('cust_name'))
                                     <span class="text-danger text-left">{{ $errors->first('cust_name') }}</span>
@@ -281,7 +281,7 @@
                                     type="text" 
                                     class="form-control" 
                                     name="cust_address" id="cust_address" 
-                                    placeholder="Address" required>
+                                    placeholder="@lang('general.lbl_address')" required>
             
                                 @if ($errors->has('cust_address'))
                                     <span class="text-danger text-left">{{ $errors->first('cust_address') }}</span>
@@ -294,7 +294,7 @@
                                     type="text" 
                                     class="form-control" 
                                     name="cust_phone_no" id="cust_phone_no" 
-                                    placeholder="Phone No" required>
+                                    placeholder="@lang('general.lbl_phoneno')" required>
             
                                 @if ($errors->has('cust_phone_no'))
                                     <span class="text-danger text-left">{{ $errors->first('cust_phone_no') }}</span>

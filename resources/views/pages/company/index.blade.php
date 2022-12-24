@@ -20,11 +20,11 @@
         <table class="table table-striped">
             <thead>
             <tr>
-                <th scope="col" width="15%">Name</th>
-                <th scope="col">Address</th>
+                <th scope="col" width="15%">@lang('general.lbl_name')</th>
+                <th scope="col">@lang('general.lbl_address')</th>
                 <th scope="col">City</th>
                 <th scope="col">Email</th>
-                <th scope="col">Phone No</th> 
+                <th scope="col">@lang('general.lbl_phoneno')</th> 
                 <th scope="col" colspan="3" width="1%"></th> 
             </tr>
             </thead>

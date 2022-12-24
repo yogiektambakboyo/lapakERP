@@ -54,7 +54,7 @@
                         <td>{{ number_format($product->value,0,',','.') }}</td>
                         <td><a href="{{ route('servicespriceadj.edit', [$product->branch_id,$product->id]) }}" class="btn btn-info btn-sm  {{ $act_permission->allow_edit==1?'':'d-none' }}">@lang('general.lbl_edit')</a></td>
                         <td class=" {{ $act_permission->allow_delete==1?'':'d-none' }}">
-                            <a onclick="showConfirm( '{{ $product->branch_id }}','{{ $product->id }}','{{ $product->dated_start }}','{{ $product->dated_end }}','{{ $product->product_name }}' )" class="btn btn-danger btn-sm  {{ $act_permission->allow_delete==1?'':'d-none' }} ">Delete</a>
+                            <a onclick="showConfirm( '{{ $product->branch_id }}','{{ $product->id }}','{{ $product->dated_start }}','{{ $product->dated_end }}','{{ $product->product_name }}' )" class="btn btn-danger btn-sm  {{ $act_permission->allow_delete==1?'':'d-none' }} ">@lang('general.lbl_delete')</a>
                         </td>
                     </tr>
                 @endforeach

@@ -32,7 +32,7 @@
                         type="text" 
                         class="form-control" 
                         name="address" 
-                        placeholder="Address" required>
+                        placeholder="@lang('general.lbl_address')" required>
 
                     @if ($errors->has('address'))
                         <span class="text-danger text-left">{{ $errors->first('address') }}</span>

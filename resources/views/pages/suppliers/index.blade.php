@@ -4,17 +4,17 @@
 
 @section('content')
     <div class="bg-light p-4 rounded">
-        <h2>Suppliers</h2>
+        <h2>@lang('general.lbl_supplier')</h2>
 
         <div class="lead row mb-3">
             <div class="col-md-10">
                 <div class="col-md-4">
-                    Manage your suppliers here.
+                    @lang('general.lbl_title')
                 </div>
 
                 <div class="col-md-10"> 	
                     <form action="{{ route('suppliers.search') }}" method="GET" class="row row-cols-lg-auto g-3 align-items-center">
-                        <div class="col-2"><input type="text" class="form-control  form-control-sm" name="search" placeholder="Find Suppliers.." value="{{ $request->search }}"></div>
+                        <div class="col-2"><input type="text" class="form-control  form-control-sm" name="search" placeholder="@lang('general.lbl_search')" value="{{ $request->search }}"></div>
                         <input type="hidden" name="filter_branch_id" value="{{ $request->filter_branch_id }}">
                         <div class="col-2"><input type="submit" class="btn btn-sm btn-secondary" value="@lang('general.btn_search')" name="src"></div>   
                         <div class="col-2"><a href="#modal-filter"  data-bs-toggle="modal" data-bs-target="#modal-filter" class="btn btn-sm btn-lime">@lang('general.btn_filter')</a></div>   
@@ -23,7 +23,7 @@
                 </div>
             </div>
             <div class="col-md-2">
-                <a href="{{ route('suppliers.create') }}" class="btn btn-primary btn-sm float-right"><span class="fa fa-plus-circle"></span>  Add Suppliers</a>
+                <a href="{{ route('suppliers.create') }}" class="btn btn-primary btn-sm float-right"><span class="fa fa-plus-circle"></span>  @lang('general.btn_create')</a>
             </div>
         </div>
         <div class="mt-2">
@@ -35,9 +35,9 @@
             <tr>
                 <th scope="col" width="1%">#</th>
                 <th scope="col" width="10%">@lang('general.lbl_branch')</th>
-                <th scope="col">Name</th>
-                <th scope="col" width="15%">Address</th>
-                <th scope="col" width="10%">Phone No</th>
+                <th scope="col">@lang('general.lbl_name')</th>
+                <th scope="col" width="15%">@lang('general.lbl_address')</th>
+                <th scope="col" width="10%">@lang('general.lbl_phoneno')</th>
                 <th scope="col" width="10%">Email</th>
                 <th scope="col" colspan="3" width="1%"></th> 
             </tr>
@@ -53,7 +53,7 @@
                         <td>{{ $supplier->email }}</td>
                         <td><a href="{{ route('suppliers.edit', $supplier->id) }}" class="btn btn-info btn-sm">@lang('general.lbl_edit')</a></td>
                         <td>
-                            <a onclick="showConfirm({{ $supplier->id }}, '{{ $supplier->name }}')" class="btn btn-danger btn-sm  {{ $act_permission->allow_delete==1?'':'d-none' }} ">Delete</a>
+                            <a onclick="showConfirm({{ $supplier->id }}, '{{ $supplier->name }}')" class="btn btn-danger btn-sm  {{ $act_permission->allow_delete==1?'':'d-none' }} ">@lang('general.lbl_delete')</a>
                         </td>
                     </tr>
                 @endforeach

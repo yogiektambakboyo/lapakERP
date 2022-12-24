@@ -19,7 +19,7 @@
                         type="text" 
                         class="form-control" 
                         name="name" 
-                        placeholder="Name" required>
+                        placeholder="@lang('general.lbl_name')" required>
 
                     @if ($errors->has('name'))
                         <span class="text-danger text-left">{{ $errors->first('name') }}</span>

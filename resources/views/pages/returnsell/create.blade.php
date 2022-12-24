@@ -3,13 +3,13 @@
 @section('title', 'Create New Return Sell')
 
 @section('content')
-<form method="POST" action="{{ route('invoices.store') }}"  enctype="multipart/form-data">
+<form method="POST" action="{{ route('returnsell.store') }}"  enctype="multipart/form-data">
   @csrf
   <div class="panel text-white">
     <div class="panel-heading  bg-teal-600">
-      <div class="panel-title"><h4 class="">Return Invoice</h4></div>
+      <div class="panel-title"><h4 class="">@lang('general.lbl_return_new')</h4></div>
       <div class="">
-        <a href="{{ route('invoices.index') }}" class="btn btn-default">@lang('general.lbl_cancel')</a>
+        <a href="{{ route('returnsell.index') }}" class="btn btn-default">@lang('general.lbl_cancel')</a>
         <button type="button" id="save-btn" class="btn btn-info">@lang('general.lbl_save')</button>
       </div>
     </div>
@@ -45,11 +45,11 @@
           <div class="col-md-8">
             <div class="row mb-3">
 
-              <label class="form-label col-form-label col-md-2">Invoice</label>
+              <label class="form-label col-form-label col-md-2">@lang('general.lbl_invoice')</label>
               <div class="col-md-3">
                 <select class="form-control" 
                     name="ref_no" id="ref_no" required>
-                    <option value="">Select Invoice</option>
+                    <option value="">@lang('general.lbl_invoice_select')</option>
                     @foreach($invoices as $invoice)
                         <option value="{{ $invoice->invoice_no }}">{{ $invoice->invoice_no }} </option>
                     @endforeach

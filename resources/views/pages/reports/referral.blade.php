@@ -8,10 +8,10 @@
         <div class="lead row mb-3">
             <div class="col-md-10">
                 <div class="col-md-8">
-                    Manage your report here.
+                    @lang('general.lbl_title')
                 </div>
                 <div class="col-md-10"> 	
-                        <button onclick="openDialogFilterSearch('Filter');" class="btn btn-sm btn-lime">Filter</button>  
+                        <button onclick="openDialogFilterSearch('Filter');" class="btn btn-sm btn-lime">@lang('general.btn_filter')</button> 
                         <button onclick="openDialogFilterSearch('Export Excel');" class="btn btn-sm btn-success">Export</button>  
                 </div>
             </div>
@@ -26,7 +26,7 @@
             <tr>
                 <th scope="col" width="10%">@lang('general.lbl_branch')</th>
                 <th scope="col">Employee ID</th>    
-                <th scope="col">Name</th>    
+                <th scope="col">@lang('general.lbl_name')</th>    
                 <th scope="col">Join Date</th>    
                 <th scope="col">Join Years</th>    
                 <th scope="col">Referral Name</th>    

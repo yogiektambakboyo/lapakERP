@@ -4,10 +4,8 @@
 
 @section('content')
     <div class="bg-light p-4 rounded">
-        <h2>Create Customer</h2>
-        <div class="lead">
-            Add new Customer.
-        </div>
+        <h2>@lang('general.lbl_customer_new')</h2>
+
 
         <div class="container mt-4">
 
@@ -19,7 +17,7 @@
                         type="text" 
                         class="form-control" 
                         name="name" 
-                        placeholder="Name" required>
+                        placeholder="@lang('general.lbl_name')" required>
 
                     @if ($errors->has('remark'))
                         <span class="text-danger text-left">{{ $errors->first('remark') }}</span>
@@ -32,7 +30,7 @@
                         type="text" 
                         class="form-control" 
                         name="address" 
-                        placeholder="Address" required>
+                        placeholder="@lang('general.lbl_address')" required>
 
                     @if ($errors->has('address'))
                         <span class="text-danger text-left">{{ $errors->first('address') }}</span>
@@ -45,7 +43,7 @@
                         type="text" 
                         class="form-control" 
                         name="phone_no" 
-                        placeholder="Phone No" required>
+                        placeholder="@lang('general.lbl_phoneno')" required>
 
                     @if ($errors->has('phone_no'))
                         <span class="text-danger text-left">{{ $errors->first('phone_no') }}</span>
@@ -65,7 +63,7 @@
                     </div>
                   </div>
                 
-                <button type="submit" class="btn btn-primary">Save customer</button>
+                <button type="submit" class="btn btn-primary">@lang('general.lbl_save')</button>
                 <a href="{{ route('customers.index') }}" class="btn btn-default">@lang('general.lbl_back') </a>
             </form>
         </div>

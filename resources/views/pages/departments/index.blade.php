@@ -24,7 +24,7 @@
             <thead>
             <tr>
                 <th scope="col" width="1%">#</th>
-                <th scope="col">Name</th>
+                <th scope="col">@lang('general.lbl_name')</th>
                 <th scope="col" colspan="3" width="1%"></th> 
             </tr>
             </thead>
@@ -35,7 +35,7 @@
                         <td>{{ $department->remark }}</td>
                         <td><a href="{{ route('departments.edit', $department->id) }}" class="btn btn-info btn-sm">@lang('general.lbl_edit')</a></td>
                         <td>
-                            <a onclick="showConfirm({{ $department->id }}, '{{ $department->remark }}')" class="btn btn-danger btn-sm  {{ $act_permission->allow_delete==1?'':'d-none' }} ">Delete</a>
+                            <a onclick="showConfirm({{ $department->id }}, '{{ $department->remark }}')" class="btn btn-danger btn-sm  {{ $act_permission->allow_delete==1?'':'d-none' }} ">@lang('general.lbl_delete')</a>
                         </td>
                     </tr>
                 @endforeach

@@ -4,18 +4,18 @@
 
 @section('content')
     <div class="bg-light p-4 rounded">
-        <h1>Purchase Order</h1>
+        <h1>@lang('general.lbl_purchase_order')</h1>
         <div class="lead row mb-3">
             <div class="col-md-10">
                 <div class="col-md-10">
-                    Manage your purchase order here, default data display last 7 days ago. Please use filter for show more data.
+                    @lang('general.lbl_title_transaction')
                 </div>
                 <br>
                 <div class="col-md-8"> 	
                     <form action="{{ route('purchaseorders.search') }}" method="POST" class="row row-cols-lg-auto g-3 align-items-center">
                         @csrf
                         <input type="hidden" name="filter_begin_date" value="2022-01-01"><input type="hidden" name="filter_end_date" value="2035-01-01">
-                        <div class="col-2"><input type="text" class="form-control  form-control-sm" name="search" placeholder="Find Purchase Order.." value="{{ $keyword }}"></div>
+                        <div class="col-2"><input type="text" class="form-control  form-control-sm" name="search" placeholder="@lang('general.lbl_search') Purchase Order.." value="{{ $keyword }}"></div>
                         <div class="col-2"><input type="submit" class="btn btn-sm btn-secondary" value="@lang('general.btn_search')" name="submit"></div>   
                         <div class="col-2"><a href="#modal-filter"  data-bs-toggle="modal" data-bs-target="#modal-filter" class="btn btn-sm btn-lime">@lang('general.btn_filter')</a></div>   
                         <div class="col-2"><input type="submit" class="btn btn-sm btn-success" value="@lang('general.btn_export')" name="export"></div>  
@@ -23,7 +23,7 @@
                 </div>
             </div>
             <div class="col-md-2">
-                <a href="{{ route('purchaseorders.create') }}" class="btn btn-primary float-right {{ $act_permission->allow_create==1?'':'d-none' }}"><span class="fa fa-circle-plus"></span> Add new PO</a>
+                <a href="{{ route('purchaseorders.create') }}" class="btn btn-primary float-right {{ $act_permission->allow_create==1?'':'d-none' }}"><span class="fa fa-circle-plus"></span> @lang('general.btn_create')</a>
             </div>
         </div>
         
@@ -55,10 +55,10 @@
                         <td>{{ $purchase->supplier }}</td>
                         <td>{{ $purchase->remark }}</td>
                         <td>{{ number_format($purchase->total,0,',','.') }}</td>
-                        <td><a href="{{ route('purchaseorders.show', $purchase->id) }}" class="btn btn-warning btn-sm  {{ $act_permission->allow_show==1?'':'d-none' }}">Show</a></td>
+                        <td><a href="{{ route('purchaseorders.show', $purchase->id) }}" class="btn btn-warning btn-sm  {{ $act_permission->allow_show==1?'':'d-none' }}">@lang('general.lbl_show')</a></td>
                         <td><a href="{{ route('purchaseorders.edit', $purchase->id) }}" class="btn btn-info btn-sm  {{ $act_permission->allow_edit==1?'':'d-none' }} ">@lang('general.lbl_edit')</a></td>
                         <td class=" {{ $act_permission->allow_delete==1?'':'d-none' }}">
-                            <a onclick="showConfirm({{ $purchase->id }}, '{{ $purchase->purchase_no }}')" class="btn btn-danger btn-sm  {{ $act_permission->allow_delete==1?'':'d-none' }} ">Delete</a>
+                            <a onclick="showConfirm({{ $purchase->id }}, '{{ $purchase->purchase_no }}')" class="btn btn-danger btn-sm  {{ $act_permission->allow_delete==1?'':'d-none' }} ">@lang('general.lbl_delete')</a>
                         </td>
                     </tr>
                 @endforeach

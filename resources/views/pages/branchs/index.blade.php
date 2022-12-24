@@ -12,7 +12,7 @@
                 </div>
                 <div class="col-md-8"> 	
                     <form action="{{ route('branchs.search') }}" method="GET" class="row row-cols-lg-auto g-3 align-items-center">
-                        <div class="col-12"><input type="text" class="form-control  form-control-lg" name="search" placeholder="Find Branch . . ." value="{{ $keyword }}"></div>
+                        <div class="col-12"><input type="text" class="form-control  form-control-lg" name="search" placeholder="@lang('general.lbl_search') Branch . . ." value="{{ $keyword }}"></div>
                         <div class="col-12"><input type="submit" class="btn btn-secondary" value="@lang('general.btn_search')" name="submit"></div>   
                         <div class="col-12"><input type="submit" class="btn btn-success" value="@lang('general.btn_export')" name="export"></div>   
                     </form>
@@ -31,8 +31,8 @@
             <thead>
             <tr>
                 <th scope="col" width="1%">#</th>
-                <th scope="col" width="15%">Name</th>
-                <th scope="col">Address</th>
+                <th scope="col" width="15%">@lang('general.lbl_name')</th>
+                <th scope="col">@lang('general.lbl_address')</th>
                 <th scope="col">City</th>
                 <th scope="col">Abbreviation</th> 
                 <th scope="col" colspan="3" width="1%"></th> 
@@ -48,7 +48,7 @@
                         <td>{{ $branch->abbr }}</td>
                         <td><a href="{{ route('branchs.edit', $branch->id) }}" class="btn btn-info btn-sm  {{ $act_permission->allow_edit==1?'':'d-none' }} ">@lang('general.lbl_edit')</a></td>
                         <td>
-                            <a onclick="showConfirm({{ $branch->id }}, '{{ $branch->remark }}')" class="btn btn-danger btn-sm  {{ $act_permission->allow_delete==1?'':'d-none' }} ">Delete</a>
+                            <a onclick="showConfirm({{ $branch->id }}, '{{ $branch->remark }}')" class="btn btn-danger btn-sm  {{ $act_permission->allow_delete==1?'':'d-none' }} ">@lang('general.lbl_delete')</a>
                         </td>
                     </tr>
                 @endforeach

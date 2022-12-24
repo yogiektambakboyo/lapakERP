@@ -66,7 +66,7 @@
       <table class="table table-striped" id="order_table" width="100%">
         <thead>
         <tr style="background-color:#FFA726;color:white;">
-            <th>Product Code</th>
+            <th>@lang('general.product')</th>
             <th scope="col" width="10%">@lang('general.lbl_uom')</th>
             <th scope="col" width="10%">@lang('general.lbl_price')</th>
             <th scope="col" width="5%">@lang('general.lbl_qty')</th>

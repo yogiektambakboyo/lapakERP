@@ -24,7 +24,7 @@
             <thead>
             <tr>
                 <th scope="col" width="1%">#</th>
-                <th scope="col" width="15%">Name</th>
+                <th scope="col" width="15%">@lang('general.lbl_name')</th>
                 <th scope="col">Guard</th> 
                 <th scope="col" colspan="3" width="1%"></th> 
             </tr>

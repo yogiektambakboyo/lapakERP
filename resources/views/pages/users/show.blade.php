@@ -325,7 +325,7 @@
                                 <td>{{ $userSkill->remark }}</td>
                                 <td>{{ $userSkill->name }}</td>
                                 <td>{{ $userSkill->status }}</td>
-                                <td><a href="#" onclick="deleteTraining('{{ $userSkill->dated }}',{{ $user->id}},{{ $userSkill->product_id }},'{{ $userSkill->status }}');" class="btn btn-danger btn-sm">Delete</a></td>
+                                <td><a href="#" onclick="deleteTraining('{{ $userSkill->dated }}',{{ $user->id}},{{ $userSkill->product_id }},'{{ $userSkill->status }}');" class="btn btn-danger btn-sm">@lang('general.lbl_delete')</a></td>
                             </tr>
                         @endforeach
                         </tbody>
@@ -401,7 +401,7 @@
                                 <th scope="row">{{ $userExperience->job_position }}</th>
                                 <td>{{ $userExperience->company }}</td>
                                 <td>{{ $userExperience->years }}</td>
-                                <td><a href="#" onclick="deleteExperience({{ $userExperience->id }});" class="btn btn-danger btn-sm">Delete</a></td>
+                                <td><a href="#" onclick="deleteExperience({{ $userExperience->id }});" class="btn btn-danger btn-sm">@lang('general.lbl_delete')</a></td>
                             </tr>
                         @endforeach
                         </tbody>

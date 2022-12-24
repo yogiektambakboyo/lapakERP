@@ -32,7 +32,7 @@ class ReceivesExport implements FromCollection,WithColumnFormatting, WithHeading
     {
         return [
             'Branch',
-            'Receive No',
+            '@lang('general.lbl_receive_no')',
             'Dated',
             'Supplier',
             'Total',

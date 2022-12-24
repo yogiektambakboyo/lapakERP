@@ -7,7 +7,7 @@
   @csrf
   <div class="panel text-white">
     <div class="panel-heading  bg-teal-600">
-      <div class="panel-title"><h4 class="">New Purchase Order</h4></div>
+      <div class="panel-title"><h4 class="">@lang('general.lbl_purchase_order_new')</h4></div>
       <div class="">
         <a href="{{ route('purchaseorders.index') }}" class="btn btn-default">@lang('general.lbl_cancel')</a>
         <button type="button" id="save-btn" class="btn btn-info">@lang('general.lbl_save')</button>
@@ -30,7 +30,7 @@
                       @endif
               </div>
 
-              <label class="form-label col-form-label col-md-1">Shipto</label>
+              <label class="form-label col-form-label col-md-1">@lang('general.lbl_shipto')</label>
               <div class="col-md-2">
                 <select class="form-control" 
                     name="branch_id" id="branch_id" required>

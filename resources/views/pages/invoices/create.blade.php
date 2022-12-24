@@ -495,7 +495,7 @@
                                 class="form-control" 
                                 name="cust_name" 
                                 id="cust_name" 
-                                placeholder="Name" required>
+                                placeholder="@lang('general.lbl_name')" required>
         
                             @if ($errors->has('cust_name'))
                                 <span class="text-danger text-left">{{ $errors->first('cust_name') }}</span>
@@ -508,7 +508,7 @@
                                 type="text" 
                                 class="form-control" 
                                 name="cust_address" id="cust_address" 
-                                placeholder="Address" required>
+                                placeholder="@lang('general.lbl_address')" required>
         
                             @if ($errors->has('cust_address'))
                                 <span class="text-danger text-left">{{ $errors->first('cust_address') }}</span>
@@ -521,7 +521,7 @@
                                 type="text" 
                                 class="form-control" 
                                 name="cust_phone_no" id="cust_phone_no" 
-                                placeholder="Phone No" required>
+                                placeholder="@lang('general.lbl_phoneno')" required>
         
                             @if ($errors->has('cust_phone_no'))
                                 <span class="text-danger text-left">{{ $errors->first('cust_phone_no') }}</span>

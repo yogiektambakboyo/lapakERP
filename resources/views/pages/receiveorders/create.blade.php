@@ -7,7 +7,7 @@
   @csrf
   <div class="panel text-white">
     <div class="panel-heading  bg-teal-600">
-      <div class="panel-title"><h4 class="">Receive Order</h4></div>
+      <div class="panel-title"><h4 class="">@lang('general.lbl_receive')</h4></div>
       <div class="">
         <a href="{{ route('receiveorders.index') }}" class="btn btn-default">@lang('general.lbl_cancel')</a>
         <button type="button" id="save-btn" class="btn btn-info">@lang('general.lbl_save')</button>
@@ -170,7 +170,7 @@
             <table class="table table-striped" id="data_table">
               <thead>
               <tr>
-                  <th>Product Code</th>
+                  <th>@lang('general.product')</th>
                   <th scope="col" width="10%">@lang('general.lbl_uom')</th>
                   <th scope="col" width="10%">@lang('general.lbl_price')</th>
                   <th scope="col" width="5%">@lang('general.lbl_qty')</th>
@@ -255,8 +255,7 @@
           const formattedNextYear = mm + '/' + dd + '/' + yyyy1;
         $(function () {
           $('#app').removeClass('app app-sidebar-fixed app-header-fixed-minified').addClass('app app-sidebar-fixed app-header-fixed-minified app-sidebar-minified');
-          
-          
+            
           
           $('#doc_dated').datepicker({
               format : 'yyyy-mm-dd',
@@ -275,7 +274,6 @@
               todayHighlight: true,
           });
           $('#input_expired_at_list').val(formattedNextYear);
-
 
           var url = "{{ route('receiveorders.getproduct') }}";
           var lastvalurl = "XX";

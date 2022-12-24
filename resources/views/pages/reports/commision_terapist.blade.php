@@ -8,10 +8,10 @@
         <div class="lead row mb-3">
             <div class="col-md-10">
                 <div class="col-md-8">
-                    Manage your report here.
+                    @lang('general.lbl_title')
                 </div>
                 <div class="col-md-10"> 	
-                        <button onclick="openDialogFilterSearch('Filter');" class="btn btn-sm btn-lime">Filter</button>  
+                        <button onclick="openDialogFilterSearch('Filter');" class="btn btn-sm btn-lime">@lang('general.btn_filter')</button> 
                         <button onclick="openDialogFilterSearch('Export Excel');" class="btn btn-sm btn-success">Export</button>  
                 </div>
             </div>
@@ -28,7 +28,7 @@
                     <th scope="col" width="8%">@lang('general.lbl_dated')</th>
                     <th>@lang('general.invoice_no')</th>
                     <th scope="col" width="17%">@lang('general.product')</th>
-                    <th scope="col" width="15%">Name</th>
+                    <th scope="col" width="15%">@lang('general.lbl_name')</th>
                     <th scope="col" width="5%">@lang('general.lbl_price')</th>
                     <th scope="col" width="4%">@lang('general.lbl_qty')</th>
                     <th scope="col" width="8%">Total</th>  

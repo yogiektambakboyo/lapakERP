@@ -415,7 +415,7 @@
 									<td>nicky@hotmail.com</td>
 									<td nowrap>
 										<a href="#" class="btn btn-sm btn-primary w-60px me-1">Edit</a>
-										<a href="#" class="btn btn-sm btn-white w-60px">Delete</a>
+										<a href="#" class="btn btn-sm btn-white w-60px">@lang('general.lbl_delete')</a>
 									</td>
 								</tr>
 								<tr>
@@ -448,7 +448,7 @@
 									<td>harvinder@gmail.com</td>
 									<td class="with-btn" nowrap>
 										<a href="#" class="btn btn-sm btn-primary w-60px me-1">Edit</a>
-										<a href="#" class="btn btn-sm btn-white w-60px">Delete</a>
+										<a href="#" class="btn btn-sm btn-white w-60px">@lang('general.lbl_delete')</a>
 									</td>
 								</tr>
 							</tbody>

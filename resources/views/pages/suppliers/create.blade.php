@@ -4,10 +4,7 @@
 
 @section('content')
     <div class="bg-light p-4 rounded">
-        <h2>Create Supllier</h2>
-        <div class="lead">
-            Add new Supllier.
-        </div>
+        <h2>@lang('general.lbl_supplier_new')</h2>
 
         <div class="container mt-4">
 
@@ -19,7 +16,7 @@
                         type="text" 
                         class="form-control" 
                         name="name" 
-                        placeholder="Name" required>
+                        placeholder="@lang('general.lbl_name')" required>
 
                     @if ($errors->has('remark'))
                         <span class="text-danger text-left">{{ $errors->first('remark') }}</span>
@@ -32,7 +29,7 @@
                         type="text" 
                         class="form-control" 
                         name="address" 
-                        placeholder="Address" required>
+                        placeholder="@lang('general.lbl_address')" required>
 
                     @if ($errors->has('address'))
                         <span class="text-danger text-left">{{ $errors->first('address') }}</span>
@@ -78,8 +75,8 @@
                     </div>
                   </div>
                 
-                <button type="submit" class="btn btn-primary">Save supplier</button>
-                <a href="{{ route('customers.index') }}" class="btn btn-default">@lang('general.lbl_back') </a>
+                <button type="submit" class="btn btn-primary">@lang('general.lbl_save')</button>
+                <a href="{{ route('suppliers.index') }}" class="btn btn-default">@lang('general.lbl_back') </a>
             </form>
         </div>
 

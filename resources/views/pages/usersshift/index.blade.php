@@ -14,7 +14,7 @@
 
                 <div class="col-md-10"> 	
                     <form action="{{ route('usersshift.search') }}" method="GET" class="row row-cols-lg-auto g-3 align-items-center">
-                        <div class="col-2"><input type="text" class="form-control  form-control-sm" name="search" placeholder="Find User Shift.." value="{{ $request->search }}"></div>
+                        <div class="col-2"><input type="text" class="form-control  form-control-sm" name="search" placeholder="@lang('general.lbl_search') User Shift.." value="{{ $request->search }}"></div>
                         <input type="hidden" name="filter_branch_id" value="{{ $request->filter_branch_id }}">
                         <div class="col-2"><input type="submit" class="btn btn-sm btn-secondary" value="@lang('general.btn_search')" name="src"></div>   
                         <div class="col-2"><a href="#modal-filter"  data-bs-toggle="modal" data-bs-target="#modal-filter" class="btn btn-sm btn-lime">@lang('general.btn_filter')</a></div>   
@@ -35,7 +35,7 @@
             <tr>
                 <th scope="col" width="10%">@lang('general.lbl_branch')</th>
                 <th scope="col" width="7%">@lang('general.lbl_dated')</th>
-                <th scope="col">Name</th>
+                <th scope="col">@lang('general.lbl_name')</th>
                 <th scope="col" width="15%">Shift Name</th>
                 <th scope="col" width="10%">Start Time</th>
                 <th scope="col" width="10%">End Time</th>
@@ -55,7 +55,7 @@
                         <td>{{ $usersshift->remark }}</td>
                         <td><a href="{{ route('usersshift.edit', $usersshift->id) }}" class="btn btn-info btn-sm  {{ $act_permission->allow_edit==1?'':'d-none' }} ">@lang('general.lbl_edit')</a></td>
                         <td>
-                            <a onclick="showConfirm({{ $usersshift->id }}, '{{ $usersshift->name }}', '{{ $usersshift->dated }}')" class="btn btn-danger btn-sm  {{ $act_permission->allow_delete==1?'':'d-none' }} ">Delete</a>
+                            <a onclick="showConfirm({{ $usersshift->id }}, '{{ $usersshift->name }}', '{{ $usersshift->dated }}')" class="btn btn-danger btn-sm  {{ $act_permission->allow_delete==1?'':'d-none' }} ">@lang('general.lbl_delete')</a>
                         </td>
                     </tr>
                 @endforeach

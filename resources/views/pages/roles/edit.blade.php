@@ -31,7 +31,7 @@
                         type="text" 
                         class="form-control" 
                         name="name" 
-                        placeholder="Name" required>
+                        placeholder="@lang('general.lbl_name')" required>
                 </div>
                 
                 <label for="permissions" class="form-label">Assign Permissions</label>
@@ -39,7 +39,7 @@
                 <table class="table table-striped">
                     <thead>
                         <th scope="col" width="1%"><input type="checkbox" name="all_permission"></th>
-                        <th scope="col" width="20%">Name</th>
+                        <th scope="col" width="20%">@lang('general.lbl_name')</th>
                         <th scope="col" width="1%">Guard</th> 
                     </thead>
 
