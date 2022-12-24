@@ -4,11 +4,7 @@
 
 @section('content')
     <div class="bg-light p-4 rounded">
-        <h2>Add new Department</h2>
-        <div class="lead">
-            Add new Department.
-        </div>
-
+        <h2>@lang('general.lbl_department_add')</h2>
         <div class="container mt-4">
 
             <form method="POST" action="{{ route('departments.store') }}">
@@ -27,7 +23,7 @@
                 </div>
 
                 
-                <button type="submit" class="btn btn-primary">Save department</button>
+                <button type="submit" class="btn btn-primary">@lang('general.lbl_save')</button>
                 <a href="{{ route('departments.index') }}" class="btn btn-default">@lang('general.lbl_back') </a>
             </form>
         </div>

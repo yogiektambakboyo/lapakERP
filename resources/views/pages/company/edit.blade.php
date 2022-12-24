@@ -39,7 +39,7 @@
                     @endif
                 </div>
                 <div class="mb-3">
-                    <label for="city" class="form-label">City</label>
+                    <label for="city" class="form-label">@lang('general.lbl_city')</label>
                     <input value="{{ $company->city }}" 
                         type="text" 
                         class="form-control" 

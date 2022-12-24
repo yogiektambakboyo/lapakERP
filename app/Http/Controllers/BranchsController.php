@@ -64,12 +64,14 @@ class BranchsController extends Controller
 
         $keyword = $request->search;
         $data = $this->data;
+        $act_permission = $this->act_permission[0];
+
 
         if($request->export=='Export Excel'){
             return Excel::download(new BranchsExport($keyword), 'branchs_'.Carbon::now()->format('YmdHis').'.xlsx');
         }else{
             $branchs = Branch::orderBy('id', 'ASC')->where('branch.remark','LIKE','%'.$keyword.'%')->get();
-            return view('pages.branchs.index', ['company' => Company::get()->first()],compact('branchs','data','keyword'))->with('i', ($request->input('page', 1) - 1) * 5);
+            return view('pages.branchs.index', ['act_permission' => $act_permission,'company' => Company::get()->first()],compact('branchs','data','keyword'))->with('i', ($request->input('page', 1) - 1) * 5);
         }
     }
 

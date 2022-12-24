@@ -4,22 +4,22 @@
 
 @section('content')
     <div class="bg-light p-4 rounded">
-        <h2>Branchs</h2>
+        <h2>@lang('general.lbl_branch')</h2>
         <div class="lead row mb-3">
             <div class="col-md-10">
                 <div class="col-md-8">
-                    Manage your branchs here.
+                    @lang('general.lbl_title')
                 </div>
                 <div class="col-md-8"> 	
                     <form action="{{ route('branchs.search') }}" method="GET" class="row row-cols-lg-auto g-3 align-items-center">
-                        <div class="col-12"><input type="text" class="form-control  form-control-lg" name="search" placeholder="@lang('general.lbl_search') Branch . . ." value="{{ $keyword }}"></div>
+                        <div class="col-12"><input type="text" class="form-control  form-control-lg" name="search" placeholder="@lang('general.lbl_search') . . ." value="{{ $keyword }}"></div>
                         <div class="col-12"><input type="submit" class="btn btn-secondary" value="@lang('general.btn_search')" name="submit"></div>   
                         <div class="col-12"><input type="submit" class="btn btn-success" value="@lang('general.btn_export')" name="export"></div>   
                     </form>
                 </div>
             </div>
             <div class="col-md-2">
-                <a href="{{ route('branchs.create') }}" class="btn btn-primary float-right"><span class="fa fa-plus-circle"></span> Add Branchs</a>
+                <a href="{{ route('branchs.create') }}" class="btn btn-primary float-right"><span class="fa fa-plus-circle"></span> @lang('general.btn_create')</a>
             </div>
         </div>
         
@@ -33,8 +33,8 @@
                 <th scope="col" width="1%">#</th>
                 <th scope="col" width="15%">@lang('general.lbl_name')</th>
                 <th scope="col">@lang('general.lbl_address')</th>
-                <th scope="col">City</th>
-                <th scope="col">Abbreviation</th> 
+                <th scope="col">@lang('general.lbl_city')</th> 
+                <th scope="col">@lang('general.lbl_abbr')</th>  
                 <th scope="col" colspan="3" width="1%"></th> 
             </tr>
             </thead>

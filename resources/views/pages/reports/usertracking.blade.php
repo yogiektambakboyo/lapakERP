@@ -26,7 +26,7 @@
                 <tr>
                     <th scope="col" width="15%">@lang('general.lbl_name')</th>
                     <th>@lang('general.lbl_branch')</th>
-                    <th scope="col" width="17%">Job Title</th>
+                    <th scope="col" width="17%">@lang('general.lbl_jobtitle')</th> 
                     <th scope="col" width="15%">Create At</th>  
                 </tr>
                 </thead>

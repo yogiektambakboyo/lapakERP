@@ -4,16 +4,16 @@
 
 @section('content')
     <div class="bg-light p-4 rounded">
-        <h2>Departments</h2>
+        <h2>@lang('general.lbl_department')</h2>
 
         <div class="lead row mb-3">
             <div class="col-md-10">
                 <div class="col-md-4">
-                    Manage your departments here.
+                    @lang('general.lbl_title')
                 </div>
             </div>
             <div class="col-md-2">
-                <a href="{{ route('departments.create') }}" class="btn btn-primary btn-sm float-right"><span class="fa fa-plus-circle"></span>  Add Departments</a>
+                <a href="{{ route('departments.create') }}" class="btn btn-primary btn-sm float-right"><span class="fa fa-plus-circle"></span>  @lang('general.btn_create')</a>
             </div>
         </div>
         <div class="mt-2">

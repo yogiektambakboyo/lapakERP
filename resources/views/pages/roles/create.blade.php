@@ -56,7 +56,7 @@
                     @endforeach
                 </table>
 
-                <button type="submit" class="btn btn-primary">Save Roles</button>
+                <button type="submit" class="btn btn-primary">@lang('general.lbl_save')</button>
                 <a href="{{ route('users.index') }}" class="btn btn-default">@lang('general.lbl_back') </a>
             </form>
         </div>

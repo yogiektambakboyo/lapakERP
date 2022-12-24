@@ -23,7 +23,7 @@
                 </div>
             </div>
             <div class="col-md-2">
-                <a href="{{ route('usersshift.create') }}" class="btn btn-primary btn-sm float-right"><span class="fa fa-plus-circle"></span>  Add User Shift</a>
+                <a href="{{ route('usersshift.create') }}" class="btn btn-primary btn-sm float-right"><span class="fa fa-plus-circle"></span>   @lang('general.btn_create')</a>
             </div>
         </div>
         <div class="mt-2">

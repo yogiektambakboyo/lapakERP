@@ -31,7 +31,7 @@
                 <th scope="col">@lang('general.lbl_total_customer')</th>    
                 <th scope="col">Total</th>    
                 <th scope="col">@lang('general.lbl_total_payment')</th>    
-                <th scope="col">Payment Type</th>    
+                <th scope="col">@lang('general.lbl_type_payment')</th>     
                 <th scope="col">Ref No</th>    
                 <th scope="col">Created By</th>    
                 <th scope="col">Created At</th>    

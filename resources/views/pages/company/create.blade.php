@@ -39,19 +39,19 @@
                     @endif
                 </div>
                 <div class="mb-3">
-                    <label for="city" class="form-label">City</label>
+                    <label for="city" class="form-label">@lang('general.lbl_city')</label>
                     <input value="{{ old('city') }}" 
                         type="text" 
                         class="form-control" 
                         name="city" 
-                        placeholder="City" required>
+                        placeholder="@lang('general.lbl_city')" required>
 
                     @if ($errors->has('city'))
                         <span class="text-danger text-left">{{ $errors->first('city') }}</span>
                     @endif
                 </div>
                 <div class="mb-3">
-                    <label for="abbr" class="form-label">Abbreviation</label>
+                    <label for="abbr" class="form-label">@lang('general.lbl_abbr')</label>
                     <input value="{{ old('abbr') }}" 
                         type="text" 
                         class="form-control" 
@@ -63,7 +63,7 @@
                     @endif
                 </div>
 
-                <button type="submit" class="btn btn-primary">Save Branch</button>
+                <button type="submit" class="btn btn-primary">@lang('general.lbl_save')</button>
                 <a href="{{ route('branchs.index') }}" class="btn btn-default">@lang('general.lbl_back') </a>
             </form>
         </div>

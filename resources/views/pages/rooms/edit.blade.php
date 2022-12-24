@@ -4,7 +4,7 @@
 
 @section('content')
     <div class="bg-light p-4 rounded">
-        <h2>Edit Rooms</h2>
+        <h2>Edit @lang('general.lbl_room')</h2>
         <div class="lead">
             Editing Rooms
         </div>
@@ -43,7 +43,7 @@
                     </div>
                 </div>
 
-                <button type="submit" class="btn btn-primary">Save rooms</button>
+                <button type="submit" class="btn btn-primary"> @lang('general.lbl_save')</button>
                 <a href="{{ route('rooms.index') }}" class="btn btn-default">@lang('general.lbl_back') </a>
             </form>
         </div>

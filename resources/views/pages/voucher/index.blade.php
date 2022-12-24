@@ -8,7 +8,7 @@
         <div class="lead row mb-3">
             <div class="col-md-10">
                 <div class="col-md-4">
-                    Manage your voucher here.
+                    @lang('general.lbl_title')
                 </div>
                 <div class="col-md-10"> 	
                     <form action="{{ route('voucher.search') }}" method="GET" class="row row-cols-lg-auto g-3 align-items-center">
@@ -22,7 +22,7 @@
                 </div>
             </div>
             <div class="col-md-2">
-                <a href="{{ route('voucher.create') }}" class="btn btn-primary float-right  {{ $act_permission->allow_create==1?'':'d-none' }}"><span class="fa fa-plus-circle"></span>  Add voucher</a>
+                <a href="{{ route('voucher.create') }}" class="btn btn-primary float-right  {{ $act_permission->allow_create==1?'':'d-none' }}"><span class="fa fa-plus-circle"></span>  @lang('general.btn_create')</a>
             </div>
         </div>
         
@@ -36,7 +36,7 @@
                 <th scope="col" width="10%">@lang('general.lbl_branch')</th>
                 <th>Remark</th>
                 <th scope="col" width="15%">Voucher Code</th>
-                <th scope="col" width="15%">Product Name</th>
+                <th scope="col" width="15%">@lang('general.lbl_product_name')</th> 
                 <th scope="col" width="10%">@lang('general.lbl_date_start')</th>
                 <th scope="col" width="10%">@lang('general.lbl_date_end')</th>
                 <th scope="col" width="10%">@lang('general.lbl_values')</th>

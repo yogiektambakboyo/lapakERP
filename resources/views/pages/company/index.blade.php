@@ -8,7 +8,7 @@
         <div class="lead row mb-3">
             <div class="col-md-10">
                 <div class="col-md-8">
-                    Manage your company here.
+                    @lang('general.lbl_title')
                 </div>
             </div>
         </div>
@@ -22,7 +22,7 @@
             <tr>
                 <th scope="col" width="15%">@lang('general.lbl_name')</th>
                 <th scope="col">@lang('general.lbl_address')</th>
-                <th scope="col">City</th>
+                <th scope="col">@lang('general.lbl_city')</th> 
                 <th scope="col">Email</th>
                 <th scope="col">@lang('general.lbl_phoneno')</th> 
                 <th scope="col" colspan="3" width="1%"></th> 

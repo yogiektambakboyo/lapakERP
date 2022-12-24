@@ -25,11 +25,11 @@
             <thead>
             <tr>
                 <th scope="col" width="10%">@lang('general.lbl_branch')</th>
-                <th scope="col">Product Name</th>    
-                <th scope="col">Balance Begin</th>    
-                <th scope="col">Balance End</th>    
-                <th scope="col">Qty In</th>    
-                <th scope="col">Qty Out</th>    
+                <th scope="col">@lang('general.lbl_product_name')</th>     
+                <th scope="col">@lang('general.lbl_balance_begin')</th>     
+                <th scope="col">@lang('general.lbl_balance_end')</th>     
+                <th scope="col">@lang('general.lbl_qty_in')</th>     
+                <th scope="col">@lang('general.lbl_qty_out')</th>     
             </tr>
             </thead>
             <tbody>

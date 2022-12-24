@@ -8,7 +8,7 @@
         <div class="lead row mb-3">
             <div class="col-md-10">
                 <div class="col-md-12">
-                    Manage your company here.
+                    @lang('general.lbl_title')
                 </div>
             </div>
             <div class="col-md-2">
@@ -42,7 +42,7 @@
                     @endif
                 </div>
                 <div class="mb-3">
-                    <label for="city" class="form-label">City</label>
+                    <label for="city" class="form-label">@lang('general.lbl_city')</label>
                     <input value="{{ $company->city }}" 
                         type="text" 
                         class="form-control" 

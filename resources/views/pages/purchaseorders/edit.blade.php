@@ -135,7 +135,7 @@
             <table class="table table-striped" id="order_table">
               <thead>
               <tr>
-                <th>Product Name</th>
+                <th>@lang('general.lbl_product_name')</th> 
                 <th scope="col" width="10%">@lang('general.lbl_uom')</th>
                 <th scope="col" width="10%">@lang('general.lbl_price')</th>
                 <th scope="col" width="5%">@lang('general.lbl_qty')</th>

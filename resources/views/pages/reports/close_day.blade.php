@@ -26,12 +26,12 @@
             <tr>
                 <th scope="col" width="10%">@lang('general.lbl_branch')</th>
                 <th scope="col" width="6%">@lang('general.lbl_dated')</th>
-                <th scope="col">Service</th>    
+                <th scope="col">@lang('general.service')</th>     
                 <th scope="col">@lang('general.product')</th>    
-                <th scope="col">Drink</th>    
+                <th scope="col">@lang('general.lbl_drink')</th>     
                 <th scope="col">Extra</th>    
                 <th scope="col">Total</th>    
-                <th scope="col">Cash</th>    
+                <th scope="col">@lang('general.lbl_cash')</th>     
                 <th scope="col">BCA D</th>    
                 <th scope="col">BCA K</th>    
                 <th scope="col">Mandiri D</th>    

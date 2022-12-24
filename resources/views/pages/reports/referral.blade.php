@@ -27,8 +27,8 @@
                 <th scope="col" width="10%">@lang('general.lbl_branch')</th>
                 <th scope="col">Employee ID</th>    
                 <th scope="col">@lang('general.lbl_name')</th>    
-                <th scope="col">Join Date</th>    
-                <th scope="col">Join Years</th>    
+                <th scope="col">@lang('general.lbl_joindate')</th>     
+                <th scope="col">@lang('general.lbl_join_years')</th>     
                 <th scope="col">Referral Name</th>    
             </tr>
             </thead>

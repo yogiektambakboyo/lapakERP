@@ -197,7 +197,7 @@
               </div>
           </div>
           <div class="row mb-3">
-            <label class="form-label col-form-label col-md-2">City</label>
+            <label class="form-label col-form-label col-md-2">@lang('general.lbl_city')</label>
             <div class="col-md-8">
               <input type="text" 
               name="city"

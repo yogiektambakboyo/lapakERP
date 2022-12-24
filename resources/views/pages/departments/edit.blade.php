@@ -4,11 +4,7 @@
 
 @section('content')
     <div class="bg-light p-4 rounded">
-        <h2>Edit Department</h2>
-        <div class="lead">
-            Editing Department.
-        </div>
-
+        <h2>@lang('general.lbl_department_edit')</h2>
         <div class="container mt-4">
 
             <form method="POST" action="{{ route('departments.update', $department->id) }}">
@@ -26,7 +22,7 @@
                         <span class="text-danger text-left">{{ $errors->first('remark') }}</span>
                     @endif
                 </div>
-                <button type="submit" class="btn btn-primary">Save department</button>
+                <button type="submit" class="btn btn-primary">@lang('general.lbl_save')</button>
                 <a href="{{ route('departments.index') }}" class="btn btn-default">@lang('general.lbl_back') </a>
             </form>
         </div>

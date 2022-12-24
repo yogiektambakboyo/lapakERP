@@ -39,7 +39,7 @@
                     @endif
                 </div>
                 <div class="mb-3">
-                    <label for="city" class="form-label">City</label>
+                    <label for="city" class="form-label">@lang('general.lbl_city')</label>
                     <input value="{{ $branch->city }}" 
                         type="text" 
                         class="form-control" 
@@ -51,7 +51,7 @@
                     @endif
                 </div>
                 <div class="mb-3">
-                    <label for="abbr" class="form-label">Abbreviation</label>
+                    <label for="abbr" class="form-label">@lang('general.lbl_abbr')</label>
                     <input value="{{ $branch->abbr }}" 
                         type="text" 
                         class="form-control" 

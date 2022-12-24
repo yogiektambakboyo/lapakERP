@@ -4,11 +4,7 @@
 
 @section('content')
     <div class="bg-light p-4 rounded">
-        <h2>Create Room</h2>
-        <div class="lead">
-            Add New Room.
-        </div>
-
+        <h2>@lang('general.lbl_room_new')</h2>
         <div class="container mt-4">
 
             <form method="POST" action="{{ route('rooms.store') }}">
@@ -40,7 +36,7 @@
                   </div>
 
 
-                <button type="submit" class="btn btn-primary">Save room</button>
+                <button type="submit" class="btn btn-primary">@lang('general.lbl_save')</button>
                 <a href="{{ route('rooms.index') }}" class="btn btn-default">@lang('general.lbl_back') </a>
             </form>
         </div>

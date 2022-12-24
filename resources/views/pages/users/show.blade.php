@@ -155,7 +155,7 @@
                   </div>
               </div>
               <div class="row mb-3">
-                <label class="form-label col-form-label col-md-2">City</label>
+                <label class="form-label col-form-label col-md-2">@lang('general.lbl_city')</label>
                 <div class="col-md-8">
                   <input type="text" class="form-control" value="{{ $users->city }}" readonly />
                 </div>
@@ -228,7 +228,7 @@
                         <tr>
                             <th>@lang('general.lbl_branch')</th>
                             <th scope="col" width="10%">Department</th>
-                            <th scope="col" width="20%">Job Title</th>
+                            <th scope="col" width="20%">@lang('general.lbl_jobtitle')</th> 
                             <th scope="col" width="15%">Date</th> 
                         </tr>
                         </thead>

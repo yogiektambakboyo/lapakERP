@@ -80,7 +80,7 @@
                     @endif
                 </div>
 
-                <button type="submit" class="btn btn-primary">Save user shift</button>
+                <button type="submit" class="btn btn-primary">@lang('general.lbl_save')</button>
                 <a href="{{ route('usersshift.index') }}" class="btn btn-default">@lang('general.lbl_back') </a>
             </form>
         </div>

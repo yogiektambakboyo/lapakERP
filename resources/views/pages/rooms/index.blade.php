@@ -4,22 +4,22 @@
 
 @section('content')
     <div class="bg-light p-4 rounded">
-        <h2>Rooms</h2>
+        <h2>@lang('general.lbl_room')</h2>
         <div class="lead row mb-3">
             <div class="col-md-10">
                 <div class="col-md-8">
-                    Manage your rooms here.
+                    @lang('general.lbl_title')
                 </div>
                 <div class="col-md-8"> 	
                     <form action="{{ route('rooms.search') }}" method="GET" class="row row-cols-lg-auto g-3 align-items-center">
-                        <div class="col-12"><input type="text" class="form-control  form-control-lg" name="search" placeholder="@lang('general.lbl_search') Room . . ." value="{{ $keyword }}"></div>
+                        <div class="col-12"><input type="text" class="form-control  form-control-lg" name="search" placeholder="@lang('general.lbl_search') . . ." value="{{ $keyword }}"></div>
                         <div class="col-12"><input type="submit" class="btn btn-secondary" value="@lang('general.btn_search')" name="submit"></div>   
                         <div class="col-12"><input type="submit" class="btn btn-success" value="@lang('general.btn_export')" name="export"></div>   
                     </form>
                 </div>
             </div>
             <div class="col-md-2">
-                <a href="{{ route('rooms.create') }}" class="btn btn-primary btn-sm float-right"><span class="fa fa-plus-circle"></span> Add Rooms</a>
+                <a href="{{ route('rooms.create') }}" class="btn btn-primary btn-sm float-right"><span class="fa fa-plus-circle"></span> @lang('general.btn_create')</a>
             </div>
         </div>
         
