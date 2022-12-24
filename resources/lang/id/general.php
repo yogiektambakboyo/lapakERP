@@ -171,7 +171,7 @@ return [
     "lbl_dated_mmddYYYY" => "Tgl (mm/dd/YYYY)",
     "lbl_total_discount" => "Total Diskon",
     "lbl_total_payment" => "Total Payment",
-    "lbl_total_customer" => "Total Pelanggan",
+    "lbl_total_customer" => "Nama Pelanggan",
     "lbl_schedule" => "Jadwal",
     "lbl_schedule_at" => "Dijadwalkan",
     "lbl_duration" => "Durasi",
