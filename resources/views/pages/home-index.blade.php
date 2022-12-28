@@ -58,7 +58,7 @@
 								<!-- BEGIN col-6 -->
 								<div class="col-6">
 									<div class="fs-12px text-gray-500">@lang('home.avg_sales')</div>
-									<div class="fs-18px mb-5px fw-bold">Rp. <span data-animation="number" data-value="@if($d_data_c[0]->count_sales>0) {{  $d_data[0]->total/$d_data_c[0]->count_sales }} @else {{ '0' }} @endif">0.00</span></div>
+									<div class="fs-18px mb-5px fw-bold">Rp. <span data-animation="number" data-value="@if($d_data_c[0]->count_sales>0) {{  ((int) ($d_data[0]->total/$d_data_c[0]->count_sales)) }} @else {{ '0' }} @endif">0.00</span></div>
 									<div class="progress h-5px rounded-3 bg-gray-900 mb-5px">
 										<div class="progress-bar progress-bar-striped rounded-right" data-animation="width" data-value="{{ ($d_data[0]->total/5000000)*100  }}" style="width: 0%"></div>
 									</div>
