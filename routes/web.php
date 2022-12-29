@@ -113,6 +113,7 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
             Route::patch('/{invoice}/checkout', 'InvoicesController@checkout')->name('invoices.checkout');
             Route::get('/{invoice}/edit', 'InvoicesController@edit')->name('invoices.edit');
             Route::get('/{invoice}/print', 'InvoicesController@print')->name('invoices.print');
+            Route::get('/{invoice}/printsj', 'InvoicesController@printsj')->name('invoices.printsj');
             Route::get('/{invoice}/printspk', 'InvoicesController@printspk')->name('invoices.printspk');
             Route::get('/{invoice}/printthermal', 'InvoicesController@printthermal')->name('invoices.printthermal');
             Route::get('/getproduct', 'InvoicesController@getproduct')->name('invoices.getproduct');

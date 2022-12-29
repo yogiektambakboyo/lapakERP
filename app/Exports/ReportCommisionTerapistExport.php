@@ -44,14 +44,13 @@ class ReportCommisionTerapistExport implements FromCollection,WithColumnFormatti
             'Type Commision',
             'Base Commision',
             'Total Commision',
-            'Point',
-            'Point Value',
+            'Point'
         ];
     }
     public function collection()
     {
         return collect(DB::select("
-                select  b.remark as branch_name,im.dated,u.name,im.invoice_no,ps.remark,id.price,id.qty,id.total,'work_commission' as com_type,pc.values base_commision,pc.values  * id.qty as commisions,coalesce(pc2.point_qty,0) as point_qty,coalesce(pc2.point_value,0) as point_value 
+                select  b.remark as branch_name,im.dated,u.name,im.invoice_no,ps.remark,id.price,id.qty,id.total,'work_commission' as com_type,pc.values base_commision,pc.values  * id.qty as commisions,coalesce(pp.point,0) as point_qty
                 from invoice_master im 
                 join invoice_detail id on id.invoice_no = im.invoice_no
                 join product_sku ps on ps.id = id.product_id 
@@ -63,10 +62,9 @@ class ReportCommisionTerapistExport implements FromCollection,WithColumnFormatti
                     from users r
                     ) u on u.id = id.assigned_to and u.job_id = pc.jobs_id  and u.id = id.assigned_to  and u.work_year = pc.years 
                 left join product_point pp on pp.product_id=ps.id and pp.branch_id=b.id 
-                left join point_conversion pc2 on pc2.point_qty = pp.point
                 where pc.values > 0 and im.dated between '".$this->begindate."' and '".$this->enddate."'  
                 union all            
-                select  b.remark as branch_name,im.dated,u.name,im.invoice_no,ps.remark,id.price,id.qty,id.total,'referral' as com_type,pc.referral_fee base_commision,pc.referral_fee * id.qty as commisions,0 as point_qty,0 as point_value
+                select  b.remark as branch_name,im.dated,u.name,im.invoice_no,ps.remark,id.price,id.qty,id.total,'referral' as com_type,pc.referral_fee base_commision,pc.referral_fee * id.qty as commisions,0 as point_qty
                 from invoice_master im 
                 join invoice_detail id on id.invoice_no = im.invoice_no 
                 join product_sku ps on ps.id = id.product_id 

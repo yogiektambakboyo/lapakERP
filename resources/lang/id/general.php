@@ -99,6 +99,8 @@ return [
     "lbl_terapist" => "Terapis",
     "lbl_tax" => "Pajak",
     "lbl_print" => "Cetak",
+    "lbl_printsj" => "Cetak SJ",
+    "lbl_delivery_note" => "Surat Jalan",
     "lbl_printspk" => "Cetak SPK",
     "lbl_address" => "Alamat",
     "lbl_phoneno" => "No HP",
