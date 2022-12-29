@@ -678,6 +678,8 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
             Route::get('/search_cashier', 'ReportCashierComController@search')->name('reports.cashier.search');
             Route::get('/terapist', 'ReportTerapistComController@index')->name('reports.terapist.index');
             Route::get('/search_terapist', 'ReportTerapistComController@search')->name('reports.terapist.search');
+            Route::get('/terapistdaily', 'ReportTerapistComDailyController@index')->name('reports.terapistdaily.index');
+            Route::get('/search_terapistdaily', 'ReportTerapistComDailyController@search')->name('reports.terapistdaily.search');
             Route::get('/closeshift', 'ReportCloseShiftController@index')->name('reports.closeshift.index');
             Route::get('/closeshift_getdata', 'ReportCloseShiftController@getdata')->name('reports.closeshift.getdata');
             Route::get('/closeshift_search', 'ReportCloseShiftController@search')->name('reports.closeshift.search');

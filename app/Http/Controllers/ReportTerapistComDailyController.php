@@ -27,7 +27,7 @@ use App\Http\Controllers\Lang;
 
 
 
-class ReportTerapistComController extends Controller
+class ReportTerapistComDailyController extends Controller
 {
     /**
      * Display all products
@@ -35,7 +35,7 @@ class ReportTerapistComController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-    private $data,$act_permission,$module="report.terapist",$id=1;
+    private $data,$act_permission,$module="report.terapistdaily",$id=1;
 
     public function __construct()
     {
@@ -62,36 +62,40 @@ class ReportTerapistComController extends Controller
         $branchs = Branch::join('users_branch as ub','ub.branch_id', '=', 'branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']);        
 
         $report_data = DB::select("
-                                    select b.remark as branch_name,'work_commission' as com_type,im.dated,im.invoice_no,ps.abbr,ps.remark,u.work_year,u.name,id.price,id.qty,id.total,pc.values base_commision,pc.values  * id.qty as commisions,coalesce(pp.point,0) as point_qty,0 as point_value
-                                    from invoice_master im 
-                                    join invoice_detail id on id.invoice_no = im.invoice_no
-                                    join product_sku ps on ps.id = id.product_id 
-                                    join customers c on c.id = im.customers_id 
-                                    join branch b on b.id = c.branch_id
-                                    join product_commision_by_year pc on pc.product_id = id.product_id and pc.branch_id = c.branch_id
-                                    join (
-                                        select r.id,r.name,r.job_id,case when date_part('year', age(now(),join_date))::int=0 then 1 else date_part('year', age(now(),join_date)) end as work_year 
-                                        from users r
-                                        ) u on u.id = id.assigned_to and u.job_id = pc.jobs_id  and u.id = id.assigned_to  and u.work_year = pc.years 
-                                    left join product_point pp on pp.product_id=ps.id and pp.branch_id=b.id 
-                                    where pc.values > 0 and im.dated >= now()-interval'7 days'
-                                    union all            
-                                    select  b.remark as branch_name,'referral' as com_type,im.dated,im.invoice_no,ps.abbr,ps.remark,case when date_part('year', age(now(),join_date))::int=0 then 1 else date_part('year', age(now(),join_date)) end as work_year,u.name,id.price,id.qty,id.total,pc.referral_fee base_commision,pc.referral_fee * id.qty as commisions,0 as point_qty,0 as point_value   
-                                    from invoice_master im 
-                                    join invoice_detail id on id.invoice_no = im.invoice_no 
-                                    join product_sku ps on ps.id = id.product_id 
-                                    join customers c on c.id = im.customers_id 
-                                    join branch b on b.id = c.branch_id
-                                    join product_commisions pc on pc.product_id = id.product_id and pc.branch_id = c.branch_id
-                                    join users u on u.job_id = 2  and u.id = id.referral_by  
-                                    where pc.referral_fee  > 0  and im.dated >= now()-interval'7 days'
+                    select a.branch_name,a.com_type,a.dated,a.qtyinv,a.work_year,a.name,a.commisions,a.point_qty,coalesce(pc2.point_value,0)  as point_value from (
+                        select b.remark as branch_name,'work_commision' as com_type,im.dated,count(ps.id) as qtyinv,u.work_year,u.name,sum(pc.values*id.qty) as commisions,sum(coalesce(pp.point,0)*id.qty) as point_qty
+                        from invoice_master im 
+                        join invoice_detail id on id.invoice_no = im.invoice_no
+                        join product_sku ps on ps.id = id.product_id 
+                        join customers c on c.id = im.customers_id 
+                        join branch b on b.id = c.branch_id
+                        join product_commision_by_year pc on pc.product_id = id.product_id and pc.branch_id = c.branch_id
+                        join (
+                            select r.id,r.name,r.job_id,case when date_part('year', age(now(),join_date))::int=0 then 1 else date_part('year', age(now(),join_date)) end as work_year 
+                            from users r
+                            ) u on u.id = id.assigned_to and u.job_id = pc.jobs_id  and u.id = id.assigned_to  and u.work_year = pc.years 
+                        left join product_point pp on pp.product_id=ps.id and pp.branch_id=b.id 
+                        where pc.values > 0 and im.dated >= now()-interval'7 days'
+                        group by  b.remark,im.dated,u.work_year,u.name
+                        union all            
+                        select  b.remark as branch_name,'referral' as com_type,im.dated,count(ps.id) as qtyinv,case when date_part('year', age(now(),join_date))::int=0 then 1 else date_part('year', age(now(),join_date)) end as work_year,u.name,sum(pc.referral_fee * id.qty) as commisions,0 as point_qty   
+                        from invoice_master im 
+                        join invoice_detail id on id.invoice_no = im.invoice_no 
+                        join product_sku ps on ps.id = id.product_id 
+                        join customers c on c.id = im.customers_id 
+                        join branch b on b.id = c.branch_id
+                        join product_commisions pc on pc.product_id = id.product_id and pc.branch_id = c.branch_id
+                        join users u on u.job_id = 2  and u.id = id.referral_by  
+                        where pc.referral_fee  > 0  and im.dated >= now()-interval'7 days'
+                        group by  b.remark,im.dated,u.join_date,u.name
+                ) a left join point_conversion pc2 on pc2.point_qty = a.point_qty;
         ");
         $data = $this->data;
         $keyword = "";
         $act_permission = $this->act_permission[0];
         $brands = ProductBrand::orderBy('product_brand.remark', 'ASC')
                     ->paginate(10,['product_brand.id','product_brand.remark']);
-        return view('pages.reports.commision_terapist',['company' => Company::get()->first()], compact('brands','branchs','data','keyword','act_permission','report_data'))->with('i', ($request->input('page', 1) - 1) * 5);
+        return view('pages.reports.commision_terapist_summary',['company' => Company::get()->first()], compact('brands','branchs','data','keyword','act_permission','report_data'))->with('i', ($request->input('page', 1) - 1) * 5);
     }
 
     public function search(Request $request) 
@@ -112,7 +116,7 @@ class ReportTerapistComController extends Controller
 
         if($request->export=='Export Excel'){
             $strencode = base64_encode($begindate.'#'.$enddate.'#'.$branchx.'#'.$user->id);
-            return Excel::download(new ReportCommisionTerapistExport($strencode), 'report_commision_terapist_'.Carbon::now()->format('YmdHis').'.xlsx');
+            return Excel::download(new ReportCommisionTerapistExport($strencode), 'report_commision_terapist_sum_'.Carbon::now()->format('YmdHis').'.xlsx');
         }else{
             $brands = ProductBrand::orderBy('product_brand.remark', 'ASC')
                     ->paginate(10,['product_brand.id','product_brand.remark']);
@@ -142,7 +146,7 @@ class ReportTerapistComController extends Controller
                                     join users u on u.job_id = 2  and u.id = id.referral_by  
                                     where pc.referral_fee  > 0  and im.dated between '".$begindate."' and '".$enddate."'              
         ");            
-            return view('pages.reports.commision_terapist',['company' => Company::get()->first()], compact('report_data','branchs','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
+            return view('pages.reports.commision_terapist_summary',['company' => Company::get()->first()], compact('report_data','branchs','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
         }
     }
 

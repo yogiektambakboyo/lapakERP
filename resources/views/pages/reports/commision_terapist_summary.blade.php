@@ -4,7 +4,7 @@
 
 @section('content')
     <div class="bg-light p-4 rounded">
-        <h1>@lang('general.lbl_report') - @lang('general.lbl_terapist_commision')</h1>
+        <h1>@lang('general.lbl_report') - @lang('general.lbl_terapist_commision_daily')</h1>
         <div class="lead row mb-3">
             <div class="col-md-10">
                 <div class="col-md-8">
@@ -26,13 +26,7 @@
                 <tr>
                     <th scope="col" width="8%">@lang('general.lbl_branch')</th>
                     <th scope="col" width="8%">@lang('general.lbl_dated')</th>
-                    <th>@lang('general.invoice_no')</th>
-                    <th scope="col" width="17%">@lang('general.product')</th>
                     <th scope="col" width="15%">@lang('general.lbl_name')</th>
-                    <th scope="col" width="5%">@lang('general.lbl_price')</th>
-                    <th scope="col" width="4%">@lang('general.lbl_qty')</th>
-                    <th scope="col" width="8%">Total</th>  
-                    <th scope="col" width="8%">Base Comm.</th>
                     <th scope="col" width="12%">Total Comm</th>    
                     <th scope="col" width="8%">Point</th>    
                     <th scope="col" width="12%">Point @lang('general.lbl_values')</th>    
@@ -44,13 +38,7 @@
                         <tr>
                             <th scope="row">{{ $user->branch_name }}</th>
                             <th scope="row">{{ $user->dated }}</th>
-                            <td>{{ $user->invoice_no }}</td>
-                            <td>{{ $user->abbr }}</td>
                             <td>{{ $user->name }}</td>
-                            <td>{{ number_format($user->price,0,',','.') }}</td>
-                            <td>{{ $user->qty }}</td>
-                            <td>{{ number_format($user->total,0,',','.') }}</td>
-                            <td>{{ number_format($user->base_commision,0,',','.') }}</td>
                             <td>{{ number_format($user->commisions,0,',','.') }}</td>
                             <td>{{ number_format($user->point_qty,0,',','.') }}</td>
                             <td>{{ number_format($user->point_value,0,',','.') }}</td>
@@ -69,7 +57,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form action="{{ route('reports.terapist.search') }}" method="GET">   
+                    <form action="{{ route('reports.terapistdaily.search') }}" method="GET">   
                         @csrf 
                         <div class="col-md-10">
                             <label class="form-label col-form-label col-md-4">@lang('general.lbl_branch')</label>
