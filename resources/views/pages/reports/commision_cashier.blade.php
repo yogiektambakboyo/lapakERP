@@ -4,7 +4,7 @@
 
 @section('content')
     <div class="bg-light p-4 rounded">
-        <h1>Reports - Commision Cashier</h1>
+        <h1>@lang('general.lbl_report') - @lang('general.lbl_chasier_commision')</h1>
         <div class="lead row mb-3">
             <div class="col-md-10">
                 <div class="col-md-8">
@@ -31,9 +31,9 @@
                     <th scope="col" width="5%">@lang('general.lbl_price')</th>
                     <th scope="col" width="4%">@lang('general.lbl_qty')</th>
                     <th scope="col" width="8%">Total</th>  
-                    <th scope="col" width="10%">Type Commission</th>   
-                    <th scope="col" width="12%">Base Commission</th>
-                    <th scope="col" width="12%">Total Commission</th>    
+                    <th scope="col" width="10%">@lang('general.lbl_type_commision')</th>   
+                    <th scope="col" width="12%">@lang('general.lbl_base_commision')</th>
+                    <th scope="col" width="12%">@lang('general.lbl_total_commision')</th>    
                 </tr>
                 </thead>
                 <tbody>

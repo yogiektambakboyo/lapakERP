@@ -9,7 +9,7 @@
         <div class="lead row mb-3">
             <div class="col-md-10">
                 <div class="col-md-4">
-                    Manage your User Shift here.
+                    @lang('general.lbl_title')
                 </div>
 
                 <div class="col-md-10"> 	
@@ -36,9 +36,9 @@
                 <th scope="col" width="10%">@lang('general.lbl_branch')</th>
                 <th scope="col" width="7%">@lang('general.lbl_dated')</th>
                 <th scope="col">@lang('general.lbl_name')</th>
-                <th scope="col" width="15%">Shift Name</th>
-                <th scope="col" width="10%">Start Time</th>
-                <th scope="col" width="10%">End Time</th>
+                <th scope="col" width="15%">@lang('general.lbl_shift_name')</th>
+                <th scope="col" width="10%">@lang('general.lbl_time_start')</th>
+                <th scope="col" width="10%">@lang('general.lbl_time_end')</th>
                 <th scope="col" width="5%">Remark</th>
                 <th scope="col" colspan="3" width="1%"></th> 
             </tr>

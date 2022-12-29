@@ -33,8 +33,8 @@
             <tr>
                 <th scope="col" width="1%">#</th>
                 <th scope="col">Remark</th>
-                <th scope="col" width="15%">Time Start</th>
-                <th scope="col" width="15%">Time End</th>
+                <th scope="col" width="15%">@lang('general.lbl_time_start')</th>
+                <th scope="col" width="15%">@lang('general.lbl_time_end')</th>
                 <th scope="col" colspan="3" width="1%"></th> 
             </tr>
             </thead>

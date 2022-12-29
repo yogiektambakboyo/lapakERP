@@ -26,7 +26,7 @@
             <tr>
                 <th scope="col" width="10%">@lang('general.lbl_branch')</th>
                 <th scope="col" width="10%">@lang('general.lbl_dated')</th>
-                <th scope="col">Purchase No</th>    
+                <th scope="col">@lang('general.lbl_purchase_no')</th>    
                 <th scope="col">@lang('general.lbl_product_name')</th>     
                 <th scope="col">@lang('general.lbl_category')</th>     
                 <th scope="col">@lang('general.lbl_qty')</th>    

@@ -35,7 +35,7 @@
             <tr>
                 <th scope="col" width="10%">@lang('general.lbl_branch')</th>
                 <th>Remark</th>
-                <th scope="col" width="15%">Voucher Code</th>
+                <th scope="col" width="15%">@lang('general.lbl_voucher_code')</th>
                 <th scope="col" width="15%">@lang('general.lbl_product_name')</th> 
                 <th scope="col" width="10%">@lang('general.lbl_date_start')</th>
                 <th scope="col" width="10%">@lang('general.lbl_date_end')</th>
