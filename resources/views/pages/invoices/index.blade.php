@@ -51,16 +51,21 @@
                     <tr>
                         <th scope="row">{{ $order->id }}</th>
                         <td>{{ $order->branch_name }}</td>
-                        <td>{{ $order->invoice_no }}</td>
+                        <td @if ($order->is_checkout == 0) class="bg-danger" @endif>{{ $order->invoice_no }}</td>
                         <td>{{ $order->dated }}</td>
                         <td>{{ $order->customer }}</td>
                         <td>{{ number_format($order->total,0,',','.') }}</td>
                         <td>{{ number_format($order->total_discount,0,',','.') }}</td>
                         <td>{{ number_format($order->total_payment,0,',','.') }}</td>
                         <td><a href="{{ route('invoices.show', $order->id) }}" class="btn btn-warning btn-sm  {{ $act_permission->allow_show==1?'':'d-none' }}">@lang('general.lbl_show')</a></td>
+                        @if ($order->is_checkout == 0)
+                        <td>
+                            <a onclick="showConfirmCheckout({{ $order->id }}, '{{ $order->invoice_no }}')" class="btn btn-success btn-sm  {{ $act_permission->allow_show==1?'':'d-none' }}">@lang('general.lbl_checkout')</a>
+                        </td>
+                        @endif
                         <td><a href="{{ route('invoices.edit', $order->id) }}" class="btn btn-info btn-sm  {{ $act_permission->allow_edit==1?'':'d-none' }} ">@lang('general.lbl_edit')</a></td>
                         <td class=" {{ $act_permission->allow_delete==1?'':'d-none' }}">
-                            <a onclick="showConfirm({{ $order->id }}, '{{ $order->order_no }}')" class="btn btn-danger btn-sm  {{ $act_permission->allow_delete==1?'':'d-none' }} ">@lang('general.lbl_delete')</a>
+                            <a onclick="showConfirm({{ $order->id }}, '{{ $order->invoice_no }}')" class="btn btn-danger btn-sm  {{ $act_permission->allow_delete==1?'':'d-none' }} ">@lang('general.lbl_delete')</a>
                         </td>
                     </tr>
                 @endforeach
@@ -138,6 +143,8 @@
 
 @push('scripts')
     <script type="text/javascript">
+     $('#app').removeClass('app app-sidebar-fixed app-header-fixed-minified').addClass('app app-sidebar-fixed app-header-fixed-minified app-sidebar-minified');
+
           const today = new Date();
           const yyyy = today.getFullYear();
           const yyyy1 = today.getFullYear()+1;
@@ -189,6 +196,57 @@
                                     Swal.fire({
                                         title: 'Deleted!',
                                         text: "@lang('general.lbl_msg_delete_title') ",
+                                        icon: 'success',
+                                        showCancelButton: false,
+                                        confirmButtonColor: '#3085d6',
+                                        cancelButtonColor: '#d33', cancelButtonText: "@lang('general.lbl_cancel')",
+                                        confirmButtonText: "@lang('general.lbl_close') "
+                                        }).then((result) => {
+                                            window.location.href = "{{ route('invoices.index') }}"; 
+                                        })
+                                }else{
+                                    Swal.fire(
+                                    {
+                                        position: 'top-end',
+                                        icon: 'warning',
+                                        text: "@lang('general.lbl_msg_failed')"+resp.data.message,
+                                        showConfirmButton: false,
+                                        imageHeight: 30, 
+                                        imageWidth: 30,   
+                                        timer: 1500
+                                    });
+                            }
+                        });
+                    }
+                })
+        }
+
+        function showConfirmCheckout(id,data){
+            Swal.fire({
+            title: "@lang('general.lbl_sure')",
+            text: "@lang('general.lbl_sure_chekout_title') "+data+" !",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33', cancelButtonText: "@lang('general.lbl_cancel')",
+            confirmButtonText: "@lang('general.lbl_sure_checkout')"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    var url = "{{ route('invoices.checkout','XX') }}";
+                    var lastvalurl = "XX";
+                    console.log(url);
+                    url = url.replace(lastvalurl, id)
+                    const res = axios.patch(url, {}, {
+                        headers: {
+                            // Overwrite Axios's automatically set Content-Type
+                            'Content-Type': 'application/json'
+                        }
+                        }).then(
+                            resp => {
+                                if(resp.data.status=="success"){
+                                    Swal.fire({
+                                        title: 'Success!',
+                                        text: "@lang('general.lbl_msg_checkout_title') ",
                                         icon: 'success',
                                         showCancelButton: false,
                                         confirmButtonColor: '#3085d6',

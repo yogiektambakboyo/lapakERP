@@ -23,12 +23,12 @@
 
       <table style="width: 100%">
         <tbody>
-          <tr style="text-align: center;height: 50px;background-color:#FFA726;">
+          <tr style="text-align: center;height: 30px;background-color:#FFA726;">
             <td style="text-align: left;padding:15px;">
               
-              <img src="data:image/png;base64,{{ base64_encode(file_get_contents(url("images/user-files/".$settings[0]->icon_file))) }}" width="180px"><br>
+              <img src="data:image/png;base64,{{ base64_encode(file_get_contents(url("images/user-files/".$settings[0]->icon_file))) }}" width="150px"><br>
               <label>{{ $invoiceDetails[0]->branch_name }}</label><br>
-              <label>{{ $invoiceDetails[0]->address }}</label></td>
+              <label>{{ $invoiceDetails[0]->branch_address }}</label></td>
             <td style="width: 50%;font-size:30px;"><p style="color: #212121;">@lang('general.lbl_invoice')</p></td>
           </tr>
           <tr style="background-color: chocolate;">
@@ -38,14 +38,14 @@
       </table>
       <table style="width: 100%">
         <tbody>
-          <tr style="text-align: center;height: 70px">
-            <td style="text-align: left;padding:20px;width:20%;vertical-align: text-top;">        
+          <tr style="text-align: center;height: 50px">
+            <td style="text-align: left;padding-left:10px;width:20%;vertical-align: text-top;">        
               <label style="font-weight: bold;">@lang('general.lbl_customer') :</label><br>
               <label>{{ $customers[0]->name }}</label><br>
               <label>{{ $customers[0]->address }}</label><br>
               <label>{{ $customers[0]->phone_no }}</label><br>
             </td>
-            <td style="text-align: left;padding:20px;width:35%;vertical-align: text-top;">        
+            <td style="text-align: left;padding:10px;width:35%;vertical-align: text-top;">        
               
             </td>
             <td style="text-align: right;width: 50%;font-size:15px;width:15%;vertical-align: text-top;">
@@ -108,7 +108,7 @@
             <td style="text-align: right;width:10%;background-color:#FFA726;display: none; ">Rp. {{ number_format(($invoice->total-$invoice->tax),0,',','.') }}</td>
           </tr>
           <tr>
-            <th style="text-align: left;width:70%;">@if($invoice->total_payment>=$invoice->total)  {{ "Lunas" }}   @endif</th>
+            <th style="text-align: left;width:70%;">{{ $invoice->payment_type }} @if($invoice->total_payment>=$invoice->total)  {{ "Lunas" }}   @endif</th>
             <td style="text-align: right;width:20%;background-color:#FFA726;display: none; ">@lang('general.lbl_tax') </th>
             <td style="text-align: right;width:10%;background-color:#FFA726;display: none; ">Rp. {{ number_format($invoice->tax,0,',','.') }}</th>
           </tr>
@@ -131,10 +131,6 @@
           <tr>
             <td style="text-align: center;width:50%;">@lang('general.lbl_cashier') </td>
             <td style="text-align: center;width:50%;">@lang('general.lbl_customer') </td>
-          </tr>
-          <tr>
-            <th style="text-align: center;width:50%;"></th>
-            <th style="text-align: center;width:50%;"></th>
           </tr>
           <tr>
             <th style="text-align: center;width:50%;"></th>

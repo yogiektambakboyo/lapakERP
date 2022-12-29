@@ -36,6 +36,7 @@
                 <th scope="col">BCA K</th>    
                 <th scope="col">Mandiri D</th>    
                 <th scope="col">Mandiri K</th> 
+                <th scope="col">QRIS</th> 
                 <th scope="col">#SPK</th> 
                 <th scope="col">#Tamu</th>  
                 <th scope="col" width="2%">@lang('general.lbl_action')</th> 
@@ -57,6 +58,7 @@
                         <td>{{ number_format($rdata->total_b_k,0,',','.') }}</td>
                         <td>{{ number_format($rdata->total_m_d,0,',','.') }}</td>
                         <td>{{ number_format($rdata->total_m_k,0,',','.') }}</td>
+                        <td>{{ number_format($rdata->total_qr,0,',','.') }}</td>
                         <td>{{ number_format($rdata->qty_transaction,0,',','.') }}</td>
                         <td>{{ number_format($rdata->qty_customers,0,',','.') }}</td>
                         <td><button onclick="openDialog('{{ $rdata->branch_id }}','{{ $rdata->dated }}','0');" class="btn btn-warning btn-sm">Print</button></td>
@@ -143,7 +145,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form action="{{ route('reports.closeday.getdata') }}" method="GET">   
+                    <form target="_blank" action="{{ route('reports.closeday.getdata') }}" method="GET">   
                         @csrf 
                         <div class="col-md-12">
                             <select class="form-control" 

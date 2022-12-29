@@ -126,9 +126,12 @@ return [
 
     "lbl_sure" => "Apakah anda yakin?",
     "lbl_sure_title" => "Anda akan menghapus data ",
+    "lbl_sure_chekout_title" => "Anda akan proses checkout data ",
     "lbl_sure_delete" => "Ya, Hapus!",
+    "lbl_sure_checkout" => "Ya, Chekout!",
     "lbl_msg_delete" => "Terhapus!",
     "lbl_msg_delete_title" => "Data anda telah berhasil dihapus",
+    "lbl_msg_checkout_title" => "Data anda telah berhasil di-checkout",
     "lbl_msg_failed" => "Ada sesuatu yang salah - ",
     "lbl_ingredient" => "Bahan Baku",
     "lbl_ingredient_add" => "Tambah Bahan Baku",
@@ -146,6 +149,7 @@ return [
     "lbl_service_name" => "Nama Perawatan",
 
     "lbl_product_stock" => "Stok Produk",
+    "lbl_checkout" => "Checkout",
 
     "lbl_uom" => "Satuan",
     "lbl_price_adjustment" => "Penyesuaian Harga",

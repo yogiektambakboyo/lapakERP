@@ -110,6 +110,7 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
             Route::post('/create', 'InvoicesController@store')->name('invoices.store');
             Route::get('/search', 'InvoicesController@search')->name('invoices.search');
             Route::get('/{invoice}/show', 'InvoicesController@show')->name('invoices.show');
+            Route::patch('/{invoice}/checkout', 'InvoicesController@checkout')->name('invoices.checkout');
             Route::get('/{invoice}/edit', 'InvoicesController@edit')->name('invoices.edit');
             Route::get('/{invoice}/print', 'InvoicesController@print')->name('invoices.print');
             Route::get('/{invoice}/printspk', 'InvoicesController@printspk')->name('invoices.printspk');

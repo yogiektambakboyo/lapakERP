@@ -35,7 +35,6 @@
                     <th scope="col" width="8%">Base Comm.</th>
                     <th scope="col" width="12%">Total Comm</th>    
                     <th scope="col" width="8%">Point</th>    
-                    <th scope="col" width="12%">Point @lang('general.lbl_values')</th>    
                 </tr>
                 </thead>
                 <tbody>
@@ -53,7 +52,6 @@
                             <td>{{ number_format($user->base_commision,0,',','.') }}</td>
                             <td>{{ number_format($user->commisions,0,',','.') }}</td>
                             <td>{{ number_format($user->point_qty,0,',','.') }}</td>
-                            <td>{{ number_format($user->point_value,0,',','.') }}</td>
                         </tr>
                     @endforeach
                 </tbody>

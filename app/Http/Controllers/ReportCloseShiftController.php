@@ -76,6 +76,7 @@ class ReportCloseShiftController extends Controller
                 sum(case when im.payment_type = 'BCA - Kredit' then id.total+id.vat_total else 0 end) as total_b_k,
                 sum(case when im.payment_type = 'Mandiri - Debit' then id.total+id.vat_total else 0 end) as total_m_d,
                 sum(case when im.payment_type = 'Mandiri - Kredit' then id.total+id.vat_total else 0 end) as total_m_k,
+                sum(case when im.payment_type = 'QRIS' then id.total+id.vat_total else 0 end) as total_qr,
                 count(distinct im.invoice_no) qty_transaction,count(distinct im.customers_id) qty_customers
                 from invoice_master im 
                 join invoice_detail id on id.invoice_no  = im.invoice_no 
@@ -173,6 +174,7 @@ class ReportCloseShiftController extends Controller
                     sum(case when im.payment_type = 'BCA - Kredit' then id.total+id.vat_total else 0 end) as total_b_k,
                     sum(case when im.payment_type = 'Mandiri - Debit' then id.total+id.vat_total else 0 end) as total_m_d,
                     sum(case when im.payment_type = 'Mandiri - Kredit' then id.total+id.vat_total else 0 end) as total_m_k,
+                    sum(case when im.payment_type = 'QRIS' then id.total+id.vat_total else 0 end) as total_qr,
                     count(distinct im.invoice_no) qty_transaction,count(distinct im.customers_id) qty_customers
                     from invoice_master im 
                     join invoice_detail id on id.invoice_no  = im.invoice_no 
@@ -317,7 +319,7 @@ class ReportCloseShiftController extends Controller
                 $query->on('role_has_permissions.permission_id', '=', 'permissions.id')
                 ->where('role_has_permissions.role_id','=',$id)->where('permissions.name','like','%.index%')->where('permissions.url','!=','null');
             });
-           })->get(['permissions.name','permissions.url','permissions.remark','permissions.parent']);
+           })->orderby('permissions.remark')->get(['permissions.name','permissions.url','permissions.remark','permissions.parent']);
 
            $this->data = [
             'menu' => 

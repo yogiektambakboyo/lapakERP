@@ -1,10 +1,10 @@
 @extends('layouts.default', ['appSidebarSearch' => true])
 
-@section('title', 'Laporan - Serah Terima')
+@section('title', 'Laporan - Referral')
 
 @section('content')
     <div class="bg-light p-4 rounded">
-        <h1>Laporan - Serah Terima</h1>
+        <h1>@lang('general.lbl_report') - @lang('general.lbl_terapist_commision')</h1>
         <div class="lead row mb-3">
             <div class="col-md-10">
                 <div class="col-md-8">
@@ -23,55 +23,41 @@
 
         <table class="table table-striped" id="example">
             <thead>
-            <tr>
-                <th scope="col" width="10%">@lang('general.lbl_branch')</th>
-                <th scope="col" width="6%">@lang('general.lbl_dated')</th>
-                <th>Shift</th>
-                <th scope="col">@lang('general.service')</th>     
-                <th scope="col">@lang('general.product')</th>    
-                <th scope="col">@lang('general.lbl_drink')</th>     
-                <th scope="col">Extra</th>    
-                <th scope="col">Total</th>    
-                <th scope="col">@lang('general.lbl_cash')</th>     
-                <th scope="col">BCA D</th>    
-                <th scope="col">BCA K</th>    
-                <th scope="col">Mandiri D</th>    
-                <th scope="col">Mandiri K</th> 
-                <th scope="col">QRIS</th> 
-                <th scope="col">#SPK</th> 
-                <th scope="col">#Tamu</th>  
-                <th scope="col" width="2%">@lang('general.lbl_action')</th> 
-            </tr>
-            </thead>
-            <tbody>
-
-                @foreach($report_data as $rdata)
-                    <tr>
-                        <th scope="row">{{ $rdata->branch_name }}</th>
-                        <td>{{ $rdata->dated }}</td>
-                        <td>{{ $rdata->shift_name }}</td>
-                        <td>{{ number_format($rdata->total_service,0,',','.') }}</td>
-                        <td>{{ number_format($rdata->total_product,0,',','.') }}</td>
-                        <td>{{ number_format($rdata->total_drink,0,',','.') }}</td>
-                        <td>{{ number_format($rdata->total_extra,0,',','.') }}</td>
-                        <td>{{ number_format($rdata->total_all,0,',','.') }}</td>
-                        <td>{{ number_format($rdata->total_cash,0,',','.') }}</td>
-                        <td>{{ number_format($rdata->total_b_d,0,',','.') }}</td>
-                        <td>{{ number_format($rdata->total_b_k,0,',','.') }}</td>
-                        <td>{{ number_format($rdata->total_m_d,0,',','.') }}</td>
-                        <td>{{ number_format($rdata->total_m_k,0,',','.') }}</td>
-                        <td>{{ number_format($rdata->total_qr,0,',','.') }}</td>
-                        <td>{{ number_format($rdata->qty_transaction,0,',','.') }}</td>
-                        <td>{{ number_format($rdata->qty_customers,0,',','.') }}</td>
-                        <td><button onclick="openDialog('{{ $rdata->branch_id }}','{{ $rdata->dated }}','{{ $rdata->shift_id }}');" class="btn btn-warning btn-sm">Print</button></td>
-                    </tr>
-                @endforeach
-            </tbody>
+                <tr>
+                    <th scope="col" width="8%">@lang('general.lbl_branch')</th>
+                    <th scope="col" width="8%">@lang('general.lbl_dated')</th>
+                    <th>@lang('general.invoice_no')</th>
+                    <th scope="col" width="17%">@lang('general.product')</th>
+                    <th scope="col" width="15%">@lang('general.lbl_name')</th>
+                    <th scope="col" width="5%">@lang('general.lbl_price')</th>
+                    <th scope="col" width="4%">@lang('general.lbl_qty')</th>
+                    <th scope="col" width="8%">Total</th>  
+                    <th scope="col" width="8%">Base Comm.</th>
+                    <th scope="col" width="12%">Total Comm</th>    
+                    <th scope="col" width="8%">Point</th>    
+                    <th scope="col" width="12%">Point @lang('general.lbl_values')</th>    
+                </tr>
+                </thead>
+                <tbody>
+    
+                    @foreach($report_data as $user)
+                        <tr>
+                            <th scope="row">{{ $user->branch_name }}</th>
+                            <th scope="row">{{ $user->dated }}</th>
+                            <td>{{ $user->invoice_no }}</td>
+                            <td>{{ $user->abbr }}</td>
+                            <td>{{ $user->name }}</td>
+                            <td>{{ number_format($user->price,0,',','.') }}</td>
+                            <td>{{ $user->qty }}</td>
+                            <td>{{ number_format($user->total,0,',','.') }}</td>
+                            <td>{{ number_format($user->base_commision,0,',','.') }}</td>
+                            <td>{{ number_format($user->commisions,0,',','.') }}</td>
+                            <td>{{ number_format($user->point_qty,0,',','.') }}</td>
+                            <td>{{ number_format($user->point_value,0,',','.') }}</td>
+                        </tr>
+                    @endforeach
+                </tbody>
         </table>
-
-        <div class="d-flex">
-           
-        </div>
 
         <!-- Vertically centered modal -->
         <!-- Modal -->
@@ -83,10 +69,11 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form action="{{ route('reports.closeshift.search') }}" method="GET">   
+                    <form action="{{ route('reports.terapist.search') }}" method="GET">   
                         @csrf 
                         <div class="col-md-10">
                             <label class="form-label col-form-label col-md-4">@lang('general.lbl_branch')</label>
+                            <input type="hidden" name="export" id="export" value="@lang('general.btn_search')">
                         </div>
                         <div class="col-md-12">
                             <select class="form-control" 
@@ -102,7 +89,6 @@
                             <label class="form-label col-form-label col-md-4">@lang('general.lbl_date_start')</label>
                         </div>
                         <div class="col-md-12">
-                            <input type="hidden" name="export" id="export" value="@lang('general.btn_search')">
                             <input type="text" 
                             name="filter_begin_date_in"
                             id="filter_begin_date_in"
@@ -127,19 +113,6 @@
                                 @endif
                         </div>
 
-
-                        <div class="col-md-10">
-                            <label class="form-label col-form-label col-md-4">Shift</label>
-                        </div>
-                        <div class="col-md-12">
-                            <select class="form-control" 
-                            name="filter_shift_in" id="filter_shift_in">
-                            <option value="%">-- All -- </option>
-                            @foreach($shifts as $shift)
-                                <option value="{{ $shift->id }}">{{ $shift->remark }} ( {{ $shift->time_start }} - {{ $shift->time_end }}) </option>
-                            @endforeach
-                        </select>
-                        </div>
                         <br>
                         <div class="col-md-12">
                             <button type="submit" class="btn btn-primary form-control">@lang('general.lbl_apply')</button>
@@ -160,7 +133,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form target="_blank" action="{{ route('reports.closeshift.getdata') }}" method="GET">   
+                    <form action="" method="GET">   
                         @csrf 
                         <div class="col-md-12">
                             <select class="form-control" 
@@ -185,15 +158,7 @@
                                 @endif
                         </div>
 
-                       
-                        <div class="col-md-12">
-                            <select class="form-control" hidden 
-                            name="filter_shift" id="filter_shift">
-                            @foreach($shifts as $shift)
-                                <option value="{{ $shift->id }}">{{ $shift->remark }} ( {{ $shift->time_start }} - {{ $shift->time_end }}) </option>
-                            @endforeach
-                        </select>
-                        </div>
+                    
                         <br>
                         <div class="col-md-12">
                             <button type="submit" class="btn btn-primary form-control">@lang('general.lbl_apply')</button>
@@ -248,9 +213,6 @@
             $('#filter_branch_id').val(branch_id);
             $('#filter_shift').val(shift_id);
             $('#filter_begin_date').val(dated.substr(5,2)+"/"+dated.substr(8,2)+"/"+dated.substr(0,4));
-            //$('#filter_branch_id').prop('disabled', true);
-            //$('#filter_shift').prop('disabled', true);
-            //$('#filter_begin_date').prop('disabled', true);
             myModal.show();
           }
 
@@ -259,56 +221,6 @@
             myModal2.show();
           }
 
-          function showConfirm(id,data){
-            Swal.fire({
-            title: "@lang('general.lbl_sure')",
-            text: "@lang('general.lbl_sure_title') "+data+" !",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33', cancelButtonText: "@lang('general.lbl_cancel')",
-            confirmButtonText: "@lang('general.lbl_sure_delete')"
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    var url = "{{ route('invoices.destroy','XX') }}";
-                    var lastvalurl = "XX";
-                    console.log(url);
-                    url = url.replace(lastvalurl, id)
-                    const res = axios.delete(url, {}, {
-                        headers: {
-                            // Overwrite Axios's automatically set Content-Type
-                            'Content-Type': 'application/json'
-                        }
-                        }).then(
-                            resp => {
-                                if(resp.data.status=="success"){
-                                    Swal.fire({
-                                        title: 'Deleted!',
-                                        text: "@lang('general.lbl_msg_delete_title') ",
-                                        icon: 'success',
-                                        showCancelButton: false,
-                                        confirmButtonColor: '#3085d6',
-                                        cancelButtonColor: '#d33', cancelButtonText: "@lang('general.lbl_cancel')",
-                                        confirmButtonText: "@lang('general.lbl_close') "
-                                        }).then((result) => {
-                                            window.location.href = "{{ route('invoices.index') }}"; 
-                                        })
-                                }else{
-                                    Swal.fire(
-                                    {
-                                        position: 'top-end',
-                                        icon: 'warning',
-                                        text: "@lang('general.lbl_msg_failed')"+resp.data.message,
-                                        showConfirmButton: false,
-                                        imageHeight: 30, 
-                                        imageWidth: 30,   
-                                        timer: 1500
-                                    });
-                            }
-                        });
-                    }
-                })
-        }
 
         $('#app').removeClass('app app-sidebar-fixed app-header-fixed-minified').addClass('app app-sidebar-fixed app-header-fixed-minified app-sidebar-minified');
 

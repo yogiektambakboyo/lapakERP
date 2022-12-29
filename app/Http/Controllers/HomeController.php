@@ -25,7 +25,7 @@ class HomeController extends Controller
                     $query->on('role_has_permissions.permission_id', '=', 'permissions.id')
                     ->where('role_has_permissions.role_id','=',$id)->where('permissions.name','like','%.index%')->where('permissions.url','!=','null');
                 });
-               })->get(['permissions.name','permissions.url','permissions.remark','permissions.parent']);
+               })->orderby('permissions.remark')->get(['permissions.name','permissions.url','permissions.remark','permissions.parent']);
 
                $this->data = [
                 'menu' => 
@@ -143,7 +143,7 @@ class HomeController extends Controller
                 join customers c on c.branch_id = ub.branch_id 
                 join invoice_master im on im.customers_id = c.id
                 join invoice_detail id on id.invoice_no = im.invoice_no
-                join product_sku ps on ps.id = id.product_id and ps.type_id = 1
+                join product_sku ps on ps.id = id.product_id and ps.type_id not in (2,8)
                 where ub.user_id = ".$user->id."  and im.dated = now()::date                       
             ");
 
@@ -163,7 +163,7 @@ class HomeController extends Controller
                 join customers c on c.branch_id = ub.branch_id 
                 join invoice_master im on im.customers_id = c.id
                 join invoice_detail id on id.invoice_no = im.invoice_no
-                join product_sku ps on ps.id = id.product_id and ps.type_id = 2
+                join product_sku ps on ps.id = id.product_id and ps.type_id in (2,8)
                 where ub.user_id = ".$user->id."  and im.dated = now()::date                     
             ");
 
@@ -248,7 +248,7 @@ class HomeController extends Controller
                 $query->on('role_has_permissions.permission_id', '=', 'permissions.id')
                 ->where('role_has_permissions.role_id','=',$id)->where('permissions.name','like','%.index%')->where('permissions.url','!=','null');
             });
-           })->get(['permissions.name','permissions.url','permissions.remark','permissions.parent']);
+           })->orderby('permissions.remark')->get(['permissions.name','permissions.url','permissions.remark','permissions.parent']);
 
            $this->data = [
             'menu' => 
