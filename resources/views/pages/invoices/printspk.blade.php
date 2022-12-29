@@ -111,7 +111,7 @@
               $c = 1;
               @endphp
               @for ($i = 0; $i < count($invoiceDetails); $i++)
-                  @if ($invoiceDetails[$i]->type_id==2)
+                  @if (($invoiceDetails[$i]->type_id==2)||($invoiceDetails[$i]->type_id==8))
                     <label>{{ $c }}. {{ $invoiceDetails[$i]->product_name }}</label><br>
                     @php
                     $c++;
@@ -136,7 +136,7 @@
               $c = 1;
               @endphp
               @for ($j = 0; $j < count($invoiceDetails); $j++)
-                  @if ($invoiceDetails[$j]->type_id==1)
+              @if (($invoiceDetails[$j]->type_id!=2)&&($invoiceDetails[$j]->type_id!=8))
                     <label>{{ $c }}. {{ $invoiceDetails[$j]->product_name }}</label><br>
                     @php
                     $c++;

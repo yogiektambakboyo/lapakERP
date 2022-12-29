@@ -1663,7 +1663,7 @@
                 for (var i = 0; i < productList.length; i++){
                   var obj = productList[i];
                   var newOption = new Option(obj["remark"], obj["id"], false, false);
-                  if(obj["type"]=="Services"){
+                  if((obj["type"]=="Services")||(obj["type"]=="Extra")){
                     $('#input_service_id').append(newOption).trigger('change');  
                   }else{
                     $('#input_product_id').append(newOption).trigger('change');  
