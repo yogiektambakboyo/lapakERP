@@ -654,6 +654,23 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
             Route::get('/export', 'UserShiftController@export')->name('usersshift.export');
         });
 
+        
+        /**
+         *  Branch Shift
+         */
+        Route::group(['prefix' => 'branchshift'], function() {
+            Route::get('/', 'BranchShiftController@index')->name('branchshift.index');
+            Route::get('/create', 'BranchShiftController@create')->name('branchshift.create');
+            Route::post('/create', 'BranchShiftController@store')->name('branchshift.store');
+            Route::post('/createapi', 'BranchShiftController@storeapi')->name('branchshift.storeapi');
+            Route::get('/{branchshift}/show', 'BranchShiftController@show')->name('branchshift.show');
+            Route::get('/{branchshift}/edit', 'BranchShiftController@edit')->name('branchshift.edit');
+            Route::patch('/{branchshift}/update', 'BranchShiftController@update')->name('branchshift.update');
+            Route::delete('/{branchshift}/delete', 'BranchShiftController@destroy')->name('branchshift.destroy');
+            Route::get('/search', 'BranchShiftController@search')->name('branchshift.search');
+            Route::get('/export', 'BranchShiftController@export')->name('branchshift.export');
+        });
+
         /**
          *  Supllier
          */

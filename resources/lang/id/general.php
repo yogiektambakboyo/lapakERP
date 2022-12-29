@@ -65,6 +65,7 @@ return [
     "lbl_save" => "Simpan",
     "lbl_cancel" => "Batal",
     "lbl_ref_by" => "Dijual Oleh",
+    "lbl_shift_branch" => "Shift Cabang",
     "lbl_close" => "Tutup",
     "lbl_price" => "Harga",
     "lbl_discountrp" => "Diskon (Rp)",

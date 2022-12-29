@@ -72,16 +72,22 @@
               @php
                 $lastassg = "";
                 $c = 1;
+                $tmpInvDetail = $invoiceDetails;
+                $arrTerapist = [];
+                for ($i = 0; $i < count($tmpInvDetail); $i++){
+                  array_push($arrTerapist, $tmpInvDetail[$i]->assigned_to);
+                }
+                $arrTerapist = array_unique($arrTerapist);
               @endphp
-              @for ($i = 0; $i < count($invoiceDetails); $i++)
-                  @if ($invoiceDetails[$i]->assigned_to!=$lastassg)
-                    <label>{{ $c }}. {{ $invoiceDetails[$i]->assigned_to }}</label><br>
-                    @php
-                    $c++;
-                    $lastassg = $invoiceDetails[$i]->assigned_to;
-                    @endphp
-                  @endif
-              @endfor
+              @foreach ($arrTerapist as $Terapist)
+                  @if ($Terapist!=$lastassg)
+                        <label>{{ $c }}. {{ $Terapist }}</label><br>
+                        @php
+                        $c++;
+                        $lastassg = $Terapist;
+                        @endphp
+                    @endif                  
+              @endforeach
             </td>
           </tr>
         </tbody>

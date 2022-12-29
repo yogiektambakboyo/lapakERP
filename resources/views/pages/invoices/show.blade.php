@@ -135,7 +135,7 @@
                   <th scope="col" width="5%">@lang('general.lbl_qty')</th>
                   <th scope="col" width="15%">Total</th>  
                   <th scope="col" width="15%">@lang('general.lbl_terapist')</th>  
-                  <th scope="col" width="15%">Referral By</th>  
+                  <th scope="col" width="15%">@lang('general.lbl_ref_by')</th>  
               </tr>
               </thead>
               <tbody>
