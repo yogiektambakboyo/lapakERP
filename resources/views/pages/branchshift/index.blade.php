@@ -14,7 +14,7 @@
 
                 <div class="col-md-10"> 	
                     <form action="{{ route('branchshift.search') }}" method="GET" class="row row-cols-lg-auto g-3 align-items-center">
-                        <div class="col-2"><input type="text" class="form-control  form-control-sm" name="search" placeholder="@lang('general.lbl_search') User Shift.." value="{{ $request->search }}"></div>
+                        <div class="col-2"><input type="text" class="form-control  form-control-sm" name="search" placeholder="@lang('general.lbl_search') Shift Cabang.." value="{{ $request->search }}"></div>
                         <input type="hidden" name="filter_branch_id" value="{{ $request->filter_branch_id }}">
                         <div class="col-2"><input type="submit" class="btn btn-sm btn-secondary" value="@lang('general.btn_search')" name="src"></div>   
                         <div class="col-2"><a href="#modal-filter"  data-bs-toggle="modal" data-bs-target="#modal-filter" class="btn btn-sm btn-lime">@lang('general.btn_filter')</a></div>   
@@ -34,12 +34,9 @@
             <thead>
             <tr>
                 <th scope="col" width="10%">@lang('general.lbl_branch')</th>
-                <th scope="col" width="7%">@lang('general.lbl_dated')</th>
-                <th scope="col">@lang('general.lbl_name')</th>
                 <th scope="col" width="15%">@lang('general.lbl_shift_name')</th>
                 <th scope="col" width="10%">@lang('general.lbl_time_start')</th>
                 <th scope="col" width="10%">@lang('general.lbl_time_end')</th>
-                <th scope="col" width="5%">Remark</th>
                 <th scope="col" colspan="3" width="1%"></th> 
             </tr>
             </thead>
@@ -47,15 +44,12 @@
                 @foreach($usersshifts as $usersshift)
                     <tr>
                         <th scope="row">{{ $usersshift->branch_name }}</th>
-                        <td>{{ $usersshift->dated }}</td>
-                        <td>{{ $usersshift->name }}</td>
-                        <td>{{ $usersshift->shift_remark }}</td>
-                        <td>{{ $usersshift->shift_time_start }}</td>
-                        <td>{{ $usersshift->shift_time_end }}</td>
-                        <td>{{ $usersshift->remark }}</td>
+                        <td>{{ $usersshift->shift_name }}</td>
+                        <td>{{ $usersshift->time_start }}</td>
+                        <td>{{ $usersshift->time_end }}</td>
                         <td><a href="{{ route('branchshift.edit', $usersshift->id) }}" class="btn btn-info btn-sm  {{ $act_permission->allow_edit==1?'':'d-none' }} ">@lang('general.lbl_edit')</a></td>
                         <td>
-                            <a onclick="showConfirm({{ $usersshift->id }}, '{{ $usersshift->name }}', '{{ $usersshift->dated }}')" class="btn btn-danger btn-sm  {{ $act_permission->allow_delete==1?'':'d-none' }} ">@lang('general.lbl_delete')</a>
+                            <a onclick="showConfirm({{ $usersshift->id }}, '{{ $usersshift->shift_name }}', '{{ $usersshift->branch_name }}')" class="btn btn-danger btn-sm  {{ $act_permission->allow_delete==1?'':'d-none' }} ">@lang('general.lbl_delete')</a>
                         </td>
                     </tr>
                 @endforeach

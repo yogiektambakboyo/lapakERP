@@ -4,30 +4,11 @@
 
 @section('content')
     <div class="bg-light p-4 rounded">
-        <h2>Create User Shift</h2>
-        <div class="lead">
-            Add new user shift.
-        </div>
-
+        <h2>@lang('general.lbl_shift_branch_new')</h2>
         <div class="container mt-4">
 
-            <form method="POST" action="{{ route('usersshift.store') }}">
+            <form method="POST" action="{{ route('branchshift.store') }}">
                 @csrf
-                <div class="mb-3">
-                    <label class="form-label col-form-label col-md-12">@lang('general.lbl_dated_mmddYYYY')</label>
-                    <div class="col-md-12">
-                        <input type="text" 
-                        name="dated"
-                        id="dated"
-                        class="form-control" 
-                        value="{{ old('dated') }}" required/>
-                        @if ($errors->has('dated'))
-                                <span class="text-danger text-left">{{ $errors->first('dated') }}</span>
-                            @endif
-                    </div>
-                </div>
-
-
                 <div class="mb-3">
                     <label class="form-label">@lang('general.lbl_branch')</label>
                     <div class="col-md-12">
@@ -40,20 +21,6 @@
                         </select>
                     </div>
                 </div>
-
-                <div class="mb-3">
-                    <label class="form-label">User</label>
-                    <div class="col-md-12">
-                        <select class="form-control" 
-                            name="users_id">
-                            <option value="">Select User</option>
-                            @foreach($users as $user)
-                                <option value="{{ $user->id }}">{{  $user->name }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                </div>
-
                 <div class="mb-3">
                     <label class="form-label">Shift</label>
                     <div class="col-md-12">
@@ -67,21 +34,9 @@
                     </div>
                 </div>
 
-                <div class="mb-3">
-                    <label for="phone_no" class="form-label">@lang('general.lbl_remark')</label>
-                    <input value="{{ old('remark') }}" 
-                        type="text" 
-                        class="form-control" 
-                        name="remark" 
-                        placeholder="Remark" required>
-
-                    @if ($errors->has('remark'))
-                        <span class="text-danger text-left">{{ $errors->first('remark') }}</span>
-                    @endif
-                </div>
 
                 <button type="submit" class="btn btn-primary">@lang('general.lbl_save')</button>
-                <a href="{{ route('usersshift.index') }}" class="btn btn-default">@lang('general.lbl_back') </a>
+                <a href="{{ route('branchshift.index') }}" class="btn btn-default">@lang('general.lbl_back') </a>
             </form>
         </div>
 
