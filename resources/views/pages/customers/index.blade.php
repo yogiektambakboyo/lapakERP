@@ -37,7 +37,7 @@
                 <th scope="col" width="10%">@lang('general.lbl_branch')</th>
                 <th scope="col">@lang('general.lbl_name')</th>
                 <th scope="col" width="15%">@lang('general.lbl_address')</th>
-                <th scope="col" width="5%">@lang('general.lbl_phoneno')</th>
+                <th scope="col" width="8%">@lang('general.lbl_phoneno')</th>
                 <th scope="col" colspan="3" width="1%"></th> 
             </tr>
             </thead>
