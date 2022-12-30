@@ -63,6 +63,8 @@ return [
     "lbl_back" => "Kembali",
     "lbl_delete" => "Hapus",
     "lbl_save" => "Simpan",
+    "lbl_product" => "Produk",
+    "lbl_activeselect" => "Pilih Status",
     "lbl_cancel" => "Batal",
     "lbl_ref_by" => "Dijual Oleh",
     "lbl_shift_branch" => "Shift Cabang",

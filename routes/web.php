@@ -724,6 +724,10 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
             Route::get('/usertracking_search', 'ReportUserTrackingController@search')->name('reports.usertracking.search');
             Route::get('/omsetdetail', 'ReportOmsetDetailController@index')->name('reports.omsetdetail.index');
             Route::get('/omsetdetaildetail_search', 'ReportOmsetDetailController@search')->name('reports.omsetdetail.search');
+            Route::get('/returnsell', 'ReportReturnSellController@index')->name('reports.returnsell.index');
+            Route::get('/returnsell_search', 'ReportReturnSellController@search')->name('reports.returnsell.search');
+            Route::get('/returnselldetail', 'ReportReturnSellDetailController@index')->name('reports.returnselldetail.index');
+            Route::get('/returnselldetail_search', 'ReportReturnSellDetailController@search')->name('reports.returnselldetail.search');
         });
 
 
