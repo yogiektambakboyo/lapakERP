@@ -223,7 +223,7 @@ class PurchaseOrderController extends Controller
             array_merge(
                 ['purchase_no' => $purchase_no ],
                 ['created_by' => $user->id],
-                ['dated' => Carbon::parse($request->get('dated'))->format('d/m/Y') ],
+                ['dated' => Carbon::parse($request->get('dated'))->format('Y-m-d') ],
                 ['supplier_id' => $request->get('supplier_id') ],
                 ['supplier_name' => $request->get('supplier_name') ],
                 ['total' => $request->get('total_order') ],
@@ -434,7 +434,7 @@ class PurchaseOrderController extends Controller
         $res_purchase = $purchase->update(
             array_merge(
                 ['updated_by'   => $user->id],
-                ['dated' => Carbon::parse($request->get('dated'))->format('d/m/Y') ],
+                ['dated' => Carbon::parse($request->get('dated'))->format('Y-m-d') ],
                 ['supplier_id' => $request->get('supplier_id') ],
                 ['supplier_name' => $request->get('supplier_name') ],
                 ['total' => $request->get('total_order') ],
