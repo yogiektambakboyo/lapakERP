@@ -83,7 +83,8 @@ class ReportCloseShiftController extends Controller
                 join product_sku ps on ps.id = id.product_id 
                 join customers c on c.id = im.customers_id 
                 join branch b on b.id = c.branch_id
-                join shift s on im.created_at::time  between s.time_start and s.time_end
+                join branch_shift bs on bs.branch_id = b.id
+                join shift s on im.created_at::time  between s.time_start and s.time_end and s.id = bs.shift_id
                 where im.dated>now()-interval'7 days'
                 group by b.remark,im.dated,s.remark,b.id,s.id              
         ");
@@ -115,7 +116,8 @@ class ReportCloseShiftController extends Controller
                 join customers c on c.id = im.customers_id 
                 join branch b on b.id=c.branch_id
                 join product_sku ps on ps.id = id.product_id 
-                join shift s on s.id = ".$filter_shift."
+                join branch_shift bs on bs.branch_id = b.id
+                join shift s on s.id = ".$filter_shift."  and s.id = bs.shift_id
                 where im.dated = '".$filter_begin_date."' and im.created_at::time  between s.time_start and s.time_end  and c.branch_id = ".$filter_branch_id."
                 group by ps.category_id,s.remark,b.remark,im.dated,id.product_name,ps.abbr,id.price,ps.type_id                         
         ");
@@ -181,7 +183,8 @@ class ReportCloseShiftController extends Controller
                     join product_sku ps on ps.id = id.product_id 
                     join customers c on c.id = im.customers_id and c.branch_id::character varying like '%".$branchx."%'
                     join branch b on b.id = c.branch_id
-                    join shift s on im.created_at::time  between s.time_start and s.time_end and s.id::character varying like '%".$shift_id."%'
+                    join branch_shift bs on bs.branch_id = b.id
+                    join shift s on im.created_at::time  between s.time_start and s.time_end and s.id::character varying like '%".$shift_id."%'  and s.id = bs.shift_id
                     where im.dated between '".$begindate."' and '".$enddate."'
                     group by b.remark,im.dated,s.remark,b.id,s.id              
             ");         
