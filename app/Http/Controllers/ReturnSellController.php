@@ -263,7 +263,7 @@ class ReturnSellController extends Controller
             array_merge(
                 ['return_sell_no' => $return_sell_no ],
                 ['created_by' => $user->id],
-                ['dated' => Carbon::parse($request->get('order_date'))->format('d/m/Y') ],
+                ['dated' => Carbon::parse($request->get('order_date'))->format('Y-m-d') ],
                 ['customers_id' => $request->get('customer_id') ],
                 ['total' => $request->get('total_order') ],
                 ['remark' => $request->get('remark') ],
@@ -579,7 +579,7 @@ class ReturnSellController extends Controller
         $res_invoice = $invoice->update(
             array_merge(
                 ['updated_by'   => $user->id],
-                ['dated' => Carbon::parse($request->get('order_date'))->format('d/m/Y') ],
+                ['dated' => Carbon::parse($request->get('order_date'))->format('Y-m-d') ],
                 ['customers_id' => $request->get('customer_id') ],
                 ['total' => $request->get('total_order') ],
                 ['remark' => $request->get('remark') ],

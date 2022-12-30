@@ -95,7 +95,7 @@
               <div class="row mb-3">
                 <label class="form-label col-form-label col-md-2">Join Date  (mm/dd/YYYY)</label>
                 <div class="col-md-8">
-                  <input type="text" class="form-control" value="{{ \Carbon\Carbon::parse($users->join_date)->format('d/m/Y') }}" readonly />
+                  <input type="text" class="form-control" value="{{ \Carbon\Carbon::parse($users->join_date)->format('Y-m-d') }}" readonly />
                 </div>
               </div>
               <div class="row mb-3">

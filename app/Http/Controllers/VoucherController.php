@@ -172,8 +172,8 @@ class VoucherController extends Controller
         $voucher->create(
             array_merge(
                 ['value' => $request->get('value') ],
-                ['dated_start' => Carbon::parse($request->get('dated_start'))->format('d/m/Y') ],
-                ['dated_end' => Carbon::parse($request->get('dated_end'))->format('d/m/Y') ],
+                ['dated_start' => Carbon::parse($request->get('dated_start'))->format('Y-m-d') ],
+                ['dated_end' => Carbon::parse($request->get('dated_end'))->format('Y-m-d') ],
                 ['product_id' => $request->get('product_id') ],
                 ['branch_id' => $request->get('branch_id') ],
                 ['remark' => $request->get('remark') ],
