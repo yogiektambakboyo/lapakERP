@@ -525,6 +525,11 @@ class UsersController extends Controller
      */
     public function destroy(User $user) 
     {
+
+        DB::select("
+            delete from users_skills us where users_id = ".$user->id.";
+        ");
+
         if($user->delete()){
             $result = array_merge(
                 ['status' => 'success'],
