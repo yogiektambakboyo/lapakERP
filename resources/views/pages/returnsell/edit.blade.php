@@ -3,13 +3,13 @@
 @section('title', 'Edit Invoice')
 
 @section('content')
-<form method="POST" action="{{ route('invoices.store') }}"  enctype="multipart/form-data">
+<form method="POST" action="{{ route('returnsell.store') }}"  enctype="multipart/form-data">
   @csrf
   <div class="panel text-white">
     <div class="panel-heading  bg-teal-600">
-      <div class="panel-title"><h4 class="">@lang('general.lbl_invoice') </h4></div>
+      <div class="panel-title"><h4 class="">@lang('general.lbl_return_sell') {{ $invoice->return_sell_no }}</h4></div>
       <div class="">
-        <a href="{{ route('invoices.index') }}" class="btn btn-default">@lang('general.lbl_cancel')</a>
+        <a href="{{ route('returnsell.index') }}" class="btn btn-default">@lang('general.lbl_cancel')</a>
         <button type="button" id="save-btn" class="btn btn-info">@lang('general.lbl_save')</button>
       </div>
     </div>
@@ -24,7 +24,7 @@
                 name="invoice_no"
                 id="invoice_no"
                 class="form-control" 
-                value="{{ $invoice->invoice_no }}"/>
+                value="{{ $invoice->return_sell_no }}"/>
                 <input type="text" 
                 name="invoice_date"
                 id="invoice_date"
@@ -67,29 +67,8 @@
                     @endforeach
                 </select>
               </div>
-              <label class="form-label col-form-label col-md-1">@lang('general.lbl_schedule')</label>
-              <div class="col-md-3">
-                  <div class="input-group">
-                    <input type="text" class="form-control" id="scheduled"  value="{{ $room->remark }} - {{ $invoice->scheduled_at }}" disabled>
-                    <button type="button" class="btn btn-indigo" data-bs-toggle="modal" data-bs-target="#modal-scheduled" >
-                      <span class="fas fa-calendar-days"></span>
-                    </button>
-                  </div>
-              </div>
             </div>
             <div class="row mb-3">
-              <label class="form-label col-form-label col-md-2">@lang('general.lbl_type_payment')</label>
-              <div class="col-md-2">
-                <select class="form-control" 
-                      name="payment_type" id ="payment_type" required>
-                      <option value="">@lang('general.lbl_type_paymentselect')</option>
-                      @foreach($payment_type as $value)
-                          <option value="{{ $value }}" {{ ($invoice->payment_type == $value) 
-                            ? 'selected'
-                            : ''}}>{{ $value }}</option>
-                      @endforeach
-                  </select>
-              </div>
 
                 <label class="form-label col-form-label col-md-2">@lang('general.lbl_nominal_payment')</label>
                 <div class="col-md-2">
@@ -328,8 +307,6 @@
               <th scope="col" width="5%">@lang('general.lbl_discount')</th>
               <th scope="col" width="5%">@lang('general.lbl_qty')</th>
               <th scope="col" width="10%">Total</th>  
-              <th scope="col" width="10%">@lang('general.lbl_terapist')</th>  
-              <th scope="col" width="10%">@lang('general.lbl_ref_by')</th>
               <th scope="col" width="20%">@lang('general.lbl_action')</th> 
           </tr>
           </thead>
@@ -466,8 +443,6 @@
                           "discount"  : obj["discount"],
                           "qty"       : obj["qty"],
                           "total"     : obj["total"],
-                          "assignedto" : obj["assignedto"],
-                          "referralby" : obj["referralby"],
                           "action"    : "",
                         }).draw(false);
                         disc_total = disc_total + (parseFloat(orderList[i]["discount"]));
@@ -561,10 +536,6 @@
                     "discount"  : obj["discount"],
                     "qty"       : obj["qty"],
                     "total"     : obj["total"],
-                    "assignedto": obj["assignedto"],
-                    "assignedtoid": obj["assignedtoid"],
-                    "referralby" : obj["referralby"],
-                    "referralbyid" : obj["referralbyid"],
                     "action"    : "",
               }).draw(false);
               disc_total = disc_total + (parseFloat(orderList[i]["discount"]));
@@ -621,10 +592,6 @@
                     "discount"  : obj["discount"],
                     "qty"       : obj["qty"],
                     "total"     : obj["total"],
-                    "assignedto": obj["assignedto"],
-                    "assignedtoid": obj["assignedtoid"],
-                    "referralby" : obj["referralby"],
-                    "referralbyid" : obj["referralbyid"],
                     "action"    : "",
               }).draw(false);
               disc_total = disc_total + (parseFloat(orderList[i]["discount"]));
@@ -768,14 +735,14 @@
                   tax : _vat_total,
                 }
               );
-              const res = axios.patch("{{ route('invoices.update',$invoice->id) }}", json, {
+              const res = axios.patch("{{ route('returnsell.update',$invoice->id) }}", json, {
                 headers: {
                   // Overwrite Axios's automatically set Content-Type
                   'Content-Type': 'application/json'
                 }
               }).then(resp => {
                     if(resp.data.status=="success"){
-                      window.location.href = "{{ route('invoices.index') }}"; 
+                      window.location.href = "{{ route('returnsell.index') }}"; 
                     }else{
                       Swal.fire(
                         {
@@ -797,7 +764,7 @@
         $('#product-table').DataTable({
           "bInfo" : false,
           pagingType: 'numbers',
-          ajax: "{{ route('invoices.getproduct') }}",
+          ajax: "{{ route('returnsell.getproduct') }}",
           columns: [
             { data: 'abbr' },
             { data: 'remark' },
@@ -809,7 +776,7 @@
         $('#order_time_table').DataTable({
           "bInfo" : false,
           pagingType: 'numbers',
-          ajax: "{{ route('invoices.gettimetable') }}",
+          ajax: "{{ route('returnsell.gettimetable') }}",
           columns: [
             { data: 'branch_room_name' },
             { data: 'invoice_no' },
@@ -843,8 +810,6 @@
             { data: 'discount',render: DataTable.render.number( '.', null, 0, '' ) },
             { data: 'qty' },
             { data: 'total',render: DataTable.render.number( '.', null, 0, '' ) },
-            { data: 'assignedto' },
-            { data: 'referralby' },
             { data: null},
         ],
         });
@@ -864,10 +829,6 @@
                 "discount"  : discount,
                 "qty"       : qty,
                 "total"     : total,
-                "assignedto" : "",
-                "assignedtoid" : "",
-                "referralby" : "",
-                "referralbyid" : "",
                 "uom" : uom,
                 "vat_total"     : vat_total, 
           }
@@ -899,8 +860,6 @@
                     "discount"  : obj["discount"],
                     "qty"       : obj["qty"],
                     "total"     : obj["total"],
-                    "assignedto": obj["assignedto"],
-                    "referralby" : obj["referralby"],
                     "action"    : "",
               }).draw(false);
               disc_total = disc_total + (parseFloat(orderList[i]["discount"]));
@@ -980,8 +939,6 @@
                       "discount"  : obj["discount"],
                       "qty"       : obj["qty"],
                       "total"     : obj["total"],
-                      "assignedto" : obj["assignedto"],
-                      "referralby" : obj["referralby"],
                       "action"    : "",
                 }).draw(false);
                 disc_total = disc_total + (parseFloat(orderList[i]["discount"]));
@@ -1235,8 +1192,6 @@
                               "discount"  : obj["discount"],
                               "qty"       : obj["qty"],
                               "total"     : obj["total"],
-                              "assignedto" : obj["assignedto"],
-                              "referralby" : obj["referralby"],
                               "action"    : "",
                         }).draw(false);
                         disc_total = disc_total + (parseFloat(orderList[i]["discount"]));
@@ -1288,7 +1243,7 @@
 
 
             //Get Invoice 
-            const resInvoice = axios.get("{{ route('invoices.getinvoice',$invoice->invoice_no) }}", {
+            const resInvoice = axios.get("{{ route('returnsell.getinvoice',$invoice->return_sell_no) }}", {
               headers: {
                 // Overwrite Axios's automatically set Content-Type
                 'Content-Type': 'application/json'
@@ -1310,10 +1265,6 @@
                             "discount"  : resp.data[i]["discount"],
                             "qty"       : resp.data[i]["qty"],
                             "total"     : resp.data[i]["total"],
-                            "assignedto"     : resp.data[i]["assignedto"],
-                            "assignedtoid"     : resp.data[i]["assignedtoid"],
-                            "referralby" : resp.data[i]["referral_by_name"],
-                            "referralbyid" : resp.data[i]["referral_by"],
                             "uom" : resp.data[i]["uom"],
                             "vat_total"     : resp.data[i]["vat"], 
                       }
@@ -1332,8 +1283,6 @@
                       "discount"  : obj["discount"],
                       "qty"       : obj["qty"],
                       "total"     : obj["total"],
-                      "assignedto" : obj["assignedto"],
-                      "referralby" : obj["referralby"],
                       "action"    : "",
                     }).draw(false);
                     disc_total = disc_total + (parseFloat(orderList[i]["discount"]));

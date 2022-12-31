@@ -27,7 +27,7 @@ use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
 use Spatie\Permission\Models\Permission;
 use Maatwebsite\Excel\Facades\Excel;
-use App\Exports\ReturnSellExport;
+use App\Exports\ReturnSellDetailExport;
 use App\Http\Controllers\Controller;
 use Yajra\Datatables\Datatables;
 use Auth;
@@ -96,11 +96,13 @@ class ReportReturnSellDetailController extends Controller
         $returnsells = ReturnSell::orderBy('id', 'ASC')
                 ->join('customers as jt','jt.id','=','return_sell_master.customers_id')
                 ->join('branch as b','b.id','=','jt.branch_id')
+                ->join('return_sell_detail as rsd','rsd.return_sell_no','=','return_sell_master.return_sell_no')
+                ->join('product_sku as ps','ps.id','=','rsd.product_id')
                 ->join('users_branch as ub', function($join){
                     $join->on('ub.branch_id', '=', 'b.id')
                     ->whereColumn('ub.branch_id', 'jt.branch_id');
                 })->where('ub.user_id', $user->id)->where('return_sell_master.dated','>=',Carbon::now()->subDay(30)) 
-              ->paginate(10,['return_sell_master.id','b.remark as branch_name','return_sell_master.invoice_no','return_sell_master.dated','jt.name as customer','return_sell_master.total','return_sell_master.total_discount','return_sell_master.total_payment' ]);
+              ->paginate(10,['ps.remark as product_name','rsd.total as product_total','rsd.discount as product_discount','rsd.qty','return_sell_master.id','b.remark as branch_name','return_sell_master.return_sell_no','return_sell_master.dated','jt.name as customer','return_sell_master.total','return_sell_master.total_discount','return_sell_master.total_payment' ]);
         return view('pages.returnsell.index_detailreport',['company' => Company::get()->first()], compact('returnsells','data','keyword','act_permission','branchs'))->with('i', ($request->input('page', 1) - 1) * 5);
     }
 
@@ -122,11 +124,13 @@ class ReportReturnSellDetailController extends Controller
 
         if($request->export=='Export Excel'){
             $strencode = base64_encode($keyword.'#'.$begindate.'#'.$enddate.'#'.$branchx.'#'.Auth::user()->id);
-            return Excel::download(new ReturnSellExport($strencode), 'returnsell_'.Carbon::now()->format('YmdHis').'.xlsx');
+            return Excel::download(new ReturnSellDetailExport($strencode), 'returnselldetail_'.Carbon::now()->format('YmdHis').'.xlsx');
         }else{
             $returnsells = ReturnSell::orderBy('id', 'ASC')
                 ->join('customers as jt','jt.id','=','return_sell_master.customers_id')
                 ->join('branch as b','b.id','=','jt.branch_id')
+                ->join('return_sell_detail as rsd','rsd.return_sell_no','=','return_sell_master.return_sell_no')
+                ->join('product_sku as ps','ps.id','=','rsd.product_id')
                 ->join('users_branch as ub', function($join){
                     $join->on('ub.branch_id', '=', 'b.id')
                     ->whereColumn('ub.branch_id', 'jt.branch_id');
@@ -134,7 +138,7 @@ class ReportReturnSellDetailController extends Controller
                 ->where('return_sell_master.return_sell_no','ilike','%'.$keyword.'%') 
                 ->where('b.id','like','%'.$branchx.'%') 
                 ->whereBetween('return_sell_master.dated',$fil) 
-              ->paginate(10,['return_sell_master.id','b.remark as branch_name','return_sell_master.return_sell_no','return_sell_master.dated','jt.name as customer','return_sell_master.total','return_sell_master.total_discount','return_sell_master.total_payment' ]);
+                ->paginate(10,['ps.remark as product_name','rsd.total as product_total','rsd.discount as product_discount','rsd.qty','return_sell_master.id','b.remark as branch_name','return_sell_master.return_sell_no','return_sell_master.dated','jt.name as customer','return_sell_master.total','return_sell_master.total_discount','return_sell_master.total_payment' ]);
         return view('pages.returnsell.index_detailreport',['company' => Company::get()->first()], compact('returnsells','data','keyword','act_permission','branchs'))->with('i', ($request->input('page', 1) - 1) * 5);
         }
     }

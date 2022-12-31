@@ -11,7 +11,7 @@
                     @lang('general.lbl_title_transaction')
                 </div>
                 <div class="col-md-10"> 	
-                    <form action="{{ route('returnsell.search') }}" method="GET" class="row row-cols-lg-auto g-3 align-items-center">
+                    <form action="{{ route('reports.returnselldetail.search') }}" method="GET" class="row row-cols-lg-auto g-3 align-items-center">
                         <input type="hidden" name="filter_begin_date" value="2022-01-01"><input type="hidden" name="filter_end_date" value="2035-01-01">
                         <div class="col-2"><a href="#modal-filter"  data-bs-toggle="modal" data-bs-target="#modal-filter" class="btn btn-sm btn-lime">@lang('general.btn_filter')</a></div>   
                         <div class="col-2"><input type="submit" class="btn btn-sm btn-success" value="@lang('general.btn_export')" name="export"></div>  
@@ -29,38 +29,26 @@
         <table class="table table-striped" id="example">
             <thead>
             <tr>
-                <th scope="col" width="1%">#</th>
                 <th scope="col" width="10%">@lang('general.lbl_branch')</th>
-                <th>@lang('general.lbl_return_no')</th>
+                <th scope="col" width="15%">@lang('general.lbl_return_no')</th>
                 <th scope="col" width="8%">@lang('general.lbl_dated')</th>
                 <th scope="col" width="15%">@lang('general.lbl_total_customer')</th>
-                <th scope="col" width="10%">@lang('general.lbl_product_name')</th>
-                <th scope="col" width="10%">Total</th>
-                <th scope="col" width="10%">@lang('general.lbl_total_discount')</th>
-                <th scope="col" width="10%">@lang('general.lbl_total_payment')</th>
-                <th scope="col" width="2%">@lang('general.lbl_action')</th>  
-                <th scope="col" width="2%"></th>
-                <th scope="col" width="2%"></th>    
+                <th scope="col">@lang('general.lbl_product_name')</th>
+                <th scope="col" width="10%">@lang('general.lbl_qty')</th>
+                <th scope="col" width="10%">Total</th>  
             </tr>
             </thead>
             <tbody>
 
                 @foreach($returnsells as $returnsell)
                     <tr>
-                        <th scope="row">{{ $returnsell->id }}</th>
                         <td>{{ $returnsell->branch_name }}</td>
-                        <td>{{ $returnsell->invoice_no }}</td>
+                        <td>{{ $returnsell->return_sell_no }}</td>
                         <td>{{ $returnsell->dated }}</td>
                         <td>{{ $returnsell->customer }}</td>
-                        <td>{{ $returnsell->customer }}</td>
-                        <td>{{ number_format($returnsell->total,0,',','.') }}</td>
-                        <td>{{ number_format($returnsell->total_discount,0,',','.') }}</td>
-                        <td>{{ number_format($returnsell->total_payment,0,',','.') }}</td>
-                        <td><a href="{{ route('returnsell.show', $returnsell->id) }}" class="btn btn-warning btn-sm  {{ $act_permission->allow_show==1?'':'d-none' }}">@lang('general.lbl_show')</a></td>
-                        <td><a href="{{ route('returnsell.edit', $returnsell->id) }}" class="btn btn-info btn-sm  {{ $act_permission->allow_edit==1?'':'d-none' }} ">@lang('general.lbl_edit')</a></td>
-                        <td class=" {{ $act_permission->allow_delete==1?'':'d-none' }}">
-                            <a onclick="showConfirm({{ $returnsell->id }}, '{{ $returnsell->return_sell_no }}')" class="btn btn-danger btn-sm  {{ $act_permission->allow_delete==1?'':'d-none' }} ">@lang('general.lbl_delete')</a>
-                        </td>
+                        <td>{{ $returnsell->product_name }}</td>
+                        <td>{{ number_format($returnsell->qty,0,',','.') }}</td>
+                        <td>{{ number_format($returnsell->product_total,0,',','.') }}</td>
                     </tr>
                 @endforeach
             </tbody>
@@ -78,7 +66,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form action="{{ route('returnsell.search') }}" method="GET">   
+                    <form action="{{ route('reports.returnselldetail.search') }}" method="GET">   
                         @csrf 
                         <div class="col-md-10">
                             <label class="form-label col-form-label col-md-4">@lang('general.lbl_branch')</label>

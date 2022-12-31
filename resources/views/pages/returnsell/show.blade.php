@@ -7,11 +7,10 @@
   @csrf
   <div class="panel text-white">
     <div class="panel-heading  bg-teal-600">
-      <div class="panel-title"><h4 class="">@lang('general.lbl_invoice')  {{ $invoice->invoice_no }}</h4></div>
+      <div class="panel-title"><h4 class="">@lang('general.lbl_return_sell')  {{ $invoice->return_sell_no }}</h4></div>
       <div class="">
-        <a href="{{ route('invoices.printthermal', $invoice->id) }}" class="btn btn-warning">Print Thermal</a>
-        <a href="{{ route('invoices.print', $invoice->id) }}" class="btn btn-warning">@lang('general.lbl_print') </a>
-        <a href="{{ route('invoices.index') }}" class="btn btn-default">@lang('general.lbl_back') </a>
+        <a href="{{ route('returnsell.print', $invoice->id) }}" class="btn btn-warning">@lang('general.lbl_print') </a>
+        <a href="{{ route('returnsell.index') }}" class="btn btn-default">@lang('general.lbl_back') </a>
       </div>
     </div>
     <div class="panel-body bg-white text-black">
@@ -61,31 +60,9 @@
                     @endforeach
                 </select>
               </div>
-              <label class="form-label col-form-label col-md-1">@lang('general.lbl_schedule')</label>
-              <div class="col-md-3">
-
-                  <div class="input-group">
-                    <input type="text" class="form-control" value="{{ $room->remark }} - {{ $invoice->scheduled_at }}" id="scheduled" disabled>
-                    <button type="button" class="btn btn-indigo" data-bs-toggle="modal" data-bs-target="#modal-scheduled" >
-                      <span class="fas fa-calendar-days"></span>
-                    </button>
-                  </div>
-              </div>
             </div>
             <div class="row mb-3">
-              <label class="form-label col-form-label col-md-2">@lang('general.lbl_type_payment')</label>
-              <div class="col-md-2">
-                <select class="form-control" 
-                      name="payment_type" id ="payment_type" readonly>
-                      <option value="">@lang('general.lbl_type_paymentselect')</option>
-                      @foreach($payment_type as $value)
-                          <option value="{{ $value }}" {{ ($invoice->payment_type == $value) 
-                            ? 'selected'
-                            : ''}}>{{ $value }}</option>
-                      @endforeach
-                  </select>
-              </div>
-
+            
                 <label class="form-label col-form-label col-md-2">@lang('general.lbl_nominal_payment')</label>
                 <div class="col-md-2">
                   <input type="text" 
@@ -119,8 +96,6 @@
                   <th scope="col" width="5%">@lang('general.lbl_discount')</th>
                   <th scope="col" width="5%">@lang('general.lbl_qty')</th>
                   <th scope="col" width="15%">Total</th>  
-                  <th scope="col" width="15%">@lang('general.lbl_terapist')</th>  
-                  <th scope="col" width="15%">@lang('general.lbl_ref_by')</th>  
               </tr>
               </thead>
               <tbody>
@@ -132,8 +107,6 @@
                         <td>{{ number_format($orderDetail->discount, 0, ',', '.') }}</td>
                         <td>{{ $orderDetail->qty }}</td>
                         <td>{{ number_format($orderDetail->total, 0, ',', '.') }}</td>
-                        <td>{{ $orderDetail->assigned_to }}</td>
-                        <td>{{ $orderDetail->referral_by }}</td>
                     </tr>
                 @endforeach
               </tbody>

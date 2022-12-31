@@ -9,7 +9,7 @@ use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 use Maatwebsite\Excel\Concerns\WithColumnFormatting;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 
-class ReturnSellExport implements FromCollection,WithColumnFormatting, WithHeadings
+class ReturnSellDetailExport implements FromCollection,WithColumnFormatting, WithHeadings
 {
     /**
     * @return \Illuminate\Support\Collection
@@ -37,9 +37,9 @@ class ReturnSellExport implements FromCollection,WithColumnFormatting, WithHeadi
             'Return Sell No',
             'Dated',
             'Customer',
+            'Product Name',
+            'Qty',
             'Total',
-            'Total Discount',
-            'Total Payment',
         ];
     }
     public function collection()
@@ -48,6 +48,8 @@ class ReturnSellExport implements FromCollection,WithColumnFormatting, WithHeadi
         return $returnsells = ReturnSell::orderBy('return_sell_master.id', 'ASC')
                 ->join('customers as jt','jt.id','=','return_sell_master.customers_id')
                 ->join('branch as b','b.id','=','jt.branch_id')
+                ->join('return_sell_detail as rsd','rsd.return_sell_no','=','return_sell_master.return_sell_no')
+                ->join('product_sku as ps','ps.id','=','rsd.product_id')
                 ->join('users_branch as ub', function($join){
                     $join->on('ub.branch_id', '=', 'b.id')
                     ->whereColumn('ub.branch_id', 'jt.branch_id');
@@ -55,7 +57,15 @@ class ReturnSellExport implements FromCollection,WithColumnFormatting, WithHeadi
                 ->where('return_sell_master.return_sell_no','ilike','%'.$this->keyword.'%') 
                 ->where('b.id','like','%'.$this->branch.'%') 
                 ->whereBetween('return_sell_master.dated',$fil) 
-              ->get(['b.remark as branch_name','return_sell_master.return_sell_no','return_sell_master.dated','jt.name as customer','return_sell_master.total','return_sell_master.total_discount','return_sell_master.total_payment' ]);
+              ->get([
+                'b.remark as branch_name',
+                'return_sell_master.return_sell_no',
+                'return_sell_master.dated',
+                'jt.name as customer',
+                'ps.remark as product_name',
+                'rsd.qty',
+                'rsd.total'
+            ]);
     }
 
     public function columnFormats(): array

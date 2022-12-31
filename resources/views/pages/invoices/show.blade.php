@@ -112,9 +112,10 @@
 
                   <label class="form-label col-form-label col-md-1">@lang('general.lbl_charge')</label>
                   <div class="col-md-3">
-                    <h2 class="text-end"><label id="order_charge">Rp. @if($invoice->payment_nominal-$invoice->total>0)
+                    <h2 class="text-end"><label id="order_charge" style='@if($invoice->payment_nominal-$invoice->total<0) {{ "color : red;" }} @endif'>
+                      Rp. @if($invoice->payment_nominal-$invoice->total>0)
                       {{ number_format(($invoice->payment_nominal-$invoice->total), 0, ',', '.') }}
-                      @else {{ 0 }}
+                      @else {{ number_format(($invoice->payment_nominal-$invoice->total), 0, ',', '.') }}
                     @endif</label></h2>
                   </div>
                 

@@ -93,6 +93,7 @@ class ReportReturnSellController extends Controller
         $user = Auth::user();
         $act_permission = $this->act_permission[0];
         
+        
         $returnsells = ReturnSell::orderBy('id', 'ASC')
                 ->join('customers as jt','jt.id','=','return_sell_master.customers_id')
                 ->join('branch as b','b.id','=','jt.branch_id')
@@ -100,7 +101,7 @@ class ReportReturnSellController extends Controller
                     $join->on('ub.branch_id', '=', 'b.id')
                     ->whereColumn('ub.branch_id', 'jt.branch_id');
                 })->where('ub.user_id', $user->id)->where('return_sell_master.dated','>=',Carbon::now()->subDay(30)) 
-              ->paginate(10,['return_sell_master.id','b.remark as branch_name','return_sell_master.invoice_no','return_sell_master.dated','jt.name as customer','return_sell_master.total','return_sell_master.total_discount','return_sell_master.total_payment' ]);
+              ->paginate(10,['return_sell_master.id','b.remark as branch_name','return_sell_master.return_sell_no','return_sell_master.dated','jt.name as customer','return_sell_master.total','return_sell_master.total_discount','return_sell_master.total_payment' ]);
         return view('pages.returnsell.index_report',['company' => Company::get()->first()], compact('returnsells','data','keyword','act_permission','branchs'))->with('i', ($request->input('page', 1) - 1) * 5);
     }
 

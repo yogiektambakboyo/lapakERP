@@ -355,7 +355,6 @@
 
           var url = "{{ route('returnsell.getinvoice','XX') }}";
           var lastvalurl = "XX";
-          console.log(url);
           $('#ref_no').change(function(){
              if($(this).val()==""){
 
@@ -382,6 +381,10 @@
                 }).then(resp => {
                       table.clear().draw(false);
                       order_total = 0;
+                      disc_total = 0;
+                      _vat_total = 0;
+                      sub_total = 0;
+                      orderList = [];
 
                       for(var i=0;i<resp.data.length;i++){
                           var product = {
@@ -698,14 +701,14 @@
                   tax : _vat_total,
                 }
               );
-              const res = axios.post("{{ route('invoices.store') }}", json, {
+              const res = axios.post("{{ route('returnsell.store') }}", json, {
                 headers: {
                   // Overwrite Axios's automatically set Content-Type
                   'Content-Type': 'application/json'
                 }
               }).then(resp => {
                     if(resp.data.status=="success"){
-                      window.location.href = "{{ route('invoices.index') }}"; 
+                      window.location.href = "{{ route('returnsell.index') }}"; 
                     }else{
                       Swal.fire(
                         {
@@ -739,7 +742,7 @@
         $('#order_time_table').DataTable({
           "bInfo" : false,
           pagingType: 'numbers',
-          ajax: "{{ route('invoices.gettimetable') }}",
+          ajax: "{{ route('returnsell.gettimetable') }}",
           columns: [
             { data: 'branch_room_name' },
             { data: 'invoice_no' },
