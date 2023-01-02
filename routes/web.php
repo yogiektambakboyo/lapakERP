@@ -167,6 +167,23 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
             Route::get('/export', 'PurchaseOrderController@export')->name('purchaseorders.export');
         });
 
+        Route::group(['prefix' => 'purchaseordersinternal'], function() {
+            Route::get('/', 'PurchaseOrderInternalController@index')->name('purchaseordersinternal.index');
+            Route::get('/create', 'PurchaseOrderInternalController@create')->name('purchaseordersinternal.create');
+            Route::post('/create', 'PurchaseOrderInternalController@store')->name('purchaseordersinternal.store');
+            Route::post('/search', 'PurchaseOrderInternalController@search')->name('purchaseordersinternal.search');
+            Route::get('/{purchase}/show', 'PurchaseOrderInternalController@show')->name('purchaseordersinternal.show');
+            Route::get('/{purchase}/print', 'PurchaseOrderInternalController@print')->name('purchaseordersinternal.print');
+            Route::get('/{purchase}/edit', 'PurchaseOrderInternalController@edit')->name('purchaseordersinternal.edit');
+            Route::get('/getproduct', 'PurchaseOrderInternalController@getproduct')->name('purchaseordersinternal.getproduct');
+            Route::get('/gettimetable', 'PurchaseOrderInternalController@gettimetable')->name('purchaseordersinternal.gettimetable');
+            Route::get('/{purchase}/getorder', 'PurchaseOrderInternalController@getorder')->name('purchaseordersinternal.getorder');
+            Route::patch('/{purchase}/update', 'PurchaseOrderInternalController@update')->name('purchaseordersinternal.update');
+            Route::get('/{purchase}/getdocdata', 'PurchaseOrderInternalController@getdocdata')->name('purchaseordersinternal.getdocdata');
+            Route::delete('/{purchase}/delete', 'PurchaseOrderInternalController@destroy')->name('purchaseordersinternal.destroy');
+            Route::get('/export', 'PurchaseOrderInternalController@export')->name('purchaseordersinternal.export');
+        });
+
          /**
          * Receive Routes
          */

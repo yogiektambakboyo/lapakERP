@@ -189,6 +189,8 @@ class HomeController extends Controller
                 group by ps.remark  order by 2 desc
             ");
 
+
+
             $has_period_stock = DB::select("
                 select periode  from period_stock ps where ps.periode = to_char(now()::date,'YYYYMM')::int;
             ");
@@ -196,7 +198,7 @@ class HomeController extends Controller
             if(count($has_period_stock)<=0){
                 DB::select("insert into period_stock(periode,branch_id,product_id,balance_begin,balance_end,qty_in,qty_out,updated_at ,created_by,created_at)
                 select to_char(now()::date,'YYYYMM')::int,ps.branch_id,product_id,ps.balance_end,ps.balance_end,0 as qty_in,0 as qty_out,null,1,now()  
-                from period_stock ps where ps.periode = to_char(now()::date,'YYYYMM')::int-1;");
+                from period_stock ps  where ps.periode=to_char(now()-interval '5 day','YYYYMM')::int;");
             }
 
 
@@ -223,7 +225,7 @@ class HomeController extends Controller
             if(count($has_period_sell_price)<=0){
                 DB::select("insert into public.period_price_sell(period, product_id, value, updated_at, updated_by, created_by, created_at, branch_id)
                 SELECT to_char(now(),'YYYYMM')::int, product_id, value, null, null, 1, now(), branch_id
-                FROM public.period_price_sell where period=to_char(now(),'YYYYMM')::int-1;");
+                FROM public.period_price_sell  where period=to_char(now()-interval '5 day','YYYYMM')::int;");
             }
             
             return view('pages.home-index',[
