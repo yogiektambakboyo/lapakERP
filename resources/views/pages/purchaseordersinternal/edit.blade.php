@@ -7,7 +7,7 @@
     <div class="panel-heading  bg-teal-600">
       <div class="panel-title"><h4 class="">Purchase Order {{ $purchase->purchase_no }}</h4></div>
       <div class="">
-        <a href="{{ route('purchaseorders.index') }}" class="btn btn-default">@lang('general.lbl_cancel')</a>
+        <a href="{{ route('purchaseordersinternal.index') }}" class="btn btn-default">@lang('general.lbl_cancel')</a>
         <button type="button" id="save-btn" class="btn btn-info">@lang('general.lbl_save')</button>
       </div>
     </div>
@@ -195,7 +195,7 @@
               todayHighlight: true,
           });
 
-          var url = "{{ route('purchaseorders.getproduct') }}";
+          var url = "{{ route('purchaseordersinternal.getproduct') }}";
           var lastvalurl = "XX";
           url = url.replace(lastvalurl, $(this).val())
           lastvalurl = $(this).val();
@@ -313,7 +313,7 @@
           });
 
 
-          var url = "{{ route('purchaseorders.getdocdata',$purchase->purchase_no) }}";
+          var url = "{{ route('purchaseordersinternal.getdocdata',$purchase->purchase_no) }}";
           const resGetPO = axios.get(url, {
             headers: {
                 'Content-Type': 'application/json'
@@ -423,14 +423,14 @@
                 total_discount : disc_total
               }
             );
-            const res = axios.patch("{{ route('purchaseorders.update',$purchase->id) }}", json, {
+            const res = axios.patch("{{ route('purchaseordersinternal.update',$purchase->id) }}", json, {
               headers: {
                 // Overwrite Axios's automatically set Content-Type
                 'Content-Type': 'application/json'
               }
             }).then(resp => {
                   if(resp.data.status=="success"){
-                    window.location.href = "{{ route('purchaseorders.index') }}"; 
+                    window.location.href = "{{ route('purchaseordersinternal.index') }}"; 
                   }else{
                     Swal.fire(
                       {

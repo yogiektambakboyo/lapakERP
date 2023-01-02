@@ -73,7 +73,7 @@ class PurchaseOrderInternalController extends Controller
         if(count($has_period_stock)<=0){
             DB::select("insert into period_stock(periode,branch_id,product_id,balance_begin,balance_end,qty_in,qty_out,updated_at ,created_by,created_at)
             select to_char(now()::date,'YYYYMM')::int,ps.branch_id,product_id,ps.balance_end,ps.balance_end,0 as qty_in,0 as qty_out,null,1,now()  
-            from period_stock ps where ps.periode = to_char(now()::date,'YYYYMM')::int-1;");
+            from period_stock ps where where ps.periode=to_char(now()-interval '5 day','YYYYMM')::int;");
         }
 
         SettingsDocumentNumber::where('doc_type','=','Purchase')->whereRaw("to_char(updated_at,'YYYYY')!=to_char(now(),'YYYYY') ")->where('period','=','Yearly')->update(
@@ -85,13 +85,15 @@ class PurchaseOrderInternalController extends Controller
         
         $data = $this->data;
         $keyword = "";
+        $status = ['Di Terima','Di Proses','Di Kirim','Batal'];
         $user = Auth::user();
         $act_permission = $this->act_permission[0];
         $branchs = Branch::join('users_branch as ub','ub.branch_id', '=', 'branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']);
         $purchases = Purchase::orderBy('id', 'ASC')
                 ->join('users_branch as ub', 'ub.branch_id','purchase_master.branch_id')->where('ub.user_id', $user->id)->where('purchase_master.dated','>=',Carbon::now()->subDay(7))  
+                ->where('purchase_master.supplier_name','ilike','%HEAD QUARTER%')
               ->paginate(10,['purchase_master.id','purchase_master.branch_name','purchase_master.remark','purchase_master.purchase_no','purchase_master.dated','purchase_master.supplier_name as supplier','purchase_master.total','purchase_master.total_discount','purchase_master.total_payment' ]);
-        return view('pages.purchaseordersinternal.index',['company' => Company::get()->first()],compact('purchases','data','keyword','act_permission','branchs'))->with('i', ($request->input('page', 1) - 1) * 5);
+        return view('pages.purchaseordersinternal.index',['company' => Company::get()->first()],compact('purchases','data','keyword','act_permission','branchs','status'))->with('i', ($request->input('page', 1) - 1) * 5);
     }
 
     public function search(Request $request) 
@@ -123,6 +125,7 @@ class PurchaseOrderInternalController extends Controller
                 ->where('ub.user_id', $user->id)
                 ->where('purchase_master.purchase_no','like','%'.$keyword.'%')
                 ->where('b.id','like','%'.$branchx.'%')  
+                ->where('purchase_master.supplier_name','ilike','%HEAD QUARTER%')
                 ->whereBetween('purchase_master.dated',$fil)  
               ->paginate(10,['purchase_master.id','b.remark as branch_name','purchase_master.purchase_no','purchase_master.dated','jt.name as supplier','purchase_master.total','purchase_master.total_discount','purchase_master.total_payment' ]);
               return view('pages.purchaseordersinternal.index',['company' => Company::get()->first()] ,compact('branchs','purchases','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
@@ -132,7 +135,7 @@ class PurchaseOrderInternalController extends Controller
     public function export(Request $request) 
     {
         $keyword = $request->search;
-        return Excel::download(new PurchasesExport, 'purchases_'.Carbon::now()->format('YmdHis').'.xlsx');
+        return Excel::download(new PurchasesExport, 'purchasesinternal_'.Carbon::now()->format('YmdHis').'.xlsx');
     }
 
     /**
@@ -487,6 +490,40 @@ class PurchaseOrderInternalController extends Controller
             }
            
         }
+
+        $result = array_merge(
+            ['status' => 'success'],
+            ['data' => $purchase_no],
+            ['message' => 'Save Successfully'],
+        );
+
+        return $result;
+    }
+
+    public function updatestatus(Purchase $purchase, Request $request) 
+    {
+
+        $user = Auth::user();
+        $purchase_no = $request->get('purchase_no');
+
+        $res_purchase = $purchase->update(
+            array_merge(
+                ['updated_by'   => $user->id],
+                ['remark'   => $request->get('remark')],
+                ['updated_at' => Carbon::now()->format('Y-m-d H:i:s') ],
+            )
+        );
+
+        if(!$res_purchase){
+            $result = array_merge(
+                ['status' => 'failed'],
+                ['data' => ''],
+                ['message' => 'Save purchase failed'],
+            );
+    
+            return $result;
+        }
+
 
         $result = array_merge(
             ['status' => 'success'],

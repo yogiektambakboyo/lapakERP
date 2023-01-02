@@ -3,13 +3,13 @@
 @section('title', 'Create New Purchase Order')
 
 @section('content')
-<form method="POST" action="{{ route('purchaseorders.store') }}"  enctype="multipart/form-data">
+<form method="POST" action="{{ route('purchaseordersinternal.store') }}"  enctype="multipart/form-data">
   @csrf
   <div class="panel text-white">
     <div class="panel-heading  bg-teal-600">
       <div class="panel-title"><h4 class="">@lang('general.lbl_purchase_order_new')</h4></div>
       <div class="">
-        <a href="{{ route('purchaseorders.index') }}" class="btn btn-default">@lang('general.lbl_cancel')</a>
+        <a href="{{ route('purchaseordersinternal.index') }}" class="btn btn-default">@lang('general.lbl_cancel')</a>
         <button type="button" id="save-btn" class="btn btn-info">@lang('general.lbl_save')</button>
       </div>
     </div>
@@ -169,6 +169,8 @@
           <div class="col-md-12">
           </div>
         </div>
+
+
     </div>
   </div>
 </form>
@@ -200,7 +202,7 @@
           });
           $('#schedule_date').val(formattedToday);
 
-          var url = "{{ route('purchaseorders.getproduct') }}";
+          var url = "{{ route('purchaseordersinternal.getproduct') }}";
           var lastvalurl = "XX";
           console.log(url);
           url = url.replace(lastvalurl, $(this).val())
@@ -392,14 +394,14 @@
                 dated : $('#doc_dated').val(),
               }
             );
-            const res = axios.post("{{ route('purchaseorders.store') }}", json, {
+            const res = axios.post("{{ route('purchaseordersinternal.store') }}", json, {
               headers: {
                 // Overwrite Axios's automatically set Content-Type
                 'Content-Type': 'application/json'
               }
             }).then(resp => {
                   if(resp.data.status=="success"){
-                    window.location.href = "{{ route('purchaseorders.index') }}"; 
+                    window.location.href = "{{ route('purchaseordersinternal.index') }}"; 
                   }else{
                     Swal.fire(
                       {

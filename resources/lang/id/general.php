@@ -55,6 +55,7 @@ return [
     "lbl_purchase_order" => "Pembelian Barang",
     "lbl_purchase_no" => "Nomor Pembelian",
     "lbl_purchase_order_new" => "Pembelian Baru",
+    "lbl_purchase_internal" => "Pembelian Internal Cabang",
     "lbl_shipto" => "Tujuan Pengiriman",
 
     "lbl_show" => "Lihat",
@@ -83,6 +84,7 @@ return [
     "lbl_uom" => "Satuan",
     "lbl_uomselect" => "Pilih Satuan",
     "lbl_statusselect" => "Pilih Status",
+    "lbl_status" => "Status",
     "lbl_uomedit" => "Ubah Satuan",
     "lbl_categoryedit" => "Ubah Kategori",
     "lbl_photo" => "Foto",
@@ -138,6 +140,7 @@ return [
     "lbl_sure_checkout" => "Ya, Chekout!",
     "lbl_msg_delete" => "Terhapus!",
     "lbl_msg_delete_title" => "Data anda telah berhasil dihapus",
+    "lbl_msg_update_title" => "Data anda telah berhasil diperbarui",
     "lbl_msg_checkout_title" => "Data anda telah berhasil di-checkout",
     "lbl_msg_failed" => "Ada sesuatu yang salah - ",
     "lbl_ingredient" => "Bahan Baku",
@@ -176,6 +179,7 @@ return [
     "lbl_commision_year" => "Komisi Berdasarkan Tahun",
 
     "lbl_invoice" => "Faktur Jual",
+    "lbl_invoice_internal" => "Faktur Jual Internal",
     "lbl_invoice_select" => "Pilih Faktur Jual",
     "lbl_invoice_no" => "No. Faktur Jual",
     "invoice_no" => "No. Faktur Jual",

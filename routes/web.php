@@ -125,6 +125,30 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
         });
 
         /**
+         * Invoice Internal Routes
+         */
+        Route::group(['prefix' => 'invoicesinternal'], function() {
+            Route::get('/', 'InvoicesInternalController@index')->name('invoicesinternal.index');
+            Route::get('/create', 'InvoicesInternalController@create')->name('invoicesinternal.create');
+            Route::post('/create', 'InvoicesInternalController@store')->name('invoicesinternal.store');
+            Route::get('/search', 'InvoicesInternalController@search')->name('invoicesinternal.search');
+            Route::get('/{invoice}/show', 'InvoicesInternalController@show')->name('invoicesinternal.show');
+            Route::patch('/{invoice}/checkout', 'InvoicesInternalController@checkout')->name('invoicesinternal.checkout');
+            Route::get('/{invoice}/edit', 'InvoicesInternalController@edit')->name('invoicesinternal.edit');
+            Route::get('/{invoice}/print', 'InvoicesInternalController@print')->name('invoicesinternal.print');
+            Route::get('/{invoice}/printsj', 'InvoicesInternalController@printsj')->name('invoicesinternal.printsj');
+            Route::get('/{invoice}/printspk', 'InvoicesInternalController@printspk')->name('invoicesinternal.printspk');
+            Route::get('/{invoice}/printthermal', 'InvoicesInternalController@printthermal')->name('invoicesinternal.printthermal');
+            Route::get('/getproduct', 'InvoicesInternalController@getproduct')->name('invoicesinternal.getproduct');
+            Route::get('/gettimetable', 'InvoicesInternalController@gettimetable')->name('invoicesinternal.gettimetable');
+            Route::get('/{invoice}/getinvoice', 'InvoicesInternalController@getinvoice')->name('invoicesinternal.getinvoice');
+            Route::patch('/{invoice}/update', 'InvoicesInternalController@update')->name('invoicesinternal.update');
+            Route::delete('/{invoice}/delete', 'InvoicesInternalController@destroy')->name('invoicesinternal.destroy');
+            Route::get('/export', 'InvoicesInternalController@export')->name('invoicesinternal.export');
+        });
+
+
+        /**
          * Return Sell Routes
          */
         Route::group(['prefix' => 'returnsell'], function() {
@@ -179,6 +203,7 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
             Route::get('/gettimetable', 'PurchaseOrderInternalController@gettimetable')->name('purchaseordersinternal.gettimetable');
             Route::get('/{purchase}/getorder', 'PurchaseOrderInternalController@getorder')->name('purchaseordersinternal.getorder');
             Route::patch('/{purchase}/update', 'PurchaseOrderInternalController@update')->name('purchaseordersinternal.update');
+            Route::patch('/{purchase}/updatestatus', 'PurchaseOrderInternalController@updatestatus')->name('purchaseordersinternal.updatestatus');
             Route::get('/{purchase}/getdocdata', 'PurchaseOrderInternalController@getdocdata')->name('purchaseordersinternal.getdocdata');
             Route::delete('/{purchase}/delete', 'PurchaseOrderInternalController@destroy')->name('purchaseordersinternal.destroy');
             Route::get('/export', 'PurchaseOrderInternalController@export')->name('purchaseordersinternal.export');
