@@ -117,11 +117,7 @@
             <th style="text-align: right;width:20%;background-color:#FFA726;">Total</th>
             <th style="text-align: right;width:10%;background-color:#FFA726;">Rp. {{ number_format($invoice->total,0,',','.') }}</th>
           </tr>
-          <tr>
-            <th style="text-align: left;width:70%;"></th>
-            <th style="text-align: right;width:20%;background-color:#FFA726;">@lang('general.lbl_payment') </th>
-            <th style='text-align: right;width:10%;background-color:#FFA726; @if($invoice->payment_nominal-$invoice->total<0) {{ "color : red;" }} @endif'>Rp. {{ number_format($invoice->total_payment,0,',','.') }}</th>
-          </tr>
+          
         </tbody>
       </table> 
       <table class="table table-striped" id="order_table" width="100%">

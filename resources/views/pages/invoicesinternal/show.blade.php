@@ -11,7 +11,6 @@
       <div class="">
         <a target="_blank" href="{{ route('invoicesinternal.print', $invoice->id) }}" class="btn btn-warning"><i class="fas fa-print"></i> @lang('general.lbl_print') </a>
         <a target="_blank" href="{{ route('invoicesinternal.printsj', $invoice->id) }}" class="btn btn-success"><i class="fas fa-truck-fast"></i> @lang('general.lbl_printsj') </a>
-        <a target="_blank" href="{{ route('invoicesinternal.printspk', $invoice->id) }}" class="btn btn-primary"><i class="fas fa-file-invoice"> </i>  @lang('general.lbl_printspk') </a>
         <a href="{{ route('invoicesinternal.index') }}" class="btn btn-default">@lang('general.lbl_back') </a>
       </div>
     </div>
@@ -32,16 +31,7 @@
                       @endif
               </div>
             </div>
-            <div class="row mb-3">
-              <label class="form-label col-form-label col-md-4">@lang('general.lbl_remark')</label>
-              <div class="col-md-8">
-                <input type="text" 
-                name="remark"
-                id="remark"
-                class="form-control" 
-                value="{{ $invoice->remark }}" readonly/>
-                </div>
-            </div>
+           
           </div>
 
           <div class="col-md-8">
@@ -63,63 +53,18 @@
                 </select>
               </div>
 
-              <label class="form-label col-form-label col-md-2">@lang('general.lbl_customer_type')</label>
-              <div class="col-md-2">
-                <select class="form-control" 
-                    name="customer_type" id="customer_type" readonly>
-                    <option value="">@lang('general.lbl_tipeselect')</option>
-                    @foreach($type_customers as $type_customer)
-                        <option value="{{ $type_customer }}" {{ ($invoice->customer_type == $type_customer) 
-                          ? 'selected'
-                          : ''}}> {{ $type_customer }}</option>
-                    @endforeach
-                </select>
-              </div>
-
-              <label class="form-label col-form-label col-md-1">@lang('general.lbl_schedule')</label>
-              <div class="col-md-3">
-
-                  <div class="input-group">
-                    <input type="text" class="form-control" value="{{ $room->remark }} - {{ $invoice->scheduled_at }}" id="scheduled" disabled>
-                    <button type="button" class="btn btn-indigo" data-bs-toggle="modal" data-bs-target="#modal-scheduled" >
-                      <span class="fas fa-calendar-days"></span>
-                    </button>
-                  </div>
-              </div>
+              <label class="form-label col-form-label col-md-2">@lang('general.lbl_remark')</label>
+              <div class="col-md-4">
+                <input type="text" 
+                name="remark"
+                id="remark"
+                class="form-control" 
+                value="{{ $invoice->remark }}" readonly/>
+                </div>
             </div>
-            <div class="row mb-3">
-              <label class="form-label col-form-label col-md-2">@lang('general.lbl_type_payment')</label>
-              <div class="col-md-2">
-                <select class="form-control" 
-                      name="payment_type" id ="payment_type" readonly>
-                      <option value="">@lang('general.lbl_type_paymentselect')</option>
-                      @foreach($payment_type as $value)
-                          <option value="{{ $value }}" {{ ($invoice->payment_type == $value) 
-                            ? 'selected'
-                            : ''}}>{{ $value }}</option>
-                      @endforeach
-                  </select>
-              </div>
 
-                <label class="form-label col-form-label col-md-2">@lang('general.lbl_nominal_payment')</label>
-                <div class="col-md-2">
-                  <input type="text" 
-                  id="payment_nominal"
-                  name="payment_nominal"
-                  class="form-control" 
-                  value="{{ $invoice->payment_nominal }}" readonly/>
-                  </div>
+            
 
-                  <label class="form-label col-form-label col-md-1">@lang('general.lbl_charge')</label>
-                  <div class="col-md-3">
-                    <h2 class="text-end"><label id="order_charge" style='@if($invoice->payment_nominal-$invoice->total<0) {{ "color : red;" }} @endif'>
-                      Rp. @if($invoice->payment_nominal-$invoice->total>0)
-                      {{ number_format(($invoice->payment_nominal-$invoice->total), 0, ',', '.') }}
-                      @else {{ number_format(($invoice->payment_nominal-$invoice->total), 0, ',', '.') }}
-                    @endif</label></h2>
-                  </div>
-                
-            </div>
           </div>
 
           <div class="col-md-12">
@@ -135,8 +80,6 @@
                   <th scope="col" width="5%">@lang('general.lbl_discount')</th>
                   <th scope="col" width="5%">@lang('general.lbl_qty')</th>
                   <th scope="col" width="15%">Total</th>  
-                  <th scope="col" width="15%">@lang('general.lbl_terapist')</th>  
-                  <th scope="col" width="15%">@lang('general.lbl_ref_by')</th>  
               </tr>
               </thead>
               <tbody>
@@ -148,8 +91,6 @@
                         <td>{{ number_format($orderDetail->discount, 0, ',', '.') }}</td>
                         <td>{{ $orderDetail->qty }}</td>
                         <td>{{ number_format($orderDetail->total, 0, ',', '.') }}</td>
-                        <td>{{ $orderDetail->assigned_to }}</td>
-                        <td>{{ $orderDetail->referral_by }}</td>
                     </tr>
                 @endforeach
               </tbody>
@@ -157,13 +98,6 @@
             
             <div class="row mb-3">
               <div class="col-md-6">
-                <div class="row mb-3">
-                    <label class="form-label col-form-label col-md-3" id="label-voucher">Voucher</label>
-                    <br>
-                    <div class="col-md-5">
-                      <input type="text" class="form-control" id="input-apply-voucher" value="{{ $invoice->voucher_code }}" disabled>
-                    </div>
-                </div>
               </div>
 
 

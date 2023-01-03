@@ -98,7 +98,7 @@ class InvoicesController extends Controller
                 ->join('users_branch as ub', function($join){
                     $join->on('ub.branch_id', '=', 'b.id')
                     ->whereColumn('ub.branch_id', 'jt.branch_id');
-                })->where('ub.user_id', $user->id)->where('invoice_master.dated','>=',Carbon::now()->subDay(7))
+                })->where('ub.user_id', $user->id)->where('invoice_master.dated','>=',Carbon::now()->subDay(7))->where('invoice_master.invoice_no','ilike','INV-%')
               ->paginate(10,['invoice_master.is_checkout','invoice_master.id','b.remark as branch_name','invoice_master.invoice_no','invoice_master.dated','jt.name as customer','invoice_master.total','invoice_master.total_discount','invoice_master.total_payment' ]);
         return view('pages.invoices.index',['company' => Company::get()->first()], compact('invoices','data','keyword','act_permission','branchs'))->with('i', ($request->input('page', 1) - 1) * 5);
     }
@@ -132,6 +132,7 @@ class InvoicesController extends Controller
                 })->where('ub.user_id', $user->id)  
                 ->where('invoice_master.invoice_no','ilike','%'.$keyword.'%') 
                 ->where('b.id','like','%'.$branchx.'%') 
+                ->where('invoice_master.invoice_no','ilike','INV-%')
                 ->whereBetween('invoice_master.dated',$fil) 
               ->paginate(10,['invoice_master.is_checkout','invoice_master.id','b.remark as branch_name','invoice_master.invoice_no','invoice_master.dated','jt.name as customer','invoice_master.total','invoice_master.total_discount','invoice_master.total_payment' ]);
         return view('pages.invoices.index',['company' => Company::get()->first()], compact('invoices','data','keyword','act_permission','branchs'))->with('i', ($request->input('page', 1) - 1) * 5);

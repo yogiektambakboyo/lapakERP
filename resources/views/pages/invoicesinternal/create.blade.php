@@ -783,45 +783,6 @@
                 timer: 1500
               }
             );
-          }else if($('#payment_type').val()==''){
-            $('#payment_type').focus();
-            Swal.fire(
-              {
-                position: 'top-end',
-                icon: 'warning',
-                text: 'Please choose payment type',
-                showConfirmButton: false,
-                imageHeight: 30, 
-                imageWidth: 30,   
-                timer: 1500
-              }
-            );
-          }else if($('#payment_nominal').val()==''){
-            $('#payment_nominal').focus();
-            Swal.fire(
-              {
-                position: 'top-end',
-                icon: 'warning',
-                text: 'Please choose payment nominal',
-                showConfirmButton: false,
-                imageHeight: 30, 
-                imageWidth: 30,   
-                timer: 1500
-              }
-            );
-          }else if($('#scheduled').val()==''){
-            $('#scheduled').focus();
-            Swal.fire(
-              {
-                position: 'top-end',
-                icon: 'warning',
-                text: 'Please choose schedule',
-                showConfirmButton: false,
-                imageHeight: 30, 
-                imageWidth: 30,   
-                timer: 1500
-              }
-            );
           }else if(order_total<=0){
             Swal.fire(
               {
@@ -835,39 +796,14 @@
               }
             );
           }else{
-
-            counterBlank = 0;
-            for (var i=0;i<orderList.length;i++){
-                if(orderList[i]["assignedto"]==""){
-                  counterBlank++;
-                }
-            }
-
-            if(counterBlank>0){
-              Swal.fire(
-              {
-                  position: 'top-end',
-                  icon: 'warning',
-                  text: 'Please choose terapist for service',
-                  showConfirmButton: false,
-                  imageHeight: 30, 
-                  imageWidth: 30,   
-                  timer: 1500
-                }
-              );
-            }else{
-              const json = JSON.stringify({
+            const json = JSON.stringify({
                   invoice_date : $('#invoice_date').val(),
                   product : orderList,
                   customer_id : $('#customer_id').val(),
                   remark : $('#remark').val(),
-                  payment_type : $('#payment_type').val(),
-                  payment_nominal : $('#payment_nominal').val(),
                   total_order : order_total,
-                  scheduled_at : $('#schedule_date').val()+" "+$('#timepicker1').val(),
-                  branch_room_id : $('#room_id').val(),
-                  customer_type : $('#customer_type').val(),
                   ref_no : $('#ref_no').val(),
+                  payment_nominal : 0,
                   tax : _vat_total,
                 }
               );
@@ -882,13 +818,11 @@
                         text: "@lang('general.lbl_msg_success_invoice') "+resp.data.message,
                         title : "@lang('general.lbl_success')",
                         icon: 'success',
-                        showDenyButton: true,
                         showCancelButton: true,
                         cancelButtonColor: '#d33',
                         denyButtonColor: '#0072b3',
                         cancelButtonText: "@lang('general.lbl_close')",
                         confirmButtonText: "@lang('general.lbl_print')",
-                        denyButtonText: "@lang('general.lbl_printspk')",
                       }).then((result) => {
                         /* Read more about isConfirmed, isDenied below */
                         if (result.isConfirmed) {
@@ -926,7 +860,6 @@
                       );
                     }
               });
-            }
           }
         });
         

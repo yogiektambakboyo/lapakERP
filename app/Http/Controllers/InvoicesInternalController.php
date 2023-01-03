@@ -98,7 +98,7 @@ class InvoicesInternalController extends Controller
                 ->join('users_branch as ub', function($join){
                     $join->on('ub.branch_id', '=', 'b.id')
                     ->whereColumn('ub.branch_id', 'jt.branch_id');
-                })->where('ub.user_id', $user->id)->where('invoice_master.dated','>=',Carbon::now()->subDay(7))
+                })->where('ub.user_id', $user->id)->where('invoice_master.dated','>=',Carbon::now()->subDay(7))->where('invoice_master.invoice_no','ilike','INVI-%')
               ->paginate(10,['invoice_master.is_checkout','invoice_master.id','b.remark as branch_name','invoice_master.invoice_no','invoice_master.dated','jt.name as customer','invoice_master.total','invoice_master.total_discount','invoice_master.total_payment' ]);
         return view('pages.invoicesinternal.index',['company' => Company::get()->first()], compact('invoices','data','keyword','act_permission','branchs'))->with('i', ($request->input('page', 1) - 1) * 5);
     }
@@ -131,7 +131,8 @@ class InvoicesInternalController extends Controller
                     ->whereColumn('ub.branch_id', 'jt.branch_id');
                 })->where('ub.user_id', $user->id)  
                 ->where('invoice_master.invoice_no','ilike','%'.$keyword.'%') 
-                ->where('b.id','like','%'.$branchx.'%') 
+                ->where('b.id','like','%'.$branchx.'%')
+                ->where('invoice_master.invoice_no','ilike','INVI-%') 
                 ->whereBetween('invoice_master.dated',$fil) 
               ->paginate(10,['invoice_master.is_checkout','invoice_master.id','b.remark as branch_name','invoice_master.invoice_no','invoice_master.dated','jt.name as customer','invoice_master.total','invoice_master.total_discount','invoice_master.total_payment' ]);
         return view('pages.invoicesinternal.index',['company' => Company::get()->first()], compact('invoices','data','keyword','act_permission','branchs'))->with('i', ($request->input('page', 1) - 1) * 5);
@@ -236,7 +237,7 @@ class InvoicesInternalController extends Controller
         $user = Auth::user();
         $branch = Customer::where('id','=',$request->get('customer_id'))->get(['branch_id'])->first();
         //$count_no = DB::select("select max(id) as id from invoice_master om where to_char(om.dated,'YYYY')=to_char(now(),'YYYY') ");
-        $count_no = SettingsDocumentNumber::where('doc_type','=','Invoice')->where('branch_id','=',$branch->branch_id)->where('period','=','Yearly')->get(['current_value','abbr']);
+        $count_no = SettingsDocumentNumber::where('doc_type','=','Invoice Internal')->where('branch_id','=',$branch->branch_id)->where('period','=','Yearly')->get(['current_value','abbr']);
         $invoice_no = $count_no[0]->abbr.'-'.substr(('000'.$branch->branch_id),-3).'-'.date("Y").'-'.substr(('00000000'.((int)($count_no[0]->current_value) + 1)),-8);
 
         $res_invoice = Invoice::create(
@@ -251,7 +252,7 @@ class InvoicesInternalController extends Controller
                 ['payment_nominal' => $request->get('payment_nominal') ],
                 ['payment_type' => $request->get('payment_type') ],
                 ['total_payment' => (int)$request->get('payment_nominal')>=(int)$request->get('total_order')?(int)$request->get('total_order'):$request->get('payment_nominal') ],
-                ['scheduled_at' => Carbon::parse($request->get('scheduled_at'))->format('Y-m-d H:i:s.u') ],
+                ['is_checkout' => "1" ],
                 ['branch_room_id' => $request->get('branch_room_id')],
                 ['ref_no' => $request->get('ref_no')],
                 ['tax' => $request->get('tax')],
@@ -259,8 +260,7 @@ class InvoicesInternalController extends Controller
             )
         );
 
-        $branch_id = Room::where('id',$request->get('branch_room_id'))->get(['branch_id'])->first();
-
+        
         if(!$res_invoice){
             $result = array_merge(
                 ['status' => 'failed'],
@@ -304,10 +304,10 @@ class InvoicesInternalController extends Controller
                 return $result;
             }
 
-            DB::update("UPDATE product_stock set qty = qty-".$request->get('product')[$i]['qty']." WHERE branch_id = ".$branch_id['branch_id']." and product_id = ".$request->get('product')[$i]["id"]);
-            DB::update("update public.period_stock set qty_out=qty_out+".$request->get('product')[$i]['qty']." ,updated_at = now(), balance_end = balance_end - ".$request->get('product')[$i]['qty']." where branch_id = ".$branch_id['branch_id']." and product_id = ".$request->get('product')[$i]['id']." and periode = to_char(now(),'YYYYMM')::int;");
+            DB::update("UPDATE product_stock set qty = qty-".$request->get('product')[$i]['qty']." WHERE branch_id = ".$branch->branch_id." and product_id = ".$request->get('product')[$i]["id"]);
+            DB::update("update public.period_stock set qty_out=qty_out+".$request->get('product')[$i]['qty']." ,updated_at = now(), balance_end = balance_end - ".$request->get('product')[$i]['qty']." where branch_id = ".$branch->branch_id." and product_id = ".$request->get('product')[$i]['id']." and periode = to_char(now(),'YYYYMM')::int;");
 
-            $price_purchase = PeriodSellPrice::whereRaw("period=to_char(now()::date ,'YYYYMM')::int and product_id='".$request->get('product')[$i]['id']."' and branch_id =".$branch_id['branch_id'])->get(['value'])->first();
+            $price_purchase = PeriodSellPrice::whereRaw("period=to_char(now()::date ,'YYYYMM')::int and product_id='".$request->get('product')[$i]['id']."' and branch_id =".$branch->branch_id)->get(['value'])->first();
             DB::update("UPDATE invoice_detail set price_purchase=".$price_purchase->value." WHERE invoice_no='". $invoice_no."' and product_id = ".$request->get('product')[$i]['id']);
 
         }
@@ -388,7 +388,7 @@ class InvoicesInternalController extends Controller
             'settings' => Settings::get(),
             'invoice' => Invoice::join('users as u','u.id','=','invoice_master.created_by')->where('invoice_master.id',$invoice->id)->get(['invoice_master.*','u.name'])->first(),
             'customers' => Customer::where('id',$invoice->customers_id)->get(['customers.*']),
-            'invoiceDetails' => InvoiceDetail::join('invoice_master as om','om.invoice_no','=','invoice_detail.invoice_no')->join('product_sku as ps','ps.id','=','invoice_detail.product_id')->join('product_uom as u','u.product_id','=','invoice_detail.product_id')->join('uom as um','um.id','=','u.uom_id')->leftjoin('users as us','us.id','=','invoice_detail.assigned_to')->join('branch as bc','bc.id','=','us.branch_id')->leftjoin('users as usm','usm.id','=','invoice_detail.referral_by')->where('invoice_detail.invoice_no',$invoice->invoice_no)->orderByRaw('ps.type_id ASC,invoice_detail.seq  ASC')->get(['bc.remark as branch_name','bc.address as branch_address','usm.name as referral_by','us.name as assigned_to','um.remark as uom','invoice_detail.qty','invoice_detail.price','invoice_detail.total','ps.id','ps.remark as product_name','invoice_detail.discount','om.tax','om.voucher_code']),
+            'invoiceDetails' => InvoiceDetail::join('invoice_master as om','om.invoice_no','=','invoice_detail.invoice_no')->join('product_sku as ps','ps.id','=','invoice_detail.product_id')->join('product_uom as u','u.product_id','=','invoice_detail.product_id')->join('uom as um','um.id','=','u.uom_id')->join('customers as us','us.id','=','om.customers_id')->join('branch as bc','bc.id','=','us.branch_id')->leftjoin('users as usm','usm.id','=','invoice_detail.referral_by')->where('invoice_detail.invoice_no',$invoice->invoice_no)->orderByRaw('ps.type_id ASC,invoice_detail.seq  ASC')->get(['bc.remark as branch_name','bc.address as branch_address','usm.name as referral_by','us.name as assigned_to','um.remark as uom','invoice_detail.qty','invoice_detail.price','invoice_detail.total','ps.id','ps.remark as product_name','invoice_detail.discount','om.tax','om.voucher_code']),
         ])->setOptions(['defaultFont' => 'sans-serif'])->setPaper('a4', 'landscape');
         return $pdf->stream('invoice.pdf');
     }
@@ -414,7 +414,7 @@ class InvoicesInternalController extends Controller
             'settings' => Settings::get(),
             'invoice' => Invoice::join('users as u','u.id','=','invoice_master.created_by')->where('invoice_master.id',$invoice->id)->get(['invoice_master.*','u.name'])->first(),
             'customers' => Customer::where('id',$invoice->customers_id)->get(['customers.*']),
-            'invoiceDetails' => InvoiceDetail::join('invoice_master as om','om.invoice_no','=','invoice_detail.invoice_no')->join('product_sku as ps','ps.id','=','invoice_detail.product_id')->join('product_uom as u','u.product_id','=','invoice_detail.product_id')->join('uom as um','um.id','=','u.uom_id')->leftjoin('users as us','us.id','=','invoice_detail.assigned_to')->join('branch as bc','bc.id','=','us.branch_id')->leftjoin('users as usm','usm.id','=','invoice_detail.referral_by')->where('invoice_detail.invoice_no',$invoice->invoice_no)->orderByRaw('ps.type_id ASC,invoice_detail.seq  ASC')->get(['bc.remark as branch_name','bc.address as branch_address','usm.name as referral_by','us.name as assigned_to','um.remark as uom','invoice_detail.qty','invoice_detail.price','invoice_detail.total','ps.id','ps.remark as product_name','invoice_detail.discount','om.tax','om.voucher_code']),
+            'invoiceDetails' => InvoiceDetail::join('invoice_master as om','om.invoice_no','=','invoice_detail.invoice_no')->join('product_sku as ps','ps.id','=','invoice_detail.product_id')->join('product_uom as u','u.product_id','=','invoice_detail.product_id')->join('uom as um','um.id','=','u.uom_id')->join('customers as us','us.id','=','om.customers_id')->join('branch as bc','bc.id','=','us.branch_id')->leftjoin('users as usm','usm.id','=','invoice_detail.referral_by')->where('invoice_detail.invoice_no',$invoice->invoice_no)->orderByRaw('ps.type_id ASC,invoice_detail.seq  ASC')->get(['bc.remark as branch_name','bc.address as branch_address','usm.name as referral_by','us.name as assigned_to','um.remark as uom','invoice_detail.qty','invoice_detail.price','invoice_detail.total','ps.id','ps.remark as product_name','invoice_detail.discount','om.tax','om.voucher_code']),
         ])->setOptions(['defaultFont' => 'sans-serif'])->setPaper('a4', 'landscape');
         return $pdf->stream('invoice.pdf');
     }
@@ -632,7 +632,7 @@ class InvoicesInternalController extends Controller
         $invoice_no = $request->get('invoice_no');
 
         $last_data = InvoiceDetail::where('invoice_detail.invoice_no','=',$invoice_no)->get('invoice_detail.*');
-        $branch_id = Room::where('id',$request->get('branch_room_id'))->get(['branch_id'])->first();
+        $branch_id = Customer::where('id',$request->get('customer_id'))->get(['branch_id'])->first();
 
 
         for ($i=0; $i < count($last_data); $i++) { 

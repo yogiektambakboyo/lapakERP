@@ -9,7 +9,7 @@ use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 use Maatwebsite\Excel\Concerns\WithColumnFormatting;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 
-class InvoicesExport implements FromCollection,WithColumnFormatting, WithHeadings
+class InvoicesInternalExport implements FromCollection,WithColumnFormatting, WithHeadings
 {
     /**
     * @return \Illuminate\Support\Collection
@@ -54,7 +54,7 @@ class InvoicesExport implements FromCollection,WithColumnFormatting, WithHeading
                 })->where('ub.user_id', $this->user_id)  
                 ->where('invoice_master.invoice_no','ilike','%'.$this->keyword.'%') 
                 ->where('b.id','like','%'.$this->branch.'%') 
-                ->where('invoice_master.invoice_no','ilike','INV-%')
+                ->where('invoice_master.invoice_no','ilike','INVI-%')
                 ->whereBetween('invoice_master.dated',$fil) 
               ->get(['b.remark as branch_name','invoice_master.invoice_no','invoice_master.dated','jt.name as customer','invoice_master.total','invoice_master.total_discount','invoice_master.total_payment' ]);
     }
