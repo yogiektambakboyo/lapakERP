@@ -575,7 +575,7 @@
                       for (var i = 0; i < orderList.length; i++){
                       var obj = orderList[i];
                       var value = obj["abbr"];
-                      if(obj["type_id"]=="Services"){
+                      if(obj["type_id"]=="Services"||obj["type_id"]=="Extra"){
                         counterno_service  = counterno_service + 1;
                         table.row.add( {
                                 "seq" : counterno_service,
@@ -702,7 +702,7 @@
           for (var i = 0; i < orderList.length; i++){
             var obj = orderList[i];
             var value = obj["abbr"];
-            if(obj["type_id"]=="Services"){
+            if(obj["type_id"]=="Services"||obj["type_id"]=="Extra"){
               counterno_service  = counterno_service + 1;
               table.row.add( {
                       "seq" : counterno_service,
@@ -787,7 +787,7 @@
           for (var i = 0; i < orderList.length; i++){
             var obj = orderList[i];
             var value = obj["abbr"];
-            if(obj["type_id"]=="Services"){
+            if(obj["type_id"]=="Services"||obj["type_id"]=="Extra"){
               counterno_service  = counterno_service + 1;
               table.row.add( {
                       "seq" : counterno_service,
@@ -1127,7 +1127,7 @@
           for (var i = 0; i < orderList.length; i++){
             var obj = orderList[i];
             var value = obj["abbr"];
-            if(obj["type_id"]=="Services"){
+            if(obj["type_id"]=="Services"||obj["type_id"]=="Extra"){
               counterno_service  = counterno_service + 1;
               table.row.add( {
                       "seq" : counterno_service,
@@ -1238,7 +1238,7 @@
 
             for (var i = 0; i < orderList.length; i++){
               var obj = orderList[i];
-              if(obj["type_id"]=="Services"){
+              if(obj["type_id"]=="Services"||obj["type_id"]=="Extra"){
               counterno_service  = counterno_service + 1;
               table.row.add( {
                       "seq" : counterno_service,
@@ -1339,7 +1339,7 @@
                 for (var i = 0; i < productList.length; i++){
                   var obj = productList[i];
                   var newOption = new Option(obj["remark"], obj["id"], false, false);
-                  if(obj["type"]=="Services"){
+                  if(obj["type_id"]=="Services"||obj["type_id"]=="Extra"){
                     $('#input_service_id').append(newOption).trigger('change');  
                   }else{
                     $('#input_product_id').append(newOption).trigger('change');  
@@ -1635,7 +1635,7 @@
 
                       var obj = orderList[i];
                       var value = obj["abbr"];
-                      if(obj["type_id"]=="Services"){
+                      if(obj["type_id"]=="Services"||obj["type_id"]=="Extra"){
                         counterno_service  = counterno_service + 1;
                         table.row.add( {
                                 "seq" : counterno_service,
@@ -1762,7 +1762,7 @@
                   for (var i = 0; i < orderList.length; i++){
                   var obj = orderList[i];
                   var value = obj["abbr"];
-                  if(obj["type_id"]=="Services"){
+                  if(obj["type_id"]=="Services"||obj["type_id"]=="Extra"){
                         counterno_service  = counterno_service + 1;
                         table.row.add( {
                                 "seq" : counterno_service,
@@ -1871,7 +1871,7 @@
 
             for (var i = 0; i < orderList.length; i++){
               var obj = orderList[i];
-              if(obj["type_id"]=="Services"){
+              if(obj["type_id"]=="Services"||obj["type_id"]=="Extra"){
                 counterno_service  = counterno_service + 1;
                 table.row.add( {
                         "seq" : counterno_service,
