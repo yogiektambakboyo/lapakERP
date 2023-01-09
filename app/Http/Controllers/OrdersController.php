@@ -156,7 +156,7 @@ class OrdersController extends Controller
         $this->getpermissions($id);
 
         $data = $this->data;
-        $payment_type = ['Cash','BCA - Debit','BCA - Kredit','Mandiri - Debit','Mandiri - Kredit','QRIS'];
+        $payment_type = ['Cash','BCA - Debit','BCA - Kredit','Mandiri - Debit','Mandiri - Kredit','Transfer','QRIS'];
         $users = User::join('users_branch','users_branch.branch_id', '=', 'users.branch_id')
                         //->join('shift_counter','shift_counter.users_id','=','users.id')
                         ->join('shift_counter', function($join)
@@ -228,7 +228,7 @@ class OrdersController extends Controller
         );
 
         $data = $this->data;
-        $payment_type = ['Cash','BCA - Debit','BCA - Kredit','Mandiri - Debit','Mandiri - Kredit','QRIS'];
+        $payment_type = ['Cash','BCA - Debit','BCA - Kredit','Mandiri - Debit','Mandiri - Kredit','Transfer','QRIS'];
         $users = User::join('users_branch as ub','ub.branch_id', '=', 'users.branch_id')->where('ub.user_id','=',$user->id)->where('users.job_id','=',2)->get(['users.id','users.name']);
 
         // Set data
@@ -297,7 +297,7 @@ class OrdersController extends Controller
         $printer->printReceiptSPK();
 
         $room = Room::where('branch_room.id','=',$order->branch_room_id)->get(['branch_room.remark'])->first();
-        $payment_type = ['Cash','BCA - Debit','BCA - Kredit','Mandiri - Debit','Mandiri - Kredit','QRIS'];
+        $payment_type = ['Cash','BCA - Debit','BCA - Kredit','Mandiri - Debit','Mandiri - Kredit','Transfer','QRIS'];
         $usersReferral = User::get(['users.id','users.name']);
         return view('pages.orders.show',[
             'customers' => Customer::join('users_branch as ub','ub.branch_id', '=', 'customers.branch_id')->join('branch as b','b.id','=','ub.branch_id')->where('ub.user_id',$user->id)->get(['customers.id','customers.name','b.remark']),
@@ -324,7 +324,7 @@ class OrdersController extends Controller
         );
 
         $data = $this->data;
-        $payment_type = ['Cash','BCA - Debit','BCA - Kredit','Mandiri - Debit','Mandiri - Kredit','QRIS'];
+        $payment_type = ['Cash','BCA - Debit','BCA - Kredit','Mandiri - Debit','Mandiri - Kredit','Transfer','QRIS'];
         $users = User::join('users_branch as ub','ub.branch_id', '=', 'users.branch_id')->where('ub.user_id','=',$user->id)->where('users.job_id','=',2)->get(['users.id','users.name']);
 
         $pdf = PDF::setOptions(['isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true])->loadView('pages.orders.print', [
@@ -496,7 +496,7 @@ class OrdersController extends Controller
         $data = $this->data;
         $user = Auth::user();
         $room = Room::where('branch_room.id','=',$order->branch_room_id)->get(['branch_room.remark'])->first();
-        $payment_type = ['Cash','BCA - Debit','BCA - Kredit','Mandiri - Debit','Mandiri - Kredit','QRIS'];
+        $payment_type = ['Cash','BCA - Debit','BCA - Kredit','Mandiri - Debit','Mandiri - Kredit','Transfer','QRIS'];
         $usersReferral = User::get(['users.id','users.name']);
         return view('pages.orders.show',[
             'customers' => Customer::join('users_branch as ub','ub.branch_id', '=', 'customers.branch_id')->join('branch as b','b.id','=','ub.branch_id')->where('ub.user_id',$user->id)->get(['customers.id','customers.name','b.remark']),
@@ -517,7 +517,7 @@ class OrdersController extends Controller
         $data = $this->data;
         $user = Auth::user();
         $room = Room::where('branch_room.id','=',$order->branch_room_id)->get(['branch_room.remark'])->first();
-        $payment_type = ['Cash','BCA - Debit','BCA - Kredit','Mandiri - Debit','Mandiri - Kredit','QRIS'];
+        $payment_type = ['Cash','BCA - Debit','BCA - Kredit','Mandiri - Debit','Mandiri - Kredit','Transfer','QRIS'];
         $users = User::join('users_branch as ub','ub.branch_id', '=', 'users.branch_id')->where('ub.user_id','=',$user->id)->where('users.job_id','=',2)->get(['users.id','users.name']);
         $usersReferral = User::get(['users.id','users.name']);
         return view('pages.orders.grid',[
@@ -549,7 +549,7 @@ class OrdersController extends Controller
         $data = $this->data;
         $user = Auth::user();
         $room = Room::where('branch_room.id','=',$order->branch_room_id)->get(['branch_room.remark'])->first();
-        $payment_type = ['Cash','BCA - Debit','BCA - Kredit','Mandiri - Debit','Mandiri - Kredit','QRIS'];
+        $payment_type = ['Cash','BCA - Debit','BCA - Kredit','Mandiri - Debit','Mandiri - Kredit','Transfer','QRIS'];
         $users = User::join('users_branch as ub','ub.branch_id', '=', 'users.branch_id')->where('ub.user_id','=',$user->id)->where('users.job_id','=',2)->get(['users.id','users.name']);
         $usersReferral = User::get(['users.id','users.name']);
         return view('pages.orders.edit',[
