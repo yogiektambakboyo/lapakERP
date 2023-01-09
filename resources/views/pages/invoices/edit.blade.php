@@ -575,7 +575,7 @@
                       for (var i = 0; i < orderList.length; i++){
                       var obj = orderList[i];
                       var value = obj["abbr"];
-                      if(obj["type_id"]=="Services"||obj["type_id"]=="Extra"){
+                      if(obj["type"]!="Goods"){
                         counterno_service  = counterno_service + 1;
                         table.row.add( {
                                 "seq" : counterno_service,
@@ -702,7 +702,7 @@
           for (var i = 0; i < orderList.length; i++){
             var obj = orderList[i];
             var value = obj["abbr"];
-            if(obj["type_id"]=="Services"||obj["type_id"]=="Extra"){
+            if(obj["type"]!="Goods"){
               counterno_service  = counterno_service + 1;
               table.row.add( {
                       "seq" : counterno_service,
@@ -787,7 +787,7 @@
           for (var i = 0; i < orderList.length; i++){
             var obj = orderList[i];
             var value = obj["abbr"];
-            if(obj["type_id"]=="Services"||obj["type_id"]=="Extra"){
+            if(obj["type"]!="Goods"){
               counterno_service  = counterno_service + 1;
               table.row.add( {
                       "seq" : counterno_service,
@@ -1072,7 +1072,7 @@
         ],
         });
 
-        function addProduct(id,abbr, price, discount, qty, uom,vat_total,total,type_id){
+        function addProduct(id,abbr, price, discount, qty, uom,vat_total,total,type){
           table.clear().draw(false);
           table_product.clear().draw(false);
           order_total = 0;
@@ -1094,7 +1094,7 @@
                 "referralbyid" : "",
                 "uom" : uom,
                 "vat_total"     : vat_total, 
-                "type_id"     : type_id, 
+                "type"     : type, 
                 "entry_time" : entry_time,
                 "seq" : 999,
           }
@@ -1127,7 +1127,7 @@
           for (var i = 0; i < orderList.length; i++){
             var obj = orderList[i];
             var value = obj["abbr"];
-            if(obj["type_id"]=="Services"||obj["type_id"]=="Extra"){
+            if(obj["type"]!="Goods"){
               counterno_service  = counterno_service + 1;
               table.row.add( {
                       "seq" : counterno_service,
@@ -1238,7 +1238,7 @@
 
             for (var i = 0; i < orderList.length; i++){
               var obj = orderList[i];
-              if(obj["type_id"]=="Services"||obj["type_id"]=="Extra"){
+              if(obj["type"]!="Goods"){
               counterno_service  = counterno_service + 1;
               table.row.add( {
                       "seq" : counterno_service,
@@ -1339,7 +1339,7 @@
                 for (var i = 0; i < productList.length; i++){
                   var obj = productList[i];
                   var newOption = new Option(obj["remark"], obj["id"], false, false);
-                  if(obj["type_id"]=="Services"||obj["type_id"]=="Extra"){
+                  if(obj["type"]!="Goods"){
                     $('#input_service_id').append(newOption).trigger('change');  
                   }else{
                     $('#input_product_id').append(newOption).trigger('change');  
@@ -1545,7 +1545,7 @@
                     $('#input_product_qty').val(),
                     $('#input_product_uom').val(),
                     $('#input_product_vat_total').val(),
-                    $('#input_product_total').val(),"Good"
+                    $('#input_product_total').val(),"Goods"
                   )
                 }
               });
@@ -1635,7 +1635,7 @@
 
                       var obj = orderList[i];
                       var value = obj["abbr"];
-                      if(obj["type_id"]=="Services"||obj["type_id"]=="Extra"){
+                      if(obj["type"]!="Goods"){
                         counterno_service  = counterno_service + 1;
                         table.row.add( {
                                 "seq" : counterno_service,
@@ -1747,7 +1747,7 @@
                             "referralbyid" : resp.data[i]["referral_by"],
                             "uom" : resp.data[i]["uom"],
                             "vat_total"     : resp.data[i]["vat"], 
-                            "type_id"     : resp.data[i]["type"], 
+                            "type"     : resp.data[i]["type"], 
                       }
 
                       orderList.push(product);
@@ -1762,7 +1762,7 @@
                   for (var i = 0; i < orderList.length; i++){
                   var obj = orderList[i];
                   var value = obj["abbr"];
-                  if(obj["type_id"]=="Services"||obj["type_id"]=="Extra"){
+                  if(obj["type"]!="Goods"){
                         counterno_service  = counterno_service + 1;
                         table.row.add( {
                                 "seq" : counterno_service,
@@ -1871,7 +1871,7 @@
 
             for (var i = 0; i < orderList.length; i++){
               var obj = orderList[i];
-              if(obj["type_id"]=="Services"||obj["type_id"]=="Extra"){
+              if(obj["type"]!="Goods"){
                 counterno_service  = counterno_service + 1;
                 table.row.add( {
                         "seq" : counterno_service,
