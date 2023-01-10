@@ -44,14 +44,14 @@
             <tbody>
                 @foreach($sales as $seller)
                     <tr>
-                        <th scope="row">{{ $sales->id }}</th>
+                        <th scope="row">{{ $seller->id }}</th>
                         <td>{{ $seller->branch_name }}</td>
                         <td>{{ $seller->name }}</td>
                         <td>{{ $seller->address }}</td>
                         <td>{{ $seller->phone_no }}</td>
                         <td><a href="{{ route('customers.edit', $seller->id) }}" class="btn btn-info btn-sm  {{ $act_permission->allow_edit==1?'':'d-none' }} ">@lang('general.lbl_edit')</a></td>
                         <td>
-                            <a onclick="showConfirm({{ $sales->id }}, '{{ $seller->name }}')" class="btn btn-danger btn-sm  {{ $act_permission->allow_delete==1?'':'d-none' }} ">@lang('general.lbl_delete')</a>
+                            <a onclick="showConfirm({{ $seller->id }}, '{{ $seller->name }}')" class="btn btn-danger btn-sm  {{ $act_permission->allow_delete==1?'':'d-none' }} ">@lang('general.lbl_delete')</a>
                         </td>
                     </tr>
                 @endforeach
