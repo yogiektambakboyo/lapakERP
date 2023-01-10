@@ -139,18 +139,19 @@ class SalesController extends Controller
     public function store(Request $request)
     {   
     
-        Customer::create(
+        Sales::create(
             array_merge( 
-                ['phone_no' => $request->get('phone_no') ],
+                ['address' => $request->get('address') ],
+                ['username' => $request->get('username') ],
+                ['password' => $request->get('password') ],
                 ['name' => $request->get('name') ],
                 ['address' => $request->get('address') ],
-                ['membership_id' => '1' ],
-                ['abbr' => '1' ],
+                ['active' => '1' ],
                 ['branch_id' => $request->get('branch_id') ],
             )
         );
         return redirect()->route('sales.index')
-            ->withSuccess(__('Customer created successfully.'));
+            ->withSuccess(__('Seller created successfully.'));
     }
 
     public function storeapi(Request $request)

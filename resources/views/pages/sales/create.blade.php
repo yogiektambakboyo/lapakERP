@@ -4,12 +4,12 @@
 
 @section('content')
     <div class="bg-light p-4 rounded">
-        <h2>@lang('general.lbl_customer_new')</h2>
+        <h2>@lang('general.lbl_seller_new')</h2>
 
 
         <div class="container mt-4">
 
-            <form method="POST" action="{{ route('customers.store') }}">
+            <form method="POST" action="{{ route('sales.store') }}">
                 @csrf
                 <div class="mb-3">
                     <label for="name" class="form-label">@lang('general.lbl_name')</label>
@@ -38,15 +38,28 @@
                 </div>
 
                 <div class="mb-3">
-                    <label for="phone_no" class="form-label">@lang('general.lbl_phoneno')</label>
-                    <input value="{{ old('phone_no') }}" 
+                    <label for="username" class="form-label">@lang('general.general.username')</label>
+                    <input value="{{ old('username') }}" 
                         type="text" 
                         class="form-control" 
-                        name="phone_no" 
-                        placeholder="@lang('general.lbl_phoneno')" required>
+                        name="username" 
+                        placeholder="@lang('general.username')" required>
 
-                    @if ($errors->has('phone_no'))
-                        <span class="text-danger text-left">{{ $errors->first('phone_no') }}</span>
+                    @if ($errors->has('username'))
+                        <span class="text-danger text-left">{{ $errors->first('username') }}</span>
+                    @endif
+                </div>
+
+                <div class="mb-3">
+                    <label for="password" class="form-label">@lang('general.general.password')</label>
+                    <input value="{{ old('password') }}" 
+                        type="text" 
+                        class="form-control" 
+                        name="password" 
+                        placeholder="@lang('general.password')" required>
+
+                    @if ($errors->has('password'))
+                        <span class="text-danger text-left">{{ $errors->first('password') }}</span>
                     @endif
                 </div>
 
@@ -64,7 +77,7 @@
                   </div>
                 
                 <button type="submit" class="btn btn-primary">@lang('general.lbl_save')</button>
-                <a href="{{ route('customers.index') }}" class="btn btn-default">@lang('general.lbl_back') </a>
+                <a href="{{ route('sales.index') }}" class="btn btn-default">@lang('general.lbl_back') </a>
             </form>
         </div>
 

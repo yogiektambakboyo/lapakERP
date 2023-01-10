@@ -115,6 +115,7 @@ return [
     "lbl_add_distribution_new" => "Tambah Distribusi Baru",
     "lbl_add_point_new" => "Tambah Poin Baru",
     "lbl_customer_new" => "Buat Pelanggan Baru",
+    "lbl_seller_new" => "Buat Seller Baru",
 
     "lbl_sure" => "Apakah anda yakin?",
     "lbl_sure_title" => "Anda akan menghapus data ",
@@ -161,6 +162,7 @@ return [
     "lbl_remark" => "Catatan",
     "lbl_customer" => "Pelanggan",
     "lbl_username" => "Username",
+    "lbl_password" => "Password",
     "lbl_seller" => "Seller",
     "lbl_balance_begin" => "Saldo Awal",
     "lbl_balance_end" => "Saldo Akhir",
