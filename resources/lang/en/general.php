@@ -41,6 +41,7 @@ return [
     "lbl_values" => "Nilai",
     "lbl_supplier" => "Vendor",
     "lbl_edit_customer" => "Ubah Pelanggan",
+    "lbl_edit_seller" => "Ubah Seller",
     "lbl_supplier_new" => "Buat Vendor",
     "lbl_type_new" => "Buat Tipe",
     "lbl_supplier_edit" => "Ubah Vendor",

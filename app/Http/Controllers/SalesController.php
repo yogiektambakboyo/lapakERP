@@ -184,14 +184,14 @@ class SalesController extends Controller
      * @param  Customer  $Customer
      * @return \Illuminate\Http\Response
      */
-    public function edit(Customer $Customer)
+    public function edit(Sales $Sales)
     {
         $user = Auth::user();
         $id = $user->roles->first()->id;
         $this->getpermissions($id);
         $data = $this->data;
         return view('pages.sales.edit', [
-            'customer' => $Customer ,'data' => $data ,'branchs' => Branch::latest()->get(), 'company' => Company::get()->first(),
+            'sales' => $Sales ,'data' => $data ,'branchs' => Branch::latest()->get(), 'company' => Company::get()->first(),
             'userBranchs' => Branch::latest()->get()->pluck('remark')->toArray()
         ]);
     }
@@ -203,22 +203,22 @@ class SalesController extends Controller
      * @param  Customer  $Customer
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Customer $customer)
+    public function update(Request $request, Sales $sales)
     {
-        Customer::where('id', $customer->id)
+        Sales::where('id', $sales->id)
         ->update(
             array_merge( 
-                ['phone_no' => $request->get('phone_no') ],
+                ['address' => $request->get('address') ],
+                ['username' => $request->get('username') ],
+                ['password' => $request->get('password') ],
                 ['name' => $request->get('name') ],
                 ['address' => $request->get('address') ],
-                ['membership_id' => '1' ],
-                ['abbr' => '1' ],
                 ['branch_id' => $request->get('branch_id') ],
             )
         );
 
         return redirect()->route('sales.index')
-            ->withSuccess(__('Customer updated successfully.'));
+            ->withSuccess(__('Sales updated successfully.'));
     }
 
     /**
