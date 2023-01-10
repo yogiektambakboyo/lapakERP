@@ -42,16 +42,16 @@
             </tr>
             </thead>
             <tbody>
-                @foreach($sales as $customer)
+                @foreach($sales as $seller)
                     <tr>
                         <th scope="row">{{ $sales->id }}</th>
-                        <td>{{ $sales->branch_name }}</td>
-                        <td>{{ $sales->name }}</td>
-                        <td>{{ $sales->address }}</td>
-                        <td>{{ $sales->phone_no }}</td>
-                        <td><a href="{{ route('customers.edit', $sales->id) }}" class="btn btn-info btn-sm  {{ $act_permission->allow_edit==1?'':'d-none' }} ">@lang('general.lbl_edit')</a></td>
+                        <td>{{ $seller->branch_name }}</td>
+                        <td>{{ $seller->name }}</td>
+                        <td>{{ $seller->address }}</td>
+                        <td>{{ $seller->phone_no }}</td>
+                        <td><a href="{{ route('customers.edit', $seller->id) }}" class="btn btn-info btn-sm  {{ $act_permission->allow_edit==1?'':'d-none' }} ">@lang('general.lbl_edit')</a></td>
                         <td>
-                            <a onclick="showConfirm({{ $sales->id }}, '{{ $sales->name }}')" class="btn btn-danger btn-sm  {{ $act_permission->allow_delete==1?'':'d-none' }} ">@lang('general.lbl_delete')</a>
+                            <a onclick="showConfirm({{ $sales->id }}, '{{ $seller->name }}')" class="btn btn-danger btn-sm  {{ $act_permission->allow_delete==1?'':'d-none' }} ">@lang('general.lbl_delete')</a>
                         </td>
                     </tr>
                 @endforeach
