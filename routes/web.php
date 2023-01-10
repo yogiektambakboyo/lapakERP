@@ -665,6 +665,22 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
         });
 
         /**
+         *  Customers
+         */
+        Route::group(['prefix' => 'sales'], function() {
+            Route::get('/', 'SalesController@index')->name('sales.index');
+            Route::get('/create', 'SalesController@create')->name('sales.create');
+            Route::post('/create', 'SalesController@store')->name('sales.store');
+            Route::post('/createapi', 'SalesController@storeapi')->name('sales.storeapi');
+            Route::get('/{sales}/show', 'SalesController@show')->name('sales.show');
+            Route::get('/{sales}/edit', 'SalesController@edit')->name('sales.edit');
+            Route::patch('/{sales}/update', 'SalesController@update')->name('sales.update');
+            Route::delete('/{sales}/delete', 'SalesController@destroy')->name('sales.destroy');
+            Route::get('/search', 'SalesController@search')->name('sales.search');
+            Route::get('/export', 'SalesController@export')->name('sales.export');
+        });
+
+        /**
          *  Shift
          */
         Route::group(['prefix' => 'shift'], function() {
