@@ -38,12 +38,12 @@
                 </div>
 
                 <div class="mb-3">
-                    <label for="username" class="form-label">@lang('general.general.username')</label>
+                    <label for="username" class="form-label">@lang('general.username')</label>
                     <input value="{{ old('username') }}" 
                         type="text" 
                         class="form-control" 
                         name="username" 
-                        placeholder="@lang('general.username')" required>
+                        placeholder="@lang('general.lbl_username')" required>
 
                     @if ($errors->has('username'))
                         <span class="text-danger text-left">{{ $errors->first('username') }}</span>
@@ -51,12 +51,12 @@
                 </div>
 
                 <div class="mb-3">
-                    <label for="password" class="form-label">@lang('general.general.password')</label>
+                    <label for="password" class="form-label">@lang('general.password')</label>
                     <input value="{{ old('password') }}" 
                         type="text" 
                         class="form-control" 
                         name="password" 
-                        placeholder="@lang('general.password')" required>
+                        placeholder="@lang('general.lbl_password')" required>
 
                     @if ($errors->has('password'))
                         <span class="text-danger text-left">{{ $errors->first('password') }}</span>
