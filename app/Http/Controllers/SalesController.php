@@ -9,7 +9,7 @@ use App\Models\Customer;
 use App\Models\Branch;
 use App\Models\Sales;
 use Auth;
-use App\Exports\CustomersExport;
+use App\Exports\SalesExport;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
 use Carbon\Carbon;
@@ -84,9 +84,9 @@ class SalesController extends Controller
         $branchs = Branch::join('users_branch as ub','ub.branch_id', '=', 'branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']);
         if($request->export=='Export Excel'){
             $strencode = base64_encode($keyword.'#'.$branchx.'#'.$user->id);
-            return Excel::download(new CustomersExport($strencode), 'sales_'.Carbon::now()->format('YmdHis').'.xlsx');
+            return Excel::download(new SalesExport($strencode), 'sales_'.Carbon::now()->format('YmdHis').'.xlsx');
         }else if($request->src=='Search'){
-            $Sales = Customer::join('branch as b','b.id','sales.branch_id')
+            $Sales = Sales::join('branch as b','b.id','sales.branch_id')
                             ->join('users_branch as ub', function($join){
                                 $join->on('ub.branch_id', '=', 'b.id');
                             })->where('ub.user_id', $user->id)->where('sales.branch_id','like','%'.$branchx.'%')->where('sales.name','ILIKE','%'.$keyword.'%')->paginate(10,['sales.*','b.remark as branch_name']);
@@ -99,7 +99,7 @@ class SalesController extends Controller
                 'act_permission' => $act_permission
             ]);
         }else{
-            $Sales = Customer::join('branch as b','b.id','sales.branch_id')
+            $Sales = Sales::join('branch as b','b.id','sales.branch_id')
                             ->join('users_branch as ub', function($join){
                                 $join->on('ub.branch_id', '=', 'b.id');
                             })->where('ub.user_id', $user->id)->where('sales.branch_id','like','%'.$branchx.'%')->where('sales.name','ILIKE','%'.$keyword.'%')->paginate(10,['sales.*','b.remark as branch_name']);
