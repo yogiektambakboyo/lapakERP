@@ -4,7 +4,7 @@
 
 @section('content')
     <div class="bg-light p-4 rounded">
-        <h2>@lang('general.lbl_customer')</h2>
+        <h2>@lang('general.lbl_seller')</h2>
 
         <div class="lead row mb-3">
             <div class="col-md-10">
@@ -13,7 +13,7 @@
                 </div>
 
                 <div class="col-md-10"> 	
-                    <form action="{{ route('customers.search') }}" method="GET" class="row row-cols-lg-auto g-3 align-items-center">
+                    <form action="{{ route('sales.search') }}" method="GET" class="row row-cols-lg-auto g-3 align-items-center">
                         <div class="col-2"><input type="text" class="form-control  form-control-sm" name="search" placeholder="@lang('general.lbl_search')" value="{{ $request->search }}"></div>
                         <input type="hidden" name="filter_branch_id" value="{{ $request->filter_branch_id }}">
                         <div class="col-2"><input type="submit" class="btn btn-sm btn-secondary" value="@lang('general.btn_search')" name="src"></div>   
@@ -23,7 +23,7 @@
                 </div>
             </div>
             <div class="col-md-2">
-                <a href="{{ route('customers.create') }}" class="btn btn-primary btn-sm float-right"><span class="fa fa-plus-circle"></span>  @lang('general.btn_create')</a>
+                <a href="{{ route('sales.create') }}" class="btn btn-primary btn-sm float-right"><span class="fa fa-plus-circle"></span>  @lang('general.btn_create')</a>
             </div>
         </div>
         <div class="mt-2">
@@ -37,7 +37,7 @@
                 <th scope="col" width="10%">@lang('general.lbl_branch')</th>
                 <th scope="col">@lang('general.lbl_name')</th>
                 <th scope="col" width="15%">@lang('general.lbl_address')</th>
-                <th scope="col" width="12%">@lang('general.lbl_phoneno')</th>
+                <th scope="col" width="12%">@lang('general.lbl_username')</th>
                 <th scope="col" colspan="3" width="1%"></th> 
             </tr>
             </thead>
@@ -49,7 +49,7 @@
                         <td>{{ $seller->name }}</td>
                         <td>{{ $seller->address }}</td>
                         <td>{{ $seller->phone_no }}</td>
-                        <td><a href="{{ route('customers.edit', $seller->id) }}" class="btn btn-info btn-sm  {{ $act_permission->allow_edit==1?'':'d-none' }} ">@lang('general.lbl_edit')</a></td>
+                        <td><a href="{{ route('sales.edit', $seller->id) }}" class="btn btn-info btn-sm  {{ $act_permission->allow_edit==1?'':'d-none' }} ">@lang('general.lbl_edit')</a></td>
                         <td>
                             <a onclick="showConfirm({{ $seller->id }}, '{{ $seller->name }}')" class="btn btn-danger btn-sm  {{ $act_permission->allow_delete==1?'':'d-none' }} ">@lang('general.lbl_delete')</a>
                         </td>
@@ -66,7 +66,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form action="{{ route('customers.search') }}" method="GET">   
+                    <form action="{{ route('sales.search') }}" method="GET">   
                         @csrf 
                         <div class="col-md-10">
                             <label class="form-label col-form-label col-md-4">@lang('general.lbl_branch')</label>
@@ -135,7 +135,7 @@
             confirmButtonText: "@lang('general.lbl_sure_delete')"
             }).then((result) => {
                 if (result.isConfirmed) {
-                    var url = "{{ route('customers.destroy','XX') }}";
+                    var url = "{{ route('sales.destroy','XX') }}";
                     var lastvalurl = "XX";
                     url = url.replace(lastvalurl, id)
                     const res = axios.delete(url, {}, {
@@ -154,7 +154,7 @@
                                         cancelButtonColor: '#d33', cancelButtonText: "@lang('general.lbl_cancel')",
                                         confirmButtonText: "@lang('general.lbl_close') "
                                         }).then((result) => {
-                                            window.location.href = "{{ route('customers.index') }}"; 
+                                            window.location.href = "{{ route('sales.index') }}"; 
                                         })
                                 }else{
                                     Swal.fire(

@@ -160,6 +160,8 @@ return [
     "lbl_time" => "Jam",
     "lbl_remark" => "Catatan",
     "lbl_customer" => "Pelanggan",
+    "lbl_username" => "Username",
+    "lbl_seller" => "Seller",
     "lbl_balance_begin" => "Saldo Awal",
     "lbl_balance_end" => "Saldo Akhir",
     "lbl_qty_in" => "Jumlah Masuk",
