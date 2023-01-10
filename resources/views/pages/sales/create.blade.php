@@ -38,7 +38,7 @@
                 </div>
 
                 <div class="mb-3">
-                    <label for="username" class="form-label">@lang('general.username')</label>
+                    <label for="username" class="form-label">@lang('general.lbl_username')</label>
                     <input value="{{ old('username') }}" 
                         type="text" 
                         class="form-control" 
@@ -51,7 +51,7 @@
                 </div>
 
                 <div class="mb-3">
-                    <label for="password" class="form-label">@lang('general.password')</label>
+                    <label for="password" class="form-label">@lang('general.lbl_password')</label>
                     <input value="{{ old('password') }}" 
                         type="text" 
                         class="form-control" 
