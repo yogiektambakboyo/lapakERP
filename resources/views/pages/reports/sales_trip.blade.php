@@ -48,7 +48,7 @@
                             <td>{{ $trip->time_end }}</td>
                             <td>{{ $trip->active_trip }}</td>
                             <td>{{ $trip->photo }}</td>
-                            <td>{{ $trip->remark }}</td>
+                            <td>{{ $trip->notes }}</td>
                             <td>{{ $trip->lbl_created_at }}</td>
                         </tr>
                     @endforeach
