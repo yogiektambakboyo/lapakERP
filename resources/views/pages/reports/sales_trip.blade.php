@@ -46,7 +46,7 @@
                             <td>{{ $trip->trip_id }}</td>
                             <td>{{ $trip->time_start }}</td>
                             <td>{{ $trip->time_end }}</td>
-                            <td>{{ $trip->active }}</td>
+                            <td>{{ $trip->active_trip }}</td>
                             <td>{{ $trip->photo }}</td>
                             <td>{{ $trip->remark }}</td>
                             <td>{{ $trip->lbl_created_at }}</td>
