@@ -752,6 +752,8 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
         Route::group(['prefix' => 'reports'], function() {
             Route::get('/cashier', 'ReportCashierComController@index')->name('reports.cashier.index');
             Route::get('/search_cashier', 'ReportCashierComController@search')->name('reports.cashier.search');
+            Route::get('/sales_trip', 'ReportSalesTripController@index')->name('reports.sales_trip.index');
+            Route::get('/search_sales_trip', 'ReportSalesTripController@search')->name('reports.sales_trip.search');
             Route::get('/terapist', 'ReportTerapistComController@index')->name('reports.terapist.index');
             Route::get('/search_terapist', 'ReportTerapistComController@search')->name('reports.terapist.search');
             Route::get('/terapistdaily', 'ReportTerapistComDailyController@index')->name('reports.terapistdaily.index');

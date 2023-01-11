@@ -10,6 +10,7 @@ return [
     "btn_filter" => "Filter",
     "btn_export" => "Export Excel",
     "btn_create" => "Create New",
+    "lbl_created_at" => "Tgl Pembuatan",
     "lbl_order" => "Order",
     "lbl_return_no" => "Return No",
 
@@ -32,6 +33,8 @@ return [
     "lbl_jobtitle" => "Jabatan",
     "lbl_appaccess" => "Hak Akses",
     "lbl_joindate" => "Tgl Bergabung",
+    "lbl_trip" => "Trip",
+    "lbl_trip_id" => "Trip ID",
     "lbl_joindatebefore" => "Tgl Bergabung (Sebelum)",
     "lbl_action" => "Aksi",
     "lbl_year" => "Tahun",
@@ -144,6 +147,8 @@ return [
     "lbl_uom" => "Satuan",
     "lbl_price_adjustment" => "Penyesuaian Harga",
     "lbl_date_start" => "Tgl Mulai",
+    "lbl_time_start" => "Waktu Mulai",
+    "lbl_time_end" => "Waktu Berakhir",
     "lbl_date_end" => "Tgl Berakhir",
 
     "lbl_product_distribution" => "Distribusi",
