@@ -49,7 +49,7 @@
                             <td>{{ $trip->active_trip }}</td>
                             <td>{{ $trip->photo }}</td>
                             <td>{{ $trip->notes }}</td>
-                            <td>{{ $trip->lbl_created_at }}</td>
+                            <td>{{ $trip->created_at }}</td>
                         </tr>
                     @endforeach
                 </tbody>
