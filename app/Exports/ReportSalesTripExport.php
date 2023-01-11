@@ -41,6 +41,7 @@ class ReportSalesTripExport implements FromCollection,WithColumnFormatting, With
             'Active',
             'Photo',
             'Notes',
+            'Created At',
         ];
     }
     public function collection()
