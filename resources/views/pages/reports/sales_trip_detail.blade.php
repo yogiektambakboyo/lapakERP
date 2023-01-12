@@ -24,12 +24,11 @@
         <table class="table table-striped" id="example">
             <thead>
                 <tr>
-                    branch_name,dated,s.name as sellername,st.id as trip_id,std.longitude,std.latitude,std.georeverse,std.created_at 
                     <th scope="col" width="6%">@lang('general.lbl_branch')</th>
                     <th scope="col" width="8%">@lang('general.lbl_dated')</th>
                     <th scope="col" width="17%">@lang('general.lbl_seller')</th>
                     <th scope="col" width="5%">@lang('general.lbl_trip_id')</th>
-                    <th scope="col" width="5%">@lang('general.lbl_latitude')</th>
+                    <th scope="col" width="5%">@lang('general.lbl_longitude')</th>
                     <th scope="col" width="4%">@lang('general.lbl_latitude')</th>
                     <th scope="col" width="5%">@lang('general.lbl_georeverse')</th>   
                     <th scope="col" width="12%">@lang('general.lbl_created_at')</th>    

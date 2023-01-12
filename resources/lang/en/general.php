@@ -192,6 +192,8 @@ return [
     "lbl_payment" => "Pembayaran",
     "lbl_cashier" => "Kasir",
     "lbl_cash" => "Tunai",
+    "lbl_longitude" => "Longitude",
+    "lbl_latitude" => "Latitude",
     "lbl_type_payment" => "Tipe Bayar",
     "lbl_nominal_payment" => "Nominal Pembayaran",
     "lbl_type_paymentselect" => "Pilih Pembayaran",
