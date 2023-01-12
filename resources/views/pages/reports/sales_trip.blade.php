@@ -198,7 +198,7 @@
                 </div>
                 <div class="modal-body">
                     <div class="col-md-12">
-                        <img id="dialog_img" src="">
+                        <img id="dialog_img" src="" width="500px" height="400px">
                     </div>
                 </div>
             </div>
