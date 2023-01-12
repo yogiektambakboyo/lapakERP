@@ -61,7 +61,7 @@ class ReportCustomerRegController extends Controller
         $branchs = Branch::join('users_branch as ub','ub.branch_id', '=', 'branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']);        
 
         $report_data = DB::select("
-            select b.remark as  branch_name,s.name as sellername,cr.id,cr.name,cr.address,cr.phone_no,cr.handphone,cr.city,cr.credit_limit,cr.longitude,cr.latitude,cr.email,cr.citizen_id,cr.tax_id,cr.contact_person,cr.contact_person_job_position,cr.contact_person_level,cr.type,cr.clasification,cr.photo,regexp_replace(cr.notes, E'[\\n\\r]+', ' ', 'g' ) as notes  
+            select b.remark as  branch_name,s.name as sellername,cr.id,cr.name,cr.address,cr.phone_no,cr.handphone,cr.city,cr.credit_limit,cr.longitude,cr.latitude,cr.email,cr.citizen_id,cr.tax_id,cr.contact_person,cr.contact_person_job_position,cr.contact_person_level,cr.type,cr.clasification,cr.photo,regexp_replace(cr.notes, E'[\\n\\r]+', ' ', 'g' ) as notes,cr.created_at 
             from customers_registration cr 
             join sales s on s.id = cr.sales_id 
             join branch b on b.id = s.branch_id  order by  b.remark
@@ -94,7 +94,7 @@ class ReportCustomerRegController extends Controller
             return Excel::download(new ReportSalesTripExport($strencode), 'report_sales_trip_'.Carbon::now()->format('YmdHis').'.xlsx');
         }else{
             $report_data = DB::select("
-                    select b.remark as  branch_name,s.name as sellername,cr.id,cr.name,cr.address,cr.phone_no,cr.handphone,cr.city,cr.credit_limit,cr.longitude,cr.latitude,cr.email,cr.citizen_id,cr.tax_id,cr.contact_person,cr.contact_person_job_position,cr.contact_person_level,cr.type,cr.clasification,cr.photo,regexp_replace(cr.notes, E'[\\n\\r]+', ' ', 'g' ) as notes  
+                    select b.remark as  branch_name,s.name as sellername,cr.id,cr.name,cr.address,cr.phone_no,cr.handphone,cr.city,cr.credit_limit,cr.longitude,cr.latitude,cr.email,cr.citizen_id,cr.tax_id,cr.contact_person,cr.contact_person_job_position,cr.contact_person_level,cr.type,cr.clasification,cr.photo,regexp_replace(cr.notes, E'[\\n\\r]+', ' ', 'g' ) as notes,cr.created_at  
                     from customers_registration cr 
                     join sales s on s.id = cr.sales_id 
                     join branch b on b.id = s.branch_id and b.id::character varying like '%".$branchx."%'
