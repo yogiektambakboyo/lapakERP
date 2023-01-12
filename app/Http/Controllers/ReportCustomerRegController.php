@@ -34,7 +34,7 @@ class ReportCustomerRegController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-    private $data,$act_permission,$module="ReportCustomerRegController",$id=1;
+    private $data,$act_permission,$module="customer_registration",$id=1;
 
     public function __construct()
     {
