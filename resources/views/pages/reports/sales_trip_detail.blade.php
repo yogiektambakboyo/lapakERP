@@ -28,7 +28,7 @@
                     <th scope="col" width="8%">@lang('general.lbl_dated')</th>
                     <th scope="col" width="10%">@lang('general.lbl_seller')</th>
                     <th scope="col" width="5%">@lang('general.lbl_trip_id')</th>
-                    <th scope="col" width="4%">@lang('general.lbl_georeverse')</th>
+                    <th scope="col" width="4%">@lang('general.lbl_geolocation')</th>
                     <th scope="col">@lang('general.lbl_georeverse')</th>   
                     <th scope="col" width="12%">@lang('general.lbl_created_at')</th>    
                 </tr>
