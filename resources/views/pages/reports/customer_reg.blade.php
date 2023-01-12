@@ -24,6 +24,7 @@
         <table class="table table-striped" id="example">
             <thead>
                 <tr>
+                    <th scope="col" width="5%">@lang('general.lbl_photo')</th> 
                     <th scope="col" width="6%">@lang('general.lbl_branch')</th>
                     <th scope="col" width="17%">@lang('general.lbl_seller')</th>
                     <th scope="col" width="5%">@lang('general.lbl_id')</th>
@@ -42,8 +43,7 @@
                     <th scope="col" width="12%">@lang('general.lbl_contactpersonlevel')</th>    
                     <th scope="col" width="12%">@lang('general.lbl_contactperson')</th>    
                     <th scope="col" width="12%">@lang('general.lbl_type')</th>    
-                    <th scope="col" width="12%">@lang('general.lbl_classification')</th>    
-                    <th scope="col" width="12%">@lang('general.lbl_photo')</th>    
+                    <th scope="col" width="12%">@lang('general.lbl_classification')</th>       
                     <th scope="col" width="12%">@lang('general.lbl_notes')</th>    
                     <th scope="col" width="12%">@lang('general.lbl_created_at')</th>    
                 </tr>
@@ -52,6 +52,7 @@
     
                     @foreach($report_data as $trip)
                         <tr>
+                            <td><button  class="btn btn-sm btn-primary" onclick="openDialogImage('{{ $trip->photo }}')" value="Show Photo">Show Photo</button></td>
                             <th scope="row">{{ $trip->branch_name }}</th>
                             <th scope="row">{{ $trip->sellername }}</th>
                             <td>{{ $trip->id }}</td>
@@ -71,7 +72,6 @@
                             <td>{{ $trip->contact_person_level }}</td>
                             <td>{{ $trip->type }}</td>
                             <td>{{ $trip->clasification }}</td>
-                            <td>{{ $trip->photo }}</td>
                             <td>{{ $trip->notes }}</td>
                             <td>{{ $trip->created_at }}</td>
                         </tr>
@@ -166,6 +166,24 @@
             </div>
             </div>
         </div>
+
+        
+        <div class="modal fade" id="modal-filterimg" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+            <div class="modal-dialog  modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                <h5 class="modal-title"  id="input_expired_list_at_lbl">Gambar</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="col-md-12 d-flex justify-content-center">
+                        <img id="dialog_img" src="" width="600px">
+                    </div>
+                </div>
+            </div>
+            </div>
+        </div>
+
 
         <!-- Vertically centered modal -->
         <!-- Modal -->
@@ -262,6 +280,11 @@
           function openDialogFilterSearch(command){
             $('#export').val(command);
             myModal2.show();
+          }
+
+          function openDialogImage(command){
+            $('#dialog_img').attr("src", "https://kakikupos.com/images/smd-image/"+command);
+            myModalImg.show();
           }
 
 

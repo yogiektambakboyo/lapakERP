@@ -143,6 +143,10 @@ return [
     "lbl_product_price" => "Harga Produk",
     "lbl_product_name" => "Nama Produk",
     "lbl_success" => "Berhasil",
+    "lbl_contactpersonjobpos" => "Jabatan",
+    "lbl_contactpersonlevel" => "Jabatan",
+    "lbl_classification" => "Klasifikasi",
+    "lbl_notes" => "Catatan",
     "lbl_customer_type" => "Tipe Tamu",
     "lbl_msg_success_invoice" => "Faktur berhasil dibuat dengan nomor ",
 
