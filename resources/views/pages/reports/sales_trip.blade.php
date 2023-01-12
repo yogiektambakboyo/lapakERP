@@ -47,7 +47,7 @@
                             <td>{{ $trip->time_start }}</td>
                             <td>{{ $trip->time_end }}</td>
                             <td>{{ $trip->active_trip }}</td>
-                            <td>{{ $trip->photo }}</td>
+                            <td><button onclick='openDialogImage( {{ $trip->photo }} )'></td>
                             <td>{{ $trip->notes }}</td>
                             <td>{{ $trip->created_at }}</td>
                         </tr>
@@ -189,6 +189,22 @@
             </div>
         </div>
 
+        <div class="modal fade" id="modal-filterimg" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+            <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                <h5 class="modal-title"  id="input_expired_list_at_lbl">Gambar</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="col-md-12">
+                        <img id="dialog_img" src="">
+                    </div>
+                </div>
+            </div>
+            </div>
+        </div>
+
 
     </div>
 @endsection
@@ -227,6 +243,7 @@
 
           var myModal = new bootstrap.Modal(document.getElementById('modal-filter'));
           var myModal2 = new bootstrap.Modal(document.getElementById('modal-filter2'));
+          var myModalImg = new bootstrap.Modal(document.getElementById('modal-filterimg'));
 
           function openDialog(branch_id,dated,shift_id){
             $('#filter_branch_id').val(branch_id);
@@ -238,6 +255,11 @@
           function openDialogFilterSearch(command){
             $('#export').val(command);
             myModal2.show();
+          }
+
+          function openDialogImage(command){
+            $('#dialog_img').attr("src", command);
+            myModalImg.show();
           }
 
 
