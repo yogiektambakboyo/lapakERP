@@ -61,10 +61,12 @@ class ReportSalesTripController extends Controller
         $branchs = Branch::join('users_branch as ub','ub.branch_id', '=', 'branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']);        
 
         $report_data = DB::select("
-            select b.remark as  branch_name,dated,s.name as sellername,st.id as trip_id,st.time_start,st.time_end,st.active as active_trip,st.photo, st.notes,st.created_at 
-            from sales_trip st 
-            join sales s on s.id = st.sales_id 
-            join branch b on b.id = s.branch_id order by b.remark,s.name,st.time_start       
+                select b.remark as  branch_name,dated,s.name as sellername,st.id as trip_id,to_char(st.time_start,'yyyy-MM-dd HH24:MI') time_start,to_char(st.time_end,'yyyy-MM-dd HH24:MI') time_end,st.active as active_trip,st.photo, st.notes,to_char(st.created_at,'yyyy-MM-dd HH24:MI:ss') created_at 
+                from sales_trip st 
+                join sales s on s.id = st.sales_id 
+                join branch b on b.id = s.branch_id
+                where st.dated > now()-interval'7 days'
+                order by b.remark,s.name,st.time_start   
         ");
         $data = $this->data;
         $keyword = "";
@@ -94,12 +96,13 @@ class ReportSalesTripController extends Controller
             return Excel::download(new ReportSalesTripExport($strencode), 'report_sales_trip_'.Carbon::now()->format('YmdHis').'.xlsx');
         }else{
             $report_data = DB::select("
-                select b.remark as  branch_name,dated,s.name as sellername,st.id as trip_id,st.time_start,st.time_end,st.active as active_trip,st.photo, st.notes,st.created_at 
-                from sales_trip st 
-                join sales s on s.id = st.sales_id 
-                join branch b on b.id = s.branch_id  and b.id::character varying like '%".$branchx."%' 
-                where st.dated between '".$begindate."' and '".$enddate."'
-                order by b.remark,s.name,st.time_start    
+                    select b.remark as  branch_name,dated,s.name as sellername,st.id as trip_id,to_char(st.time_start,'yyyy-MM-dd HH24:MI') time_start,to_char(st.time_end,'yyyy-MM-dd HH24:MI') time_end,st.active as active_trip,st.photo, st.notes,to_char(st.created_at,'yyyy-MM-dd HH24:MI:ss') created_at 
+                    from sales_trip st 
+                    join sales s on s.id = st.sales_id 
+                    join branch b on b.id = s.branch_id  and b.id::character varying like '%".$branchx."%' 
+                    where st.dated between '".$begindate."' and '".$enddate."'
+                    order by b.remark,s.name,st.time_start   
+        
             ");          
             return view('pages.reports.sales_trip',['company' => Company::get()->first()], compact('report_data','branchs','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
         }
