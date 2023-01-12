@@ -177,6 +177,8 @@ return [
     "lbl_dated" => "Tanggal",
     "lbl_time" => "Jam",
     "lbl_remark" => "Catatan",
+    "lbl_phone_no" => "Nomor Telepon",
+    "lbl_email" => "Email",
     "lbl_customer" => "Pelanggan",
     "lbl_username" => "Username",
     "lbl_password" => "Password",
