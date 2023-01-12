@@ -269,6 +269,7 @@
 
           var myModal = new bootstrap.Modal(document.getElementById('modal-filter'));
           var myModal2 = new bootstrap.Modal(document.getElementById('modal-filter2'));
+          var myModalImg = new bootstrap.Modal(document.getElementById('modal-filterimg'));
 
           function openDialog(branch_id,dated,shift_id){
             $('#filter_branch_id').val(branch_id);
