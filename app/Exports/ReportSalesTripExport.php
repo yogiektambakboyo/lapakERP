@@ -39,16 +39,16 @@ class ReportSalesTripExport implements FromCollection,WithColumnFormatting, With
             'Time Start',
             'Time End',
             'Active',
-            'Photo',
             'Notes',
             'Created At',
+            'Photo',
         ];
     }
     public function collection()
     {
         return collect(DB::select("
 
-            select b.remark as  branch_name,dated,s.name as sellername,st.id as trip_id,st.time_start,st.time_end,st.active as active_trip,st.photo, st.notes,st.created_at 
+            select b.remark as  branch_name,dated,s.name as sellername,st.id as trip_id,st.time_start,st.time_end,st.active as active_trip, st.notes,st.created_at,'https://kakikupos.com/images/smd-image/'||st.photo as photo 
             from sales_trip st 
             join sales s on s.id = st.sales_id 
             join branch b on b.id = s.branch_id and b.id::character varying like '%".$this->branch."%'

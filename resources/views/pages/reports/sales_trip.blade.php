@@ -26,14 +26,14 @@
                 <tr>
                     <th scope="col" width="6%">@lang('general.lbl_branch')</th>
                     <th scope="col" width="8%">@lang('general.lbl_dated')</th>
-                    <th scope="col" width="17%">@lang('general.lbl_seller')</th>
+                    <th scope="col" width="10%">@lang('general.lbl_seller')</th>
                     <th scope="col" width="5%">@lang('general.lbl_trip_id')</th>
                     <th scope="col" width="5%">@lang('general.lbl_time_start')</th>
                     <th scope="col" width="4%">@lang('general.lbl_time_end')</th>
                     <th scope="col" width="5%">@lang('general.lbl_active')</th>   
-                    <th scope="col" width="12%">@lang('general.lbl_photo')</th>
                     <th scope="col" width="12%">@lang('general.lbl_remark')</th>    
-                    <th scope="col" width="12%">@lang('general.lbl_created_at')</th>    
+                    <th scope="col">@lang('general.lbl_created_at')</th>    
+                    <th scope="col" width="12%">@lang('general.lbl_photo')</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -47,9 +47,9 @@
                             <td>{{ $trip->time_start }}</td>
                             <td>{{ $trip->time_end }}</td>
                             <td>{{ $trip->active_trip }}</td>
-                            <td><button  class="btn btn-sm btn-primary" onclick="openDialogImage('{{ $trip->photo }}')" value="Show Photo">Show Photo</button></td>
                             <td>{{ $trip->notes }}</td>
                             <td>{{ $trip->created_at }}</td>
+                            <td><button  class="btn btn-sm btn-primary" onclick="openDialogImage('{{ $trip->photo }}')" value="Show Photo">Show Photo</button></td>
                         </tr>
                     @endforeach
                 </tbody>
