@@ -756,6 +756,8 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
             Route::get('/search_sales_trip', 'ReportSalesTripController@search')->name('reports.sales_trip.search');
             Route::get('/sales_trip_detail', 'ReportSalesTripDetailController@index')->name('reports.sales_trip_detail.index');
             Route::get('/search_sales_trip_detail', 'ReportSalesTripDetailController@search')->name('reports.sales_trip_detail.search');
+            Route::get('/customer_reg', 'ReportCustomerRegDetailController@index')->name('reports.customer_reg.index');
+            Route::get('/search_customer_reg_detail', 'ReportCustomerRegDetailController@search')->name('reports.customer_reg.search');
             Route::get('/terapist', 'ReportTerapistComController@index')->name('reports.terapist.index');
             Route::get('/search_terapist', 'ReportTerapistComController@search')->name('reports.terapist.search');
             Route::get('/terapistdaily', 'ReportTerapistComDailyController@index')->name('reports.terapistdaily.index');
