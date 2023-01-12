@@ -91,7 +91,7 @@ class ReportCustomerRegController extends Controller
 
         if($request->export=='Export Excel'){
             $strencode = base64_encode($begindate.'#'.$enddate.'#'.$branchx.'#'.$user->id);
-            return Excel::download(new ReportSalesTripExport($strencode), 'report_sales_trip_'.Carbon::now()->format('YmdHis').'.xlsx');
+            return Excel::download(new ReportCustomerReg($strencode), 'report_customer_reg'.Carbon::now()->format('YmdHis').'.xlsx');
         }else{
             $report_data = DB::select("
                     select b.remark as  branch_name,s.name as sellername,cr.id,cr.name,cr.address,cr.phone_no,cr.handphone,cr.city,cr.credit_limit,cr.longitude,cr.latitude,cr.email,cr.citizen_id,cr.tax_id,cr.contact_person,cr.contact_person_job_position,cr.contact_person_level,cr.type,cr.clasification,cr.photo,regexp_replace(cr.notes, E'[\\n\\r]+', ' ', 'g' ) as notes,cr.created_at  
