@@ -47,7 +47,7 @@
                             <td>{{ $trip->time_start }}</td>
                             <td>{{ $trip->time_end }}</td>
                             <td>{{ $trip->active_trip }}</td>
-                            <td><button onclick='openDialogImage( {{ $trip->photo }} )' value="Show Photo"></td>
+                            <td><button onclick='openDialogImage( {{ $trip->photo }} )' value="Show Photo">Show Photo</button></td>
                             <td>{{ $trip->notes }}</td>
                             <td>{{ $trip->created_at }}</td>
                         </tr>
