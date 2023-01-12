@@ -34,8 +34,7 @@
                     <th scope="col" width="12%">@lang('general.lbl_handphone')</th>
                     <th scope="col" width="12%">@lang('general.lbl_city')</th>    
                     <th scope="col" width="12%">@lang('general.lbl_creditlimit')</th>    
-                    <th scope="col" width="12%">@lang('general.lbl_longitude')</th>    
-                    <th scope="col" width="12%">@lang('general.lbl_latitude')</th>    
+                    <th scope="col" width="12%">@lang('general.lbl_geolocation')</th>     
                     <th scope="col" width="12%">@lang('general.lbl_email')</th>    
                     <th scope="col" width="12%">@lang('general.lbl_citizenid')</th>    
                     <th scope="col" width="12%">@lang('general.lbl_contactperson')</th>    
@@ -62,8 +61,7 @@
                             <td>{{ $trip->handphone }}</td>
                             <td>{{ $trip->city }}</td>
                             <td>{{ $trip->credit_limit }}</td>
-                            <td>{{ $trip->longitude }}</td>
-                            <td>{{ $trip->latitude }}</td>
+                            <td><a target="_blank" class="btn btn-sm btn-primary" href="http://maps.google.com/maps?q={{ $trip->latitude }},{{ $trip->longitude }}" value="Lihat Peta">Peta</a> {{ $trip->latitude }},{{ $trip->longitude }}</td>
                             <td>{{ $trip->email }}</td>
                             <td>{{ $trip->citizen_id }}</td>
                             <td>{{ $trip->tax_id }}</td>

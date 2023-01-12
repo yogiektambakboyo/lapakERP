@@ -211,6 +211,7 @@ return [
     "lbl_type_paymentselect" => "Pilih Pembayaran",
     "lbl_charge" => "Kembalian",
     "lbl_georeverse" => "Geo Reverse",
+    "lbl_geolocation" => "Geolocation",
     "lbl_assign" => "Penugasan",
     "lbl_room" => "Kamar",
     "lbl_room_new" => "Buat Kamar",
