@@ -17,7 +17,7 @@ use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
 use Spatie\Permission\Models\Permission;
 use Maatwebsite\Excel\Facades\Excel;
-use App\Exports\ReportSalesTripExport;
+use App\Exports\ReportSalesTripDetailExport;
 use App\Http\Controllers\Controller;
 use Yajra\Datatables\Datatables;
 use Auth;
@@ -26,7 +26,7 @@ use App\Models\Company;
 use App\Http\Controllers\Lang;
 
 
-class ReportSalesTripController extends Controller
+class ReportSalesTripDetailController extends Controller
 {
     /**
      * Display all products
@@ -34,7 +34,7 @@ class ReportSalesTripController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-    private $data,$act_permission,$module="sales_trip",$id=1;
+    private $data,$act_permission,$module="sales_trip_detail",$id=1;
 
     public function __construct()
     {
@@ -60,18 +60,19 @@ class ReportSalesTripController extends Controller
         $this->getpermissions($id);
         $branchs = Branch::join('users_branch as ub','ub.branch_id', '=', 'branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']);        
 
-        $report_data = DB::select("
-            select b.remark as  branch_name,dated,s.name as sellername,st.id as trip_id,st.time_start,st.time_end,st.active as active_trip,st.photo, st.notes,st.created_at 
+        $report_data = DB::select("             
+            select b.remark as  branch_name,dated,s.name as sellername,st.id as trip_id,std.longitude,std.latitude,std.georeverse,std.created_at 
             from sales_trip st 
+            join sales_trip_detail std on std.trip_id = st.id
             join sales s on s.id = st.sales_id 
-            join branch b on b.id = s.branch_id order by b.remark,s.name,st.time_start       
+            join branch b on b.id = s.branch_id  order by st.dated, b.remark,std.trip_id 
         ");
         $data = $this->data;
         $keyword = "";
         $act_permission = $this->act_permission[0];
         $brands = ProductBrand::orderBy('product_brand.remark', 'ASC')
                     ->paginate(10,['product_brand.id','product_brand.remark']);
-        return view('pages.reports.sales_trip',['company' => Company::get()->first()] ,compact('brands','branchs','data','keyword','act_permission','report_data'))->with('i', ($request->input('page', 1) - 1) * 5);
+        return view('pages.reports.sales_trip_detail',['company' => Company::get()->first()] ,compact('brands','branchs','data','keyword','act_permission','report_data'))->with('i', ($request->input('page', 1) - 1) * 5);
     }
 
     public function search(Request $request) 
@@ -91,24 +92,28 @@ class ReportSalesTripController extends Controller
 
         if($request->export=='Export Excel'){
             $strencode = base64_encode($begindate.'#'.$enddate.'#'.$branchx.'#'.$user->id);
-            return Excel::download(new ReportSalesTripExport($strencode), 'report_sales_trip_'.Carbon::now()->format('YmdHis').'.xlsx');
+            return Excel::download(new ReportSalesTripDetailExport($strencode), 'report_sales_trip_'.Carbon::now()->format('YmdHis').'.xlsx');
         }else{
             $report_data = DB::select("
-                select b.remark as  branch_name,dated,s.name as sellername,st.id as trip_id,st.time_start,st.time_end,st.active as active_trip,st.photo, st.notes,st.created_at 
+
+                                
+                select b.remark as  branch_name,dated,s.name as sellername,st.id as trip_id,std.longitude,std.latitude,std.georeverse,std.created_at 
                 from sales_trip st 
+                join sales_trip_detail std on std.trip_id = st.id
                 join sales s on s.id = st.sales_id 
-                join branch b on b.id = s.branch_id  and b.id::character varying like '%".$branchx."%' 
+                join branch b on b.id = s.branch_id  and b.id::character varying like '%".$branchx."%'
                 where st.dated between '".$begindate."' and '".$enddate."'
-                order by b.remark,s.name,st.time_start    
+                order by st.dated, b.remark,std.trip_id 
+ 
             ");          
-            return view('pages.reports.sales_trip',['company' => Company::get()->first()], compact('report_data','branchs','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
+            return view('pages.reports.sales_trip_detail',['company' => Company::get()->first()], compact('report_data','branchs','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
         }
     }
 
     public function export(Request $request) 
     {
         $keyword = $request->search;
-        return Excel::download(new ProductsExport, 'salestrip_'.Carbon::now()->format('YmdHis').'.xlsx');
+        return Excel::download(new ProductsExport, 'tripdetail_'.Carbon::now()->format('YmdHis').'.xlsx');
     }
 
 

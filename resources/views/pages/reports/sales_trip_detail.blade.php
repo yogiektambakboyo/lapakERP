@@ -4,7 +4,7 @@
 
 @section('content')
     <div class="bg-light p-4 rounded">
-        <h1>@lang('general.lbl_report') - @lang('general.lbl_trip')</h1>
+        <h1>@lang('general.lbl_report') - @lang('general.lbl_trip_detail')</h1>
         <div class="lead row mb-3">
             <div class="col-md-10">
                 <div class="col-md-8">
@@ -24,15 +24,14 @@
         <table class="table table-striped" id="example">
             <thead>
                 <tr>
+                    branch_name,dated,s.name as sellername,st.id as trip_id,std.longitude,std.latitude,std.georeverse,std.created_at 
                     <th scope="col" width="6%">@lang('general.lbl_branch')</th>
                     <th scope="col" width="8%">@lang('general.lbl_dated')</th>
                     <th scope="col" width="17%">@lang('general.lbl_seller')</th>
                     <th scope="col" width="5%">@lang('general.lbl_trip_id')</th>
-                    <th scope="col" width="5%">@lang('general.lbl_time_start')</th>
-                    <th scope="col" width="4%">@lang('general.lbl_time_end')</th>
-                    <th scope="col" width="5%">@lang('general.lbl_active')</th>   
-                    <th scope="col" width="12%">@lang('general.lbl_photo')</th>
-                    <th scope="col" width="12%">@lang('general.lbl_remark')</th>    
+                    <th scope="col" width="5%">@lang('general.lbl_latitude')</th>
+                    <th scope="col" width="4%">@lang('general.lbl_latitude')</th>
+                    <th scope="col" width="5%">@lang('general.lbl_georeverse')</th>   
                     <th scope="col" width="12%">@lang('general.lbl_created_at')</th>    
                 </tr>
                 </thead>
@@ -44,11 +43,9 @@
                             <th scope="row">{{ $trip->dated }}</th>
                             <td>{{ $trip->sellername }}</td>
                             <td>{{ $trip->trip_id }}</td>
-                            <td>{{ $trip->time_start }}</td>
-                            <td>{{ $trip->time_end }}</td>
-                            <td>{{ $trip->active_trip }}</td>
-                            <td>{{ $trip->photo }}</td>
-                            <td>{{ $trip->notes }}</td>
+                            <td>{{ $trip->latitude }}</td>
+                            <td>{{ $trip->latitude }}</td>
+                            <td>{{ $trip->georeverse }}</td>
                             <td>{{ $trip->created_at }}</td>
                         </tr>
                     @endforeach

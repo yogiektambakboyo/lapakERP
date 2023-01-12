@@ -10,7 +10,7 @@ use Maatwebsite\Excel\Concerns\WithHeadings;
 use Illuminate\Support\Facades\DB;
 
 
-class ReportSalesTripExport implements FromCollection,WithColumnFormatting, WithHeadings
+class ReportSalesTripDetailExport implements FromCollection,WithColumnFormatting, WithHeadings
 {
     /**
     * @return \Illuminate\Support\Collection
@@ -36,11 +36,9 @@ class ReportSalesTripExport implements FromCollection,WithColumnFormatting, With
             'Dated',
             'Seller Name',
             'Trip ID',
-            'Time Start',
-            'Time End',
-            'Active',
-            'Photo',
-            'Notes',
+            'Longitude',
+            'Latitude',
+            'Georeverse',
             'Created At',
         ];
     }
@@ -48,12 +46,14 @@ class ReportSalesTripExport implements FromCollection,WithColumnFormatting, With
     {
         return collect(DB::select("
 
-            select b.remark as  branch_name,dated,s.name as sellername,st.id as trip_id,st.time_start,st.time_end,st.active as active_trip,st.photo, st.notes,st.created_at 
+                        
+            select b.remark as  branch_name,dated,s.name as sellername,st.id as trip_id,std.longitude,std.latitude,std.georeverse,std.created_at 
             from sales_trip st 
+            join sales_trip_detail std on std.trip_id = st.id
             join sales s on s.id = st.sales_id 
-            join branch b on b.id = s.branch_id and b.id::character varying like '%".$this->branch."%'
+            join branch b on b.id = s.branch_id  and b.id::character varying like '%".$this->branch."%'
             where st.dated between '".$this->begindate."' and '".$this->enddate."'
-            order by b.remark,s.name,st.time_start  
+            order by st.dated, b.remark,std.trip_id 
         
         ")); 
     }
