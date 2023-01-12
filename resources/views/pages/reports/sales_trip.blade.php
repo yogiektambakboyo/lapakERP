@@ -197,8 +197,8 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <div class="col-md-12">
-                        <img id="dialog_img" src="" width="500px" height="400px">
+                    <div class="col-md-12 d-flex justify-content-center">
+                        <img id="dialog_img" src="" width="600px">
                     </div>
                 </div>
             </div>
