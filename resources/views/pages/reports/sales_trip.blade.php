@@ -258,7 +258,7 @@
           }
 
           function openDialogImage(command){
-            $('#dialog_img').attr("src", "http://kakikupos.com:8081/getImage/"+command);
+            $('#dialog_img').attr("src", "https://kakikupos.com/images/smd-image/"+command);
             myModalImg.show();
           }
 
