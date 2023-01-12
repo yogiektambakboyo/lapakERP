@@ -21,7 +21,7 @@
             @include('layouts.partials.messages')
         </div>
 
-        <table class="table table-striped" id="example">
+        <table class="table table-striped display nowrap" id="example"  style="width:100%">
             <thead>
                 <tr>
                     <th scope="col">@lang('general.lbl_photo')</th> 
@@ -31,20 +31,20 @@
                     <th scope="col">@lang('general.lbl_name')</th>
                     <th scope="col">@lang('general.lbl_address')</th>
                     <th scope="col">@lang('general.lbl_phone_no')</th>   
-                    <th scope="col">@lang('general.lbl_handphone')</th>
-                    <th scope="col">@lang('general.lbl_city')</th>    
-                    <th scope="col">@lang('general.lbl_creditlimit')</th>    
-                    <th scope="col">@lang('general.lbl_geolocation')</th>     
-                    <th scope="col">@lang('general.lbl_email')</th>    
-                    <th scope="col">@lang('general.lbl_citizenid')</th>    
-                    <th scope="col">@lang('general.lbl_contactperson')</th>    
-                    <th scope="col">@lang('general.lbl_contactpersonjobpos')</th>    
-                    <th scope="col">@lang('general.lbl_contactpersonlevel')</th>    
-                    <th scope="col">@lang('general.lbl_contactperson')</th>    
-                    <th scope="col">@lang('general.lbl_type')</th>    
-                    <th scope="col">@lang('general.lbl_classification')</th>       
-                    <th scope="col">@lang('general.lbl_notes')</th>    
-                    <th scope="col">@lang('general.lbl_created_at')</th>    
+                    <th scope="col" width="12%">@lang('general.lbl_handphone')</th>
+                    <th scope="col" width="12%">@lang('general.lbl_city')</th>    
+                    <th scope="col" width="12%">@lang('general.lbl_creditlimit')</th>    
+                    <th scope="col" width="12%">@lang('general.lbl_geolocation')</th>     
+                    <th scope="col" width="12%">@lang('general.lbl_email')</th>    
+                    <th scope="col" width="12%">@lang('general.lbl_citizenid')</th>    
+                    <th scope="col" width="12%">@lang('general.lbl_contactperson')</th>    
+                    <th scope="col" width="12%">@lang('general.lbl_contactpersonjobpos')</th>    
+                    <th scope="col" width="12%">@lang('general.lbl_contactpersonlevel')</th>    
+                    <th scope="col" width="12%">@lang('general.lbl_contactperson')</th>    
+                    <th scope="col" width="12%">@lang('general.lbl_type')</th>    
+                    <th scope="col" width="12%">@lang('general.lbl_classification')</th>       
+                    <th scope="col" width="12%">@lang('general.lbl_notes')</th>    
+                    <th scope="col" width="12%">@lang('general.lbl_created_at')</th>    
                 </tr>
                 </thead>
                 <tbody>
