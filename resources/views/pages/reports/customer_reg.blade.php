@@ -59,6 +59,7 @@
                             <td>{{ $trip->address }}</td>
                             <td>{{ $trip->phone_no }}</td>
                             <td>{{ $trip->handphone }}</td>
+                            <td>{{ $trip->city }}</td>
                             <td>{{ $trip->credit_limit }}</td>
                             <td>{{ $trip->longitude }}</td>
                             <td>{{ $trip->latitude }}</td>

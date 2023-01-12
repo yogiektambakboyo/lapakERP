@@ -46,7 +46,6 @@ class ReportCustomerRegExport implements FromCollection,WithColumnFormatting, Wi
             'Email',
             'Citizen Id',
             'Tax ID',
-            'Citizen Id',
             'Contact Person',
             'Contact Person Job Position',
             'contact Person Level',
@@ -60,7 +59,8 @@ class ReportCustomerRegExport implements FromCollection,WithColumnFormatting, Wi
     public function collection()
     {
         return collect(DB::select("
-                select b.remark as  branch_name,s.name as sellername,cr.id,cr.name,cr.address,cr.phone_no,cr.handphone,cr.city,cr.credit_limit,cr.longitude,cr.latitude,cr.email,cr.citizen_id,cr.tax_id,cr.contact_person,cr.contact_person_job_position,cr.contact_person_level,cr.type,cr.clasification,cr.photo,regexp_replace(cr.notes, E'[\\n\\r]+', ' ', 'g' ) as notes  
+                select b.remark as  branch_name,s.name as sellername,cr.id,cr.name,cr.address,cr.phone_no,cr.handphone,cr.city,cr.credit_limit,cr.longitude,cr.latitude,cr.email,cr.citizen_id,cr.tax_id,
+                cr.contact_person,cr.contact_person_job_position,cr.contact_person_level,cr.type,cr.clasification,cr.photo,regexp_replace(cr.notes, E'[\\n\\r]+', ' ', 'g' ) as notes  
                 from customers_registration cr 
                 join sales s on s.id = cr.sales_id 
                 join branch b on b.id = s.branch_id and b.id::character varying like '%".$this->branch."%'
