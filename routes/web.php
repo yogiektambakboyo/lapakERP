@@ -665,6 +665,22 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
         });
 
         /**
+         *  Customers
+         */
+        Route::group(['prefix' => 'sales'], function() {
+            Route::get('/', 'SalesController@index')->name('sales.index');
+            Route::get('/create', 'SalesController@create')->name('sales.create');
+            Route::post('/create', 'SalesController@store')->name('sales.store');
+            Route::post('/createapi', 'SalesController@storeapi')->name('sales.storeapi');
+            Route::get('/{sales}/show', 'SalesController@show')->name('sales.show');
+            Route::get('/{sales}/edit', 'SalesController@edit')->name('sales.edit');
+            Route::patch('/{sales}/update', 'SalesController@update')->name('sales.update');
+            Route::delete('/{sales}/delete', 'SalesController@destroy')->name('sales.destroy');
+            Route::get('/search', 'SalesController@search')->name('sales.search');
+            Route::get('/export', 'SalesController@export')->name('sales.export');
+        });
+
+        /**
          *  Shift
          */
         Route::group(['prefix' => 'shift'], function() {
@@ -736,6 +752,13 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
         Route::group(['prefix' => 'reports'], function() {
             Route::get('/cashier', 'ReportCashierComController@index')->name('reports.cashier.index');
             Route::get('/search_cashier', 'ReportCashierComController@search')->name('reports.cashier.search');
+            Route::get('/sales_trip', 'ReportSalesTripController@index')->name('reports.sales_trip.index');
+            Route::get('/search_sales_trip', 'ReportSalesTripController@search')->name('reports.sales_trip.search');
+            Route::get('/sales_trip_detail', 'ReportSalesTripDetailController@index')->name('reports.sales_trip_detail.index');
+            Route::get('/search_sales_trip_detail', 'ReportSalesTripDetailController@search')->name('reports.sales_trip_detail.search');
+            Route::get('/customer_reg', 'ReportCustomerRegController@index')->name('reports.customer_reg.index');
+            Route::get('/search_customer_reg', 'ReportCustomerRegController@search')->name('reports.customer_reg.search');
+            Route::post('/approve_customer_reg', 'ReportCustomerRegController@approve')->name('reports.customer_reg.approve');
             Route::get('/terapist', 'ReportTerapistComController@index')->name('reports.terapist.index');
             Route::get('/search_terapist', 'ReportTerapistComController@search')->name('reports.terapist.search');
             Route::get('/terapistdaily', 'ReportTerapistComDailyController@index')->name('reports.terapistdaily.index');
