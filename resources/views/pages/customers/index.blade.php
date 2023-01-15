@@ -35,8 +35,9 @@
             <tr>
                 <th scope="col" width="1%">#</th>
                 <th scope="col" width="10%">@lang('general.lbl_branch')</th>
+                <th scope="col" width="10%">@lang('general.lbl_seller')</th>
                 <th scope="col">@lang('general.lbl_name')</th>
-                <th scope="col" width="15%">@lang('general.lbl_address')</th>
+                <th scope="col" width="20%">@lang('general.lbl_address')</th>
                 <th scope="col" width="12%">@lang('general.lbl_phoneno')</th>
                 <th scope="col" width="12%">@lang('general.lbl_visit')</th>
                 <th scope="col" colspan="3" width="1%"></th> 
@@ -47,6 +48,7 @@
                     <tr>
                         <th scope="row">{{ $customer->id }}</th>
                         <td>{{ $customer->branch_name }}</td>
+                        <td>{{ $customer->sellername }}</td>
                         <td>{{ $customer->name }}</td>
                         <td>{{ $customer->address }}</td>
                         <td>{{ $customer->phone_no }}</td>

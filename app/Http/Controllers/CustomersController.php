@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Route;
 use Spatie\Permission\Models\Permission;
 use App\Models\Customer;
 use App\Models\Branch;
+use App\Models\Sales;
 use Auth;
 use App\Exports\CustomersExport;
 use Illuminate\Support\Facades\DB;
@@ -52,9 +53,10 @@ class CustomersController extends Controller
 
         $user = Auth::user();
         $Customers = Customer::join('branch as b','b.id','customers.branch_id')
+                            ->join('sales as s','s.id','customers.sales_id')
                             ->join('users_branch as ub', function($join){
                                 $join->on('ub.branch_id', '=', 'b.id');
-                            })->where('ub.user_id', $user->id)->paginate(10,['customers.*','b.remark as branch_name']);
+                            })->where('ub.user_id', $user->id)->paginate(10,['customers.*','s.name  as sellername','b.remark as branch_name']);
         $data = $this->data;
 
         $request->search = "";
@@ -86,9 +88,10 @@ class CustomersController extends Controller
             return Excel::download(new CustomersExport($strencode), 'customers_'.Carbon::now()->format('YmdHis').'.xlsx');
         }else if($request->src=='Search'){
             $Customers = Customer::join('branch as b','b.id','customers.branch_id')
+                            ->join('sales as s','s.id','customers.sales_id')
                             ->join('users_branch as ub', function($join){
                                 $join->on('ub.branch_id', '=', 'b.id');
-                            })->where('ub.user_id', $user->id)->where('customers.branch_id','like','%'.$branchx.'%')->where('customers.name','ILIKE','%'.$keyword.'%')->paginate(10,['customers.*','b.remark as branch_name']);
+                            })->where('ub.user_id', $user->id)->where('customers.branch_id','like','%'.$branchx.'%')->where('customers.name','ILIKE','%'.$keyword.'%')->paginate(10,['customers.*','s.name  as sellername','b.remark as branch_name']);
             $request->filter_branch_id = "";
             return view('pages.customers.index', [
                 'customers' => $Customers,'data' => $data , 
@@ -99,9 +102,10 @@ class CustomersController extends Controller
             ]);
         }else{
             $Customers = Customer::join('branch as b','b.id','customers.branch_id')
+                           ->join('sales as s','s.id','customers.sales_id')
                             ->join('users_branch as ub', function($join){
                                 $join->on('ub.branch_id', '=', 'b.id');
-                            })->where('ub.user_id', $user->id)->where('customers.branch_id','like','%'.$branchx.'%')->where('customers.name','ILIKE','%'.$keyword.'%')->paginate(10,['customers.*','b.remark as branch_name']);
+                            })->where('ub.user_id', $user->id)->where('customers.branch_id','like','%'.$branchx.'%')->where('customers.name','ILIKE','%'.$keyword.'%')->paginate(10,['customers.*','s.name as sellername','b.remark as branch_name']);
             return view('pages.customers.index', [
                 'customers' => $Customers,'data' => $data , 
                 'company' => Company::get()->first(),
@@ -123,10 +127,17 @@ class CustomersController extends Controller
         $user = Auth::user();
         $id = $user->roles->first()->id;
         $this->getpermissions($id);
- 
+
+        $sellers = Sales::join('users_branch as ub','ub.branch_id','=','sales.branch_id')->where('ub.user_id','=',$user->id)->orderBy('sales.name')->get(['sales.id','sales.name']);
         $data = $this->data;
-        return view('pages.customers.create',['data'=>$data,'branchs' => Branch::latest()->get(), 'company' => Company::get()->first(),
-        'userBranchs' => Branch::latest()->get()->pluck('remark')->toArray(),]);
+        return view('pages.customers.create',
+        [
+            'data'=>$data,
+            'branchs' => Branch::latest()->get(), 
+            'company' => Company::get()->first(),
+            'userBranchs' => Branch::latest()->get()->pluck('remark')->toArray(),
+            'sellers' => $sellers,
+        ]);
     }
 
     /**
@@ -137,7 +148,6 @@ class CustomersController extends Controller
      */
     public function store(Request $request)
     {   
-    
         Customer::create(
             array_merge( 
                 ['phone_no' => $request->get('phone_no') ],
@@ -145,6 +155,24 @@ class CustomersController extends Controller
                 ['address' => $request->get('address') ],
                 ['membership_id' => '1' ],
                 ['abbr' => '1' ],
+                ['branch_id' => $request->get('branch_id') ],
+                ['sales_id' => $request->get('sales_id') ],
+                ['city' => $request->get('city') ],
+                ['credit_limit' => $request->get('credit_limit') ],
+                ['longitude' => $request->get('longitude') ],
+                ['latitude' => $request->get('latitude') ],
+                ['email' => $request->get('email') ],
+                ['handphone' => $request->get('handphone') ],
+                ['whatsapp_no' => $request->get('whatsapp_no') ],
+                ['citizen_id' => $request->get('citizen_id') ],
+                ['tax_id' => $request->get('tax_id') ],
+                ['contact_person' => $request->get('contact_person') ],
+                ['type' => $request->get('type') ],
+                ['clasification' => $request->get('clasification') ],
+                ['contact_person_job_position' => $request->get('bcontact_person_job_positionranch_id') ],
+                ['contact_person_level' => $request->get('contact_person_level') ],
+                ['visit_day' => $request->get('input_day') ],
+                ['visit_week' => $request->get('input_week') ],
                 ['branch_id' => $request->get('branch_id') ],
             )
         );
@@ -186,11 +214,13 @@ class CustomersController extends Controller
     {
         $user = Auth::user();
         $id = $user->roles->first()->id;
+        $sellers = Sales::where('branch_id','=',$customer->branch_id)->get(['id','name']);
         $this->getpermissions($id);
         $data = $this->data;
         return view('pages.customers.edit', [
             'customer' => $Customer ,'data' => $data ,'branchs' => Branch::latest()->get(), 'company' => Company::get()->first(),
-            'userBranchs' => Branch::latest()->get()->pluck('remark')->toArray()
+            'userBranchs' => Branch::latest()->get()->pluck('remark')->toArray(),
+            'sellers' => $sellers,
         ]);
     }
 
