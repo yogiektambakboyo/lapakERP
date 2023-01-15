@@ -29,7 +29,7 @@
               <img src="data:image/png;base64,{{ base64_encode(file_get_contents(url("images/user-files/".$settings[0]->icon_file))) }}" width="180px"><br>
               <label>{{ $invoiceDetails[0]->branch_name }}</label><br>
               <label>{{ $invoiceDetails[0]->address }}</label></td>
-            <td style="width: 50%;font-size:30px;"><p style="color: #212121;">Invoice</p></td>
+            <td style="width: 50%;font-size:30px;"><p style="color: #212121;">@lang('general.lbl_invoice')</p></td>
           </tr>
           <tr style="background-color: chocolate;">
             <td colspan="2"><br></td>
@@ -40,7 +40,7 @@
         <tbody>
           <tr style="text-align: center;height: 70px">
             <td style="text-align: left;padding:20px;width:20%;vertical-align: text-top;">        
-              <label style="font-weight: bold;">Customer :</label><br>
+              <label style="font-weight: bold;">@lang('general.lbl_customer')</label><br>
               <label>{{ $customers[0]->name }}</label><br>
               <label>{{ $customers[0]->address }}</label><br>
               <label>{{ $customers[0]->phone_no }}</label><br>
@@ -49,9 +49,9 @@
               
             </td>
             <td style="text-align: right;width: 50%;font-size:15px;width:15%;vertical-align: text-top;">
-              <label>Date :</label><br>
-              <label>Invoice No :</label><br>
-              <label>Remark :</label><br>
+              <label>@lang('general.lbl_dated')  :</label><br>
+              @lang('general.lbl_invoice_no')  :</label><br>
+              <label>@lang('general.lbl_remark')  :</label><br>
             </td>
             <td style="text-align: left;width: 50%;font-size:15px;width:15%;padding-left:10px;vertical-align: text-top;">
               <label>{{ substr(explode(" ",$invoice->dated)[0],8,2) }}-{{substr(explode(" ",$invoice->dated)[0],5,2) }}-{{ substr(explode(" ",$invoice->dated)[0],0,4) }}</label><br>
@@ -65,10 +65,10 @@
       <table class="table table-striped" id="order_table" width="100%">
         <thead>
         <tr style="background-color:#FFA726;color:white;">
-            <th>Product</th>
-            <th scope="col" width="10%">UOM</th>
-            <th scope="col" width="10%">Price</th>
-            <th scope="col" width="5%">Qty</th>
+            <th>@lang('general.product')</th>
+            <th scope="col" width="10%">@lang('general.lbl_uom')</th>
+            <th scope="col" width="10%">@lang('general.lbl_price')</th>
+            <th scope="col" width="5%">@lang('general.lbl_qty')</th>
             <th scope="col" width="10%">Disc.</th>
             <th scope="col" width="10%">Total</th>
         </tr>
@@ -111,7 +111,7 @@
           </tr>
           <tr>
             <th style="text-align: left;width:70%;">@if($invoice->total_payment>=$invoice->total)  {{ "Lunas" }}   @endif</th>
-            <td style="text-align: right;width:20%;background-color:#FFA726;">Tax</th>
+            <td style="text-align: right;width:20%;background-color:#FFA726;">@lang('general.lbl_tax') </th>
             <td style="text-align: right;width:10%;background-color:#FFA726;">Rp. {{ number_format($invoice->tax,0,',','.') }}</th>
           </tr>
           <tr>
@@ -121,7 +121,7 @@
           </tr>
           <tr>
             <th style="text-align: left;width:70%;"></th>
-            <th style="text-align: right;width:20%;background-color:#FFA726;">Payment</th>
+            <th style="text-align: right;width:20%;background-color:#FFA726;">@lang('general.lbl_payment') </th>
             <th style="text-align: right;width:10%;background-color:#FFA726;">Rp. {{ number_format($invoice->total_payment,0,',','.') }}</th>
           </tr>
         </tbody>
@@ -131,8 +131,8 @@
         </thead>
         <tbody>
           <tr>
-            <td style="text-align: center;width:50%;">Kasir</td>
-            <td style="text-align: center;width:50%;">Customer</td>
+            <td style="text-align: center;width:50%;">@lang('general.lbl_cashier') </td>
+            <td style="text-align: center;width:50%;">@lang('general.lbl_customer') </td>
           </tr>
           <tr>
             <th style="text-align: center;width:50%;"></th>

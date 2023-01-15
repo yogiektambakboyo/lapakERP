@@ -47,7 +47,7 @@ class UomController extends Controller
         $id = $user->roles->first()->id;
         $this->getpermissions($id);
 
-        $uoms = Uom::paginate(10,['uom.id','uom.remark']);
+        $uoms = Uom::where('type_id','=','1')->paginate(10,['uom.id','uom.remark']);
         $data = $this->data;
 
         return view('pages.uoms.index', [
@@ -148,7 +148,7 @@ class UomController extends Controller
                 $query->on('role_has_permissions.permission_id', '=', 'permissions.id')
                 ->where('role_has_permissions.role_id','=',$id)->where('permissions.name','like','%.index%')->where('permissions.url','!=','null');
             });
-           })->get(['permissions.name','permissions.url','permissions.remark','permissions.parent']);
+           })->orderby('permissions.remark')->get(['permissions.name','permissions.url','permissions.remark','permissions.parent']);
 
            $this->data = [
             'menu' => 
@@ -167,7 +167,7 @@ class UomController extends Controller
                         'caret' => true,
                         'sub_menu' => []
                     ],
-		   [
+		            [
                         'icon' => 'fa fa-box',
                         'title' => \Lang::get('home.service_management'),
                         'url' => 'javascript:;',

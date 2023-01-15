@@ -46,8 +46,8 @@
                 <thead>
                 <tr style="background-color:#FFA726;color:white;">
                     <th>Perawatan</th>
-                    <th scope="col" width="10%">Price</th>
-                    <th scope="col" width="5%">Qty</th>
+                    <th scope="col" width="10%">@lang('general.lbl_price')</th>
+                    <th scope="col" width="5%">@lang('general.lbl_qty')</th>
                     <th scope="col" width="10%">Total</th>
                 </tr>
                 </thead>
@@ -114,8 +114,8 @@
                 <thead>
                 <tr style="background-color:#FFA726;color:white;">
                     <th>Produk</th>
-                    <th scope="col" width="10%">Price</th>
-                    <th scope="col" width="5%">Qty</th>
+                    <th scope="col" width="10%">@lang('general.lbl_price')</th>
+                    <th scope="col" width="5%">@lang('general.lbl_qty')</th>
                     <th scope="col" width="10%">Total</th>
                 </tr>
                 </thead>
@@ -298,6 +298,7 @@
                     $payment_bca_kredit = 0;
                     $payment_mandiri_debit = 0;
                     $payment_mandiri_kredit = 0;
+                    $payment_qr = 0;
 
                   @endphp
                   @foreach($payment_datas as $payment_data)
@@ -321,6 +322,8 @@
                             $payment_mandiri_debit = $payment_mandiri_debit + $payment_data->total_payment;
                           }else if($payment_data->payment_type=='Mandiri - Kredit'){
                             $payment_mandiri_kredit = $payment_mandiri_kredit + $payment_data->total_payment;
+                          }else if($payment_data->payment_type=='QRIS'){
+                            $payment_qr = $payment_qr + $payment_data->total_payment;
                           }
                           $counter++;
                         @endphp
@@ -357,6 +360,11 @@
                   <tr>
                     <td colspan="2" style="text-align: left;">Mandiri - Kredit</td>
                     <td colspan="2" style="text-align: right;">{{ number_format($payment_mandiri_kredit,0,',','.') }}</td>
+                  </tr>
+
+                  <tr>
+                    <td colspan="2" style="text-align: left;">QRIS</td>
+                    <td colspan="2" style="text-align: right;">{{ number_format($payment_qr,0,',','.') }}</td>
                   </tr>
 
                   <tr>

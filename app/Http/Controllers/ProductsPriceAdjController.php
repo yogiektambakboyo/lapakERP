@@ -71,6 +71,7 @@ class ProductsPriceAdjController extends Controller
                     ->join('product_brand as pb','pb.id','=','product_sku.brand_id')
                     ->join('price_adjustment as pr','pr.product_id','=','product_sku.id')
                     ->join('branch as bc','bc.id','=','pr.branch_id')
+                    ->where('pt.id','=','1')
                     ->whereRaw('now()::date between pr.dated_start and pr.dated_end')
                     ->paginate(10,['product_sku.id','product_sku.remark as product_name','pr.branch_id','bc.remark as branch_name','pr.value as value','pr.dated_start','pr.dated_end','pb.remark as product_brand']);
         return view('pages.productspriceadj.index',['company' => Company::get()->first()] ,compact('request','branchs','products','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
@@ -108,6 +109,7 @@ class ProductsPriceAdjController extends Controller
                         ->join('price_adjustment as pr','pr.product_id','=','product_sku.id')
                         ->join('branch as bc','bc.id','=','pr.branch_id')
                         ->whereRaw($whereclause)
+                        ->where('pt.id','=','1')
                         ->where('bc.id','like','%'.$branchx.'%')  
                         ->paginate(10,['product_sku.id','product_sku.remark as product_name','pr.branch_id','bc.remark as branch_name','pr.value as value','pr.dated_start','pr.dated_end','pb.remark as product_brand']); 
                         $request->filter_branch_id = "";
@@ -122,6 +124,7 @@ class ProductsPriceAdjController extends Controller
                         ->join('price_adjustment as pr','pr.product_id','=','product_sku.id')
                         ->join('branch as bc','bc.id','=','pr.branch_id')
                         ->whereRaw($whereclause)
+                        ->where('pt.id','=','1')
                         ->where('bc.id','like','%'.$branchx.'%')  
                         ->paginate(10,['product_sku.id','product_sku.remark as product_name','pr.branch_id','bc.remark as branch_name','pr.value as value','pr.dated_start','pr.dated_end','pb.remark as product_brand']);                 
             return view('pages.productspriceadj.index',['company' => Company::get()->first()], compact('request','branchs','products','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
@@ -148,7 +151,7 @@ class ProductsPriceAdjController extends Controller
         $user  = Auth::user();
         $data = $this->data;
         return view('pages.productspriceadj.create',[
-            'products' => DB::select('select ps.id,ps.remark from product_sku as ps;'),
+            'products' => DB::select('select ps.id,ps.remark from product_sku as ps where type_id=1;'),
             'data' => $data, 'company' => Company::get()->first(),
             'branchs' => Branch::join('users_branch as ub','ub.branch_id','=','branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']),
         ]);
@@ -171,8 +174,8 @@ class ProductsPriceAdjController extends Controller
         $productpriceadj->create(
             array_merge(
                 ['value' => $request->get('value') ],
-                ['dated_start' => Carbon::parse($request->get('dated_start'))->format('d/m/Y') ],
-                ['dated_end' => Carbon::parse($request->get('dated_end'))->format('d/m/Y') ],
+                ['dated_start' => Carbon::parse($request->get('dated_start'))->format('Y-m-d') ],
+                ['dated_end' => Carbon::parse($request->get('dated_end'))->format('Y-m-d') ],
                 ['product_id' => $request->get('product_id') ],
                 ['branch_id' => $request->get('branch_id') ],
                 ['created_by' => $user->id ],
@@ -293,7 +296,7 @@ class ProductsPriceAdjController extends Controller
                 $query->on('role_has_permissions.permission_id', '=', 'permissions.id')
                 ->where('role_has_permissions.role_id','=',$id)->where('permissions.name','like','%.index%')->where('permissions.url','!=','null');
             });
-           })->get(['permissions.name','permissions.url','permissions.remark','permissions.parent']);
+           })->orderby('permissions.remark')->get(['permissions.name','permissions.url','permissions.remark','permissions.parent']);
 
            $this->data = [
             'menu' => 

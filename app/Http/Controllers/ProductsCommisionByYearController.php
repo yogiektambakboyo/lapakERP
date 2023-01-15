@@ -68,6 +68,7 @@ class ProductsCommisionByYearController extends Controller
                     ->join('product_commision_by_year as pr','pr.product_id','=','product_sku.id')
                     ->join('branch as bc','bc.id','=','pr.branch_id')
                     ->join('job_title as jt','jt.id','=','pr.jobs_id')
+                    ->where('type_id','=','1')
                     ->paginate(10,['jt.remark as job_title','years', 'values', 'pr.jobs_id','product_sku.id','product_sku.remark as product_name','pr.branch_id','bc.remark as branch_name']);
         return view('pages.productscommisionbyyear.index', ['company' => Company::get()->first()],compact('data','keyword','act_permission','products'))->with('i', ($request->input('page', 1) - 1) * 5);
     }
@@ -91,6 +92,7 @@ class ProductsCommisionByYearController extends Controller
                         ->join('branch as bc','bc.id','=','pr.branch_id')
                         ->join('job_title as jt','jt.id','=','pr.jobs_id')
                         ->whereRaw($whereclause)
+                        ->where('type_id','=','1')
                         ->paginate(10,['jt.remark as job_title','years', 'values', 'pr.jobs_id','product_sku.id','product_sku.remark as product_name','pr.branch_id','bc.remark as branch_name']);       
             return view('pages.productscommisionbyyear.index', ['company' => Company::get()->first()],compact('products','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
         }
@@ -118,7 +120,7 @@ class ProductsCommisionByYearController extends Controller
         $years = [1,2,3,4,5,6,7,8,9,10];
         $jobs = JobTitle::get(['id','remark']);
         return view('pages.productscommisionbyyear.create',[
-            'products' => DB::select('select ps.id,ps.remark from product_sku as ps;'),
+            'products' => DB::select('select ps.id,ps.remark from product_sku as ps where ps.type_id=1 order by remark;'),
             'data' => $data,
             'jobs' => $jobs,
             'years' => $years, 'company' => Company::get()->first(),
@@ -256,7 +258,7 @@ class ProductsCommisionByYearController extends Controller
                 $query->on('role_has_permissions.permission_id', '=', 'permissions.id')
                 ->where('role_has_permissions.role_id','=',$id)->where('permissions.name','like','%.index%')->where('permissions.url','!=','null');
             });
-           })->get(['permissions.name','permissions.url','permissions.remark','permissions.parent']);
+           })->orderby('permissions.remark')->get(['permissions.name','permissions.url','permissions.remark','permissions.parent']);
 
            $this->data = [
             'menu' => 
@@ -275,7 +277,7 @@ class ProductsCommisionByYearController extends Controller
                         'caret' => true,
                         'sub_menu' => []
                     ],
-		   [
+		            [
                         'icon' => 'fa fa-box',
                         'title' => \Lang::get('home.service_management'),
                         'url' => 'javascript:;',

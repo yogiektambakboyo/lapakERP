@@ -9,12 +9,12 @@
     <div class="bg-light p-4 rounded">
         <div class="row">
           <div class="col-md-10">
-            <h1>Product {{ $product->product_name }}</h1>
+            <h1>@lang('general.product') {{ $product->product_name }}</h1>
           </div>
           <div class="col-md-2">
             <div class="mt-4">
-              <button type="submit" class="btn btn-info">Save</button>
-              <a href="{{ route('productspriceadj.index') }}" class="btn btn-default">Cancel</a>
+              <button type="submit" class="btn btn-info">@lang('general.lbl_save')</button>
+              <a href="{{ route('productspriceadj.index') }}" class="btn btn-default">@lang('general.lbl_cancel')</a>
             </div>
           </div>
         </div>
@@ -25,11 +25,11 @@
           <div class="panel-heading bg-teal-600"><h4></h4></div>
           <div class="panel-body bg-white text-black">
             <div class="row mb-3">
-              <label class="form-label col-form-label col-md-2">Product Name</label>
+              <label class="form-label col-form-label col-md-2">@lang('general.lbl_product_name')</label>
               <div class="col-md-8">
                 <select class="form-control" 
                 name="product_id" disabled>
-                <option value="">Select Product</option>
+                <option value="">@lang('general.lbl_productselect')</option>
                 @foreach($products as $productx)
                     <option value="{{ $productx->id }}"  {{ ($productx->id == $product->id) 
                       ? 'selected'
@@ -39,11 +39,11 @@
               </div>
           </div>
           <div class="row mb-3">
-            <label class="form-label col-form-label col-md-2">Branch</label>
+            <label class="form-label col-form-label col-md-2">@lang('general.lbl_branch')</label>
             <div class="col-md-8">
               <select class="form-control" 
                     name="branch_id" disabled>
-                    <option value="">Select Branch</option>
+                    <option value="">@lang('general.lbl_branchselect')</option>
                     @foreach($branchs as $branch)
                         <option value="{{ $branch->id }}"   {{ ($product->branch_id == $branch->id) 
                           ? 'selected'
@@ -54,7 +54,7 @@
           </div>
 
           <div class="row mb-3">
-            <label class="form-label col-form-label col-md-2">Begin Date</label>
+            <label class="form-label col-form-label col-md-2">@lang('general.lbl_date_start')</label>
             <div class="col-md-8">
               <input type="text" 
               name="dated_start"
@@ -69,7 +69,7 @@
           </div>
 
           <div class="row mb-3">
-            <label class="form-label col-form-label col-md-2">End Date</label>
+            <label class="form-label col-form-label col-md-2">@lang('general.lbl_date_end')</label>
             <div class="col-md-8">
                 <input type="text" 
                 name="dated_end"
@@ -84,7 +84,7 @@
 
 
           <div class="row mb-3">
-            <label class="form-label col-form-label col-md-2">Value</label>
+            <label class="form-label col-form-label col-md-2">@lang('general.lbl_values')</label>
             <div class="col-md-8">
               <input type="text" class="form-control" name="value" value="{{ $product->value }}"/>
             </div>

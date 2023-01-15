@@ -8,7 +8,7 @@
         <div class="lead row mb-3">
             <div class="col-md-10">
                 <div class="col-md-8">
-                    Manage your company here.
+                    @lang('general.lbl_title')
                 </div>
             </div>
         </div>
@@ -20,11 +20,11 @@
         <table class="table table-striped">
             <thead>
             <tr>
-                <th scope="col" width="15%">Name</th>
-                <th scope="col">Address</th>
-                <th scope="col">City</th>
+                <th scope="col" width="15%">@lang('general.lbl_name')</th>
+                <th scope="col">@lang('general.lbl_address')</th>
+                <th scope="col">@lang('general.lbl_city')</th> 
                 <th scope="col">Email</th>
-                <th scope="col">Phone No</th> 
+                <th scope="col">@lang('general.lbl_phoneno')</th> 
                 <th scope="col" colspan="3" width="1%"></th> 
             </tr>
             </thead>
@@ -35,7 +35,7 @@
                         <td>{{ $company->city }}</td>
                         <td>{{ $company->email }}</td>
                         <td>{{ $company->phone_no }}</td>
-                        <td><a href="{{ route('company.edit', $company->id) }}" class="btn btn-info btn-sm  {{ $act_permission->allow_edit==1?'':'d-none' }} ">Edit</a></td> 
+                        <td><a href="{{ route('company.edit', $company->id) }}" class="btn btn-info btn-sm  {{ $act_permission->allow_edit==1?'':'d-none' }} ">@lang('general.lbl_edit')</a></td> 
                     </tr>
             </tbody>
         </table>

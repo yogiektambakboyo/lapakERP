@@ -3,14 +3,14 @@
 @section('title', 'Edit Invoice')
 
 @section('content')
-<form method="POST" action="{{ route('invoices.store') }}"  enctype="multipart/form-data">
+<form method="POST" action="{{ route('returnsell.store') }}"  enctype="multipart/form-data">
   @csrf
   <div class="panel text-white">
     <div class="panel-heading  bg-teal-600">
-      <div class="panel-title"><h4 class="">Sales Invoice</h4></div>
+      <div class="panel-title"><h4 class="">@lang('general.lbl_return_sell') {{ $invoice->return_sell_no }}</h4></div>
       <div class="">
-        <a href="{{ route('invoices.index') }}" class="btn btn-default">Cancel</a>
-        <button type="button" id="save-btn" class="btn btn-info">Save</button>
+        <a href="{{ route('returnsell.index') }}" class="btn btn-default">@lang('general.lbl_cancel')</a>
+        <button type="button" id="save-btn" class="btn btn-info">@lang('general.lbl_save')</button>
       </div>
     </div>
     <div class="panel-body bg-white text-black">
@@ -18,13 +18,13 @@
         <div class="row mb-3">
           <div class="col-md-2">
             <div class="row mb-3">
-              <label class="form-label col-form-label col-md-4">Date</label>
+              <label class="form-label col-form-label col-md-4">@lang('general.lbl_dated')   </label>
               <div class="col-md-8">
                 <input type="hidden" 
                 name="invoice_no"
                 id="invoice_no"
                 class="form-control" 
-                value="{{ $invoice->invoice_no }}"/>
+                value="{{ $invoice->return_sell_no }}"/>
                 <input type="text" 
                 name="invoice_date"
                 id="invoice_date"
@@ -36,7 +36,7 @@
               </div>
             </div>
             <div class="row mb-3">
-              <label class="form-label col-form-label col-md-4">Remark</label>
+              <label class="form-label col-form-label col-md-4">@lang('general.lbl_remark')</label>
               <div class="col-md-8">
                 <input type="text" 
                 name="remark"
@@ -50,16 +50,16 @@
           <div class="col-md-10">
             <div class="row mb-3">
 
-              <label class="form-label col-form-label col-md-2">SPK</label>
+              <label class="form-label col-form-label col-md-2">@lang('general.lbl_spk')</label>
               <div class="col-md-3">
                 <input type="text" class="form-control" id="ref_no" name="ref_no" value="{{ $invoice->ref_no }}" id="scheduled" disabled>
               </div>
 
-              <label class="form-label col-form-label col-md-1">Customer</label>
+              <label class="form-label col-form-label col-md-1">@lang('general.lbl_customer')</label>
               <div class="col-md-2">
                 <select class="form-control" 
                     name="customer_id" id="customer_id" required>
-                    <option value="">Select Customers</option>
+                    <option value="">@lang('general.lbl_customerselect')</option>
                     @foreach($customers as $customer)
                         <option value="{{ $customer->id }}" {{ ($customer->id == $invoice->customers_id) 
                           ? 'selected'
@@ -67,31 +67,10 @@
                     @endforeach
                 </select>
               </div>
-              <label class="form-label col-form-label col-md-1">Schedule</label>
-              <div class="col-md-3">
-                  <div class="input-group">
-                    <input type="text" class="form-control" id="scheduled"  value="{{ $room->remark }} - {{ $invoice->scheduled_at }}" disabled>
-                    <button type="button" class="btn btn-indigo" data-bs-toggle="modal" data-bs-target="#modal-scheduled" >
-                      <span class="fas fa-calendar-days"></span>
-                    </button>
-                  </div>
-              </div>
             </div>
             <div class="row mb-3">
-              <label class="form-label col-form-label col-md-2">Type Payment</label>
-              <div class="col-md-2">
-                <select class="form-control" 
-                      name="payment_type" id ="payment_type" required>
-                      <option value="">Select Payment</option>
-                      @foreach($payment_type as $value)
-                          <option value="{{ $value }}" {{ ($invoice->payment_type == $value) 
-                            ? 'selected'
-                            : ''}}>{{ $value }}</option>
-                      @endforeach
-                  </select>
-              </div>
 
-                <label class="form-label col-form-label col-md-2">Nominal Payment</label>
+                <label class="form-label col-form-label col-md-2">@lang('general.lbl_nominal_payment')</label>
                 <div class="col-md-2">
                   <input type="text" 
                   id="payment_nominal"
@@ -100,7 +79,7 @@
                   value="{{ $invoice->payment_nominal }}" required/>
                   </div>
 
-                  <label class="form-label col-form-label col-md-1">Charge</label>
+                  <label class="form-label col-form-label col-md-1">@lang('general.lbl_charge')</label>
                   <div class="col-md-3">
                     <h2 class="text-end"><label id="order_charge">Rp. @if($invoice->payment_nominal-$invoice->total>0)
                       {{ number_format(($invoice->payment_nominal-$invoice->total), 0, ',', '.') }}
@@ -113,16 +92,16 @@
               <div class="modal-dialog">
               <div class="modal-content">
                   <div class="modal-header">
-                  <h5 class="modal-title" id="staticBackdropLabel">Assign Task</h5>
+                  <h5 class="modal-title" id="staticBackdropLabel">@lang('general.lbl_assign')</h5>
                   <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                   </div>
                   <div class="modal-body">
-                    <label class="form-label col-form-label col-md-8" id="product_id_selected_lbl">Choose Terapist </label>
+                    <label class="form-label col-form-label col-md-8" id="product_id_selected_lbl">@lang('general.lbl_assignselect') </label>
                     <input type="hidden" id="product_id_selected" value="">
                     <div class="col-md-8">
                       <select class="form-control" 
                           name="assign_id" id="assign_id" required>
-                          <option value="">Select Staff</option>
+                          <option value="">@lang('general.lbl_assignselect') </option>
                           @foreach($users as $user)
                               <option value="{{ $user->id }}">{{ $user->name }}</option>
                           @endforeach
@@ -130,8 +109,8 @@
                     </div>
                   </div>
                   <div class="modal-footer">
-                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                  <button type="button" class="btn btn-primary"  data-bs-dismiss="modal" id="btn_assigned">Apply</button>
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">@lang('general.lbl_close') </button>
+                  <button type="button" class="btn btn-primary"  data-bs-dismiss="modal" id="btn_assigned">@lang('general.lbl_apply')</button>
                   </div>
               </div>
               </div>
@@ -141,16 +120,16 @@
               <div class="modal-dialog">
               <div class="modal-content">
                   <div class="modal-header">
-                  <h5 class="modal-title" id="staticBackdropLabel">Referral By</h5>
+                  <h5 class="modal-title" id="staticBackdropLabel">@lang('general.lbl_ref_by') </h5>
                   <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                   </div>
                   <div class="modal-body">
-                    <label class="form-label col-form-label col-md-8" id="referral_selected_lbl">Choose User </label>
+                    <label class="form-label col-form-label col-md-8" id="referral_selected_lbl">@lang('general.lbl_assignselect')  </label>
                     <input type="hidden" id="referral_selected" value="">
                     <div class="col-md-8">
                       <select class="form-control" 
                           name="referral_by" id="referral_by">
-                          <option value="">Select Staff</option>
+                          <option value="">@lang('general.lbl_assignselect') </option>
                           @foreach($usersall as $userall)
                               <option value="{{ $userall->id }}">{{ $userall->name }}</option>
                           @endforeach
@@ -158,8 +137,8 @@
                     </div>
                   </div>
                   <div class="modal-footer">
-                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                  <button type="button" class="btn btn-primary"  data-bs-dismiss="modal" id="btn_referred">Apply</button>
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">@lang('general.lbl_close') </button>
+                  <button type="button" class="btn btn-primary"  data-bs-dismiss="modal" id="btn_referred">@lang('general.lbl_apply')</button>
                   </div>
               </div>
               </div>
@@ -169,19 +148,19 @@
               <div class="modal-dialog modal-lg">
               <div class="modal-content">
                   <div class="modal-header">
-                  <h5 class="modal-title" id="staticBackdropLabel">Choose Schedule</h5>
+                  <h5 class="modal-title" id="staticBackdropLabel">@lang('general.lbl_scheduleselect')  </h5>
                   <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                   </div>
                   <div class="modal-body">
 
                     <div class="row mb-3">
                       <div class="col-md-1">
-                        <label class="form-label col-form-label col-md-8">Room </label>
+                        <label class="form-label col-form-label col-md-8">@lang('general.lbl_room')   </label>
                       </div>
                       <div class="col-md-2">
                           <select class="form-control" 
                               name="room_id" id="room_id" required>
-                              <option value="">Select Rooms</option>
+                              <option value="">@lang('general.lbl_roomselect')   </option>
                               @foreach($rooms as $room)
                                   <option value="{{ $room->id }}" {{ ($room->id == $invoice->branch_room_id) 
                                     ? 'selected'
@@ -190,7 +169,7 @@
                           </select>
                       </div>
                       <div class="col-md-1">
-                        <label class="form-label col-form-label col-md-4">Date</label>
+                        <label class="form-label col-form-label col-md-4">@lang('general.lbl_dated')   </label>
                       </div>
                       <div class="col-md-2">
                         <input type="text" 
@@ -203,7 +182,7 @@
                               @endif
                       </div>
                       <div class="col-md-1">
-                        <label class="form-label col-form-label col-md-8">Time </label>
+                        <label class="form-label col-form-label col-md-8">@lang('general.lbl_time')   </label>
                       </div>
                       <div class="col-md-2">
                         <div class="input-group bootstrap-timepicker timepicker">
@@ -213,19 +192,19 @@
                       </div>
                     </div>
                    
-                    <div class="panel-heading bg-teal-600 text-white"><strong>Time Table</strong></div>
+                    <div class="panel-heading bg-teal-600 text-white"><strong>@lang('general.lbl_schedule_list')   </strong></div>
                     </br>
       
                     <div class="col-md-12">
                       <table class="table table-striped" id="order_time_table" style="width:100%">
                         <thead>
                         <tr>
-                            <th>Room</th>
-                            <th scope="col" width="25%">Order No</th>
-                            <th scope="col" width="15%">Customer</th>
-                            <th scope="col" width="15%">Schedule At</th>
-                            <th scope="col" width="5%">Duration</th>  
-                            <th scope="col" width="15%">End Estimate</th>   
+                            <th>@lang('general.lbl_room')   </th>
+                            <th scope="col" width="25%">@lang('general.lbl_invoice_no')   </th>
+                            <th scope="col" width="15%">@lang('general.lbl_total_customer')</th>
+                            <th scope="col" width="15%">@lang('general.lbl_schedule_at')   </th>
+                            <th scope="col" width="5%">@lang('general.lbl_duration')   </th>
+                            <th scope="col" width="15%">@lang('general.lbl_end_estimation') </th>
                         </tr>
                         </thead>
                         <tbody>
@@ -234,8 +213,8 @@
                     </div>
                   </div>
                   <div class="modal-footer">
-                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                  <button type="button" class="btn btn-primary"  data-bs-dismiss="modal" id="btn_scheduled">Apply</button>
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">@lang('general.lbl_close') </button>
+                  <button type="button" class="btn btn-primary"  data-bs-dismiss="modal" id="btn_scheduled">@lang('general.lbl_apply')</button>
                   </div>
               </div>
               </div>
@@ -247,21 +226,21 @@
 
 
 
-        <div class="panel-heading bg-teal-600 text-white"><strong>Order List</strong></div>
+        <div class="panel-heading bg-teal-600 text-white"><strong>@lang('general.lbl_order_list')</strong></div>
         <br>
 
         <div class="row mb-3">
           <div class="col-md-3">
-            <label class="form-label col-form-label">Product</label>
+            <label class="form-label col-form-label">@lang('general.product')</label>
             <select class="form-control" 
                   name="input_product_id" id="input_product_id" required>
-                  <option value="">Select Product</option>
+                  <option value="">@lang('general.lbl_productselect')</option>
               </select>
           </div>
 
 
           <div class="col-md-1">
-            <label class="form-label col-form-label">UOM</label>
+            <label class="form-label col-form-label">@lang('general.lbl_uom')</label>
             <input type="text" 
             name="input_product_uom"
             id="input_product_uom"
@@ -270,7 +249,7 @@
           </div>
 
           <div class="col-md-2">
-            <label class="form-label col-form-label">Price</label>
+            <label class="form-label col-form-label">@lang('general.lbl_price')</label>
             <input type="text" 
             name="input_product_price"
             id="input_product_price"
@@ -280,7 +259,7 @@
 
 
           <div class="col-md-1">
-            <label class="form-label col-form-label">Disc (Rp.)</label>
+            <label class="form-label col-form-label">@lang('general.lbl_discountrp')</label>
             <input type="text" 
             name="input_product_disc"
             id="input_product_disc"
@@ -290,7 +269,7 @@
 
 
           <div class="col-md-1">
-            <label class="form-label col-form-label">Qty</label>
+            <label class="form-label col-form-label">@lang('general.lbl_qty')</label>
             <input type="text" 
             name="input_product_qty"
             id="input_product_qty"
@@ -314,7 +293,7 @@
 
           <div class="col-md-2">
             <div class="col-md-12"><label class="form-label col-form-label">_</label></div>
-            <a href="#" id="input_product_submit" class="btn btn-green"><div class="fa-1x"><i class="fas fa-plus fa-fw"></i>Add Product</div></a>
+            <a href="#" id="input_product_submit" class="btn btn-green"><div class="fa-1x"><i class="fas fa-plus fa-fw"></i>@lang('general.lbl_add_product')</div></a>
           </div>
 
         </div>
@@ -322,15 +301,13 @@
         <table class="table table-striped" id="order_table">
           <thead>
           <tr>
-              <th scope="col" width="20%">Product</th>
-              <th scope="col" width="10%">UOM</th>
-              <th scope="col" width="10%">Price</th>
-              <th scope="col" width="5%">Discount</th>
-              <th scope="col" width="5%">Qty</th>
+              <th scope="col" width="20%">@lang('general.product')</th>
+              <th scope="col" width="10%">@lang('general.lbl_uom')</th>
+              <th scope="col" width="10%">@lang('general.lbl_price')</th>
+              <th scope="col" width="5%">@lang('general.lbl_discount')</th>
+              <th scope="col" width="5%">@lang('general.lbl_qty')</th>
               <th scope="col" width="10%">Total</th>  
-              <th scope="col" width="10%">Assigned to</th>  
-              <th scope="col" width="10%">Referral to</th>  
-              <th scope="col" width="20%">Action</th>  
+              <th scope="col" width="20%">@lang('general.lbl_action')</th> 
           </tr>
           </thead>
           <tbody>
@@ -347,7 +324,7 @@
                   <input type="text" class="form-control" id="input-apply-voucher" value="{{ $invoice->voucher_code==null?"":$invoice->voucher_code }}">
                 </div>
                 <div class="col-md-3">
-                  <button type="button" id="apply-voucher-btn" class="btn btn-warning">Apply Voucher</button>
+                  <button type="button" id="apply-voucher-btn" class="btn btn-warning">@lang('general.lbl_apply_voucher')</button>
                 </div>
             </div>
           </div>
@@ -362,7 +339,7 @@
             </div>
             <div class="col-md-12">
               <div class="col-auto text-end">
-                <label class="col-md-2"><h2>Tax </h2></label>
+                <label class="col-md-2"><h2>@lang('general.lbl_tax') </h2></label>
                 <label class="col-md-8" id="vat-total"> <h3>0</h3></label>
               </div>
             </div>
@@ -466,8 +443,6 @@
                           "discount"  : obj["discount"],
                           "qty"       : obj["qty"],
                           "total"     : obj["total"],
-                          "assignedto" : obj["assignedto"],
-                          "referralby" : obj["referralby"],
                           "action"    : "",
                         }).draw(false);
                         disc_total = disc_total + (parseFloat(orderList[i]["discount"]));
@@ -561,10 +536,6 @@
                     "discount"  : obj["discount"],
                     "qty"       : obj["qty"],
                     "total"     : obj["total"],
-                    "assignedto": obj["assignedto"],
-                    "assignedtoid": obj["assignedtoid"],
-                    "referralby" : obj["referralby"],
-                    "referralbyid" : obj["referralbyid"],
                     "action"    : "",
               }).draw(false);
               disc_total = disc_total + (parseFloat(orderList[i]["discount"]));
@@ -621,10 +592,6 @@
                     "discount"  : obj["discount"],
                     "qty"       : obj["qty"],
                     "total"     : obj["total"],
-                    "assignedto": obj["assignedto"],
-                    "assignedtoid": obj["assignedtoid"],
-                    "referralby" : obj["referralby"],
-                    "referralbyid" : obj["referralbyid"],
                     "action"    : "",
               }).draw(false);
               disc_total = disc_total + (parseFloat(orderList[i]["discount"]));
@@ -768,20 +735,20 @@
                   tax : _vat_total,
                 }
               );
-              const res = axios.patch("{{ route('invoices.update',$invoice->id) }}", json, {
+              const res = axios.patch("{{ route('returnsell.update',$invoice->id) }}", json, {
                 headers: {
                   // Overwrite Axios's automatically set Content-Type
                   'Content-Type': 'application/json'
                 }
               }).then(resp => {
                     if(resp.data.status=="success"){
-                      window.location.href = "{{ route('invoices.index') }}"; 
+                      window.location.href = "{{ route('returnsell.index') }}"; 
                     }else{
                       Swal.fire(
                         {
                           position: 'top-end',
                           icon: 'warning',
-                          text: 'Something went wrong - '+resp.data.message,
+                          text: "@lang('general.lbl_msg_failed')"+resp.data.message,
                           showConfirmButton: false,
                           imageHeight: 30, 
                           imageWidth: 30,   
@@ -797,7 +764,7 @@
         $('#product-table').DataTable({
           "bInfo" : false,
           pagingType: 'numbers',
-          ajax: "{{ route('invoices.getproduct') }}",
+          ajax: "{{ route('returnsell.getproduct') }}",
           columns: [
             { data: 'abbr' },
             { data: 'remark' },
@@ -809,7 +776,7 @@
         $('#order_time_table').DataTable({
           "bInfo" : false,
           pagingType: 'numbers',
-          ajax: "{{ route('invoices.gettimetable') }}",
+          ajax: "{{ route('returnsell.gettimetable') }}",
           columns: [
             { data: 'branch_room_name' },
             { data: 'invoice_no' },
@@ -830,11 +797,11 @@
             targets: -1, 
             data: null, 
             defaultContent: 
-            '<a href="#" id="add_row" class="btn btn-sm btn-green"><div class="fa-1x"><i class="fas fa-circle-plus fa-fw"></i></div></a>'+
-            '<a href="#" id="minus_row" class="btn btn-sm btn-yellow"><div class="fa-1x"><i class="fas fa-circle-minus fa-fw"></i></div></a>'+
-            '<a href="#" id="delete_row" class="btn btn-sm btn-danger"><div class="fa-1x"><i class="fas fa-circle-xmark fa-fw"></i></div></a>'+
-            '<a href="#" href="#modal-filter" data-bs-toggle="modal" data-bs-target="#modal-filter" id="assign_row" class="btn btn-sm btn-gray"><div class="fa-1x"><i class="fas fa-user-tag fa-fw"></i></div></a>'+
-            '<a href="#" href="#modal-referral" data-bs-toggle="modal" data-bs-target="#modal-referral" id="referral_row" class="btn btn-sm btn-purple"><div class="fa-1x"><i class="fas fa-users fa-fw"></i></div></a>',
+            '<a href="#"  data-toggle="tooltip" data-placement="top" title="Tambah"   id="add_row"  class="btn btn-sm btn-green"><div class="fa-1x"><i class="fas fa-circle-plus fa-fw"></i></div></a>'+
+            '<a href="#"  data-toggle="tooltip" data-placement="top" title="Kurangi"   id="minus_row"  class="btn btn-sm btn-yellow"><div class="fa-1x"><i class="fas fa-circle-minus fa-fw"></i></div></a>'+
+            '<a href="#" data-toggle="tooltip" data-placement="top" title="Hapus"  id="delete_row"  class="btn btn-sm btn-danger"><div class="fa-1x"><i class="fas fa-circle-xmark fa-fw"></i></div></a>'+
+            '<a href="#" href="#modal-filter" data-bs-toggle="modal" data-bs-target="#modal-filter"  data-toggle="tooltip" data-placement="top" title="Terapis" id="assign_row" class="btn btn-sm btn-gray"><div class="fa-1x"><i class="fas fa-user-tag fa-fw"></i></div></a>'+
+            '<a href="#" href="#modal-referral" data-bs-toggle="modal" data-bs-target="#modal-referral" data-toggle="tooltip" data-placement="top" title="Dijual Oleh"  id="referral_row" class="btn btn-sm btn-purple"><div class="fa-1x"><i class="fas fa-users fa-fw"></i></div></a>',
           }],
           columns: [
             { data: 'abbr' },
@@ -843,8 +810,6 @@
             { data: 'discount',render: DataTable.render.number( '.', null, 0, '' ) },
             { data: 'qty' },
             { data: 'total',render: DataTable.render.number( '.', null, 0, '' ) },
-            { data: 'assignedto' },
-            { data: 'referralby' },
             { data: null},
         ],
         });
@@ -864,10 +829,6 @@
                 "discount"  : discount,
                 "qty"       : qty,
                 "total"     : total,
-                "assignedto" : "",
-                "assignedtoid" : "",
-                "referralby" : "",
-                "referralbyid" : "",
                 "uom" : uom,
                 "vat_total"     : vat_total, 
           }
@@ -899,8 +860,6 @@
                     "discount"  : obj["discount"],
                     "qty"       : obj["qty"],
                     "total"     : obj["total"],
-                    "assignedto": obj["assignedto"],
-                    "referralby" : obj["referralby"],
                     "action"    : "",
               }).draw(false);
               disc_total = disc_total + (parseFloat(orderList[i]["discount"]));
@@ -980,8 +939,6 @@
                       "discount"  : obj["discount"],
                       "qty"       : obj["qty"],
                       "total"     : obj["total"],
-                      "assignedto" : obj["assignedto"],
-                      "referralby" : obj["referralby"],
                       "action"    : "",
                 }).draw(false);
                 disc_total = disc_total + (parseFloat(orderList[i]["discount"]));
@@ -1235,8 +1192,6 @@
                               "discount"  : obj["discount"],
                               "qty"       : obj["qty"],
                               "total"     : obj["total"],
-                              "assignedto" : obj["assignedto"],
-                              "referralby" : obj["referralby"],
                               "action"    : "",
                         }).draw(false);
                         disc_total = disc_total + (parseFloat(orderList[i]["discount"]));
@@ -1288,7 +1243,7 @@
 
 
             //Get Invoice 
-            const resInvoice = axios.get("{{ route('invoices.getinvoice',$invoice->invoice_no) }}", {
+            const resInvoice = axios.get("{{ route('returnsell.getinvoice',$invoice->return_sell_no) }}", {
               headers: {
                 // Overwrite Axios's automatically set Content-Type
                 'Content-Type': 'application/json'
@@ -1310,10 +1265,6 @@
                             "discount"  : resp.data[i]["discount"],
                             "qty"       : resp.data[i]["qty"],
                             "total"     : resp.data[i]["total"],
-                            "assignedto"     : resp.data[i]["assignedto"],
-                            "assignedtoid"     : resp.data[i]["assignedtoid"],
-                            "referralby" : resp.data[i]["referral_by_name"],
-                            "referralbyid" : resp.data[i]["referral_by"],
                             "uom" : resp.data[i]["uom"],
                             "vat_total"     : resp.data[i]["vat"], 
                       }
@@ -1332,8 +1283,6 @@
                       "discount"  : obj["discount"],
                       "qty"       : obj["qty"],
                       "total"     : obj["total"],
-                      "assignedto" : obj["assignedto"],
-                      "referralby" : obj["referralby"],
                       "action"    : "",
                     }).draw(false);
                     disc_total = disc_total + (parseFloat(orderList[i]["discount"]));

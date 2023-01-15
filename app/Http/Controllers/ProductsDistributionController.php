@@ -52,8 +52,7 @@ class ProductsDistributionController extends Controller
                 select 0 as allow_create,0 as allow_delete,0 as allow_show,count(1) as allow_edit from permissions p  join role_has_permissions rp on rp.permission_id = p.id where rp.role_id = 1 and p.name like '%.edit' and p.name like '".$this->module.".%'
             ) a
         ");
-        
- 
+
     }
 
     public function index(Request $request) 
@@ -71,6 +70,7 @@ class ProductsDistributionController extends Controller
                     ->join('product_brand as pb','pb.id','=','product_sku.brand_id')
                     ->join('product_distribution as pr','pr.product_id','=','product_sku.id')
                     ->join('branch as bc','bc.id','=','pr.branch_id')
+                    ->where('pt.id','=','1')
                     ->paginate(10,['product_sku.id','product_sku.remark as product_name','pr.branch_id','bc.remark as branch_name','pb.remark as product_brand','pr.active']);
         return view('pages.productsdistribution.index', ['company' => Company::get()->first()],compact('products','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
     }
@@ -96,6 +96,7 @@ class ProductsDistributionController extends Controller
                         ->join('product_price as pr','pr.product_id','=','product_sku.id')
                         ->join('branch as bc','bc.id','=','pr.branch_id')
                         ->whereRaw($whereclause)
+                        ->where('pt.id','=','1')
                         ->paginate(10,['product_sku.id','product_sku.remark as product_name','pr.branch_id','bc.remark as branch_name','pr.price as product_price','pb.remark as product_brand']);           
             return view('pages.productsdistribution.index',['company' => Company::get()->first()], compact('products','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
         }
@@ -122,7 +123,7 @@ class ProductsDistributionController extends Controller
         $data = $this->data;
         $active = ['1','0'];
         return view('pages.productsdistribution.create',[
-            'products' => DB::select('select ps.id,ps.remark from product_sku as ps;'),
+            'products' => DB::select('select ps.id,ps.remark from product_sku as ps where ps.type_id=1 order by remark;'),
             'data' => $data,
             'active' => $active, 'company' => Company::get()->first(),
             'branchs' => Branch::join('users_branch as ub','ub.branch_id','=','branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']),
@@ -211,7 +212,7 @@ class ProductsDistributionController extends Controller
             'data' => $data,
             'active' => $active,
             'product' => $product,
-            'products' => Product::get(), 'company' => Company::get()->first(),
+            'products' => Product::where('type_id','=','1')->get(), 'company' => Company::get()->first(),
         ]);
     }
 
@@ -257,7 +258,7 @@ class ProductsDistributionController extends Controller
                 $query->on('role_has_permissions.permission_id', '=', 'permissions.id')
                 ->where('role_has_permissions.role_id','=',$id)->where('permissions.name','like','%.index%')->where('permissions.url','!=','null');
             });
-           })->get(['permissions.name','permissions.url','permissions.remark','permissions.parent']);
+           })->orderby('permissions.remark')->get(['permissions.name','permissions.url','permissions.remark','permissions.parent']);
 
            $this->data = [
             'menu' => 
@@ -276,7 +277,7 @@ class ProductsDistributionController extends Controller
                         'caret' => true,
                         'sub_menu' => []
                     ],
-		   [
+		            [
                         'icon' => 'fa fa-box',
                         'title' => \Lang::get('home.service_management'),
                         'url' => 'javascript:;',

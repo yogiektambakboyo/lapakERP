@@ -35,6 +35,7 @@ class Invoice extends Model
         'branch_room_id',
         'ref_no',
         'customers_name',
-        'printed_count'
+        'printed_count',
+        'customer_type'
     ];
 }

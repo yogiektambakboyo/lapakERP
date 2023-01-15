@@ -46,7 +46,7 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
                 return DataTables::of($data)
                     ->addIndexColumn()
                     ->addColumn('action', function($row){
-                        $actionBtn = '<a href="javascript:void(0)" class="edit btn btn-success btn-sm">Edit</a> <a href="javascript:void(0)" class="delete btn btn-danger btn-sm">Delete</a>';
+                        $actionBtn = '<a href="javascript:void(0)" class="edit btn btn-success btn-sm">Edit</a> <a href="javascript:void(0)" class="delete btn btn-danger btn-sm">@lang('general.lbl_delete')</a>';
                         return $actionBtn;
                     })
                     ->rawColumns(['action'])
@@ -110,8 +110,11 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
             Route::post('/create', 'InvoicesController@store')->name('invoices.store');
             Route::get('/search', 'InvoicesController@search')->name('invoices.search');
             Route::get('/{invoice}/show', 'InvoicesController@show')->name('invoices.show');
+            Route::patch('/{invoice}/checkout', 'InvoicesController@checkout')->name('invoices.checkout');
             Route::get('/{invoice}/edit', 'InvoicesController@edit')->name('invoices.edit');
             Route::get('/{invoice}/print', 'InvoicesController@print')->name('invoices.print');
+            Route::get('/{invoice}/printsj', 'InvoicesController@printsj')->name('invoices.printsj');
+            Route::get('/{invoice}/printspk', 'InvoicesController@printspk')->name('invoices.printspk');
             Route::get('/{invoice}/printthermal', 'InvoicesController@printthermal')->name('invoices.printthermal');
             Route::get('/getproduct', 'InvoicesController@getproduct')->name('invoices.getproduct');
             Route::get('/gettimetable', 'InvoicesController@gettimetable')->name('invoices.gettimetable');
@@ -120,6 +123,30 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
             Route::delete('/{invoice}/delete', 'InvoicesController@destroy')->name('invoices.destroy');
             Route::get('/export', 'InvoicesController@export')->name('invoices.export');
         });
+
+        /**
+         * Invoice Internal Routes
+         */
+        Route::group(['prefix' => 'invoicesinternal'], function() {
+            Route::get('/', 'InvoicesInternalController@index')->name('invoicesinternal.index');
+            Route::get('/create', 'InvoicesInternalController@create')->name('invoicesinternal.create');
+            Route::post('/create', 'InvoicesInternalController@store')->name('invoicesinternal.store');
+            Route::get('/search', 'InvoicesInternalController@search')->name('invoicesinternal.search');
+            Route::get('/{invoice}/show', 'InvoicesInternalController@show')->name('invoicesinternal.show');
+            Route::patch('/{invoice}/checkout', 'InvoicesInternalController@checkout')->name('invoicesinternal.checkout');
+            Route::get('/{invoice}/edit', 'InvoicesInternalController@edit')->name('invoicesinternal.edit');
+            Route::get('/{invoice}/print', 'InvoicesInternalController@print')->name('invoicesinternal.print');
+            Route::get('/{invoice}/printsj', 'InvoicesInternalController@printsj')->name('invoicesinternal.printsj');
+            Route::get('/{invoice}/printspk', 'InvoicesInternalController@printspk')->name('invoicesinternal.printspk');
+            Route::get('/{invoice}/printthermal', 'InvoicesInternalController@printthermal')->name('invoicesinternal.printthermal');
+            Route::get('/getproduct', 'InvoicesInternalController@getproduct')->name('invoicesinternal.getproduct');
+            Route::get('/gettimetable', 'InvoicesInternalController@gettimetable')->name('invoicesinternal.gettimetable');
+            Route::get('/{invoice}/getinvoice', 'InvoicesInternalController@getinvoice')->name('invoicesinternal.getinvoice');
+            Route::patch('/{invoice}/update', 'InvoicesInternalController@update')->name('invoicesinternal.update');
+            Route::delete('/{invoice}/delete', 'InvoicesInternalController@destroy')->name('invoicesinternal.destroy');
+            Route::get('/export', 'InvoicesInternalController@export')->name('invoicesinternal.export');
+        });
+
 
         /**
          * Return Sell Routes
@@ -164,6 +191,24 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
             Route::get('/export', 'PurchaseOrderController@export')->name('purchaseorders.export');
         });
 
+        Route::group(['prefix' => 'purchaseordersinternal'], function() {
+            Route::get('/', 'PurchaseOrderInternalController@index')->name('purchaseordersinternal.index');
+            Route::get('/create', 'PurchaseOrderInternalController@create')->name('purchaseordersinternal.create');
+            Route::post('/create', 'PurchaseOrderInternalController@store')->name('purchaseordersinternal.store');
+            Route::post('/search', 'PurchaseOrderInternalController@search')->name('purchaseordersinternal.search');
+            Route::get('/{purchase}/show', 'PurchaseOrderInternalController@show')->name('purchaseordersinternal.show');
+            Route::get('/{purchase}/print', 'PurchaseOrderInternalController@print')->name('purchaseordersinternal.print');
+            Route::get('/{purchase}/edit', 'PurchaseOrderInternalController@edit')->name('purchaseordersinternal.edit');
+            Route::get('/getproduct', 'PurchaseOrderInternalController@getproduct')->name('purchaseordersinternal.getproduct');
+            Route::get('/gettimetable', 'PurchaseOrderInternalController@gettimetable')->name('purchaseordersinternal.gettimetable');
+            Route::get('/{purchase}/getorder', 'PurchaseOrderInternalController@getorder')->name('purchaseordersinternal.getorder');
+            Route::patch('/{purchase}/update', 'PurchaseOrderInternalController@update')->name('purchaseordersinternal.update');
+            Route::patch('/{purchase}/updatestatus', 'PurchaseOrderInternalController@updatestatus')->name('purchaseordersinternal.updatestatus');
+            Route::get('/{purchase}/getdocdata', 'PurchaseOrderInternalController@getdocdata')->name('purchaseordersinternal.getdocdata');
+            Route::delete('/{purchase}/delete', 'PurchaseOrderInternalController@destroy')->name('purchaseordersinternal.destroy');
+            Route::get('/export', 'PurchaseOrderInternalController@export')->name('purchaseordersinternal.export');
+        });
+
          /**
          * Receive Routes
          */
@@ -205,6 +250,24 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
         });
 
         /**
+         * Service Routes
+         */
+        Route::group(['prefix' => 'services'], function() {
+            Route::get('/', 'ServicesController@index')->name('services.index');
+            Route::get('/create', 'ServicesController@create')->name('services.create');
+            Route::post('/create', 'ServicesController@store')->name('services.store');
+            Route::post('/createingredient', 'ServicesController@storeIngredients')->name('services.addingredients');
+            Route::get('/search', 'ServicesController@search')->name('services.search');
+            Route::get('/{product}/show', 'ServicesController@show')->name('services.show');
+            Route::get('/{product}/edit', 'ServicesController@edit')->name('services.edit');
+            Route::patch('/{product}/update', 'ServicesController@update')->name('services.update');
+            Route::delete('/{product}/delete', 'ServicesController@destroy')->name('services.destroy');
+            Route::get('/export', 'ServicesController@export')->name('services.export');
+            Route::post('/deleteingredients', 'ServicesController@deleteIngredients')->name('services.deleteingredients');
+
+        });
+
+        /**
          * Product Brand
          */
         Route::group(['prefix' => 'productsbrand'], function() {
@@ -217,6 +280,21 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
             Route::patch('/{productbrand}/update', 'ProductsBrandController@update')->name('productsbrand.update');
             Route::delete('/{productbrand}/delete', 'ProductsBrandController@destroy')->name('productsbrand.destroy');
             Route::get('/export', 'ProductsBrandController@export')->name('productsbrand.export');
+        });
+
+        /**
+         * Service Brand
+         */
+        Route::group(['prefix' => 'servicesbrand'], function() {
+            Route::get('/', 'ServicesBrandController@index')->name('servicesbrand.index');
+            Route::get('/create', 'ServicesBrandController@create')->name('servicesbrand.create');
+            Route::post('/create', 'ServicesBrandController@store')->name('servicesbrand.store');
+            Route::get('/search', 'ServicesBrandController@search')->name('servicesbrand.search');
+            Route::get('/{productbrand}/show', 'ServicesBrandController@show')->name('servicesbrand.show');
+            Route::get('/{productbrand}/edit', 'ServicesBrandController@edit')->name('servicesbrand.edit');
+            Route::patch('/{productbrand}/update', 'ServicesBrandController@update')->name('servicesbrand.update');
+            Route::delete('/{productbrand}/delete', 'ServicesBrandController@destroy')->name('servicesbrand.destroy');
+            Route::get('/export', 'ServicesBrandController@export')->name('servicesbrand.export');
         });
 
 
@@ -235,6 +313,21 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
             Route::get('/export', 'ProductsPriceController@export')->name('productsprice.export');
         });
 
+        /**
+         * Service Price
+         */
+        Route::group(['prefix' => 'servicesprice'], function() {
+            Route::get('/', 'ServicesPriceController@index')->name('servicesprice.index');
+            Route::get('/create', 'ServicesPriceController@create')->name('servicesprice.create');
+            Route::post('/create', 'ServicesPriceController@store')->name('servicesprice.store');
+            Route::get('/search', 'ServicesPriceController@search')->name('servicesprice.search');
+            Route::get('/{branch}/{product}/show', 'ServicesPriceController@show')->name('servicesprice.show');
+            Route::get('/{branch}/{product}/edit', 'ServicesPriceController@edit')->name('servicesprice.edit');
+            Route::patch('/{branch}/{product}/update', 'ServicesPriceController@update')->name('servicesprice.update');
+            Route::delete('/{branch}/{product}/delete', 'ServicesPriceController@destroy')->name('servicesprice.destroy');
+            Route::get('/export', 'ServicesPriceController@export')->name('servicesprice.export');
+        });
+
 
         /**
          * Product Price Adjustment
@@ -249,6 +342,21 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
             Route::patch('/{branch}/{product}/{dated_start}/{dated_end}/update', 'ProductsPriceAdjController@update')->name('productspriceadj.update');
             Route::delete('/{branch}/{product}/{dated_start}/{dated_end}/delete', 'ProductsPriceAdjController@destroy')->name('productspriceadj.destroy');
             Route::get('/export', 'ProductsPriceAdjController@export')->name('productspriceadj.export');
+        });
+
+        /**
+         * Product Service Adjustment
+         */
+        Route::group(['prefix' => 'servicespriceadj'], function() {
+            Route::get('/', 'ServicesPriceAdjController@index')->name('servicespriceadj.index');
+            Route::get('/create', 'ServicesPriceAdjController@create')->name('servicespriceadj.create');
+            Route::post('/create', 'ServicesPriceAdjController@store')->name('servicespriceadj.store');
+            Route::get('/search', 'ServicesPriceAdjController@search')->name('servicespriceadj.search');
+            Route::get('/{branch}/{product}/show', 'ServicesPriceAdjController@show')->name('servicespriceadj.show');
+            Route::get('/{branch}/{product}/edit', 'ServicesPriceAdjController@edit')->name('servicespriceadj.edit');
+            Route::patch('/{branch}/{product}/{dated_start}/{dated_end}/update', 'ServicesPriceAdjController@update')->name('servicespriceadj.update');
+            Route::delete('/{branch}/{product}/{dated_start}/{dated_end}/delete', 'ServicesPriceAdjController@destroy')->name('servicespriceadj.destroy');
+            Route::get('/export', 'ServicesPriceAdjController@export')->name('servicespriceadj.export');
         });
 
         /**
@@ -282,6 +390,21 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
         });
 
         /**
+         * Service Distribution
+         */
+        Route::group(['prefix' => 'servicesdistribution'], function() {
+            Route::get('/', 'ServicesDistributionController@index')->name('servicesdistribution.index');
+            Route::get('/create', 'ServicesDistributionController@create')->name('servicesdistribution.create');
+            Route::post('/create', 'ServicesDistributionController@store')->name('servicesdistribution.store');
+            Route::get('/search', 'ServicesDistributionController@search')->name('servicesdistribution.search');
+            Route::get('/{branch}/{product}/show', 'ServicesDistributionController@show')->name('servicesdistribution.show');
+            Route::get('/{branch}/{product}/edit', 'ServicesDistributionController@edit')->name('servicesdistribution.edit');
+            Route::patch('/{branch}/{product}/update', 'ServicesDistributionController@update')->name('servicesdistribution.update');
+            Route::delete('/{branch}/{product}/delete', 'ServicesDistributionController@destroy')->name('servicesdistribution.destroy');
+            Route::get('/export', 'ServicesDistributionController@export')->name('servicesdistribution.export');
+        });
+
+        /**
          * Product Commisions
          */
         Route::group(['prefix' => 'productscommision'], function() {
@@ -294,6 +417,21 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
             Route::patch('/{branch}/{product}/update', 'ProductsCommisionController@update')->name('productscommision.update');
             Route::delete('/{branch}/{product}/delete', 'ProductsCommisionController@destroy')->name('productscommision.destroy');
             Route::get('/export', 'ProductsCommisionController@export')->name('productscommision.export');
+        });
+
+        /**
+         * Service Commisions
+         */
+        Route::group(['prefix' => 'servicescommision'], function() {
+            Route::get('/', 'ServicesCommisionController@index')->name('servicescommision.index');
+            Route::get('/create', 'ServicesCommisionController@create')->name('servicescommision.create');
+            Route::post('/create', 'ServicesCommisionController@store')->name('servicescommision.store');
+            Route::get('/search', 'ServicesCommisionController@search')->name('servicescommision.search');
+            Route::get('/{branch}/{product}/show', 'ServicesCommisionController@show')->name('servicescommision.show');
+            Route::get('/{branch}/{product}/edit', 'ServicesCommisionController@edit')->name('servicescommision.edit');
+            Route::patch('/{branch}/{product}/update', 'ServicesCommisionController@update')->name('servicescommision.update');
+            Route::delete('/{branch}/{product}/delete', 'ServicesCommisionController@destroy')->name('servicescommision.destroy');
+            Route::get('/export', 'ServicesCommisionController@export')->name('servicescommision.export');
         });
 
         /**
@@ -311,6 +449,21 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
             Route::get('/export', 'ProductsCommisionByYearController@export')->name('productscommisionbyyear.export');
         });
 
+        /**
+         * Service Commisions By Year
+         */
+        Route::group(['prefix' => 'servicescommisionbyyear'], function() {
+            Route::get('/', 'ServicesCommisionByYearController@index')->name('servicescommisionbyyear.index');
+            Route::get('/create', 'ServicesCommisionByYearController@create')->name('servicescommisionbyyear.create');
+            Route::post('/create', 'ServicesCommisionByYearController@store')->name('servicescommisionbyyear.store');
+            Route::get('/search', 'ServicesCommisionByYearController@search')->name('servicescommisionbyyear.search');
+            Route::get('/{branch}/{product}/show', 'ServicesCommisionByYearController@show')->name('servicescommisionbyyear.show');
+            Route::get('/{branch}/{product}/edit', 'ServicesCommisionByYearController@edit')->name('servicescommisionbyyear.edit');
+            Route::patch('/{branch}/{product}/update', 'ServicesCommisionByYearController@update')->name('servicescommisionbyyear.update');
+            Route::delete('/{branch}/{product}/delete', 'ServicesCommisionByYearController@destroy')->name('servicescommisionbyyear.destroy');
+            Route::get('/export', 'ServicesCommisionByYearController@export')->name('servicescommisionbyyear.export');
+        });
+
 
 
         /**
@@ -326,6 +479,21 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
             Route::patch('/{branch}/{product}/update', 'ProductsPointController@update')->name('productspoint.update');
             Route::delete('/{branch}/{product}/delete', 'ProductsPointController@destroy')->name('productspoint.destroy');
             Route::get('/export', 'ProductsPointController@export')->name('productspoint.export');
+        });
+
+                /**
+         * Product Point
+         */
+        Route::group(['prefix' => 'servicespoint'], function() {
+            Route::get('/', 'ServicesPointController@index')->name('servicespoint.index');
+            Route::get('/create', 'ServicesPointController@create')->name('servicespoint.create');
+            Route::post('/create', 'ServicesPointController@store')->name('servicespoint.store');
+            Route::get('/search', 'ServicesPointController@search')->name('servicespoint.search');
+            Route::get('/{branch}/{product}/show', 'ServicesPointController@show')->name('servicespoint.show');
+            Route::get('/{branch}/{product}/edit', 'ServicesPointController@edit')->name('servicespoint.edit');
+            Route::patch('/{branch}/{product}/update', 'ServicesPointController@update')->name('servicespoint.update');
+            Route::delete('/{branch}/{product}/delete', 'ServicesPointController@destroy')->name('servicespoint.destroy');
+            Route::get('/export', 'ServicesPointController@export')->name('servicespoint.export');
         });
 
 
@@ -424,6 +592,19 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
             Route::delete('/{uom}/delete', 'UomController@destroy')->name('uoms.destroy');
         });
 
+        /**
+         *  UOM Service
+         */
+        Route::group(['prefix' => 'uomservice'], function() {
+            Route::get('/', 'UomServiceController@index')->name('uomservice.index');
+            Route::get('/create', 'UomServiceController@create')->name('uomservice.create');
+            Route::post('/create', 'UomServiceController@store')->name('uomservice.store');
+            Route::get('/{uom}/show', 'UomServiceController@show')->name('uomservice.show');
+            Route::get('/{uom}/edit', 'UomServiceController@edit')->name('uomservice.edit');
+            Route::patch('/{uom}/update', 'UomServiceController@update')->name('uomservice.update');
+            Route::delete('/{uom}/delete', 'UomServiceController@destroy')->name('uomservice.destroy');
+        });
+
 
         /**
          *  Category
@@ -436,6 +617,19 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
             Route::get('/{category}/edit', 'CategoriesController@edit')->name('categories.edit');
             Route::patch('/{category}/update', 'CategoriesController@update')->name('categories.update');
             Route::delete('/{category}/delete', 'CategoriesController@destroy')->name('categories.destroy');
+        });
+
+        /**
+         *  Category Service
+         */
+        Route::group(['prefix' => 'categoriesservice'], function() {
+            Route::get('/', 'CategoriesServiceController@index')->name('categoriesservice.index');
+            Route::get('/create', 'CategoriesServiceController@create')->name('categoriesservice.create');
+            Route::post('/create', 'CategoriesServiceController@store')->name('categoriesservice.store');
+            Route::get('/{category}/show', 'CategoriesServiceController@show')->name('categoriesservice.show');
+            Route::get('/{category}/edit', 'CategoriesServiceController@edit')->name('categoriesservice.edit');
+            Route::patch('/{category}/update', 'CategoriesServiceController@update')->name('categoriesservice.update');
+            Route::delete('/{category}/delete', 'CategoriesServiceController@destroy')->name('categoriesservice.destroy');
         });
 
 
@@ -471,6 +665,22 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
         });
 
         /**
+         *  Customers
+         */
+        Route::group(['prefix' => 'sales'], function() {
+            Route::get('/', 'SalesController@index')->name('sales.index');
+            Route::get('/create', 'SalesController@create')->name('sales.create');
+            Route::post('/create', 'SalesController@store')->name('sales.store');
+            Route::post('/createapi', 'SalesController@storeapi')->name('sales.storeapi');
+            Route::get('/{sales}/show', 'SalesController@show')->name('sales.show');
+            Route::get('/{sales}/edit', 'SalesController@edit')->name('sales.edit');
+            Route::patch('/{sales}/update', 'SalesController@update')->name('sales.update');
+            Route::delete('/{sales}/delete', 'SalesController@destroy')->name('sales.destroy');
+            Route::get('/search', 'SalesController@search')->name('sales.search');
+            Route::get('/export', 'SalesController@export')->name('sales.export');
+        });
+
+        /**
          *  Shift
          */
         Route::group(['prefix' => 'shift'], function() {
@@ -502,6 +712,23 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
             Route::get('/export', 'UserShiftController@export')->name('usersshift.export');
         });
 
+        
+        /**
+         *  Branch Shift
+         */
+        Route::group(['prefix' => 'branchshift'], function() {
+            Route::get('/', 'BranchShiftController@index')->name('branchshift.index');
+            Route::get('/create', 'BranchShiftController@create')->name('branchshift.create');
+            Route::post('/create', 'BranchShiftController@store')->name('branchshift.store');
+            Route::post('/createapi', 'BranchShiftController@storeapi')->name('branchshift.storeapi');
+            Route::get('/{branchshift}/show', 'BranchShiftController@show')->name('branchshift.show');
+            Route::get('/{branchshift}/edit', 'BranchShiftController@edit')->name('branchshift.edit');
+            Route::patch('/{branchshift}/update', 'BranchShiftController@update')->name('branchshift.update');
+            Route::delete('/{branchshift}/delete', 'BranchShiftController@destroy')->name('branchshift.destroy');
+            Route::get('/search', 'BranchShiftController@search')->name('branchshift.search');
+            Route::get('/export', 'BranchShiftController@export')->name('branchshift.export');
+        });
+
         /**
          *  Supllier
          */
@@ -525,8 +752,17 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
         Route::group(['prefix' => 'reports'], function() {
             Route::get('/cashier', 'ReportCashierComController@index')->name('reports.cashier.index');
             Route::get('/search_cashier', 'ReportCashierComController@search')->name('reports.cashier.search');
+            Route::get('/sales_trip', 'ReportSalesTripController@index')->name('reports.sales_trip.index');
+            Route::get('/search_sales_trip', 'ReportSalesTripController@search')->name('reports.sales_trip.search');
+            Route::get('/sales_trip_detail', 'ReportSalesTripDetailController@index')->name('reports.sales_trip_detail.index');
+            Route::get('/search_sales_trip_detail', 'ReportSalesTripDetailController@search')->name('reports.sales_trip_detail.search');
+            Route::get('/customer_reg', 'ReportCustomerRegController@index')->name('reports.customer_reg.index');
+            Route::get('/search_customer_reg', 'ReportCustomerRegController@search')->name('reports.customer_reg.search');
+            Route::post('/approve_customer_reg', 'ReportCustomerRegController@approve')->name('reports.customer_reg.approve');
             Route::get('/terapist', 'ReportTerapistComController@index')->name('reports.terapist.index');
             Route::get('/search_terapist', 'ReportTerapistComController@search')->name('reports.terapist.search');
+            Route::get('/terapistdaily', 'ReportTerapistComDailyController@index')->name('reports.terapistdaily.index');
+            Route::get('/search_terapistdaily', 'ReportTerapistComDailyController@search')->name('reports.terapistdaily.search');
             Route::get('/closeshift', 'ReportCloseShiftController@index')->name('reports.closeshift.index');
             Route::get('/closeshift_getdata', 'ReportCloseShiftController@getdata')->name('reports.closeshift.getdata');
             Route::get('/closeshift_search', 'ReportCloseShiftController@search')->name('reports.closeshift.search');
@@ -553,6 +789,10 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
             Route::get('/usertracking_search', 'ReportUserTrackingController@search')->name('reports.usertracking.search');
             Route::get('/omsetdetail', 'ReportOmsetDetailController@index')->name('reports.omsetdetail.index');
             Route::get('/omsetdetaildetail_search', 'ReportOmsetDetailController@search')->name('reports.omsetdetail.search');
+            Route::get('/returnsell', 'ReportReturnSellController@index')->name('reports.returnsell.index');
+            Route::get('/returnsell_search', 'ReportReturnSellController@search')->name('reports.returnsell.search');
+            Route::get('/returnselldetail', 'ReportReturnSellDetailController@index')->name('reports.returnselldetail.index');
+            Route::get('/returnselldetail_search', 'ReportReturnSellDetailController@search')->name('reports.returnselldetail.search');
         });
 
 

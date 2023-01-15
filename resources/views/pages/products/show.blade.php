@@ -1,58 +1,58 @@
 @extends('layouts.default', ['appSidebarSearch' => true])
 
-@section('title', 'Profile Users')
+@section('title', 'Show Product')
 
 @section('content')
     <div class="bg-light p-4 rounded">
         <div class="row">
           <div class="col-md-10">
-            <h1>Product #{{ $product->product_id }}</h1>
+            <h1>@lang('general.product') #{{ $product->product_id }}</h1>
           </div>
           <div class="col-md-2">
             <div class="mt-4">
-                <a href="{{ route('products.edit', $product->product_id) }}" class="btn btn-info">Edit</a>
-                <a href="{{ route('products.index') }}" class="btn btn-default">Back</a>
+                <a href="{{ route('products.edit', $product->product_id) }}" class="btn btn-info">@lang('general.lbl_edit')</a>
+                <a href="{{ route('products.index') }}" class="btn btn-default">@lang('general.lbl_back')</a>
             </div>
           </div>
         </div>
         <br>
       
         <div class="panel text-white">
-          <div class="panel-heading bg-teal-600"><h4>Information</h4></div>
+          <div class="panel-heading bg-teal-600"><h4>@lang('general.lbl_information')</h4></div>
           <div class="panel-body bg-white text-black">
             <div class="row mb-3">
-              <label class="form-label col-form-label col-md-2">Name</label>
+              <label class="form-label col-form-label col-md-2">@lang('general.lbl_name')</label>
               <div class="col-md-8">
                 <input type="text" class="form-control" value="{{ $product->product_name }}" readonly />
               </div>
           </div>
           <div class="row mb-3">
-            <label class="form-label col-form-label col-md-2">Abbr</label>
+            <label class="form-label col-form-label col-md-2">@lang('general.lbl_abbr')</label>
             <div class="col-md-8">
               <input type="text" class="form-control" value="{{ $product->abbr }}" readonly />
             </div>
           </div>
           <div class="row mb-3">
-            <label class="form-label col-form-label col-md-2">Type</label>
+            <label class="form-label col-form-label col-md-2">@lang('general.lbl_type')</label>
             <div class="col-md-8">
               <input type="text" class="form-control" value="{{ $product->product_type }}" readonly />
             </div>
           </div>
           <div class="row mb-3">
-            <label class="form-label col-form-label col-md-2">Category</label>
+            <label class="form-label col-form-label col-md-2">@lang('general.lbl_category')</label>
             <div class="col-md-8">
               <input type="text" class="form-control" value="{{ $product->product_category }}" readonly />
             </div>
           </div>
           <div class="row mb-3">
-            <label class="form-label col-form-label col-md-2">Brand</label>
+            <label class="form-label col-form-label col-md-2">@lang('general.lbl_brand')</label>
             <div class="col-md-8">
               <input type="text" class="form-control" value="{{ $product->product_brand }}" readonly />
             </div>
           </div>
 
           <div class="row mb-3">
-              <label class="form-label col-form-label col-md-2">Photo</label>
+              <label class="form-label col-form-label col-md-2">@lang('general.lbl_photo')</label>
               <div class="col-md-8">
                 <a href="/images/user-files/{{ $product->photo }}" target="_blank"><img src="/images/user-files/{{ $product->photo }}" width="100" height="100" class="rounded float-start"></a>
               </div>
@@ -62,12 +62,12 @@
         </div>
 
         <div class="panel text-white">
-          <div class="panel-heading bg-teal-600"><h4>Ingredients</h4></div>
+          <div class="panel-heading bg-teal-600"><h4>@lang('general.lbl_ingredient')</h4></div>
           <div class="panel-body bg-white text-black">
             
             <div class="row mb-3">
               <div class="col-md-4">
-                <label class="form-label col-form-label">Product Name</label>
+                <label class="form-label col-form-label">@lang('general.lbl_name')</label>
                 <input type="hidden" 
                 name="input_product_id"
                 id="input_product_id"
@@ -75,7 +75,7 @@
                 value="{{ $product->product_id }}" required/>
                 <select class="form-control" 
                   name="input_product_id_material" id="input_product_id_material" required>
-                  <option value="">Select Product</option>
+                  <option value="">@lang('general.productselect')</option>
                   @foreach($products as $pd)
                       <option value="{{ $pd->id }}" {{ ($pd->id==old('input_product_id_material') ) 
                         ? 'selected'
@@ -85,10 +85,10 @@
               </div>
 
               <div class="col-md-2">
-                <label class="form-label col-form-label">UOM</label>
+                <label class="form-label col-form-label">@lang('general.lbl_uom')</label>
                 <select class="form-control" 
                   name="input_uom" id="input_uom" required>
-                  <option value="">Select UOM</option>
+                  <option value="">@lang('general.lbl_uomselect')</option>
                   @foreach($uoms as $uom)
                       <option value="{{ $uom->id }}" {{ ($uom->id==old('input_uom') ) 
                         ? 'selected'
@@ -98,7 +98,7 @@
               </div>
 
               <div class="col-md-2">
-                <label class="form-label col-form-label">Qty</label>
+                <label class="form-label col-form-label">@lang('general.lbl_qty')</label>
                 <input type="text" 
                 name="input_qty"
                 id="input_qty"
@@ -111,7 +111,7 @@
 
               <div class="col-md-2">
                 <div class="col-md-12"><label class="form-label col-form-label">_</label></div>
-                <a href="#" id="input_submit" class="btn btn-green"><div class="fa-1x"><i class="fas fa-plus fa-fw"></i>Add Ingredients</div></a>
+                <a href="#" id="input_submit" class="btn btn-green"><div class="fa-1x"><i class="fas fa-plus fa-fw"></i>@lang('general.lbl_ingredient_add')</div></a>
               </div>
 
 
@@ -120,10 +120,10 @@
                 <table class="table table-striped" id="example">
                     <thead>
                     <tr>
-                        <th scope="col">Product Name</th>
-                        <th scope="col" width="10%">UOM</th>
-                        <th scope="col" width="10%">Qty</th>
-                        <th scope="col" width="10%">Action</th>
+                      <th scope="col">@lang('general.lbl_name')</th>
+                      <th scope="col" width="10%">@lang('general.lbl_uom')</th>
+                      <th scope="col" width="10%">@lang('general.lbl_qty')</th>
+                      <th scope="col" width="10%">@lang('general.lbl_action')</th>
                     </tr>
                     </thead>
                     <tbody>            
@@ -132,7 +132,7 @@
                             <th scope="row">{{ $ingredient->product_name }}</th>
                             <td>{{ $ingredient->uom_name }}</td>
                             <td>{{ $ingredient->qty }}</td>
-                            <td><a href="#" onclick="deleteIngredients({{ $ingredient->product_id}},{{$ingredient->product_id_material }});" class="btn btn-danger btn-sm">Delete</a></td>
+                            <td><a href="#" onclick="deleteIngredients({{ $ingredient->product_id}},{{$ingredient->product_id_material }});" class="btn btn-danger btn-sm">@lang('general.lbl_delete')</a></td>
                         </tr>
                     @endforeach
                     </tbody>
@@ -228,7 +228,7 @@
                       {
                         position: 'top-end',
                         icon: 'warning',
-                        text: 'Something went wrong - '+resp.data.message,
+                        text: "@lang('general.lbl_msg_failed')"+resp.data.message,
                         showConfirmButton: false,
                         imageHeight: 30, 
                         imageWidth: 30,   
@@ -260,7 +260,7 @@
                       {
                         position: 'top-end',
                         icon: 'warning',
-                        text: 'Something went wrong - '+resp.data.message,
+                        text: "@lang('general.lbl_msg_failed')"+resp.data.message,
                         showConfirmButton: false,
                         imageHeight: 30, 
                         imageWidth: 30,   

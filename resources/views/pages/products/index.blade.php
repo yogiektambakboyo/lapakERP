@@ -4,22 +4,22 @@
 
 @section('content')
     <div class="bg-light p-4 rounded">
-        <h1>Products</h1>
+        <h1>@lang('general.product')</h1>
         <div class="lead row mb-3">
             <div class="col-md-10">
                 <div class="col-md-4">
-                    Manage your products here.
+                    @lang('general.label')
                 </div>
                 <div class="col-md-10"> 	
                     <form action="{{ route('products.search') }}" method="GET" class="row row-cols-lg-auto g-3 align-items-center">
-                        <div class="col-2"><input type="text" class="form-control  form-control-sm" name="search" placeholder="Find Product.." value="{{ $keyword }}"></div>
-                        <div class="col-2"><input type="submit" class="btn btn-sm btn-secondary" value="Search" name="submit"></div>   
-                        <div class="col-2"><input type="submit" class="btn btn-sm btn-success" value="Export Excel" name="export"></div>  
+                        <div class="col-2"><input type="text" class="form-control  form-control-sm" name="search" placeholder="@lang('general.label_search')" value="{{ $keyword }}"></div>
+                        <div class="col-2"><input type="submit" class="btn btn-sm btn-secondary" value="@lang('general.btn_search')" name="submit"></div>   
+                        <div class="col-2"><input type="submit" class="btn btn-sm btn-success" value="@lang('general.btn_export')" name="export"></div>  
                     </form>
                 </div>
             </div>
             <div class="col-md-2">
-                <a href="{{ route('products.create') }}" class="btn btn-primary float-right"><span class="fa fa-plus-circle"></span>  Add new product</a>
+                <a href="{{ route('products.create') }}" class="btn btn-primary float-right"><span class="fa fa-plus-circle"></span> @lang('general.btn_create')</a>
             </div>
         </div>
         
@@ -31,11 +31,11 @@
             <thead>
             <tr>
                 <th scope="col" width="1%">#</th>
-                <th>Name</th>
-                <th scope="col" width="15%">Category</th>
-                <th scope="col" width="10%">Brand</th>
-                <th scope="col" width="5%">Type</th>
-                <th scope="col" width="2%">Action</th>   
+                <th>@lang('general.lbl_name')</th>
+                <th scope="col" width="15%">@lang('general.category')</th>
+                <th scope="col" width="10%">@lang('general.brand')</th>
+                <th scope="col" width="5%">@lang('general.tipe')</th>
+                <th scope="col" width="2%">@lang('general.lbl_action')</th>   
                 <th scope="col" width="2%"></th>
                 <th scope="col" width="2%"></th>    
             </tr>
@@ -49,10 +49,10 @@
                         <td>{{ $product->product_category }}</td>
                         <td>{{ $product->product_brand }}</td>
                         <td>{{ $product->product_type }}</td>
-                        <td><a href="{{ route('products.show', $product->id) }}" class="btn btn-warning btn-sm">Show</a></td>
-                        <td><a href="{{ route('products.edit', $product->id) }}" class="btn btn-info btn-sm {{ $act_permission->allow_edit==1?'':'d-none' }} ">Edit</a></td>
+                        <td><a href="{{ route('products.show', $product->id) }}" class="btn btn-warning btn-sm">@lang('general.lbl_show')</a></td>
+                        <td><a href="{{ route('products.edit', $product->id) }}" class="btn btn-info btn-sm {{ $act_permission->allow_edit==1?'':'d-none' }} ">@lang('general.lbl_edit')</a></td>
                         <td>
-                            <a onclick="showConfirm({{ $product->id }}, '{{ $product->product_name }}')" class="btn btn-danger btn-sm  {{ $act_permission->allow_delete==1?'':'d-none' }} ">Delete</a>
+                            <a onclick="showConfirm({{ $product->id }}, '{{ $product->product_name }}')" class="btn btn-danger btn-sm  {{ $act_permission->allow_delete==1?'':'d-none' }} ">@lang('general.lbl_delete')</a>
                         </td>
                     </tr>
                 @endforeach
@@ -61,26 +61,6 @@
 
         <div class="d-flex">
             {!! $products->links() !!}
-        </div>
-
-        <!-- Vertically centered modal -->
-        <!-- Modal -->
-        <div class="modal fade" id="modal-filter" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-            <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                <h5 class="modal-title" id="staticBackdropLabel">Filter Data</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                ...
-                </div>
-                <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary">Apply</button>
-                </div>
-            </div>
-            </div>
         </div>
 
     </div>
@@ -116,13 +96,14 @@
 
           function showConfirm(id,data){
             Swal.fire({
-            title: 'Are you sure?',
-            text: "You will delete document "+data+" !",
+            title: "@lang('general.lbl_sure')",
+            text: "@lang('general.lbl_sure_title') "+data+" !",
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Yes, delete it!'
+            cancelButtonColor: '#d33', cancelButtonText: "@lang('general.lbl_cancel')",
+            confirmButtonText: "@lang('general.lbl_sure_delete')",
+            cancelButtonText: "@lang('general.lbl_cancel')"
             }).then((result) => {
                 if (result.isConfirmed) {
                     var url = "{{ route('products.destroy','XX') }}";
@@ -136,13 +117,13 @@
                             resp => {
                                 if(resp.data.status=="success"){
                                     Swal.fire({
-                                        title: 'Deleted!',
-                                        text: 'Your data has been deleted.',
+                                        title: "@lang('general.lbl_msg_delete')",
+                                        text: "@lang('general.lbl_msg_delete_title')",
                                         icon: 'success',
                                         showCancelButton: false,
                                         confirmButtonColor: '#3085d6',
-                                        cancelButtonColor: '#d33',
-                                        confirmButtonText: 'Close'
+                                        cancelButtonColor: '#d33', cancelButtonText: "@lang('general.lbl_cancel')",
+                                        confirmButtonText: "@lang('general.lbl_close')"
                                         }).then((result) => {
                                             window.location.href = "{{ route('products.index') }}"; 
                                         })
@@ -151,7 +132,7 @@
                                     {
                                         position: 'top-end',
                                         icon: 'warning',
-                                        text: 'Something went wrong - '+resp.data.message,
+                                        text: "@lang('general.lbl_msg_failed') - "+resp.data.message,
                                         showConfirmButton: false,
                                         imageHeight: 30, 
                                         imageWidth: 30,   

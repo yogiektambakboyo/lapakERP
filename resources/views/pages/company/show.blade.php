@@ -8,7 +8,7 @@
         <div class="lead row mb-3">
             <div class="col-md-10">
                 <div class="col-md-12">
-                    Manage your company here.
+                    @lang('general.lbl_title')
                 </div>
             </div>
             <div class="col-md-2">
@@ -18,7 +18,7 @@
 
         <div class="container mt-4">
                 <div class="mb-3">
-                    <label for="name" class="form-label">Name</label>
+                    <label for="name" class="form-label">@lang('general.lbl_name')</label>
                     <input value="{{ $company->remark }}" 
                         type="text" 
                         class="form-control" 
@@ -30,19 +30,19 @@
                     @endif
                 </div>
                 <div class="mb-3">
-                    <label for="address" class="form-label">Address</label>
+                    <label for="address" class="form-label">@lang('general.lbl_address')</label>
                     <input value="{{ $company->address }}" 
                         type="text" 
                         class="form-control" 
                         name="address" 
-                        placeholder="Address" required  disabled>
+                        placeholder="@lang('general.lbl_address')" required  disabled>
 
                     @if ($errors->has('address'))
                         <span class="text-danger text-left">{{ $errors->first('address') }}</span>
                     @endif
                 </div>
                 <div class="mb-3">
-                    <label for="city" class="form-label">City</label>
+                    <label for="city" class="form-label">@lang('general.lbl_city')</label>
                     <input value="{{ $company->city }}" 
                         type="text" 
                         class="form-control" 
@@ -66,7 +66,7 @@
                     @endif
                 </div>
                 <div class="mb-3">
-                    <label for="abbr" class="form-label">Phone No</label>
+                    <label for="abbr" class="form-label">@lang('general.lbl_phoneno')</label>
                     <input value="{{ $company->phone_no }}" 
                         type="text" 
                         class="form-control" 

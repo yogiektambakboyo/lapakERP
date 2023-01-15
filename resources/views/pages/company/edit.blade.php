@@ -15,7 +15,7 @@
                 @method('patch')
                 @csrf
                 <div class="mb-3">
-                    <label for="name" class="form-label">Name</label>
+                    <label for="name" class="form-label">@lang('general.lbl_name')</label>
                     <input value="{{ $company->remark }}" 
                         type="text" 
                         class="form-control" 
@@ -27,19 +27,19 @@
                     @endif
                 </div>
                 <div class="mb-3">
-                    <label for="address" class="form-label">Address</label>
+                    <label for="address" class="form-label">@lang('general.lbl_address')</label>
                     <input value="{{ $company->address }}" 
                         type="text" 
                         class="form-control" 
                         name="address" 
-                        placeholder="Address" required>
+                        placeholder="@lang('general.lbl_address')" required>
 
                     @if ($errors->has('address'))
                         <span class="text-danger text-left">{{ $errors->first('address') }}</span>
                     @endif
                 </div>
                 <div class="mb-3">
-                    <label for="city" class="form-label">City</label>
+                    <label for="city" class="form-label">@lang('general.lbl_city')</label>
                     <input value="{{ $company->city }}" 
                         type="text" 
                         class="form-control" 
@@ -63,7 +63,7 @@
                     @endif
                 </div>
                 <div class="mb-3">
-                    <label for="abbr" class="form-label">Phone No</label>
+                    <label for="abbr" class="form-label">@lang('general.lbl_phoneno')</label>
                     <input value="{{ $company->phone_no }}" 
                         type="text" 
                         class="form-control" 
@@ -95,7 +95,7 @@
                 </div>
 
                 <button type="submit" class="btn btn-primary">Save company</button>
-                <a href="{{ route('company.index') }}" class="btn btn-default">Back</a>
+                <a href="{{ route('company.index') }}" class="btn btn-default">@lang('general.lbl_back') </a>
             </form>
         </div>
 

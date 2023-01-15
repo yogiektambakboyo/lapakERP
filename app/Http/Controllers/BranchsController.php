@@ -64,12 +64,14 @@ class BranchsController extends Controller
 
         $keyword = $request->search;
         $data = $this->data;
+        $act_permission = $this->act_permission[0];
+
 
         if($request->export=='Export Excel'){
             return Excel::download(new BranchsExport($keyword), 'branchs_'.Carbon::now()->format('YmdHis').'.xlsx');
         }else{
             $branchs = Branch::orderBy('id', 'ASC')->where('branch.remark','LIKE','%'.$keyword.'%')->get();
-            return view('pages.branchs.index', ['company' => Company::get()->first()],compact('branchs','data','keyword'))->with('i', ($request->input('page', 1) - 1) * 5);
+            return view('pages.branchs.index', ['act_permission' => $act_permission,'company' => Company::get()->first()],compact('branchs','data','keyword'))->with('i', ($request->input('page', 1) - 1) * 5);
         }
     }
 
@@ -137,7 +139,12 @@ class BranchsController extends Controller
             'remark' => 'required|unique:branch,remark,'.$branch->id
         ]);
 
-        $branch->update($request->only('name'));
+        $branch->update( array_merge(
+            ['remark' => $request->get('remark') ],
+            ['address' => $request->get('address') ],
+            ['city' => $request->get('city') ],
+            ['abbr' => $request->get('abbr') ],
+        ));
         
 
         return redirect()->route('branchs.index')
@@ -175,7 +182,7 @@ class BranchsController extends Controller
                 $query->on('role_has_permissions.permission_id', '=', 'permissions.id')
                 ->where('role_has_permissions.role_id','=',$id)->where('permissions.name','like','%.index%')->where('permissions.url','!=','null');
             });
-           })->get(['permissions.name','permissions.url','permissions.remark','permissions.parent']);
+           })->orderby('permissions.remark')->get(['permissions.name','permissions.url','permissions.remark','permissions.parent']);
 
            $this->data = [
             'menu' => 

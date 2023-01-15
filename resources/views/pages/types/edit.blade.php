@@ -15,7 +15,7 @@
                 @method('patch')
                 @csrf
                 <div class="mb-3">
-                    <label for="name" class="form-label">Name</label>
+                    <label for="name" class="form-label">@lang('general.lbl_name')</label>
                     <input value="{{ $type->remark }}" 
                         type="text" 
                         class="form-control" 
@@ -27,7 +27,7 @@
                     @endif
                 </div>
                 <button type="submit" class="btn btn-primary">Save types</button>
-                <a href="{{ route('types.index') }}" class="btn btn-default">Back</a>
+                <a href="{{ route('types.index') }}" class="btn btn-default">@lang('general.lbl_back') </a>
             </form>
         </div>
 

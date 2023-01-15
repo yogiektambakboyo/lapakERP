@@ -167,7 +167,7 @@ class UsersController extends Controller
                 $request->validated(), 
                 ['password' => $request->get('password') ],
                 ['phone_no' => $request->get('phone_no') ],
-                ['join_date' => Carbon::parse($request->get('join_date'))->format('d/m/Y') ],
+                ['join_date' => Carbon::parse($request->get('join_date'))->format('Y-m-d') ],
                 ['gender' => $request->get('gender') ],
                 ['netizen_id' => $request->get('netizen_id') ],
                 ['active' => '1' ],
@@ -179,7 +179,7 @@ class UsersController extends Controller
                 ['referral_id' => $request->get('referral_id') ],
                 ['employee_status' => $request->get('employee_status') ],
                 ['birth_place' => $request->get('birth_place') ],
-                ['birth_date' => Carbon::parse($request->get('birth_date'))->format('d/m/Y')  ]
+                ['birth_date' => Carbon::parse($request->get('birth_date'))->format('Y-m-d')  ]
             )
         );
 
@@ -270,7 +270,7 @@ class UsersController extends Controller
 
         DB::insert("INSERT INTO public.users_skills
         (users_id, modul, trainer, status, dated, updated_at, created_by, created_at)
-        VALUES(".$request->get('user_id').", ".$request->get('module').", ".$request->get('trainer').", '".$request->get('status')."', '".Carbon::parse($request->get('dated'))->format('d/m/Y')."', null, 1, now());");
+        VALUES(".$request->get('user_id').", ".$request->get('module').", ".$request->get('trainer').", '".$request->get('status')."', '".Carbon::parse($request->get('dated'))->format('Y-m-d')."', null, 1, now());");
             
         $result = array_merge(
             ['status' => 'success'],
@@ -476,7 +476,7 @@ class UsersController extends Controller
         $user->update( array_merge(
             $request->validated(), 
             ['phone_no' => $request->get('phone_no') ],
-            ['join_date' => Carbon::parse($request->get('join_date'))->format('d/m/Y') ],
+            ['join_date' => Carbon::parse($request->get('join_date'))->format('Y-m-d') ],
             ['gender' => $request->get('gender') ],
             ['netizen_id' => $request->get('netizen_id') ],
             ['city' => $request->get('city') ],
@@ -487,7 +487,7 @@ class UsersController extends Controller
             ['referral_id' => $request->get('referral_id') ],
             ['birth_place' => $request->get('birth_place') ],
             ['employee_status' => $request->get('employee_status') ],
-            ['birth_date' => Carbon::parse($request->get('birth_date'))->format('d/m/Y')  ]
+            ['birth_date' => Carbon::parse($request->get('birth_date'))->format('Y-m-d')  ]
         ));
 
         if($request->file('photo_netizen_ids') == null){
@@ -525,6 +525,11 @@ class UsersController extends Controller
      */
     public function destroy(User $user) 
     {
+
+        DB::select("
+            delete from users_skills us where users_id = ".$user->id.";
+        ");
+
         if($user->delete()){
             $result = array_merge(
                 ['status' => 'success'],
@@ -548,7 +553,7 @@ class UsersController extends Controller
                 $query->on('role_has_permissions.permission_id', '=', 'permissions.id')
                 ->where('role_has_permissions.role_id','=',$id)->where('permissions.name','like','%.index%')->where('permissions.url','!=','null');
             });
-           })->get(['permissions.name','permissions.url','permissions.remark','permissions.parent']);
+           })->orderby('permissions.remark')->get(['permissions.name','permissions.url','permissions.remark','permissions.parent']);
 
            $this->data = [
             'menu' => 

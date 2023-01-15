@@ -9,8 +9,8 @@
     <div class="panel-heading  bg-teal-600">
       <div class="panel-title"><h4 class="">Sales Order</h4></div>
       <div class="">
-        <a href="{{ route('orders.index') }}" class="btn btn-default">Cancel</a>
-        <button type="button" id="save-btn" class="btn btn-info">Save</button>
+        <a href="{{ route('orders.index') }}" class="btn btn-default">@lang('general.lbl_cancel')</a>
+        <button type="button" id="save-btn" class="btn btn-info">@lang('general.lbl_save')</button>
       </div>
     </div>
     <div class="panel-body bg-white text-black">
@@ -18,7 +18,7 @@
         <div class="row mb-3">
           <div class="col-md-4">
             <div class="row mb-3">
-              <label class="form-label col-form-label col-md-4">Date (mm/dd/YYYY)</label>
+              <label class="form-label col-form-label col-md-4">@lang('general.lbl_dated_mmddYYYY')</label>
               <div class="col-md-8">
                 <input type="text" 
                 name="order_date"
@@ -31,7 +31,7 @@
               </div>
             </div>
             <div class="row mb-3">
-              <label class="form-label col-form-label col-md-4">Remark</label>
+              <label class="form-label col-form-label col-md-4">@lang('general.lbl_remark')</label>
               <div class="col-md-8">
                 <input type="text" 
                 name="remark"
@@ -49,9 +49,9 @@
                 <thead>
                 <tr>
                     <th scope="col" width="20%">Code</th>
-                    <th>Product</th>
+                    <th>@lang('general.product')</th>
                     <th scope="col" width="5%">Type</th>
-                    <th scope="col" width="5%">Action</th>  
+                    <th scope="col" width="5%">@lang('general.lbl_action')</th> 
                 </tr>
                 </thead>
                 <tbody>
@@ -62,11 +62,11 @@
 
           <div class="col-md-8">
             <div class="row mb-3">
-              <label class="form-label col-form-label col-md-2">Customer</label>
+              <label class="form-label col-form-label col-md-2">@lang('general.lbl_customer')</label>
               <div class="col-md-10">
                 <select class="form-control" 
                     name="customer_id" id="customer_id" required>
-                    <option value="">Select Customers</option>
+                    <option value="">@lang('general.lbl_customerselect')</option>
                     @foreach($customers as $customer)
                         <option value="{{ $customer->id }}">{{ $customer->id }} - {{ $customer->name }} ({{ $customer->remark }})</option>
                     @endforeach
@@ -74,18 +74,18 @@
               </div>
             </div>
             <div class="row mb-3">
-              <label class="form-label col-form-label col-md-2">Type Payment</label>
+              <label class="form-label col-form-label col-md-2">@lang('general.lbl_type_payment')</label>
               <div class="col-md-2">
                 <select class="form-control" 
                       name="payment_type" id ="payment_type" required>
-                      <option value="">Select Payment</option>
+                      <option value="">@lang('general.lbl_type_paymentselect')</option>
                       @foreach($payment_type as $value)
                           <option value="{{ $value }}">{{ $value }}</option>
                       @endforeach
                   </select>
               </div>
 
-                <label class="form-label col-form-label col-md-2">Nominal Payment</label>
+                <label class="form-label col-form-label col-md-2">@lang('general.lbl_nominal_payment')</label>
                 <div class="col-md-2">
                   <input type="text" 
                   id="payment_nominal"
@@ -94,25 +94,25 @@
                   value="{{ old('remark') }}" required/>
                   </div>
 
-                  <label class="form-label col-form-label col-md-1">Charge</label>
+                  <label class="form-label col-form-label col-md-1">@lang('general.lbl_charge')</label>
                   <div class="col-md-3">
                     <h2 class="text-end"><label id="order_charge">Rp. 0</label></h2>
                   </div>
                 
             </div>
 
-            <div class="panel-heading bg-teal-600 text-white"><strong>Order List</strong></div>
+            <div class="panel-heading bg-teal-600 text-white"><strong>@lang('general.lbl_order_list')</strong></div>
             </br>
 
             <table class="table table-striped" id="order_table">
               <thead>
               <tr>
-                  <th>Product Code</th>
-                  <th scope="col" width="10%">Price</th>
-                  <th scope="col" width="5%">Discount</th>
-                  <th scope="col" width="5%">Qty</th>
+                  <th>@lang('general.product')</th>
+                  <th scope="col" width="10%">@lang('general.lbl_price')</th>
+                  <th scope="col" width="5%">@lang('general.lbl_discount')</th>
+                  <th scope="col" width="5%">@lang('general.lbl_qty')</th>
                   <th scope="col" width="15%">Total</th>  
-                  <th scope="col" width="15%">Action</th>  
+                  <th scope="col" width="15%">@lang('general.lbl_action')</th> 
               </tr>
               </thead>
               <tbody>
@@ -233,7 +233,7 @@
                       {
                         position: 'top-end',
                         icon: 'warning',
-                        text: 'Something went wrong - '+resp.data.message,
+                        text: "@lang('general.lbl_msg_failed')"+resp.data.message,
                         showConfirmButton: false,
                         imageHeight: 30, 
                         imageWidth: 30,   
@@ -262,9 +262,9 @@
             targets: -1, 
             data: null, 
             defaultContent: 
-            '<a href="#" id="add_row" class="btn btn-xs btn-green"><div class="fa-1x"><i class="fas fa-circle-plus fa-fw"></i></div></a>'+
-            '<a href="#" id="minus_row" class="btn btn-xs btn-yellow"><div class="fa-1x"><i class="fas fa-circle-minus fa-fw"></i></div></a>'+
-            '<a href="#" id="delete_row" class="btn btn-xs btn-danger"><div class="fa-1x"><i class="fas fa-circle-xmark fa-fw"></i></div></a>',}],
+            '<a href="#"  data-toggle="tooltip" data-placement="top" title="Tambah"   id="add_row"  class="btn btn-xs btn-green"><div class="fa-1x"><i class="fas fa-circle-plus fa-fw"></i></div></a>'+
+            '<a href="#"  data-toggle="tooltip" data-placement="top" title="Kurangi"   id="minus_row"  class="btn btn-xs btn-yellow"><div class="fa-1x"><i class="fas fa-circle-minus fa-fw"></i></div></a>'+
+            '<a href="#" data-toggle="tooltip" data-placement="top" title="Hapus"  id="delete_row"  class="btn btn-xs btn-danger"><div class="fa-1x"><i class="fas fa-circle-xmark fa-fw"></i></div></a>',}],
           columns: [
             { data: 'abbr' },
             { data: 'price',render: DataTable.render.number( '.', null, 0, '' ) },

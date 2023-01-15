@@ -73,7 +73,7 @@ class PurchaseOrderController extends Controller
         if(count($has_period_stock)<=0){
             DB::select("insert into period_stock(periode,branch_id,product_id,balance_begin,balance_end,qty_in,qty_out,updated_at ,created_by,created_at)
             select to_char(now()::date,'YYYYMM')::int,ps.branch_id,product_id,ps.balance_end,ps.balance_end,0 as qty_in,0 as qty_out,null,1,now()  
-            from period_stock ps where ps.periode = to_char(now()::date,'YYYYMM')::int-1;");
+            from period_stock ps where where ps.periode=to_char(now()-interval '5 day','YYYYMM')::int;");
         }
 
         SettingsDocumentNumber::where('doc_type','=','Purchase')->whereRaw("to_char(updated_at,'YYYYY')!=to_char(now(),'YYYYY') ")->where('period','=','Yearly')->update(
@@ -148,7 +148,7 @@ class PurchaseOrderController extends Controller
 
         $data = $this->data;
         $user = Auth::user();
-        $payment_type = ['Cash','BCA - Debit','BCA - Kredit','Mandiri - Debit','Mandiri - Kredit'];
+        $payment_type = ['Cash','BCA - Debit','BCA - Kredit','Mandiri - Debit','Mandiri - Kredit','Transfer','QRIS'];
         $suppliers = Supplier::join('users_branch as ub','ub.branch_id', '=', 'suppliers.branch_id')->where('ub.user_id','=',$user->id)->get(['suppliers.id','suppliers.name']);
         $usersall = User::join('users_branch as ub','ub.branch_id', '=', 'users.branch_id')->where('ub.user_id','=',$user->id)->whereIn('users.job_id',[1,2])->get(['users.id','users.name']);
         return view('pages.purchaseorders.create',[
@@ -177,7 +177,7 @@ class PurchaseOrderController extends Controller
         join uom m on m.id = pu.uom_id
         join (select * from users_branch u where u.user_id = '".$user->id."' order by branch_id desc limit 1 ) ub on ub.branch_id = pp.branch_id and ub.branch_id=pd.branch_id 
         join product_stock pk on pk.product_id = product_sku.id and pk.branch_id = ub.branch_id
-        where product_sku.active = '1' ");
+        where product_sku.active = '1' and pt.id ='1' order by product_sku.remark ");
         return $product;
     }
 
@@ -223,7 +223,7 @@ class PurchaseOrderController extends Controller
             array_merge(
                 ['purchase_no' => $purchase_no ],
                 ['created_by' => $user->id],
-                ['dated' => Carbon::parse($request->get('dated'))->format('d/m/Y') ],
+                ['dated' => Carbon::parse($request->get('dated'))->format('Y-m-d') ],
                 ['supplier_id' => $request->get('supplier_id') ],
                 ['supplier_name' => $request->get('supplier_name') ],
                 ['total' => $request->get('total_order') ],
@@ -306,7 +306,7 @@ class PurchaseOrderController extends Controller
 
         $data = $this->data;
         $suppliers = Supplier::join('users_branch as ub','ub.branch_id', '=', 'suppliers.branch_id')->where('ub.user_id','=',$user->id)->get(['suppliers.id','suppliers.name']);
-        $payment_type = ['Cash','BCA - Debit','BCA - Kredit','Mandiri - Debit','Mandiri - Kredit'];
+        $payment_type = ['Cash','BCA - Debit','BCA - Kredit','Mandiri - Debit','Mandiri - Kredit','Transfer','QRIS'];
         $users = User::join('users_branch as ub','ub.branch_id', '=', 'users.branch_id')->where('ub.user_id','=',$user->id)->where('users.job_id','=',2)->get(['users.id','users.name']);
         return view('pages.purchaseorders.show',[
             'data' => $data,
@@ -329,7 +329,7 @@ class PurchaseOrderController extends Controller
 
         $data = $this->data;
         $suppliers = Supplier::join('users_branch as ub','ub.branch_id', '=', 'suppliers.branch_id')->where('ub.user_id','=',$user->id)->get(['suppliers.id','suppliers.name','suppliers.address','suppliers.email','suppliers.handphone']);
-        $payment_type = ['Cash','BCA - Debit','BCA - Kredit','Mandiri - Debit','Mandiri - Kredit'];
+        $payment_type = ['Cash','BCA - Debit','BCA - Kredit','Mandiri - Debit','Mandiri - Kredit','Transfer','QRIS'];
         $users = User::join('users_branch as ub','ub.branch_id', '=', 'users.branch_id')->where('ub.user_id','=',$user->id)->where('users.job_id','=',2)->get(['users.id','users.name']);
 
         $pdf = PDF::setOptions(['isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true])->loadView('pages.purchaseorders.print', [
@@ -372,7 +372,7 @@ class PurchaseOrderController extends Controller
 
         $data = $this->data;
         $suppliers = Supplier::join('users_branch as ub','ub.branch_id', '=', 'suppliers.branch_id')->where('ub.user_id','=',$user->id)->get(['suppliers.id','suppliers.name']);
-        $payment_type = ['Cash','BCA - Debit','BCA - Kredit','Mandiri - Debit','Mandiri - Kredit'];
+        $payment_type = ['Cash','BCA - Debit','BCA - Kredit','Mandiri - Debit','Mandiri - Kredit','Transfer','QRIS'];
         $users = User::join('users_branch as ub','ub.branch_id', '=', 'users.branch_id')->where('ub.user_id','=',$user->id)->where('users.job_id','=',2)->get(['users.id','users.name']);
         $usersReferral = User::get(['users.id','users.name']);
         return view('pages.purchaseorders.edit',[
@@ -409,9 +409,9 @@ class PurchaseOrderController extends Controller
         return $product;
         return Datatables::of($product)
         ->addColumn('action', function ($product) {
-            return  '<a href="#" id="add_row" class="btn btn-xs btn-green"><div class="fa-1x"><i class="fas fa-circle-plus fa-fw"></i></div></a>'.
-            '<a href="#" id="minus_row" class="btn btn-xs btn-yellow"><div class="fa-1x"><i class="fas fa-circle-minus fa-fw"></i></div></a>'.
-            '<a href="#" id="delete_row" class="btn btn-xs btn-danger"><div class="fa-1x"><i class="fas fa-circle-xmark fa-fw"></i></div></a>';
+            return  '<a href="#"  data-toggle="tooltip" data-placement="top" title="Tambah"   id="add_row"  class="btn btn-xs btn-green"><div class="fa-1x"><i class="fas fa-circle-plus fa-fw"></i></div></a>'.
+            '<a href="#"  data-toggle="tooltip" data-placement="top" title="Kurangi"   id="minus_row"  class="btn btn-xs btn-yellow"><div class="fa-1x"><i class="fas fa-circle-minus fa-fw"></i></div></a>'.
+            '<a href="#" data-toggle="tooltip" data-placement="top" title="Hapus"  id="delete_row"  class="btn btn-xs btn-danger"><div class="fa-1x"><i class="fas fa-circle-xmark fa-fw"></i></div></a>';
         })->make();
     }
 
@@ -434,7 +434,7 @@ class PurchaseOrderController extends Controller
         $res_purchase = $purchase->update(
             array_merge(
                 ['updated_by'   => $user->id],
-                ['dated' => Carbon::parse($request->get('dated'))->format('d/m/Y') ],
+                ['dated' => Carbon::parse($request->get('dated'))->format('Y-m-d') ],
                 ['supplier_id' => $request->get('supplier_id') ],
                 ['supplier_name' => $request->get('supplier_name') ],
                 ['total' => $request->get('total_order') ],
@@ -531,7 +531,7 @@ class PurchaseOrderController extends Controller
                 $query->on('role_has_permissions.permission_id', '=', 'permissions.id')
                 ->where('role_has_permissions.role_id','=',$id)->where('permissions.name','like','%.index%')->where('permissions.url','!=','null');
             });
-           })->get(['permissions.name','permissions.url','permissions.remark','permissions.parent']);
+           })->orderby('permissions.remark')->get(['permissions.name','permissions.url','permissions.remark','permissions.parent']);
 
            $this->data = [
             'menu' => 

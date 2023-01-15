@@ -16,7 +16,7 @@
                 @csrf
                 
                 <div class="mb-3">
-                    <label class="form-label col-form-label col-md-12">Date (mm/dd/YYYY)</label>
+                    <label class="form-label col-form-label col-md-12">@lang('general.lbl_dated_mmddYYYY')</label>
                     <div class="col-md-12">
                         <input type="text" 
                         name="dated"
@@ -31,11 +31,11 @@
 
 
                 <div class="mb-3">
-                    <label class="form-label">Branch</label>
+                    <label class="form-label">@lang('general.lbl_branch')</label>
                     <div class="col-md-12">
                       <select class="form-control" 
                             name="branch_id">
-                            <option value="">Select Branch</option>
+                            <option value="">@lang('general.lbl_branchselect')</option>
                             @foreach($branchs as $branch)
                                 <option value="{{ $branch->id }}" {{ ($usershift->branch_id == $branch->id) 
                                     ? 'selected'
@@ -76,7 +76,7 @@
                 </div>
 
                 <div class="mb-3">
-                    <label for="phone_no" class="form-label">Remark</label>
+                    <label for="phone_no" class="form-label">@lang('general.lbl_remark')</label>
                     <input value="{{ $usershift->remark }}" 
                         type="text" 
                         class="form-control" 
@@ -88,8 +88,8 @@
                     @endif
                 </div>
            
-                <button type="submit" class="btn btn-primary">Save customer</button>
-                <a href="{{ route('usersshift.index') }}" class="btn btn-default">Back</a>
+                <button type="submit" class="btn btn-primary">@lang('general.lbl_save')</button>
+                <a href="{{ route('usersshift.index') }}" class="btn btn-default">@lang('general.lbl_back') </a>
             </form>
         </div>
 

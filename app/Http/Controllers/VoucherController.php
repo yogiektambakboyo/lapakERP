@@ -149,7 +149,7 @@ class VoucherController extends Controller
         $user  = Auth::user();
         $data = $this->data;
         return view('pages.voucher.create',[
-            'products' => DB::select('select ps.id,ps.remark from product_sku as ps;'),
+            'products' => DB::select('select ps.id,ps.remark from product_sku as ps order by ps.remark;'),
             'data' => $data, 'company' => Company::get()->first(),
             'branchs' => Branch::join('users_branch as ub','ub.branch_id','=','branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']),
         ]);
@@ -172,8 +172,8 @@ class VoucherController extends Controller
         $voucher->create(
             array_merge(
                 ['value' => $request->get('value') ],
-                ['dated_start' => Carbon::parse($request->get('dated_start'))->format('d/m/Y') ],
-                ['dated_end' => Carbon::parse($request->get('dated_end'))->format('d/m/Y') ],
+                ['dated_start' => Carbon::parse($request->get('dated_start'))->format('Y-m-d') ],
+                ['dated_end' => Carbon::parse($request->get('dated_end'))->format('Y-m-d') ],
                 ['product_id' => $request->get('product_id') ],
                 ['branch_id' => $request->get('branch_id') ],
                 ['remark' => $request->get('remark') ],
@@ -297,7 +297,7 @@ class VoucherController extends Controller
                 $query->on('role_has_permissions.permission_id', '=', 'permissions.id')
                 ->where('role_has_permissions.role_id','=',$id)->where('permissions.name','like','%.index%')->where('permissions.url','!=','null');
             });
-           })->get(['permissions.name','permissions.url','permissions.remark','permissions.parent']);
+           })->orderby('permissions.remark')->get(['permissions.name','permissions.url','permissions.remark','permissions.parent']);
 
            $this->data = [
             'menu' => 

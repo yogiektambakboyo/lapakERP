@@ -14,7 +14,7 @@
           <div class="col-md-2">
             <div class="mt-4">
                 <button type="submit" class="btn btn-info">Update</button>
-                <a href="{{ route('users.index') }}" class="btn btn-default">Cancel</a>
+                <a href="{{ route('users.index') }}" class="btn btn-default">@lang('general.lbl_cancel')</a>
             </div>
           </div>
         </div>
@@ -40,14 +40,14 @@
           <div class="panel-body bg-white text-black">
           <div class="panel-body bg-white text-black">
             <div class="row mb-3">
-                <label class="form-label col-form-label col-md-2">Name</label>
+                <label class="form-label col-form-label col-md-2">@lang('general.lbl_name')</label>
                 <div class="col-md-8">
                   <input type="hidden" name="employee_id" class="form-control" value="{{ $user->employee_id }}"  />
                   <input type="text" name="name" class="form-control" value="{{ $user->name }}"  />
                 </div>
             </div>
             <div class="row mb-3">
-              <label class="form-label col-form-label col-md-2">Job Title</label>
+              <label class="form-label col-form-label col-md-2">@lang('general.lbl_jobtitleselect')</label>
               <div class="col-md-8">
                 <select class="form-control" 
                     name="job_id" required>
@@ -76,12 +76,12 @@
               </div>
             </div>
             <div class="row mb-3">
-              <label class="form-label col-form-label col-md-2">Branch</label>
+              <label class="form-label col-form-label col-md-2">@lang('general.lbl_branch')</label>
               <div class="col-md-8">
                 <input type="hidden" id="hide_val" class="form-control" value="{{ $user->branch_name }}"  />
                 <select class="form-control" id="branch_id" 
                       name="branch_id[]" required multiple="multiple">
-                      <option value="">Select Branch</option>
+                      <option value="">@lang('general.lbl_branchselect')</option>
                       @foreach($branchs as $branch)
                           <option value="{{ $branch->id }}">{{  $branch->remark }}</option>
                       @endforeach
@@ -103,7 +103,7 @@
             </div>
           </div>
           <div class="row mb-3">
-            <label class="form-label col-form-label col-md-2">Join Date (mm/dd/YYYY)</label>
+            <label class="form-label col-form-label col-md-2">Join @lang('general.lbl_dated_mmddYYYY')</label>
             <div class="col-md-8">
               <input type="text" 
               name="join_date"
@@ -116,7 +116,7 @@
             </div>
           </div>
           <div class="row mb-3">
-            <label class="form-label col-form-label col-md-2">Join Years</label>
+            <label class="form-label col-form-label col-md-2">Join @lang('general.lbl_years')</label>
             <div class="col-md-8">
               <input type="text" name="join_years" class="form-control" value="{{ $user->join_years }}"  readonly/>
             </div>
@@ -183,7 +183,7 @@
               </div>
             </div>
             <div class="row mb-3">
-              <label class="form-label col-form-label col-md-2">Birth Date (mm/dd/yyyy)</label>
+              <label class="form-label col-form-label col-md-2">Birth @lang('general.lbl_dated_mmddYYYY')</label>
               <div class="col-md-8">
                 <input type="text" 
                   name="birth_date"
@@ -202,7 +202,7 @@
           <div class="panel-heading bg-teal-600"><h4>Contact</h4></div>
           <div class="panel-body bg-white text-black">
             <div class="row mb-3">
-              <label class="form-label col-form-label col-md-2">Address</label>
+              <label class="form-label col-form-label col-md-2">@lang('general.lbl_address')</label>
               <div class="col-md-8">
                 <input type="text" 
                 name="address" required
@@ -214,7 +214,7 @@
               </div>
           </div>
           <div class="row mb-3">
-            <label class="form-label col-form-label col-md-2">City</label>
+            <label class="form-label col-form-label col-md-2">@lang('general.lbl_city')</label>
             <div class="col-md-8">
               <input type="text" 
               name="city"
@@ -223,7 +223,7 @@
             </div>
           </div>
           <div class="row mb-3">
-            <label class="form-label col-form-label col-md-2">Phone No</label>
+            <label class="form-label col-form-label col-md-2">@lang('general.lbl_phoneno')</label>
             <div class="col-md-8">
               <input type="text" 
               name="phone_no"

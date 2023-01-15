@@ -14,7 +14,7 @@
             <form method="POST" action="{{ route('shift.store') }}">
                 @csrf
                 <div class="mb-3">
-                    <label for="remark" class="form-label">Remark</label>
+                    <label for="remark" class="form-label">@lang('general.lbl_remark')</label>
                     <input value="{{ old('remark') }}" 
                         type="text" 
                         class="form-control" 
@@ -52,8 +52,8 @@
                     @endif
                 </div>
 
-                <button type="submit" class="btn btn-primary">Save Shift</button>
-                <a href="{{ route('shift.index') }}" class="btn btn-default">Back</a>
+                <button type="submit" class="btn btn-primary">@lang('general.lbl_save')</button>
+                <a href="{{ route('shift.index') }}" class="btn btn-default">@lang('general.lbl_back') </a>
             </form>
         </div>
 

@@ -12,8 +12,8 @@
           </div>
           <div class="col-md-2">
             <div class="mt-4">
-                <button type="submit" class="btn btn-info">Save</button>
-                <a href="{{ route('users.index') }}" class="btn btn-default">Cancel</a>
+                <button type="submit" class="btn btn-info">@lang('general.lbl_save')</button>
+                <a href="{{ route('users.index') }}" class="btn btn-default">@lang('general.lbl_cancel')</a>
             </div>
           </div>
         </div>
@@ -22,7 +22,7 @@
           <div class="panel-heading bg-teal-600"><h4>Employee Info</h4></div>
           <div class="panel-body bg-white text-black">
             <div class="row mb-3">
-                <label class="form-label col-form-label col-md-2">Name</label>
+                <label class="form-label col-form-label col-md-2">@lang('general.lbl_name')</label>
                 <div class="col-md-8">
                   <input type="text" name="name" class="form-control" value="{{ old('name') }}"  required/>
                 </div>
@@ -35,7 +35,7 @@
             </div>
             
             <div class="row mb-3">
-              <label class="form-label col-form-label col-md-2">Job Title</label>
+              <label class="form-label col-form-label col-md-2">@lang('general.lbl_jobtitleselect')</label>
               <div class="col-md-8">
                 <select class="form-control" 
                     name="job_id" required>
@@ -65,11 +65,11 @@
             </div>
 
             <div class="row mb-3">
-              <label class="form-label col-form-label col-md-2">Branch</label>
+              <label class="form-label col-form-label col-md-2">@lang('general.lbl_branch')</label>
               <div class="col-md-8">
                 <select class="multiple-select2 form-control" 
                       name="branch_id[]" required multiple="multiple">
-                      <option value="">Select Branch</option>
+                      <option value="">@lang('general.lbl_branchselect')</option>
                       @foreach($branchs as $branch)
                           <option value="{{ $branch->id }}">{{  $branch->remark }}</option>
                       @endforeach
@@ -91,7 +91,7 @@
             </div>
           </div>
           <div class="row mb-3">
-            <label class="form-label col-form-label col-md-2">Join Date (mm/dd/YYYY)</label>
+            <label class="form-label col-form-label col-md-2">Join @lang('general.lbl_dated_mmddYYYY')</label>
             <div class="col-md-8">
               <input type="text" 
               name="join_date"
@@ -185,7 +185,7 @@
           <div class="panel-heading bg-teal-600"><h4>Contact</h4></div>
           <div class="panel-body bg-white text-black">
             <div class="row mb-3">
-              <label class="form-label col-form-label col-md-2">Address</label>
+              <label class="form-label col-form-label col-md-2">@lang('general.lbl_address')</label>
               <div class="col-md-8">
                 <input type="text" 
                 name="address" required
@@ -197,7 +197,7 @@
               </div>
           </div>
           <div class="row mb-3">
-            <label class="form-label col-form-label col-md-2">City</label>
+            <label class="form-label col-form-label col-md-2">@lang('general.lbl_city')</label>
             <div class="col-md-8">
               <input type="text" 
               name="city"
@@ -206,7 +206,7 @@
             </div>
           </div>
           <div class="row mb-3">
-            <label class="form-label col-form-label col-md-2">Phone No</label>
+            <label class="form-label col-form-label col-md-2">@lang('general.lbl_phoneno')</label>
             <div class="col-md-8">
               <input type="text" 
               name="phone_no"

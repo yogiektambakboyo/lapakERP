@@ -332,7 +332,7 @@
 							</div>
 						</div>
 						<div class="form-group row">
-							<label class="form-label col-form-label col-lg-4">Disabled Past Date</label>
+							<label class="form-label col-form-label col-lg-4">Disabled Past @lang('general.lbl_dated')   </label>
 							<div class="col-lg-8">
 								<div class="input-group date" id="datepicker-disabled-past" data-date-format="dd-mm-yyyy" data-date-start-date="Date.default">
 									<input type="text" class="form-control" placeholder="Select Date" />
@@ -480,7 +480,7 @@
 							</div>
 						</div>
 						<div class="form-group row">
-							<label class="form-label col-form-label col-lg-4">Custom Values</label>
+							<label class="form-label col-form-label col-lg-4">Custom @lang('general.lbl_values')</label>
 							<div class="col-lg-8">
 								<input type="text" id="customValue_rangeSlider" name="customValue_rangeSlider" value="" />
 							</div>
@@ -669,7 +669,7 @@
 				<div class="panel-body p-0">
 					<form class="form-horizontal form-bordered">
 						<div class="form-group row">
-							<label class="form-label col-form-label col-lg-4">Date</label>
+							<label class="form-label col-form-label col-lg-4">@lang('general.lbl_dated')   </label>
 							<div class="col-lg-8">
 								<input type="text" class="form-control" id="masked-input-date" placeholder="dd/mm/yyyy" />
 							</div>

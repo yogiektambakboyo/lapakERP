@@ -4,16 +4,16 @@
 
 @section('content')
     <div class="bg-light p-4 rounded">
-        <h2>Departments</h2>
+        <h2>@lang('general.lbl_department')</h2>
 
         <div class="lead row mb-3">
             <div class="col-md-10">
                 <div class="col-md-4">
-                    Manage your departments here.
+                    @lang('general.lbl_title')
                 </div>
             </div>
             <div class="col-md-2">
-                <a href="{{ route('departments.create') }}" class="btn btn-primary btn-sm float-right"><span class="fa fa-plus-circle"></span>  Add Departments</a>
+                <a href="{{ route('departments.create') }}" class="btn btn-primary btn-sm float-right"><span class="fa fa-plus-circle"></span>  @lang('general.btn_create')</a>
             </div>
         </div>
         <div class="mt-2">
@@ -24,7 +24,7 @@
             <thead>
             <tr>
                 <th scope="col" width="1%">#</th>
-                <th scope="col">Name</th>
+                <th scope="col">@lang('general.lbl_name')</th>
                 <th scope="col" colspan="3" width="1%"></th> 
             </tr>
             </thead>
@@ -33,9 +33,9 @@
                     <tr>
                         <th scope="row">{{ ++$key }}</th>
                         <td>{{ $department->remark }}</td>
-                        <td><a href="{{ route('departments.edit', $department->id) }}" class="btn btn-info btn-sm">Edit</a></td>
+                        <td><a href="{{ route('departments.edit', $department->id) }}" class="btn btn-info btn-sm">@lang('general.lbl_edit')</a></td>
                         <td>
-                            <a onclick="showConfirm({{ $department->id }}, '{{ $department->remark }}')" class="btn btn-danger btn-sm  {{ $act_permission->allow_delete==1?'':'d-none' }} ">Delete</a>
+                            <a onclick="showConfirm({{ $department->id }}, '{{ $department->remark }}')" class="btn btn-danger btn-sm  {{ $act_permission->allow_delete==1?'':'d-none' }} ">@lang('general.lbl_delete')</a>
                         </td>
                     </tr>
                 @endforeach
@@ -73,13 +73,13 @@
 
           function showConfirm(id,data){
             Swal.fire({
-            title: 'Are you sure?',
-            text: "You will delete document "+data+" !",
+            title: "@lang('general.lbl_sure')",
+            text: "@lang('general.lbl_sure_title') "+data+" !",
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Yes, delete it!'
+            cancelButtonColor: '#d33', cancelButtonText: "@lang('general.lbl_cancel')",
+            confirmButtonText: "@lang('general.lbl_sure_delete')"
             }).then((result) => {
                 if (result.isConfirmed) {
                     var url = "{{ route('departments.destroy','XX') }}";
@@ -95,12 +95,12 @@
                                 if(resp.data.status=="success"){
                                     Swal.fire({
                                         title: 'Deleted!',
-                                        text: 'Your data has been deleted.',
+                                        text: "@lang('general.lbl_msg_delete_title') ",
                                         icon: 'success',
                                         showCancelButton: false,
                                         confirmButtonColor: '#3085d6',
-                                        cancelButtonColor: '#d33',
-                                        confirmButtonText: 'Close'
+                                        cancelButtonColor: '#d33', cancelButtonText: "@lang('general.lbl_cancel')",
+                                        confirmButtonText: "@lang('general.lbl_close') "
                                         }).then((result) => {
                                             window.location.href = "{{ route('departments.index') }}"; 
                                         })
@@ -109,7 +109,7 @@
                                     {
                                         position: 'top-end',
                                         icon: 'warning',
-                                        text: 'Something went wrong - '+resp.data.message,
+                                        text: "@lang('general.lbl_msg_failed')"+resp.data.message,
                                         showConfirmButton: false,
                                         imageHeight: 30, 
                                         imageWidth: 30,   

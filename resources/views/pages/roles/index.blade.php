@@ -7,11 +7,11 @@
         <div class="lead row mb-3">
             <div class="col-md-10">
                 <div class="col-md-4">
-                    Manage your roles here.
+                    @lang('general.lbl_title')
                 </div>
             </div>
             <div class="col-md-2">
-                <a href="{{ route('roles.create') }}" class="btn btn-primary btn-sm float-right"><span class="fa fa-plus-circle"></span>  Add role</a>
+                <a href="{{ route('roles.create') }}" class="btn btn-primary btn-sm float-right"><span class="fa fa-plus-circle"></span>  @lang('general.btn_create')</a>
             </div>
         </div>
         
@@ -23,7 +23,7 @@
          <thead>
           <tr>
              <th width="1%">No</th>
-             <th>Name</th>
+             <th>@lang('general.lbl_name')</th>
              <th width="3%" colspan="3">Action</th>
           </tr>
         </thead> 

@@ -8,10 +8,10 @@
         <div class="lead row mb-3">
             <div class="col-md-10">
                 <div class="col-md-8">
-                    Manage your report here.
+                    @lang('general.lbl_title')
                 </div>
                 <div class="col-md-10"> 	
-                        <button onclick="openDialogFilterSearch('Filter');" class="btn btn-sm btn-lime">Filter</button>  
+                        <button onclick="openDialogFilterSearch('Filter');" class="btn btn-sm btn-lime">@lang('general.btn_filter')</button> 
                         <button onclick="openDialogFilterSearch('Export Excel');" class="btn btn-sm btn-success">Export</button>  
                 </div>
             </div>
@@ -24,12 +24,12 @@
         <table class="table table-striped" id="example">
             <thead>
             <tr>
-                <th scope="col" width="10%">Branch</th>
-                <th scope="col">Product Name</th>    
-                <th scope="col">Balance Begin</th>    
-                <th scope="col">Balance End</th>    
-                <th scope="col">Qty In</th>    
-                <th scope="col">Qty Out</th>    
+                <th scope="col" width="10%">@lang('general.lbl_branch')</th>
+                <th scope="col">@lang('general.lbl_product_name')</th>     
+                <th scope="col">@lang('general.lbl_balance_begin')</th>     
+                <th scope="col">@lang('general.lbl_balance_end')</th>     
+                <th scope="col">@lang('general.lbl_qty_in')</th>     
+                <th scope="col">@lang('general.lbl_qty_out')</th>     
             </tr>
             </thead>
             <tbody>
@@ -57,15 +57,15 @@
             <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                <h5 class="modal-title"  id="input_expired_list_at_lbl">Filter Data</h5>
+                <h5 class="modal-title"  id="input_expired_list_at_lbl">@lang('general.lbl_filterdata')</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <form action="{{ route('reports.stockmutation.search') }}" method="GET">   
                         @csrf 
                         <div class="col-md-10">
-                            <label class="form-label col-form-label col-md-4">Branch</label>
-                            <input type="hidden" name="export" id="export" value="Search">
+                            <label class="form-label col-form-label col-md-4">@lang('general.lbl_branch')</label>
+                            <input type="hidden" name="export" id="export" value="@lang('general.btn_search')">
                         </div>
                         <div class="col-md-12">
                             <select class="form-control" 
@@ -79,7 +79,7 @@
 
                         <br>
                         <div class="col-md-12">
-                            <button type="submit" class="btn btn-primary form-control">Apply</button>
+                            <button type="submit" class="btn btn-primary form-control">@lang('general.lbl_apply')</button>
                         </div>
                     </form>
                 </div>
@@ -125,7 +125,7 @@
                     
                         <br>
                         <div class="col-md-12">
-                            <button type="submit" class="btn btn-primary form-control">Apply</button>
+                            <button type="submit" class="btn btn-primary form-control">@lang('general.lbl_apply')</button>
                         </div>
                     </form>
                 </div>

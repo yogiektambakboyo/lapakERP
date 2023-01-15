@@ -76,13 +76,15 @@ class ReportCloseShiftController extends Controller
                 sum(case when im.payment_type = 'BCA - Kredit' then id.total+id.vat_total else 0 end) as total_b_k,
                 sum(case when im.payment_type = 'Mandiri - Debit' then id.total+id.vat_total else 0 end) as total_m_d,
                 sum(case when im.payment_type = 'Mandiri - Kredit' then id.total+id.vat_total else 0 end) as total_m_k,
+                sum(case when im.payment_type = 'QRIS' then id.total+id.vat_total else 0 end) as total_qr,
                 count(distinct im.invoice_no) qty_transaction,count(distinct im.customers_id) qty_customers
                 from invoice_master im 
                 join invoice_detail id on id.invoice_no  = im.invoice_no 
                 join product_sku ps on ps.id = id.product_id 
                 join customers c on c.id = im.customers_id 
                 join branch b on b.id = c.branch_id
-                join shift s on im.created_at::time  between s.time_start and s.time_end
+                join branch_shift bs on bs.branch_id = b.id
+                join shift s on im.created_at::time  between s.time_start and s.time_end and s.id = bs.shift_id
                 where im.dated>now()-interval'7 days'
                 group by b.remark,im.dated,s.remark,b.id,s.id              
         ");
@@ -114,7 +116,8 @@ class ReportCloseShiftController extends Controller
                 join customers c on c.id = im.customers_id 
                 join branch b on b.id=c.branch_id
                 join product_sku ps on ps.id = id.product_id 
-                join shift s on s.id = ".$filter_shift."
+                join branch_shift bs on bs.branch_id = b.id
+                join shift s on s.id = ".$filter_shift."  and s.id = bs.shift_id
                 where im.dated = '".$filter_begin_date."' and im.created_at::time  between s.time_start and s.time_end  and c.branch_id = ".$filter_branch_id."
                 group by ps.category_id,s.remark,b.remark,im.dated,id.product_name,ps.abbr,id.price,ps.type_id                         
         ");
@@ -126,7 +129,7 @@ class ReportCloseShiftController extends Controller
                 join shift s on s.id = ".$filter_shift."
                 where im.dated = '".$filter_begin_date."' and im.created_at::time  between s.time_start and s.time_end  and c.branch_id = ".$filter_branch_id."  group by im.total_payment,im.payment_type                       
         ");
-        $payment_type = ['Cash','BCA - Debit','BCA - Kredit','Mandiri - Debit','Mandiri - Kredit'];
+        $payment_type = ['Cash','BCA - Debit','BCA - Kredit','Mandiri - Debit','Mandiri - Kredit','Transfer','QRIS'];
         $users = User::join('users_branch as ub','ub.branch_id', '=', 'users.branch_id')->where('ub.user_id','=',$user->id)->where('users.job_id','=',2)->get(['users.id','users.name']);
 
         $pdf = PDF::setOptions(['isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true])->loadView('pages.reports.close_shift_print', [
@@ -173,13 +176,15 @@ class ReportCloseShiftController extends Controller
                     sum(case when im.payment_type = 'BCA - Kredit' then id.total+id.vat_total else 0 end) as total_b_k,
                     sum(case when im.payment_type = 'Mandiri - Debit' then id.total+id.vat_total else 0 end) as total_m_d,
                     sum(case when im.payment_type = 'Mandiri - Kredit' then id.total+id.vat_total else 0 end) as total_m_k,
+                    sum(case when im.payment_type = 'QRIS' then id.total+id.vat_total else 0 end) as total_qr,
                     count(distinct im.invoice_no) qty_transaction,count(distinct im.customers_id) qty_customers
                     from invoice_master im 
                     join invoice_detail id on id.invoice_no  = im.invoice_no 
                     join product_sku ps on ps.id = id.product_id 
                     join customers c on c.id = im.customers_id and c.branch_id::character varying like '%".$branchx."%'
                     join branch b on b.id = c.branch_id
-                    join shift s on im.created_at::time  between s.time_start and s.time_end and s.id::character varying like '%".$shift_id."%'
+                    join branch_shift bs on bs.branch_id = b.id
+                    join shift s on im.created_at::time  between s.time_start and s.time_end and s.id::character varying like '%".$shift_id."%'  and s.id = bs.shift_id
                     where im.dated between '".$begindate."' and '".$enddate."'
                     group by b.remark,im.dated,s.remark,b.id,s.id              
             ");         
@@ -317,7 +322,7 @@ class ReportCloseShiftController extends Controller
                 $query->on('role_has_permissions.permission_id', '=', 'permissions.id')
                 ->where('role_has_permissions.role_id','=',$id)->where('permissions.name','like','%.index%')->where('permissions.url','!=','null');
             });
-           })->get(['permissions.name','permissions.url','permissions.remark','permissions.parent']);
+           })->orderby('permissions.remark')->get(['permissions.name','permissions.url','permissions.remark','permissions.parent']);
 
            $this->data = [
             'menu' => 

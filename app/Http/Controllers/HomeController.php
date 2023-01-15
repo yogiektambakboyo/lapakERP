@@ -25,9 +25,9 @@ class HomeController extends Controller
                     $query->on('role_has_permissions.permission_id', '=', 'permissions.id')
                     ->where('role_has_permissions.role_id','=',$id)->where('permissions.name','like','%.index%')->where('permissions.url','!=','null');
                 });
-               })->get(['permissions.name','permissions.url','permissions.remark','permissions.parent']);
+               })->orderby('permissions.remark')->get(['permissions.name','permissions.url','permissions.remark','permissions.parent']);
 
-            $this->data = [
+               $this->data = [
                 'menu' => 
                     [
                         [
@@ -45,8 +45,15 @@ class HomeController extends Controller
                             'sub_menu' => []
                         ],
                         [
+                            'icon' => 'fa fa-box',
+                            'title' => \Lang::get('home.service_management'),
+                            'url' => 'javascript:;',
+                            'caret' => true,
+                            'sub_menu' => []
+                        ],
+                        [
                             'icon' => 'fa fa-table',
-                            'title' => \Lang::get('home.product_management'),
+                            'title' => \Lang::get('home.transaction'),
                             'url' => 'javascript:;',
                             'caret' => true,
                             'sub_menu' => []
@@ -83,28 +90,38 @@ class HomeController extends Controller
                         'route-name' => $menu['name']
                     ));
                 }
-                if($menu['parent']=='Transactions'){
+                if($menu['parent']=='Services'){
                     array_push($this->data['menu'][2]['sub_menu'], array(
                         'url' => $menu['url'],
                         'title' => $menu['remark'],
                         'route-name' => $menu['name']
                     ));
                 }
-                if($menu['parent']=='Reports'){
+                if($menu['parent']=='Transactions'){
                     array_push($this->data['menu'][3]['sub_menu'], array(
                         'url' => $menu['url'],
                         'title' => $menu['remark'],
                         'route-name' => $menu['name']
                     ));
                 }
-                if($menu['parent']=='Settings'){
+                if($menu['parent']=='Reports'){
                     array_push($this->data['menu'][4]['sub_menu'], array(
                         'url' => $menu['url'],
                         'title' => $menu['remark'],
                         'route-name' => $menu['name']
                     ));
                 }
+                if($menu['parent']=='Settings'){
+                    array_push($this->data['menu'][5]['sub_menu'], array(
+                        'url' => $menu['url'],
+                        'title' => $menu['remark'],
+                        'route-name' => $menu['name']
+                    ));
+                }
             }
+
+
+
             $data = $this->data;
 
             $d_data = DB::select("
@@ -126,7 +143,7 @@ class HomeController extends Controller
                 join customers c on c.branch_id = ub.branch_id 
                 join invoice_master im on im.customers_id = c.id
                 join invoice_detail id on id.invoice_no = im.invoice_no
-                join product_sku ps on ps.id = id.product_id and ps.type_id = 1
+                join product_sku ps on ps.id = id.product_id and ps.type_id not in (2,8)
                 where ub.user_id = ".$user->id."  and im.dated = now()::date                       
             ");
 
@@ -146,7 +163,7 @@ class HomeController extends Controller
                 join customers c on c.branch_id = ub.branch_id 
                 join invoice_master im on im.customers_id = c.id
                 join invoice_detail id on id.invoice_no = im.invoice_no
-                join product_sku ps on ps.id = id.product_id and ps.type_id = 2
+                join product_sku ps on ps.id = id.product_id and ps.type_id in (2,8)
                 where ub.user_id = ".$user->id."  and im.dated = now()::date                     
             ");
 
@@ -172,6 +189,8 @@ class HomeController extends Controller
                 group by ps.remark  order by 2 desc
             ");
 
+
+
             $has_period_stock = DB::select("
                 select periode  from period_stock ps where ps.periode = to_char(now()::date,'YYYYMM')::int;
             ");
@@ -179,7 +198,7 @@ class HomeController extends Controller
             if(count($has_period_stock)<=0){
                 DB::select("insert into period_stock(periode,branch_id,product_id,balance_begin,balance_end,qty_in,qty_out,updated_at ,created_by,created_at)
                 select to_char(now()::date,'YYYYMM')::int,ps.branch_id,product_id,ps.balance_end,ps.balance_end,0 as qty_in,0 as qty_out,null,1,now()  
-                from period_stock ps where ps.periode = to_char(now()::date,'YYYYMM')::int-1;");
+                from period_stock ps  where ps.periode=to_char(now()-interval '5 day','YYYYMM')::int;");
             }
 
 
@@ -206,7 +225,7 @@ class HomeController extends Controller
             if(count($has_period_sell_price)<=0){
                 DB::select("insert into public.period_price_sell(period, product_id, value, updated_at, updated_by, created_by, created_at, branch_id)
                 SELECT to_char(now(),'YYYYMM')::int, product_id, value, null, null, 1, now(), branch_id
-                FROM public.period_price_sell where period=to_char(now(),'YYYYMM')::int-1;");
+                FROM public.period_price_sell  where period=to_char(now()-interval '5 day','YYYYMM')::int;");
             }
             
             return view('pages.home-index',[
@@ -231,7 +250,7 @@ class HomeController extends Controller
                 $query->on('role_has_permissions.permission_id', '=', 'permissions.id')
                 ->where('role_has_permissions.role_id','=',$id)->where('permissions.name','like','%.index%')->where('permissions.url','!=','null');
             });
-           })->get(['permissions.name','permissions.url','permissions.remark','permissions.parent']);
+           })->orderby('permissions.remark')->get(['permissions.name','permissions.url','permissions.remark','permissions.parent']);
 
            $this->data = [
             'menu' => 
@@ -250,7 +269,7 @@ class HomeController extends Controller
                         'caret' => true,
                         'sub_menu' => []
                     ],
-		   [
+		            [
                         'icon' => 'fa fa-box',
                         'title' => \Lang::get('home.service_management'),
                         'url' => 'javascript:;',

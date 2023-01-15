@@ -10,8 +10,8 @@
       <div class="panel-title"><h4 class="">SPK No : {{ $order->order_no }}</h4></div>
       <div class="">
         <a href="{{ route('orders.printthermal', $order->id) }}" class="btn btn-warning">Print Thermal</a>
-        <a href="{{ route('orders.print', $order->id) }}" class="btn btn-warning">Print</a>
-        <a href="{{ route('orders.index') }}" class="btn btn-default">Back</a>
+        <a href="{{ route('orders.print', $order->id) }}" class="btn btn-warning">@lang('general.lbl_print') </a>
+        <a href="{{ route('orders.index') }}" class="btn btn-default">@lang('general.lbl_back') </a>
       </div>
     </div>
     <div class="panel-body bg-white text-black">
@@ -20,7 +20,7 @@
         <div class="row mb-3">
           <div class="col-md-4">
             <div class="row mb-3">
-              <label class="form-label col-form-label col-md-4">Date</label>
+              <label class="form-label col-form-label col-md-4">@lang('general.lbl_dated')   </label>
               <div class="col-md-8">
                 <input type="text" 
                 name="order_date"
@@ -33,7 +33,7 @@
               </div>
             </div>
             <div class="row mb-3">
-              <label class="form-label col-form-label col-md-4">Remark</label>
+              <label class="form-label col-form-label col-md-4">@lang('general.lbl_remark')</label>
               <div class="col-md-8">
                 <input type="text" 
                 name="remark"
@@ -46,11 +46,11 @@
 
           <div class="col-md-8">
             <div class="row mb-3">
-              <label class="form-label col-form-label col-md-2">Customer</label>
+              <label class="form-label col-form-label col-md-2">@lang('general.lbl_customer')</label>
               <div class="col-md-4">
                 <select class="form-control" 
                     name="customer_id" id="customer_id" readonly>
-                    <option value="">Select Customers</option>
+                    <option value="">@lang('general.lbl_customerselect')</option>
                     @foreach($customers as $customer)
                         <option value="{{ $customer->id }}" {{ ($customer->id == $order->customers_id) 
                           ? 'selected'
@@ -58,7 +58,7 @@
                     @endforeach
                 </select>
               </div>
-              <label class="form-label col-form-label col-md-2">Schedule</label>
+              <label class="form-label col-form-label col-md-2">@lang('general.lbl_schedule')</label>
               <div class="col-md-4">
 
                   <div class="input-group">
@@ -70,11 +70,11 @@
               </div>
             </div>
             <div class="row mb-3">
-              <label class="form-label col-form-label col-md-2">Type Payment</label>
+              <label class="form-label col-form-label col-md-2">@lang('general.lbl_type_payment')</label>
               <div class="col-md-2">
                 <select class="form-control" 
                       name="payment_type" id ="payment_type" readonly>
-                      <option value="">Select Payment</option>
+                      <option value="">@lang('general.lbl_type_paymentselect')</option>
                       @foreach($payment_type as $value)
                           <option value="{{ $value }}" {{ ($order->payment_type == $value) 
                             ? 'selected'
@@ -83,7 +83,7 @@
                   </select>
               </div>
 
-                <label class="form-label col-form-label col-md-2">Nominal Payment</label>
+                <label class="form-label col-form-label col-md-2">@lang('general.lbl_nominal_payment')</label>
                 <div class="col-md-2">
                   <input type="text" 
                   id="payment_nominal"
@@ -92,7 +92,7 @@
                   value="{{ $order->payment_nominal }}" readonly/>
                   </div>
 
-                  <label class="form-label col-form-label col-md-1">Charge</label>
+                  <label class="form-label col-form-label col-md-1">@lang('general.lbl_charge')</label>
                   <div class="col-md-3">
                     <h2 class="text-end"><label id="order_charge">Rp. {{ number_format(($order->payment_nominal-$order->total), 0, ',', '.') }}</label></h2>
                   </div>
@@ -101,19 +101,19 @@
           </div>
 
           <div class="col-md-12">
-            <div class="panel-heading bg-teal-600 text-white"><strong>Order List</strong></div>
+            <div class="panel-heading bg-teal-600 text-white"><strong>@lang('general.lbl_order_list')</strong></div>
             </br>
 
             <table class="table table-striped" id="order_table">
               <thead>
               <tr>
-                  <th>Product</th>
-                  <th scope="col" width="10%">UOM</th>
-                  <th scope="col" width="10%">Price</th>
-                  <th scope="col" width="5%">Discount</th>
-                  <th scope="col" width="5%">Qty</th>
+                  <th>@lang('general.product')</th>
+                  <th scope="col" width="10%">@lang('general.lbl_uom')</th>
+                  <th scope="col" width="10%">@lang('general.lbl_price')</th>
+                  <th scope="col" width="5%">@lang('general.lbl_discount')</th>
+                  <th scope="col" width="5%">@lang('general.lbl_qty')</th>
                   <th scope="col" width="15%">Total</th>  
-                  <th scope="col" width="15%">Assigned To</th>  
+                  <th scope="col" width="15%">@lang('general.lbl_terapist')</th>  
               </tr>
               </thead>
               <tbody>
@@ -152,7 +152,7 @@
               </div>
               <div class="col-md-12">
                 <div class="col-auto text-end">
-                  <label class="col-md-2"><h2>Tax </h2></label>
+                  <label class="col-md-2"><h2>@lang('general.lbl_tax') </h2></label>
                   <label class="col-md-8" id="vat-total"> <h3>Rp. {{ number_format($order->tax, 0, ',', '.') }}</h3></label>
                 </div>
               </div>

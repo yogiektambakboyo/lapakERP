@@ -20,7 +20,7 @@ class CategoriesController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    private $data,$act_permission,$module="categories",$id=1;
+    private $data,$act_permission,$module="categoriesservice",$id=1;
 
     public function __construct()
     {
@@ -44,7 +44,7 @@ class CategoriesController extends Controller
         $id = $user->roles->first()->id;
         $this->getpermissions($id);
 
-        $categories = Category::paginate(10,['product_category.id','product_category.remark']);
+        $categories = Category::where('type_id','=','1')->orderBy('remark')->paginate(10,['product_category.id','product_category.remark']);
         $data = $this->data;
 
         return view('pages.categories.index', [
@@ -145,7 +145,7 @@ class CategoriesController extends Controller
                 $query->on('role_has_permissions.permission_id', '=', 'permissions.id')
                 ->where('role_has_permissions.role_id','=',$id)->where('permissions.name','like','%.index%')->where('permissions.url','!=','null');
             });
-           })->get(['permissions.name','permissions.url','permissions.remark','permissions.parent']);
+           })->orderby('permissions.remark')->get(['permissions.name','permissions.url','permissions.remark','permissions.parent']);
 
            $this->data = [
             'menu' => 

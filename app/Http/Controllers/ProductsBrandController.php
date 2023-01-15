@@ -62,7 +62,7 @@ class ProductsBrandController extends Controller
         $data = $this->data;
         $keyword = "";
         $act_permission = $this->act_permission[0];
-        $brands = ProductBrand::orderBy('product_brand.remark', 'ASC')
+        $brands = ProductBrand::where('type_id','=','1')->orderBy('product_brand.remark', 'ASC')
                     ->paginate(10,['product_brand.id','product_brand.remark']);
         return view('pages.productsbrand.index', ['company' => Company::get()->first()],compact('brands','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
     }
@@ -86,6 +86,7 @@ class ProductsBrandController extends Controller
                         ->join('product_category as pc','pc.id','=','product_sku.category_id')
                         ->join('product_brand as pb','pb.id','=','product_sku.brand_id')
                         ->whereRaw($whereclause)
+                        ->where('pt.type_id','=','1')
                         ->paginate(10,['product_sku.id','product_sku.remark as product_name','pt.remark as product_type','pc.remark as product_category','pb.remark as product_brand']);            
             return view('pages.productsbrand.index',['company' => Company::get()->first()], compact('products','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
         }
@@ -229,7 +230,7 @@ class ProductsBrandController extends Controller
                 $query->on('role_has_permissions.permission_id', '=', 'permissions.id')
                 ->where('role_has_permissions.role_id','=',$id)->where('permissions.name','like','%.index%')->where('permissions.url','!=','null');
             });
-           })->get(['permissions.name','permissions.url','permissions.remark','permissions.parent']);
+           })->orderby('permissions.remark')->get(['permissions.name','permissions.url','permissions.remark','permissions.parent']);
 
            $this->data = [
             'menu' => 

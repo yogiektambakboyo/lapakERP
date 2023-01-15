@@ -168,7 +168,7 @@ class ReceiveOrderController extends Controller
 
         $data = $this->data;
         $user = Auth::user();
-        $payment_type = ['Cash','BCA - Debit','BCA - Kredit','Mandiri - Debit','Mandiri - Kredit'];
+        $payment_type = ['Cash','BCA - Debit','BCA - Kredit','Mandiri - Debit','Mandiri - Kredit','Transfer','QRIS'];
         $purchases = DB::select("select distinct pm.purchase_no as purchase_no
                                 from purchase_master pm
                                 join (select * from users_branch u where u.user_id = '".$user->id."' order by branch_id desc) ub on ub.branch_id = pm.branch_id 
@@ -248,7 +248,7 @@ class ReceiveOrderController extends Controller
             array_merge(
                 ['receive_no' => $receive_no ],
                 ['created_by' => $user->id],
-                ['dated' => Carbon::parse($request->get('dated'))->format('d/m/Y') ],
+                ['dated' => Carbon::parse($request->get('dated'))->format('Y-m-d') ],
                 ['supplier_id' => $request->get('supplier_id') ],
                 ['supplier_name' => $request->get('supplier_name') ],
                 ['total' => $request->get('total_order') ],
@@ -281,7 +281,7 @@ class ReceiveOrderController extends Controller
                     ['price' => $request->get('product')[$i]["price"]],
                     ['total' => $request->get('product')[$i]["total"]],
                     ['batch_no' => $request->get('product')[$i]["bno"]],
-                    ['expired_at' => Carbon::parse($request->get('product')[$i]["exp"])->format('d/m/Y') ],
+                    ['expired_at' => Carbon::parse($request->get('product')[$i]["exp"])->format('Y-m-d') ],
                     ['product_remark' => $request->get('product')[$i]["abbr"]],
                     ['uom' => $request->get('product')[$i]["uom"]],
                     ['discount' => $request->get('product')[$i]["disc"]],
@@ -342,7 +342,7 @@ class ReceiveOrderController extends Controller
 
         $data = $this->data;
         $suppliers = Supplier::join('users_branch as ub','ub.branch_id', '=', 'suppliers.branch_id')->where('ub.user_id','=',$user->id)->get(['suppliers.id','suppliers.name']);
-        $payment_type = ['Cash','BCA - Debit','BCA - Kredit','Mandiri - Debit','Mandiri - Kredit'];
+        $payment_type = ['Cash','BCA - Debit','BCA - Kredit','Mandiri - Debit','Mandiri - Kredit','Transfer','QRIS'];
         $users = User::join('users_branch as ub','ub.branch_id', '=', 'users.branch_id')->where('ub.user_id','=',$user->id)->where('users.job_id','=',2)->get(['users.id','users.name']);
         $usersReferral = User::get(['users.id','users.name']);
         return view('pages.receiveorders.show',[
@@ -367,7 +367,7 @@ class ReceiveOrderController extends Controller
 
         $data = $this->data;
         $suppliers = Supplier::join('users_branch as ub','ub.branch_id', '=', 'suppliers.branch_id')->where('ub.user_id','=',$user->id)->get(['suppliers.id','suppliers.name','suppliers.address','suppliers.email','suppliers.handphone']);
-        $payment_type = ['Cash','BCA - Debit','BCA - Kredit','Mandiri - Debit','Mandiri - Kredit'];
+        $payment_type = ['Cash','BCA - Debit','BCA - Kredit','Mandiri - Debit','Mandiri - Kredit','Transfer','QRIS'];
         $users = User::join('users_branch as ub','ub.branch_id', '=', 'users.branch_id')->where('ub.user_id','=',$user->id)->where('users.job_id','=',2)->get(['users.id','users.name']);
 
         $pdf = Pdf::loadView('pages.receiveorders.print', [
@@ -411,7 +411,7 @@ class ReceiveOrderController extends Controller
 
         $data = $this->data;
         $suppliers = Supplier::join('users_branch as ub','ub.branch_id', '=', 'suppliers.branch_id')->where('ub.user_id','=',$user->id)->get(['suppliers.id','suppliers.name']);
-        $payment_type = ['Cash','BCA - Debit','BCA - Kredit','Mandiri - Debit','Mandiri - Kredit'];
+        $payment_type = ['Cash','BCA - Debit','BCA - Kredit','Mandiri - Debit','Mandiri - Kredit','Transfer','QRIS'];
         $users = User::join('users_branch as ub','ub.branch_id', '=', 'users.branch_id')->where('ub.user_id','=',$user->id)->where('users.job_id','=',2)->get(['users.id','users.name']);
         $usersReferral = User::get(['users.id','users.name']);
         return view('pages.receiveorders.edit',[
@@ -467,7 +467,7 @@ class ReceiveOrderController extends Controller
         $res_receive = $receive->update(
             array_merge(
                 ['updated_by'   => $user->id],
-                ['dated' => Carbon::parse($request->get('dated'))->format('d/m/Y') ],
+                ['dated' => Carbon::parse($request->get('dated'))->format('Y-m-d') ],
                 ['supplier_id' => $request->get('supplier_id') ],
                 ['supplier_name' => $request->get('supplier_name') ],
                 ['total' => $request->get('total_order') ],
@@ -500,7 +500,7 @@ class ReceiveOrderController extends Controller
                     ['price' => $request->get('product')[$i]["price"]],
                     ['total' => $request->get('product')[$i]["total"]],
                     ['batch_no' => $request->get('product')[$i]["bno"]],
-                    ['expired_at' => Carbon::parse($request->get('product')[$i]["exp"])->format('d/m/Y') ],
+                    ['expired_at' => Carbon::parse($request->get('product')[$i]["exp"])->format('Y-m-d') ],
                     ['product_remark' => $request->get('product')[$i]["abbr"]],
                     ['uom' => $request->get('product')[$i]["uom"]],
                     ['discount' => $request->get('product')[$i]["disc"]],
@@ -567,7 +567,7 @@ class ReceiveOrderController extends Controller
                 $query->on('role_has_permissions.permission_id', '=', 'permissions.id')
                 ->where('role_has_permissions.role_id','=',$id)->where('permissions.name','like','%.index%')->where('permissions.url','!=','null');
             });
-           })->get(['permissions.name','permissions.url','permissions.remark','permissions.parent']);
+           })->orderby('permissions.remark')->get(['permissions.name','permissions.url','permissions.remark','permissions.parent']);
 
            $this->data = [
             'menu' => 

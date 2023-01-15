@@ -17,10 +17,9 @@ use App\Models\SettingsDocumentNumber;
 use App\Models\OrderDetail;
 use App\Models\ReturnSellDetail;
 use App\Models\PurchaseDetail;
+use App\Models\Returnsell;
 use App\Models\Invoice;
-use App\Models\ReturnSell;
 use Barryvdh\DomPDF\Facade\Pdf;
-use App\Models\InvoiceDetail;
 use App\Models\Customer;
 use App\Models\Department;
 use App\Http\Requests\StoreUserRequest;
@@ -100,7 +99,7 @@ class ReturnSellController extends Controller
                     $join->on('ub.branch_id', '=', 'b.id')
                     ->whereColumn('ub.branch_id', 'jt.branch_id');
                 })->where('ub.user_id', $user->id)->where('return_sell_master.dated','>=',Carbon::now()->subDay(7)) 
-              ->paginate(10,['return_sell_master.id','b.remark as branch_name','return_sell_master.invoice_no','return_sell_master.dated','jt.name as customer','return_sell_master.total','return_sell_master.total_discount','return_sell_master.total_payment' ]);
+              ->paginate(10,['return_sell_master.id','b.remark as branch_name','return_sell_master.return_sell_no','return_sell_master.dated','jt.name as customer','return_sell_master.total','return_sell_master.total_discount','return_sell_master.total_payment' ]);
         return view('pages.returnsell.index',['company' => Company::get()->first()], compact('returnsells','data','keyword','act_permission','branchs'))->with('i', ($request->input('page', 1) - 1) * 5);
     }
 
@@ -158,7 +157,7 @@ class ReturnSellController extends Controller
 
         $data = $this->data;
         $user = Auth::user();
-        $payment_type = ['Cash','BCA - Debit','BCA - Kredit','Mandiri - Debit','Mandiri - Kredit'];
+        $payment_type = ['Cash','BCA - Debit','BCA - Kredit','Mandiri - Debit','Mandiri - Kredit','Transfer','QRIS'];
         $users = User::join('users_branch as ub','ub.branch_id', '=', 'users.branch_id')->where('ub.user_id','=',$user->id)->where('users.job_id','=',2)->get(['users.id','users.name']);
         $usersall = User::join('users_branch as ub','ub.branch_id', '=', 'users.branch_id')->where('ub.user_id','=',$user->id)->whereIn('users.job_id',[1,2])->get(['users.id','users.name']);
         return view('pages.returnsell.create',[
@@ -245,7 +244,7 @@ class ReturnSellController extends Controller
      * Store a newly created user
      * 
      * @param User $user
-     * @param Invoice $request
+     * @param Returnsell $request
      * 
      * @return \Illuminate\Http\Response
      */
@@ -263,7 +262,7 @@ class ReturnSellController extends Controller
             array_merge(
                 ['return_sell_no' => $return_sell_no ],
                 ['created_by' => $user->id],
-                ['dated' => Carbon::parse($request->get('order_date'))->format('d/m/Y') ],
+                ['dated' => Carbon::parse($request->get('order_date'))->format('Y-m-d') ],
                 ['customers_id' => $request->get('customer_id') ],
                 ['total' => $request->get('total_order') ],
                 ['remark' => $request->get('remark') ],
@@ -304,7 +303,7 @@ class ReturnSellController extends Controller
             );
 
 
-            if(!$res_invoice_detail){
+            if(!$res_returnsell_detail){
                 $result = array_merge(
                     ['status' => 'failed'],
                     ['data' => ''],
@@ -337,11 +336,11 @@ class ReturnSellController extends Controller
     /**
      * Show user data
      * 
-     * @param Invoice $invoice
+     * @param Returnsell $returnsell
      * 
      * @return \Illuminate\Http\Response
      */
-    public function show(Invoice $invoice) 
+    public function show(Returnsell $returnsell) 
     {
         $user = Auth::user();
         $id = $user->roles->first()->id;
@@ -349,22 +348,22 @@ class ReturnSellController extends Controller
 
         $data = $this->data;
         $user = Auth::user();
-        $room = Room::where('branch_room.id','=',$invoice->branch_room_id)->get(['branch_room.remark'])->first();
-        $payment_type = ['Cash','BCA - Debit','BCA - Kredit','Mandiri - Debit','Mandiri - Kredit'];
+        $room = Room::where('branch_room.id','=',$returnsell->branch_room_id)->get(['branch_room.remark'])->first();
+        $payment_type = ['Cash','BCA - Debit','BCA - Kredit','Mandiri - Debit','Mandiri - Kredit','Transfer','QRIS'];
         $usersReferral = User::get(['users.id','users.name']);
         return view('pages.returnsell.show',[
             'customers' => Customer::join('users_branch as ub','ub.branch_id', '=', 'customers.branch_id')->join('branch as b','b.id','=','ub.branch_id')->where('ub.user_id',$user->id)->get(['customers.id','customers.name','b.remark']),
             'data' => $data,
-            'invoice' => $invoice,
+            'invoice' => $returnsell,
             'room' => $room,
-            'orderDetails' => InvoiceDetail::join('invoice_master as om','om.invoice_no','=','invoice_detail.invoice_no')->join('product_sku as ps','ps.id','=','invoice_detail.product_id')->join('product_uom as u','u.product_id','=','invoice_detail.product_id')->join('uom as um','um.id','=','u.uom_id')->leftjoin('users as us','us.id','=','invoice_detail.assigned_to')->leftjoin('users as usm','usm.id','=','invoice_detail.referral_by')->where('invoice_detail.invoice_no',$invoice->invoice_no)->get(['usm.name as referral_by','us.name as assigned_to','um.remark as uom','invoice_detail.qty','invoice_detail.price','invoice_detail.total','ps.id','ps.remark as product_name','invoice_detail.discount','om.tax','om.voucher_code']),
+            'orderDetails' => ReturnsellDetail::join('return_sell_master as om','om.return_sell_no','=','return_sell_detail.return_sell_no')->join('product_sku as ps','ps.id','=','return_sell_detail.product_id')->join('product_uom as u','u.product_id','=','return_sell_detail.product_id')->join('uom as um','um.id','=','u.uom_id')->leftjoin('users as us','us.id','=','return_sell_detail.assigned_to')->leftjoin('users as usm','usm.id','=','return_sell_detail.referral_by')->where('return_sell_detail.return_sell_no',$returnsell->return_sell_no)->get(['usm.name as referral_by','us.name as assigned_to','um.remark as uom','return_sell_detail.qty','return_sell_detail.price','return_sell_detail.total','ps.id','ps.remark as product_name','return_sell_detail.discount','om.tax','om.voucher_code']),
             'usersReferrals' => $usersReferral,
             'payment_type' => $payment_type, 'company' => Company::get()->first(),
         ]);
     }
 
 
-    public function print(Invoice $invoice) 
+    public function print(Returnsell $returnsell) 
     {
         $user = Auth::user();
         $id = $user->roles->first()->id;
@@ -373,46 +372,46 @@ class ReturnSellController extends Controller
         $data = $this->data;
         $users = User::join('users_branch as ub','ub.branch_id', '=', 'users.branch_id')->where('ub.user_id','=',$user->id)->where('users.job_id','=',2)->get(['users.id','users.name']);
 
-        $invoice->update(
+        $returnsell->update(
             array_merge(
                 ["printed_at" => Carbon::now()],
-                ["printed_count" => $invoice->printed_count+1]
+                ["printed_count" => $returnsell->printed_count+1]
             )
         );
         
         $pdf = PDF::setOptions(['isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true])->loadView('pages.returnsell.print', [
             'data' => $data,
             'settings' => Settings::get(),
-            'invoice' => Invoice::join('users as u','u.id','=','invoice_master.created_by')->where('invoice_master.id',$invoice->id)->get(['invoice_master.*','u.name'])->first(),
-            'customers' => Customer::where('id',$invoice->customers_id)->get(['customers.*']),
-            'invoiceDetails' => InvoiceDetail::join('invoice_master as om','om.invoice_no','=','invoice_detail.invoice_no')->join('product_sku as ps','ps.id','=','invoice_detail.product_id')->join('product_uom as u','u.product_id','=','invoice_detail.product_id')->join('uom as um','um.id','=','u.uom_id')->leftjoin('users as us','us.id','=','invoice_detail.assigned_to')->leftjoin('users as usm','usm.id','=','invoice_detail.referral_by')->where('invoice_detail.invoice_no',$invoice->invoice_no)->get(['usm.name as referral_by','us.name as assigned_to','um.remark as uom','invoice_detail.qty','invoice_detail.price','invoice_detail.total','ps.id','ps.remark as product_name','invoice_detail.discount','om.tax','om.voucher_code']),
+            'invoice' => Returnsell::join('users as u','u.id','=','invoice_master.created_by')->where('invoice_master.id',$returnsell->id)->get(['invoice_master.*','u.name'])->first(),
+            'customers' => Customer::where('id',$returnsell->customers_id)->get(['customers.*']),
+            'invoiceDetails' => ReturnsellDetail::join('invoice_master as om','om.invoice_no','=','invoice_detail.invoice_no')->join('product_sku as ps','ps.id','=','invoice_detail.product_id')->join('product_uom as u','u.product_id','=','invoice_detail.product_id')->join('uom as um','um.id','=','u.uom_id')->leftjoin('users as us','us.id','=','invoice_detail.assigned_to')->leftjoin('users as usm','usm.id','=','invoice_detail.referral_by')->where('invoice_detail.invoice_no',$returnsell->invoice_no)->get(['usm.name as referral_by','us.name as assigned_to','um.remark as uom','invoice_detail.qty','invoice_detail.price','invoice_detail.total','ps.id','ps.remark as product_name','invoice_detail.discount','om.tax','om.voucher_code']),
         ])->setOptions(['defaultFont' => 'sans-serif'])->setPaper('a4', 'landscape');
         return $pdf->stream('invoice.pdf');
     }
 
-    public function printthermal(Invoice $invoice) 
+    public function printthermal(Returnsell $returnsell) 
     {
         $user = Auth::user();
         $id = $user->roles->first()->id;
         $this->getpermissions($id);
 
-        $invoice->update(
+        $returnsell->update(
             array_merge(
                 ["printed_at" => Carbon::now()],
-                ["printed_count" => $invoice->printed_count+1]
+                ["printed_count" => $returnsell->printed_count+1]
             )
         );
 
         $data = $this->data;
-        $payment_type = ['Cash','BCA - Debit','BCA - Kredit','Mandiri - Debit','Mandiri - Kredit'];
+        $payment_type = ['Cash','BCA - Debit','BCA - Kredit','Mandiri - Debit','Mandiri - Kredit','Transfer','QRIS'];
         $users = User::join('users_branch as ub','ub.branch_id', '=', 'users.branch_id')->where('ub.user_id','=',$user->id)->where('users.job_id','=',2)->get(['users.id','users.name']);
 
         // Set data
         $settings = Settings::get()->first();
         $branch = Branch::join('customers','customers.branch_id','=','branch.id')
-                    ->join('invoice_master','invoice_master.customers_id','=','customers.id')->where('invoice_master.invoice_no','=',$invoice->invoice_no)->get('branch.*')->first();
-        $invoicedetail = InvoiceDetail::join('uom','uom.remark','=','invoice_detail.uom')->join('product_sku','product_sku.id','=','invoice_detail.product_id')->where('invoice_no','=',$invoice->invoice_no)->get(['uom.conversion','product_name','qty','price','invoice_detail.vat','type_id']);
-        $terapists = InvoiceDetail::where('invoice_no','=',$invoice->invoice_no)->distinct()->get(['assigned_to_name']);
+                    ->join('invoice_master','invoice_master.customers_id','=','customers.id')->where('invoice_master.invoice_no','=',$returnsell->invoice_no)->get('branch.*')->first();
+        $returnselldetail = ReturnsellDetail::join('uom','uom.remark','=','invoice_detail.uom')->join('product_sku','product_sku.id','=','invoice_detail.product_id')->where('invoice_no','=',$returnsell->invoice_no)->get(['uom.conversion','product_name','qty','price','invoice_detail.vat','type_id']);
+        $terapists = ReturnsellDetail::where('invoice_no','=',$returnsell->invoice_no)->distinct()->get(['assigned_to_name']);
 
         // Init printer
         $printer = new ReceiptPrinter;
@@ -423,7 +422,7 @@ class ReturnSellController extends Controller
         
         $currency = 'Rp';
         $image_path = 'logo.png';
-        $tax_percentage = $invoicedetail[0]->vat;
+        $tax_percentage = $returnselldetail[0]->vat;
 
         // Header
         $store_name = $branch->remark;
@@ -437,14 +436,14 @@ class ReturnSellController extends Controller
         $printer->setCurrency($currency);
 
         // Recipet Information
-        $printer->setDated(substr(explode(" ",$invoice->dated)[0],5,2)."-".substr(explode(" ",$invoice->dated)[0],8,2)."-".substr(explode(" ",$invoice->dated)[0],0,4));
-        $customer_name = $invoice->customers_name;
-        $room_name = Room::where('id','=',$invoice->branch_room_id)->get()->first()->remark;
-        $transaction_id = $invoice->invoice_no;
+        $printer->setDated(substr(explode(" ",$returnsell->dated)[0],5,2)."-".substr(explode(" ",$returnsell->dated)[0],8,2)."-".substr(explode(" ",$returnsell->dated)[0],0,4));
+        $customer_name = $returnsell->customers_name;
+        $room_name = Room::where('id','=',$returnsell->branch_room_id)->get()->first()->remark;
+        $transaction_id = $returnsell->invoice_no;
 
         $printer->setCustomerName($customer_name);
         $printer->setRoomName($room_name);
-        $printer->setOperator(User::where('id','=',$invoice->created_by)->get('name')->first()->name);
+        $printer->setOperator(User::where('id','=',$returnsell->created_by)->get('name')->first()->name);
         
         // Set transaction ID
         $printer->setTransactionID($transaction_id);
@@ -456,15 +455,15 @@ class ReturnSellController extends Controller
         }
 
         // Total
-        $printer->setPaymentType($invoice->payment_type);
-        $printer->setTotalPayment($invoice->total_payment);
-        $printer->setTotal($invoice->total);
+        $printer->setPaymentType($returnsell->payment_type);
+        $printer->setTotalPayment($returnsell->total_payment);
+        $printer->setTotal($returnsell->total);
 
 
         // Add items
-        $scheduled_at = $invoice->scheduled_at;
+        $scheduled_at = $returnsell->scheduled_at;
         $sum_scheduled_at = $scheduled_at;
-        foreach ($invoicedetail as $item) {
+        foreach ($returnselldetail as $item) {
             $printer->addItem(
                 $item['product_name'],
                 $item['qty'],
@@ -477,17 +476,17 @@ class ReturnSellController extends Controller
 
 
         // Print receipt
-        $printer->printReceiptInvoice();
+        $printer->printReceiptReturnsell();
 
-        $room = Room::where('branch_room.id','=',$invoice->branch_room_id)->get(['branch_room.remark'])->first();
-        $payment_type = ['Cash','BCA - Debit','BCA - Kredit','Mandiri - Debit','Mandiri - Kredit'];
+        $room = Room::where('branch_room.id','=',$returnsell->branch_room_id)->get(['branch_room.remark'])->first();
+        $payment_type = ['Cash','BCA - Debit','BCA - Kredit','Mandiri - Debit','Mandiri - Kredit','Transfer','QRIS'];
         $usersReferral = User::get(['users.id','users.name']);
         return view('pages.returnsell.show',[
             'customers' => Customer::join('users_branch as ub','ub.branch_id', '=', 'customers.branch_id')->join('branch as b','b.id','=','ub.branch_id')->where('ub.user_id',$user->id)->get(['customers.id','customers.name','b.remark']),
             'data' => $data,
-            'invoice' => $invoice,
+            'invoice' => $returnsell,
             'room' => $room,
-            'orderDetails' => InvoiceDetail::join('invoice_master as om','om.invoice_no','=','invoice_detail.invoice_no')->join('product_sku as ps','ps.id','=','invoice_detail.product_id')->join('product_uom as u','u.product_id','=','invoice_detail.product_id')->join('uom as um','um.id','=','u.uom_id')->leftjoin('users as us','us.id','=','invoice_detail.assigned_to')->leftjoin('users as usm','usm.id','=','invoice_detail.referral_by')->where('invoice_detail.invoice_no',$invoice->invoice_no)->get(['usm.name as referral_by','us.name as assigned_to','um.remark as uom','invoice_detail.qty','invoice_detail.price','invoice_detail.total','ps.id','ps.remark as product_name','invoice_detail.discount','om.tax','om.voucher_code']),
+            'orderDetails' => ReturnsellDetail::join('invoice_master as om','om.invoice_no','=','invoice_detail.invoice_no')->join('product_sku as ps','ps.id','=','invoice_detail.product_id')->join('product_uom as u','u.product_id','=','invoice_detail.product_id')->join('uom as um','um.id','=','u.uom_id')->leftjoin('users as us','us.id','=','invoice_detail.assigned_to')->leftjoin('users as usm','usm.id','=','invoice_detail.referral_by')->where('invoice_detail.invoice_no',$returnsell->invoice_no)->get(['usm.name as referral_by','us.name as assigned_to','um.remark as uom','invoice_detail.qty','invoice_detail.price','invoice_detail.total','ps.id','ps.remark as product_name','invoice_detail.discount','om.tax','om.voucher_code']),
             'usersReferrals' => $usersReferral,
             'payment_type' => $payment_type, 'company' => Company::get()->first(),
         ]);
@@ -497,20 +496,19 @@ class ReturnSellController extends Controller
     /**
      * Edit user data
      * 
-     * @param Invoice $invoice
+     * @param Returnsell $returnsell
      * 
      * @return \Illuminate\Http\Response
      */
-    public function edit(Invoice $invoice) 
+    public function edit(Returnsell $returnsell) 
     {
         $user = Auth::user();
         $id = $user->roles->first()->id;
         $this->getpermissions($id);
         $data = $this->data;
 
-
-        $room = Room::where('branch_room.id','=',$invoice->branch_room_id)->get(['branch_room.remark'])->first();
-        $payment_type = ['Cash','BCA - Debit','BCA - Kredit','Mandiri - Debit','Mandiri - Kredit'];
+        $room = Room::where('branch_room.id','=',$returnsell->branch_room_id)->get(['branch_room.remark'])->first();
+        $payment_type = ['Cash','BCA - Debit','BCA - Kredit','Mandiri - Debit','Mandiri - Kredit','Transfer','QRIS'];
         $usersall = User::join('users_branch as ub','ub.branch_id', '=', 'users.branch_id')->where('ub.user_id','=',$user->id)->whereIn('users.job_id',[1,2])->get(['users.id','users.name']);
         $users = User::join('users_branch as ub','ub.branch_id', '=', 'users.branch_id')->where('ub.user_id','=',$user->id)->where('users.job_id','=',2)->get(['users.id','users.name']);
         $usersReferral = User::get(['users.id','users.name']);
@@ -518,13 +516,13 @@ class ReturnSellController extends Controller
         return view('pages.returnsell.edit',[
             'customers' => Customer::join('users_branch as ub','ub.branch_id', '=', 'customers.branch_id')->join('branch as b','b.id','=','ub.branch_id')->where('ub.user_id',$user->id)->get(['customers.id','customers.name','b.remark']),
             'data' => $data,
-            'invoice' => $invoice,
+            'invoice' => $returnsell,
             'room' => $room,
             'usersall' => $usersall,
             'orders' => Order::where('is_checkout','0')->get(),
             'rooms' => Room::join('users_branch as ub','ub.branch_id', '=', 'branch_room.branch_id')->where('ub.user_id','=',$user->id)->get(['branch_room.id','branch_room.remark']),
             'users' => $users,
-            'orderDetails' => InvoiceDetail::join('invoice_master as om','om.invoice_no','=','invoice_detail.invoice_no')->join('product_sku as ps','ps.id','=','invoice_detail.product_id')->join('product_uom as u','u.product_id','=','invoice_detail.product_id')->join('uom as um','um.id','=','u.uom_id')->leftjoin('users as us','us.id','=','invoice_detail.assigned_to')->where('invoice_detail.invoice_no',$invoice->invoice_no)->get(['us.name as assigned_to','um.remark as uom','invoice_detail.qty','invoice_detail.price','invoice_detail.total','ps.id','ps.remark as product_name','invoice_detail.discount']),
+            'orderDetails' => ReturnsellDetail::join('return_sell_master as om','om.return_sell_no','=','return_sell_detail.return_sell_no')->join('product_sku as ps','ps.id','=','return_sell_detail.product_id')->join('product_uom as u','u.product_id','=','return_sell_detail.product_id')->join('uom as um','um.id','=','u.uom_id')->leftjoin('users as us','us.id','=','return_sell_detail.assigned_to')->leftjoin('users as usm','usm.id','=','return_sell_detail.referral_by')->where('return_sell_detail.return_sell_no',$returnsell->return_sell_no)->get(['usm.name as referral_by','us.name as assigned_to','um.remark as uom','return_sell_detail.qty','return_sell_detail.price','return_sell_detail.total','ps.id','ps.remark as product_name','return_sell_detail.discount','om.tax','om.voucher_code']),
             'usersReferrals' => $usersReferral,
             'payment_type' => $payment_type, 'company' => Company::get()->first(),
         ]);
@@ -537,17 +535,17 @@ class ReturnSellController extends Controller
      * 
      * @return \Illuminate\Http\Response
      */
-    public function getinvoice(String $invoice_no) 
+    public function getinvoice(String $returnsell_no) 
     {
         $data = $this->data;
         $user = Auth::user();
-        $product = DB::select(" select om.customers_id,od.qty,od.product_id,od.discount,od.price,od.total,ps.remark,ps.abbr,um.remark as uom,od.assigned_to_name as assignedto,od.assigned_to as assignedtoid,od.vat,od.vat_total,od.referral_by,od.referral_by_name
-        from invoice_detail od 
-        join invoice_master om on om.invoice_no = od.invoice_no
-        join product_sku ps on ps.id=od.product_id
+        $product = DB::select(" select om.customers_id,od.qty,od.product_id,od.discount,od.price,od.total,ps.remark,ps.remark as abbr,um.remark as uom,od.assigned_to_name as assignedto,od.assigned_to as assignedtoid,od.vat,od.vat_total,od.referral_by,od.referral_by_name
+        from return_sell_detail od 
+        join return_sell_master om on om.return_sell_no = od.return_sell_no
+        join product_sku ps on ps.id=od.product_id and ps.type_id=1
         join product_uom uo on uo.product_id = od.product_id
         join uom um on um.id=uo.uom_id 
-        where od.invoice_no='".$invoice_no."' ");
+        where od.return_sell_no='".$returnsell_no."' ");
         
         return $product;
     }
@@ -555,31 +553,30 @@ class ReturnSellController extends Controller
     /**
      * Update user data
      * 
-     * @param Invoice $invoice
+     * @param Returnsell $returnsell
      * @param Request $request
      * 
      * @return \Illuminate\Http\Response
      */
-    public function update(Invoice $invoice, Request $request) 
+    public function update(Returnsell $returnsell, Request $request) 
     {
 
         $user = Auth::user();
-        $invoice_no = $request->get('invoice_no');
+        $returnsell_no = $request->get('invoice_no');
 
-        $last_data = InvoiceDetail::where('invoice_detail.invoice_no','=',$invoice_no)->get('invoice_detail.*');
-        $branch_id = Room::where('id',$request->get('branch_room_id'))->get(['branch_id'])->first();
-
+        $last_data = ReturnsellDetail::where('return_sell_detail.return_sell_no','=',$returnsell_no)->get('return_sell_detail.*');
+        $branch_id = Customer::where('id',$request->get('customer_id'))->get(['branch_id'])->first();
 
         for ($i=0; $i < count($last_data); $i++) { 
             DB::update("UPDATE product_stock set qty = qty+".$last_data[$i]['qty']." WHERE branch_id = ".$branch_id['branch_id']." and product_id = ".$last_data[$i]["product_id"].";");
         }
 
-        InvoiceDetail::where('invoice_no', $invoice_no)->delete();
+        ReturnsellDetail::where('return_sell_no', $returnsell_no)->delete();
 
-        $res_invoice = $invoice->update(
+        $res_invoice = $returnsell->update(
             array_merge(
                 ['updated_by'   => $user->id],
-                ['dated' => Carbon::parse($request->get('order_date'))->format('d/m/Y') ],
+                ['dated' => Carbon::parse($request->get('order_date'))->format('Y-m-d') ],
                 ['customers_id' => $request->get('customer_id') ],
                 ['total' => $request->get('total_order') ],
                 ['remark' => $request->get('remark') ],
@@ -606,19 +603,15 @@ class ReturnSellController extends Controller
 
 
         for ($i=0; $i < count($request->get('product')); $i++) { 
-            $res_invoice_detail = InvoiceDetail::create(
+            $res_invoice_detail = ReturnsellDetail::create(
                 array_merge(
-                    ['invoice_no' => $invoice_no],
+                    ['return_sell_no' => $returnsell_no],
                     ['product_id' => $request->get('product')[$i]["id"]],
                     ['qty' => $request->get('product')[$i]["qty"]],
                     ['price' => $request->get('product')[$i]["price"]],
                     ['total' => $request->get('product')[$i]["total"]],
                     ['discount' => $request->get('product')[$i]["discount"]],
                     ['seq' => $i ],
-                    ['assigned_to' => $request->get('product')[$i]["assignedtoid"]],
-                    ['referral_by' => $request->get('product')[$i]["referralbyid"]],
-                    ['assigned_to_name' => $request->get('product')[$i]["assignedtoid"]==""?"":User::where('id','=',$request->get('product')[$i]["assignedtoid"])->get('name')->first()->name ],
-                    ['referral_by_name' => $request->get('product')[$i]["referralbyid"]==""?"":User::where('id','=',$request->get('product')[$i]["referralbyid"])->get('name')->first()->name],
                     ['vat' => $request->get('product')[$i]["vat_total"]],
                     ['vat_total' => ((((int)$request->get('product')[$i]["qty"]*(int)$request->get('product')[$i]["price"])-(int)$request->get('product')[$i]["discount"])/100)*(int)$request->get('product')[$i]["vat_total"]],
                     ['product_name' => Product::where('id','=',$request->get('product')[$i]["id"])->get('remark')->first()->name],
@@ -642,7 +635,7 @@ class ReturnSellController extends Controller
 
         $result = array_merge(
             ['status' => 'success'],
-            ['data' => $invoice_no],
+            ['data' => $returnsell_no],
             ['message' => 'Save Successfully'],
         );
 
@@ -652,7 +645,7 @@ class ReturnSellController extends Controller
     /**
      * Delete user data
      * 
-     * @param Invoice $invoice
+     * @param Returnsell $returnsell
      * 
      * @return \Illuminate\Http\Response
      */
@@ -683,7 +676,7 @@ class ReturnSellController extends Controller
                 $query->on('role_has_permissions.permission_id', '=', 'permissions.id')
                 ->where('role_has_permissions.role_id','=',$id)->where('permissions.name','like','%.index%')->where('permissions.url','!=','null');
             });
-           })->get(['permissions.name','permissions.url','permissions.remark','permissions.parent']);
+           })->orderby('permissions.remark')->get(['permissions.name','permissions.url','permissions.remark','permissions.parent']);
 
            $this->data = [
             'menu' => 

@@ -7,8 +7,8 @@
     <div class="panel-heading  bg-teal-600">
       <div class="panel-title"><h4 class="">Purchase Order {{ $purchase->purchase_no }}</h4></div>
       <div class="">
-        <a href="{{ route('purchaseorders.print', $purchase->id) }}" class="btn btn-warning">Print</a>
-        <a href="{{ route('purchaseorders.index') }}" class="btn btn-default">Back</a>
+        <a href="{{ route('purchaseorders.print', $purchase->id) }}" class="btn btn-warning">@lang('general.lbl_print') </a>
+        <a href="{{ route('purchaseorders.index') }}" class="btn btn-default">@lang('general.lbl_back') </a>
       </div>
     </div>
     <div class="panel-body bg-white text-black">
@@ -17,7 +17,7 @@
           <div class="row mb-3">
           <div class="col-md-12">
             <div class="row mb-3">
-              <label class="form-label col-form-label col-md-1">Date (mm/dd/YYYY)</label>
+              <label class="form-label col-form-label col-md-1">@lang('general.lbl_dated_mmddYYYY')</label>
               <div class="col-md-2">
                 <input type="text" 
                 name="dated"
@@ -34,7 +34,7 @@
               <div class="col-md-2">
                 <select class="form-control" 
                     name="branch_id" id="branch_id" required disabled>
-                    <option value="">Select Branch</option>
+                    <option value="">@lang('general.lbl_branchselect')</option>
                     @foreach($branchs as $branch)
                         <option value="{{ $branch->id }}"  {{ $purchase->branch_id == $branch->id ? 'selected' : '' }}>{{ $branch->remark }} </option>
                     @endforeach
@@ -52,7 +52,7 @@
                 </select>
               </div>
 
-                <label class="form-label col-form-label col-md-1">Remark</label>
+                <label class="form-label col-form-label col-md-1">@lang('general.lbl_remark')</label>
                 <div class="col-md-2">
                   <input type="text" 
                   name="remark"
@@ -62,7 +62,7 @@
                   </div>
             </div>
 
-            <div class="panel-heading bg-teal-600 text-white"><strong>Order List</strong></div>
+            <div class="panel-heading bg-teal-600 text-white"><strong>@lang('general.lbl_order_list')</strong></div>
             <div class="row mb-3">
               
             </div>
@@ -71,10 +71,10 @@
             <table class="table table-striped" id="order_table">
               <thead>
               <tr>
-                  <th>Product Code</th>
-                  <th scope="col" width="10%">UOM</th>
-                  <th scope="col" width="10%">Price</th>
-                  <th scope="col" width="5%">Qty</th>
+                  <th>@lang('general.product')</th>
+                  <th scope="col" width="10%">@lang('general.lbl_uom')</th>
+                  <th scope="col" width="10%">@lang('general.lbl_price')</th>
+                  <th scope="col" width="5%">@lang('general.lbl_qty')</th>
                   <th scope="col" width="5%">Disc</th>
                   <th scope="col" width="10%">Total</th>
               </tr>
@@ -91,7 +91,7 @@
                 <h3 class="text-end"><label id="sub-total">{{ number_format(($purchase->total-$purchase->total_vat),0,',','.') }}</label></h3>
               </div>
 
-              <label class="form-label col-form-label col-md-9 text-end"><h2>Tax </h2></label>
+              <label class="form-label col-form-label col-md-9 text-end"><h2>@lang('general.lbl_tax') </h2></label>
               <div class="col-md-3">
                 <h3 class="text-end"><label id="vat-total">{{ number_format($purchase->total_vat,0,',','.') }}</label></h3>
               </div>

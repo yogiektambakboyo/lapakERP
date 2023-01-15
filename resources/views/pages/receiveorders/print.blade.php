@@ -50,9 +50,9 @@
               <label>{{ $receiveDetails[0]->address }}</label></td>
             </td>
             <td style="text-align: right;width: 50%;font-size:15px;width:15%;vertical-align: text-top;">
-              <label>Date :</label><br>
+              <label>@lang('general.lbl_dated')  :</label><br>
               <label>Purchase No :</label><br>
-              <label>Remark :</label><br>
+              <label>@lang('general.lbl_remark')  :</label><br>
             </td>
             <td style="text-align: left;width: 50%;font-size:15px;width:15%;padding-left:10px;vertical-align: text-top;">
               <label>{{ substr(explode(" ",$receive->dated)[0],8,2) }}-{{substr(explode(" ",$receive->dated)[0],5,2) }}-{{ substr(explode(" ",$receive->dated)[0],0,4) }}</label><br>
@@ -66,10 +66,10 @@
       <table class="table table-striped" id="order_table" width="100%">
         <thead>
         <tr style="background-color:#FFA726;color:white;">
-            <th>Product Code</th>
-            <th scope="col" width="10%">UOM</th>
-            <th scope="col" width="10%">Price</th>
-            <th scope="col" width="5%">Qty</th>
+            <th>@lang('general.product')</th>
+            <th scope="col" width="10%">@lang('general.lbl_uom')</th>
+            <th scope="col" width="10%">@lang('general.lbl_price')</th>
+            <th scope="col" width="5%">@lang('general.lbl_qty')</th>
             <th scope="col" width="10%">Total</th>
         </tr>
         </thead>
@@ -109,7 +109,7 @@
           </tr>
           <tr>
             <td style="text-align: left;width:70%;"></td>
-            <td style="text-align: right;width:20%;background-color:#FFA726;">Tax</th>
+            <td style="text-align: right;width:20%;background-color:#FFA726;">@lang('general.lbl_tax') </th>
             <td style="text-align: right;width:10%;background-color:#FFA726;">Rp. {{ number_format($receive->total_vat,0,',','.') }}</th>
           </tr>
           <tr>

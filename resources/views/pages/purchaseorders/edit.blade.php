@@ -7,8 +7,8 @@
     <div class="panel-heading  bg-teal-600">
       <div class="panel-title"><h4 class="">Purchase Order {{ $purchase->purchase_no }}</h4></div>
       <div class="">
-        <a href="{{ route('purchaseorders.index') }}" class="btn btn-default">Cancel</a>
-        <button type="button" id="save-btn" class="btn btn-info">Save</button>
+        <a href="{{ route('purchaseorders.index') }}" class="btn btn-default">@lang('general.lbl_cancel')</a>
+        <button type="button" id="save-btn" class="btn btn-info">@lang('general.lbl_save')</button>
       </div>
     </div>
     <div class="panel-body bg-white text-black">
@@ -17,7 +17,7 @@
           <div class="row mb-3">
           <div class="col-md-12">
             <div class="row mb-3">
-              <label class="form-label col-form-label col-md-1">Date (mm/dd/YYYY)</label>
+              <label class="form-label col-form-label col-md-1">@lang('general.lbl_dated_mmddYYYY')</label>
               <div class="col-md-2">
                 <input id="purchase_no" name="purchase_no" type="hidden" value="{{ $purchase->purchase_no }}">
                 <input type="text" 
@@ -35,7 +35,7 @@
               <div class="col-md-2">
                 <select class="form-control" 
                     name="branch_id" id="branch_id" required>
-                    <option value="">Select Branch</option>
+                    <option value="">@lang('general.lbl_branchselect')</option>
                     @foreach($branchs as $branch)
                         <option value="{{ $branch->id }}"  {{ $purchase->branch_id == $branch->id ? 'selected' : '' }}>{{ $branch->remark }} </option>
                     @endforeach
@@ -53,7 +53,7 @@
                 </select>
               </div>
 
-                <label class="form-label col-form-label col-md-1">Remark</label>
+                <label class="form-label col-form-label col-md-1">@lang('general.lbl_remark')</label>
                 <div class="col-md-2">
                   <input type="text" 
                   name="remark"
@@ -63,19 +63,19 @@
                   </div>
             </div>
 
-            <div class="panel-heading bg-teal-600 text-white"><strong>Order List</strong></div>
+            <div class="panel-heading bg-teal-600 text-white"><strong>@lang('general.lbl_order_list')</strong></div>
             <div class="row mb-3">
               <div class="col-md-3">
-                <label class="form-label col-form-label">Product</label>
+                <label class="form-label col-form-label">@lang('general.product')</label>
                 <select class="form-control" 
                       name="input_product_id" id="input_product_id" required>
-                      <option value="">Select Product</option>
+                      <option value="">@lang('general.lbl_productselect')</option>
                   </select>
               </div>
 
 
               <div class="col-md-1">
-                <label class="form-label col-form-label">UOM</label>
+                <label class="form-label col-form-label">@lang('general.lbl_uom')</label>
                 <input type="text" 
                 name="input_product_uom"
                 id="input_product_uom"
@@ -84,7 +84,7 @@
               </div>
 
               <div class="col-md-2">
-                <label class="form-label col-form-label">Price</label>
+                <label class="form-label col-form-label">@lang('general.lbl_price')</label>
                 <input type="text" 
                 name="input_product_price"
                 id="input_product_price"
@@ -93,7 +93,7 @@
               </div>
 
               <div class="col-md-1">
-                <label class="form-label col-form-label">Qty</label>
+                <label class="form-label col-form-label">@lang('general.lbl_qty')</label>
                 <input type="text" 
                 name="input_product_qty"
                 id="input_product_qty"
@@ -102,7 +102,7 @@
               </div>
 
               <div class="col-md-1">
-                <label class="form-label col-form-label">Disc (Rp.)</label>
+                <label class="form-label col-form-label">@lang('general.lbl_discountrp')</label>
                 <input type="text" 
                 name="input_product_disc"
                 id="input_product_disc"
@@ -126,7 +126,7 @@
 
               <div class="col-md-2">
                 <div class="col-md-12"><label class="form-label col-form-label">_</label></div>
-                <a href="#" id="input_product_submit" class="btn btn-green"><div class="fa-1x"><i class="fas fa-plus fa-fw"></i>Add Product</div></a>
+                <a href="#" id="input_product_submit" class="btn btn-green"><div class="fa-1x"><i class="fas fa-plus fa-fw"></i>@lang('general.lbl_add_product')</div></a>
               </div>
 
             </div>
@@ -135,13 +135,13 @@
             <table class="table table-striped" id="order_table">
               <thead>
               <tr>
-                <th>Product Name</th>
-                <th scope="col" width="10%">UOM</th>
-                <th scope="col" width="10%">Price</th>
-                <th scope="col" width="5%">Qty</th>
+                <th>@lang('general.lbl_product_name')</th> 
+                <th scope="col" width="10%">@lang('general.lbl_uom')</th>
+                <th scope="col" width="10%">@lang('general.lbl_price')</th>
+                <th scope="col" width="5%">@lang('general.lbl_qty')</th>
                 <th scope="col" width="10%">Disc</th>
                 <th scope="col" width="10%">Total</th>
-                <th scope="col" width="20%">Action</th>   
+                <th scope="col" width="20%">@lang('general.lbl_action')</th>  
               </tr>
               </thead>
               <tbody>
@@ -155,7 +155,7 @@
                 <h3 class="text-end"><label id="sub-total">{{ number_format(($purchase->total-$purchase->total_vat),0,',','.') }}</label></h3>
               </div>
 
-              <label class="form-label col-form-label col-md-9 text-end"><h2>Tax </h2></label>
+              <label class="form-label col-form-label col-md-9 text-end"><h2>@lang('general.lbl_tax') </h2></label>
               <div class="col-md-3">
                 <h3 class="text-end"><label id="vat-total">{{ number_format($purchase->total_vat,0,',','.') }}</label></h3>
               </div>
@@ -436,7 +436,7 @@
                       {
                         position: 'top-end',
                         icon: 'warning',
-                        text: 'Something went wrong - '+resp.data.message,
+                        text: "@lang('general.lbl_msg_failed')"+resp.data.message,
                         showConfirmButton: false,
                         imageHeight: 30, 
                         imageWidth: 30,   
@@ -453,9 +453,9 @@
             targets: -1, 
             data: null, 
             defaultContent: 
-            '  <a href="#" id="add_row" class="btn btn-green"><div class="fa-1x"><i class="fas fa-circle-plus fa-lg"></i></div></a>'+
-            '  <a href="#" id="minus_row" class="btn btn-yellow ml-1"><div class="fa-1x"><i class="fas fa-circle-minus fa-lg"></i></div></a>'+
-            '  <a href="#" id="delete_row" class="btn btn-danger"><div class="fa-1x"><i class="fas fa-circle-xmark fa-lg"></i></div></a>'
+            '  <a href="#"  data-toggle="tooltip" data-placement="top" title="Tambah"   id="add_row"  class="btn btn-green"><div class="fa-1x"><i class="fas fa-circle-plus fa-lg"></i></div></a>'+
+            '  <a href="#"  data-toggle="tooltip" data-placement="top" title="Kurangi"   id="minus_row"  class="btn btn-yellow ml-1"><div class="fa-1x"><i class="fas fa-circle-minus fa-lg"></i></div></a>'+
+            '  <a href="#" data-toggle="tooltip" data-placement="top" title="Hapus"  id="delete_row"  class="btn btn-danger"><div class="fa-1x"><i class="fas fa-circle-xmark fa-lg"></i></div></a>'
           }],
           columns: [
             { data: 'abbr' },

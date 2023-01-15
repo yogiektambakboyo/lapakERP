@@ -75,7 +75,6 @@ class ReportPurchaseController extends Controller
        join suppliers c on c.id = im.supplier_id 
        join users u on u.id=im.created_by
        join branch b on b.id = c.branch_id
-       join shift s on im.created_at::time  between s.time_start and s.time_end
        where im.dated>now()-interval'7 days' order by im.purchase_no               
         ");
         $data = $this->data;
@@ -116,7 +115,6 @@ class ReportPurchaseController extends Controller
            join suppliers c on c.id = im.supplier_id  and im.branch_id::character varying like '%".$branchx."%'
            join users u on u.id=im.created_by
            join branch b on b.id = c.branch_id
-           join shift s on im.created_at::time  between s.time_start and s.time_end
            where im.dated between '".$begindate."' and '".$enddate."'                  
             ");         
             return view('pages.reports.purchase',['company' => Company::get()->first()], compact('shifts','branchs','data','keyword','act_permission','report_data'))->with('i', ($request->input('page', 1) - 1) * 5);
@@ -131,7 +129,7 @@ class ReportPurchaseController extends Controller
                 $query->on('role_has_permissions.permission_id', '=', 'permissions.id')
                 ->where('role_has_permissions.role_id','=',$id)->where('permissions.name','like','%.index%')->where('permissions.url','!=','null');
             });
-           })->get(['permissions.name','permissions.url','permissions.remark','permissions.parent']);
+           })->orderby('permissions.remark')->get(['permissions.name','permissions.url','permissions.remark','permissions.parent']);
 
            $this->data = [
             'menu' => 

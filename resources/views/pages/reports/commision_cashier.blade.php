@@ -4,14 +4,14 @@
 
 @section('content')
     <div class="bg-light p-4 rounded">
-        <h1>Reports - Commision Cashier</h1>
+        <h1>@lang('general.lbl_report') - @lang('general.lbl_chasier_commision')</h1>
         <div class="lead row mb-3">
             <div class="col-md-10">
                 <div class="col-md-8">
-                    Manage your report here.
+                    @lang('general.lbl_title')
                 </div>
                 <div class="col-md-10"> 	
-                        <button onclick="openDialogFilterSearch('Filter');" class="btn btn-sm btn-lime">Filter</button>  
+                        <button onclick="openDialogFilterSearch('Filter');" class="btn btn-sm btn-lime">@lang('general.btn_filter')</button> 
                         <button onclick="openDialogFilterSearch('Export Excel');" class="btn btn-sm btn-success">Export</button>  
                 </div>
             </div>
@@ -24,16 +24,16 @@
         <table class="table table-striped" id="example">
             <thead>
                 <tr>
-                    <th scope="col" width="6%">Dated</th>
-                    <th>Invoice No</th>
-                    <th scope="col" width="17%">Product</th>
-                    <th scope="col" width="15%">Name</th>
-                    <th scope="col" width="5%">Price</th>
-                    <th scope="col" width="4%">Qty</th>
+                    <th scope="col" width="6%">@lang('general.lbl_dated')</th>
+                    <th>@lang('general.invoice_no')</th>
+                    <th scope="col" width="17%">@lang('general.product')</th>
+                    <th scope="col" width="15%">@lang('general.lbl_name')</th>
+                    <th scope="col" width="5%">@lang('general.lbl_price')</th>
+                    <th scope="col" width="4%">@lang('general.lbl_qty')</th>
                     <th scope="col" width="8%">Total</th>  
-                    <th scope="col" width="10%">Type Commission</th>   
-                    <th scope="col" width="12%">Base Commission</th>
-                    <th scope="col" width="12%">Total Commission</th>    
+                    <th scope="col" width="10%">@lang('general.lbl_type_commision')</th>   
+                    <th scope="col" width="12%">@lang('general.lbl_base_commision')</th>
+                    <th scope="col" width="12%">@lang('general.lbl_total_commision')</th>    
                 </tr>
                 </thead>
                 <tbody>
@@ -65,15 +65,15 @@
             <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                <h5 class="modal-title" id="staticBackdropLabel">Filter Data</h5>
+                <h5 class="modal-title" id="staticBackdropLabel">@lang('general.lbl_filterdata')</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                 ...
                 </div>
                 <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary">Apply</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">@lang('general.lbl_close') </button>
+                <button type="button" class="btn btn-primary">@lang('general.lbl_apply')</button>
                 </div>
             </div>
             </div>
@@ -85,15 +85,15 @@
             <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                <h5 class="modal-title"  id="input_expired_list_at_lbl">Filter Data</h5>
+                <h5 class="modal-title"  id="input_expired_list_at_lbl">@lang('general.lbl_filterdata')</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <form action="{{ route('reports.cashier.search') }}" method="GET">   
                         @csrf 
                         <div class="col-md-10">
-                            <label class="form-label col-form-label col-md-4">Branch</label>
-                            <input type="hidden" name="export" id="export" value="Search">
+                            <label class="form-label col-form-label col-md-4">@lang('general.lbl_branch')</label>
+                            <input type="hidden" name="export" id="export" value="@lang('general.btn_search')">
                         </div>
                         <div class="col-md-12">
                             <select class="form-control" 
@@ -106,7 +106,7 @@
                         </div>
 
                         <div class="col-md-12">
-                            <label class="form-label col-form-label col-md-4">Begin Date</label>
+                            <label class="form-label col-form-label col-md-4">@lang('general.lbl_date_start')</label>
                         </div>
                         <div class="col-md-12">
                             <input type="text" 
@@ -120,7 +120,7 @@
                         </div>
 
                         <div class="col-md-12">
-                            <label class="form-label col-form-label col-md-4">End Date</label>
+                            <label class="form-label col-form-label col-md-4">@lang('general.lbl_date_end')</label>
                         </div>
                         <div class="col-md-12">
                             <input type="text" 
@@ -135,7 +135,7 @@
 
                         <br>
                         <div class="col-md-12">
-                            <button type="submit" class="btn btn-primary form-control">Apply</button>
+                            <button type="submit" class="btn btn-primary form-control">@lang('general.lbl_apply')</button>
                         </div>
                     </form>
                 </div>
@@ -181,7 +181,7 @@
                     
                         <br>
                         <div class="col-md-12">
-                            <button type="submit" class="btn btn-primary form-control">Apply</button>
+                            <button type="submit" class="btn btn-primary form-control">@lang('general.lbl_apply')</button>
                         </div>
                     </form>
                 </div>

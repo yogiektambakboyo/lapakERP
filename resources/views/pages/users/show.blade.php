@@ -11,7 +11,7 @@
           <div class="col-md-2">
             <div class="mt-4">
                 <a href="{{ route('users.edit', $user->id) }}" class="btn btn-info">Edit</a>
-                <a href="{{ route('users.index') }}" class="btn btn-default">Back</a>
+                <a href="{{ route('users.index') }}" class="btn btn-default">@lang('general.lbl_back') </a>
             </div>
           </div>
         </div>
@@ -61,7 +61,7 @@
               <div class="panel-heading bg-teal-600"><h4>Employee Info</h4></div>
               <div class="panel-body bg-white text-black">
                 <div class="row mb-3">
-                  <label class="form-label col-form-label col-md-2">Job Title</label>
+                  <label class="form-label col-form-label col-md-2">@lang('general.lbl_jobtitleselect')</label>
                   <div class="col-md-8">
                     <input type="text" class="form-control" value="{{ $users->job_title }}" readonly />
                   </div>
@@ -81,7 +81,7 @@
                 </div>
               </div>
               <div class="row mb-3">
-                <label class="form-label col-form-label col-md-2">Branch</label>
+                <label class="form-label col-form-label col-md-2">@lang('general.lbl_branch')</label>
                 <div class="col-md-8">
                   <input type="text" class="form-control" value="{{ $users->branch_name }}" readonly />
                 </div>
@@ -95,11 +95,11 @@
               <div class="row mb-3">
                 <label class="form-label col-form-label col-md-2">Join Date  (mm/dd/YYYY)</label>
                 <div class="col-md-8">
-                  <input type="text" class="form-control" value="{{ \Carbon\Carbon::parse($users->join_date)->format('d/m/Y') }}" readonly />
+                  <input type="text" class="form-control" value="{{ \Carbon\Carbon::parse($users->join_date)->format('Y-m-d') }}" readonly />
                 </div>
               </div>
               <div class="row mb-3">
-                <label class="form-label col-form-label col-md-2">Join Years</label>
+                <label class="form-label col-form-label col-md-2">Join @lang('general.lbl_years')</label>
                 <div class="col-md-8">
                   <input type="text" class="form-control" value="{{ $users->join_years }}" readonly />
                 </div>
@@ -136,7 +136,7 @@
                   </div>
                 </div>
                 <div class="row mb-3">
-                  <label class="form-label col-form-label col-md-2">Birth Date</label>
+                  <label class="form-label col-form-label col-md-2">Birth @lang('general.lbl_dated')   </label>
                   <div class="col-md-8">
                     <input type="text" class="form-control" value="{{ $users->birth_date }}" readonly />
                   </div>
@@ -149,19 +149,19 @@
               <div class="panel-heading bg-teal-600"><h4>Contact</h4></div>
               <div class="panel-body bg-white text-black">
                 <div class="row mb-3">
-                  <label class="form-label col-form-label col-md-2">Address</label>
+                  <label class="form-label col-form-label col-md-2">@lang('general.lbl_address')</label>
                   <div class="col-md-8">
                     <input type="text" class="form-control" value="{{ $users->address }}" readonly />
                   </div>
               </div>
               <div class="row mb-3">
-                <label class="form-label col-form-label col-md-2">City</label>
+                <label class="form-label col-form-label col-md-2">@lang('general.lbl_city')</label>
                 <div class="col-md-8">
                   <input type="text" class="form-control" value="{{ $users->city }}" readonly />
                 </div>
               </div>
               <div class="row mb-3">
-                <label class="form-label col-form-label col-md-2">Phone No</label>
+                <label class="form-label col-form-label col-md-2">@lang('general.lbl_phoneno')</label>
                 <div class="col-md-8">
                   <input type="text" class="form-control" value="{{ $users->phone_no }}" readonly />
                 </div>
@@ -226,9 +226,9 @@
                     <table class="table table-striped" id="example">
                         <thead>
                         <tr>
-                            <th>Branch</th>
+                            <th>@lang('general.lbl_branch')</th>
                             <th scope="col" width="10%">Department</th>
-                            <th scope="col" width="20%">Job Title</th>
+                            <th scope="col" width="20%">@lang('general.lbl_jobtitle')</th> 
                             <th scope="col" width="15%">Date</th> 
                         </tr>
                         </thead>
@@ -256,7 +256,7 @@
               <div class="panel-body bg-white text-black">
                 <div class="row mb-3">
                   <div class="col-md-2">
-                    <label class="form-label col-form-label">Date (mm/dd/YYYY)</label>
+                    <label class="form-label col-form-label">@lang('general.lbl_dated_mmddYYYY')</label>
                     <input type="text" 
                     name="input_date"
                     id="input_date"
@@ -325,7 +325,7 @@
                                 <td>{{ $userSkill->remark }}</td>
                                 <td>{{ $userSkill->name }}</td>
                                 <td>{{ $userSkill->status }}</td>
-                                <td><a href="#" onclick="deleteTraining('{{ $userSkill->dated }}',{{ $user->id}},{{ $userSkill->product_id }},'{{ $userSkill->status }}');" class="btn btn-danger btn-sm">Delete</a></td>
+                                <td><a href="#" onclick="deleteTraining('{{ $userSkill->dated }}',{{ $user->id}},{{ $userSkill->product_id }},'{{ $userSkill->status }}');" class="btn btn-danger btn-sm">@lang('general.lbl_delete')</a></td>
                             </tr>
                         @endforeach
                         </tbody>
@@ -367,7 +367,7 @@
                   </div>
 
                   <div class="col-md-2">
-                    <label class="form-label col-form-label">Years</label>
+                    <label class="form-label col-form-label">@lang('general.lbl_years')</label>
                     <input type="text" 
                     name="input_exp_years"
                     id="input_exp_years"
@@ -401,7 +401,7 @@
                                 <th scope="row">{{ $userExperience->job_position }}</th>
                                 <td>{{ $userExperience->company }}</td>
                                 <td>{{ $userExperience->years }}</td>
-                                <td><a href="#" onclick="deleteExperience({{ $userExperience->id }});" class="btn btn-danger btn-sm">Delete</a></td>
+                                <td><a href="#" onclick="deleteExperience({{ $userExperience->id }});" class="btn btn-danger btn-sm">@lang('general.lbl_delete')</a></td>
                             </tr>
                         @endforeach
                         </tbody>
@@ -525,7 +525,7 @@
                       {
                         position: 'top-end',
                         icon: 'warning',
-                        text: 'Something went wrong - '+resp.data.message,
+                        text: "@lang('general.lbl_msg_failed')"+resp.data.message,
                         showConfirmButton: false,
                         imageHeight: 30, 
                         imageWidth: 30,   
@@ -599,7 +599,7 @@
                       {
                         position: 'top-end',
                         icon: 'warning',
-                        text: 'Something went wrong - '+resp.data.message,
+                        text: "@lang('general.lbl_msg_failed')"+resp.data.message,
                         showConfirmButton: false,
                         imageHeight: 30, 
                         imageWidth: 30,   
@@ -633,7 +633,7 @@
                       {
                         position: 'top-end',
                         icon: 'warning',
-                        text: 'Something went wrong - '+resp.data.message,
+                        text: "@lang('general.lbl_msg_failed')"+resp.data.message,
                         showConfirmButton: false,
                         imageHeight: 30, 
                         imageWidth: 30,   
@@ -662,7 +662,7 @@
                       {
                         position: 'top-end',
                         icon: 'warning',
-                        text: 'Something went wrong - '+resp.data.message,
+                        text: "@lang('general.lbl_msg_failed')"+resp.data.message,
                         showConfirmButton: false,
                         imageHeight: 30, 
                         imageWidth: 30,   

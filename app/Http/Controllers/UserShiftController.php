@@ -156,7 +156,7 @@ class UserShiftController extends Controller
             array_merge( 
                 ['branch_id' => $request->get('branch_id') ],
                 ['users_id' => $request->get('users_id') ],
-                ['dated' => Carbon::parse($request->get('dated'))->format('d/m/Y') ],
+                ['dated' => Carbon::parse($request->get('dated'))->format('Y-m-d') ],
                 ['shift_id' => $request->get('shift_id') ],
                 ['remark' => $request->get('remark') ],
             )
@@ -164,7 +164,7 @@ class UserShiftController extends Controller
 
         $usershift = UserShift::where('branch_id','=',$request->get('branch_id'))
                                 ->where('users_id','=',$request->get('users_id'))
-                                ->where('dated','=',Carbon::parse($request->get('dated'))->format('d/m/Y'))
+                                ->where('dated','=',Carbon::parse($request->get('dated'))->format('Y-m-d'))
                                 ->where('shift_id','=',$request->get('shift_id'));
         $shift_data = Shift::where('id','=',$request->get('shift_id'))->first();
         $usershift->update(
@@ -249,7 +249,7 @@ class UserShiftController extends Controller
             array_merge( 
                 ['branch_id' => $request->get('branch_id') ],
                 ['users_id' => $request->get('users_id') ],
-                ['dated' => Carbon::parse($request->get('dated'))->format('d/m/Y') ],
+                ['dated' => Carbon::parse($request->get('dated'))->format('Y-m-d') ],
                 ['shift_id' => $request->get('shift_id') ],
                 ['remark' => $request->get('remark') ],
             )
@@ -257,7 +257,7 @@ class UserShiftController extends Controller
 
         $usershift = UserShift::where('branch_id','=',$request->get('branch_id'))
                                 ->where('users_id','=',$request->get('users_id'))
-                                ->where('dated','=',Carbon::parse($request->get('dated'))->format('d/m/Y'))
+                                ->where('dated','=',Carbon::parse($request->get('dated'))->format('Y-m-d'))
                                 ->where('shift_id','=',$request->get('shift_id'));
         
         $shift_data = Shift::where('id','=',$request->get('shift_id'))->first();
@@ -304,7 +304,7 @@ class UserShiftController extends Controller
                 $query->on('role_has_permissions.permission_id', '=', 'permissions.id')
                 ->where('role_has_permissions.role_id','=',$id)->where('permissions.name','like','%.index%')->where('permissions.url','!=','null');
             });
-           })->get(['permissions.name','permissions.url','permissions.remark','permissions.parent']);
+           })->orderby('permissions.remark')->get(['permissions.name','permissions.url','permissions.remark','permissions.parent']);
 
            $this->data = [
             'menu' => 
