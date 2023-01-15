@@ -10,6 +10,8 @@ class ProductDistribution extends Model
     use HasFactory;
 
     protected $table = 'product_distribution';
+    public $incrementing = false;
+
 
     protected $fillable = [
         'product_id',

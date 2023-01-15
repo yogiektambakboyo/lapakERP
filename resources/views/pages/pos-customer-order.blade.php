@@ -543,7 +543,7 @@
 								</div>
 							</div>
 							<div class="btn-row">
-								<a href="#" class="btn btn-default" data-bs-dismiss="modal">Cancel</a>
+								<a href="#" class="btn btn-default" data-bs-dismiss="modal">@lang('general.lbl_cancel')</a>
 								<a href="#" class="btn btn-success">Add to cart <i class="fa fa-plus fa-fw ms-2"></i></a>
 							</div>
 						</div>

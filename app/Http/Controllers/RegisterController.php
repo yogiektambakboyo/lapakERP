@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\Http\Requests\RegisterRequest;
+use App\Models\Company;
+use App\Http\Controllers\Lang;
+
 
 class RegisterController extends Controller
 {
@@ -15,7 +18,7 @@ class RegisterController extends Controller
      */
     public function show()
     {
-        return view('auth.register');
+        //return view('auth.register');
     }
 
     /**
@@ -27,10 +30,8 @@ class RegisterController extends Controller
      */
     public function register(RegisterRequest $request) 
     {
-        $user = User::create($request->validated());
-
-        auth()->login($user);
-
+        //$user = User::create($request->validated());
+        //auth()->login($user);
         return redirect('/')->with('success', "Account successfully registered.");
     }
 }

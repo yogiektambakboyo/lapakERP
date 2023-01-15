@@ -49,11 +49,11 @@
 			
 			@if ($appSidebarSearch)
 			<div class="menu-search mb-n3">
-        <input type="text" class="form-control" placeholder="Sidebar menu filter..." data-sidebar-search="true" />
+        <input type="text" class="form-control" placeholder="@lang('home.search')" data-sidebar-search="true" />
 			</div>
 			@endif
 			
-			<div class="menu-header">Navigation</div>
+			<div class="menu-header">@lang('home.navigation')</div>
 			
 			@php
 				$currentUrl = (Request::path() != '/') ? '/'. Request::path() : '/';

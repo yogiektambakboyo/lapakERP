@@ -25,12 +25,12 @@
             <form method="POST" action="{{ route('roles.store') }}">
                 @csrf
                 <div class="mb-3">
-                    <label for="name" class="form-label">Name</label>
+                    <label for="name" class="form-label">@lang('general.lbl_name')</label>
                     <input value="{{ old('name') }}" 
                         type="text" 
                         class="form-control" 
                         name="name" 
-                        placeholder="Name" required>
+                        placeholder="@lang('general.lbl_name')" required>
                 </div>
                 
                 <label for="permissions" class="form-label">Assign Permissions</label>
@@ -38,7 +38,7 @@
                 <table class="table table-striped">
                     <thead>
                         <th scope="col" width="1%"><input type="checkbox" name="all_permission"></th>
-                        <th scope="col" width="20%">Name</th>
+                        <th scope="col" width="20%">@lang('general.lbl_name')</th>
                         <th scope="col" width="1%">Guard</th> 
                     </thead>
 
@@ -56,8 +56,8 @@
                     @endforeach
                 </table>
 
-                <button type="submit" class="btn btn-primary">Save Roles</button>
-                <a href="{{ route('users.index') }}" class="btn btn-default">Back</a>
+                <button type="submit" class="btn btn-primary">@lang('general.lbl_save')</button>
+                <a href="{{ route('users.index') }}" class="btn btn-default">@lang('general.lbl_back') </a>
             </form>
         </div>
 

@@ -16,9 +16,9 @@
 			<div class="login-header">
 				<div class="brand">
 					<div class="d-flex align-items-center">
-						<span class="logo"></span>{{ $settings->company_name }}
+						<span class="logo"></span>{{ $company->remark }}
 					</div>
-					<small>{{ $settings->app_name }} {{ $settings->version }}</small>
+					<small>{{ $company->address }} ({{ $settings->version }})</small>
 				</div>
 				<div class="icon">
 					<i class="fa fa-lock"></i>
@@ -49,11 +49,11 @@
 						<div class="form-check mb-20px">
 							<input class="form-check-input" type="checkbox" value="" id="rememberMe"  name="remember" />
 							<label class="form-check-label" for="rememberMe">
-								Remember Me
+								@lang('login.checkbox')
 							</label>
 						</div>
 						<div class="login-buttons">
-							<button type="submit" class="btn h-45px btn-success d-block w-100 btn-lg">Sign me in</button>
+							<button type="submit" class="btn h-45px btn-success d-block w-100 btn-lg">@lang('login.button')</button>
 						</div>
 					</form>
 				</div>

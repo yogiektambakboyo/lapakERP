@@ -8,7 +8,13 @@ use Spatie\Permission\Models\Permission;
 use App\Models\Customer;
 use App\Models\Branch;
 use Auth;
+use App\Exports\CustomersExport;
 use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
+use Carbon\Carbon;
+use App\Models\Company;
+use App\Http\Controllers\Lang;
+
 
 
 class CustomersController extends Controller
@@ -18,7 +24,7 @@ class CustomersController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    private $data,$act_permission,$module="customers";
+    private $data,$act_permission,$module="customers",$id=1;
 
     public function __construct()
     {
@@ -33,108 +39,79 @@ class CustomersController extends Controller
                 select 0 as allow_create,0 as allow_delete,0 as allow_show,count(1) as allow_edit from permissions p  join role_has_permissions rp on rp.permission_id = p.id where rp.role_id = 1 and p.name like '%.edit' and p.name like '".$this->module.".%'
             ) a
         ");
-        $permissions = Permission::join('role_has_permissions',function ($join) {
-            $join->on(function($query){
-                $query->on('role_has_permissions.permission_id', '=', 'permissions.id')
-                ->where('role_has_permissions.role_id','=','1')->where('permissions.name','like','%.index%')->where('permissions.url','!=','null');
-            });
-           })->get(['permissions.name','permissions.url','permissions.remark','permissions.parent']);
-       
-        $this->data = [
-            'menu' => 
-                [
-                    [
-                        'icon' => 'fa fa-user-gear',
-                        'title' => 'User Management',
-                        'url' => 'javascript:;',
-                        'caret' => true,
-                        'sub_menu' => []
-                    ],
-                    [
-                        'icon' => 'fa fa-box',
-                        'title' => 'Product Management',
-                        'url' => 'javascript:;',
-                        'caret' => true,
-                        'sub_menu' => []
-                    ],
-                    [
-                        'icon' => 'fa fa-table',
-                        'title' => 'Transactions',
-                        'url' => 'javascript:;',
-                        'caret' => true,
-                        'sub_menu' => []
-                    ],
-                    [
-                        'icon' => 'fa fa-chart-column',
-                        'title' => 'Reports',
-                        'url' => 'javascript:;',
-                        'caret' => true,
-                        'sub_menu' => []
-                    ],
-                    [
-                        'icon' => 'fa fa-screwdriver-wrench',
-                        'title' => 'Settings',
-                        'url' => 'javascript:;',
-                        'caret' => true,
-                        'sub_menu' => []
-                    ]  
-                ]      
-        ];
-
-        foreach ($permissions as $key => $menu) {
-            if($menu['parent']=='Users'){
-                array_push($this->data['menu'][0]['sub_menu'], array(
-                    'url' => $menu['url'],
-                    'title' => $menu['remark'],
-                    'route-name' => $menu['name']
-                ));
-            }
-            if($menu['parent']=='Products'){
-                array_push($this->data['menu'][1]['sub_menu'], array(
-                    'url' => $menu['url'],
-                    'title' => $menu['remark'],
-                    'route-name' => $menu['name']
-                ));
-            }
-            if($menu['parent']=='Transactions'){
-                array_push($this->data['menu'][2]['sub_menu'], array(
-                    'url' => $menu['url'],
-                    'title' => $menu['remark'],
-                    'route-name' => $menu['name']
-                ));
-            }
-            if($menu['parent']=='Reports'){
-                array_push($this->data['menu'][3]['sub_menu'], array(
-                    'url' => $menu['url'],
-                    'title' => $menu['remark'],
-                    'route-name' => $menu['name']
-                ));
-            }
-            if($menu['parent']=='Settings'){
-                array_push($this->data['menu'][4]['sub_menu'], array(
-                    'url' => $menu['url'],
-                    'title' => $menu['remark'],
-                    'route-name' => $menu['name']
-                ));
-            }
-        }
+        
+        
     }
 
 
-    public function index()
+    public function index(Request $request)
     {   
+        $user = Auth::user();
+        $id = $user->roles->first()->id;
+        $this->getpermissions($id);
+
         $user = Auth::user();
         $Customers = Customer::join('branch as b','b.id','customers.branch_id')
                             ->join('users_branch as ub', function($join){
                                 $join->on('ub.branch_id', '=', 'b.id');
-                            })->where('ub.user_id', $user->id)->get(['customers.*','b.remark as branch_name']);
+                            })->where('ub.user_id', $user->id)->paginate(10,['customers.*','b.remark as branch_name']);
         $data = $this->data;
 
+        $request->search = "";
+        $request->branch = "";
+        $req = $request;
+        $act_permission = $this->act_permission[0];
+        $branchs = Branch::join('users_branch as ub','ub.branch_id', '=', 'branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']);
+
+        $act_permission = $this->act_permission[0];
         return view('pages.customers.index', [
-            'customers' => $Customers,'data' => $data 
+            'customers' => $Customers,'data' => $data , 'company' => Company::get()->first(), 'request' => $request, 'branchs' => $branchs , 'act_permission' => $act_permission
             
         ]);
     }
+
+    public function search(Request $request) 
+    {
+        $user = Auth::user();
+        $id = $user->roles->first()->id;
+        $this->getpermissions($id);
+
+        $keyword = $request->search;
+        $data = $this->data;
+        $act_permission = $this->act_permission[0];
+        $branchx = $request->filter_branch_id;
+        $branchs = Branch::join('users_branch as ub','ub.branch_id', '=', 'branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']);
+        if($request->export=='Export Excel'){
+            $strencode = base64_encode($keyword.'#'.$branchx.'#'.$user->id);
+            return Excel::download(new CustomersExport($strencode), 'customers_'.Carbon::now()->format('YmdHis').'.xlsx');
+        }else if($request->src=='Search'){
+            $Customers = Customer::join('branch as b','b.id','customers.branch_id')
+                            ->join('users_branch as ub', function($join){
+                                $join->on('ub.branch_id', '=', 'b.id');
+                            })->where('ub.user_id', $user->id)->where('customers.branch_id','like','%'.$branchx.'%')->where('customers.name','ILIKE','%'.$keyword.'%')->paginate(10,['customers.*','b.remark as branch_name']);
+            $request->filter_branch_id = "";
+            return view('pages.customers.index', [
+                'customers' => $Customers,'data' => $data , 
+                'company' => Company::get()->first(),
+                'request' => $request,
+                'branchs' => $branchs,
+                'act_permission' => $act_permission
+            ]);
+        }else{
+            $Customers = Customer::join('branch as b','b.id','customers.branch_id')
+                            ->join('users_branch as ub', function($join){
+                                $join->on('ub.branch_id', '=', 'b.id');
+                            })->where('ub.user_id', $user->id)->where('customers.branch_id','like','%'.$branchx.'%')->where('customers.name','ILIKE','%'.$keyword.'%')->paginate(10,['customers.*','b.remark as branch_name']);
+            return view('pages.customers.index', [
+                'customers' => $Customers,'data' => $data , 
+                'company' => Company::get()->first(),
+                'request' => $request,
+                'branchs' => $branchs,
+                'act_permission' => $act_permission
+            ]);
+        }
+    }
+
 
     /**
      * Show form for creating Customer
@@ -142,9 +119,13 @@ class CustomersController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function create() 
-    {   
+    {  
+        $user = Auth::user();
+        $id = $user->roles->first()->id;
+        $this->getpermissions($id);
+ 
         $data = $this->data;
-        return view('pages.customers.create',['data'=>$data,'branchs' => Branch::latest()->get(),
+        return view('pages.customers.create',['data'=>$data,'branchs' => Branch::latest()->get(), 'company' => Company::get()->first(),
         'userBranchs' => Branch::latest()->get()->pluck('remark')->toArray(),]);
     }
 
@@ -171,6 +152,30 @@ class CustomersController extends Controller
             ->withSuccess(__('Customer created successfully.'));
     }
 
+    public function storeapi(Request $request)
+    {   
+    
+        Customer::create(
+            array_merge( 
+                ['phone_no' => $request->get('phone_no') ],
+                ['name' => $request->get('name') ],
+                ['address' => $request->get('address') ],
+                ['membership_id' => '1' ],
+                ['abbr' => '1' ],
+                ['branch_id' => $request->get('branch_id') ],
+            )
+        );
+
+        $id = Customer::where('name','=',$request->get('name'))->max('id');
+        $result = array_merge(
+            ['status' => 'success'],
+            ['data' => $id],
+            ['message' => 'Save Successfully'],
+        );
+
+        return $result;
+    }
+
     /**
      * Show the form for editing the specified resource.
      *
@@ -179,9 +184,12 @@ class CustomersController extends Controller
      */
     public function edit(Customer $Customer)
     {
+        $user = Auth::user();
+        $id = $user->roles->first()->id;
+        $this->getpermissions($id);
         $data = $this->data;
         return view('pages.customers.edit', [
-            'customer' => $Customer ,'data' => $data ,'branchs' => Branch::latest()->get(),
+            'customer' => $Customer ,'data' => $data ,'branchs' => Branch::latest()->get(), 'company' => Company::get()->first(),
             'userBranchs' => Branch::latest()->get()->pluck('remark')->toArray()
         ]);
     }
@@ -207,9 +215,6 @@ class CustomersController extends Controller
             )
         );
 
-       
-
-
         return redirect()->route('customers.index')
             ->withSuccess(__('Customer updated successfully.'));
     }
@@ -222,9 +227,124 @@ class CustomersController extends Controller
      */
     public function destroy(Customer $Customer)
     {
-        $Customer->delete();
+        if($Customer->delete()){
+            $result = array_merge(
+                ['status' => 'success'],
+                ['data' => $Customer->name],
+                ['message' => 'Delete Successfully'],
+            );    
+        }else{
+            $result = array_merge(
+                ['status' => 'failed'],
+                ['data' => $Customer->name],
+                ['message' => 'Delete failed'],
+            );   
+        }
+        return $result;
+    }
 
-        return redirect()->route('customers.index')
-            ->withSuccess(__('Customer deleted successfully.'));
+    public function getpermissions($role_id){
+        $id = $role_id;
+        $permissions = Permission::join('role_has_permissions',function ($join)  use ($id) {
+            $join->on(function($query) use ($id) {
+                $query->on('role_has_permissions.permission_id', '=', 'permissions.id')
+                ->where('role_has_permissions.role_id','=',$id)->where('permissions.name','like','%.index%')->where('permissions.url','!=','null');
+            });
+           })->orderby('permissions.remark')->get(['permissions.name','permissions.url','permissions.remark','permissions.parent']);
+
+           $this->data = [
+            'menu' => 
+                [
+                    [
+                        'icon' => 'fa fa-user-gear',
+                        'title' => \Lang::get('home.user_management'),
+                        'url' => 'javascript:;',
+                        'caret' => true,
+                        'sub_menu' => []
+                    ],
+                    [
+                        'icon' => 'fa fa-box',
+                        'title' => \Lang::get('home.product_management'),
+                        'url' => 'javascript:;',
+                        'caret' => true,
+                        'sub_menu' => []
+                    ],
+		   [
+                        'icon' => 'fa fa-box',
+                        'title' => \Lang::get('home.service_management'),
+                        'url' => 'javascript:;',
+                        'caret' => true,
+                        'sub_menu' => []
+                    ],
+                    [
+                        'icon' => 'fa fa-table',
+                        'title' => \Lang::get('home.transaction'),
+                        'url' => 'javascript:;',
+                        'caret' => true,
+                        'sub_menu' => []
+                    ],
+                    [
+                        'icon' => 'fa fa-chart-column',
+                        'title' => \Lang::get('home.reports'),
+                        'url' => 'javascript:;',
+                        'caret' => true,
+                        'sub_menu' => []
+                    ],
+                    [
+                        'icon' => 'fa fa-screwdriver-wrench',
+                        'title' => \Lang::get('home.settings'),
+                        'url' => 'javascript:;',
+                        'caret' => true,
+                        'sub_menu' => []
+                    ]  
+                ]      
+        ];
+
+        foreach ($permissions as $key => $menu) {
+            if($menu['parent']=='Users'){
+                array_push($this->data['menu'][0]['sub_menu'], array(
+                    'url' => $menu['url'],
+                    'title' => $menu['remark'],
+                    'route-name' => $menu['name']
+                ));
+            }
+            if($menu['parent']=='Products'){
+                array_push($this->data['menu'][1]['sub_menu'], array(
+                    'url' => $menu['url'],
+                    'title' => $menu['remark'],
+                    'route-name' => $menu['name']
+                ));
+            }
+            if($menu['parent']=='Services'){
+                array_push($this->data['menu'][2]['sub_menu'], array(
+                    'url' => $menu['url'],
+                    'title' => $menu['remark'],
+                    'route-name' => $menu['name']
+                ));
+            }
+            if($menu['parent']=='Transactions'){
+                array_push($this->data['menu'][3]['sub_menu'], array(
+                    'url' => $menu['url'],
+                    'title' => $menu['remark'],
+                    'route-name' => $menu['name']
+                ));
+            }	
+            if($menu['parent']=='Reports'){
+                array_push($this->data['menu'][4]['sub_menu'], array(
+                    'url' => $menu['url'],
+                    'title' => $menu['remark'],
+                    'route-name' => $menu['name']
+                ));
+            }
+            if($menu['parent']=='Settings'){
+                array_push($this->data['menu'][5]['sub_menu'], array(
+                    'url' => $menu['url'],
+                    'title' => $menu['remark'],
+                    'route-name' => $menu['name']
+                ));
+            }
+        }
+
+
     }
 }

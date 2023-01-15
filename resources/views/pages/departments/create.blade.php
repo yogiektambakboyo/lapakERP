@@ -4,17 +4,13 @@
 
 @section('content')
     <div class="bg-light p-4 rounded">
-        <h2>Add new Department</h2>
-        <div class="lead">
-            Add new Department.
-        </div>
-
+        <h2>@lang('general.lbl_department_add')</h2>
         <div class="container mt-4">
 
             <form method="POST" action="{{ route('departments.store') }}">
                 @csrf
                 <div class="mb-3">
-                    <label for="remark" class="form-label">Name</label>
+                    <label for="remark" class="form-label">@lang('general.lbl_name')</label>
                     <input value="{{ old('remark') }}" 
                         type="text" 
                         class="form-control" 
@@ -27,8 +23,8 @@
                 </div>
 
                 
-                <button type="submit" class="btn btn-primary">Save department</button>
-                <a href="{{ route('departments.index') }}" class="btn btn-default">Back</a>
+                <button type="submit" class="btn btn-primary">@lang('general.lbl_save')</button>
+                <a href="{{ route('departments.index') }}" class="btn btn-default">@lang('general.lbl_back') </a>
             </form>
         </div>
 

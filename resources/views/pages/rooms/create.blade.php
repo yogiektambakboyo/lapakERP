@@ -4,17 +4,13 @@
 
 @section('content')
     <div class="bg-light p-4 rounded">
-        <h2>Add new Room</h2>
-        <div class="lead">
-            Add new Room.
-        </div>
-
+        <h2>@lang('general.lbl_room_new')</h2>
         <div class="container mt-4">
 
             <form method="POST" action="{{ route('rooms.store') }}">
                 @csrf
                 <div class="mb-3">
-                    <label for="remark" class="form-label">Name</label>
+                    <label for="remark" class="form-label">@lang('general.lbl_name')</label>
                     <input value="{{ old('remark') }}" 
                         type="text" 
                         class="form-control" 
@@ -27,11 +23,11 @@
                 </div>
 
                 <div class="row mb-3">
-                    <label class="form-label col-form-label">Branch</label>
+                    <label class="form-label col-form-label">@lang('general.lbl_branch')</label>
                     <div>
                       <select class="form-control" 
                             name="branch_id" required>
-                            <option value="">Select Branch</option>
+                            <option value="">@lang('general.lbl_branchselect')</option>
                             @foreach($branchs as $branch)
                                 <option value="{{ $branch->id }}">{{  $branch->remark }}</option>
                             @endforeach
@@ -40,8 +36,8 @@
                   </div>
 
 
-                <button type="submit" class="btn btn-primary">Save room</button>
-                <a href="{{ route('rooms.index') }}" class="btn btn-default">Back</a>
+                <button type="submit" class="btn btn-primary">@lang('general.lbl_save')</button>
+                <a href="{{ route('rooms.index') }}" class="btn btn-default">@lang('general.lbl_back') </a>
             </form>
         </div>
 

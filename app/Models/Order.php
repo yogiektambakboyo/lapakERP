@@ -23,6 +23,7 @@ class Order extends Model
         'customers_id',
         'total',
         'tax',
+        'customers_name',
         'total_payment',
         'total_discount',
         'remark',
@@ -32,6 +33,10 @@ class Order extends Model
         'created_by',
         'updated_by',
         'scheduled_at',
-        'branch_room_id'
+        'branch_room_id',
+        'voucher_code',
+        'printed_at',
+        'printed_count',
+        'queue_no'
     ];
 }

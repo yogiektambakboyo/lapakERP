@@ -22,12 +22,18 @@ class OrderDetail extends Model
     protected $fillable = [
         'order_no',
         'product_id',
+        'product_name',
         'qty',
         'price',
         'total',
         'discount',
         'seq',
+        'uom',
+        'vat',
+        'vat_total',
         'assigned_to',
+        'assigned_to_name',
         'referral_by',
+        'referral_by_name',
     ];
 }

@@ -11,6 +11,7 @@ class ProductUom extends Model
 
     protected $table = 'product_uom';
 
+    public $incrementing = false;
     protected $fillable = [
         'product_id',
         'uom_id'

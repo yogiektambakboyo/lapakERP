@@ -12,8 +12,8 @@
           </div>
           <div class="col-md-2">
             <div class="mt-4">
-                <button type="submit" class="btn btn-info">Save</button>
-                <a href="{{ route('users.index') }}" class="btn btn-default">Cancel</a>
+                <button type="submit" class="btn btn-info">@lang('general.lbl_save')</button>
+                <a href="{{ route('users.index') }}" class="btn btn-default">@lang('general.lbl_cancel')</a>
             </div>
           </div>
         </div>
@@ -22,7 +22,7 @@
           <div class="panel-heading bg-teal-600"><h4>Employee Info</h4></div>
           <div class="panel-body bg-white text-black">
             <div class="row mb-3">
-                <label class="form-label col-form-label col-md-2">Name</label>
+                <label class="form-label col-form-label col-md-2">@lang('general.lbl_name')</label>
                 <div class="col-md-8">
                   <input type="text" name="name" class="form-control" value="{{ old('name') }}"  required/>
                 </div>
@@ -33,30 +33,49 @@
                   <input type="text" name="employee_id" class="form-control" value="{{ old('employee_id') }}"   required />
                 </div>
             </div>
+            
             <div class="row mb-3">
-              <label class="form-label col-form-label col-md-2">Job Title</label>
+              <label class="form-label col-form-label col-md-2">@lang('general.lbl_jobtitleselect')</label>
               <div class="col-md-8">
                 <select class="form-control" 
                     name="job_id" required>
                     <option value="">Select Job Title</option>
                     @foreach($jobTitles as $jobTitle)
-                        <option value="{{ $jobTitle->id }}">{{ $jobTitle->remark }}</option>
+                        <option value="{{ $jobTitle->id }}" {{ ($jobTitle->id==old('job_id') ) 
+                          ? 'selected'
+                          : '' }}>{{ $jobTitle->remark }}</option>
                     @endforeach
                 </select>
               </div>
-          </div>
-          <div class="row mb-3">
-            <label class="form-label col-form-label col-md-2">Branch</label>
-            <div class="col-md-8">
-              <select class="multiple-select2 form-control" 
-                    name="branch_id[]" required multiple="multiple">
-                    <option value="">Select Branch</option>
-                    @foreach($branchs as $branch)
-                        <option value="{{ $branch->id }}">{{  $branch->remark }}</option>
+            </div>
+
+            <div class="row mb-3">
+              <label class="form-label col-form-label col-md-2">Employee Status</label>
+              <div class="col-md-8">
+                <select class="form-control" 
+                    name="employee_status" required>
+                    <option value="">Select Employee Status</option>
+                    @foreach($employeestatusx as $employee_status)
+                        <option value="{{ $employee_status }}" {{ ($employee_status==old('employee_status') ) 
+                          ? 'selected'
+                          : '' }}>{{ $employee_status }}</option>
                     @endforeach
                 </select>
+              </div>
             </div>
-          </div>
+
+            <div class="row mb-3">
+              <label class="form-label col-form-label col-md-2">@lang('general.lbl_branch')</label>
+              <div class="col-md-8">
+                <select class="multiple-select2 form-control" 
+                      name="branch_id[]" required multiple="multiple">
+                      <option value="">@lang('general.lbl_branchselect')</option>
+                      @foreach($branchs as $branch)
+                          <option value="{{ $branch->id }}">{{  $branch->remark }}</option>
+                      @endforeach
+                  </select>
+              </div>
+            </div>
           <div class="row mb-3">
             <label class="form-label col-form-label col-md-2">Department</label>
             <div class="col-md-8">
@@ -64,13 +83,15 @@
                     name="department_id" required>
                     <option value="">Select Department</option>
                     @foreach($departments as $department)
-                        <option value="{{ $department->id }}">{{  $department->remark }}</option>
+                        <option value="{{ $department->id }}" {{ ($department->id==old('department_id') ) 
+                          ? 'selected'
+                          : '' }}>{{  $department->remark }}</option>
                     @endforeach
                 </select>
             </div>
           </div>
           <div class="row mb-3">
-            <label class="form-label col-form-label col-md-2">Join Date (mm/dd/YYYY)</label>
+            <label class="form-label col-form-label col-md-2">Join @lang('general.lbl_dated_mmddYYYY')</label>
             <div class="col-md-8">
               <input type="text" 
               name="join_date"
@@ -88,6 +109,18 @@
         <div class="panel text-white">
           <div class="panel-heading bg-teal-600"><h4>Personal Info</h4></div>
           <div class="panel-body bg-white text-black">
+
+            <div class="row mb-3">
+              <label class="form-label col-form-label col-md-2">Photo</label>
+              <div class="col-md-8">
+                <a href="/images/user-files/user.png" target="_blank"><img  id="photo_preview" src="/images/user-files/user.png" width="100" height="100" class="rounded float-start" alt="..."></a>
+                <input type="file" 
+                name="photo"  id="photo" onchange="previewFile(this);"
+                class="form-control"  />
+                <span></span>
+              </div>
+            </div>
+          
             <div class="row mb-3">
               <label class="form-label col-form-label col-md-2">Netizen ID</label>
               <div class="col-md-8">
@@ -100,9 +133,9 @@
             <div class="row mb-3">
                 <label class="form-label col-form-label col-md-2">Netizen ID Photo</label>
                 <div class="col-md-8">
-                  <a href="/images/user-files/ttd.jpeg" target="_blank"><img src="/images/user-files/ttd.jpeg" width="200" height="100" class="rounded float-start" alt="..."></a>
-                  <input type="file" 
-                  name="{{ old('photo_netizen_id') }}"
+                  <a href="/images/user-files/draft_netizen.jpg" target="_blank"><img  id="photo_netizen_preview" src="/images/user-files/draft_netizen.jpg" width="200" height="100" class="rounded float-start" alt="..."></a>
+                  <input type="file"  onchange="previewFileNetizen(this);"
+                  name="photo_netizen_ids" id="photo_netizen_ids"
                   class="form-control"  />
                   <span></span>
                 </div>
@@ -114,7 +147,9 @@
                     name="gender" required>
                     <option value="">Select Gender</option>
                     @foreach($gender as $value)
-                        <option value="{{ $value }}">{{ $value }}</option>
+                        <option value="{{ $value }}" {{ ($value==old('gender') ) 
+                          ? 'selected'
+                          : '' }}>{{ $value }}</option>
                     @endforeach
                 </select>
               </div>
@@ -150,7 +185,7 @@
           <div class="panel-heading bg-teal-600"><h4>Contact</h4></div>
           <div class="panel-body bg-white text-black">
             <div class="row mb-3">
-              <label class="form-label col-form-label col-md-2">Address</label>
+              <label class="form-label col-form-label col-md-2">@lang('general.lbl_address')</label>
               <div class="col-md-8">
                 <input type="text" 
                 name="address" required
@@ -162,7 +197,7 @@
               </div>
           </div>
           <div class="row mb-3">
-            <label class="form-label col-form-label col-md-2">City</label>
+            <label class="form-label col-form-label col-md-2">@lang('general.lbl_city')</label>
             <div class="col-md-8">
               <input type="text" 
               name="city"
@@ -171,7 +206,7 @@
             </div>
           </div>
           <div class="row mb-3">
-            <label class="form-label col-form-label col-md-2">Phone No</label>
+            <label class="form-label col-form-label col-md-2">@lang('general.lbl_phoneno')</label>
             <div class="col-md-8">
               <input type="text" 
               name="phone_no"
@@ -195,10 +230,12 @@
               <label class="form-label col-form-label col-md-2">Referral ID</label>
               <div class="col-md-8">
                 <select class="form-control" 
-                      name="referral_id" required>
+                      name="referral_id">
                       <option value="">Select Referral</option>
                       @foreach($usersReferrals as $usersreferral)
-                          <option value="{{ $usersreferral->id }}" >{{  $usersreferral->name }}</option>
+                          <option value="{{ $usersreferral->id }}" {{ ($usersreferral->id==old('referral_id') ) 
+                            ? 'selected'
+                            : '' }} >{{  $usersreferral->name }}</option>
                       @endforeach
                   </select>
               </div>
@@ -222,13 +259,27 @@
               </div>
             </div>
             <div class="row mb-3">
+              <label class="form-label col-form-label col-md-2">Password</label>
+              <div class="col-md-8">
+                <input type="text" 
+                class="form-control"
+                name="password" 
+                value="{{ old('password') }}"  required/>
+                @if ($errors->has('password'))
+                    <span class="text-danger text-left">{{ $errors->first('password') }}</span>
+                @endif
+              </div>
+            </div>
+            <div class="row mb-3">
                 <label class="form-label col-form-label col-md-2">App Accesss</label>
                 <div class="col-md-8">
                     <select class="form-control" 
                         name="role" required>
                         <option value="">Select role</option>
                         @foreach($roles as $role)
-                            <option value="{{ $role->id }}">{{ $role->name }}</option>
+                            <option value="{{ $role->id }}" {{ ($role->id==old('role') ) 
+                              ? 'selected'
+                              : '' }}>{{ $role->name }}</option>
                         @endforeach
                     </select>
                     @if ($errors->has('role'))
@@ -239,7 +290,7 @@
             <div class="row mb-3">
               <label class="form-label col-form-label col-md-2">Status</label>
               <div class="col-md-8">
-                <input type="checkbox" name="active" id="active" value="{{ old('active') }}" > <label for="active">Active</label>
+                <input type="checkbox" name="active" id="active" value="{{ old('active') }}" checked> <label for="active">Active</label>
               </div>
             </div>
           </div>
@@ -247,3 +298,34 @@
     </div>
 </form>
 @endsection
+@push('scripts')
+<script type="text/javascript">
+    function previewFile(input){
+        var file = $("#photo").get(0).files[0];
+ 
+        if(file){
+            var reader = new FileReader();
+ 
+            reader.onload = function(){
+                $("#photo_preview").attr("src", reader.result);
+            }
+ 
+            reader.readAsDataURL(file);
+        }
+    }
+
+    function previewFileNetizen(input){
+        var file = $("#photo_netizen_ids").get(0).files[0];
+ 
+        if(file){
+            var reader = new FileReader();
+ 
+            reader.onload = function(){
+                $("#photo_netizen_preview").attr("src", reader.result);
+            }
+ 
+            reader.readAsDataURL(file);
+        }
+    }
+</script>
+@endpush

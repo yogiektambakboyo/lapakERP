@@ -4,22 +4,18 @@
 
 @section('content')
     <div class="bg-light p-4 rounded">
-        <h2>Add new Branch</h2>
-        <div class="lead">
-            Add new Branch.
-        </div>
-
+        <h2>@lang('general.lbl_branch_new')</h2>
         <div class="container mt-4">
 
             <form method="POST" action="{{ route('branchs.store') }}">
                 @csrf
                 <div class="mb-3">
-                    <label for="remark" class="form-label">Name</label>
+                    <label for="remark" class="form-label">@lang('general.lbl_name')</label>
                     <input value="{{ old('remark') }}" 
                         type="text" 
                         class="form-control" 
                         name="remark" 
-                        placeholder="Remark" required>
+                        placeholder="Branch Name" required>
 
                     @if ($errors->has('remark'))
                         <span class="text-danger text-left">{{ $errors->first('remark') }}</span>
@@ -27,44 +23,44 @@
                 </div>
 
                 <div class="mb-3">
-                    <label for="address" class="form-label">Address</label>
+                    <label for="address" class="form-label">@lang('general.lbl_address')</label>
                     <input value="{{ old('address') }}" 
                         type="text" 
                         class="form-control" 
                         name="address" 
-                        placeholder="Address" required>
+                        placeholder="@lang('general.lbl_address')" required>
 
                     @if ($errors->has('address'))
                         <span class="text-danger text-left">{{ $errors->first('address') }}</span>
                     @endif
                 </div>
                 <div class="mb-3">
-                    <label for="city" class="form-label">City</label>
+                    <label for="city" class="form-label">@lang('general.lbl_city')</label>
                     <input value="{{ old('city') }}" 
                         type="text" 
                         class="form-control" 
                         name="city" 
-                        placeholder="city" required>
+                        placeholder="@lang('general.lbl_city')" required>
 
                     @if ($errors->has('city'))
                         <span class="text-danger text-left">{{ $errors->first('city') }}</span>
                     @endif
                 </div>
                 <div class="mb-3">
-                    <label for="abbr" class="form-label">Abbreviation</label>
+                    <label for="abbr" class="form-label">@lang('general.lbl_abbr')</label>
                     <input value="{{ old('abbr') }}" 
                         type="text" 
                         class="form-control" 
                         name="abbr" 
-                        placeholder="abbr" required>
+                        placeholder="Abbreviation" required>
 
                     @if ($errors->has('abbr'))
                         <span class="text-danger text-left">{{ $errors->first('abbr') }}</span>
                     @endif
                 </div>
 
-                <button type="submit" class="btn btn-primary">Save branch</button>
-                <a href="{{ route('branchs.index') }}" class="btn btn-default">Back</a>
+                <button type="submit" class="btn btn-primary">@lang('general.lbl_save')</button>
+                <a href="{{ route('branchs.index') }}" class="btn btn-default">@lang('general.lbl_back') </a>
             </form>
         </div>
 

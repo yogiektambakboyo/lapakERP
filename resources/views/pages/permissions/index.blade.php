@@ -8,11 +8,11 @@
         <div class="lead row mb-3">
             <div class="col-md-10">
                 <div class="col-md-4">
-                    Manage your permissions here.
+                    @lang('general.lbl_title')
                 </div>
             </div>
             <div class="col-md-2">
-                <a href="{{ route('permissions.create') }}" class="btn btn-primary btn-sm float-right">Add permissions</a>
+                <a href="{{ route('permissions.create') }}" class="btn btn-primary btn-sm float-right"><span class="fa fa-plus-circle"></span>  @lang('general.btn_create')</a>
             </div>
         </div>
 
@@ -24,7 +24,7 @@
             <thead>
             <tr>
                 <th scope="col" width="1%">#</th>
-                <th scope="col" width="15%">Name</th>
+                <th scope="col" width="15%">@lang('general.lbl_name')</th>
                 <th scope="col">Guard</th> 
                 <th scope="col" colspan="3" width="1%"></th> 
             </tr>
@@ -35,7 +35,7 @@
                         <th>{{ $permission->id }}</th>
                         <td>{{ $permission->name }}</td>
                         <td>{{ $permission->guard_name }}</td>
-                        <td><a href="{{ route('permissions.edit', $permission->id) }}" class="btn btn-info btn-sm">Edit</a></td>
+                        <td><a href="{{ route('permissions.edit', $permission->id) }}" class="btn btn-info btn-sm">@lang('general.lbl_edit')</a></td>
                         <td>
                             {!! Form::open(['method' => 'DELETE','route' => ['permissions.destroy', $permission->id],'style'=>'display:inline']) !!}
                             {!! Form::submit('Delete', ['class' => 'btn btn-danger btn-sm']) !!}

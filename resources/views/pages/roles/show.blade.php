@@ -14,7 +14,7 @@
 
             <table class="table table-striped">
                 <thead>
-                    <th scope="col" width="20%">Name</th>
+                    <th scope="col" width="20%">@lang('general.lbl_name')</th>
                     <th scope="col" width="1%">Guard</th> 
                 </thead>
 
@@ -30,6 +30,6 @@
     </div>
     <div class="mt-4">
         <a href="{{ route('roles.edit', $role->id) }}" class="btn btn-info">Edit</a>
-        <a href="{{ route('roles.index') }}" class="btn btn-default">Back</a>
+        <a href="{{ route('roles.index') }}" class="btn btn-default">@lang('general.lbl_back') </a>
     </div>
 @endsection

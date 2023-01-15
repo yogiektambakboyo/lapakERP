@@ -88,7 +88,7 @@
 											</div>
 										</div>
 										<div class="product-action">
-											<a href="#" class="btn btn-default"><i class="fa fa-times fa-fw"></i> Cancel</a>
+											<a href="#" class="btn btn-default"><i class="fa fa-times fa-fw"></i> @lang('general.lbl_cancel')</a>
 											<a href="#" class="btn btn-success"><i class="fa fa-check fa-fw"></i> Update</a>
 										</div>
 									</div>
@@ -125,7 +125,7 @@
 											</div>
 										</div>
 										<div class="product-action">
-											<a href="#" class="btn btn-default"><i class="fa fa-times fa-fw"></i> Cancel</a>
+											<a href="#" class="btn btn-default"><i class="fa fa-times fa-fw"></i> @lang('general.lbl_cancel')</a>
 											<a href="#" class="btn btn-success"><i class="fa fa-check fa-fw"></i> Update</a>
 										</div>
 									</div>
@@ -162,7 +162,7 @@
 											</div>
 										</div>
 										<div class="product-action">
-											<a href="#" class="btn btn-default"><i class="fa fa-times fa-fw"></i> Cancel</a>
+											<a href="#" class="btn btn-default"><i class="fa fa-times fa-fw"></i> @lang('general.lbl_cancel')</a>
 											<a href="#" class="btn btn-success"><i class="fa fa-check fa-fw"></i> Update</a>
 										</div>
 									</div>
@@ -199,7 +199,7 @@
 											</div>
 										</div>
 										<div class="product-action">
-											<a href="#" class="btn btn-default"><i class="fa fa-times fa-fw"></i> Cancel</a>
+											<a href="#" class="btn btn-default"><i class="fa fa-times fa-fw"></i> @lang('general.lbl_cancel')</a>
 											<a href="#" class="btn btn-success"><i class="fa fa-check fa-fw"></i> Update</a>
 										</div>
 									</div>
@@ -236,7 +236,7 @@
 											</div>
 										</div>
 										<div class="product-action">
-											<a href="#" class="btn btn-default"><i class="fa fa-times fa-fw"></i> Cancel</a>
+											<a href="#" class="btn btn-default"><i class="fa fa-times fa-fw"></i> @lang('general.lbl_cancel')</a>
 											<a href="#" class="btn btn-success"><i class="fa fa-check fa-fw"></i> Update</a>
 										</div>
 									</div>
@@ -273,7 +273,7 @@
 											</div>
 										</div>
 										<div class="product-action">
-											<a href="#" class="btn btn-default"><i class="fa fa-times fa-fw"></i> Cancel</a>
+											<a href="#" class="btn btn-default"><i class="fa fa-times fa-fw"></i> @lang('general.lbl_cancel')</a>
 											<a href="#" class="btn btn-success"><i class="fa fa-check fa-fw"></i> Update</a>
 										</div>
 									</div>
@@ -310,7 +310,7 @@
 											</div>
 										</div>
 										<div class="product-action">
-											<a href="#" class="btn btn-default"><i class="fa fa-times fa-fw"></i> Cancel</a>
+											<a href="#" class="btn btn-default"><i class="fa fa-times fa-fw"></i> @lang('general.lbl_cancel')</a>
 											<a href="#" class="btn btn-success"><i class="fa fa-check fa-fw"></i> Update</a>
 										</div>
 									</div>
@@ -347,7 +347,7 @@
 											</div>
 										</div>
 										<div class="product-action">
-											<a href="#" class="btn btn-default"><i class="fa fa-times fa-fw"></i> Cancel</a>
+											<a href="#" class="btn btn-default"><i class="fa fa-times fa-fw"></i> @lang('general.lbl_cancel')</a>
 											<a href="#" class="btn btn-success"><i class="fa fa-check fa-fw"></i> Update</a>
 										</div>
 									</div>
@@ -384,7 +384,7 @@
 											</div>
 										</div>
 										<div class="product-action">
-											<a href="#" class="btn btn-default"><i class="fa fa-times fa-fw"></i> Cancel</a>
+											<a href="#" class="btn btn-default"><i class="fa fa-times fa-fw"></i> @lang('general.lbl_cancel')</a>
 											<a href="#" class="btn btn-success"><i class="fa fa-check fa-fw"></i> Update</a>
 										</div>
 									</div>
@@ -421,7 +421,7 @@
 											</div>
 										</div>
 										<div class="product-action">
-											<a href="#" class="btn btn-default"><i class="fa fa-times fa-fw"></i> Cancel</a>
+											<a href="#" class="btn btn-default"><i class="fa fa-times fa-fw"></i> @lang('general.lbl_cancel')</a>
 											<a href="#" class="btn btn-success"><i class="fa fa-check fa-fw"></i> Update</a>
 										</div>
 									</div>
@@ -458,7 +458,7 @@
 											</div>
 										</div>
 										<div class="product-action">
-											<a href="#" class="btn btn-default"><i class="fa fa-times fa-fw"></i> Cancel</a>
+											<a href="#" class="btn btn-default"><i class="fa fa-times fa-fw"></i> @lang('general.lbl_cancel')</a>
 											<a href="#" class="btn btn-success"><i class="fa fa-check fa-fw"></i> Update</a>
 										</div>
 									</div>
@@ -495,7 +495,7 @@
 											</div>
 										</div>
 										<div class="product-action">
-											<a href="#" class="btn btn-default"><i class="fa fa-times fa-fw"></i> Cancel</a>
+											<a href="#" class="btn btn-default"><i class="fa fa-times fa-fw"></i> @lang('general.lbl_cancel')</a>
 											<a href="#" class="btn btn-success"><i class="fa fa-check fa-fw"></i> Update</a>
 										</div>
 									</div>
@@ -532,7 +532,7 @@
 											</div>
 										</div>
 										<div class="product-action">
-											<a href="#" class="btn btn-default"><i class="fa fa-times fa-fw"></i> Cancel</a>
+											<a href="#" class="btn btn-default"><i class="fa fa-times fa-fw"></i> @lang('general.lbl_cancel')</a>
 											<a href="#" class="btn btn-success"><i class="fa fa-check fa-fw"></i> Update</a>
 										</div>
 									</div>
@@ -569,7 +569,7 @@
 											</div>
 										</div>
 										<div class="product-action">
-											<a href="#" class="btn btn-default"><i class="fa fa-times fa-fw"></i> Cancel</a>
+											<a href="#" class="btn btn-default"><i class="fa fa-times fa-fw"></i> @lang('general.lbl_cancel')</a>
 											<a href="#" class="btn btn-success"><i class="fa fa-check fa-fw"></i> Update</a>
 										</div>
 									</div>
@@ -606,7 +606,7 @@
 											</div>
 										</div>
 										<div class="product-action">
-											<a href="#" class="btn btn-default"><i class="fa fa-times fa-fw"></i> Cancel</a>
+											<a href="#" class="btn btn-default"><i class="fa fa-times fa-fw"></i> @lang('general.lbl_cancel')</a>
 											<a href="#" class="btn btn-success"><i class="fa fa-check fa-fw"></i> Update</a>
 										</div>
 									</div>
@@ -643,7 +643,7 @@
 											</div>
 										</div>
 										<div class="product-action">
-											<a href="#" class="btn btn-default"><i class="fa fa-times fa-fw"></i> Cancel</a>
+											<a href="#" class="btn btn-default"><i class="fa fa-times fa-fw"></i> @lang('general.lbl_cancel')</a>
 											<a href="#" class="btn btn-success"><i class="fa fa-check fa-fw"></i> Update</a>
 										</div>
 									</div>
