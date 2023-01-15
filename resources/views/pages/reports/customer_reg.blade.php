@@ -330,7 +330,7 @@
           var myModal = new bootstrap.Modal(document.getElementById('modal-filter'));
           var myModal2 = new bootstrap.Modal(document.getElementById('modal-filter2'));
           var myModalImg = new bootstrap.Modal(document.getElementById('modal-filterimg'));
-          var myModalApprove = new bootstrap.Modal(document.getElementById('modal-filterapprove'));
+          var myModalApprove = new bootstrap.Modal(document.getElementById('modal-filterApprove'));
 
           function openDialog(branch_id,dated,shift_id){
             $('#filter_branch_id').val(branch_id);
