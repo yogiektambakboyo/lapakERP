@@ -24,7 +24,7 @@
         <table class="table table-striped display nowrap" id="example"  style="width:100%">
             <thead>
                 <tr>
-                    <th scope="col">@lang('general.lbl_photo')</th> 
+                    <th scope="col">@lang('general.lbl_action')</th> 
                     <th scope="col">@lang('general.lbl_branch')</th>
                     <th scope="col">@lang('general.lbl_seller')</th>
                     <th scope="col">@lang('general.lbl_id')</th>
@@ -51,7 +51,7 @@
     
                     @foreach($report_data as $trip)
                         <tr>
-                            <td><button  class="btn btn-sm btn-primary" onclick="openDialogImage('{{ $trip->photo }}')" value="Show Photo">Show Photo</button></td>
+                            <td><button  class="btn btn-sm btn-primary" onclick="openDialogImage('{{ $trip->photo }}')" value="Show Photo">Photo</button><button  class="btn btn-sm btn-warning" onclick="openDialogImage('{{ $trip->photo }}')" value="Show Photo">Approve</button></td>
                             <th scope="row">{{ $trip->branch_name }}</th>
                             <th scope="row">{{ $trip->sellername }}</th>
                             <td>{{ $trip->id }}</td>
@@ -104,6 +104,68 @@
                 <!-- Vertically centered modal -->
         <!-- Modal -->
         <div class="modal fade" id="modal-filter2" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+            <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                <h5 class="modal-title"  id="input_expired_list_at_lbl">@lang('general.lbl_filterdata')</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form action="{{ route('reports.customer_reg.search') }}" method="GET">   
+                        @csrf 
+                        <div class="col-md-10">
+                            <label class="form-label col-form-label col-md-4">@lang('general.lbl_branch')</label>
+                            <input type="hidden" name="export" id="export" value="@lang('general.btn_search')">
+                        </div>
+                        <div class="col-md-12">
+                            <select class="form-control" 
+                                name="filter_branch_id_in" id="filter_branch_id_in">
+                                <option value="%">-- All -- </option>
+                                @foreach($branchs as $branchx)
+                                    <option value="{{ $branchx->id }}">{{ $branchx->remark }} </option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <div class="col-md-12">
+                            <label class="form-label col-form-label col-md-4">@lang('general.lbl_date_start')</label>
+                        </div>
+                        <div class="col-md-12">
+                            <input type="text" 
+                            name="filter_begin_date_in"
+                            id="filter_begin_date_in"
+                            class="form-control" 
+                            value="{{ old('filter_begin_date_in') }}" required/>
+                            @if ($errors->has('filter_begin_date_in'))
+                                    <span class="text-danger text-left">{{ $errors->first('filter_begin_date_in') }}</span>
+                                @endif
+                        </div>
+
+                        <div class="col-md-12">
+                            <label class="form-label col-form-label col-md-4">@lang('general.lbl_date_end')</label>
+                        </div>
+                        <div class="col-md-12">
+                            <input type="text" 
+                            name="filter_end_date_in"
+                            id="filter_end_date_in"
+                            class="form-control" 
+                            value="{{ old('filter_end_date_in') }}" required/>
+                            @if ($errors->has('filter_end_date_in'))
+                                    <span class="text-danger text-left">{{ $errors->first('filter_end_date_in') }}</span>
+                                @endif
+                        </div>
+
+                        <br>
+                        <div class="col-md-12">
+                            <button type="submit" class="btn btn-primary form-control">@lang('general.lbl_apply')</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="modal-filterApprove" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
             <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -268,6 +330,7 @@
           var myModal = new bootstrap.Modal(document.getElementById('modal-filter'));
           var myModal2 = new bootstrap.Modal(document.getElementById('modal-filter2'));
           var myModalImg = new bootstrap.Modal(document.getElementById('modal-filterimg'));
+          var myModalApprove = new bootstrap.Modal(document.getElementById('modal-filterapprove'));
 
           function openDialog(branch_id,dated,shift_id){
             $('#filter_branch_id').val(branch_id);
@@ -284,6 +347,10 @@
           function openDialogImage(command){
             $('#dialog_img').attr("src", "https://kakikupos.com/images/smd-image/"+command);
             myModalImg.show();
+          }
+
+          function openDialogApprove(command){
+            myModalApprove.show();
           }
 
           $('#example').DataTable({
