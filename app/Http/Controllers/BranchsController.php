@@ -139,7 +139,12 @@ class BranchsController extends Controller
             'remark' => 'required|unique:branch,remark,'.$branch->id
         ]);
 
-        $branch->update($request->only('name'));
+        $branch->update( array_merge(
+            ['remark' => $request->get('remark') ],
+            ['address' => $request->get('address') ],
+            ['city' => $request->get('city') ],
+            ['abbr' => $request->get('abbr') ],
+        ));
         
 
         return redirect()->route('branchs.index')
