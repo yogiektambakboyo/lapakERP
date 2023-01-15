@@ -51,7 +51,7 @@
     
                     @foreach($report_data as $trip)
                         <tr>
-                            <td><button  class="btn btn-sm btn-primary" onclick="openDialogImage('{{ $trip->photo }}')" value="Show Photo">Photo</button><button  class="btn btn-sm btn-warning" onclick="openDialogImage('{{ $trip->photo }}')" value="Show Photo">Approve</button></td>
+                            <td><button  class="btn btn-sm btn-primary" onclick="openDialogImage('{{ $trip->photo }}')" value="Show Photo">Photo</button><button  class="btn btn-sm btn-warning" onclick="openDialogApprove('{{ $trip->id }}','{{ $trip->name }}')" value="Show Photo">Approve</button></td>
                             <th scope="row">{{ $trip->branch_name }}</th>
                             <th scope="row">{{ $trip->sellername }}</th>
                             <td>{{ $trip->id }}</td>
@@ -166,60 +166,100 @@
         </div>
 
         <div class="modal fade" id="modal-filterApprove" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-            <div class="modal-dialog">
+            <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                <h5 class="modal-title"  id="input_expired_list_at_lbl">@lang('general.lbl_filterdata')</h5>
+                <h5 class="modal-title"><label id="lbl_title_store"><label></h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form action="{{ route('reports.customer_reg.search') }}" method="GET">   
+                    <form action="{{ route('reports.customer_reg.approve') }}" method="POST">   
                         @csrf 
-                        <div class="col-md-10">
-                            <label class="form-label col-form-label col-md-4">@lang('general.lbl_branch')</label>
-                            <input type="hidden" name="export" id="export" value="@lang('general.btn_search')">
-                        </div>
-                        <div class="col-md-12">
-                            <select class="form-control" 
-                                name="filter_branch_id_in" id="filter_branch_id_in">
-                                <option value="%">-- All -- </option>
-                                @foreach($branchs as $branchx)
-                                    <option value="{{ $branchx->id }}">{{ $branchx->remark }} </option>
-                                @endforeach
-                            </select>
-                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <label class="form-label col-form-label col-md-12">@lang('general.lbl_approve_sure')</label>
+                                <select class="form-control" 
+                                    name="input_approve" id="input_approve">
+                                        <option value="1">Approve </option>
+                                        <option value="-1">Reject </option>
+                                </select>
+                            </div>
+                            <div class="col-md-12">
+                                <label class="form-label col-form-label col-md-12">@lang('general.lbl_notes')</label>
+                                <input class="form-control" 
+                                    name="input_notes" id="input_notes">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label col-form-label col-md-4">@lang('general.lbl_visit_day')</label>
+                                <div class="form-check">
+                                    <input class="form-check-input"   name="input_day" type="radio" value="Monday" id="input_day_mon">
+                                    <label class="form-check-label" for="input_day_mon">Senin</label>
+                                </div>
+        
+                                <div class="form-check">
+                                    <input class="form-check-input"  name="input_day"  type="radio" value="Tuesday" id="input_day_tue">
+                                    <label class="form-check-label" for="input_day_tue">Selasa</label>
+                                </div>
+        
+                                <div class="form-check">
+                                    <label class="form-check-label" for="input_day_wed">Rabu</label>
+                                    <input class="form-check-input"   name="input_day" type="radio" value="Wednesday" id="input_day_wed">
+                                </div>
+        
+                                <div class="form-check">
+                                    <input class="form-check-input"  name="input_day"  type="radio" value="Thursday" id="input_day_thu">
+                                   <label class="form-check-label" for="input_day_thu">Kamis</label>
+                                </div>
+        
+                                <div class="form-check">
+                                    <input class="form-check-input"  name="input_day"  type="radio" value="Friday" id="input_day_fri">
+                                    <label class="form-check-label" for="input_day_fri">Jum'at</label>
+                                </div>
+        
+                                <div class="form-check">
+                                    <input class="form-check-input"  name="input_day"  type="radio" value="Saturday" id="input_day_sab">
+                                    <label class="form-check-label" for="input_day_sab">Sabtu</label>
+                                </div>
+        
+                                <div class="form-check">
+                                    <input class="form-check-input"   name="input_day" type="radio" value="Sunday" id="input_day_sun">
+                                    <label class="form-check-label" for="input_day_sun">Minggu</label>
+                                </div>
+                            </div>
 
-                        <div class="col-md-12">
-                            <label class="form-label col-form-label col-md-4">@lang('general.lbl_date_start')</label>
+                            <div class="col-md-6">
+                                <label class="form-label col-form-label col-md-4">@lang('general.lbl_visit_week')</label>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" value="1" id="input_week_1">
+                                    <label class="form-check-label" for="input_week_1">
+                                     Minggu 1
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" value="2" id="input_week_2">
+                                    <label class="form-check-label" for="input_week_2">
+                                     Minggu 2
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" value="3" id="input_week_3">
+                                    <label class="form-check-label" for="input_week_3">
+                                     Minggu 3
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" value="4" id="input_week_4">
+                                    <label class="form-check-label" for="input_week_4">
+                                     Minggu 4
+                                    </label>
+                                </div>
+                            </div>
                         </div>
-                        <div class="col-md-12">
-                            <input type="text" 
-                            name="filter_begin_date_in"
-                            id="filter_begin_date_in"
-                            class="form-control" 
-                            value="{{ old('filter_begin_date_in') }}" required/>
-                            @if ($errors->has('filter_begin_date_in'))
-                                    <span class="text-danger text-left">{{ $errors->first('filter_begin_date_in') }}</span>
-                                @endif
-                        </div>
-
-                        <div class="col-md-12">
-                            <label class="form-label col-form-label col-md-4">@lang('general.lbl_date_end')</label>
-                        </div>
-                        <div class="col-md-12">
-                            <input type="text" 
-                            name="filter_end_date_in"
-                            id="filter_end_date_in"
-                            class="form-control" 
-                            value="{{ old('filter_end_date_in') }}" required/>
-                            @if ($errors->has('filter_end_date_in'))
-                                    <span class="text-danger text-left">{{ $errors->first('filter_end_date_in') }}</span>
-                                @endif
-                        </div>
-
                         <br>
+                        <input type="hidden" id="input_id" name="input_id">
+                        <input type="hidden" id="input_week" name="input_week">
                         <div class="col-md-12">
-                            <button type="submit" class="btn btn-primary form-control">@lang('general.lbl_apply')</button>
+                            <button type="submit" class="btn btn-primary form-control">@lang('general.lbl_save')</button>
                         </div>
                     </form>
                 </div>
@@ -320,7 +360,6 @@
           });
           $('#filter_begin_date_in').val(formattedToday);
 
-
           $('#filter_end_date_in').datepicker({
               format : 'yyyy-mm-dd',
               todayHighlight: true,
@@ -349,13 +388,103 @@
             myModalImg.show();
           }
 
-          function openDialogApprove(command){
+          function openDialogApprove(id, name){
+            $('#input_id').val(id);
+            $('#lbl_title_store').text(name);
             myModalApprove.show();
           }
 
           $('#example').DataTable({
                 scrollX: true,
         });
+
+        $('#input_day_mon').on('change', function() {
+            $('#input_day').val(this.value);
+        });
+        $('#input_day_tue').on('change', function() {
+            $('#input_day').val(this.value);
+        });
+        $('#input_day_wed').on('change', function() {
+            $('#input_day').val(this.value);
+        });
+        $('#input_day_thu').on('change', function() {
+            $('#input_day').val(this.value);
+        });
+        $('#input_day_fri').on('change', function() {
+            $('#input_day').val(this.value);
+        });
+        $('#input_day_sab').on('change', function() {
+            $('#input_day').val(this.value);
+        });
+        $('#input_day_sun').on('change', function() {
+            $('#input_day').val(this.value);
+        });
+
+        $('#input_week_1').on('change', function() {
+            var weekchecked = "";
+            if($('#input_week_1').is(':checked')){
+                weekchecked = weekchecked + "1";
+            }
+            if($('#input_week_2').is(':checked')){
+                weekchecked = weekchecked + "2";
+            }
+            if($('#input_week_3').is(':checked')){
+                weekchecked = weekchecked + "3";
+            }
+            if($('#input_week_4').is(':checked')){
+                weekchecked = weekchecked + "4";
+            }
+            $('#input_week').val(weekchecked);
+        });
+        $('#input_week_2').on('change', function() {
+            var weekchecked = "";
+            if($('#input_week_1').is(':checked')){
+                weekchecked = weekchecked + "1";
+            }
+            if($('#input_week_2').is(':checked')){
+                weekchecked = weekchecked + "2";
+            }
+            if($('#input_week_3').is(':checked')){
+                weekchecked = weekchecked + "3";
+            }
+            if($('#input_week_4').is(':checked')){
+                weekchecked = weekchecked + "4";
+            }
+            $('#input_week').val(weekchecked);
+        });
+        $('#input_week_3').on('change', function() {
+            var weekchecked = "";
+            if($('#input_week_1').is(':checked')){
+                weekchecked = weekchecked + "1";
+            }
+            if($('#input_week_2').is(':checked')){
+                weekchecked = weekchecked + "2";
+            }
+            if($('#input_week_3').is(':checked')){
+                weekchecked = weekchecked + "3";
+            }
+            if($('#input_week_4').is(':checked')){
+                weekchecked = weekchecked + "4";
+            }
+            $('#input_week').val(weekchecked);
+        });
+        $('#input_week_4').on('change', function() {
+            var weekchecked = "";
+            if($('#input_week_1').is(':checked')){
+                weekchecked = weekchecked + "1";
+            }
+            if($('#input_week_2').is(':checked')){
+                weekchecked = weekchecked + "2";
+            }
+            if($('#input_week_3').is(':checked')){
+                weekchecked = weekchecked + "3";
+            }
+            if($('#input_week_4').is(':checked')){
+                weekchecked = weekchecked + "4";
+            }
+            $('#input_week').val(weekchecked);
+        });
+
 
 
         $('#app').removeClass('app app-sidebar-fixed app-header-fixed-minified').addClass('app app-sidebar-fixed app-header-fixed-minified app-sidebar-minified');

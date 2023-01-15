@@ -11,6 +11,7 @@ use App\Models\Branch;
 use App\Models\JobTitle;
 use App\Models\Department;
 use App\Models\ProductType;
+use App\Models\Customer;
 use App\Models\ProductBrand;
 use App\Models\ProductCategory;
 use App\Http\Requests\StoreUserRequest;
@@ -64,7 +65,7 @@ class ReportCustomerRegController extends Controller
             select b.remark as  branch_name,s.name as sellername,cr.id,cr.name,cr.address,cr.phone_no,cr.handphone,cr.city,cr.credit_limit,cr.longitude,cr.latitude,cr.email,cr.citizen_id,cr.tax_id,cr.contact_person,cr.contact_person_job_position,cr.contact_person_level,cr.type,cr.clasification,cr.photo,regexp_replace(cr.notes, E'[\\n\\r]+', ' ', 'g' ) as notes,cr.created_at 
             from customers_registration cr 
             join sales s on s.id = cr.sales_id 
-            join branch b on b.id = s.branch_id  order by  b.remark
+            join branch b on b.id = s.branch_id where cr.is_approved=0 order by  b.remark
         ");
         $data = $this->data;
         $keyword = "";
@@ -72,6 +73,32 @@ class ReportCustomerRegController extends Controller
         $brands = ProductBrand::orderBy('product_brand.remark', 'ASC')
                     ->paginate(10,['product_brand.id','product_brand.remark']);
         return view('pages.reports.customer_reg',['company' => Company::get()->first()] ,compact('brands','branchs','data','keyword','act_permission','report_data'))->with('i', ($request->input('page', 1) - 1) * 5);
+    }
+
+    public function approve(Request $request)
+    {   
+    
+        if($request->get('input_approve')==1){
+                DB::select("
+                INSERT INTO public.customers
+                (name, address, phone_no, membership_id, abbr, branch_id, created_at, updated_at, sales_id, city, notes, credit_limit, longitude, latitude, email, handphone, whatsapp_no, citizen_id, tax_id, contact_person, type, clasification, contact_person_job_position, contact_person_level, ref_id)
+                select  name, address, phone_no, membership_id, abbr, branch_id, created_at, updated_at, sales_id, city, notes, credit_limit, longitude, latitude, email, handphone, whatsapp_no, citizen_id, tax_id, contact_person, type, clasification, contact_person_job_position, contact_person_level,id
+                from customers_registration cr where cr.id = ".$request->get('input_id')." and cr.is_approved = 0;
+            ");
+
+            Customer::where('ref_id','=',$request->get('input_id'))->update(
+                array_merge( 
+                    ['visit_day' => $request->get('input_day') ],
+                    ['visit_week' => $request->get('input_week') ],
+                )
+            );
+        }
+
+    
+        DB::select("update customers_registration set is_approved = ".$request->get('input_approve').",notes=notes||' #Reject# '||'".$request->get('input_notes')."' where id = ".$request->get('input_id')." and is_approved = 0;");
+
+        return redirect()->route('reports.customer_reg.index')
+            ->withSuccess(__('Customer approval successfully.'));
     }
 
     public function search(Request $request) 
@@ -98,7 +125,7 @@ class ReportCustomerRegController extends Controller
                     from customers_registration cr 
                     join sales s on s.id = cr.sales_id 
                     join branch b on b.id = s.branch_id and b.id::character varying like '%".$branchx."%'
-                    where cr.created_at::date between '".$begindate."' and '".$enddate."'
+                    where cr.is_approved=0 and cr.created_at::date between '".$begindate."' and '".$enddate."'
                     order by  b.remark   
             ");          
             return view('pages.reports.customer_reg',['company' => Company::get()->first()], compact('report_data','branchs','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);

@@ -34,5 +34,7 @@ class Customer extends Model
         'clasification',
         'contact_person_job_position',
         'contact_person_level',
+        'visit_day',
+        'visit_week',
     ];
 }
