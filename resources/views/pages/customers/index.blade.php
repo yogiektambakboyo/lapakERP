@@ -38,6 +38,7 @@
                 <th scope="col">@lang('general.lbl_name')</th>
                 <th scope="col" width="15%">@lang('general.lbl_address')</th>
                 <th scope="col" width="12%">@lang('general.lbl_phoneno')</th>
+                <th scope="col" width="12%">@lang('general.lbl_visit')</th>
                 <th scope="col" colspan="3" width="1%"></th> 
             </tr>
             </thead>
@@ -49,6 +50,7 @@
                         <td>{{ $customer->name }}</td>
                         <td>{{ $customer->address }}</td>
                         <td>{{ $customer->phone_no }}</td>
+                        <td>{{ $customer->visit_day }} - @php echo implode(",",str_split($customer->visit_week,1)); @endphp</td>
                         <td><a href="{{ route('customers.edit', $customer->id) }}" class="btn btn-info btn-sm  {{ $act_permission->allow_edit==1?'':'d-none' }} ">@lang('general.lbl_edit')</a></td>
                         <td>
                             <a onclick="showConfirm({{ $customer->id }}, '{{ $customer->name }}')" class="btn btn-danger btn-sm  {{ $act_permission->allow_delete==1?'':'d-none' }} ">@lang('general.lbl_delete')</a>

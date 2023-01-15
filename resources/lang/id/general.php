@@ -48,6 +48,7 @@ return [
     "lbl_edit_customer" => "Ubah Pelanggan",
     "lbl_supplier_new" => "Buat Vendor",
     "lbl_type_new" => "Buat Tipe",
+    "lbl_visit" => "Jadwal Kunjungan",
     "lbl_type_commision" => "Tipe Komisi",
     "lbl_base_commision" => "Komisi Dasar",
     "lbl_total_commision" => "Total Komisi",
