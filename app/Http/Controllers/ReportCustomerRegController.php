@@ -92,6 +92,11 @@ class ReportCustomerRegController extends Controller
                     ['visit_week' => $request->get('input_week') ],
                 )
             );
+
+            DB::select("update customers_registration set is_approved = ".$request->get('input_approve').",notes=notes||' #Reject# '||'".$request->get('input_notes')."' where id = ".$request->get('input_id')." and is_approved = 0;");
+
+        }else{
+            DB::select("update customers_registration set is_approved = ".$request->get('input_approve')." where id = ".$request->get('input_id')." and is_approved = 0;");
         }
 
     
