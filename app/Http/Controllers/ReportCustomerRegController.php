@@ -95,6 +95,9 @@ class ReportCustomerRegController extends Controller
 
             DB::select("update customers_registration set is_approved = ".$request->get('input_approve').",notes=notes||' #Reject# '||'".$request->get('input_notes')."' where id = ".$request->get('input_id')." and is_approved = 0;");
 
+            DB::select("
+                    update customers c set branch_id = s.branch_id from sales s where s.id = c.sales_id and c.branch_id = 1 and c.created_at > now()-interval '1 day';
+            ");
         }else{
             DB::select("update customers_registration set is_approved = ".$request->get('input_approve')." where id = ".$request->get('input_id')." and is_approved = 0;");
         }
