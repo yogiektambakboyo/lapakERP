@@ -169,11 +169,10 @@ class CustomersController extends Controller
                 ['contact_person' => $request->get('contact_person') ],
                 ['type' => $request->get('type') ],
                 ['clasification' => $request->get('clasification') ],
-                ['contact_person_job_position' => $request->get('bcontact_person_job_positionranch_id') ],
+                ['contact_person_job_position' => $request->get('contact_person_job_position') ],
                 ['contact_person_level' => $request->get('contact_person_level') ],
                 ['visit_day' => $request->get('input_day') ],
                 ['visit_week' => $request->get('input_week') ],
-                ['branch_id' => $request->get('branch_id') ],
             )
         );
         return redirect()->route('customers.index')
@@ -214,9 +213,10 @@ class CustomersController extends Controller
     {
         $user = Auth::user();
         $id = $user->roles->first()->id;
-        $sellers = Sales::where('branch_id','=',$customer->branch_id)->get(['id','name']);
+        $sellers = Sales::where('branch_id','=',$Customer->branch_id)->get(['id','name']);
         $this->getpermissions($id);
         $data = $this->data;
+        $sellers = Sales::join('users_branch as ub','ub.branch_id','=','sales.branch_id')->where('ub.user_id','=',$user->id)->orderBy('sales.name')->get(['sales.id','sales.name']);
         return view('pages.customers.edit', [
             'customer' => $Customer ,'data' => $data ,'branchs' => Branch::latest()->get(), 'company' => Company::get()->first(),
             'userBranchs' => Branch::latest()->get()->pluck('remark')->toArray(),
@@ -242,6 +242,23 @@ class CustomersController extends Controller
                 ['membership_id' => '1' ],
                 ['abbr' => '1' ],
                 ['branch_id' => $request->get('branch_id') ],
+                ['sales_id' => $request->get('sales_id') ],
+                ['city' => $request->get('city') ],
+                ['credit_limit' => $request->get('credit_limit') ],
+                ['longitude' => $request->get('longitude') ],
+                ['latitude' => $request->get('latitude') ],
+                ['email' => $request->get('email') ],
+                ['handphone' => $request->get('handphone') ],
+                ['whatsapp_no' => $request->get('whatsapp_no') ],
+                ['citizen_id' => $request->get('citizen_id') ],
+                ['tax_id' => $request->get('tax_id') ],
+                ['contact_person' => $request->get('contact_person') ],
+                ['type' => $request->get('type') ],
+                ['clasification' => $request->get('clasification') ],
+                ['contact_person_job_position' => $request->get('contact_person_job_position') ],
+                ['contact_person_level' => $request->get('contact_person_level') ],
+                ['visit_day' => $request->get('input_day') ],
+                ['visit_week' => $request->get('input_week') ],
             )
         );
 

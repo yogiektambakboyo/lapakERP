@@ -94,7 +94,7 @@
                     <input value="{{ old('credit_limit') }}" 
                         type="text" 
                         class="form-control" 
-                        name="city" 
+                        name="credit_limit" 
                         placeholder="@lang('general.lbl_credit_limit')" required>
 
                     @if ($errors->has('credit_limit'))
@@ -130,7 +130,7 @@
                 </div>
                 <div class="mb-3">
                     <label for="email" class="form-label">@lang('general.lbl_email')</label>
-                    <input value="{{ old('credit_limit') }}" 
+                    <input value="{{ old('email') }}" 
                         type="text" 
                         class="form-control" 
                         name="email" 
@@ -207,13 +207,27 @@
                     <input value="{{ old('type') }}" 
                         type="text" 
                         class="form-control" 
-                        name="clasification" 
+                        name="type" 
                         placeholder="@lang('general.lbl_type')" required>
 
                     @if ($errors->has('type'))
                         <span class="text-danger text-left">{{ $errors->first('type') }}</span>
                     @endif
                 </div>
+
+                <div class="mb-3">
+                    <label for="clasification" class="form-label">@lang('general.lbl_clasification')</label>
+                    <input value="{{ old('clasification') }}" 
+                        type="clasification" 
+                        class="form-control" 
+                        name="clasification" 
+                        placeholder="@lang('general.lbl_type')" required>
+
+                    @if ($errors->has('clasification'))
+                        <span class="text-danger text-left">{{ $errors->first('clasification') }}</span>
+                    @endif
+                </div>
+
                 <div class="mb-3">
                     <label for="contact_person_job_position" class="form-label">@lang('general.lbl_contact_person_job_position')</label>
                     <input value="{{ old('contact_person_job_position') }}" 
