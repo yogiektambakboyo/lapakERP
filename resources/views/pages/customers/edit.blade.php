@@ -335,3 +335,158 @@
 
     </div>
 @endsection
+@push('scripts')
+    <script type="text/javascript">
+          const today = new Date();
+          const yyyy = today.getFullYear();
+          const yyyy1 = today.getFullYear()+1;
+          let mm = today.getMonth() + 1; // Months start at 0!
+          let dd = today.getDate();
+
+          if (dd < 10) dd = '0' + dd;
+          if (mm < 10) mm = '0' + mm;
+
+          const formattedToday = mm + '/' + dd + '/' + yyyy;
+          const formattedNextYear = mm + '/' + dd + '/' + yyyy1;
+
+          $('#filter_begin_date').datepicker({
+              format : 'yyyy-mm-dd',
+              todayHighlight: true,
+          });
+          $('#filter_begin_date').val(formattedToday);
+
+          $('#filter_begin_date_in').datepicker({
+              format : 'yyyy-mm-dd',
+              todayHighlight: true,
+          });
+          $('#filter_begin_date_in').val(formattedToday);
+
+          $('#filter_end_date_in').datepicker({
+              format : 'yyyy-mm-dd',
+              todayHighlight: true,
+          });
+          $('#filter_end_date_in').val(formattedToday);
+
+          var myModal = new bootstrap.Modal(document.getElementById('modal-filter'));
+          var myModal2 = new bootstrap.Modal(document.getElementById('modal-filter2'));
+          var myModalImg = new bootstrap.Modal(document.getElementById('modal-filterimg'));
+          var myModalApprove = new bootstrap.Modal(document.getElementById('modal-filterApprove'));
+
+          function openDialog(branch_id,dated,shift_id){
+            $('#filter_branch_id').val(branch_id);
+            $('#filter_shift').val(shift_id);
+            $('#filter_begin_date').val(dated.substr(5,2)+"/"+dated.substr(8,2)+"/"+dated.substr(0,4));
+            myModal.show();
+          }
+
+          function openDialogFilterSearch(command){
+            $('#export').val(command);
+            myModal2.show();
+          }
+
+          function openDialogImage(command){
+            $('#dialog_img').attr("src", "https://kakikupos.com/images/smd-image/"+command);
+            myModalImg.show();
+          }
+
+          function openDialogApprove(id, name){
+            $('#input_id').val(id);
+            $('#lbl_title_store').text(name);
+            myModalApprove.show();
+          }
+
+          $('#example').DataTable({
+                scrollX: true,
+        });
+
+        $('#input_day_mon').on('change', function() {
+            $('#input_day').val(this.value);
+        });
+        $('#input_day_tue').on('change', function() {
+            $('#input_day').val(this.value);
+        });
+        $('#input_day_wed').on('change', function() {
+            $('#input_day').val(this.value);
+        });
+        $('#input_day_thu').on('change', function() {
+            $('#input_day').val(this.value);
+        });
+        $('#input_day_fri').on('change', function() {
+            $('#input_day').val(this.value);
+        });
+        $('#input_day_sab').on('change', function() {
+            $('#input_day').val(this.value);
+        });
+        $('#input_day_sun').on('change', function() {
+            $('#input_day').val(this.value);
+        });
+
+        $('#input_week_1').on('change', function() {
+            var weekchecked = "";
+            if($('#input_week_1').is(':checked')){
+                weekchecked = weekchecked + "1";
+            }
+            if($('#input_week_2').is(':checked')){
+                weekchecked = weekchecked + "2";
+            }
+            if($('#input_week_3').is(':checked')){
+                weekchecked = weekchecked + "3";
+            }
+            if($('#input_week_4').is(':checked')){
+                weekchecked = weekchecked + "4";
+            }
+            $('#input_week').val(weekchecked);
+        });
+        $('#input_week_2').on('change', function() {
+            var weekchecked = "";
+            if($('#input_week_1').is(':checked')){
+                weekchecked = weekchecked + "1";
+            }
+            if($('#input_week_2').is(':checked')){
+                weekchecked = weekchecked + "2";
+            }
+            if($('#input_week_3').is(':checked')){
+                weekchecked = weekchecked + "3";
+            }
+            if($('#input_week_4').is(':checked')){
+                weekchecked = weekchecked + "4";
+            }
+            $('#input_week').val(weekchecked);
+        });
+        $('#input_week_3').on('change', function() {
+            var weekchecked = "";
+            if($('#input_week_1').is(':checked')){
+                weekchecked = weekchecked + "1";
+            }
+            if($('#input_week_2').is(':checked')){
+                weekchecked = weekchecked + "2";
+            }
+            if($('#input_week_3').is(':checked')){
+                weekchecked = weekchecked + "3";
+            }
+            if($('#input_week_4').is(':checked')){
+                weekchecked = weekchecked + "4";
+            }
+            $('#input_week').val(weekchecked);
+        });
+        $('#input_week_4').on('change', function() {
+            var weekchecked = "";
+            if($('#input_week_1').is(':checked')){
+                weekchecked = weekchecked + "1";
+            }
+            if($('#input_week_2').is(':checked')){
+                weekchecked = weekchecked + "2";
+            }
+            if($('#input_week_3').is(':checked')){
+                weekchecked = weekchecked + "3";
+            }
+            if($('#input_week_4').is(':checked')){
+                weekchecked = weekchecked + "4";
+            }
+            $('#input_week').val(weekchecked);
+        });
+
+
+
+    </script>
+@endpush
