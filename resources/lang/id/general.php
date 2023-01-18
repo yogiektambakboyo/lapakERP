@@ -99,6 +99,7 @@ return [
     "lbl_branch" => "Cabang",
     "lbl_branch_new" => "Cabang Baru",
     "lbl_city" => "Kota",
+    "lbl_contactpersonlevel" => "Kontak Level",
     "lbl_whatsapp_no" => "No WhatsApp",
     "lbl_citizen_id" => "KTP",
     "lbl_clasification" => "Klasifikasi",
@@ -114,7 +115,6 @@ return [
     "lbl_contactperson" => "Penghubung",
     "lbl_contact_person_job_position" => "Jabatan",
     "lbl_contact_person_level" => "Level",
-    "lbl_tax_id" => "NPWP",
     "lbl_tax_id" => "NPWP",
     "lbl_print" => "Cetak",
     "lbl_printsj" => "Cetak SJ",
@@ -172,6 +172,7 @@ return [
 
     "lbl_product_stock" => "Stok Produk",
     "lbl_checkout" => "Checkout",
+    "lbl_ischeckout" => "Is Checkout",
 
     "lbl_uom" => "Satuan",
     "lbl_price_adjustment" => "Penyesuaian Harga",

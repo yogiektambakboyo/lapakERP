@@ -65,7 +65,7 @@ class ReportSalesTripController extends Controller
                 from sales_trip st 
                 join sales s on s.id = st.sales_id 
                 join branch b on b.id = s.branch_id
-                where st.dated > now()-interval'7 days'
+                where st.dated = now()::date
                 order by b.remark,s.name,st.time_start   
         ");
         $data = $this->data;

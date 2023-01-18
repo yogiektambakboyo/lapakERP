@@ -37,10 +37,10 @@
                     <th scope="col" width="12%">@lang('general.lbl_geolocation')</th>     
                     <th scope="col" width="12%">@lang('general.lbl_email')</th>    
                     <th scope="col" width="12%">@lang('general.lbl_citizenid')</th>    
+                    <th scope="col" width="12%">@lang('general.lbl_tax_id')</th>    
                     <th scope="col" width="12%">@lang('general.lbl_contactperson')</th>    
                     <th scope="col" width="12%">@lang('general.lbl_contactpersonjobpos')</th>    
                     <th scope="col" width="12%">@lang('general.lbl_contactpersonlevel')</th>    
-                    <th scope="col" width="12%">@lang('general.lbl_contactperson')</th>    
                     <th scope="col" width="12%">@lang('general.lbl_type')</th>    
                     <th scope="col" width="12%">@lang('general.lbl_classification')</th>       
                     <th scope="col" width="12%">@lang('general.lbl_notes')</th>    
