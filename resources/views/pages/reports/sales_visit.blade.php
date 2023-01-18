@@ -4,7 +4,7 @@
 
 @section('content')
     <div class="bg-light p-4 rounded">
-        <h1>@lang('general.lbl_report') - @lang('general.lbl_trip')</h1>
+        <h1>@lang('general.lbl_report') - @lang('general.lbl_sales_visit')</h1>
         <div class="lead row mb-3">
             <div class="col-md-10">
                 <div class="col-md-8">

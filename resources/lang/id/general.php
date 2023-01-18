@@ -175,6 +175,7 @@ return [
     "lbl_ischeckout" => "Is Checkout",
 
     "lbl_uom" => "Satuan",
+    "lbl_sales_visit" => "Kunjungan Sales",
     "lbl_price_adjustment" => "Penyesuaian Harga",
     "lbl_date_start" => "Tgl Mulai",
     "lbl_date_end" => "Tgl Berakhir",
