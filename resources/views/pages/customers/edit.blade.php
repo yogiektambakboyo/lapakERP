@@ -335,3 +335,97 @@
 
     </div>
 @endsection
+@push('scripts')
+    <script type="text/javascript">
+
+        $('#input_day_mon').on('change', function() {
+            $('#input_day').val(this.value);
+        });
+        $('#input_day_tue').on('change', function() {
+            $('#input_day').val(this.value);
+        });
+        $('#input_day_wed').on('change', function() {
+            $('#input_day').val(this.value);
+        });
+        $('#input_day_thu').on('change', function() {
+            $('#input_day').val(this.value);
+        });
+        $('#input_day_fri').on('change', function() {
+            $('#input_day').val(this.value);
+        });
+        $('#input_day_sab').on('change', function() {
+            $('#input_day').val(this.value);
+        });
+        $('#input_day_sun').on('change', function() {
+            $('#input_day').val(this.value);
+        });
+
+        $('#input_week_1').on('change', function() {
+            var weekchecked = "";
+            if($('#input_week_1').is(':checked')){
+                weekchecked = weekchecked + "1";
+            }
+            if($('#input_week_2').is(':checked')){
+                weekchecked = weekchecked + "2";
+            }
+            if($('#input_week_3').is(':checked')){
+                weekchecked = weekchecked + "3";
+            }
+            if($('#input_week_4').is(':checked')){
+                weekchecked = weekchecked + "4";
+            }
+            $('#input_week').val(weekchecked);
+        });
+        $('#input_week_2').on('change', function() {
+            var weekchecked = "";
+            if($('#input_week_1').is(':checked')){
+                weekchecked = weekchecked + "1";
+            }
+            if($('#input_week_2').is(':checked')){
+                weekchecked = weekchecked + "2";
+            }
+            if($('#input_week_3').is(':checked')){
+                weekchecked = weekchecked + "3";
+            }
+            if($('#input_week_4').is(':checked')){
+                weekchecked = weekchecked + "4";
+            }
+            $('#input_week').val(weekchecked);
+        });
+        $('#input_week_3').on('change', function() {
+            var weekchecked = "";
+            if($('#input_week_1').is(':checked')){
+                weekchecked = weekchecked + "1";
+            }
+            if($('#input_week_2').is(':checked')){
+                weekchecked = weekchecked + "2";
+            }
+            if($('#input_week_3').is(':checked')){
+                weekchecked = weekchecked + "3";
+            }
+            if($('#input_week_4').is(':checked')){
+                weekchecked = weekchecked + "4";
+            }
+            $('#input_week').val(weekchecked);
+        });
+        $('#input_week_4').on('change', function() {
+            var weekchecked = "";
+            if($('#input_week_1').is(':checked')){
+                weekchecked = weekchecked + "1";
+            }
+            if($('#input_week_2').is(':checked')){
+                weekchecked = weekchecked + "2";
+            }
+            if($('#input_week_3').is(':checked')){
+                weekchecked = weekchecked + "3";
+            }
+            if($('#input_week_4').is(':checked')){
+                weekchecked = weekchecked + "4";
+            }
+            $('#input_week').val(weekchecked);
+        });
+
+
+
+    </script>
+@endpush
