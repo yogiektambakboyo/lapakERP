@@ -36,10 +36,12 @@ class OrdersExport implements FromCollection,WithColumnFormatting, WithHeadings
             'Branch',
             'Order No',
             'Dated',
+            'Seller',
             'Customer',
+            'Product',
+            'Qty',
+            'Price',
             'Total',
-            'Total Discount',
-            'Total Payment',
         ];
     }
     public function collection()
@@ -48,6 +50,9 @@ class OrdersExport implements FromCollection,WithColumnFormatting, WithHeadings
         return Order::orderBy('order_master.id', 'ASC')
         ->join('customers as jt','jt.id','=','order_master.customers_id')
         ->join('branch as b','b.id','=','jt.branch_id')
+        ->join('sales as s','s.id','=','order_master.sales_id')
+        ->join('order_detail as od','od.order_no','=','order_master.order_no')
+        ->join('product_sku as ps','ps.id','=','od.product_id')
         ->join('users_branch as ub', function($join){
             $join->on('ub.branch_id', '=', 'b.id')
             ->whereColumn('ub.branch_id', 'jt.branch_id');
@@ -55,13 +60,13 @@ class OrdersExport implements FromCollection,WithColumnFormatting, WithHeadings
         ->where('order_master.order_no','ilike','%'.$this->keyword.'%')  
         ->where('b.id','like','%'.$this->branch.'%')  
         ->whereBetween('order_master.dated',$fil)  
-      ->get(['b.remark as branch_name','order_master.order_no','order_master.dated','jt.name as customer','order_master.total','order_master.total_discount','order_master.total_payment' ]);
+      ->get(['b.remark as branch_name','order_master.order_no','order_master.dated','s.name as sales_name','jt.name as customer','ps.remark','od.qty','od.price','od.total' ]);
     }
 
     public function columnFormats(): array
     {
         return [
-            'F' => 'yyyy-mm-dd',
+            'C' => 'yyyy-mm-dd',
         ];
     }
 }

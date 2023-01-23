@@ -1,10 +1,10 @@
 @extends('layouts.default', ['appSidebarSearch' => true])
 
-@section('title', 'SPK')
+@section('title', 'Pesanan')
 
 @section('content')
     <div class="bg-light p-4 rounded">
-        <h1>@lang('general.lbl_spk')</h1>
+        <h1>@lang('general.lbl_order')</h1>
         <div class="lead row mb-3">
             <div class="col-md-10">
                 <div class="col-md-12">
@@ -34,12 +34,11 @@
             <tr>
                 <th scope="col" width="1%">#</th>
                 <th scope="col" width="10%">@lang('general.lbl_branch')</th>
-                <th>@lang('general.lbl_invoice_no')   </th>
+                <th>@lang('general.lbl_order_no')   </th>
                 <th scope="col" width="8%">@lang('general.lbl_dated')</th>
                 <th scope="col" width="15%">@lang('general.lbl_total_customer')</th>
+                <th scope="col" width="15%">@lang('general.lbl_sales')</th>
                 <th scope="col" width="10%">Total</th>
-                <th scope="col" width="10%">@lang('general.lbl_total_discount')</th>
-                <th scope="col" width="10%">@lang('general.lbl_total_payment')</th>
                 <th scope="col" width="2%">@lang('general.lbl_action')</th>  
                 <th scope="col" width="2%"></th>
                 <th scope="col" width="2%"></th>    
@@ -54,9 +53,8 @@
                         <td>{{ $order->order_no }}</td>
                         <td>{{ $order->dated }}</td>
                         <td>{{ $order->customer }}</td>
+                        <td>{{ $order->sales_name }}</td>
                         <td>{{ number_format($order->total,0,',','.') }}</td>
-                        <td>{{ $order->total_discount }}</td>
-                        <td>{{ number_format($order->total_payment,0,',','.') }}</td>
                         <td><a href="{{ route('orders.show', $order->id) }}" class="btn btn-warning btn-sm  {{ $act_permission->allow_show==1?'':'d-none' }}">@lang('general.lbl_show')</a></td>
                         <td><a href="{{ route('orders.edit', $order->id) }}" class="btn btn-info btn-sm  {{ $act_permission->allow_edit==1?'':'d-none' }} ">@lang('general.lbl_edit')</a></td>
                         <td class=" {{ $act_permission->allow_delete==1?'':'d-none' }}">

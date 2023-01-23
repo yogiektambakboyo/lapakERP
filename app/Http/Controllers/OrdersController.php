@@ -94,11 +94,12 @@ class OrdersController extends Controller
         $orders = Order::orderBy('id', 'ASC')
                 ->join('customers as jt','jt.id','=','order_master.customers_id')
                 ->join('branch as b','b.id','=','jt.branch_id')
+                ->join('sales as s','s.id','=','order_master.sales_id')
                 ->join('users_branch as ub', function($join){
                     $join->on('ub.branch_id', '=', 'b.id')
                     ->whereColumn('ub.branch_id', 'jt.branch_id');
                 })->where('ub.user_id', $user->id)->where('order_master.dated','>=',Carbon::now()->subDay(7)) 
-              ->paginate(10,['order_master.id','b.remark as branch_name','order_master.order_no','order_master.dated','jt.name as customer','order_master.total','order_master.total_discount','order_master.total_payment' ]);
+              ->paginate(10,['s.name as sales_name','order_master.id','b.remark as branch_name','order_master.order_no','order_master.dated','jt.name as customer','order_master.total','order_master.total_discount','order_master.total_payment' ]);
         return view('pages.orders.index',['company' => Company::get()->first()], compact('orders','data','keyword','act_permission','branchs'))->with('i', ($request->input('page', 1) - 1) * 5);
     }
 
@@ -126,6 +127,7 @@ class OrdersController extends Controller
             $orders = Order::orderBy('id', 'ASC')
                 ->join('customers as jt','jt.id','=','order_master.customers_id')
                 ->join('branch as b','b.id','=','jt.branch_id')
+                ->join('sales as s','s.id','=','order_master.sales_id')
                 ->join('users_branch as ub', function($join){
                     $join->on('ub.branch_id', '=', 'b.id')
                     ->whereColumn('ub.branch_id', 'jt.branch_id');
@@ -133,7 +135,7 @@ class OrdersController extends Controller
                 ->where('order_master.order_no','ilike','%'.$keyword.'%')  
                 ->where('b.id','like','%'.$branchx.'%')  
                 ->whereBetween('order_master.dated',$fil)  
-              ->paginate(10,['order_master.id','b.remark as branch_name','order_master.order_no','order_master.dated','jt.name as customer','order_master.total','order_master.total_discount','order_master.total_payment' ]);
+              ->paginate(10,['s.name as sales_name','order_master.id','b.remark as branch_name','order_master.order_no','order_master.dated','jt.name as customer','order_master.total','order_master.total_discount','order_master.total_payment' ]);
         return view('pages.orders.index',['company' => Company::get()->first()], compact('orders','data','keyword','act_permission','branchs'))->with('i', ($request->input('page', 1) - 1) * 5);
         }
     }

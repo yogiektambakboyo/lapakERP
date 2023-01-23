@@ -10,7 +10,8 @@ return [
     "btn_filter" => "Saring",
     "btn_export" => "Export Excel",
     "btn_create" => "Buat Baru",
-    "lbl_order" => "SPK",
+    "lbl_order" => "Pesanan",
+    "lbl_order_no" => "Nomor Pesanan",
     "lbl_return_no" => "Nomor Retur",
 
     "product" => "Produk",
@@ -176,6 +177,7 @@ return [
 
     "lbl_uom" => "Satuan",
     "lbl_sales_visit" => "Kunjungan Sales",
+    "lbl_sales" => "Seller",
     "lbl_price_adjustment" => "Penyesuaian Harga",
     "lbl_date_start" => "Tgl Mulai",
     "lbl_date_end" => "Tgl Berakhir",

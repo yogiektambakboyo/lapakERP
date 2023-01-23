@@ -57,44 +57,10 @@
                     @endforeach
                 </select>
               </div>
-              <label class="form-label col-form-label col-md-2">@lang('general.lbl_schedule')</label>
-              <div class="col-md-4">
-
-                  <div class="input-group">
-                    <input type="text" class="form-control" id="scheduled" value="{{ $room->remark }} - {{ $order->scheduled_at }}">
-                    <button type="button" class="btn btn-indigo" data-bs-toggle="modal" data-bs-target="#modal-scheduled" >
-                      <span class="fas fa-calendar-days"></span>
-                    </button>
-                  </div>
-              </div>
             </div>
             <div class="row mb-3">
-              <label class="form-label col-form-label col-md-2">@lang('general.lbl_type_payment')</label>
-              <div class="col-md-2">
-                <select class="form-control" 
-                      name="payment_type" id ="payment_type" >
-                      <option value="">@lang('general.lbl_type_paymentselect')</option>
-                      @foreach($payment_type as $value)
-                          <option value="{{ $value }}" {{ ($order->payment_type == $value) 
-                            ? 'selected'
-                            : ''}}>{{ $value }}</option>
-                      @endforeach
-                  </select>
-              </div>
 
-                <label class="form-label col-form-label col-md-2">@lang('general.lbl_nominal_payment')</label>
-                <div class="col-md-2">
-                  <input type="text" 
-                  id="payment_nominal"
-                  name="payment_nominal"
-                  class="form-control" 
-                  value="{{ $order->payment_nominal }}" />
-                  </div>
-
-                  <label class="form-label col-form-label col-md-1">@lang('general.lbl_charge')</label>
-                  <div class="col-md-3">
-                    <h2 class="text-end"><label id="order_charge">Rp. {{ number_format(($order->payment_nominal-$order->total), 0, ',', '.') }}</label></h2>
-                  </div>
+              
             </div>
 
             
@@ -125,82 +91,6 @@
               </div>
               </div>
             </div>
-
-            <div class="modal fade" id="modal-scheduled" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-              <div class="modal-dialog modal-lg">
-              <div class="modal-content">
-                  <div class="modal-header">
-                  <h5 class="modal-title" id="staticBackdropLabel">@lang('general.lbl_scheduleselect')  </h5>
-                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                  </div>
-                  <div class="modal-body">
-
-                    <div class="row mb-3">
-                      <div class="col-md-1">
-                        <label class="form-label col-form-label col-md-8">@lang('general.lbl_room')   </label>
-                      </div>
-                      <div class="col-md-2">
-                          <select class="form-control" 
-                              name="room_id" id="room_id" required>
-                              <option value="">@lang('general.lbl_roomselect')   </option>
-                              @foreach($rooms as $roomx)
-                                  <option value="{{ $roomx->id }}"  {{ $roomx->remark==$room->remark?"selected":"" }}>{{ $roomx->remark }}</option>
-                              @endforeach
-                          </select>
-                      </div>
-                      <div class="col-md-1">
-                        <label class="form-label col-form-label col-md-4">@lang('general.lbl_dated')   </label>
-                      </div>
-                      <div class="col-md-2">
-                        <input type="text" 
-                        name="schedule_date"
-                        id="schedule_date"
-                        class="form-control" 
-                        value="{{ substr(explode(" ",$order->scheduled_at)[0],5,2) }}/{{ substr(explode(" ",$order->scheduled_at)[0],8,2) }}/{{ substr(explode(" ",$order->scheduled_at)[0],0,4) }}" required/>
-                        @if ($errors->has('order_date'))
-                                  <span class="text-danger text-left">{{ $errors->first('schedule_date') }}</span>
-                              @endif
-                      </div>
-                      <div class="col-md-1">
-                        <label class="form-label col-form-label col-md-8">@lang('general.lbl_time')   </label>
-                      </div>
-                      <div class="col-md-2">
-                        <div class="input-group bootstrap-timepicker timepicker">
-                            <input id="timepicker1" type="text" class="form-control input-small" value="{{ explode(" ",$order->scheduled_at)[1] }}">
-                            <span class="btn btn-indigo input-group-addon"><i class="fas fa-clock"></i></span>
-                        </div>    
-                      </div>
-                    </div>
-                   
-                    <div class="panel-heading bg-teal-600 text-white"><strong>@lang('general.lbl_schedule_list')   </strong></div>
-                    </br>
-      
-                    <div class="col-md-12">
-                      <table class="table table-striped" id="order_time_table" style="width:100%">
-                        <thead>
-                        <tr>
-                            <th>@lang('general.lbl_room')   </th>
-                            <th scope="col" width="25%">@lang('general.lbl_invoice_no')   </th>
-                            <th scope="col" width="15%">@lang('general.lbl_total_customer')</th>
-                            <th scope="col" width="15%">@lang('general.lbl_schedule_at')   </th>
-                            <th scope="col" width="5%">@lang('general.lbl_duration')   </th>
-                            <th scope="col" width="15%">@lang('general.lbl_end_estimation') </th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        </tbody>
-                      </table> 
-                    </div>
-                  </div>
-                  <div class="modal-footer">
-                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">@lang('general.lbl_close') </button>
-                  <button type="button" class="btn btn-primary"  data-bs-dismiss="modal" id="btn_scheduled">@lang('general.lbl_apply')</button>
-                  </div>
-              </div>
-              </div>
-            </div>
-
-
 
             </div>
                 

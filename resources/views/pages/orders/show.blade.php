@@ -9,8 +9,6 @@
     <div class="panel-heading  bg-teal-600">
       <div class="panel-title"><h4 class="">SPK No : {{ $order->order_no }}</h4></div>
       <div class="">
-        <a href="{{ route('orders.printthermal', $order->id) }}" class="btn btn-warning">Print Thermal</a>
-        <a href="{{ route('orders.print', $order->id) }}" class="btn btn-warning">@lang('general.lbl_print') </a>
         <a href="{{ route('orders.index') }}" class="btn btn-default">@lang('general.lbl_back') </a>
       </div>
     </div>
@@ -58,45 +56,10 @@
                     @endforeach
                 </select>
               </div>
-              <label class="form-label col-form-label col-md-2">@lang('general.lbl_schedule')</label>
-              <div class="col-md-4">
-
-                  <div class="input-group">
-                    <input type="text" class="form-control" value="{{ $room->remark }} - {{ $order->scheduled_at }}" id="scheduled" disabled>
-                    <button type="button" class="btn btn-indigo" data-bs-toggle="modal" data-bs-target="#modal-scheduled" >
-                      <span class="fas fa-calendar-days"></span>
-                    </button>
-                  </div>
-              </div>
             </div>
             <div class="row mb-3">
-              <label class="form-label col-form-label col-md-2">@lang('general.lbl_type_payment')</label>
-              <div class="col-md-2">
-                <select class="form-control" 
-                      name="payment_type" id ="payment_type" readonly>
-                      <option value="">@lang('general.lbl_type_paymentselect')</option>
-                      @foreach($payment_type as $value)
-                          <option value="{{ $value }}" {{ ($order->payment_type == $value) 
-                            ? 'selected'
-                            : ''}}>{{ $value }}</option>
-                      @endforeach
-                  </select>
-              </div>
-
-                <label class="form-label col-form-label col-md-2">@lang('general.lbl_nominal_payment')</label>
-                <div class="col-md-2">
-                  <input type="text" 
-                  id="payment_nominal"
-                  name="payment_nominal"
-                  class="form-control" 
-                  value="{{ $order->payment_nominal }}" readonly/>
-                  </div>
-
-                  <label class="form-label col-form-label col-md-1">@lang('general.lbl_charge')</label>
-                  <div class="col-md-3">
-                    <h2 class="text-end"><label id="order_charge">Rp. {{ number_format(($order->payment_nominal-$order->total), 0, ',', '.') }}</label></h2>
-                  </div>
-                
+            
+              
             </div>
           </div>
 
@@ -134,11 +97,7 @@
             <div class="row mb-3">
               <div class="col-md-6">
                 <div class="row mb-3">
-                    <label class="form-label col-form-label col-md-3" id="label-voucher">Voucher</label>
-                    <br>
-                    <div class="col-md-5">
-                      <input type="text" class="form-control" id="input-apply-voucher" value="{{ $order->voucher_code }}" disabled>
-                    </div>
+                    
                 </div>
             </div>
 
@@ -148,12 +107,6 @@
                 <div class="col-auto text-end">
                   <label class="col-md-2"><h2>Sub Total </h2></label>
                   <label class="col-md-8" id="sub-total"> <h3>Rp. {{ number_format(($order->total-$order->tax), 0, ',', '.') }}</h3></label>
-                </div>
-              </div>
-              <div class="col-md-12">
-                <div class="col-auto text-end">
-                  <label class="col-md-2"><h2>@lang('general.lbl_tax') </h2></label>
-                  <label class="col-md-8" id="vat-total"> <h3>Rp. {{ number_format($order->tax, 0, ',', '.') }}</h3></label>
                 </div>
               </div>
               <div class="col-md-12">
