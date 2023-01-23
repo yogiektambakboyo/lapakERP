@@ -66,8 +66,9 @@ class ReportCustomerController extends Controller
 
         $shifts = Shift::orderBy('shift.id')->get(['shift.id','shift.remark','shift.id','shift.time_start','shift.time_end']); 
         $report_data = DB::select("
-            select b.remark as branch_name,c.name as customers_name,c.address,c.phone_no  from customers c
+            select b.remark as branch_name,s.name as sales_name,c.name as customers_name,c.address,c.phone_no  from customers c
             join branch b on b.id = c.branch_id 
+			join sales s on s.id = c.sales_id
             join users_branch ub on ub.branch_id = b.id and ub.user_id = 1              
         ");
         $data = $this->data;
