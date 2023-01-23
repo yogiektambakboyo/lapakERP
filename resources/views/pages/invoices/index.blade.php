@@ -58,9 +58,13 @@
                         <td>{{ number_format($order->total_discount,0,',','.') }}</td>
                         <td  @if ($order->total_payment < $order->total) class="bg-warning" @endif>{{ number_format($order->total_payment,0,',','.') }}</td>
                         <td><a href="{{ route('invoices.show', $order->id) }}" class="btn btn-warning btn-sm  {{ $act_permission->allow_show==1?'':'d-none' }}">@lang('general.lbl_show')</a></td>
-                        @if ($order->is_checkout == 0)
+                        @if (($order->is_checkout == 0)&&($order->total_payment <= $order->total))
                         <td>
                             <a onclick="showConfirmCheckout({{ $order->id }}, '{{ $order->invoice_no }}')" class="btn btn-success btn-sm  {{ $act_permission->allow_show==1?'':'d-none' }}">@lang('general.lbl_checkout')</a>
+                        </td>
+                        @else
+                        <td>
+                            <a onclick="showErrorCheckout({{ $order->id }}, '{{ $order->invoice_no }}')" class="btn btn-success btn-sm  {{ $act_permission->allow_show==1?'':'d-none' }}">@lang('general.lbl_checkout')</a>
                         </td>
                         @endif
                         <td><a href="{{ route('invoices.edit', $order->id) }}" class="btn btn-info btn-sm  {{ $act_permission->allow_edit==1?'':'d-none' }} ">@lang('general.lbl_edit')</a></td>
@@ -219,6 +223,20 @@
                         });
                     }
                 })
+        }
+
+        function showErrorCheckout(id,data){
+
+            Swal.fire(
+            {
+                position: 'top-end',
+                icon: 'warning',
+                text: "@lang('general.lbl_msg_failed') Faktur "+data+" belum lunas, silahkan penuhi pembayaran dahulu sesuai total ",
+                showConfirmButton: false,
+                imageHeight: 30, 
+                imageWidth: 30,   
+                timer: 1500
+            });
         }
 
         function showConfirmCheckout(id,data){
