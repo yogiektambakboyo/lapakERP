@@ -55,7 +55,7 @@
                         <td>{{ $order->dated }}</td>
                         <td>{{ $order->customer }}</td>
                         <td>{{ number_format($order->total,0,',','.') }}</td>
-                        <td>{{ number_format($order->total_discount,0,',','.') }}</td>
+                        <td>{{ number_format($order->total_payment,0,',','.') }}</td>
                         <td  @if ($order->total_payment < $order->total) class="bg-warning" @endif>{{ number_format($order->total_payment,0,',','.') }}</td>
                         <td><a href="{{ route('invoices.show', $order->id) }}" class="btn btn-warning btn-sm  {{ $act_permission->allow_show==1?'':'d-none' }}">@lang('general.lbl_show')</a></td>
                         @if (($order->is_checkout == 0)&&($order->total_payment >= $order->total))
