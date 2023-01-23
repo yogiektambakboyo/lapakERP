@@ -299,6 +299,7 @@
                     $payment_mandiri_debit = 0;
                     $payment_mandiri_kredit = 0;
                     $payment_qr = 0;
+                    $payment_tr = 0;
 
                   @endphp
                   @foreach($payment_datas as $payment_data)
@@ -324,6 +325,8 @@
                             $payment_mandiri_kredit = $payment_mandiri_kredit + $payment_data->total_payment;
                           }else if($payment_data->payment_type=='QRIS'){
                             $payment_qr = $payment_qr + $payment_data->total_payment;
+                          }else if($payment_data->payment_type=='Transfer'){
+                            $payment_tr = $payment_tr + $payment_data->total_payment;
                           }
                           $counter++;
                         @endphp
@@ -365,6 +368,11 @@
                   <tr>
                     <td colspan="2" style="text-align: left;">QRIS</td>
                     <td colspan="2" style="text-align: right;">{{ number_format($payment_qr,0,',','.') }}</td>
+                  </tr>
+
+                  <tr>
+                    <td colspan="2" style="text-align: left;">Transfer</td>
+                    <td colspan="2" style="text-align: right;">{{ number_format($payment_tr,0,',','.') }}</td>
                   </tr>
 
                   <tr>
