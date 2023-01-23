@@ -7,7 +7,7 @@
   @csrf
   <div class="panel text-white">
     <div class="panel-heading  bg-teal-600">
-      <div class="panel-title"><h4 class="">SPK No : {{ $order->order_no }}</h4></div>
+      <div class="panel-title"><h4 class="">@lang('general.lbl_order_no') : {{ $order->order_no }}</h4></div>
       <div class="">
         <a href="{{ route('orders.index') }}" class="btn btn-default">@lang('general.lbl_back') </a>
       </div>
