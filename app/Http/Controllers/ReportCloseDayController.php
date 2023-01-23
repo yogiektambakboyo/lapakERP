@@ -77,6 +77,7 @@ class ReportCloseDayController extends Controller
                 sum(case when im.payment_type = 'Mandiri - Debit' then id.total+id.vat_total else 0 end) as total_m_d,
                 sum(case when im.payment_type = 'Mandiri - Kredit' then id.total+id.vat_total else 0 end) as total_m_k,
                 sum(case when im.payment_type = 'QRIS' then id.total+id.vat_total else 0 end) as total_qr,
+                sum(case when im.payment_type = 'Transfer' then id.total+id.vat_total else 0 end) as total_tr,
                 count(distinct im.invoice_no) qty_transaction,count(distinct im.customers_id) qty_customers
                 from invoice_master im 
                 join invoice_detail id on id.invoice_no  = im.invoice_no 
@@ -157,7 +158,7 @@ class ReportCloseDayController extends Controller
 
         if($request->export=='Export Excel'){
              $strencode = base64_encode($shift_id.'#'.$begindate.'#'.$enddate.'#'.$branchx);
-            return Excel::download(new CloseDayExport($strencode), 'closesday_'.Carbon::now()->format('YmdHis').'.xlsx');
+            return Excel::download(new CloseDayExport($strencode), 'closeday_'.Carbon::now()->format('YmdHis').'.xlsx');
         }else{
             $report_data = DB::select("
                     select b.id as branch_id,b.remark as branch_name,im.dated,sum(id.total+id.vat_total) as total_all,
@@ -171,6 +172,7 @@ class ReportCloseDayController extends Controller
                     sum(case when im.payment_type = 'Mandiri - Debit' then id.total+id.vat_total else 0 end) as total_m_d,
                     sum(case when im.payment_type = 'Mandiri - Kredit' then id.total+id.vat_total else 0 end) as total_m_k,
                      sum(case when im.payment_type = 'QRIS' then id.total+id.vat_total else 0 end) as total_qr,
+                     sum(case when im.payment_type = 'Transfer' then id.total+id.vat_total else 0 end) as total_tr,
                     count(distinct im.invoice_no) qty_transaction,count(distinct im.customers_id) qty_customers
                     from invoice_master im 
                     join invoice_detail id on id.invoice_no  = im.invoice_no 
