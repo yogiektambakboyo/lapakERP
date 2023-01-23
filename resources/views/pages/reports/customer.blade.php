@@ -25,6 +25,7 @@
             <thead>
             <tr>
                 <th scope="col" width="10%">@lang('general.lbl_branch')</th>
+				 <th scope="col">Sales</th>  
                 <th scope="col">@lang('general.lbl_customer')</th>     
                 <th scope="col">@lang('general.lbl_address')</th>    
                 <th scope="col">@lang('general.lbl_phoneno')</th>    
@@ -35,7 +36,8 @@
                 @foreach($report_data as $rdata)
                     <tr>
                         <th scope="row">{{ $rdata->branch_name }}</th>
-                        <td>{{ $rdata->customers_name }}</td>
+						<td>{{ $rdata->sales_name }}</td>
+						<td>{{ $rdata->customers_name }}</td>
                         <td>{{ $rdata->address }}</td>
                         <td>{{ $rdata->phone_no }}</td>
                     </tr>

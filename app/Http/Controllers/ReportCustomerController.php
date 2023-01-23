@@ -66,8 +66,9 @@ class ReportCustomerController extends Controller
 
         $shifts = Shift::orderBy('shift.id')->get(['shift.id','shift.remark','shift.id','shift.time_start','shift.time_end']); 
         $report_data = DB::select("
-            select b.remark as branch_name,c.name as customers_name,c.address,c.phone_no  from customers c
+            select b.remark as branch_name,s.name as sales_name,c.name as customers_name,c.address,c.phone_no  from customers c
             join branch b on b.id = c.branch_id 
+			join sales s on s.id = c.sales_id
             join users_branch ub on ub.branch_id = b.id and ub.user_id = 1              
         ");
         $data = $this->data;
@@ -99,8 +100,9 @@ class ReportCustomerController extends Controller
             return Excel::download(new ReportCustomerExport($strencode), 'report_customer_'.Carbon::now()->format('YmdHis').'.xlsx');
         }else{
             $report_data = DB::select("
-            select b.remark as branch_name,c.name as customers_name,c.address,c.phone_no  from customers c
+            select b.remark as branch_name,s.name as sales_name,c.name as customers_name,c.address,c.phone_no  from customers c
             join branch b on b.id = c.branch_id 
+			join sales s on s.id = c.sales_id
             join users_branch ub on ub.branch_id = b.id and ub.user_id = ".$user->id." and ub.branch_id::character varying like '%".$branchx."%'           
             ");         
             return view('pages.reports.customer',['company' => Company::get()->first()], compact('shifts','branchs','data','keyword','act_permission','report_data'))->with('i', ($request->input('page', 1) - 1) * 5);

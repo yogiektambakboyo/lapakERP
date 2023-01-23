@@ -34,6 +34,7 @@ class ReportCustomerExport implements FromCollection,WithColumnFormatting, WithH
     {
         return [
             'Branch',
+			'Sales Name',
             'Customer Name',
             'Address',
             'Phone No',
@@ -42,8 +43,9 @@ class ReportCustomerExport implements FromCollection,WithColumnFormatting, WithH
     public function collection()
     {
         return collect(DB::select("
-            select b.remark as branch_name,c.name as customers_name,c.address,c.phone_no  from customers c
+            select b.remark as branch_name,s.name as sales_name,c.name as customers_name,c.address,c.phone_no  from customers c
             join branch b on b.id = c.branch_id 
+			join sales s on s.id = c.sales_id
             join users_branch ub on ub.branch_id = b.id and ub.user_id = ".$this->userid." and ub.branch_id::character varying like '%".$this->branch."%'                       
         ")); 
     }
@@ -51,7 +53,6 @@ class ReportCustomerExport implements FromCollection,WithColumnFormatting, WithH
     public function columnFormats(): array
     {
         return [
-            'B' => 'yyyy-mm-dd',
         ];
     }
 }
