@@ -36,8 +36,8 @@
                 @foreach($report_data as $rdata)
                     <tr>
                         <th scope="row">{{ $rdata->branch_name }}</th>
-                        <td>{{ $rdata->customers_name }}</td>
 						<td>{{ $rdata->sales_name }}</td>
+						<td>{{ $rdata->customers_name }}</td>
                         <td>{{ $rdata->address }}</td>
                         <td>{{ $rdata->phone_no }}</td>
                     </tr>
