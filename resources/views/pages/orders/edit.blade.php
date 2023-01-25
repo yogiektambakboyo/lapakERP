@@ -340,13 +340,11 @@
         ],
         });
 
-        function addProduct(id,abbr, price, discount, qty, uom,vat_total,total){
+        function addProduct(id,abbr, price, discount, qty, uom,total){
           table.clear().draw(false);
           order_total = 0;
           disc_total = 0;
-          _vat_total = 0;
           sub_total = 0;
-          var total_vat = parseFloat(total) * (parseFloat(vat_total)/100); 
           var product = {
                 "id"        : id,
                 "abbr"      : abbr,
@@ -354,10 +352,8 @@
                 "discount"  : discount,
                 "qty"       : qty,
                 "total"     : price,
-                "total_vat"     : total_vat,
                 "assignedto" : "",
                 "assignedtoid" : "",
-                "vat_total"     : vat_total,
                 "uom" : uom,
           }
 
@@ -380,7 +376,6 @@
           for (var i = 0; i < orderList.length; i++){
             var obj = orderList[i];
             var value = obj["abbr"];
-            console.log(obj["vat_total"]);
 
             table.row.add( {
                     "id"        : obj["id"],
@@ -394,8 +389,7 @@
               }).draw(false);
               disc_total = disc_total + (parseFloat(orderList[i]["discount"]));
               sub_total = sub_total + (((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"]))-(parseFloat(orderList[i]["discount"])));
-              _vat_total = _vat_total + ((((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"]))-(parseFloat(orderList[i]["discount"])))*(parseFloat(orderList[i]["vat_total"])/100));
-              order_total = order_total + ((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"])+((((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"]))-(parseFloat(orderList[i]["discount"])))*(parseFloat(orderList[i]["vat_total"])/100)))-(parseFloat(orderList[i]["discount"]));
+              order_total = order_total + ((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"])+((((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"]))-(parseFloat(orderList[i]["discount"])))*(parseFloat(0))))-(parseFloat(orderList[i]["discount"]));
               if(($('#payment_nominal').val())>order_total){
                 $('#order_charge').text(currency((($('#payment_nominal').val())-order_total), { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
               }else{
@@ -406,7 +400,6 @@
 
 
           $('#result-total').text(currency(order_total, { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
-          $('#vat-total').text(currency(_vat_total, { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
           $('#sub-total').text(currency(sub_total, { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
 
         }
@@ -415,7 +408,6 @@
             var data = table.row($(this).parents('tr')).data();
             order_total = 0;
             disc_total = 0;
-            _vat_total = 0;
             sub_total = 0;
 
             table.clear().draw(false);
@@ -473,7 +465,7 @@
                 disc_total = disc_total + (parseFloat(orderList[i]["discount"]));
                 sub_total = sub_total + (((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"]))-(parseFloat(orderList[i]["discount"])));
                 _vat_total = _vat_total + ((((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"]))-(parseFloat(orderList[i]["discount"])))*(parseFloat(orderList[i]["vat_total"])/100));
-                order_total = order_total + ((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"])+((((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"]))-(parseFloat(orderList[i]["discount"])))*(parseFloat(orderList[i]["vat_total"])/100)))-(parseFloat(orderList[i]["discount"]));
+                order_total = order_total + ((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"])+((((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"]))-(parseFloat(orderList[i]["discount"])))*(parseFloat(0))))-(parseFloat(orderList[i]["discount"]));
               if(($('#payment_nominal').val())>order_total){
                 $('#order_charge').text(currency((($('#payment_nominal').val())-order_total), { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
               }else{
@@ -482,14 +474,12 @@
             }
 
             $('#result-total').text(currency(order_total, { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
-            $('#vat-total').text(currency(_vat_total, { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
             $('#sub-total').text(currency(sub_total, { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
         });
 
             $("#payment_nominal").on("input", function(){
               order_total = 0;
               disc_total = 0;
-              _vat_total = 0;
               sub_total = 0;
 
               for (var i = 0; i < productList.length; i++){
@@ -557,7 +547,6 @@
                     table.clear().draw(false);
                     order_total = 0;
                     disc_total = 0;
-                    _vat_total = 0;
                     sub_total = 0;
 
                     counterVoucherHit = 0;
@@ -566,7 +555,7 @@
                       for (var j = 0; j < resp.data.length;j++){
                         if(resp.data[j].product_id == orderList[i]["id"]){
                           orderList[i]["discount"] = ( ((parseFloat(resp.data[j].value)) * (parseFloat(orderList[i]["price"])))/100 );
-                          orderList[i]["total"] = ((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"])+((((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"]))-(parseFloat(orderList[i]["discount"])))*(parseFloat(orderList[i]["vat_total"])/100)))-(parseFloat(orderList[i]["discount"]));
+                          orderList[i]["total"] = ((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"])+((((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"]))-(parseFloat(orderList[i]["discount"])))*(parseFloat(0))))-(parseFloat(orderList[i]["discount"]));
                           $("#remark").val($("#remark").val()+"["+resp.data[j].remark+"]");
                           counterVoucherHit++;
                           voucherNo = $("#input-apply-voucher").val();
@@ -589,8 +578,7 @@
                         }).draw(false);
                         disc_total = disc_total + (parseFloat(orderList[i]["discount"]));
                         sub_total = sub_total + (((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"]))-(parseFloat(orderList[i]["discount"])));
-                        _vat_total = _vat_total + ((((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"]))-(parseFloat(orderList[i]["discount"])))*(parseFloat(orderList[i]["vat_total"])/100));
-                        order_total = order_total + ((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"])+((((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"]))-(parseFloat(orderList[i]["discount"])))*(parseFloat(orderList[i]["vat_total"])/100)))-(parseFloat(orderList[i]["discount"]));
+                        order_total = order_total + ((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"])+((((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"]))-(parseFloat(orderList[i]["discount"])))*(parseFloat(0))))-(parseFloat(orderList[i]["discount"]));
 
                         if(($('#payment_nominal').val())>order_total){
                           $('#order_charge').text(currency((($('#payment_nominal').val())-order_total), { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
@@ -600,7 +588,6 @@
                     }
 
                     $('#result-total').text(currency(order_total, { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
-                    $('#vat-total').text(currency(_vat_total, { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
                     $('#sub-total').text(currency(sub_total, { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
 
 
@@ -655,10 +642,6 @@
                             "discount"  : resp.data[i]["discount"],
                             "qty"       : resp.data[i]["qty"],
                             "total"     : resp.data[i]["total"],
-                            "total_vat"     : resp.data[i]["vat_total"],
-                            "vat_total"     : resp.data[i]["vat"],
-                            "assignedto"     : resp.data[i]["assignedto"],
-                            "assignedtoid"     : resp.data[i]["assignedtoid"],
                       }
 
                       orderList.push(product);
@@ -679,8 +662,7 @@
                     }).draw(false);
                     disc_total = disc_total + (parseFloat(orderList[i]["discount"]));
                     sub_total = sub_total + (((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"]))-(parseFloat(orderList[i]["discount"])));
-                    _vat_total = _vat_total + ((((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"]))-(parseFloat(orderList[i]["discount"])))*(parseFloat(orderList[i]["vat_total"])/100));
-                    order_total = order_total + ((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"])+((((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"]))-(parseFloat(orderList[i]["discount"])))*(parseFloat(orderList[i]["vat_total"])/100)))-(parseFloat(orderList[i]["discount"]));
+                    order_total = order_total + ((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"])+((((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"]))-(parseFloat(orderList[i]["discount"])))*(parseFloat(0))))-(parseFloat(orderList[i]["discount"]));
 
                     if(($('#payment_nominal').val())>order_total){
                       $('#order_charge').text(currency((($('#payment_nominal').val())-order_total), { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
@@ -690,7 +672,6 @@
                 }
 
                 $('#result-total').text(currency(order_total, { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
-                $('#vat-total').text(currency(_vat_total, { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
                 $('#sub-total').text(currency(sub_total, { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
 
             });
@@ -733,7 +714,6 @@
                         $('#input_product_qty').val(1);
                         $('#input_product_disc').val(0);
                         $('#input_product_total').val(v.price);
-                        $('#input_product_vat_total').val(v.vat_total);
                         return;
                     }
                 });
@@ -820,7 +800,6 @@
                     $('#input_product_disc').val(), 
                     $('#input_product_qty').val(),
                     $('#input_product_uom').val(),
-                    $('#input_product_vat_total').val(),
                     $('#input_product_total').val()
                   );
 
