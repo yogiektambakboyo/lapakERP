@@ -58,41 +58,7 @@
                 </select>
               </div>
             </div>
-            <div class="row mb-3">
-
-              
-            </div>
-
-            
-            <div class="modal fade" id="modal-filter" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-              <div class="modal-dialog">
-              <div class="modal-content">
-                  <div class="modal-header">
-                  <h5 class="modal-title" id="staticBackdropLabel">@lang('general.lbl_assign')</h5>
-                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                  </div>
-                  <div class="modal-body">
-                    <label class="form-label col-form-label col-md-8" id="product_id_selected_lbl">@lang('general.lbl_assignselect') </label>
-                    <input type="hidden" id="product_id_selected" value="">
-                    <div class="col-md-8">
-                      <select class="form-control" 
-                          name="assign_id" id="assign_id" required>
-                          <option value="">@lang('general.lbl_assignselect') </option>
-                          @foreach($users as $user)
-                              <option value="{{ $user->id }}">{{ $user->name }}</option>
-                          @endforeach
-                      </select>
-                    </div>
-                  </div>
-                  <div class="modal-footer">
-                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">@lang('general.lbl_close') </button>
-                  <button type="button" class="btn btn-primary"  data-bs-dismiss="modal" id="btn_assigned">@lang('general.lbl_apply')</button>
-                  </div>
-              </div>
-              </div>
-            </div>
-
-            </div>
+           </div>
                 
           </div>
           <div class="row mb-3">
@@ -177,7 +143,6 @@
                   <th scope="col" width="5%">@lang('general.lbl_discount')</th>
                   <th scope="col" width="5%">@lang('general.lbl_qty')</th>
                   <th scope="col" width="15%">Total</th>  
-                  <th scope="col" width="15%">@lang('general.lbl_terapist')</th>  
                   <th scope="col" width="15%">@lang('general.lbl_action')</th> 
                 </tr>
                 </thead>
@@ -207,14 +172,8 @@
             <div class="col-md-6">
               <div class="col-md-12">
                 <div class="col-auto text-end">
-                  <label class="col-md-2"><h2>Sub Total </h2></label>
+                  <label class="col-md-4"><h2>Sub Total </h2></label>
                   <label class="col-md-8" id="sub-total"> <h3>Rp. {{ number_format(($order->total-$order->tax), 0, ',', '.') }}</h3></label>
-                </div>
-              </div>
-              <div class="col-md-12">
-                <div class="col-auto text-end">
-                  <label class="col-md-2"><h2>@lang('general.lbl_tax') </h2></label>
-                  <label class="col-md-8" id="vat-total"> <h3>Rp. {{ number_format($order->tax, 0, ',', '.') }}</h3></label>
                 </div>
               </div>
               <div class="col-md-12">
@@ -251,65 +210,6 @@
       });
 
 
-      $('#btn_assigned').on('click',function(){
-        if($('#assign_id').val()==""){
-          Swal.fire(
-              {
-                position: 'top-end',
-                icon: 'warning',
-                text: 'Please choose staff',
-                showConfirmButton: false,
-                imageHeight: 30, 
-                imageWidth: 30,   
-                timer: 1500
-              }
-            );
-        }else{
-          table.clear().draw(false);
-          order_total = 0;
-          disc_total = 0;
-          _vat_total = 0;
-          sub_total = 0;
-          for (var i = 0; i < orderList.length; i++){
-            var obj = orderList[i];
-            var value = obj["id"];
-            if($('#product_id_selected').val()==obj["id"]){
-              orderList[i]["assignedto"] = $('#assign_id option:selected').text();
-              orderList[i]["assignedtoid"] = $('#assign_id').val();
-            }
-          }
-
-
-          for (var i = 0; i < orderList.length; i++){
-            var obj = orderList[i];
-            var value = obj["abbr"];
-            table.row.add( {
-                   "id"        : obj["id"],
-                    "abbr"      : obj["abbr"],
-                    "uom"       : obj["uom"],
-                    "price"     : obj["price"],
-                    "discount"  : obj["discount"],
-                    "qty"       : obj["qty"],
-                    "total"     : obj["total"],
-                    "assignedto": obj["assignedto"],
-                    "assignedtoid": obj["assignedtoid"],
-                    "action"    : "",
-              }).draw(false);
-              disc_total = disc_total + (parseFloat(orderList[i]["discount"]));
-              sub_total = sub_total + (((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"]))-(parseFloat(orderList[i]["discount"])));
-              _vat_total = _vat_total + ((((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"]))-(parseFloat(orderList[i]["discount"])))*(parseFloat(orderList[i]["vat_total"])/100));
-              order_total = order_total + ((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"])+((((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"]))-(parseFloat(orderList[i]["discount"])))*(parseFloat(orderList[i]["vat_total"])/100)))-(parseFloat(orderList[i]["discount"]));
-              if(($('#payment_nominal').val())>order_total){
-                $('#order_charge').text(currency((($('#payment_nominal').val())-order_total), { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
-              }else{
-                $('#order_charge').text("Rp. 0");
-              }
-          }
-
-          $('#order-total').text(currency(order_total, { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
-        }
-      });
-
       var productList = [];
       var orderList = [];
       var order_total = 0;
@@ -345,45 +245,6 @@
                 timer: 1500
               }
             );
-          }else if($('#payment_type').val()==''){
-            $('#payment_type').focus();
-            Swal.fire(
-              {
-                position: 'top-end',
-                icon: 'warning',
-                text: 'Please choose payment type',
-                showConfirmButton: false,
-                imageHeight: 30, 
-                imageWidth: 30,   
-                timer: 1500
-              }
-            );
-          }else if($('#payment_nominal').val()==''){
-            $('#payment_nominal').focus();
-            Swal.fire(
-              {
-                position: 'top-end',
-                icon: 'warning',
-                text: 'Please choose payment nominal',
-                showConfirmButton: false,
-                imageHeight: 30, 
-                imageWidth: 30,   
-                timer: 1500
-              }
-            );
-          }else if($('#scheduled').val()==''){
-            $('#scheduled').focus();
-            Swal.fire(
-              {
-                position: 'top-end',
-                icon: 'warning',
-                text: 'Please choose schedule',
-                showConfirmButton: false,
-                imageHeight: 30, 
-                imageWidth: 30,   
-                timer: 1500
-              }
-            );
           }else if(orderList.length<=0){
             Swal.fire(
               {
@@ -397,27 +258,7 @@
               }
             );
           }else{
-            counterBlank = 0;
-            for (var i=0;i<orderList.length;i++){
-                if(orderList[i]["assignedto"]==""){
-                  counterBlank++;
-                }
-            }
-
-            if(counterBlank>0){
-              Swal.fire(
-              {
-                  position: 'top-end',
-                  icon: 'warning',
-                  text: 'Please choose terapist for service',
-                  showConfirmButton: false,
-                  imageHeight: 30, 
-                  imageWidth: 30,   
-                  timer: 1500
-                }
-              );
-            }else{
-                const json = JSON.stringify({
+            const json = JSON.stringify({
                   order_date : $('#order_date').val(),
                   product : orderList,
                   customer_id : $('#customer_id').val(),
@@ -454,14 +295,7 @@
                         }
                       );
                     }
-              });
-
-            }
-
-
-
-
-              
+              });              
           }
         });
         
@@ -494,8 +328,7 @@
             defaultContent: 
             '<a href="#"  data-toggle="tooltip" data-placement="top" title="Tambah"   id="add_row"  class="btn btn-xs btn-green"><div class="fa-1x"><i class="fas fa-circle-plus fa-fw"></i></div></a>'+
             '<a href="#"  data-toggle="tooltip" data-placement="top" title="Kurangi"   id="minus_row"  class="btn btn-xs btn-yellow"><div class="fa-1x"><i class="fas fa-circle-minus fa-fw"></i></div></a>'+
-            '<a href="#" data-toggle="tooltip" data-placement="top" title="Hapus"  id="delete_row"  class="btn btn-xs btn-danger"><div class="fa-1x"><i class="fas fa-circle-xmark fa-fw"></i></div></a>'+
-            '<a href="#" href="#modal-filter" data-bs-toggle="modal" data-bs-target="#modal-filter"  data-toggle="tooltip" data-placement="top" title="Terapis" id="assign_row" class="btn btn-xs btn-gray"><div class="fa-1x"><i class="fas fa-user-tag fa-fw"></i></div></a>',}],
+            '<a href="#" data-toggle="tooltip" data-placement="top" title="Hapus"  id="delete_row"  class="btn btn-xs btn-danger"><div class="fa-1x"><i class="fas fa-circle-xmark fa-fw"></i></div></a>',}],
           columns: [
             { data: 'abbr' },
             { data: 'uom' },
@@ -503,7 +336,6 @@
             { data: 'discount' },
             { data: 'qty' },
             { data: 'total',render: DataTable.render.number( '.', null, 0, '' ) },
-            { data: 'assignedto' },
             { data: null},
         ],
         });
@@ -558,7 +390,6 @@
                     "discount"  : obj["discount"],
                     "qty"       : obj["qty"],
                     "total"     : obj["total"],
-                    "assignedto": obj["assignedto"],
                     "action"    : "",
               }).draw(false);
               disc_total = disc_total + (parseFloat(orderList[i]["discount"]));
@@ -637,7 +468,6 @@
                       "discount"  : obj["discount"],
                       "qty"       : obj["qty"],
                       "total"     : obj["total"],
-                      "assignedto" : obj["assignedto"],
                       "action"    : "",
                 }).draw(false);
                 disc_total = disc_total + (parseFloat(orderList[i]["discount"]));
@@ -755,7 +585,6 @@
                               "discount"  : obj["discount"],
                               "qty"       : obj["qty"],
                               "total"     : obj["total"],
-                              "assignedto": obj["assignedto"],
                               "action"    : "",
                         }).draw(false);
                         disc_total = disc_total + (parseFloat(orderList[i]["discount"]));
@@ -846,7 +675,6 @@
                       "discount"  : obj["discount"],
                       "qty"       : obj["qty"],
                       "total"     : obj["total"],
-                      "assignedto" : obj["assignedto"],
                       "action"    : "",
                     }).draw(false);
                     disc_total = disc_total + (parseFloat(orderList[i]["discount"]));
