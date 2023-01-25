@@ -35,7 +35,7 @@
                 <th scope="col" width="10%">@lang('general.brand')</th>
                 <th scope="col" width="5%">@lang('general.tipe')</th>
                 <th scope="col" width="12%">@lang('general.lbl_external_code')</th>
-                <th scope="col" width="17%">@lang('general.lbl_action')</th>   
+                <th scope="col" width="20%">@lang('general.lbl_action')</th>   
             </tr>
             </thead>
             <tbody>
