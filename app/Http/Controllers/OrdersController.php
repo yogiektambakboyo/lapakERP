@@ -578,8 +578,7 @@ class OrdersController extends Controller
     {
         $data = $this->data;
         $user = Auth::user();
-        $product = DB::select(" select od.vat,od.vat_total,to_char(om.scheduled_at,'mm/dd/YYYY') as scheduled_date,to_char(om.scheduled_at,'HH24:MI') as scheduled_time,rm.remark as room_name,om.customers_id,om.remark as order_remark,to_char(om.dated,'mm/dd/YYYY') as dated,om.payment_type,om.payment_nominal,om.scheduled_at,om.branch_room_id,od.qty,od.product_id,od.discount,od.price,od.total,ps.remark,ps.abbr,um.remark as uom,us.name as assignedto,us.id as assignedtoid,
-        usr.name as referralby,usr.id as referralbyid   
+        $product = DB::select(" select od.vat,od.vat_total,to_char(om.scheduled_at,'mm/dd/YYYY') as scheduled_date,om.customers_id,om.remark as order_remark,to_char(om.dated,'mm/dd/YYYY') as dated,om.payment_type,om.payment_nominal,om.scheduled_at,om.branch_room_id,od.qty,od.product_id,od.discount,od.price,od.total,ps.remark,ps.abbr,um.remark as uom  
         from order_detail od 
         join order_master om on om.order_no = od.order_no
         join product_sku ps on ps.id=od.product_id
