@@ -30,28 +30,29 @@
             @include('layouts.partials.messages')
         </div>
 
-        <table class="table table-striped">
+        <table class="table table-striped" id="example">
             <thead>
             <tr>
-                <th scope="col" width="1%">#</th>
                 <th scope="col" width="10%">@lang('general.lbl_branch')</th>
                 <th scope="col">@lang('general.lbl_name')</th>
                 <th scope="col" width="15%">@lang('general.lbl_address')</th>
                 <th scope="col" width="12%">@lang('general.lbl_username')</th>
-                <th scope="col" colspan="3" width="1%"></th> 
+                <th scope="col" width="12%">@lang('general.lbl_external_code')</th>
+                <th scope="col" width="13%">@lang('general.lbl_action')</th> 
             </tr>
             </thead>
             <tbody>
                 @foreach($sales as $seller)
                     <tr>
-                        <th scope="row">{{ $seller->id }}</th>
                         <td>{{ $seller->branch_name }}</td>
                         <td>{{ $seller->name }}</td>
                         <td>{{ $seller->address }}</td>
                         <td>{{ $seller->username }}</td>
-                        <td><a href="{{ route('sales.edit', $seller->id) }}" class="btn btn-info btn-sm  {{ $act_permission->allow_edit==1?'':'d-none' }} ">@lang('general.lbl_edit')</a></td>
+                        <td>{{ $seller->external_code }}</td>
                         <td>
+                            <a href="{{ route('sales.edit', $seller->id) }}" class="btn btn-info btn-sm  {{ $act_permission->allow_edit==1?'':'d-none' }} ">@lang('general.lbl_edit')</a>
                             <a onclick="showConfirm({{ $seller->id }}, '{{ $seller->name }}')" class="btn btn-danger btn-sm  {{ $act_permission->allow_delete==1?'':'d-none' }} ">@lang('general.lbl_delete')</a>
+                        
                         </td>
                     </tr>
                 @endforeach
@@ -117,6 +118,9 @@
           });
           $('#filter_begin_date').val(formattedToday);
 
+          $(document).ready(function () {
+                $('#example').DataTable();
+            });
 
           $('#filter_end_date').datepicker({
               format : 'yyyy-mm-dd',

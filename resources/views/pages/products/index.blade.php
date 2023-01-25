@@ -30,28 +30,26 @@
         <table class="table table-striped" id="example">
             <thead>
             <tr>
-                <th scope="col" width="1%">#</th>
                 <th>@lang('general.lbl_name')</th>
                 <th scope="col" width="15%">@lang('general.category')</th>
                 <th scope="col" width="10%">@lang('general.brand')</th>
                 <th scope="col" width="5%">@lang('general.tipe')</th>
-                <th scope="col" width="2%">@lang('general.lbl_action')</th>   
-                <th scope="col" width="2%"></th>
-                <th scope="col" width="2%"></th>    
+                <th scope="col" width="12%">@lang('general.lbl_external_code')</th>
+                <th scope="col" width="17%">@lang('general.lbl_action')</th>   
             </tr>
             </thead>
             <tbody>
 
                 @foreach($products as $product)
                     <tr>
-                        <th scope="row">{{ $product->id }}</th>
                         <td>{{ $product->product_name }}</td>
                         <td>{{ $product->product_category }}</td>
                         <td>{{ $product->product_brand }}</td>
                         <td>{{ $product->product_type }}</td>
-                        <td><a href="{{ route('products.show', $product->id) }}" class="btn btn-warning btn-sm">@lang('general.lbl_show')</a></td>
-                        <td><a href="{{ route('products.edit', $product->id) }}" class="btn btn-info btn-sm {{ $act_permission->allow_edit==1?'':'d-none' }} ">@lang('general.lbl_edit')</a></td>
+                        <td>{{ $product->external_code }}</td>
                         <td>
+                            <a href="{{ route('products.show', $product->id) }}" class="btn btn-warning btn-sm">@lang('general.lbl_show')</a>
+                            <a href="{{ route('products.edit', $product->id) }}" class="btn btn-info btn-sm {{ $act_permission->allow_edit==1?'':'d-none' }} ">@lang('general.lbl_edit')</a>
                             <a onclick="showConfirm({{ $product->id }}, '{{ $product->product_name }}')" class="btn btn-danger btn-sm  {{ $act_permission->allow_delete==1?'':'d-none' }} ">@lang('general.lbl_delete')</a>
                         </td>
                     </tr>
@@ -93,6 +91,10 @@
               todayHighlight: true,
           });
           $('#filter_end_date').val(formattedToday);
+
+          $(document).ready(function () {
+                $('#example').DataTable();
+            });
 
           function showConfirm(id,data){
             Swal.fire({

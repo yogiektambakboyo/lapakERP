@@ -253,6 +253,18 @@
                         <span class="text-danger text-left">{{ $errors->first('contact_person_level') }}</span>
                     @endif
                 </div>
+                <div class="mb-3">
+                    <label for="external_code" class="form-label">@lang('general.lbl_external_code')</label>
+                    <input value="{{  $customer->external_code }}" 
+                        type="text" 
+                        class="form-control" 
+                        name="external_code" 
+                        placeholder="@lang('general.lbl_external_code')" >
+
+                    @if ($errors->has('external_code'))
+                        <span class="text-danger text-left">{{ $errors->first('external_code') }}</span>
+                    @endif
+                </div>
 
                <div class="row mb-3">
 

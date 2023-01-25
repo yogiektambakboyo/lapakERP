@@ -73,7 +73,7 @@ class ProductsController extends Controller
                     ->join('product_category as pc','pc.id','=','product_sku.category_id')
                     ->join('product_brand as pb','pb.id','=','product_sku.brand_id')
                     ->where('pt.id','=','1')
-                    ->paginate(10,['product_sku.photo','product_sku.id','product_sku.remark as product_name','pt.remark as product_type','pc.remark as product_category','pb.remark as product_brand']);
+                    ->paginate(10,['product_sku.external_code','product_sku.photo','product_sku.id','product_sku.remark as product_name','pt.remark as product_type','pc.remark as product_category','pb.remark as product_brand']);
         return view('pages.products.index', ['act_permission' => $act_permission,'company' => Company::get()->first()],compact('products','data','keyword'))->with('i', ($request->input('page', 1) - 1) * 5);
     }
 
@@ -97,7 +97,7 @@ class ProductsController extends Controller
                         ->join('product_brand as pb','pb.id','=','product_sku.brand_id')
                         ->whereRaw($whereclause)
                         ->where('pt.id','=','1')
-                        ->paginate(10,['product_sku.photo','product_sku.id','product_sku.remark as product_name','pt.remark as product_type','pc.remark as product_category','pb.remark as product_brand']);            
+                        ->paginate(10,['product_sku.external_code','product_sku.photo','product_sku.id','product_sku.remark as product_name','pt.remark as product_type','pc.remark as product_category','pb.remark as product_brand']);            
             return view('pages.products.index',[ 'act_permission' => $act_permission, 'company' => Company::get()->first()], compact('products','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
         }
     }
@@ -154,6 +154,7 @@ class ProductsController extends Controller
                 ['type_id' => $request->get('type_id') ],
                 ['category_id' => $request->get('category_id') ],
                 ['brand_id' => $request->get('brand_id') ],
+                ['external_code' => $request->get('external_code') ],
             )
         );
 
@@ -281,7 +282,7 @@ class ProductsController extends Controller
         ->join('product_brand as pb','pb.id','=','product_sku.brand_id')
         ->join('product_uom','product_uom.product_id','=','product_sku.id')
         ->where('product_sku.id',$product->id)
-        ->get(['product_uom.uom_id as uom_id','product_sku.photo','product_sku.id as id','product_sku.abbr','product_sku.brand_id','product_sku.category_id','product_sku.type_id','product_sku.remark as product_name','pt.remark as product_type','pc.remark as product_category','pb.remark as product_brand'])->first();
+        ->get(['product_sku.external_code','product_uom.uom_id as uom_id','product_sku.photo','product_sku.id as id','product_sku.abbr','product_sku.brand_id','product_sku.category_id','product_sku.type_id','product_sku.remark as product_name','pt.remark as product_type','pc.remark as product_category','pb.remark as product_brand'])->first();
         return view('pages.products.edit', [
             'productCategorys' => Category::latest()->get(),
             'productCategorysRemark' => Category::latest()->get()->pluck('remark')->toArray(),
@@ -314,6 +315,8 @@ class ProductsController extends Controller
                 ['type_id' => $request->get('type_id') ],
                 ['category_id' => $request->get('category_id') ],
                 ['brand_id' => $request->get('brand_id') ],
+                ['external_code' => $request->get('external_code') ],
+
             )
         );
 
@@ -321,7 +324,7 @@ class ProductsController extends Controller
             ['uom_id' => $request->get('uom_id')],
         ));
 
-        
+    
         return redirect()->route('products.index')
             ->withSuccess(__('Product updated successfully.'));
     }

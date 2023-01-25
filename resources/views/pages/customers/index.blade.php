@@ -30,31 +30,30 @@
             @include('layouts.partials.messages')
         </div>
 
-        <table class="table table-striped">
+
+        <table class="table table-striped" id="example">
             <thead>
-            <tr>
-                <th scope="col" width="1%">#</th>
-                <th scope="col" width="10%">@lang('general.lbl_branch')</th>
-                <th scope="col" width="10%">@lang('general.lbl_seller')</th>
-                <th scope="col">@lang('general.lbl_name')</th>
-                <th scope="col" width="20%">@lang('general.lbl_address')</th>
-                <th scope="col" width="12%">@lang('general.lbl_phoneno')</th>
-                <th scope="col" width="12%">@lang('general.lbl_visit')</th>
-                <th scope="col" colspan="3" width="1%"></th> 
-            </tr>
+                <tr>
+                    <th scope="col" width="10%">@lang('general.lbl_branch')</th>
+                    <th scope="col" width="10%">@lang('general.lbl_seller')</th>
+                    <th scope="col">@lang('general.lbl_name')</th>
+                    <th scope="col" width="20%">@lang('general.lbl_address')</th>
+                    <th scope="col" width="12%">@lang('general.lbl_external_code')</th>
+                    <th scope="col" width="12%">@lang('general.lbl_visit')</th>
+                    <th scope="col" width="15%">@lang('general.lbl_action')</th> 
+                </tr>
             </thead>
             <tbody>
                 @foreach($customers as $customer)
                     <tr>
-                        <th scope="row">{{ $customer->id }}</th>
                         <td>{{ $customer->branch_name }}</td>
                         <td>{{ $customer->sellername }}</td>
                         <td>{{ $customer->name }}</td>
                         <td>{{ $customer->address }}</td>
-                        <td>{{ $customer->phone_no }}</td>
+                        <td>{{ $customer->external_code }}</td>
                         <td>{{ $customer->visit_day }} - @php echo implode(",",str_split($customer->visit_week,1)); @endphp</td>
-                        <td><a href="{{ route('customers.edit', $customer->id) }}" class="btn btn-info btn-sm  {{ $act_permission->allow_edit==1?'':'d-none' }} ">@lang('general.lbl_edit')</a></td>
                         <td>
+                            <a href="{{ route('customers.edit', $customer->id) }}" class="btn btn-info btn-sm  {{ $act_permission->allow_edit==1?'':'d-none' }} ">@lang('general.lbl_edit')</a>
                             <a onclick="showConfirm({{ $customer->id }}, '{{ $customer->name }}')" class="btn btn-danger btn-sm  {{ $act_permission->allow_delete==1?'':'d-none' }} ">@lang('general.lbl_delete')</a>
                         </td>
                     </tr>
@@ -127,6 +126,11 @@
               todayHighlight: true,
           });
           $('#filter_end_date').val(formattedToday);
+
+           
+          $(document).ready(function () {
+                $('#example').DataTable();
+            });
 
           function showConfirm(id,data){
             Swal.fire({

@@ -128,6 +128,7 @@ return [
     "lbl_department_add" => "Tambah Departemen",
     "lbl_department_edit" => "Edit Departemen",
     "lbl_price_purchase" => "Harga Beli",
+    "lbl_external_code" => "Kode Eksternal",
 
     "lbl_product_new" => "Produk Baru",
     "lbl_add_product_new" => "Tambah Produk Baru",

@@ -36,5 +36,6 @@ class Customer extends Model
         'contact_person_level',
         'visit_day',
         'visit_week',
+        'external_code',
     ];
 }

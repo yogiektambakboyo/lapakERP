@@ -16,6 +16,7 @@ class Sales extends Model
         'password',
         'address',
         'branch_id',
+        'external_code',
         'active'
     ];
 }

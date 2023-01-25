@@ -35,6 +35,12 @@
             </div>
           </div>
           <div class="row mb-3">
+            <label class="form-label col-form-label col-md-2">@lang('general.lbl_external_code')</label>
+            <div class="col-md-8">
+              <input type="text" class="form-control" name="external_code" value="{{ old('external_code') }}"  />
+            </div>
+          </div>
+          <div class="row mb-3">
             <label class="form-label col-form-label col-md-2">@lang('general.lbl_type')</label>
             <div class="col-md-8">
               <select class="form-control" 

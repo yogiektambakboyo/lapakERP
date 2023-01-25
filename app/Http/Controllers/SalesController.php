@@ -55,7 +55,7 @@ class SalesController extends Controller
         $Sales = Sales::join('branch as b','b.id','sales.branch_id')
                             ->join('users_branch as ub', function($join){
                                 $join->on('ub.branch_id', '=', 'b.id');
-                            })->where('ub.user_id', $user->id)->paginate(10,['sales.*','b.remark as branch_name']);
+                            })->where('ub.user_id', $user->id)->paginate(10,['sales.id','sales.name','sales.address','sales.username','sales.external_code','b.remark as branch_name']);
         $data = $this->data;
 
         $request->search = "";
@@ -148,6 +148,7 @@ class SalesController extends Controller
                 ['address' => $request->get('address') ],
                 ['active' => '1' ],
                 ['branch_id' => $request->get('branch_id') ],
+                ['external_code' => $request->get('external_code') ],
             )
         );
         return redirect()->route('sales.index')
@@ -214,6 +215,7 @@ class SalesController extends Controller
                 ['name' => $request->get('name') ],
                 ['address' => $request->get('address') ],
                 ['branch_id' => $request->get('branch_id') ],
+                ['external_code' => $request->get('external_code') ],
             )
         );
 

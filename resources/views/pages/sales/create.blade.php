@@ -75,6 +75,19 @@
                         </select>
                     </div>
                   </div>
+
+                  <div class="mb-3">
+                    <label for="external_code" class="form-label">@lang('general.lbl_external_code')</label>
+                    <input value="{{ old('external_code') }}" 
+                        type="text" 
+                        class="form-control" 
+                        name="external_code" 
+                        placeholder="@lang('general.lbl_external_code')" required>
+
+                    @if ($errors->has('external_code'))
+                        <span class="text-danger text-left">{{ $errors->first('external_code') }}</span>
+                    @endif
+                </div>
                 
                 <button type="submit" class="btn btn-primary">@lang('general.lbl_save')</button>
                 <a href="{{ route('sales.index') }}" class="btn btn-default">@lang('general.lbl_back') </a>

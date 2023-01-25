@@ -173,6 +173,7 @@ class CustomersController extends Controller
                 ['contact_person_level' => $request->get('contact_person_level') ],
                 ['visit_day' => $request->get('input_day') ],
                 ['visit_week' => $request->get('input_week') ],
+                ['external_code' => $request->get('external_code') ],
             )
         );
         return redirect()->route('customers.index')
@@ -259,6 +260,7 @@ class CustomersController extends Controller
                 ['contact_person_level' => $request->get('contact_person_level') ],
                 ['visit_day' => $request->get('input_day') ],
                 ['visit_week' => $request->get('input_week') ],
+                ['external_code' => $request->get('external_code') ],
             )
         );
 
