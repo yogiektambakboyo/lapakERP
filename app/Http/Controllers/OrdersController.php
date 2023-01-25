@@ -623,11 +623,8 @@ class OrdersController extends Controller
                 ['payment_nominal' => $request->get('payment_nominal') ],
                 ['payment_type' => $request->get('payment_type') ],
                 ['total_payment' => (int)$request->get('payment_nominal')>=(int)$request->get('total_order')?(int)$request->get('total_order'):$request->get('payment_nominal') ],
-                ['scheduled_at' => Carbon::parse($request->get('scheduled_at'))->format('Y-m-d H:i:s.u') ],
-                ['branch_room_id' => $request->get('branch_room_id')],
                 ['customers_name' => Customer::where('id','=',$request->get('customer_id'))->get(['name'])->first()->name ],
                 ['voucher_code' => $request->get('voucher_code')],
-                ['tax' => $request->get('total_vat')],
                 ['total_discount' => $request->get('total_discount')],
             )
         );
@@ -663,13 +660,7 @@ class OrdersController extends Controller
                     ['total' => $request->get('product')[$i]["total"]],
                     ['discount' => $request->get('product')[$i]["discount"]],
                     ['uom' => $request->get('product')[$i]["uom"]],
-                    ['vat' => $request->get('product')[$i]["vat_total"]],
-                    ['vat_total' => $request->get('product')[$i]["total_vat"]],
                     ['seq' => $i ],
-                    ['assigned_to' => $request->get('product')[$i]["assignedtoid"]],
-                    ['assigned_to_name' => User::where('id','=',$request->get('product')[$i]["assignedtoid"])->get(['name'])->first()->name ],
-                    ['referral_by' => $user->id],
-                    ['referral_by_name' => User::where('id','=', $user->id)->get(['name'])->first()->name],
                 )
             );
 
