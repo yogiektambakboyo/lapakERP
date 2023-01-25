@@ -662,7 +662,7 @@
                     }).draw(false);
                     disc_total = disc_total + (parseFloat(orderList[i]["discount"]));
                     sub_total = sub_total + (((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"]))-(parseFloat(orderList[i]["discount"])));
-                    order_total = order_total + ((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"])+((((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"]))-(parseFloat(orderList[i]["discount"])))*(parseFloat(0))))-(parseFloat(orderList[i]["discount"]));
+                    order_total = order_total + ((parseInt(orderList[i]["qty"])) * parseFloat(orderList[i]["price"])) - (parseFloat(orderList[i]["discount"]));
 
                     if(($('#payment_nominal').val())>order_total){
                       $('#order_charge').text(currency((($('#payment_nominal').val())-order_total), { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
