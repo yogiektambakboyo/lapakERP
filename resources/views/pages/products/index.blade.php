@@ -12,8 +12,6 @@
                 </div>
                 <div class="col-md-10"> 	
                     <form action="{{ route('products.search') }}" method="GET" class="row row-cols-lg-auto g-3 align-items-center">
-                        <div class="col-2"><input type="text" class="form-control  form-control-sm" name="search" placeholder="@lang('general.label_search')" value="{{ $keyword }}"></div>
-                        <div class="col-2"><input type="submit" class="btn btn-sm btn-secondary" value="@lang('general.btn_search')" name="submit"></div>   
                         <div class="col-2"><input type="submit" class="btn btn-sm btn-success" value="@lang('general.btn_export')" name="export"></div>  
                     </form>
                 </div>
@@ -31,11 +29,11 @@
             <thead>
             <tr>
                 <th>@lang('general.lbl_name')</th>
-                <th scope="col" width="15%">@lang('general.category')</th>
+                <th scope="col" width="15%">@lang('general.lbl_abbr')</th>
+                <th scope="col" width="12%">@lang('general.category')</th>
                 <th scope="col" width="10%">@lang('general.brand')</th>
-                <th scope="col" width="5%">@lang('general.tipe')</th>
                 <th scope="col" width="12%">@lang('general.lbl_external_code')</th>
-                <th scope="col" width="20%">@lang('general.lbl_action')</th>   
+                <th scope="col" width="18%">@lang('general.lbl_action')</th>   
             </tr>
             </thead>
             <tbody>
@@ -43,9 +41,9 @@
                 @foreach($products as $product)
                     <tr>
                         <td>{{ $product->product_name }}</td>
+                        <td>{{ $product->abbr }}</td>
                         <td>{{ $product->product_category }}</td>
                         <td>{{ $product->product_brand }}</td>
-                        <td>{{ $product->product_type }}</td>
                         <td>{{ $product->external_code }}</td>
                         <td>
                             <a href="{{ route('products.show', $product->id) }}" class="btn btn-warning btn-sm">@lang('general.lbl_show')</a>
@@ -56,10 +54,6 @@
                 @endforeach
             </tbody>
         </table>
-
-        <div class="d-flex">
-            {!! $products->links() !!}
-        </div>
 
     </div>
 @endsection
