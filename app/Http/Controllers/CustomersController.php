@@ -56,7 +56,7 @@ class CustomersController extends Controller
                             ->join('sales as s','s.id','customers.sales_id')
                             ->join('users_branch as ub', function($join){
                                 $join->on('ub.branch_id', '=', 'b.id');
-                            })->where('ub.user_id', $user->id)->paginate(10,['customers.*','s.name  as sellername','b.remark as branch_name']);
+                            })->where('ub.user_id', $user->id)->get(['customers.*','s.name  as sellername','b.remark as branch_name']);
         $data = $this->data;
 
         $request->search = "";
@@ -91,7 +91,7 @@ class CustomersController extends Controller
                             ->join('sales as s','s.id','customers.sales_id')
                             ->join('users_branch as ub', function($join){
                                 $join->on('ub.branch_id', '=', 'b.id');
-                            })->where('ub.user_id', $user->id)->where('customers.branch_id','like','%'.$branchx.'%')->where('customers.name','ILIKE','%'.$keyword.'%')->paginate(10,['customers.*','s.name  as sellername','b.remark as branch_name']);
+                            })->where('ub.user_id', $user->id)->where('customers.branch_id','like','%'.$branchx.'%')->where('customers.name','ILIKE','%'.$keyword.'%')->get(['customers.*','s.name  as sellername','b.remark as branch_name']);
             $request->filter_branch_id = "";
             return view('pages.customers.index', [
                 'customers' => $Customers,'data' => $data , 
@@ -105,7 +105,7 @@ class CustomersController extends Controller
                            ->join('sales as s','s.id','customers.sales_id')
                             ->join('users_branch as ub', function($join){
                                 $join->on('ub.branch_id', '=', 'b.id');
-                            })->where('ub.user_id', $user->id)->where('customers.branch_id','like','%'.$branchx.'%')->where('customers.name','ILIKE','%'.$keyword.'%')->paginate(10,['customers.*','s.name as sellername','b.remark as branch_name']);
+                            })->where('ub.user_id', $user->id)->where('customers.branch_id','like','%'.$branchx.'%')->where('customers.name','ILIKE','%'.$keyword.'%')->get(['customers.*','s.name as sellername','b.remark as branch_name']);
             return view('pages.customers.index', [
                 'customers' => $Customers,'data' => $data , 
                 'company' => Company::get()->first(),

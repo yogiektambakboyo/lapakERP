@@ -92,11 +92,6 @@
             </div>
             </div>
           </div>
-
-        <div class="d-flex">
-            {!! $customers->links() !!}
-        </div>
-
     </div>
 @endsection
 
