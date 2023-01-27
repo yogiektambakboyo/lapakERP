@@ -25,6 +25,7 @@ class ProductsExport implements FromCollection,WithColumnFormatting, WithHeading
         return [
             'External Code',
             'Name',
+            'Name Abbreviation',
             'Product Type',
             'Product Category',
             'Product Brand',
@@ -39,7 +40,7 @@ class ProductsExport implements FromCollection,WithColumnFormatting, WithHeading
                     ->join('product_category as pc','pc.id','=','product_sku.category_id')
                     ->join('product_brand as pb','pb.id','=','product_sku.brand_id')
                     ->whereRaw($whereclause)
-                    ->get(['product_sku.external_code','product_sku.remark as product_name','pt.remark as product_type','pc.remark as product_category','pb.remark as product_brand']);            
+                    ->get(['product_sku.external_code','product_sku.remark as product_name','product_sku.abbr','pt.remark as product_type','pc.remark as product_category','pb.remark as product_brand']);            
         
     }
 
