@@ -63,7 +63,7 @@ class OrdersExport implements FromCollection,WithColumnFormatting, WithHeadings
         ->where('order_master.order_no','ilike','%'.$this->keyword.'%')  
         ->where('b.id','like','%'.$this->branch.'%')  
         ->whereBetween('order_master.dated',$fil)  
-      ->get(['b.remark as branch_name','order_master.order_no','order_master.dated','s.external_code','s.name as sales_name','jt.external_code','jt.name as customer','ps.external_code','ps.remark','od.qty','od.price','od.total' ]);
+      ->get(['b.remark as branch_name','order_master.order_no','order_master.dated','s.external_code as sales_ext_code','s.name as sales_name','jt.external_code as cust_ext_code','jt.name as customer','ps.external_code as product_ext_code','ps.remark','od.qty','od.price','od.total' ]);
     }
 
     public function columnFormats(): array
