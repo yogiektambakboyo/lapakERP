@@ -33,6 +33,7 @@ class CustomersExport implements FromCollection,WithColumnFormatting, WithHeadin
         //b.remark as branch_name','customers.name','customers.address','customers.phone_no
         return [
             'Branch Name',
+            'External Code',
             'Name',
             'Address',
             'Phone No',
@@ -43,7 +44,7 @@ class CustomersExport implements FromCollection,WithColumnFormatting, WithHeadin
         return Customer::join('branch as b','b.id','customers.branch_id')
         ->join('users_branch as ub', function($join){
             $join->on('ub.branch_id', '=', 'b.id');
-        })->where('ub.user_id', $this->user_id)->where('customers.branch_id','like','%'.$this->branch.'%')->where('customers.name','ILIKE','%'.$this->keyword.'%')->get(['b.remark as branch_name','customers.name','customers.address','customers.phone_no']);;
+        })->where('ub.user_id', $this->user_id)->where('customers.branch_id','like','%'.$this->branch.'%')->where('customers.name','ILIKE','%'.$this->keyword.'%')->get(['b.remark as branch_name','customers.external_code','customers.name','customers.address','customers.phone_no']);;
 
     }
 

@@ -33,6 +33,7 @@ class SalesExport implements FromCollection,WithColumnFormatting, WithHeadings
         //b.remark as branch_name','sales.name','sales.address','sales.phone_no
         return [
             'Branch Name',
+            'External Code',
             'Name',
             'Address',
             'Username',
@@ -44,7 +45,7 @@ class SalesExport implements FromCollection,WithColumnFormatting, WithHeadings
         return Sales::join('branch as b','b.id','sales.branch_id')
         ->join('users_branch as ub', function($join){
             $join->on('ub.branch_id', '=', 'b.id');
-        })->where('ub.user_id', $this->user_id)->where('sales.branch_id','like','%'.$this->branch.'%')->where('sales.name','ILIKE','%'.$this->keyword.'%')->get(['b.remark as branch_name','sales.name','sales.address','sales.username','sales.password']);;
+        })->where('ub.user_id', $this->user_id)->where('sales.branch_id','like','%'.$this->branch.'%')->where('sales.name','ILIKE','%'.$this->keyword.'%')->get(['b.remark as branch_name','sales.external_Code','sales.name','sales.address','sales.username','sales.password']);;
 
     }
 

@@ -23,7 +23,7 @@ class ProductsExport implements FromCollection,WithColumnFormatting, WithHeading
     public function headings(): array
     {
         return [
-            '#',
+            'External Code',
             'Name',
             'Product Type',
             'Product Category',
@@ -39,7 +39,7 @@ class ProductsExport implements FromCollection,WithColumnFormatting, WithHeading
                     ->join('product_category as pc','pc.id','=','product_sku.category_id')
                     ->join('product_brand as pb','pb.id','=','product_sku.brand_id')
                     ->whereRaw($whereclause)
-                    ->get(['product_sku.id','product_sku.remark as product_name','pt.remark as product_type','pc.remark as product_category','pb.remark as product_brand']);            
+                    ->get(['product_sku.external_code','product_sku.remark as product_name','pt.remark as product_type','pc.remark as product_category','pb.remark as product_brand']);            
         
     }
 
