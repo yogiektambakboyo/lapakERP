@@ -19,7 +19,7 @@ use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
 use Spatie\Permission\Models\Permission;
 use Maatwebsite\Excel\Facades\Excel;
-use App\Exports\ProductsExport;
+use App\Exports\ProductsDistributionExport;
 use App\Http\Controllers\Controller;
 use Yajra\Datatables\Datatables;
 use Auth;
@@ -60,6 +60,8 @@ class ProductsDistributionController extends Controller
         $user = Auth::user();
         $id = $user->roles->first()->id;
         $this->getpermissions($id);
+        $branchs = Branch::join('users_branch as ub','ub.branch_id', '=', 'branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']);
+
 
         $data = $this->data;
         $keyword = "";
@@ -72,7 +74,7 @@ class ProductsDistributionController extends Controller
                     ->join('branch as bc','bc.id','=','pr.branch_id')
                     ->where('pt.id','=','1')
                     ->paginate(10,['product_sku.id','product_sku.remark as product_name','pr.branch_id','bc.remark as branch_name','pb.remark as product_brand','pr.active']);
-        return view('pages.productsdistribution.index', ['company' => Company::get()->first()],compact('products','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
+        return view('pages.productsdistribution.index', ['company' => Company::get()->first()],compact('products','branchs','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
     }
 
     public function search(Request $request) 
@@ -81,12 +83,16 @@ class ProductsDistributionController extends Controller
         $id = $user->roles->first()->id;
         $this->getpermissions($id);
 
+        $branchs = Branch::join('users_branch as ub','ub.branch_id', '=', 'branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']);
+
         $keyword = $request->search;
         $data = $this->data;
         $act_permission = $this->act_permission[0];
+        $branchx = $request->filter_branch_id;
 
         if($request->export=='Export Excel'){
-            return Excel::download(new ProductsExport($keyword), 'products_'.Carbon::now()->format('YmdHis').'.xlsx');
+            $strencode = base64_encode($keyword.'#'.$branchx);
+            return Excel::download(new ProductsDistributionExport($strencode), 'productsdistribution_'.Carbon::now()->format('YmdHis').'.xlsx');
         }else{
             $whereclause = " upper(product_sku.remark) like '%".strtoupper($keyword)."%'";
             $products = Product::orderBy('product_sku.remark', 'ASC')
@@ -97,8 +103,9 @@ class ProductsDistributionController extends Controller
                         ->join('branch as bc','bc.id','=','pr.branch_id')
                         ->whereRaw($whereclause)
                         ->where('pt.id','=','1')
+                        ->where('bc.id','like','%'.$branchx.'%')  
                         ->paginate(10,['product_sku.id','product_sku.remark as product_name','pr.branch_id','bc.remark as branch_name','pr.price as product_price','pb.remark as product_brand']);           
-            return view('pages.productsdistribution.index',['company' => Company::get()->first()], compact('products','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
+            return view('pages.productsdistribution.index',['company' => Company::get()->first()], compact('products','branchs','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
         }
     }
 

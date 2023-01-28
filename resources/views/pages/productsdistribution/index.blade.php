@@ -13,7 +13,8 @@
                 <div class="col-md-10"> 	
                     <form action="{{ route('productsdistribution.search') }}" method="GET" class="row row-cols-lg-auto g-3 align-items-center">
                         <div class="col-2"><input type="text" class="form-control  form-control-sm" name="search" placeholder="@lang('general.lbl_search')" value="{{ $keyword }}"></div>
-                        <div class="col-2"><input type="submit" class="btn btn-sm btn-secondary" value="@lang('general.btn_search')" name="submit"></div>    
+                        <div class="col-2"><input type="submit" class="btn btn-sm btn-secondary" value="@lang('general.btn_search')" name="submit"></div>   
+                        <div class="col-2"><a href="#modal-filter"  data-bs-toggle="modal" data-bs-target="#modal-filter" class="btn btn-sm btn-lime">@lang('general.btn_filter')</a></div>    
                         <div class="col-2"><input type="submit" class="btn btn-sm btn-success" value="@lang('general.btn_export')" name="export"></div>  
                     </form>
                 </div>
@@ -58,6 +59,40 @@
 
         <div class="d-flex">
             {!! $products->links() !!}
+        </div>
+
+        <!-- Vertically centered modal -->
+        <!-- Modal -->
+        <div class="modal fade" id="modal-filter" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+            <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                <h5 class="modal-title"  id="input_expired_list_at_lbl">@lang('general.lbl_filterdata')</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form action="{{ route('productsdistribution.search') }}" method="GET">   
+                        @csrf 
+                        <div class="col-md-10">
+                            <label class="form-label col-form-label col-md-4">@lang('general.lbl_branch')</label>
+                        </div>
+                        <div class="col-md-12">
+                            <select class="form-control" 
+                                name="filter_branch_id" id="filter_branch_id">
+                                <option value="">@lang('general.lbl_allbranch')</option>
+                                @foreach($branchs as $branchx)
+                                    <option value="{{ $branchx->id }}">{{ $branchx->remark }} </option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <br>
+                        <div class="col-md-12">
+                            <button type="submit" class="btn btn-primary form-control">@lang('general.lbl_apply')</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            </div>
         </div>
 
     </div>
