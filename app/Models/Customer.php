@@ -37,5 +37,6 @@ class Customer extends Model
         'visit_day',
         'visit_week',
         'external_code',
+        'segment_id',
     ];
 }

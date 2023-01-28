@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Spatie\Permission\Models\Permission;
 use App\Models\Customer;
+use App\Models\CustomersSegment;
 use App\Models\Branch;
 use App\Models\Sales;
 use Auth;
@@ -54,9 +55,10 @@ class CustomersController extends Controller
         $user = Auth::user();
         $Customers = Customer::join('branch as b','b.id','customers.branch_id')
                             ->join('sales as s','s.id','customers.sales_id')
+                            ->join('customers_segment as cs','cs.id','=','customers.segment_id')
                             ->join('users_branch as ub', function($join){
                                 $join->on('ub.branch_id', '=', 'b.id');
-                            })->where('ub.user_id', $user->id)->get(['customers.*','s.name  as sellername','b.remark as branch_name']);
+                            })->where('ub.user_id', $user->id)->get(['cs.remark as segment_name','customers.*','s.name  as sellername','b.remark as branch_name']);
         $data = $this->data;
 
         $request->search = "";
@@ -89,9 +91,10 @@ class CustomersController extends Controller
         }else if($request->src=='Search'){
             $Customers = Customer::join('branch as b','b.id','customers.branch_id')
                             ->join('sales as s','s.id','customers.sales_id')
+                            ->join('customers_segment as cs','cs.id','=','customers.segment_id')
                             ->join('users_branch as ub', function($join){
                                 $join->on('ub.branch_id', '=', 'b.id');
-                            })->where('ub.user_id', $user->id)->where('customers.branch_id','like','%'.$branchx.'%')->where('customers.name','ILIKE','%'.$keyword.'%')->get(['customers.*','s.name  as sellername','b.remark as branch_name']);
+                            })->where('ub.user_id', $user->id)->where('customers.branch_id','like','%'.$branchx.'%')->where('customers.name','ILIKE','%'.$keyword.'%')->get(['cs.remark as segment_name','customers.*','s.name  as sellername','b.remark as branch_name']);
             $request->filter_branch_id = "";
             return view('pages.customers.index', [
                 'customers' => $Customers,'data' => $data , 
@@ -103,9 +106,10 @@ class CustomersController extends Controller
         }else{
             $Customers = Customer::join('branch as b','b.id','customers.branch_id')
                            ->join('sales as s','s.id','customers.sales_id')
+                           ->join('customers_segment as cs','cs.id','=','customers.segment_id')
                             ->join('users_branch as ub', function($join){
                                 $join->on('ub.branch_id', '=', 'b.id');
-                            })->where('ub.user_id', $user->id)->where('customers.branch_id','like','%'.$branchx.'%')->where('customers.name','ILIKE','%'.$keyword.'%')->get(['customers.*','s.name as sellername','b.remark as branch_name']);
+                            })->where('ub.user_id', $user->id)->where('customers.branch_id','like','%'.$branchx.'%')->where('customers.name','ILIKE','%'.$keyword.'%')->get(['cs.remark as segment_name','customers.*','s.name as sellername','b.remark as branch_name']);
             return view('pages.customers.index', [
                 'customers' => $Customers,'data' => $data , 
                 'company' => Company::get()->first(),
@@ -135,8 +139,10 @@ class CustomersController extends Controller
             'data'=>$data,
             'branchs' => Branch::latest()->get(), 
             'company' => Company::get()->first(),
+            'segments' => CustomersSegment::get()->first(),
             'userBranchs' => Branch::latest()->get()->pluck('remark')->toArray(),
             'sellers' => $sellers,
+            'segments' => CustomersSegment::orderBy('remark','asc')->get(['id','remark']),
         ]);
     }
 
@@ -174,6 +180,7 @@ class CustomersController extends Controller
                 ['visit_day' => $request->get('input_day') ],
                 ['visit_week' => $request->get('input_week') ],
                 ['external_code' => $request->get('external_code') ],
+                ['segment_id' => $request->get('segment_id') ],
             )
         );
         return redirect()->route('customers.index')
@@ -221,6 +228,7 @@ class CustomersController extends Controller
         return view('pages.customers.edit', [
             'customer' => $Customer ,'data' => $data ,'branchs' => Branch::latest()->get(), 'company' => Company::get()->first(),
             'userBranchs' => Branch::latest()->get()->pluck('remark')->toArray(),
+            'segments' => CustomersSegment::orderBy('remark','asc')->get(['id','remark']),
             'sellers' => $sellers,
         ]);
     }
@@ -261,6 +269,7 @@ class CustomersController extends Controller
                 ['visit_day' => $request->get('input_day') ],
                 ['visit_week' => $request->get('input_week') ],
                 ['external_code' => $request->get('external_code') ],
+                ['segment_id' => $request->get('segment_id') ],
             )
         );
 

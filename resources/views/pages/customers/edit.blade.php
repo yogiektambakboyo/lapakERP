@@ -66,7 +66,7 @@
 
 
 
-                  <div class="mb-3">
+                <div class="mb-3">
                     <label class="form-label">@lang('general.lbl_seller')</label>
                     <div class="col-md-12">
                       <select class="form-control" 
@@ -74,6 +74,19 @@
                             <option value="">@lang('general.lbl_sellerselect')</option>
                             @foreach($sellers as $seller)
                                 <option value="{{ $seller->id }}"  @if($seller->id == $customer->sales_id) selected @endif>{{  $seller->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">@lang('general.lbl_segment')</label>
+                    <div class="col-md-12">
+                      <select class="form-control" 
+                            name="segment_id">
+                            <option value="">@lang('general.lbl_segmentselect')</option>
+                            @foreach($segments as $segment)
+                                <option value="{{ $segment->id }}"  @if($segment->id == $customer->segment_id) selected @endif>{{  $segment->remark }}</option>
                             @endforeach
                         </select>
                     </div>

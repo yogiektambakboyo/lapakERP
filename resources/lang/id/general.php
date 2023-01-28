@@ -13,10 +13,12 @@ return [
     "lbl_order" => "Pesanan",
     "lbl_order_no" => "Nomor Pesanan",
     "lbl_return_no" => "Nomor Retur",
+    "lbl_segment" => "Segment",
 
     "product" => "Produk",
     "productselect" => "Pilih Produk",
     "lbl_productselect" => "Pilih Produk",
+    "lbl_segmentselect" => "Pilih Segment",
     "service" => "Perawatan",
     "serviceselect" => "Pilih Perawatan",
     "category" => "Kategori",

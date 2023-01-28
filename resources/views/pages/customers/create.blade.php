@@ -77,6 +77,19 @@
                 </div>
 
                 <div class="mb-3">
+                    <label class="form-label">@lang('general.lbl_segment')</label>
+                    <div class="col-md-12">
+                      <select class="form-control" 
+                            name="segment_id">
+                            <option value="">@lang('general.lbl_segmentselect')</option>
+                            @foreach($segments as $segment)
+                                <option value="{{ $segment->id }}">{{  $segment->remark }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
+
+                <div class="mb-3">
                     <label for="city" class="form-label">@lang('general.lbl_city')</label>
                     <input value="{{ old('city') }}" 
                         type="text" 
