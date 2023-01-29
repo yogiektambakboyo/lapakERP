@@ -322,32 +322,32 @@
                     <div class="col-md-6">
                         <label class="form-label col-form-label col-md-4">@lang('general.lbl_visit_week')</label>
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" value="1" id="input_week_1"  @if(str_contains($customer->visit_week,"1")) checked @endif>
+                            <input class="form-check-input" type="checkbox" value="1" name="input_week_1" id="input_week_1"  @if(str_contains($customer->visit_week,"1")) checked @endif>
                             <label class="form-check-label" for="input_week_1">
                             Minggu 1
                             </label>
                         </div>
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" value="2" id="input_week_2"  @if(str_contains($customer->visit_week,"2")) checked @endif>
+                            <input class="form-check-input" type="checkbox" value="2" name="input_week_2" id="input_week_2"  @if(str_contains($customer->visit_week,"2")) checked @endif>
                             <label class="form-check-label" for="input_week_2">
                             Minggu 2
                             </label>
                         </div>
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" value="3" id="input_week_3"  @if(str_contains($customer->visit_week,"3")) checked @endif>
+                            <input class="form-check-input" type="checkbox" value="3" name="input_week_3" id="input_week_3"  @if(str_contains($customer->visit_week,"3")) checked @endif>
                             <label class="form-check-label" for="input_week_3">
                             Minggu 3
                             </label>
                         </div>
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" value="4" id="input_week_4"  @if(str_contains($customer->visit_week,"4")) checked @endif>
+                            <input class="form-check-input" type="checkbox" value="4" name="input_week_4" id="input_week_4"  @if(str_contains($customer->visit_week,"4")) checked @endif>
                             <label class="form-check-label" for="input_week_4">
                             Minggu 4
                             </label>
                         </div>
                     </div>
 
-                    <input type="hidden" id="input_week" name="input_week" value="{{  $customer->input_week }}">
+                    <input type="hidden" id="input_week" name="input_week" value="{{  $customer->visit_week }}">
 
                </div>
 
