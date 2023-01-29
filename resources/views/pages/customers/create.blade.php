@@ -43,7 +43,7 @@
                         type="text" 
                         class="form-control" 
                         name="phone_no" 
-                        placeholder="@lang('general.lbl_phoneno')" required>
+                        placeholder="@lang('general.lbl_phoneno')">
 
                     @if ($errors->has('phone_no'))
                         <span class="text-danger text-left">{{ $errors->first('phone_no') }}</span>
@@ -95,7 +95,7 @@
                         type="text" 
                         class="form-control" 
                         name="city" 
-                        placeholder="@lang('general.lbl_city')" required>
+                        placeholder="@lang('general.lbl_city')">
 
                     @if ($errors->has('city'))
                         <span class="text-danger text-left">{{ $errors->first('city') }}</span>
@@ -108,7 +108,7 @@
                         type="text" 
                         class="form-control" 
                         name="credit_limit" 
-                        placeholder="@lang('general.lbl_credit_limit')" required>
+                        placeholder="@lang('general.lbl_credit_limit')">
 
                     @if ($errors->has('credit_limit'))
                         <span class="text-danger text-left">{{ $errors->first('credit_limit') }}</span>
@@ -122,7 +122,7 @@
                         type="text" 
                         class="form-control" 
                         name="longitude" 
-                        placeholder="@lang('general.lbl_longitude')" required>
+                        placeholder="@lang('general.lbl_longitude')">
 
                     @if ($errors->has('longitude'))
                         <span class="text-danger text-left">{{ $errors->first('longitude') }}</span>
@@ -135,7 +135,7 @@
                         type="text" 
                         class="form-control" 
                         name="latitude" 
-                        placeholder="@lang('general.lbl_latitude')" required>
+                        placeholder="@lang('general.lbl_latitude')">
 
                     @if ($errors->has('latitude'))
                         <span class="text-danger text-left">{{ $errors->first('latitude') }}</span>
@@ -147,7 +147,7 @@
                         type="text" 
                         class="form-control" 
                         name="email" 
-                        placeholder="@lang('general.lbl_email')" required>
+                        placeholder="@lang('general.lbl_email')">
 
                     @if ($errors->has('email'))
                         <span class="text-danger text-left">{{ $errors->first('email') }}</span>
@@ -159,7 +159,7 @@
                         type="text" 
                         class="form-control" 
                         name="handphone" 
-                        placeholder="@lang('general.lbl_handphone')" required>
+                        placeholder="@lang('general.lbl_handphone')">
 
                     @if ($errors->has('handphone'))
                         <span class="text-danger text-left">{{ $errors->first('handphone') }}</span>
@@ -171,7 +171,7 @@
                         type="text" 
                         class="form-control" 
                         name="whatsapp_no" 
-                        placeholder="@lang('general.lbl_whatsapp_no')" required>
+                        placeholder="@lang('general.lbl_whatsapp_no')">
 
                     @if ($errors->has('whatsapp_no'))
                         <span class="text-danger text-left">{{ $errors->first('whatsapp_no') }}</span>
@@ -183,7 +183,7 @@
                         type="text" 
                         class="form-control" 
                         name="citizen_id" 
-                        placeholder="@lang('general.lbl_citizen_id')" required>
+                        placeholder="@lang('general.lbl_citizen_id')">
 
                     @if ($errors->has('citizen_id'))
                         <span class="text-danger text-left">{{ $errors->first('citizen_id') }}</span>
@@ -195,7 +195,7 @@
                         type="text" 
                         class="form-control" 
                         name="tax_id" 
-                        placeholder="@lang('general.lbl_tax_id')" required>
+                        placeholder="@lang('general.lbl_tax_id')">
 
                     @if ($errors->has('tax_id'))
                         <span class="text-danger text-left">{{ $errors->first('tax_id') }}</span>
@@ -208,7 +208,7 @@
                         type="text" 
                         class="form-control" 
                         name="contact_person" 
-                        placeholder="@lang('general.lbl_contactperson')" required>
+                        placeholder="@lang('general.lbl_contactperson')">
 
                     @if ($errors->has('contact_person'))
                         <span class="text-danger text-left">{{ $errors->first('contact_person') }}</span>
@@ -221,7 +221,7 @@
                         type="text" 
                         class="form-control" 
                         name="type" 
-                        placeholder="@lang('general.lbl_type')" required>
+                        placeholder="@lang('general.lbl_type')">
 
                     @if ($errors->has('type'))
                         <span class="text-danger text-left">{{ $errors->first('type') }}</span>
@@ -234,7 +234,7 @@
                         type="clasification" 
                         class="form-control" 
                         name="clasification" 
-                        placeholder="@lang('general.lbl_type')" required>
+                        placeholder="@lang('general.lbl_type')">
 
                     @if ($errors->has('clasification'))
                         <span class="text-danger text-left">{{ $errors->first('clasification') }}</span>
@@ -247,7 +247,7 @@
                         type="text" 
                         class="form-control" 
                         name="contact_person_job_position" 
-                        placeholder="@lang('general.lbl_contact_person_job_position')" required>
+                        placeholder="@lang('general.lbl_contact_person_job_position')">
 
                     @if ($errors->has('contact_person_job_position'))
                         <span class="text-danger text-left">{{ $errors->first('contact_person_job_position') }}</span>
@@ -259,7 +259,7 @@
                         type="text" 
                         class="form-control" 
                         name="contact_person_level" 
-                        placeholder="@lang('general.lbl_contact_person_level')" required>
+                        placeholder="@lang('general.lbl_contact_person_level')">
 
                     @if ($errors->has('contact_person_level'))
                         <span class="text-danger text-left">{{ $errors->first('contact_person_level') }}</span>
@@ -272,7 +272,7 @@
                         type="text" 
                         class="form-control" 
                         name="external_code" 
-                        placeholder="@lang('general.lbl_external_code')" required>
+                        placeholder="@lang('general.lbl_external_code')">
 
                     @if ($errors->has('external_code'))
                         <span class="text-danger text-left">{{ $errors->first('external_code') }}</span>
