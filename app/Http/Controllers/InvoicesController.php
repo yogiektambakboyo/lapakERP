@@ -233,7 +233,6 @@ class InvoicesController extends Controller
     {
         //For demo purposes only. When creating user or inviting a user
         // you should create a generated random password and email it to the user
-        
         $user = Auth::user();
         $branch = Customer::where('id','=',$request->get('customer_id'))->get(['branch_id'])->first();
         //$count_no = DB::select("select max(id) as id from invoice_master om where to_char(om.dated,'YYYY')=to_char(now(),'YYYY') ");
@@ -244,7 +243,7 @@ class InvoicesController extends Controller
             array_merge(
                 ['invoice_no' => $invoice_no ],
                 ['created_by' => $user->id],
-                ['dated' => Carbon::parse($request->get('order_date'))->format('Y-m-d') ],
+                ['dated' => Carbon::parse($request->get('invoice_date'))->format('Y-m-d') ],
                 ['customers_id' => $request->get('customer_id') ],
                 ['total' => $request->get('total_order') ],
                 ['remark' => $request->get('remark') ],
@@ -645,7 +644,7 @@ class InvoicesController extends Controller
         $res_invoice = $invoice->update(
             array_merge(
                 ['updated_by'   => $user->id],
-                ['dated' => Carbon::parse($request->get('order_date'))->format('Y-m-d') ],
+                ['dated' => Carbon::parse($request->get('invoice_date'))->format('Y-m-d') ],
                 ['customers_id' => $request->get('customer_id') ],
                 ['total' => $request->get('total_order') ],
                 ['remark' => $request->get('remark') ],

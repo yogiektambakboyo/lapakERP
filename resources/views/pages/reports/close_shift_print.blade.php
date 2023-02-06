@@ -299,17 +299,67 @@
                     $payment_mandiri_debit = 0;
                     $payment_mandiri_kredit = 0;
                     $payment_qr = 0;
+                    $payment_tr = 0;
 
                   @endphp
+
+                  @php
+                    $arr_bca_d = array();
+                    $arr_bca_k = array();
+                    $arr_man_d = array();
+                    $arr_man_k = array();
+                  @endphp
+
+                  @foreach($payment_datas as $payment_d)
+                  @if($payment_d->payment_type!='Cash')
+                    @php
+                    if($payment_d->payment_type=='BCA - Debit'){
+                        array_push($arr_bca_d,$payment_d->total_payment);
+                    }else{
+                        array_push($arr_bca_d,"0");
+                    }
+                    if($payment_d->payment_type=='BCA - Kredit'){
+                        array_push($arr_bca_k,$payment_d->total_payment);
+                    }else{
+                        array_push($arr_bca_k,"0");
+                    }
+                    if($payment_d->payment_type=='Mandiri - Debit'){
+                        array_push($arr_man_d,$payment_d->total_payment);
+                    } else{
+                        array_push($arr_man_d,"0");
+                    }  
+
+                    if($payment_d->payment_type=='Mandiri - Kredit'){
+                        array_push($arr_man_k,$payment_d->total_payment);
+                    }else{
+                        array_push($arr_man_k,"0");
+                    }
+
+                    rsort($arr_bca_d,1);
+                    rsort($arr_bca_k,1);
+                    rsort($arr_man_d,1);
+                    rsort($arr_man_k,1);
+                    @endphp   
+                  @endif
+                  @endforeach
+
+
+                  @php
+                     $cp = 0; 
+                  @endphp
+                  @foreach($arr_bca_d as $dat)
+                        <tr>
+                            <td style="text-align: left;">{{ number_format($arr_bca_d[$cp],0,',','.') }}</td>
+                            <td style="text-align: center;">{{ number_format($arr_bca_k[$cp],0,',','.') }}</td>
+                            <td style="text-align: left;">{{number_format($arr_man_d[$cp],0,',','.') }}</td>
+                            <td style="text-align: center;">{{ number_format($arr_man_k[$cp],0,',','.') }}</td>
+                        </tr> 
+                        @php
+                          $cp++; 
+                      @endphp  
+                  @endforeach
+
                   @foreach($payment_datas as $payment_data)
-                        @if($payment_data->payment_type!='Cash')
-                          <tr>
-                              <td style="text-align: left;">{{ $payment_data->payment_type=='BCA - Debit'?number_format($payment_data->total_payment,0,',','.'):0 }}</td>
-                              <td style="text-align: center;">{{ $payment_data->payment_type=='BCA - Kredit'?number_format($payment_data->total_payment,0,',','.'):0 }}</td>
-                              <td style="text-align: left;">{{ $payment_data->payment_type=='Mandiri - Debit'?number_format($payment_data->total_payment,0,',','.'):0 }}</td>
-                              <td style="text-align: center;">{{ $payment_data->payment_type=='Mandiri - Kredit'?number_format($payment_data->total_payment,0,',','.'):0 }}</td>
-                          </tr>    
-                        @endif
                         @php
                           $total_payment = $total_payment+$payment_data->total_payment; 
                           if($payment_data->payment_type=='Cash'){
@@ -324,6 +374,8 @@
                             $payment_mandiri_kredit = $payment_mandiri_kredit + $payment_data->total_payment;
                           }else if($payment_data->payment_type=='QRIS'){
                             $payment_qr = $payment_qr + $payment_data->total_payment;
+                          }else if($payment_data->payment_type=='Transfer'){
+                            $payment_tr = $payment_tr + $payment_data->total_payment;
                           }
                           $counter++;
                         @endphp
@@ -365,6 +417,11 @@
                   <tr>
                     <td colspan="2" style="text-align: left;">QRIS</td>
                     <td colspan="2" style="text-align: right;">{{ number_format($payment_qr,0,',','.') }}</td>
+                  </tr>
+
+                  <tr>
+                    <td colspan="2" style="text-align: left;">Transfer</td>
+                    <td colspan="2" style="text-align: right;">{{ number_format($payment_tr,0,',','.') }}</td>
                   </tr>
 
                   <tr>

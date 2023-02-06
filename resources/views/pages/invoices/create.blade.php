@@ -202,7 +202,7 @@
                         <label class="form-label col-form-label col-md-4">@lang('general.lbl_dated')   </label>
                       </div>
                       <div class="col-md-2">
-                        <input type="text" 
+                        <input type="text" data-date-format="yyyy-mm-dd"
                         name="schedule_date"
                         id="schedule_date"
                         class="form-control" 
@@ -674,9 +674,9 @@
           if (dd < 10) dd = '0' + dd;
           if (mm < 10) mm = '0' + mm;
 
-          const formattedToday = mm + '/' + dd + '/' + yyyy;
+          const formattedToday = dd + '-' + mm + '-' + yyyy;
           $('#invoice_date').datepicker({
-              format : 'yyyy-mm-dd',
+              dateFormat : 'dd-mm-yy',
               todayHighlight: true,
           });
           $('#invoice_date').val(formattedToday);

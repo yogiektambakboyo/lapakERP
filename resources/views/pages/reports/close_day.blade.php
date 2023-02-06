@@ -1,6 +1,6 @@
 @extends('layouts.default', ['appSidebarSearch' => true])
 
-@section('title', 'Laporan - Serah Terima')
+@section('title', 'Laporan - Closing Harian')
 
 @section('content')
     <div class="bg-light p-4 rounded">
@@ -37,6 +37,7 @@
                 <th scope="col">Mandiri D</th>    
                 <th scope="col">Mandiri K</th> 
                 <th scope="col">QRIS</th> 
+                <th scope="col">Transfer</th> 
                 <th scope="col">#SPK</th> 
                 <th scope="col">#Tamu</th>  
                 <th scope="col" width="2%">@lang('general.lbl_action')</th> 
@@ -59,6 +60,7 @@
                         <td>{{ number_format($rdata->total_m_d,0,',','.') }}</td>
                         <td>{{ number_format($rdata->total_m_k,0,',','.') }}</td>
                         <td>{{ number_format($rdata->total_qr,0,',','.') }}</td>
+                        <td>{{ number_format($rdata->total_tr,0,',','.') }}</td>
                         <td>{{ number_format($rdata->qty_transaction,0,',','.') }}</td>
                         <td>{{ number_format($rdata->qty_customers,0,',','.') }}</td>
                         <td><button onclick="openDialog('{{ $rdata->branch_id }}','{{ $rdata->dated }}','0');" class="btn btn-warning btn-sm">Print</button></td>
