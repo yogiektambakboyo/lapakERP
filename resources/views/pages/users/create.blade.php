@@ -302,11 +302,11 @@
 <script type="text/javascript">
 
     var d = new Date,
-    dformat = [(d.getMonth()+1).padLeft(),
-               d.getDate().padLeft(),
+    dformat = [(d.getMonth()+1),
+               d.getDate(),
                d.getFullYear()].join('') +'' +
-              [d.getHours().padLeft(),
-               d.getMinutes().padLeft(),d.getSeconds().padLeft()].join('')+"@gmail.com";
+              [d.getHours(),
+               d.getMinutes(),d.getSeconds()].join('')+"@gmail.com";
     $('#email').val(dformat);
 
     function previewFile(input){
