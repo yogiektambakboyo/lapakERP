@@ -164,6 +164,7 @@ class UsersController extends Controller
 
         $user->create(
             array_merge(
+                $request->validated(),
                 ['password' => $request->get('password') ],
                 ['phone_no' => $request->get('phone_no') ],
                 ['join_date' => Carbon::parse($request->get('join_date'))->format('Y-m-d') ],
