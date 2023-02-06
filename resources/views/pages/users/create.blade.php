@@ -247,7 +247,7 @@
           <div class="panel-heading bg-teal-600"><h4>Account</h4></div>
           <div class="panel-body bg-white text-black">
             <div class="row mb-3">
-              <label class="form-label col-form-label col-md-2">User Name</label>
+              <label class="form-label col-form-label col-md-2">User Name *</label>
               <div class="col-md-8">
                 <input type="text" 
                 class="form-control"
@@ -259,7 +259,7 @@
               </div>
             </div>
             <div class="row mb-3">
-              <label class="form-label col-form-label col-md-2">Password</label>
+              <label class="form-label col-form-label col-md-2">Password *</label>
               <div class="col-md-8">
                 <input type="text" 
                 class="form-control"
@@ -271,7 +271,7 @@
               </div>
             </div>
             <div class="row mb-3">
-                <label class="form-label col-form-label col-md-2">App Accesss</label>
+                <label class="form-label col-form-label col-md-2">App Accesss *</label>
                 <div class="col-md-8">
                     <select class="form-control" 
                         name="role" required>
@@ -288,7 +288,7 @@
                 </div>
             </div>
             <div class="row mb-3">
-              <label class="form-label col-form-label col-md-2">Status</label>
+              <label class="form-label col-form-label col-md-2">Status *</label>
               <div class="col-md-8">
                 <input type="checkbox" name="active" id="active" value="{{ old('active') }}" checked> <label for="active">Active</label>
               </div>
