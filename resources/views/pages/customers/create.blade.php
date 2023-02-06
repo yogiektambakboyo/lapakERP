@@ -12,7 +12,7 @@
             <form method="POST" action="{{ route('customers.store') }}">
                 @csrf
                 <div class="mb-3">
-                    <label for="name" class="form-label">@lang('general.lbl_name')</label>
+                    <label for="name" class="form-label">@lang('general.lbl_name') *</label>
                     <input value="{{ old('name') }}" 
                         type="text" 
                         class="form-control" 
@@ -25,7 +25,7 @@
                 </div>
 
                 <div class="mb-3">
-                    <label for="address" class="form-label">@lang('general.lbl_address')</label>
+                    <label for="address" class="form-label">@lang('general.lbl_address') *</label>
                     <input value="{{ old('address') }}" 
                         type="text" 
                         class="form-control" 
@@ -43,7 +43,7 @@
                         type="text" 
                         class="form-control" 
                         name="phone_no" 
-                        placeholder="@lang('general.lbl_phoneno')" required>
+                        placeholder="@lang('general.lbl_phoneno')">
 
                     @if ($errors->has('phone_no'))
                         <span class="text-danger text-left">{{ $errors->first('phone_no') }}</span>
@@ -51,7 +51,7 @@
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label">@lang('general.lbl_branch')</label>
+                    <label class="form-label">@lang('general.lbl_branch') *</label>
                     <div class="col-md-12">
                       <select class="form-control" 
                             name="branch_id">

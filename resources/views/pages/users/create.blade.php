@@ -22,7 +22,7 @@
           <div class="panel-heading bg-teal-600"><h4>Employee Info</h4></div>
           <div class="panel-body bg-white text-black">
             <div class="row mb-3">
-                <label class="form-label col-form-label col-md-2">@lang('general.lbl_name')</label>
+                <label class="form-label col-form-label col-md-2">@lang('general.lbl_name') *</label>
                 <div class="col-md-8">
                   <input type="text" name="name" class="form-control" value="{{ old('name') }}"  required/>
                 </div>
@@ -30,12 +30,12 @@
             <div class="row mb-3">
                 <label class="form-label col-form-label col-md-2">Employee ID</label>
                 <div class="col-md-8">
-                  <input type="text" name="employee_id" class="form-control" value="{{ old('employee_id') }}"   required />
+                  <input type="text" name="employee_id" class="form-control" value="{{ old('employee_id') }}" />
                 </div>
             </div>
             
             <div class="row mb-3">
-              <label class="form-label col-form-label col-md-2">@lang('general.lbl_jobtitleselect')</label>
+              <label class="form-label col-form-label col-md-2">@lang('general.lbl_jobtitleselect') *</label>
               <div class="col-md-8">
                 <select class="form-control" 
                     name="job_id" required>
@@ -53,7 +53,7 @@
               <label class="form-label col-form-label col-md-2">Employee Status</label>
               <div class="col-md-8">
                 <select class="form-control" 
-                    name="employee_status" required>
+                    name="employee_status">
                     <option value="">Select Employee Status</option>
                     @foreach($employeestatusx as $employee_status)
                         <option value="{{ $employee_status }}" {{ ($employee_status==old('employee_status') ) 
@@ -65,7 +65,7 @@
             </div>
 
             <div class="row mb-3">
-              <label class="form-label col-form-label col-md-2">@lang('general.lbl_branch')</label>
+              <label class="form-label col-form-label col-md-2">@lang('general.lbl_branch') *</label>
               <div class="col-md-8">
                 <select class="multiple-select2 form-control" 
                       name="branch_id[]" required multiple="multiple">
@@ -77,7 +77,7 @@
               </div>
             </div>
           <div class="row mb-3">
-            <label class="form-label col-form-label col-md-2">Department</label>
+            <label class="form-label col-form-label col-md-2">Department *</label>
             <div class="col-md-8">
               <select class="form-control" 
                     name="department_id" required>
@@ -91,7 +91,7 @@
             </div>
           </div>
           <div class="row mb-3">
-            <label class="form-label col-form-label col-md-2">Join @lang('general.lbl_dated_mmddYYYY')</label>
+            <label class="form-label col-form-label col-md-2">Join @lang('general.lbl_dated_mmddYYYY') *</label>
             <div class="col-md-8">
               <input type="text" 
               name="join_date"
@@ -127,7 +127,7 @@
                 <input type="text" 
                 name="netizen_id"
                 class="form-control" 
-                value="{{ old('netizen_id') }}"    required/>
+                value="{{ old('netizen_id') }}" />
                 </div>
             </div>
             <div class="row mb-3">
@@ -141,7 +141,7 @@
                 </div>
             </div>  
             <div class="row mb-3">
-              <label class="form-label col-form-label col-md-2">Gender</label>
+              <label class="form-label col-form-label col-md-2">Gender *</label>
               <div class="col-md-8">
                 <select class="form-control" 
                     name="gender" required>
@@ -160,7 +160,7 @@
                 <input type="text" 
                 name="birth_place"
                 class="form-control" 
-                value="{{ old('birth_place') }}"    required/>
+                value="{{ old('birth_place') }}" />
               </div>
             </div>
             <div class="row mb-3">
@@ -171,7 +171,7 @@
                     name="birth_date"
                     id="datepicker_2"
                     class="form-control" 
-                    value="{{ old('birth_date') }}"  required/>
+                    value="{{ old('birth_date') }}"/>
                     @if ($errors->has('birth_date'))
                         <span class="text-danger text-left">{{ $errors->first('birth_date') }}</span>
                     @endif
@@ -188,7 +188,7 @@
               <label class="form-label col-form-label col-md-2">@lang('general.lbl_address')</label>
               <div class="col-md-8">
                 <input type="text" 
-                name="address" required
+                name="address"
                 class="form-control" 
                 value="{{ old('address') }}"  />
                 @if ($errors->has('address'))
@@ -202,7 +202,7 @@
               <input type="text" 
               name="city"
               class="form-control" 
-              value="{{ old('city') }}"  required/>
+              value="{{ old('city') }}"/>
             </div>
           </div>
           <div class="row mb-3">
@@ -218,7 +218,7 @@
             <label class="form-label col-form-label col-md-2">Email</label>
             <div class="col-md-8">
               <input type="text" 
-              name="email" required
+              name="email"
               class="form-control" 
               value="{{ old('email') }}"  />
               @if ($errors->has('email'))
