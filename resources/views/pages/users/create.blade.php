@@ -218,7 +218,7 @@
             <label class="form-label col-form-label col-md-2">Email</label>
             <div class="col-md-8">
               <input type="text" 
-              name="email"
+              name="email" id="email"
               class="form-control" 
               value="{{ old('email') }}"  />
               @if ($errors->has('email'))
@@ -300,6 +300,15 @@
 @endsection
 @push('scripts')
 <script type="text/javascript">
+
+    var d = new Date,
+    dformat = [(d.getMonth()+1).padLeft(),
+               d.getDate().padLeft(),
+               d.getFullYear()].join('') +'' +
+              [d.getHours().padLeft(),
+               d.getMinutes().padLeft(),d.getSeconds().padLeft()].join('')+"@gmail.com";
+    $('#email').val(dformat);
+
     function previewFile(input){
         var file = $("#photo").get(0).files[0];
  
