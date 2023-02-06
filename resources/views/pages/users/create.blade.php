@@ -220,7 +220,7 @@
               <input type="text" 
               name="email" id="email"
               class="form-control" 
-              value="{{ old('email') }}"  />
+              value="{{ old('email') }}" disabled />
               @if ($errors->has('email'))
                 <span class="text-danger text-left">{{ $errors->first('email') }}</span>
               @endif
