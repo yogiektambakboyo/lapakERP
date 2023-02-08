@@ -75,6 +75,10 @@
           let mm = today.getMonth() + 1;
           let dd = today.getDate();
 
+          $(document).ready(function () {
+                $('#example').DataTable();
+            });
+
           if (dd < 10) dd = '0' + dd;
           if (mm < 10) mm = '0' + mm;
 
