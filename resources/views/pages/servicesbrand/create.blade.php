@@ -29,6 +29,10 @@
               <div class="col-md-8">
                 <input type="text" class="form-control" name="remark" value="{{ old('remark') }}" />
               </div>
+              <input value="2" 
+              type="hidden" 
+              class="form-control" 
+              name="type_id" >
           </div>
           </div>
         </div>

@@ -132,6 +132,7 @@ class ProductsBrandController extends Controller
         $productbrand->create(
             array_merge(
                 ['remark' => $request->get('remark') ],
+                ['type_id' => $request->get('type_id') ]
             )
         );
         return redirect()->route('productsbrand.index')
@@ -201,6 +202,7 @@ class ProductsBrandController extends Controller
         $productbrand->update(
             array_merge(
                 ['remark' => $request->get('remark') ],
+                ['type_id' => $request->get('type_id') ]
             )
         );
         

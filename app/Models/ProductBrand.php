@@ -11,6 +11,6 @@ class ProductBrand extends Model
     protected $table = 'product_brand';
 
     protected $fillable = [
-        'remark'
+        'remark','type_id'
     ];
 }

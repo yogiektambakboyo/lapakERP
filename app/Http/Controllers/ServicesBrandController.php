@@ -132,9 +132,10 @@ class ServicesBrandController extends Controller
         $productbrand->create(
             array_merge(
                 ['remark' => $request->get('remark') ],
+                ['type_id' => $request->get('type_id') ]
             )
         );
-        return redirect()->route('productsbrand.index')
+        return redirect()->route('servicesbrand.index')
             ->withSuccess(__('Brand created successfully.'));
     }
 
@@ -201,10 +202,11 @@ class ServicesBrandController extends Controller
         $productbrand->update(
             array_merge(
                 ['remark' => $request->get('remark') ],
+                ['type_id' => $request->get('type_id') ]
             )
         );
         
-        return redirect()->route('productsbrand.index')
+        return redirect()->route('servicesbrand.index')
             ->withSuccess(__('Product updated successfully.'));
     }
 
@@ -219,7 +221,7 @@ class ServicesBrandController extends Controller
     {
         $productbrand->delete();
 
-        return redirect()->route('productsbrand.index')
+        return redirect()->route('servicesbrand.index')
             ->withSuccess(__('Brand deleted successfully.'));
     }
 
