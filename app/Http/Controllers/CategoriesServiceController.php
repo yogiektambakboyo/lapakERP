@@ -83,7 +83,7 @@ class CategoriesServiceController extends Controller
 
         Category::create($request->all());
 
-        return redirect()->route('categories.index')
+        return redirect()->route('categoriesservice.index')
             ->withSuccess(__('Category created successfully.'));
     }
 
@@ -120,7 +120,7 @@ class CategoriesServiceController extends Controller
 
         $category->update($request->all());
 
-        return redirect()->route('categories.index')
+        return redirect()->route('categoriesservice.index')
             ->withSuccess(__('Category updated successfully.'));
     }
 
@@ -134,7 +134,7 @@ class CategoriesServiceController extends Controller
     {
         $category->delete();
 
-        return redirect()->route('categories.index')
+        return redirect()->route('categoriesservice.index')
             ->withSuccess(__('Category deleted successfully.'));
     }
 
