@@ -188,8 +188,8 @@ class ServicesController extends Controller
             ));
         }
 
-        return redirect()->route('products.index')
-            ->withSuccess(__('Product created successfully.'));
+        return redirect()->route('services.index')
+            ->withSuccess(__('Perawatan created successfully.'));
     }
 
     /**
@@ -322,7 +322,7 @@ class ServicesController extends Controller
         ));
 
         
-        return redirect()->route('products.index')
+        return redirect()->route('services.index')
             ->withSuccess(__('Product updated successfully.'));
     }
 
