@@ -152,7 +152,7 @@ class ServicesDistributionController extends Controller
                 ['created_by' => $user->id ],
             )
         );
-        return redirect()->route('productsdistribution.index')
+        return redirect()->route('servicesdistribution.index')
             ->withSuccess(__('Product distribution created successfully.'));
     }
 
@@ -233,7 +233,7 @@ class ServicesDistributionController extends Controller
             )
         );
         
-        return redirect()->route('productsdistribution.index')
+        return redirect()->route('servicesdistribution.index')
             ->withSuccess(__('Product distribution updated successfully.'));
     }
 
@@ -247,7 +247,7 @@ class ServicesDistributionController extends Controller
     public function destroy(String $branch,String $product) 
     {
         ProductDistribution::where('product_id','=',$product)->where('branch_id','=',$branch)->delete();
-        return redirect()->route('productsdistribution.index')
+        return redirect()->route('servicesdistribution.index')
             ->withSuccess(__('Product distribution deleted successfully.'));
     }
 

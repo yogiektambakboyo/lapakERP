@@ -98,7 +98,7 @@ class ServicesPriceAdjController extends Controller
         
         if($request->export=='Export Excel'){
             $strencode = base64_encode($keyword.'#'.$begindate.'#'.$enddate.'#'.$branchx);
-            return Excel::download(new ProductsPriceAdjExport($strencode), 'productspriceadjustment_'.Carbon::now()->format('YmdHis').'.xlsx');
+            return Excel::download(new ProductsPriceAdjExport($strencode), 'servicespriceadjustment_'.Carbon::now()->format('YmdHis').'.xlsx');
         }else if($request->src=='Search'){
             $branchx = "";
             $whereclause = " upper(product_sku.remark) like '%".strtoupper($keyword)."%' and '".$begindate."' between pr.dated_start and pr.dated_end ";
@@ -181,7 +181,7 @@ class ServicesPriceAdjController extends Controller
                 ['created_by' => $user->id ],
             )
         );
-        return redirect()->route('productspriceadj.index')
+        return redirect()->route('servicespriceadj.index')
             ->withSuccess(__('Product price adjustment created successfully.'));
     }
 
@@ -264,7 +264,7 @@ class ServicesPriceAdjController extends Controller
                             )
                         );
         
-        return redirect()->route('productspriceadj.index')
+        return redirect()->route('servicespriceadj.index')
             ->withSuccess(__('Price Adjustment updated successfully.'));
     }
 

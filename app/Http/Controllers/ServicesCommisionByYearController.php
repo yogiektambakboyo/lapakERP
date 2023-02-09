@@ -152,7 +152,7 @@ class ServicesCommisionByYearController extends Controller
                 ['created_by' => $user->id ],
             )
         );
-        return redirect()->route('productscommisionbyyear.index')
+        return redirect()->route('servicescommisionbyyear.index')
             ->withSuccess(__('Product commision by year created successfully.'));
     }
 
@@ -233,7 +233,7 @@ class ServicesCommisionByYearController extends Controller
             )
         );
         
-        return redirect()->route('productscommisionbyyear.index')
+        return redirect()->route('servicescommisionbyyear.index')
             ->withSuccess(__('Product commision updated successfully.'));
     }
 

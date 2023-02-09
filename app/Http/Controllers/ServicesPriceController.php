@@ -36,7 +36,7 @@ class ServicesPriceController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-    private $data,$act_permission,$module="productsprice",$id=1;
+    private $data,$act_permission,$module="servicesprice",$id=1;
 
     public function __construct()
     {
@@ -169,7 +169,7 @@ class ServicesPriceController extends Controller
                 ['created_by' => $user->id ],
             )
         );
-        return redirect()->route('productsprice.index')
+        return redirect()->route('servicesprice.index')
             ->withSuccess(__('Product price created successfully.'));
     }
 
@@ -254,7 +254,7 @@ class ServicesPriceController extends Controller
             )
         );
         
-        return redirect()->route('productsprice.index')
+        return redirect()->route('servicesprice.index')
             ->withSuccess(__('Product price updated successfully.'));
     }
 

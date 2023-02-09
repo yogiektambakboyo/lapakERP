@@ -73,7 +73,7 @@ class ServicesCommisionController extends Controller
                     ->join('branch as bc','bc.id','=','pr.branch_id')
                     ->where('pt.id','=','2')
                     ->paginate(10,['created_by_fee', 'assigned_to_fee', 'referral_fee','product_sku.id','product_sku.remark as product_name','pr.branch_id','bc.remark as branch_name','pb.remark as product_brand']);
-        return view('pages.productscommision.index', ['company' => Company::get()->first()],compact('products','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
+        return view('pages.servicescommision.index', ['company' => Company::get()->first()],compact('products','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
     }
 
     public function search(Request $request) 
@@ -99,7 +99,7 @@ class ServicesCommisionController extends Controller
                         ->whereRaw($whereclause)
                         ->where('pt.id','=','2')
                         ->paginate(10,['created_by_fee', 'assigned_to_fee', 'referral_fee','product_sku.id','product_sku.remark as product_name','pr.branch_id','bc.remark as branch_name','pb.remark as product_brand']);       
-            return view('pages.productscommision.index',['company' => Company::get()->first()], compact('products','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
+            return view('pages.servicescommision.index',['company' => Company::get()->first()], compact('products','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
         }
     }
 
@@ -122,7 +122,7 @@ class ServicesCommisionController extends Controller
 
         $user  = Auth::user();
         $data = $this->data;
-        return view('pages.productscommision.create',[
+        return view('pages.servicescommision.create',[
             'products' => DB::select('select ps.id,ps.remark from product_sku as ps where ps.type_id=2 order by remark;'),
             'data' => $data, 'company' => Company::get()->first(),
             'branchs' => Branch::join('users_branch as ub','ub.branch_id','=','branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']),
@@ -153,7 +153,7 @@ class ServicesCommisionController extends Controller
                 ['created_by' => $user->id ],
             )
         );
-        return redirect()->route('productscommision.index')
+        return redirect()->route('servicescommision.index')
             ->withSuccess(__('Product commision created successfully.'));
     }
 
@@ -178,7 +178,7 @@ class ServicesCommisionController extends Controller
         ->where('product_sku.id',$product->id)
         ->get(['product_sku.id as product_id','product_sku.abbr','product_sku.remark as product_name','pt.remark as product_type','pc.remark as product_category','pb.remark as product_brand'])->first();
 
-        return view('pages.productscommision.show', [
+        return view('pages.servicescommision.show', [
             'product' => $products ,
             'data' => $data, 'company' => Company::get()->first(),
         ]);
@@ -205,7 +205,7 @@ class ServicesCommisionController extends Controller
         ->where('product_sku.id',$product_id)
         ->where('bc.id','=',$branch_id)
         ->get(['created_by_fee', 'assigned_to_fee', 'referral_fee','product_sku.id as id','product_sku.abbr','product_sku.brand_id','product_sku.category_id','product_sku.type_id','product_sku.remark as product_name','pr.branch_id','bc.remark as branch_name'])->first();
-        return view('pages.productscommision.edit', [
+        return view('pages.servicescommision.edit', [
             'branchs' => Branch::join('users_branch as ub','ub.branch_id','=','branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']),
             'data' => $data,
             'product' => $product, 'company' => Company::get()->first(),
@@ -232,7 +232,7 @@ class ServicesCommisionController extends Controller
             )
         );
         
-        return redirect()->route('productscommision.index')
+        return redirect()->route('servicescommision.index')
             ->withSuccess(__('Product commision updated successfully.'));
     }
 
@@ -246,7 +246,7 @@ class ServicesCommisionController extends Controller
     public function destroy(String $branch,String $product) 
     {
         ProductCommisions::where('product_id','=',$product)->where('branch_id','=',$branch)->delete();
-        return redirect()->route('productscommision.index')
+        return redirect()->route('servicescommision.index')
             ->withSuccess(__('Product commisions deleted successfully.'));
     }
 
