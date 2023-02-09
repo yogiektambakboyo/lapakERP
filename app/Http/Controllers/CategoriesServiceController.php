@@ -44,7 +44,7 @@ class CategoriesServiceController extends Controller
         $id = $user->roles->first()->id;
         $this->getpermissions($id);
 
-        $categories = Category::where('type_id','=','2')->orderBy('remark')->paginate(10,['product_category.id','product_category.remark']);
+        $categories = Category::where('type_id','=','2')->orderBy('remark')->get(['product_category.id','product_category.remark']);
         $data = $this->data;
 
         return view('pages.categoriesservice.index', [
