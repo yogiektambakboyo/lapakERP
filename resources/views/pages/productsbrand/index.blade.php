@@ -32,7 +32,6 @@
                 <th>@lang('general.lbl_name')</th>
                 <th scope="col" width="2%">@lang('general.lbl_action')</th>   
                 <th scope="col" width="2%"></th>
-                <th scope="col" width="2%"></th>    
             </tr>
             </thead>
             <tbody>
