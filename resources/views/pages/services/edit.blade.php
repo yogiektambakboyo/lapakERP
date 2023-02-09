@@ -28,6 +28,7 @@
               <label class="form-label col-form-label col-md-2">@lang('general.lbl_name')</label>
               <div class="col-md-8">
                 <input type="text" class="form-control" name="remark" value="{{ $product->product_name }}" />
+                <input type="hidden" class="form-control" name="id" value="{{ $product->id }}" readonly />
               </div>
           </div>
           <div class="row mb-3">
@@ -76,6 +77,20 @@
                           <option value="{{ $productBrand->id }}"  {{ ($product->brand_id == $productBrand->id) 
                             ? 'selected'
                             : ''}}  >{{ $productBrand->remark }}</option>
+                      @endforeach
+                  </select>
+            </div>
+          </div>
+          <div class="row mb-3">
+            <label class="form-label col-form-label col-md-2">@lang('general.lbl_uom')</label>
+            <div class="col-md-8">
+              <select class="form-control" 
+                      name="uom_id" required>
+                      <option value="">@lang('general.lbl_uomselect')</option>
+                      @foreach($productUoms as $productUom)
+                          <option value="{{ $productUom->id }}"  {{ ($product->uom_id == $productUom->id) 
+                            ? 'selected'
+                            : ''}}  >{{ $productUom->remark }}</option>
                       @endforeach
                   </select>
             </div>
