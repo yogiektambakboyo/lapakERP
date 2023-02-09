@@ -69,7 +69,7 @@ class ProductsCommisionByYearController extends Controller
                     ->join('branch as bc','bc.id','=','pr.branch_id')
                     ->join('job_title as jt','jt.id','=','pr.jobs_id')
                     ->where('type_id','=','1')
-                    ->paginate(10,['jt.remark as job_title','years', 'values', 'pr.jobs_id','product_sku.id','product_sku.remark as product_name','pr.branch_id','bc.remark as branch_name']);
+                    ->get(['jt.remark as job_title','years', 'values', 'pr.jobs_id','product_sku.id','product_sku.remark as product_name','pr.branch_id','bc.remark as branch_name']);
         return view('pages.productscommisionbyyear.index', ['company' => Company::get()->first()],compact('data','keyword','act_permission','products'))->with('i', ($request->input('page', 1) - 1) * 5);
     }
 
@@ -93,7 +93,7 @@ class ProductsCommisionByYearController extends Controller
                         ->join('job_title as jt','jt.id','=','pr.jobs_id')
                         ->whereRaw($whereclause)
                         ->where('type_id','=','1')
-                        ->paginate(10,['jt.remark as job_title','years', 'values', 'pr.jobs_id','product_sku.id','product_sku.remark as product_name','pr.branch_id','bc.remark as branch_name']);       
+                        ->get(['jt.remark as job_title','years', 'values', 'pr.jobs_id','product_sku.id','product_sku.remark as product_name','pr.branch_id','bc.remark as branch_name']);       
             return view('pages.productscommisionbyyear.index', ['company' => Company::get()->first()],compact('products','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
         }
     }
