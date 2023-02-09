@@ -150,7 +150,7 @@ class ServicesPointController extends Controller
             )
         );
         return redirect()->route('servicespoint.index')
-            ->withSuccess(__('Product distribution created successfully.'));
+            ->withSuccess(__('Service point created successfully.'));
     }
 
     /**
@@ -230,7 +230,7 @@ class ServicesPointController extends Controller
         );
         
         return redirect()->route('servicespoint.index')
-            ->withSuccess(__('Product distribution updated successfully.'));
+            ->withSuccess(__('Service Point updated successfully.'));
     }
 
     /**
