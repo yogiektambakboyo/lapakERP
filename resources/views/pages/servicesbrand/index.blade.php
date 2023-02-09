@@ -50,11 +50,6 @@
                 @endforeach
             </tbody>
         </table>
-
-        <div class="d-flex">
-            {!! $brands->links() !!}
-        </div>
-
     </div>
 @endsection
 @push('scripts')
