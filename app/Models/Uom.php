@@ -12,6 +12,6 @@ class Uom extends Model
     protected $table = 'uom';
 
     protected $fillable = [
-        'remark',
+        'remark','type_id'
     ];
 }

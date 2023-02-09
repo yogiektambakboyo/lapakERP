@@ -18,6 +18,11 @@
                         name="remark" 
                         placeholder="Remark" required>
 
+                        <input value="1" 
+                        type="hidden" 
+                        class="form-control" 
+                        name="type_id" >
+
                     @if ($errors->has('name'))
                         <span class="text-danger text-left">{{ $errors->first('remark') }}</span>
                     @endif

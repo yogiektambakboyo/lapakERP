@@ -44,9 +44,12 @@
             </tbody>
         </table>
 
-        <div class="d-flex">
-            {!! $uoms->links() !!}
-        </div>
-
     </div>
 @endsection
+@push('scripts')
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#example').DataTable();
+    });
+</script>
+@endpush
