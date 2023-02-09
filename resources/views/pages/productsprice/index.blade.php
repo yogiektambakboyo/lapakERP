@@ -13,8 +13,7 @@
                 <div class="col-md-10"> 	
                     <form action="{{ route('productsprice.search') }}" method="GET" class="row row-cols-lg-auto g-3 align-items-center">
                         <input type="hidden" class="form-control  form-control-sm" name="filter_branch_id" value="{{ $request->filter_branch_id }}">
-                        <div class="col-2"><input type="text" class="form-control  form-control-sm" name="search" placeholder="@lang('general.label_search')" value="{{ $keyword }}"></div>
-                        <div class="col-2"><input type="submit" class="btn btn-sm btn-secondary" value="@lang('general.btn_search')" name="submit"></div>   
+                        <div class="col-2"><input type="hidden" class="form-control  form-control-sm" name="search" placeholder="@lang('general.label_search')" value="{{ $keyword }}"></div>
                         <div class="col-2"><a href="#modal-filter"  data-bs-toggle="modal" data-bs-target="#modal-filter" class="btn btn-sm btn-lime">@lang('general.btn_filter')</a></div>   
                         <div class="col-2"><input type="submit" class="btn btn-sm btn-success" value="@lang('general.btn_export')" name="export"></div>  
                     </form>
@@ -55,10 +54,6 @@
                 @endforeach
             </tbody>
         </table>
-
-        <div class="d-flex">
-            {!! $products->links() !!}
-        </div>
 
         <!-- Vertically centered modal -->
         <!-- Modal -->
@@ -112,6 +107,9 @@
           const formattedToday = mm + '/' + dd + '/' + yyyy;
           const formattedNextYear = mm + '/' + dd + '/' + yyyy1;
 
+          $(document).ready(function () {
+                $('#example').DataTable();
+            });
           $('#filter_begin_date').datepicker({
               format : 'yyyy-mm-dd',
               todayHighlight: true,
