@@ -20,7 +20,7 @@
             @include('layouts.partials.messages')
         </div>
 
-        <table class="table table-striped">
+        <table class="table table-striped"  id="example">
             <thead>
             <tr>
                 <th scope="col" width="1%">#</th>
