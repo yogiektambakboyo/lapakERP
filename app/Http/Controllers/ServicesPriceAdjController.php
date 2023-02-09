@@ -182,7 +182,7 @@ class ServicesPriceAdjController extends Controller
             )
         );
         return redirect()->route('servicespriceadj.index')
-            ->withSuccess(__('Product price adjustment created successfully.'));
+            ->withSuccess(__('Service price adjustment created successfully.'));
     }
 
     /**
