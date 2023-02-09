@@ -71,7 +71,7 @@ class ProductsStockController extends Controller
                     ->join('product_stock as pr','pr.product_id','=','product_sku.id')
                     ->join('branch as bc','bc.id','=','pr.branch_id')
                     ->where('pt.id','=','1')
-                    ->paginate(10,['product_sku.id','product_sku.remark as product_name','pr.branch_id','bc.remark as branch_name','pr.qty as product_qty','pb.remark as product_brand']);
+                    ->get(['product_sku.id','product_sku.remark as product_name','pr.branch_id','bc.remark as branch_name','pr.qty as product_qty','pb.remark as product_brand']);
         return view('pages.productsstock.index', ['company' => Company::get()->first()],compact('products','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
     }
 
@@ -97,7 +97,7 @@ class ProductsStockController extends Controller
                         ->join('branch as bc','bc.id','=','pr.branch_id')
                         ->whereRaw($whereclause)
                         ->where('pt.id','=','1')
-                        ->paginate(10,['product_sku.id','product_sku.remark as product_name','pr.branch_id','bc.remark as branch_name','pr.price as product_price','pb.remark as product_brand']);           
+                        ->get(['product_sku.id','product_sku.remark as product_name','pr.branch_id','bc.remark as branch_name','pr.price as product_price','pb.remark as product_brand']);           
             return view('pages.productsstock.index',['company' => Company::get()->first()], compact('products','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
         }
     }
