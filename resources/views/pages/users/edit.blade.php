@@ -47,7 +47,7 @@
                 </div>
             </div>
             <div class="row mb-3">
-              <label class="form-label col-form-label col-md-2">@lang('general.lbl_jobtitleselect')</label>
+              <label class="form-label col-form-label col-md-2">@lang('general.lbl_jobtitleselect') *</label>
               <div class="col-md-8">
                 <select class="form-control" 
                     name="job_id" required>
@@ -65,7 +65,7 @@
               <label class="form-label col-form-label col-md-2">Employee Status</label>
               <div class="col-md-8">
                 <select class="form-control" 
-                    name="employee_status" required>
+                    name="employee_status" >
                     <option value="">Select Employee Status</option>
                     @foreach($employeestatusx as $employee_status)
                         <option value="{{ $employee_status }}" {{ ($employee_status==$user->employee_status ) 
@@ -76,7 +76,7 @@
               </div>
             </div>
             <div class="row mb-3">
-              <label class="form-label col-form-label col-md-2">@lang('general.lbl_branch')</label>
+              <label class="form-label col-form-label col-md-2">@lang('general.lbl_branch') *</label>
               <div class="col-md-8">
                 <input type="hidden" id="hide_val" class="form-control" value="{{ $user->branch_name }}"  />
                 <select class="form-control" id="branch_id" 
@@ -89,7 +89,7 @@
               </div>
             </div>
           <div class="row mb-3">
-            <label class="form-label col-form-label col-md-2">Department</label>
+            <label class="form-label col-form-label col-md-2">Department *</label>
             <div class="col-md-8">
               <select class="form-control" 
                     name="department_id" required>
@@ -103,7 +103,7 @@
             </div>
           </div>
           <div class="row mb-3">
-            <label class="form-label col-form-label col-md-2">Join @lang('general.lbl_dated_mmddYYYY')</label>
+            <label class="form-label col-form-label col-md-2">Join @lang('general.lbl_dated_mmddYYYY') *</label>
             <div class="col-md-8">
               <input type="text" 
               name="join_date"
@@ -159,7 +159,7 @@
                 </div>
             </div>  
             <div class="row mb-3">
-              <label class="form-label col-form-label col-md-2">Gender</label>
+              <label class="form-label col-form-label col-md-2">Gender *</label>
               <div class="col-md-8">
                 <select class="form-control" 
                     name="gender" required>
@@ -189,7 +189,7 @@
                   name="birth_date"
                   id="datepicker_2"
                   class="form-control" 
-                  value="{{ \Carbon\Carbon::parse($user->birth_date)->format('m/d/Y') }}"  required/>
+                  value="{{ \Carbon\Carbon::parse($user->birth_date)->format('m/d/Y') }}"/>
                   @if ($errors->has('birth_date'))
                       <span class="text-danger text-left">{{ $errors->first('birth_date') }}</span>
                   @endif
@@ -205,7 +205,7 @@
               <label class="form-label col-form-label col-md-2">@lang('general.lbl_address')</label>
               <div class="col-md-8">
                 <input type="text" 
-                name="address" required
+                name="address"
                 class="form-control" 
                 value="{{ $user->address }}"  />
                 @if ($errors->has('address'))
@@ -232,7 +232,7 @@
             </div>
           </div>
           <div class="row mb-3">
-            <label class="form-label col-form-label col-md-2">Email</label>
+            <label class="form-label col-form-label col-md-2">Email *</label>
             <div class="col-md-8">
               <input type="text" 
               name="email" required
@@ -264,7 +264,7 @@
           <div class="panel-heading bg-teal-600"><h4>Account</h4></div>
           <div class="panel-body bg-white text-black">
             <div class="row mb-3">
-              <label class="form-label col-form-label col-md-2">User Name</label>
+              <label class="form-label col-form-label col-md-2">User Name *</label>
               <div class="col-md-8">
                 <input type="text" 
                 class="form-control"
@@ -276,7 +276,7 @@
               </div>
             </div>
             <div class="row mb-3">
-                <label class="form-label col-form-label col-md-2">App Accesss</label>
+                <label class="form-label col-form-label col-md-2">App Accesss *</label>
                 <div class="col-md-8">
                     <select class="form-control" 
                         name="role" required>
