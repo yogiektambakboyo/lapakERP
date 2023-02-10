@@ -47,7 +47,7 @@ class UomController extends Controller
         $id = $user->roles->first()->id;
         $this->getpermissions($id);
 
-        $uoms = Uom::where('type_id','=','1')->paginate(10,['uom.id','uom.remark']);
+        $uoms = Uom::where('type_id','=','1')->get(['uom.id','uom.remark']);
         $data = $this->data;
 
         return view('pages.uoms.index', [

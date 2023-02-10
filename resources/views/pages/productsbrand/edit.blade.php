@@ -28,6 +28,10 @@
               <label class="form-label col-form-label col-md-2">@lang('general.lbl_name')</label>
               <div class="col-md-8">
                 <input type="text" class="form-control" name="remark" value="{{ $brand->remark }}" />
+                <input value="1" 
+                type="hidden" 
+                class="form-control" 
+                name="type_id" >
               </div>
           </div>
           </div>

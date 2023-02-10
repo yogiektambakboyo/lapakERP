@@ -12,8 +12,7 @@
                 </div>
                 <div class="col-md-10"> 	
                     <form action="{{ route('servicesbrand.search') }}" method="GET" class="row row-cols-lg-auto g-3 align-items-center">
-                        <div class="col-2"><input type="text" class="form-control  form-control-sm" name="search" placeholder="@lang('general.label_search')" value="{{ $keyword }}"></div>
-                        <div class="col-2"><input type="submit" class="btn btn-sm btn-secondary" value="@lang('general.btn_search')" name="submit"></div>   
+                        <div class="col-2"><input type="hidden" class="form-control  form-control-sm" name="search" placeholder="@lang('general.label_search')" value="{{ $keyword }}"></div>
                     </form>
                 </div>
             </div>
@@ -32,8 +31,7 @@
                 <th scope="col" width="1%">#</th>
                 <th>@lang('general.lbl_name')</th>
                 <th scope="col" width="2%">@lang('general.lbl_action')</th>   
-                <th scope="col" width="2%"></th>
-                <th scope="col" width="2%"></th>    
+                <th scope="col" width="2%"></th>  
             </tr>
             </thead>
             <tbody>
@@ -52,10 +50,12 @@
                 @endforeach
             </tbody>
         </table>
-
-        <div class="d-flex">
-            {!! $brands->links() !!}
-        </div>
-
     </div>
 @endsection
+@push('scripts')
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#example').DataTable();
+    });
+</script>
+@endpush

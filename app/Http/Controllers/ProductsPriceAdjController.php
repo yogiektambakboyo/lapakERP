@@ -73,7 +73,7 @@ class ProductsPriceAdjController extends Controller
                     ->join('branch as bc','bc.id','=','pr.branch_id')
                     ->where('pt.id','=','1')
                     ->whereRaw('now()::date between pr.dated_start and pr.dated_end')
-                    ->paginate(10,['product_sku.id','product_sku.remark as product_name','pr.branch_id','bc.remark as branch_name','pr.value as value','pr.dated_start','pr.dated_end','pb.remark as product_brand']);
+                    ->get(['product_sku.id','product_sku.remark as product_name','pr.branch_id','bc.remark as branch_name','pr.value as value','pr.dated_start','pr.dated_end','pb.remark as product_brand']);
         return view('pages.productspriceadj.index',['company' => Company::get()->first()] ,compact('request','branchs','products','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
     }
 
@@ -111,7 +111,7 @@ class ProductsPriceAdjController extends Controller
                         ->whereRaw($whereclause)
                         ->where('pt.id','=','1')
                         ->where('bc.id','like','%'.$branchx.'%')  
-                        ->paginate(10,['product_sku.id','product_sku.remark as product_name','pr.branch_id','bc.remark as branch_name','pr.value as value','pr.dated_start','pr.dated_end','pb.remark as product_brand']); 
+                        ->get(['product_sku.id','product_sku.remark as product_name','pr.branch_id','bc.remark as branch_name','pr.value as value','pr.dated_start','pr.dated_end','pb.remark as product_brand']); 
                         $request->filter_branch_id = "";
                         $request->filter_end_date = "";       
             return view('pages.productspriceadj.index',['company' => Company::get()->first()], compact('request','branchs','products','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
@@ -126,7 +126,7 @@ class ProductsPriceAdjController extends Controller
                         ->whereRaw($whereclause)
                         ->where('pt.id','=','1')
                         ->where('bc.id','like','%'.$branchx.'%')  
-                        ->paginate(10,['product_sku.id','product_sku.remark as product_name','pr.branch_id','bc.remark as branch_name','pr.value as value','pr.dated_start','pr.dated_end','pb.remark as product_brand']);                 
+                        ->get(['product_sku.id','product_sku.remark as product_name','pr.branch_id','bc.remark as branch_name','pr.value as value','pr.dated_start','pr.dated_end','pb.remark as product_brand']);                 
             return view('pages.productspriceadj.index',['company' => Company::get()->first()], compact('request','branchs','products','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
         }
     }

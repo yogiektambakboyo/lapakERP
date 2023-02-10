@@ -20,12 +20,13 @@
             @include('layouts.partials.messages')
         </div>
 
-        <table class="table table-striped">
+        <table class="table table-striped" id="example">
             <thead>
             <tr>
                 <th scope="col" width="1%">#</th>
                 <th scope="col" width="15%">@lang('general.lbl_name')</th>
-                <th scope="col" colspan="3" width="1%"></th> 
+                <th scope="col" width="1%"></th> 
+                <th scope="col" width="1%"></th> 
             </tr>
             </thead>
             <tbody>
@@ -44,9 +45,13 @@
             </tbody>
         </table>
 
-        <div class="d-flex">
-            {!! $categories->links() !!}
-        </div>
 
     </div>
 @endsection
+@push('scripts')
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#example').DataTable();
+    });
+</script>
+@endpush

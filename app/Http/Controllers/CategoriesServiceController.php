@@ -44,7 +44,7 @@ class CategoriesServiceController extends Controller
         $id = $user->roles->first()->id;
         $this->getpermissions($id);
 
-        $categories = Category::where('type_id','=','2')->orderBy('remark')->paginate(10,['product_category.id','product_category.remark']);
+        $categories = Category::where('type_id','=','2')->orderBy('remark')->get(['product_category.id','product_category.remark']);
         $data = $this->data;
 
         return view('pages.categoriesservice.index', [
@@ -83,7 +83,7 @@ class CategoriesServiceController extends Controller
 
         Category::create($request->all());
 
-        return redirect()->route('categories.index')
+        return redirect()->route('categoriesservice.index')
             ->withSuccess(__('Category created successfully.'));
     }
 
@@ -120,7 +120,7 @@ class CategoriesServiceController extends Controller
 
         $category->update($request->all());
 
-        return redirect()->route('categories.index')
+        return redirect()->route('categoriesservice.index')
             ->withSuccess(__('Category updated successfully.'));
     }
 
@@ -134,7 +134,7 @@ class CategoriesServiceController extends Controller
     {
         $category->delete();
 
-        return redirect()->route('categories.index')
+        return redirect()->route('categoriesservice.index')
             ->withSuccess(__('Category deleted successfully.'));
     }
 

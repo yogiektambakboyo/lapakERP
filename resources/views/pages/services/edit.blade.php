@@ -45,7 +45,7 @@
                     @foreach($productTypes as $productType)
                         <option value="{{ $productType->id }}"   {{ ($product->type_id == $productType->id) 
                           ? 'selected'
-                          : ''}} >{{ $productType->remark }}</option>
+                          : ''}} >{{ $productType->abbr }}</option>
                     @endforeach
                 </select>
             </div>

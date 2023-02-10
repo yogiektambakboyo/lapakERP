@@ -11,6 +11,6 @@ class Category extends Model
     protected $table = 'product_category';
 
     protected $fillable = [
-        'remark'
+        'remark','type_id'
     ];
 }

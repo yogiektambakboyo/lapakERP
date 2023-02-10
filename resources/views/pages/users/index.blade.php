@@ -16,7 +16,6 @@
                         <input type="hidden" class="form-control  form-control-sm" name="filter_branch_id" value="{{ $request->filter_branch_id }}">
                         <input type="hidden" name="filter_job_id" value="{{ $request->filter_job_id }}">
                         <input type="hidden" name="filter_enddate" value="{{ $request->filter_end_date }}">
-                        <div class="col-2"><input type="submit" class="btn btn-sm btn-secondary" value="@lang('user.btn_search')" name="src"></div>   
                         <div class="col-2"><a href="#modal-filter"  data-bs-toggle="modal" data-bs-target="#modal-filter" class="btn btn-sm btn-lime">@lang('user.btn_filter')</a></div>   
                         <div class="col-2"><input type="submit" class="btn btn-sm btn-success" value="@lang('user.btn_export')" name="export"></div>  
                     </form>
@@ -69,10 +68,6 @@
                 @endforeach
             </tbody>
         </table>
-
-        <div class="d-flex">
-            {!! $users->links() !!}
-        </div>
 
         <div class="modal fade" id="modal-filter" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
             <div class="modal-dialog">
@@ -211,4 +206,12 @@
                 })
         }
     </script>
+@endpush
+
+@push('scripts')
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#example').DataTable();
+    });
+</script>
 @endpush

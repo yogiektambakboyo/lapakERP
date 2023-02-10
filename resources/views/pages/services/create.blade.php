@@ -41,7 +41,7 @@
                     name="type_id" required>
                     <option value="">@lang('general.lbl_typeselect')</option>
                     @foreach($productTypes as $productType)
-                        <option value="{{ $productType->id }}">{{ $productType->remark }}</option>
+                        <option value="{{ $productType->id }}">{{ $productType->abbr }}</option>
                     @endforeach
                 </select>
             </div>

@@ -17,6 +17,12 @@
                         class="form-control" 
                         name="remark" 
                         placeholder="@lang('general.lbl_name')" required>
+                        
+                        <input value="2" 
+                        type="hidden" 
+                        class="form-control" 
+                        name="type_id" 
+                         required>
 
                     @if ($errors->has('name'))
                         <span class="text-danger text-left">{{ $errors->first('remark') }}</span>
