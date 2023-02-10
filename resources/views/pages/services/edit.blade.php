@@ -81,6 +81,20 @@
             </div>
           </div>
           <div class="row mb-3">
+            <label class="form-label col-form-label col-md-2">@lang('general.lbl_uom')</label>
+            <div class="col-md-8">
+              <select class="form-control" 
+                      name="uom_id" required>
+                      <option value="">@lang('general.lbl_uomselect')</option>
+                      @foreach($productUoms as $productUom)
+                          <option value="{{ $productUom->id }}"  {{ ($product->uom_id == $productUom->id) 
+                            ? 'selected'
+                            : ''}}  >{{ $productUom->remark }}</option>
+                      @endforeach
+                  </select>
+            </div>
+          </div>
+          <div class="row mb-3">
               <label class="form-label col-form-label col-md-2">@lang('general.lbl_photo')</label>
               <div class="col-md-8">
                 <a href="/images/user-files/{{ $product->photo }}" target="_blank"><img src="/images/user-files/{{ $product->photo }}" width="100" height="100" class="rounded float-start"></a>

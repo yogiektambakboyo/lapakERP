@@ -243,8 +243,10 @@ class ServicesController extends Controller
         $products = Product::join('product_type as pt','pt.id','=','product_sku.type_id')
         ->join('product_category as pc','pc.id','=','product_sku.category_id')
         ->join('product_brand as pb','pb.id','=','product_sku.brand_id')
+        ->join('product_uom as pu','pu.product_id','=','product_sku.product_id')
+        ->join('uom as uo','uo.id','=','pu.uom_id')
         ->where('product_sku.id',$product->id)
-        ->get(['product_sku.photo','product_sku.id as product_id','product_sku.abbr','product_sku.remark as product_name','pt.remark as product_type','pc.remark as product_category','pb.remark as product_brand'])->first();
+        ->get(['pu.uom_id','uo.remark as product_uom','product_sku.photo','product_sku.id as product_id','product_sku.abbr','product_sku.remark as product_name','pt.remark as product_type','pc.remark as product_category','pb.remark as product_brand'])->first();
 
         $productsw = Product::join('product_type as pt','pt.id','=','product_sku.type_id')
         ->join('product_category as pc','pc.id','=','product_sku.category_id')
