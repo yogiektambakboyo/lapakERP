@@ -28,7 +28,7 @@
               <label class="form-label col-form-label col-md-2">@lang('general.lbl_name')</label>
               <div class="col-md-8">
                 <input type="text" class="form-control" name="remark" value="{{ $product->product_name }}" />
-                <input type="hidden" class="form-control" value="{{ $product->id }}" readonly />
+                <input type="hidden" class="form-control" name="id" value="{{ $product->id }}" readonly />
               </div>
           </div>
           <div class="row mb-3">
