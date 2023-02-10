@@ -307,6 +307,7 @@ class ServicesController extends Controller
      */
     public function update(Product $product, Request $request) 
     {
+        return $request;
         $user = Auth::user();
         $product->update(
             array_merge(
@@ -325,7 +326,7 @@ class ServicesController extends Controller
 
         
         return redirect()->route('services.index')
-            ->withSuccess(__('Product updated successfully.'));
+            ->withSuccess(__('Service updated successfully.'));
     }
 
 
