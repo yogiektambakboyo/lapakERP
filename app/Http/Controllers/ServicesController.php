@@ -307,7 +307,6 @@ class ServicesController extends Controller
      */
     public function update(Product $product, Request $request) 
     {
-        return $request;
         $user = Auth::user();
         $product->update(
             array_merge(
