@@ -198,7 +198,7 @@ class ProductsCommisionByYearController extends Controller
 
         $user  = Auth::user();
         $data = $this->data;
-        $years = [1,2,3,4,5,6,7,8,9,10];
+        $yearsarr = [1,2,3,4,5,6,7,8,9,10];
         $product = Product::join('product_type as pt','pt.id','=','product_sku.type_id')
         ->join('product_commision_by_year as pr','pr.product_id','=','product_sku.id')
         ->join('branch as bc','bc.id','=','pr.branch_id')
@@ -211,7 +211,7 @@ class ProductsCommisionByYearController extends Controller
         return view('pages.productscommisionbyyear.edit', [
             'branchs' => Branch::join('users_branch as ub','ub.branch_id','=','branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']),
             'data' => $data,
-            'years' => $years,
+            'years' => $yearsarr,
             'jobs' => JobTitle::get(['id','remark']),
             'product' => $product,
             'products' => Product::get(), 'company' => Company::get()->first(),
