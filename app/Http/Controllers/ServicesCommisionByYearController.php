@@ -208,6 +208,7 @@ class ServicesCommisionByYearController extends Controller
         ->where('pr.jobs_id','=',$jobs_id)
         ->where('pr.years','=',$years)
         ->get(['values','pr.jobs_id', 'jt.remark as job_title', 'years','product_sku.id as id','product_sku.abbr','product_sku.brand_id','product_sku.category_id','product_sku.type_id','product_sku.remark as product_name','pr.branch_id','bc.remark as branch_name'])->first();
+        return $product;
         return view('pages.servicescommisionbyyear.edit', [
             'branchs' => Branch::join('users_branch as ub','ub.branch_id','=','branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']),
             'data' => $data,
