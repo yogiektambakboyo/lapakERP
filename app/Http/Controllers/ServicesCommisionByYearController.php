@@ -240,7 +240,7 @@ class ServicesCommisionByYearController extends Controller
         );
         
         return redirect()->route('servicescommisionbyyear.index')
-            ->withSuccess(__('Product commision updated successfully.'));
+            ->withSuccess(__('Service commision updated successfully.'));
     }
 
     /**
