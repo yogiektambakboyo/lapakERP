@@ -53,8 +53,9 @@
           <div class="row mb-3">
             <label class="form-label col-form-label col-md-2">@lang('general.lbl_jobtitleselect')</label>
             <div class="col-md-8">
+              <input type="hidden" name="jobs_id" value="{{ $product->jobs_id }}">
               <select class="form-control" 
-                  name="jobs_id" disabled>
+                  name="jobs_ids" disabled>
                   <option value="">@lang('general.lbl_jobtitleselect')</option>
                   @foreach($jobs as $job)
                       <option value="{{ $job->id }}"  {{ ($product->jobs_id == $job->id) 
