@@ -124,7 +124,7 @@ return [
     "lbl_add_service_new" => "Tambah Perawatan Baru",
     "lbl_add_customer_new" => "Tambah Pelanggan Baru",
     "lbl_add_price_new" => "Tambah Harga Produk Baru",
-    "lbl_add_service_new" => "Tambah Harga Perawatan Baru",
+    "lbl_add_service_price_new" => "Tambah Harga Perawatan Baru",
     "lbl_add_brand_new" => "Tambah Merek Baru",
     "lbl_add_stock_new" => "Tambah Stok Produk Baru",
     "lbl_add_uom_new" => "Tambah Satuan Baru",
