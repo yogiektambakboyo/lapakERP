@@ -50,7 +50,7 @@
                         <td>{{ $product->values }}</td>
                         <td><a href="{{ route('productscommisionbyyear.edit', [$product->branch_id,$product->id]) }}" class="btn btn-info btn-sm  {{ $act_permission->allow_edit==1?'':'d-none' }}">@lang('general.lbl_edit')</a></td>
                         <td class="{{ $act_permission->allow_delete==1?'':'d-none' }}">
-                            {!! Form::open(['method' => 'DELETE','route' => ['productscommisionbyyear.destroy', [$product->branch_id,$product->id]],'style'=>'display:inline']) !!}
+                            {!! Form::open(['method' => 'DELETE','route' => ['productscommisionbyyear.destroy', [$product->branch_id,$product->id,$product->jobs_id,$product->years]],'style'=>'display:inline']) !!}
                             {!! Form::submit('Hapus', ['class' => 'btn btn-danger btn-sm']) !!}
                             {!! Form::close() !!}
                         </td>

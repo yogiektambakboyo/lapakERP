@@ -101,7 +101,7 @@ class ServicesCommisionByYearController extends Controller
     public function export(Request $request) 
     {
         $keyword = $request->search;
-        return Excel::download(new ProductsExport, 'products_'.Carbon::now()->format('YmdHis').'.xlsx');
+        return Excel::download(new ProductsExport, 'productscommision_'.Carbon::now()->format('YmdHis').'.xlsx');
     }
 
     /**
@@ -190,7 +190,7 @@ class ServicesCommisionByYearController extends Controller
      * 
      * @return \Illuminate\Http\Response
      */
-    public function edit(String $branch_id,String $product_id) 
+    public function edit(String $branch_id,String $product_id,String $jobs_id,String $years) 
     {
         $user = Auth::user();
         $id = $user->roles->first()->id;
@@ -205,6 +205,8 @@ class ServicesCommisionByYearController extends Controller
         ->join('job_title as jt','jt.id','=','pr.jobs_id')
         ->where('product_sku.id',$product_id)
         ->where('bc.id','=',$branch_id)
+        ->where('pr.jobs_id','=',$jobs_id)
+        ->where('pr.years','=',$years)
         ->get(['values','pr.jobs_id', 'jt.remark as job_title', 'years','product_sku.id as id','product_sku.abbr','product_sku.brand_id','product_sku.category_id','product_sku.type_id','product_sku.remark as product_name','pr.branch_id','bc.remark as branch_name'])->first();
         return view('pages.servicescommisionbyyear.edit', [
             'branchs' => Branch::join('users_branch as ub','ub.branch_id','=','branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']),
@@ -224,14 +226,16 @@ class ServicesCommisionByYearController extends Controller
      * 
      * @return \Illuminate\Http\Response
      */
-    public function update(String $branch,String $product, Request $request) 
+    public function update(String $branch,String $product,String $jobs_id,String $years, Request $request) 
     {
         $user = Auth::user();
-        ProductCommisionByYear::where('product_id','=',$product)->where('branch_id','=',$branch)->update(
+        ProductCommisionByYear::where('product_id','=',$product)
+            ->where('branch_id','=',$branch)
+            ->where('jobs_id','=',$jobs_id)
+            ->where('years','=',$years)
+            ->update(
             array_merge(
-                ['values' => $request->get('values') ],
-                ['jobs_id' => $request->get('jobs_id') ],
-                ['years' => $request->get('years') ]
+                ['values' => $request->get('values') ]
             )
         );
         
@@ -246,11 +250,15 @@ class ServicesCommisionByYearController extends Controller
      * 
      * @return \Illuminate\Http\Response
      */
-    public function destroy(String $branch,String $product) 
+    public function destroy(String $branch,String $product,String $jobs_id,String $years) 
     {
-        ProductCommisionByYear::where('product_id','=',$product)->where('branch_id','=',$branch)->delete();
+        ProductCommisionByYear::where('product_id','=',$product)
+        ->where('branch_id','=',$branch)
+        ->where('jobs_id','=',$jobs_id)
+            ->where('years','=',$years)
+            ->delete();
         return redirect()->route('productscommisionbyyear.index')
-            ->withSuccess(__('Product commisions by year deleted successfully.'));
+            ->withSuccess(__('Service commisions by year deleted successfully.'));
     }
 
     public function getpermissions($role_id){

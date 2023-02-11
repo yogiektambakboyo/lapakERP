@@ -3,7 +3,7 @@
 @section('title', 'Edit Commision')
 
 @section('content')
-<form method="POST" action="{{ route('productscommisionbyyear.update', [$product->branch_id,$product->id]) }}"  enctype="multipart/form-data">
+<form method="POST" action="{{ route('productscommisionbyyear.update', [$product->branch_id,$product->id,$product->jobs_id,$product->years]) }}"  enctype="multipart/form-data">
   @method('patch')
   @csrf
     <div class="bg-light p-4 rounded">

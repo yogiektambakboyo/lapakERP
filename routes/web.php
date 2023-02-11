@@ -442,10 +442,10 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
             Route::get('/create', 'ProductsCommisionByYearController@create')->name('productscommisionbyyear.create');
             Route::post('/create', 'ProductsCommisionByYearController@store')->name('productscommisionbyyear.store');
             Route::get('/search', 'ProductsCommisionByYearController@search')->name('productscommisionbyyear.search');
-            Route::get('/{branch}/{product}/show', 'ProductsCommisionByYearController@show')->name('productscommisionbyyear.show');
-            Route::get('/{branch}/{product}/edit', 'ProductsCommisionByYearController@edit')->name('productscommisionbyyear.edit');
-            Route::patch('/{branch}/{product}/update', 'ProductsCommisionByYearController@update')->name('productscommisionbyyear.update');
-            Route::delete('/{branch}/{product}/delete', 'ProductsCommisionByYearController@destroy')->name('productscommisionbyyear.destroy');
+            Route::get('/{branch}/{product}/{jobs_id}/show', 'ProductsCommisionByYearController@show')->name('productscommisionbyyear.show');
+            Route::get('/{branch}/{product}/{jobs_id}/{years}/edit', 'ProductsCommisionByYearController@edit')->name('productscommisionbyyear.edit');
+            Route::patch('/{branch}/{product}/{jobs_id}/{years}/update', 'ProductsCommisionByYearController@update')->name('productscommisionbyyear.update');
+            Route::delete('/{branch}/{product}/{jobs_id}/{years}/delete', 'ProductsCommisionByYearController@destroy')->name('productscommisionbyyear.destroy');
             Route::get('/export', 'ProductsCommisionByYearController@export')->name('productscommisionbyyear.export');
         });
 
@@ -457,10 +457,10 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
             Route::get('/create', 'ServicesCommisionByYearController@create')->name('servicescommisionbyyear.create');
             Route::post('/create', 'ServicesCommisionByYearController@store')->name('servicescommisionbyyear.store');
             Route::get('/search', 'ServicesCommisionByYearController@search')->name('servicescommisionbyyear.search');
-            Route::get('/{branch}/{product}/show', 'ServicesCommisionByYearController@show')->name('servicescommisionbyyear.show');
-            Route::get('/{branch}/{product}/edit', 'ServicesCommisionByYearController@edit')->name('servicescommisionbyyear.edit');
-            Route::patch('/{branch}/{product}/update', 'ServicesCommisionByYearController@update')->name('servicescommisionbyyear.update');
-            Route::delete('/{branch}/{product}/delete', 'ServicesCommisionByYearController@destroy')->name('servicescommisionbyyear.destroy');
+            Route::get('/{branch}/{product}/{jobs_id}/show', 'ServicesCommisionByYearController@show')->name('servicescommisionbyyear.show');
+            Route::get('/{branch}/{product}/{jobs_id}/{years}/edit', 'ServicesCommisionByYearController@edit')->name('servicescommisionbyyear.edit');
+            Route::patch('/{branch}/{product}/{jobs_id}/{years}/update', 'ServicesCommisionByYearController@update')->name('servicescommisionbyyear.update');
+            Route::delete('/{branch}/{product}/{jobs_id}/{years}/delete', 'ServicesCommisionByYearController@destroy')->name('servicescommisionbyyear.destroy');
             Route::get('/export', 'ServicesCommisionByYearController@export')->name('servicescommisionbyyear.export');
         });
 
