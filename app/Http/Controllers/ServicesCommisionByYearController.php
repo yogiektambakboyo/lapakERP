@@ -257,7 +257,7 @@ class ServicesCommisionByYearController extends Controller
         ->where('jobs_id','=',$jobs_id)
             ->where('years','=',$years)
             ->delete();
-        return redirect()->route('productscommisionbyyear.index')
+        return redirect()->route('servicescommisionbyyear.index')
             ->withSuccess(__('Service commisions by year deleted successfully.'));
     }
 
