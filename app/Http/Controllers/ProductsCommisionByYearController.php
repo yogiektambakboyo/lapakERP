@@ -229,7 +229,8 @@ class ProductsCommisionByYearController extends Controller
         $user = Auth::user();
         ProductCommisionByYear::where('product_id','=',$product)->where('branch_id','=',$branch)->update(
             array_merge(
-                ['values' => $request->get('values') ]
+                ['values' => $request->get('values') ],
+                ['years' => $request->get('years') ]
             )
         );
         

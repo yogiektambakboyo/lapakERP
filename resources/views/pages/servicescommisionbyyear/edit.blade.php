@@ -67,8 +67,9 @@
           <div class="row mb-3">
             <label class="form-label col-form-label col-md-2">@lang('general.lbl_years')</label>
             <div class="col-md-8">
+              <input type="hidden" name="years" value="{{ $product->years }}">
               <select class="form-control" 
-                  name="years" disabled>
+                  name="yearss" disabled>
                   <option value="">@lang('general.lbl_yearselect')</option>
                   @foreach($years as $year)
                       <option value="{{ $year }}" {{ ($product->years == $year) 
