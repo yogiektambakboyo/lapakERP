@@ -36,11 +36,11 @@
                 </div>
              </div>
               <div class="row mb-3">
-                <label class="form-label col-form-label col-md-2">@lang('general.lbl_product_name')</label>
+                <label class="form-label col-form-label col-md-2">@lang('general.lbl_service_name')</label>
                 <div class="col-md-8">
                   <select class="form-control" 
                   name="product_id">
-                  <option value="">@lang('general.lbl_productselect')</option>
+                  <option value="">@lang('general.serviceselect')</option>
                   @foreach($products as $product)
                       <option value="{{ $product->id }}">{{  $product->remark }}</option>
                   @endforeach
