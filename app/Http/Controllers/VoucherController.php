@@ -149,7 +149,7 @@ class VoucherController extends Controller
         $user  = Auth::user();
         $data = $this->data;
         return view('pages.voucher.create',[
-            'products' => DB::select('select ps.id,ps.remark from product_sku as ps order by ps.remark;'),
+            'products' => DB::select('select ps.id,ps.remark from product_sku as ps where ps.type_id=2 order by ps.remark;'),
             'data' => $data, 'company' => Company::get()->first(),
             'branchs' => Branch::join('users_branch as ub','ub.branch_id','=','branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']),
         ]);
