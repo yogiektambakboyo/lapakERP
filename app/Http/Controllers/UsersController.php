@@ -64,7 +64,7 @@ class UsersController extends Controller
         $keyword = "";
         $act_permission = $this->act_permission[0];
         $branchs = Branch::join('users_branch as ub','ub.branch_id', '=', 'branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']);
-        $users = User::orderBy('id', 'ASC')->join('job_title as jt','jt.id','=','users.job_id')->where('users.name','!=','Admin')->paginate(10,['users.id','users.employee_id','users.name','jt.remark as job_title','users.join_date' ]);
+        $users = User::orderBy('id', 'ASC')->join('job_title as jt','jt.id','=','users.job_id')->where('users.name','!=','Admin')->get(['users.id','users.employee_id','users.name','jt.remark as job_title','users.join_date' ]);
         return view('pages.users.index',['company' => Company::get()->first(),'jobtitles'=>JobTitle::orderBy('remark','asc')->get(['id','remark'])] ,compact('request','branchs','users','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
     }
 
@@ -91,7 +91,7 @@ class UsersController extends Controller
             $users = User::orderBy('id', 'ASC')->join('branch as b','b.id','=','users.branch_id')
             ->join('job_title as jt','jt.id','=','users.job_id')
             ->where('users.name','!=','Admin')->where('users.name','ILIKE','%'.$keyword.'%')
-            ->paginate(10,['users.id','users.employee_id','users.name','jt.remark as job_title','b.remark as branch_name','users.join_date' ]);
+            ->get(['users.id','users.employee_id','users.name','jt.remark as job_title','b.remark as branch_name','users.join_date' ]);
             $request->filter_branch_id = "";
             $request->filter_end_date = "";
             $request->filter_job_id = "";
@@ -103,7 +103,7 @@ class UsersController extends Controller
             ->where('b.id','like','%'.$branchx.'%')
             ->where('jt.id','like','%'.$jobtitlex.'%')
             ->where('users.join_date','<=',$enddate)
-            ->paginate(10,['users.id','users.employee_id','users.name','jt.remark as job_title','b.remark as branch_name','users.join_date' ]);
+            ->get(['users.id','users.employee_id','users.name','jt.remark as job_title','b.remark as branch_name','users.join_date' ]);
             return view('pages.users.index', ['company' => Company::get()->first(),'jobtitles'=>JobTitle::orderBy('remark','asc')->get(['id','remark'])],compact('request','branchs','users','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
         }
     }

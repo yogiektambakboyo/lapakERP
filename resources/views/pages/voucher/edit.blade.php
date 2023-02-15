@@ -43,7 +43,7 @@
               <div class="col-md-8">
                 <select class="form-control" 
                 name="product_id" disabled>
-                <option value="">@lang('general.lbl_productselect')</option>
+                <option value="">@lang('general.serviceselect')</option>
                 @foreach($products as $productx)
                     <option value="{{ $productx->id }}"  {{ ($productx->id == $product->id) 
                       ? 'selected'

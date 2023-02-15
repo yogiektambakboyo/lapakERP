@@ -74,7 +74,6 @@ class ReportOmsetDetailController extends Controller
             join customers c on c.id = im.customers_id 
             join users u on u.id=im.created_by
             join branch b on b.id = c.branch_id
-            join shift s on im.created_at::time  between s.time_start and s.time_end
             where im.dated>now()-interval'7 days' order by im.invoice_no               
         ");
         $data = $this->data;
