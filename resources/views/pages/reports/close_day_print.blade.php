@@ -126,7 +126,7 @@
                     $total_qty = 0;
                   @endphp
                   @foreach($report_datas as $report_data)
-                      @if($report_data->type_id==1&&$report_data->category_id!=12)
+                      @if($report_data->type_id==1&&$report_data->category_id!=26)
                         <tr>
                             <td style="text-align: left;">{{ $report_data->abbr }}</td>
                             <td style="text-align: center;">{{ number_format($report_data->price,0,',','.') }}</td>
@@ -167,7 +167,7 @@
                     $counter = 0;    
                   @endphp
                   @foreach($report_datas as $report_data)
-                      @if($report_data->category_id==12)
+                      @if($report_data->category_id==26)
                         <tr>
                             <td style="text-align: left;">{{ $report_data->abbr }}</td>
                             <td style="text-align: center;">{{ number_format($report_data->price,0,',','.') }}</td>
