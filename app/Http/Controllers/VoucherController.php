@@ -153,7 +153,7 @@ class VoucherController extends Controller
         }else{
             $l_voucher = $last_voucher;
         }
-        $now_voucher = "VC-".("000000".$l_voucher);
+        $now_voucher = "VC-".substr(("000000".$l_voucher),-5);
         return $now_voucher;
 
         $user  = Auth::user();
@@ -182,12 +182,12 @@ class VoucherController extends Controller
         for($i=0;$i<$request->qty_voucher_code;$i++){
 
             $last_voucher = Voucher::orderBy('id','DESC')->first()->id;
-            if($last_voucher==null or $last_voucher=""){
+            if($last_voucher==null or $last_voucher==""){
                 $l_voucher = 0;
             }else{
                 $l_voucher = $last_voucher;
             }
-            $now_voucher = "VC-".substr((("000000".$l_voucher+1)),-6);
+            $now_voucher = "VC-".substr((("000000".$l_voucher+1)),-5);
         
             $user = Auth::user();
             $voucher->create(
