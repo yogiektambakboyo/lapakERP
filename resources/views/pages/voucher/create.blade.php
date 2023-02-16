@@ -45,7 +45,7 @@
                 <label class="form-label col-form-label col-md-2">@lang('general.lbl_service_name')</label>
                 <div class="col-md-8">
                   <select class="form-control" 
-                  name="product_id">
+                  name="product_id" required>
                   <option value="">@lang('general.serviceselect')</option>
                   @foreach($products as $product)
                       <option value="{{ $product->id }}">{{  $product->remark }}</option>
@@ -57,7 +57,7 @@
               <label class="form-label col-form-label col-md-2">@lang('general.lbl_branch')</label>
               <div class="col-md-8">
                 <select class="form-control" 
-                    name="branch_id">
+                    name="branch_id" required>
                     <option value="">@lang('general.lbl_branchselect')</option>
                     @foreach($branchs as $branch)
                         <option value="{{ $branch->id }}">{{  $branch->remark }}</option>
