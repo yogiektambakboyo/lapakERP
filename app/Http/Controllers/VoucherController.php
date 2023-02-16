@@ -146,7 +146,10 @@ class VoucherController extends Controller
         $id = $user->roles->first()->id;
         $this->getpermissions($id);
 
+    
+
         $last_voucher = Voucher::orderBy('id','DESC')->get(['id'])->first();
+        return $last_voucher;
         if($last_voucher==null or $last_voucher=""){
             $last_voucher = 0;
         }else{
