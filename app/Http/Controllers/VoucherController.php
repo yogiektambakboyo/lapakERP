@@ -174,8 +174,11 @@ class VoucherController extends Controller
     
         for($i=0;$i<$request->qty_voucher_code;$i++){
 
-            $last_voucher = Voucher::orderBy('id','DESC')->get('id')->first()+1;
-            $last_voucher = "VC-".substr((("000000".$last_voucher)),-6);
+            $last_voucher = Voucher::orderBy('id','DESC')->get('id')->first();
+            if($last_voucher==null or $last_voucher=""){
+                $last_voucher =0;
+            }
+            $last_voucher = "VC-".substr((("000000".$last_voucher+1)),-6);
         
             $user = Auth::user();
             $voucher->create(
