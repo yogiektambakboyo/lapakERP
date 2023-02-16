@@ -148,6 +148,7 @@ class VoucherController extends Controller
 
 
         $last_voucher = Voucher::orderBy('id','DESC')->first()->id;
+        return $last_voucher;
         if($last_voucher==null or $last_voucher=""){
             $l_voucher = 0;
         }else{
