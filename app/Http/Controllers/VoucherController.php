@@ -152,7 +152,7 @@ class VoucherController extends Controller
         }else{
             $last_voucher = $last_voucher->id;
         }
-        $last_voucher = "VC-".substr(("000000".$last_voucher->id),-6);
+        $last_voucher = "VC-".substr(("000000".$last_voucher),-6);
 
         $user  = Auth::user();
         $data = $this->data;
