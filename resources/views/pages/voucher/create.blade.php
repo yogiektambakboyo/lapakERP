@@ -35,6 +35,12 @@
                   <input type="text" class="form-control" name="voucher_code" value="{{ old('voucher_code') }}" required/>
                 </div>
              </div>
+             <div class="row mb-3">
+              <label class="form-label col-form-label col-md-2">Jumlah Voucher</label>
+              <div class="col-md-8">
+                <input type="text" class="form-control" name="qty_voucher_code" value="{{ old('qty_voucher_code') }}" required/>
+              </div>
+           </div>
               <div class="row mb-3">
                 <label class="form-label col-form-label col-md-2">@lang('general.lbl_service_name')</label>
                 <div class="col-md-8">
