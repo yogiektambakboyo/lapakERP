@@ -76,7 +76,11 @@ class ReportTerapistComController extends Controller
                                     left join product_point pp on pp.product_id=ps.id and pp.branch_id=b.id 
                                     where pc.values > 0 and im.dated >= now()-interval'7 days'
                                     union all            
-                                    select  b.remark as branch_name,'referral' as com_type,im.dated,im.invoice_no,ps.abbr,ps.remark,case when date_part('year', age(now(),join_date))::int=0 then 1 else date_part('year', age(now(),join_date)) end as work_year,u.name,id.price,id.qty,id.total,pc.referral_fee base_commision,pc.referral_fee * id.qty as commisions,0 as point_qty,0 as point_value   
+                                    select  b.remark as branch_name,'referral' as com_type,im.dated,im.invoice_no,ps.abbr,ps.remark,case when date_part('year', age(now(),join_date))::int=0 then 1 else date_part('year', age(now(),join_date)) end as work_year,u.name,id.price,id.qty,id.total,
+                                    case when pc.referral_fee<=0 then pc.assigned_to_fee else pc.referral_fee end base_commision,
+                                    case when pc.referral_fee<=0 then pc.assigned_to_fee * id.qty else pc.referral_fee * id.qty end as commisions,
+                                    0 as point_qty,
+                                    0 as point_value   
                                     from invoice_master im 
                                     join invoice_detail id on id.invoice_no = im.invoice_no 
                                     join product_sku ps on ps.id = id.product_id 
@@ -84,7 +88,7 @@ class ReportTerapistComController extends Controller
                                     join branch b on b.id = c.branch_id
                                     join product_commisions pc on pc.product_id = id.product_id and pc.branch_id = c.branch_id
                                     join users u on u.job_id = 2  and u.id = id.referral_by  
-                                    where pc.referral_fee  > 0  and im.dated >= now()-interval'7 days'
+                                    where pc.referral_fee+pc.assigned_to_fee+pc.created_by_fee  > 0  and im.dated >= now()-interval'7 days'
         ");
         $data = $this->data;
         $keyword = "";
