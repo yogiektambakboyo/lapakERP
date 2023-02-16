@@ -154,7 +154,6 @@ class VoucherController extends Controller
             $l_voucher = $last_voucher;
         }
         $now_voucher = "VC-".substr(("000000".$l_voucher),-5);
-        return $now_voucher;
 
         $user  = Auth::user();
         $data = $this->data;
