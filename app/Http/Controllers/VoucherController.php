@@ -147,9 +147,10 @@ class VoucherController extends Controller
         $this->getpermissions($id);
 
         $last_voucher = Voucher::orderBy('id','DESC')->get(['id'])->first();
-        $last_voucher = $last_voucher->id;
         if($last_voucher==null or $last_voucher=""){
             $last_voucher = 0;
+        }else{
+            $last_voucher = $last_voucher->id;
         }
         $last_voucher = "VC-".substr(("000000".$last_voucher->id),-6);
 
@@ -179,9 +180,10 @@ class VoucherController extends Controller
         for($i=0;$i<$request->qty_voucher_code;$i++){
 
             $last_voucher = Voucher::orderBy('id','DESC')->get(['id'])->first();
-            $last_voucher = $last_voucher->id;
             if($last_voucher==null or $last_voucher=""){
                 $last_voucher = 0;
+            }else{
+                $last_voucher = $last_voucher->id;
             }
             $last_voucher = "VC-".substr((("000000".$last_voucher+1)),-6);
         
