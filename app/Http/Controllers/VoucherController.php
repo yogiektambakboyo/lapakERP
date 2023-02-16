@@ -148,13 +148,13 @@ class VoucherController extends Controller
 
 
         $last_voucher = Voucher::orderBy('id','DESC')->first()->id;
-        return $last_voucher;
         if($last_voucher==null or $last_voucher=""){
             $l_voucher = 0;
         }else{
             $l_voucher = $last_voucher;
         }
         $now_voucher = "VC-".substr((("000000".$l_voucher)),-6);
+        return $now_voucher;
 
         $user  = Auth::user();
         $data = $this->data;
