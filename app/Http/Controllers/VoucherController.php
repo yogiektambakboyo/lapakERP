@@ -146,13 +146,12 @@ class VoucherController extends Controller
         $id = $user->roles->first()->id;
         $this->getpermissions($id);
 
-    
 
-        $last_voucher = Voucher::orderBy('id','DESC')->get(['id']);
+        $last_voucher = Voucher::orderBy('id','DESC')->first()->id;
         if($last_voucher==null or $last_voucher=""){
             $l_voucher = 0;
         }else{
-            $l_voucher = $last_voucher[0]->id;
+            $l_voucher = last_voucher;
         }
         $now_voucher = "VC-".substr((("000000".$l_voucher)),-6);
 
@@ -181,11 +180,11 @@ class VoucherController extends Controller
     
         for($i=0;$i<$request->qty_voucher_code;$i++){
 
-            $last_voucher = Voucher::orderBy('id','DESC')->get(['id']);
+            $last_voucher = Voucher::orderBy('id','DESC')->first()->id;
             if($last_voucher==null or $last_voucher=""){
                 $l_voucher = 0;
             }else{
-                $l_voucher = $last_voucher[0]->id;
+                $l_voucher = last_voucher;
             }
             $now_voucher = "VC-".substr((("000000".$l_voucher+1)),-6);
         
