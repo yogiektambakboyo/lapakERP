@@ -147,12 +147,12 @@ class VoucherController extends Controller
         $this->getpermissions($id);
 
         $last_voucher = Voucher::orderBy('id','DESC')->get('id')->first();
-        $last_voucher = "VC-".substr((("000000".$last_voucher)),-5);
+        $last_voucher = "VC-".substr((("000000".$last_voucher)),-6);
 
-        return $last_voucher;
         $user  = Auth::user();
         $data = $this->data;
         return view('pages.voucher.create',[
+            'last_voucher' => $last_voucher,
             'products' => DB::select('select ps.id,ps.remark from product_sku as ps where ps.type_id=2 order by ps.remark;'),
             'data' => $data, 'company' => Company::get()->first(),
             'branchs' => Branch::join('users_branch as ub','ub.branch_id','=','branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']),
@@ -172,21 +172,28 @@ class VoucherController extends Controller
         //For demo purposes only. When creating user or inviting a user
         // you should create a generated random password and email it to the user
     
-        $user = Auth::user();
-        $voucher->create(
-            array_merge(
-                ['value' => $request->get('value') ],
-                ['dated_start' => Carbon::parse($request->get('dated_start'))->format('Y-m-d') ],
-                ['dated_end' => Carbon::parse($request->get('dated_end'))->format('Y-m-d') ],
-                ['product_id' => $request->get('product_id') ],
-                ['branch_id' => $request->get('branch_id') ],
-                ['remark' => $request->get('remark') ],
-                ['voucher_code' => $request->get('voucher_code') ],
-                ['created_by' => $user->id ],
-            )
-        );
+        for($i=0;$i<$request->qty_voucher_code;$i++){
+
+            $last_voucher = Voucher::orderBy('id','DESC')->get('id')->first()+1;
+            $last_voucher = "VC-".substr((("000000".$last_voucher)),-6);
+        
+            $user = Auth::user();
+            $voucher->create(
+                array_merge(
+                    ['value' => $request->get('value') ],
+                    ['dated_start' => Carbon::parse($request->get('dated_start'))->format('Y-m-d') ],
+                    ['dated_end' => Carbon::parse($request->get('dated_end'))->format('Y-m-d') ],
+                    ['product_id' => $request->get('product_id') ],
+                    ['branch_id' => $request->get('branch_id') ],
+                    ['remark' => $request->get('remark') ],
+                    ['voucher_code' => $last_voucher ],
+                    ['created_by' => $user->id ],
+                )
+            );
+        }
+        
         return redirect()->route('voucher.index')
-            ->withSuccess(__('Voucher created successfully.'));
+            ->withSuccess(__($request->qty_voucher_code.' Voucher created successfully.'));
     }
 
     /**

@@ -30,9 +30,9 @@
                 </div>
              </div>
               <div class="row mb-3">
-                <label class="form-label col-form-label col-md-2">Voucher Code</label>
+                <label class="form-label col-form-label col-md-2">Last Voucher Code</label>
                 <div class="col-md-8">
-                  <input type="text" class="form-control" name="voucher_code" value="{{ old('voucher_code') }}" required/>
+                  <input type="text" class="form-control" name="voucher_code" value="{{ $last_voucher }}" required/>
                 </div>
              </div>
              <div class="row mb-3">
