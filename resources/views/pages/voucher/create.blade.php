@@ -32,7 +32,7 @@
               <div class="row mb-3">
                 <label class="form-label col-form-label col-md-2">Last Voucher Code</label>
                 <div class="col-md-8">
-                  <input type="text" class="form-control" name="voucher_code" value="{{ $last_voucher }}" required/>
+                  <input type="text" class="form-control" name="voucher_code" value="{{ $last_voucher }}" disabled/>
                 </div>
              </div>
              <div class="row mb-3">
