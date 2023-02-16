@@ -151,7 +151,7 @@ class VoucherController extends Controller
         if($last_voucher==null or $last_voucher=""){
             $l_voucher = 0;
         }else{
-            $l_voucher = last_voucher;
+            $l_voucher = $last_voucher;
         }
         $now_voucher = "VC-".substr((("000000".$l_voucher)),-6);
 
@@ -184,7 +184,7 @@ class VoucherController extends Controller
             if($last_voucher==null or $last_voucher=""){
                 $l_voucher = 0;
             }else{
-                $l_voucher = last_voucher;
+                $l_voucher = $last_voucher;
             }
             $now_voucher = "VC-".substr((("000000".$l_voucher+1)),-6);
         
