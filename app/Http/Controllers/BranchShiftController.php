@@ -208,7 +208,6 @@ class BranchShiftController extends Controller
      */
     public function update(Request $request, BranchShift $branchshift)
     {
-        return $branchshift;
         BranchShift::where('id', $branchshift->id)
         ->update(
             array_merge( 
@@ -218,7 +217,7 @@ class BranchShiftController extends Controller
         );
 
         return redirect()->route('branchshift.index')
-            ->withSuccess(__('Customer updated successfully.'));
+            ->withSuccess(__('Branch Shift updated successfully.'));
     }
 
     /**
