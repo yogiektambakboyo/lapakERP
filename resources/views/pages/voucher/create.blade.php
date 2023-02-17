@@ -24,13 +24,13 @@
             <div class="panel-heading bg-teal-600"><h4></h4></div>
             <div class="panel-body bg-white text-black">
               <div class="row mb-3">
-                <label class="form-label col-form-label col-md-2">Voucher Name</label>
+                <label class="form-label col-form-label col-md-2">Nama Voucher</label>
                 <div class="col-md-8">
                   <input type="text" class="form-control" name="remark" value="{{ old('remark') }}" required/>
                 </div>
              </div>
               <div class="row mb-3">
-                <label class="form-label col-form-label col-md-2">Last Voucher Code</label>
+                <label class="form-label col-form-label col-md-2">Kode Voucher Terakhir</label>
                 <div class="col-md-8">
                   <input type="text" class="form-control" name="voucher_code" value="{{ $last_voucher }}" disabled/>
                 </div>
