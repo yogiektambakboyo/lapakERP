@@ -131,6 +131,14 @@ class ReportCloseShiftController extends Controller
                 where im.dated = '".$filter_begin_date."' and im.created_at::time  between s.time_start and s.time_end  and c.branch_id = ".$filter_branch_id." 
                  group by im.invoice_no,im.total_payment,im.payment_type                       
         ");
+        $cust = DB::select("
+                select count(distinct c.id) as c_cus
+                from invoice_master im 
+                join customers c on c.id = im.customers_id 
+                join branch b on b.id=c.branch_id 
+                join shift s on s.id = ".$filter_shift."
+                where im.dated = '".$filter_begin_date."' and im.created_at::time  between s.time_start and s.time_end  and c.branch_id = ".$filter_branch_id."                      
+        ");
         $payment_type = ['Cash','BCA - Debit','BCA - Kredit','Mandiri - Debit','Mandiri - Kredit','Transfer','QRIS'];
         $users = User::join('users_branch as ub','ub.branch_id', '=', 'users.branch_id')->where('ub.user_id','=',$user->id)->where('users.job_id','=',2)->get(['users.id','users.name']);
 
@@ -139,6 +147,7 @@ class ReportCloseShiftController extends Controller
             'payment_datas' => $payment_data,
             'report_datas' => $report_data,
             'settings' => Settings::get(),
+            'cust' => $cust,
         ])->setOptions(['defaultFont' => 'sans-serif'])->setPaper('a4', 'landscape');
         return $pdf->stream('invoice.pdf');
 

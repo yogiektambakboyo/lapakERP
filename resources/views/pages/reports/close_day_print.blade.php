@@ -98,7 +98,7 @@
                   </tr>
                   <tr>
                     <th colspan="3" style="text-align: left">Tamu</th>
-                    <th  style="text-align: right">{{ count($report_datas)>0?$report_datas[0]->qty_customer:"" }}</th>
+                    <th  style="text-align: right">{{ count($cust)>0?$cust[0]->c_cus:"" }}</th>
                   </tr>
                   <tr>
                     <th colspan="3" style="text-align: left">SPK</th>
@@ -154,7 +154,7 @@
         
                   <tr>
                     <th colspan="2" style="text-align: left;width:20%;">Total</th>
-                    <th style="text-align: right;">{{ number_format($total_qty,0,',','.') }} </th>
+                    <th style="text-align: center;">{{ number_format($total_qty,0,',','.') }} </th>
                     <th style="text-align: right;">{{ number_format($total_product,0,',','.') }} </th>
                   </tr>
 
@@ -195,7 +195,7 @@
 
                   <tr>
                     <th colspan="2" style="text-align: left;width:20%;">Total</th>
-                    <th style="text-align: right;">{{ number_format($total_qty,0,',','.') }} </th>
+                    <th style="text-align: center;">{{ number_format($total_qty,0,',','.') }} </th>
                     <th style="text-align: right;">{{ number_format($total_misc,0,',','.') }} </th>
                   </tr>
 
@@ -237,7 +237,7 @@
 
                   <tr>
                     <th colspan="2" style="text-align: left;width:20%;">Total</th>
-                    <th style="text-align: right;">{{ number_format($total_qty,0,',','.') }} </th>
+                    <th style="text-align: center;">{{ number_format($total_qty,0,',','.') }} </th>
                     <th style="text-align: right;">{{ number_format($total_extra,0,',','.') }} </th>
                   </tr>
 
@@ -348,7 +348,7 @@
                         <tr>
                             <td style="text-align: left;">{{ number_format($arr_bca_d[$cp],0,',','.') }}</td>
                             <td style="text-align: center;">{{ number_format($arr_bca_k[$cp],0,',','.') }}</td>
-                            <td style="text-align: left;">{{number_format($arr_man_d[$cp],0,',','.') }}</td>
+                            <td style="text-align: center;">{{number_format($arr_man_d[$cp],0,',','.') }}</td>
                             <td style="text-align: center;">{{ number_format($arr_man_k[$cp],0,',','.') }}</td>
                         </tr> 
                         @php
