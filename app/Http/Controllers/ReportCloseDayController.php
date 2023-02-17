@@ -118,11 +118,12 @@ class ReportCloseDayController extends Controller
                 group by ps.category_id,b.remark,im.dated,id.product_name,ps.abbr,id.price,ps.type_id                         
         ");
         $payment_data = DB::select("
-                select im.total_payment,im.payment_type,count(distinct im.invoice_no) as qty_payment
+                select im.invoice_no,im.total_payment,im.payment_type,count(distinct im.invoice_no) as qty_payment
                 from invoice_master im 
                 join customers c on c.id = im.customers_id 
                 join branch b on b.id=c.branch_id 
-                where im.dated = '".$filter_begin_date."'  and c.branch_id = ".$filter_branch_id."  group by im.total_payment,im.payment_type                       
+                where im.dated = '".$filter_begin_date."'  and c.branch_id = ".$filter_branch_id."  
+                group by im.invoice_no,im.total_payment,im.payment_type                       
         ");
         $payment_type = ['Cash','BCA - Debit','BCA - Kredit','Mandiri - Debit','Mandiri - Kredit','Transfer','QRIS'];
         $users = User::join('users_branch as ub','ub.branch_id', '=', 'users.branch_id')->where('ub.user_id','=',$user->id)->where('users.job_id','=',2)->get(['users.id','users.name']);
