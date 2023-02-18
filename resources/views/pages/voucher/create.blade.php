@@ -119,18 +119,18 @@
           if (dd < 10) dd = '0' + dd;
           if (mm < 10) mm = '0' + mm;
 
-          const formattedToday = mm + '/' + dd + '/' + yyyy;
-          const formattedNextYear = mm + '/' + dd + '/' + yyyy1;
+          const formattedToday =  dd + '-' + mm + '-' + yyyy;
+          const formattedNextYear =  dd + '-' + mm + '-' + yyyy1;
 
           $('#dated_start').datepicker({
-              format : 'yyyy-mm-dd',
+              dateFormat: 'dd-mm-yy',
               todayHighlight: true,
           });
           $('#dated_start').val(formattedToday);
 
 
           $('#dated_end').datepicker({
-              format : 'yyyy-mm-dd',
+            dateFormat: 'dd-mm-yy',
               todayHighlight: true,
           });
           $('#dated_end').val(formattedToday);

@@ -51,8 +51,8 @@
                         <td>{{ $product->voucher_remark }}</td>
                         <td>{{ $product->voucher_code }}</td>
                         <td>{{ $product->product_name }}</td>
-                        <td>{{ $product->dated_start }}</td>
-                        <td>{{ $product->dated_end }}</td>
+                        <td>{{ Carbon\Carbon::parse($product->dated_start)->format('d-m-Y') }}</td>
+                        <td>{{ Carbon\Carbon::parse($product->dated_end)->format('d-m-Y') }}</td>
                         <td>{{ number_format($product->value,0,',','.') }}</td>
                         <td><a href="{{ route('voucher.edit', [$product->branch_id,$product->id,$product->dated_start,$product->dated_end,$product->voucher_code]) }}" class="btn btn-info btn-sm  {{ $act_permission->allow_edit==1?'':'d-none' }}">@lang('general.lbl_edit')</a></td>
                         <td class=" {{ $act_permission->allow_delete==1?'':'d-none' }}">

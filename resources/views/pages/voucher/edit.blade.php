@@ -74,7 +74,7 @@
               name="dated_start"
               id="dated_start"
               class="form-control" 
-              value="{{ $product->dated_start }}" disabled/>
+              value="{{ Carbon\Carbon::parse($product->dated_start)->format('d-m-Y') }}" disabled/>
               @if ($errors->has('dated_start'))
                       <span class="text-danger text-left">{{ $errors->first('dated_start') }}</span>
                   @endif
@@ -89,7 +89,7 @@
                 name="dated_end"
                 id="dated_end"
                 class="form-control" 
-                value="{{ $product->dated_end }}" disabled/>
+                value="{{ Carbon\Carbon::parse($product->dated_end)->format('d-m-Y') }}" disabled/>
                 @if ($errors->has('dated_end'))
                         <span class="text-danger text-left">{{ $errors->first('dated_end') }}</span>
                     @endif

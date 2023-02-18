@@ -26,9 +26,9 @@
                 name="order_date"
                 id="order_date"
                 class="form-control" 
-                value="{{ $invoice->dated }}" readonly/>
+                value="{{ Carbon\Carbon::parse($invoice->dated)->format('d-m-Y') }}" readonly/>
                 @if ($errors->has('order_date'))
-                          <span class="text-danger text-left">{{ $errors->first('join_date') }}</span>
+                          <span class="text-danger text-left">{{ $errors->first('order_date') }}</span>
                       @endif
               </div>
             </div>
@@ -80,7 +80,7 @@
               <div class="col-md-3">
 
                   <div class="input-group">
-                    <input type="text" class="form-control" value="{{ $room->remark }} - {{ $invoice->scheduled_at }}" id="scheduled" disabled>
+                    <input type="text" class="form-control" value="{{ $room->remark }} - {{ Carbon\Carbon::parse($invoice->scheduled_at)->format('d-m-Y') }}" id="scheduled" disabled>
                     <button type="button" class="btn btn-indigo" data-bs-toggle="modal" data-bs-target="#modal-scheduled" >
                       <span class="fas fa-calendar-days"></span>
                     </button>

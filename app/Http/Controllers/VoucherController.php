@@ -187,13 +187,15 @@ class VoucherController extends Controller
                 $l_voucher = $last_voucher;
             }
             $now_voucher = "VC-".substr((("000000".$l_voucher+1)),-5);
+
+            
         
             $user = Auth::user();
             $voucher->create(
                 array_merge(
                     ['value' => $request->get('value') ],
-                    ['dated_start' => Carbon::parse($request->get('dated_start'))->format('Y-m-d') ],
-                    ['dated_end' => Carbon::parse($request->get('dated_end'))->format('Y-m-d') ],
+                    ['dated_start' => Carbon::createFromFormat('d-m-Y', $request->get('dated_start'))->format('Y-m-d') ],
+                    ['dated_end' => Carbon::createFromFormat('d-m-Y', $request->get('dated_end'))->format('Y-m-d') ],
                     ['product_id' => $request->get('product_id') ],
                     ['branch_id' => $request->get('branch_id') ],
                     ['remark' => $request->get('remark') ],
@@ -278,8 +280,6 @@ class VoucherController extends Controller
         $user = Auth::user();
         Voucher::where('product_id','=',$product)
                         ->where('branch_id','=',$branch)
-                        ->where('dated_start','=',Carbon::parse($dated_start)->format('Y-m-d'))
-                        ->where('dated_end','=',Carbon::parse($dated_end)->format('Y-m-d'))
                         ->where('voucher_code','=',$voucher_code)
                         ->update(
                             array_merge(

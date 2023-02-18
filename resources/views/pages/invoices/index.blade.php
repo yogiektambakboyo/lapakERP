@@ -13,8 +13,7 @@
                 <div class="col-md-10"> 	
                     <form action="{{ route('invoices.search') }}" method="GET" class="row row-cols-lg-auto g-3 align-items-center">
                         <input type="hidden" name="filter_begin_date" value="2022-01-01"><input type="hidden" name="filter_end_date" value="2035-01-01">
-                        <div class="col-2"><input type="text" class="form-control  form-control-sm" name="search" placeholder="@lang('general.lbl_search')" value="{{ $keyword }}"></div>
-                        <div class="col-2"><input type="submit" class="btn btn-sm btn-secondary" value="@lang('general.btn_search')" name="submit"></div>   
+                        <div class="col-2"><input type="hidden" class="form-control  form-control-sm" name="search" placeholder="@lang('general.lbl_search')" value="{{ $keyword }}"></div>
                         <div class="col-2"><a href="#modal-filter"  data-bs-toggle="modal" data-bs-target="#modal-filter" class="btn btn-sm btn-lime">@lang('general.btn_filter')</a></div>   
                         <div class="col-2"><input type="submit" class="btn btn-sm btn-success" value="@lang('general.btn_export')" name="export"></div>  
                     </form>
@@ -43,6 +42,7 @@
                 <th scope="col" width="2%">@lang('general.lbl_action')</th>  
                 <th scope="col" width="2%"></th>
                 <th scope="col" width="2%"></th>    
+                <th scope="col" width="2%"></th>    
             </tr>
             </thead>
             <tbody>
@@ -52,7 +52,7 @@
                         <th scope="row">{{ $order->id }}</th>
                         <td>{{ $order->branch_name }}</td>
                         <td @if ($order->is_checkout == 0) class="bg-danger" @endif>{{ $order->invoice_no }}</td>
-                        <td>{{ $order->dated }}</td>
+                        <td>{{ Carbon\Carbon::parse($order->dated)->format('d-m-Y') }}</td>
                         <td>{{ $order->customer }}</td>
                         <td>{{ number_format($order->total,0,',','.') }}</td>
                         <td>{{ number_format($order->total_discount,0,',','.') }}</td>
@@ -75,10 +75,6 @@
                 @endforeach
             </tbody>
         </table>
-
-        <div class="d-flex">
-            {!! $invoices->links() !!}
-        </div>
 
         <div class="modal fade" id="modal-filter" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
             <div class="modal-dialog">
@@ -290,4 +286,12 @@
                 })
         }
     </script>
+@endpush
+
+@push('scripts')
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#example').DataTable();
+    });
+</script>
 @endpush

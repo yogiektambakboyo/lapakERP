@@ -29,7 +29,7 @@
                 name="invoice_date"
                 id="invoice_date"
                 class="form-control" 
-                value="{{ substr(explode(" ",$invoice->dated)[0],5,2) }}/{{ substr(explode(" ",$invoice->dated)[0],8,2) }}/{{ substr(explode(" ",$invoice->dated)[0],0,4) }}" required/>
+                value="{{ substr(explode(" ",$invoice->dated)[0],8,2) }}-{{ substr(explode(" ",$invoice->dated)[0],5,2) }}-{{ substr(explode(" ",$invoice->dated)[0],0,4) }}" required/>
                 @if ($errors->has('invoice_date'))
                           <span class="text-danger text-left">{{ $errors->first('join_date') }}</span>
                       @endif
@@ -212,9 +212,9 @@
                         name="schedule_date"
                         id="schedule_date"
                         class="form-control" 
-                        value="{{ old('invoice_date') }}" required/>
+                        value="{{ substr(explode(" ",$invoice->dated)[0],8,2) }}-{{ substr(explode(" ",$invoice->dated)[0],5,2) }}-{{ substr(explode(" ",$invoice->dated)[0],0,4) }}" required/>
                         @if ($errors->has('invoice_date'))
-                                  <span class="text-danger text-left">{{ $errors->first('join_date') }}</span>
+                                  <span class="text-danger text-left">{{ $errors->first('schedule_date') }}</span>
                               @endif
                       </div>
                       <div class="col-md-1">
@@ -503,17 +503,17 @@
           if (dd < 10) dd = '0' + dd;
           if (mm < 10) mm = '0' + mm;
 
-          const formattedToday = mm + '/' + dd + '/' + yyyy;
+          const formattedToday =  dd + '-' + mm + '-' + yyyy;
           $('#invoice_date').datepicker({
-              format : 'yyyy-mm-dd',
+              dateFormat: 'dd-mm-yy',
               todayHighlight: true,
           });
-          $('#invoice_date').val(formattedToday);
+          //$('#invoice_date').val(formattedToday);
           $('#schedule_date').datepicker({
-              format : 'yyyy-mm-dd',
+              dateFormat: 'dd-mm-yy',
               todayHighlight: true,
           });
-          $('#schedule_date').val(formattedToday);
+          //$('#schedule_date').val(formattedToday);
 
           var url = "{{ route('orders.getorder','XX') }}";
           var lastvalurl = "XX";
