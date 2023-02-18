@@ -89,7 +89,7 @@
                 name="dated_end"
                 id="dated_end"
                 class="form-control" 
-                value="{{ $product->dated_start }}" disabled/>
+                value="{{ $product->dated_end }}" disabled/>
                 @if ($errors->has('dated_end'))
                         <span class="text-danger text-left">{{ $errors->first('dated_end') }}</span>
                     @endif
