@@ -49,7 +49,7 @@
                 @foreach($report_data as $rdata)
                     <tr>
                         <th scope="row">{{ $rdata->branch_name }}</th>
-                        <td>{{ $rdata->dated }}</td>
+                        <td>{{ Carbon\Carbon::parse($rdata->dated)->format('d-m-Y') }}</td>
                         <td>{{ $rdata->shift_name }}</td>
                         <td>{{ number_format($rdata->total_service,0,',','.') }}</td>
                         <td>{{ number_format($rdata->total_product,0,',','.') }}</td>

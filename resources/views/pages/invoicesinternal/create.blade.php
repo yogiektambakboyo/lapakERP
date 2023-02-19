@@ -7,7 +7,7 @@
   @csrf
   <div class="panel text-white">
     <div class="panel-heading  bg-teal-600">
-      <div class="panel-title"><h4 class="">@lang('general.lbl_invoice')</h4></div>
+      <div class="panel-title"><h4 class="">@lang('general.lbl_invoice') Internal</h4></div>
       <div class="">
         <a href="{{ route('invoicesinternal.index') }}" class="btn btn-default">@lang('general.lbl_cancel')</a>
         <button type="button" id="save-btn" class="btn btn-info">@lang('general.lbl_save')</button>
@@ -26,7 +26,7 @@
                 class="form-control" 
                 value="{{ old('invoice_date') }}" required/>
                 @if ($errors->has('invoice_date'))
-                          <span class="text-danger text-left">{{ $errors->first('join_date') }}</span>
+                          <span class="text-danger text-left">{{ $errors->first('invoice_date') }}</span>
                       @endif
               </div>
             </div>
@@ -446,14 +446,14 @@
           if (dd < 10) dd = '0' + dd;
           if (mm < 10) mm = '0' + mm;
 
-          const formattedToday = mm + '/' + dd + '/' + yyyy;
+          const formattedToday = dd + '-' + mm + '-' + yyyy;
           $('#invoice_date').datepicker({
-              format : 'yyyy-mm-dd',
+              dateFormat : 'dd-mm-yy',
               todayHighlight: true,
           });
           $('#invoice_date').val(formattedToday);
           $('#schedule_date').datepicker({
-              format : 'yyyy-mm-dd',
+              dateFormat : 'dd-mm-yy',
               todayHighlight: true,
           });
           $('#schedule_date').val(formattedToday);

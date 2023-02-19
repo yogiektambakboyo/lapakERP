@@ -25,7 +25,7 @@
                 name="order_date"
                 id="order_date"
                 class="form-control" 
-                value="{{ $invoice->dated }}" readonly/>
+                value="{{ Carbon\Carbon::parse($invoice->dated)->format('d-m-Y') }}" readonly/>
                 @if ($errors->has('order_date'))
                           <span class="text-danger text-left">{{ $errors->first('join_date') }}</span>
                       @endif

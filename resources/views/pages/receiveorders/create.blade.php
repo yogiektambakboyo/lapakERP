@@ -251,26 +251,26 @@
           if (dd < 10) dd = '0' + dd;
           if (mm < 10) mm = '0' + mm;
 
-          const formattedToday = mm + '/' + dd + '/' + yyyy;
-          const formattedNextYear = mm + '/' + dd + '/' + yyyy1;
+          const formattedToday = dd + '-' + mm + '-' + yyyy;
+          const formattedNextYear =  dd + '-' + mm + '-' + yyyy1;
         $(function () {
           $('#app').removeClass('app app-sidebar-fixed app-header-fixed-minified').addClass('app app-sidebar-fixed app-header-fixed-minified app-sidebar-minified');
             
           
           $('#doc_dated').datepicker({
-              format : 'yyyy-mm-dd',
+            dateFormat : 'dd-mm-yy',
               todayHighlight: true,
           });
           $('#doc_dated').val(formattedToday);
           $('#input_expired_at').datepicker({
-              format : 'yyyy-mm-dd',
+            dateFormat : 'dd-mm-yy',
               todayHighlight: true,
           });
           $('#input_expired_at').val(formattedNextYear);
 
 
           $('#input_expired_at_list').datepicker({
-              format : 'yyyy-mm-dd',
+            dateFormat : 'dd-mm-yy',
               todayHighlight: true,
           });
           $('#input_expired_at_list').val(formattedNextYear);

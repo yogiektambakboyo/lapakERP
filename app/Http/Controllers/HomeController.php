@@ -189,6 +189,13 @@ class HomeController extends Controller
                 group by ps.remark  order by 2 desc
             ");
 
+            $check_settingdoc = DB::select("
+                insert into setting_document_counter(doc_type, abbr, period, current_value, updated_at, updated_by, created_by, created_at, branch_id) 
+                select doc_type, sdc.abbr, period, 0, null, 1, 1, now(), b.id
+                from setting_document_counter sdc 
+                join branch b on b.id not in (select distinct branch_id from setting_document_counter)
+                where branch_id = 1 ;                
+            ");
 
 
             $has_period_stock = DB::select("
@@ -200,7 +207,6 @@ class HomeController extends Controller
                 select to_char(now()::date,'YYYYMM')::int,ps.branch_id,product_id,ps.balance_end,ps.balance_end,0 as qty_in,0 as qty_out,null,1,now()  
                 from period_stock ps  where ps.periode=to_char(now()-interval '5 day','YYYYMM')::int;");
             }
-
 
             $has_shift_counter = DB::select("
                 select users_id from shift_counter where created_at::date=now()::date;
@@ -227,6 +233,8 @@ class HomeController extends Controller
                 SELECT to_char(now(),'YYYYMM')::int, product_id, value, null, null, 1, now(), branch_id
                 FROM public.period_price_sell  where period=to_char(now()-interval '5 day','YYYYMM')::int;");
             }
+
+
             
             return view('pages.home-index',[
                 'd_data' => $d_data,

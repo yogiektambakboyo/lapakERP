@@ -109,7 +109,7 @@ class ReceiveOrderController extends Controller
                     $join->on('ub.branch_id', '=', 'b.id')
                     ->whereColumn('ub.branch_id', 'jt.branch_id');
                 })->where('ub.user_id', $user->id)->where('receive_master.dated','>=',Carbon::now()->subDay(7))    
-              ->paginate(10,['receive_master.id','b.remark as branch_name','receive_master.receive_no','receive_master.dated','jt.name as customer','receive_master.total','receive_master.total_discount','receive_master.total_payment' ]);
+              ->get(['receive_master.id','b.remark as branch_name','receive_master.receive_no','receive_master.dated','jt.name as customer','receive_master.total','receive_master.total_discount','receive_master.total_payment' ]);
         return view('pages.receiveorders.index',['company' => Company::get()->first()], compact('receives','data','keyword','act_permission','branchs'))->with('i', ($request->input('page', 1) - 1) * 5);
     }
 
@@ -144,7 +144,7 @@ class ReceiveOrderController extends Controller
                 ->where('b.id','like','%'.$branchx.'%')  
                 ->where('receive_master.receive_no','like','%'.$keyword.'%')  
                 ->whereBetween('receive_master.dated',$fil) 
-                ->paginate(10,['receive_master.id','b.remark as branch_name','receive_master.receive_no','receive_master.dated','jt.name as customer','receive_master.total','receive_master.total_discount','receive_master.total_payment' ]);
+                ->get(['receive_master.id','b.remark as branch_name','receive_master.receive_no','receive_master.dated','jt.name as customer','receive_master.total','receive_master.total_discount','receive_master.total_payment' ]);
             return view('pages.receiveorders.index',['company' => Company::get()->first()], compact('branchs','receives','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
         }
     }
@@ -248,7 +248,7 @@ class ReceiveOrderController extends Controller
             array_merge(
                 ['receive_no' => $receive_no ],
                 ['created_by' => $user->id],
-                ['dated' => Carbon::parse($request->get('dated'))->format('Y-m-d') ],
+                ['dated' => Carbon::createFromFormat('d-m-Y', $request->get('dated'))->format('Y-m-d') ],
                 ['supplier_id' => $request->get('supplier_id') ],
                 ['supplier_name' => $request->get('supplier_name') ],
                 ['total' => $request->get('total_order') ],
@@ -281,7 +281,7 @@ class ReceiveOrderController extends Controller
                     ['price' => $request->get('product')[$i]["price"]],
                     ['total' => $request->get('product')[$i]["total"]],
                     ['batch_no' => $request->get('product')[$i]["bno"]],
-                    ['expired_at' => Carbon::parse($request->get('product')[$i]["exp"])->format('Y-m-d') ],
+                    ['expired_at' => Carbon::createFromFormat('d-m-Y', $request->get('product')[$i]["exp"])->format('Y-m-d')  ],
                     ['product_remark' => $request->get('product')[$i]["abbr"]],
                     ['uom' => $request->get('product')[$i]["uom"]],
                     ['discount' => $request->get('product')[$i]["disc"]],

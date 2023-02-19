@@ -23,7 +23,7 @@
                 name="dated"
                 id="dated"
                 class="form-control" 
-                value="{{ substr(explode(" ",$purchase->dated)[0],5,2) }}/{{ substr(explode(" ",$purchase->dated)[0],8,2) }}/{{ substr(explode(" ",$purchase->dated)[0],0,4) }}"
+                value="{{ Carbon\Carbon::parse($purchase->dated)->format('d-m-Y') }}"
                 required disabled/>
                 @if ($errors->has('purchase_date'))
                           <span class="text-danger text-left">{{ $errors->first('purchase_date') }}</span>

@@ -15,8 +15,7 @@
                     <form action="{{ route('purchaseorders.search') }}" method="POST" class="row row-cols-lg-auto g-3 align-items-center">
                         @csrf
                         <input type="hidden" name="filter_begin_date" value="2022-01-01"><input type="hidden" name="filter_end_date" value="2035-01-01">
-                        <div class="col-2"><input type="text" class="form-control  form-control-sm" name="search" placeholder="@lang('general.lbl_search') Purchase Order.." value="{{ $keyword }}"></div>
-                        <div class="col-2"><input type="submit" class="btn btn-sm btn-secondary" value="@lang('general.btn_search')" name="submit"></div>   
+                        <div class="col-2"><input type="hidden" class="form-control  form-control-sm" name="search" placeholder="@lang('general.lbl_search') Purchase Order.." value="{{ $keyword }}"></div>
                         <div class="col-2"><a href="#modal-filter"  data-bs-toggle="modal" data-bs-target="#modal-filter" class="btn btn-sm btn-lime">@lang('general.btn_filter')</a></div>   
                         <div class="col-2"><input type="submit" class="btn btn-sm btn-success" value="@lang('general.btn_export')" name="export"></div>  
                     </form>
@@ -51,7 +50,7 @@
                     <tr>
                         <td>{{ $purchase->branch_name }}</td>
                         <td>{{ $purchase->purchase_no }}</td>
-                        <td>{{ $purchase->dated }}</td>
+                        <td>{{ Carbon\Carbon::parse($order->dated)->format('d-m-Y') }}</td>
                         <td>{{ $purchase->supplier }}</td>
                         <td>{{ $purchase->remark }}</td>
                         <td>{{ number_format($purchase->total,0,',','.') }}</td>
@@ -64,10 +63,6 @@
                 @endforeach
             </tbody>
         </table>
-
-        <div class="d-flex">
-            {!! $purchases->links() !!}
-        </div>
 
         <div class="modal fade" id="modal-filter" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
             <div class="modal-dialog">
@@ -212,4 +207,12 @@
                 })
         }
     </script>
+@endpush
+
+@push('scripts')
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#example').DataTable();
+    });
+</script>
 @endpush

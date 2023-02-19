@@ -30,7 +30,7 @@
             <td colspan="2" style="width: 50%;">Laporan Closing Harian</td>
           </tr>
           <tr style="background-color: chocolate;">
-            <td>Tanggal : {{ count($report_datas)>0?$report_datas[0]->dated:"" }}</td>
+            <td>Tanggal : {{ Carbon\Carbon::parse(count($report_datas)>0?$report_datas[0]->dated:"")->format('d-m-Y')  }}</td>
             <td>Cabang  : {{ count($report_datas)>0?$report_datas[0]->branch_name:"" }}</td>
             <td>Shift   : All </td>
           </tr>

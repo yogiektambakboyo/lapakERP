@@ -42,7 +42,7 @@
                         type="text" 
                         class="form-control" 
                         name="handphone" 
-                        placeholder="Handphone" required>
+                        placeholder="Handphone">
 
                     @if ($errors->has('phone_no'))
                         <span class="text-danger text-left">{{ $errors->first('handphone') }}</span>
@@ -55,7 +55,7 @@
                         type="text" 
                         class="form-control" 
                         name="email" 
-                        placeholder="Email" required>
+                        placeholder="Email">
 
                     @if ($errors->has('email'))
                         <span class="text-danger text-left">{{ $errors->first('email') }}</span>

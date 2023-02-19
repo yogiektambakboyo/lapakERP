@@ -160,6 +160,20 @@ class ProductsPriceController extends Controller
         //For demo purposes only. When creating user or inviting a user
         // you should create a generated random password and email it to the user
     
+        $check_periodstock = DB::select("
+            insert into period_stock(periode,branch_id,product_id,balance_begin,balance_end,qty_in,qty_out,updated_at ,created_by,created_at)
+            select to_char(now()::date,'YYYYMM')::int,".$request->get('branch_id')." as branch_id,ps.id,0,0,0 as qty_in,0 as qty_out,null,1,now()  
+            from product_sku ps 
+            where ps.id not in (select distinct product_id from period_stock where branch_id = ".$request->get('branch_id').");               
+        ");
+
+        DB::select("insert into public.period_price_sell(period, product_id, value, updated_at, updated_by, created_by, created_at, branch_id)
+            select to_char(now(),'YYYYMM')::int, id, 0, null, null, 1, now(), ".$request->get('branch_id')."
+            from product_sku ps 
+            where ps.id not in (select distinct product_id from period_stock where branch_id = ".$request->get('branch_id').");
+        ");
+
+
         $user = Auth::user();
         $productprice->create(
             array_merge(

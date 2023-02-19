@@ -24,10 +24,10 @@
                 name="dated"
                 id="dated"
                 class="form-control" 
-                value="{{ substr(explode(" ",$purchase->dated)[0],5,2) }}/{{ substr(explode(" ",$purchase->dated)[0],8,2) }}/{{ substr(explode(" ",$purchase->dated)[0],0,4) }}"
+                value="{{ Carbon\Carbon::parse($purchase->dated)->format('d-m-Y') }}"
                 required/>
-                @if ($errors->has('purchase_date'))
-                          <span class="text-danger text-left">{{ $errors->first('purchase_date') }}</span>
+                @if ($errors->has('dated'))
+                          <span class="text-danger text-left">{{ $errors->first('dated') }}</span>
                       @endif
               </div>
 
@@ -188,10 +188,11 @@
           if (dd < 10) dd = '0' + dd;
           if (mm < 10) mm = '0' + mm;
 
-          const formattedToday = mm + '/' + dd + '/' + yyyy;
+          const formattedToday = dd + '-' + mm + '-' + yyyy;
           
-          $('#invoice_date').datepicker({
-              format : 'yyyy-mm-dd',
+
+          $('#dated').datepicker({
+            dateFormat : 'dd-mm-yy',
               todayHighlight: true,
           });
 
@@ -419,8 +420,8 @@
                 total_order : order_total,
                 dated : $('#dated').val(),
                 purchase_no : $('#purchase_no').val(),
-                total_vat : _vat_total,
-                total_discount : disc_total
+                total_vat : 0,
+                total_discount : 0
               }
             );
             const res = axios.patch("{{ route('purchaseorders.update',$purchase->id) }}", json, {

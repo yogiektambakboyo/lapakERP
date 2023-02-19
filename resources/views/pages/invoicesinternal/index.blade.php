@@ -13,8 +13,7 @@
                 <div class="col-md-10"> 	
                     <form action="{{ route('invoicesinternal.search') }}" method="GET" class="row row-cols-lg-auto g-3 align-items-center">
                         <input type="hidden" name="filter_begin_date" value="2022-01-01"><input type="hidden" name="filter_end_date" value="2035-01-01">
-                        <div class="col-2"><input type="text" class="form-control  form-control-sm" name="search" placeholder="@lang('general.lbl_search')" value="{{ $keyword }}"></div>
-                        <div class="col-2"><input type="submit" class="btn btn-sm btn-secondary" value="@lang('general.btn_search')" name="submit"></div>   
+                        <div class="col-2"><input type="hidden" class="form-control  form-control-sm" name="search" placeholder="@lang('general.lbl_search')" value="{{ $keyword }}"></div>
                         <div class="col-2"><a href="#modal-filter"  data-bs-toggle="modal" data-bs-target="#modal-filter" class="btn btn-sm btn-lime">@lang('general.btn_filter')</a></div>   
                         <div class="col-2"><input type="submit" class="btn btn-sm btn-success" value="@lang('general.btn_export')" name="export"></div>  
                     </form>
@@ -32,16 +31,15 @@
         <table class="table table-striped" id="example">
             <thead>
             <tr>
-                <th scope="col" width="1%">#</th>
                 <th scope="col" width="10%">@lang('general.lbl_branch')</th>
                 <th>@lang('general.invoice_no')</th>
                 <th scope="col" width="8%">@lang('general.lbl_dated')</th>
                 <th scope="col" width="15%">@lang('general.lbl_total_customer')</th>
                 <th scope="col" width="10%">Total</th>
-                <th scope="col" width="10%">@lang('general.lbl_total_discount')</th>
                 <th scope="col" width="10%">@lang('general.lbl_total_payment')</th>
                 <th scope="col" width="2%">@lang('general.lbl_action')</th>  
                 <th scope="col" width="2%"></th>
+                <th scope="col" width="2%"></th>    
                 <th scope="col" width="2%"></th>    
             </tr>
             </thead>
@@ -49,13 +47,11 @@
 
                 @foreach($invoices as $order)
                     <tr>
-                        <th scope="row">{{ $order->id }}</th>
                         <td>{{ $order->branch_name }}</td>
                         <td @if ($order->is_checkout == 0) class="bg-danger" @endif>{{ $order->invoice_no }}</td>
-                        <td>{{ $order->dated }}</td>
+                        <td>{{ Carbon\Carbon::parse($order->dated)->format('d-m-Y') }}</td>
                         <td>{{ $order->customer }}</td>
                         <td>{{ number_format($order->total,0,',','.') }}</td>
-                        <td>{{ number_format($order->total_discount,0,',','.') }}</td>
                         <td>{{ number_format($order->total_payment,0,',','.') }}</td>
                         <td><a href="{{ route('invoicesinternal.show', $order->id) }}" class="btn btn-warning btn-sm  {{ $act_permission->allow_show==1?'':'d-none' }}">@lang('general.lbl_show')</a></td>
                         @if ($order->is_checkout == 0)
@@ -71,10 +67,6 @@
                 @endforeach
             </tbody>
         </table>
-
-        <div class="d-flex">
-            {!! $invoices->links() !!}
-        </div>
 
         <div class="modal fade" id="modal-filter" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
             <div class="modal-dialog">
@@ -272,4 +264,11 @@
                 })
         }
     </script>
+@endpush
+@push('scripts')
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#example').DataTable();
+    });
+</script>
 @endpush

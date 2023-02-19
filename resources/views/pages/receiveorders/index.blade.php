@@ -13,8 +13,7 @@
                 <div class="col-md-8"> 	
                     <form action="{{ route('receiveorders.search') }}" method="GET" class="row row-cols-lg-auto g-3 align-items-center">
                         <input type="hidden" name="filter_begin_date" value="2022-01-01"><input type="hidden" name="filter_end_date" value="2035-01-01">
-                        <div class="col-2"><input type="text" class="form-control  form-control-sm" name="search" placeholder="@lang('general.lbl_search') @lang('general.lbl_receive').." value="{{ $keyword }}"></div>
-                        <div class="col-2"><input type="submit" class="btn btn-sm btn-secondary" value="@lang('general.btn_search')" name="submit"></div>   
+                        <div class="col-2"><input type="hidden" class="form-control  form-control-sm" name="search" placeholder="@lang('general.lbl_search') @lang('general.lbl_receive').." value="{{ $keyword }}"></div>
                         <div class="col-2"><a href="#modal-filter"  data-bs-toggle="modal" data-bs-target="#modal-filter" class="btn btn-sm btn-lime">@lang('general.btn_filter')</a></div>   
                         <div class="col-2"><input type="submit" class="btn btn-sm btn-success" value="@lang('general.btn_export')" name="export"></div>  
                     </form>
@@ -50,7 +49,7 @@
                         <th scope="row">{{ $receive->id }}</th>
                         <td>{{ $receive->branch_name }}</td>
                         <td>{{ $receive->receive_no }}</td>
-                        <td>{{ $receive->dated }}</td>
+                        <td>{{ Carbon\Carbon::parse($receive->dated)->format('d-m-Y') }}</td>
                         <td>{{ $receive->customer }}</td>
                         <td>{{ number_format($receive->total,0,',','.') }}</td>
                         <td><a href="{{ route('receiveorders.show', $receive->id) }}" class="btn btn-warning btn-sm  {{ $act_permission->allow_show==1?'':'d-none' }}">@lang('general.lbl_show')</a></td>
@@ -62,10 +61,6 @@
                 @endforeach
             </tbody>
         </table>
-
-        <div class="d-flex">
-            {!! $receives->links() !!}
-        </div>
 
         <!-- Vertically centered modal -->
         <!-- Modal -->
@@ -143,18 +138,18 @@
           if (dd < 10) dd = '0' + dd;
           if (mm < 10) mm = '0' + mm;
 
-          const formattedToday = mm + '/' + dd + '/' + yyyy;
-          const formattedNextYear = mm + '/' + dd + '/' + yyyy1;
+          const formattedToday = dd + '-' + mm + '-' + yyyy;
+          const formattedNextYear = dd + '-' + mm + '-' + yyyy1;
 
           $('#filter_begin_date').datepicker({
-              format : 'yyyy-mm-dd',
+            dateFormat : 'dd-mm-yy',
               todayHighlight: true,
           });
           $('#filter_begin_date').val(formattedToday);
 
 
           $('#filter_end_date').datepicker({
-              format : 'yyyy-mm-dd',
+            dateFormat : 'dd-mm-yy',
               todayHighlight: true,
           });
           $('#filter_end_date').val(formattedToday);
@@ -210,4 +205,12 @@
             })
         }
     </script>
+@endpush
+
+@push('scripts')
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#example').DataTable();
+    });
+</script>
 @endpush
