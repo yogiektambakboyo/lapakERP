@@ -40,7 +40,7 @@
       <table style="width: 100%">
         <tbody>
           <tr>
-            <td style="width: 30%;vertical-align:top;">
+            <td style="width: 25%;vertical-align:top;">
 
               <table class="table table-striped" id="service_table">
                 <thead>
@@ -109,7 +109,7 @@
               
 
             </td>
-            <td style="width: 28%; vertical-align:top;">
+            <td style="width: 25%; vertical-align:top;">
               <table class="table table-striped" id="service_table">
                 <thead>
                 <tr style="background-color:#FFA726;color:white;">
@@ -271,7 +271,7 @@
 
             </td>
 
-            <td style="width: 25%; vertical-align:top;">
+            <td style="width: 22%; vertical-align:top;">
               <table class="table table-striped" id="service_table">
                 <thead>
                 <tr>

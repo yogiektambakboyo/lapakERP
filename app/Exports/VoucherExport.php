@@ -32,11 +32,12 @@ class VoucherExport implements FromCollection,WithColumnFormatting, WithHeadings
         return [
             'Voucher Name',
             'Voucher Code',
+            'Service Name',
             'Branch Name',
-            'Product Name',
             'Value',
             'Date Start',
             'Date End',
+            'Price',
         ];
     }
     public function collection()
@@ -51,7 +52,7 @@ class VoucherExport implements FromCollection,WithColumnFormatting, WithHeadings
                         ->join('branch as bc','bc.id','=','pr.branch_id')
                         ->whereRaw($whereclause)
                         ->where('bc.id','like','%'.$this->branch.'%')  
-                        ->get(['pr.remark as voucher_remark','pr.voucher_code','product_sku.remark as product_name','bc.remark as branch_name','pr.value as value','pr.dated_start','pr.dated_end']);           
+                        ->get(['pr.remark as voucher_remark','pr.voucher_code','product_sku.remark as product_name','bc.remark as branch_name','pr.value as value','pr.dated_start','pr.dated_end','pr.price']);           
         
     }
 

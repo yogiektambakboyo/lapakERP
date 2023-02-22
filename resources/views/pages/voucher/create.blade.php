@@ -101,6 +101,15 @@
                 <input type="text" class="form-control" name="value" value="{{ old('value') }}" required/>
               </div>
             </div>
+
+            <div class="row mb-3">
+              <label class="form-label col-form-label col-md-2">Harga Voucher Rp</label>
+              <div class="col-md-8">
+                <input type="text" class="form-control" name="price" value="{{ old('price') }}" required/>
+              </div>
+            </div>
+
+
             </div>
           </div>
         </div>

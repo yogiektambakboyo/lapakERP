@@ -72,7 +72,8 @@ class VoucherController extends Controller
                     ->join('voucher as pr','pr.product_id','=','product_sku.id')
                     ->join('branch as bc','bc.id','=','pr.branch_id')
                     ->whereRaw(' now()::date between pr.dated_start and pr.dated_end')
-                    ->get(['pr.remark as voucher_remark','pr.voucher_code','product_sku.id','product_sku.remark as product_name','pr.branch_id','bc.remark as branch_name','pr.value as value','pr.dated_start','pr.dated_end','pb.remark as product_brand']);
+                    ->orderby('pr.voucher_code','ASC')
+                    ->get(['pr.price','pr.remark as voucher_remark','pr.voucher_code','product_sku.id','product_sku.remark as product_name','pr.branch_id','bc.remark as branch_name','pr.value as value','pr.dated_start','pr.dated_end','pb.remark as product_brand']);
         return view('pages.voucher.index',['company' => Company::get()->first()] ,compact('request','branchs','products','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
     }
 
@@ -187,7 +188,7 @@ class VoucherController extends Controller
                 $l_voucher = $last_voucher;
             }
             $now_voucher = "VC-".substr((("000000".$l_voucher+1)),-5);
-
+            $price = $request->get('price') / $request->qty_voucher_code;
             
         
             $user = Auth::user();
@@ -199,6 +200,7 @@ class VoucherController extends Controller
                     ['product_id' => $request->get('product_id') ],
                     ['branch_id' => $request->get('branch_id') ],
                     ['remark' => $request->get('remark') ],
+                    ['price' => $price ],
                     ['voucher_code' => $now_voucher ],
                     ['created_by' => $user->id ],
                 )
