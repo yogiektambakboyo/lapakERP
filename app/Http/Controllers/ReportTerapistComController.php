@@ -123,7 +123,7 @@ class ReportTerapistComController extends Controller
             $brands = ProductBrand::orderBy('product_brand.remark', 'ASC')
                     ->paginate(10,['product_brand.id','product_brand.remark']);
             $report_data = DB::select("
-                                    elect * from (
+                                    select * from (
                                         select  b.remark as branch_name,'work_commission' as com_type,im.dated,im.invoice_no,ps.abbr,ps.remark,u.work_year,u.name,id.price,id.qty,id.total,pc.values base_commision,pc.values  * id.qty as commisions,coalesce(pp.point,0) as point_qty,0 as point_value
                                         from invoice_master im 
                                         join invoice_detail id on id.invoice_no = im.invoice_no
