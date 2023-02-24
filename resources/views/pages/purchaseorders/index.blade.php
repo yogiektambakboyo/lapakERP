@@ -50,7 +50,7 @@
                     <tr>
                         <td>{{ $purchase->branch_name }}</td>
                         <td>{{ $purchase->purchase_no }}</td>
-                        <td>{{ Carbon\Carbon::parse($order->dated)->format('d-m-Y') }}</td>
+                        <td>{{ Carbon\Carbon::parse($purchase->dated)->format('d-m-Y') }}</td>
                         <td>{{ $purchase->supplier }}</td>
                         <td>{{ $purchase->remark }}</td>
                         <td>{{ number_format($purchase->total,0,',','.') }}</td>

@@ -313,6 +313,22 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
             Route::get('/export', 'ProductsPriceController@export')->name('productsprice.export');
         });
 
+
+        /**
+         * Petty Cash
+         */
+        Route::group(['prefix' => 'petty'], function() {
+            Route::get('/', 'PettyController@index')->name('petty.index');
+            Route::get('/create', 'PettyController@create')->name('petty.create');
+            Route::post('/create', 'PettyController@store')->name('petty.store');
+            Route::get('/search', 'PettyController@search')->name('petty.search');
+            Route::get('/{branch}/{petty}/show', 'PettyController@show')->name('petty.show');
+            Route::get('/{branch}/{petty}/edit', 'PettyController@edit')->name('petty.edit');
+            Route::patch('/{branch}/{petty}/update', 'PettyController@update')->name('petty.update');
+            Route::delete('/{branch}/{petty}/delete', 'PettyController@destroy')->name('petty.destroy');
+            Route::get('/export', 'PettyController@export')->name('petty.export');
+        });
+
         /**
          * Service Price
          */
