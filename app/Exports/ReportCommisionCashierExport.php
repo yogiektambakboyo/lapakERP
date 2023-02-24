@@ -56,7 +56,7 @@ class ReportCommisionCashierExport implements FromCollection,WithColumnFormattin
             join customers c on c.id = im.customers_id  and c.branch_id::character varying like '%".$this->branch."%' 
             join branch b on b.id = c.branch_id
             join product_commisions pc on pc.product_id = id.product_id and pc.branch_id = c.branch_id
-            join users u on u.id = im.created_by and u.job_id = 1  and u.id = im.created_by  
+            join users u on u.id = im.created_by and u.job_id = 1  and u.id = im.created_by and coalesce(id.assigned_to,0) = 0
             where pc.created_by_fee > 0 and im.dated between '".$this->begindate."' and '".$this->enddate."' 
             union 
             select  b.remark as branch_name,im.dated,im.invoice_no,ps.remark,im.created_by,u.name,id.price,id.qty,id.total,'referral' as com_type,pc.referral_fee base_commision,pc.referral_fee  * id.qty as commisions  
