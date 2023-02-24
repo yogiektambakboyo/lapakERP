@@ -1108,7 +1108,7 @@
 
             counterBlank = 0;
             for (var i=0;i<orderList.length;i++){
-                if(orderList[i]["assignedto"]=="" && orderList[i]["type_id"] == "Services"){
+                if(orderList[i]["assignedto"]=="" && orderList[i]["type"] == "Services"){
                   counterBlank++;
                 }
             }
