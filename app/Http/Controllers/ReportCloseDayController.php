@@ -125,6 +125,15 @@ class ReportCloseDayController extends Controller
                 where im.dated = '".$filter_begin_date."'  and c.branch_id = ".$filter_branch_id."  
                 group by im.invoice_no,im.total_payment,im.payment_type                       
         ");
+
+        $petty_datas = DB::select("
+            select ps.abbr,pc.type,sum(pcd.line_total) as total  from petty_cash pc 
+            join petty_cash_detail pcd on pcd.doc_no = pc.doc_no
+            join product_sku ps on ps.id = pcd.product_id 
+            where pc.dated  = '".$filter_begin_date."'  and pc.branch_id = ".$filter_branch_id."  
+            group by ps.abbr,pc.type order by 1                   
+        ");
+
         $cust = DB::select("
                 select count(distinct c.id) as c_cus
                 from invoice_master im 
@@ -139,6 +148,7 @@ class ReportCloseDayController extends Controller
             'data' => $data,
             'payment_datas' => $payment_data,
             'report_datas' => $report_data,
+            'petty_datas' => $petty_datas,
             'cust' => $cust,
             'settings' => Settings::get(),
         ])->setOptions(['defaultFont' => 'sans-serif'])->setPaper('a4', 'landscape');

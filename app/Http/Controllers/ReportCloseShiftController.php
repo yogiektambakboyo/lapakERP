@@ -139,6 +139,15 @@ class ReportCloseShiftController extends Controller
                 join shift s on s.id = ".$filter_shift."
                 where im.dated = '".$filter_begin_date."' and im.created_at::time  between s.time_start and s.time_end  and c.branch_id = ".$filter_branch_id."                      
         ");
+
+        $petty_datas = DB::select("
+            select ps.abbr,pc.type,sum(pcd.line_total) as total  from petty_cash pc 
+            join petty_cash_detail pcd on pcd.doc_no = pc.doc_no
+            join product_sku ps on ps.id = pcd.product_id 
+            join shift s on s.id = ".$filter_shift."
+            where pc.dated  = '".$filter_begin_date."' and pc.created_at::time between s.time_start and s.time_end  and pc.branch_id = ".$filter_branch_id."  
+            group by ps.abbr,pc.type order by 1                   
+        ");
         $payment_type = ['Cash','BCA - Debit','BCA - Kredit','Mandiri - Debit','Mandiri - Kredit','Transfer','QRIS'];
         $users = User::join('users_branch as ub','ub.branch_id', '=', 'users.branch_id')->where('ub.user_id','=',$user->id)->where('users.job_id','=',2)->get(['users.id','users.name']);
 
@@ -147,6 +156,7 @@ class ReportCloseShiftController extends Controller
             'payment_datas' => $payment_data,
             'report_datas' => $report_data,
             'settings' => Settings::get(),
+            'petty_datas' => $petty_datas,
             'cust' => $cust,
         ])->setOptions(['defaultFont' => 'sans-serif'])->setPaper('a4', 'landscape');
         return $pdf->stream('invoice.pdf');

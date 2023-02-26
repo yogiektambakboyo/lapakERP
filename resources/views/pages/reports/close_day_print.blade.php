@@ -444,18 +444,27 @@
                   <th colspan="1" style="width:80px;text-align: center;background-color:#FFA726;">Harga</th>
                 </tr>
                 </thead>
-                <tbody>        
-                      @for($i=0;$i<10;$i++)
-                        <tr>
-                            <td style="text-align: left;"><br></th>
-                            <td style="text-align: center;"> </td>
-                        </tr>
-                      @endfor
+                <tbody>    
+                   @php
+                      $total_petty = 0;
+                   @endphp    
+                       @foreach($petty_datas as $petty_data)
+                          @if($petty_data->type == 'Kas - Keluar')
+                          @php
+                            $total_petty = $total_petty + $petty_data->total;
+                          @endphp    
+                          <tr>
+                              <td style="text-align: left;">{{ $petty_data->abbr }}</th>
+                              <td style="text-align: center;">{{ number_format($petty_data->total,0,',','.') }}</td>
+                          </tr>
+                          @endif
+                         
+                        @endforeach
                
                   
                   <tr>
                     <th colspan="1" style="text-align: left;width:20%;">Total</th>
-                    <th colspan="1" style="text-align: right;"> </th>
+                    <th colspan="1" style="text-align: right;">{{ number_format($total_petty,0,',','.') }}</th>
                   </tr>
                   <tr>
                     <th colspan="1" style="text-align: left;width:20%;">Sisa Kas</th>
@@ -476,19 +485,27 @@
                       <tr>
                         <td style="text-align: left;width:80px;">Keluar : </th>
                       </tr>     
-                      @for($i=0;$i<10;$i++)
-                        <tr>
-                            <td style="text-align: left;width:80px;"><br></th>
-                        </tr>
-                      @endfor
+                      @foreach($petty_datas as $petty_data)
+                          @if($petty_data->type == 'Produk - Keluar')
+                          @php
+                          @endphp    
+                          <tr>
+                              <td style="text-align: left;">{{ $petty_data->abbr }}</th>                            
+                          </tr>
+                          @endif    
+                        @endforeach
                       <tr>
                         <td style="text-align: left;width:80px;">Masuk : </th>
                       </tr>     
-                      @for($i=0;$i<10;$i++)
+                      @foreach($petty_datas as $petty_data)
+                        @if($petty_data->type == 'Produk - Masuk')
+                        @php
+                        @endphp    
                         <tr>
-                            <td style="text-align: left;width:80px;"><br></th>
+                            <td style="text-align: left;">{{ $petty_data->abbr }}</th>                            
                         </tr>
-                      @endfor
+                        @endif    
+                      @endforeach
                 </tbody>
               </table>           
             </td>
