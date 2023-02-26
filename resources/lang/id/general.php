@@ -178,6 +178,9 @@ return [
     "lbl_referral_fee" => "Komisi Penjual",
     "lbl_commision_year" => "Komisi Berdasarkan Tahun",
 
+    "lbl_petty" => "Kas Kecil",
+
+
     "lbl_invoice" => "Faktur Jual",
     "lbl_invoice_internal" => "Faktur Jual Internal",
     "lbl_invoice_select" => "Pilih Faktur Jual",
@@ -187,6 +190,7 @@ return [
     "lbl_time" => "Jam",
     "lbl_remark" => "Catatan",
     "lbl_customer" => "Pelanggan",
+    "lbl_document_no" => "No Dokumen",
     "lbl_balance_begin" => "Saldo Awal",
     "lbl_balance_end" => "Saldo Akhir",
     "lbl_qty_in" => "Jumlah Masuk",
@@ -218,5 +222,6 @@ return [
     "lbl_roomselect" => "Pilih Kamar",
     "lbl_assignselect" => "Pilih Staff",
     "lbl_invoice_title" => "Atur data faktur anda disini, data yang tampil adalah 7 hari kebelakang. Silahkan gunakan Saring untuk data lebih lengkap",
+    "lbl_petty_title" => "Atur data Kas anda disini, data yang tampil adalah 7 hari kebelakang. Silahkan gunakan Saring untuk data lebih lengkap",
 
 ];

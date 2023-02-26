@@ -322,10 +322,18 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
             Route::get('/create', 'PettyController@create')->name('petty.create');
             Route::post('/create', 'PettyController@store')->name('petty.store');
             Route::get('/search', 'PettyController@search')->name('petty.search');
-            Route::get('/{branch}/{petty}/show', 'PettyController@show')->name('petty.show');
-            Route::get('/{branch}/{petty}/edit', 'PettyController@edit')->name('petty.edit');
-            Route::patch('/{branch}/{petty}/update', 'PettyController@update')->name('petty.update');
-            Route::delete('/{branch}/{petty}/delete', 'PettyController@destroy')->name('petty.destroy');
+            Route::get('/{petty}/show', 'PettyController@show')->name('petty.show');
+            Route::patch('/{petty}/checkout', 'PettyController@checkout')->name('petty.checkout');
+            Route::get('/{petty}/edit', 'PettyController@edit')->name('petty.edit');
+            Route::get('/{petty}/print', 'PettyController@print')->name('petty.print');
+            Route::get('/{petty}/printsj', 'PettyController@printsj')->name('petty.printsj');
+            Route::get('/{petty}/printspk', 'PettyController@printspk')->name('petty.printspk');
+            Route::get('/{petty}/printthermal', 'PettyController@printthermal')->name('petty.printthermal');
+            Route::get('/getproduct', 'PettyController@getproduct')->name('petty.getproduct');
+            Route::get('/gettimetable', 'PettyController@gettimetable')->name('petty.gettimetable');
+            Route::get('/{petty}/getinvoice', 'PettyController@getinvoice')->name('petty.getinvoice');
+            Route::patch('/{petty}/update', 'PettyController@update')->name('petty.update');
+            Route::delete('/{petty}/delete', 'PettyController@destroy')->name('petty.destroy');
             Route::get('/export', 'PettyController@export')->name('petty.export');
         });
 
