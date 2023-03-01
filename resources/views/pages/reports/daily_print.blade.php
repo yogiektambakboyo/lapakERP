@@ -40,7 +40,7 @@
       <table style="width: 100%">
         <tbody>
           <tr>
-            <td style="width: 80%;vertical-align:top;">
+            <td style="width: 100%;vertical-align:top;">
 
               <table class="table table-striped" id="service_table">
                 <thead>

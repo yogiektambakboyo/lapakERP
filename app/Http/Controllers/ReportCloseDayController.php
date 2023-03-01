@@ -197,7 +197,9 @@ class ReportCloseDayController extends Controller
                 join users u on u.id = id.assigned_to
                 join product_sku ps on ps.id = id.product_id  and ps.type_id=2 
                 join customers c on c.id = im.customers_id
-                where im.dated  = '".$filter_begin_date."'  and c.branch_id = ".$filter_branch_id."  
+                where im.dated  = '".$filter_begin_date."'  and c.branch_id = ".$filter_branch_id."  and ps.id in (
+                    
+                )
                 group by customers_name,c.id order by 1
         ");
 
