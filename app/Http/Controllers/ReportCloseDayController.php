@@ -198,7 +198,40 @@ class ReportCloseDayController extends Controller
                 join product_sku ps on ps.id = id.product_id  and ps.type_id=2 
                 join customers c on c.id = im.customers_id
                 where im.dated  = '".$filter_begin_date."'  and c.branch_id = ".$filter_branch_id."  and ps.id in (
-                    
+                    '280',
+                    '281',
+                    '282',
+                    '283',
+                    '284',
+                    '285',
+                    '286',
+                    '287',
+                    '288',
+                    '289',
+                    '290',
+                    '291',
+                    '292',
+                    '293',
+                    '294',
+                    '295',
+                    '296',
+                    '297',
+                    '298',
+                    '299',
+                    '300',
+                    '301',
+                    '302',
+                    '304',
+                    '305',
+                    '306',
+                    '307',
+                    '308',
+                    '310',
+                    '312',
+                    '313',
+                    '315',
+                    '317',
+                    '321'
                 )
                 group by customers_name,c.id order by 1
         ");
