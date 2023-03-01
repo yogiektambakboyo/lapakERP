@@ -40,7 +40,7 @@
       <table style="width: 100%">
         <tbody>
           <tr>
-            <td style="width: 75%;vertical-align:top;">
+            <td style="width: 80%;vertical-align:top;">
 
               <table class="table table-striped" id="service_table">
                 <thead>
@@ -48,8 +48,10 @@
    
 
                 <tr style="background-color:#FFA726;color:white;">
-                    <th>No</th>
+                    <th scope="col" width="4%">No</th>
                     <th>Nama Tamu</th>
+                    <th  scope="col" width="18%">Jam Kerja</th>
+                    <th>MU</th>
                     @foreach($dtt_raw_oneline as $header)
                       @if((int)$header->total_280>0)
                         <th scope="col" width="5%">TH</th>
@@ -168,6 +170,7 @@
                       @if((int)$header->total_321>0)
                         <th scope="col" width="5%">TP</th>
                       @endif
+                      <th>Pembayaran</th>
                   @endforeach
 
                 </tr>
@@ -181,8 +184,10 @@
                   @endphp
                   @foreach($dtt_detail as $detail)
                         <tr>
-                            <td style="text-align: left;">{{ $counter }}</td>
+                            <td style="text-align: left;">{{ $counter+1 }}</td>
                             <td style="text-align: left;">{{ $detail->customers_name }}</td>
+                            <td style="text-align: left;">{{ $detail->scheduled_at }}</td>
+                            <td style="text-align: left;">{{ $detail->name }}</td>          
                             @foreach($dtt_raw_oneline as $header)
                                 @if((int)$header->total_280>0)
                                   <td scope="col" widtd="5%">{{ number_format($dtt_raw[$counter]->total_280,0,',','.') }}</td>
@@ -228,11 +233,11 @@
                                   @endif
                               
                                 @if((int)$header->total_294>0)
-                                  <td scope="col" widtd="5%">BACK</td>
+                                  <td scope="col" widtd="5%">{{ number_format($dtt_raw[$counter]->total_294,0,',','.') }}</td>
                                 @endif
                             
                                 @if((int)$header->total_295>0)
-                                  <td scope="col" widtd="5%">BCM</td>
+                                  <td scope="col" widtd="5%">{{ number_format($dtt_raw[$counter]->total_295,0,',','.') }}</td>
                                 @endif
                             
                                 @if((int)$header->total_296>0)
@@ -240,30 +245,30 @@
                                 @endif
                           
                                 @if((int)$header->total_297>0)
-                                  <td scope="col" widtd="5%">SLIM</td>
+                                  <td scope="col" widtd="5%">{{ number_format($dtt_raw[$counter]->total_297,0,',','.') }}</td>
                                 @endif
                                 @if((int)$header->total_298>0)
-                                  <td scope="col" widtd="5%">BREAST</td>
+                                  <td scope="col" widtd="5%">{{ number_format($dtt_raw[$counter]->total_298,0,',','.') }}</td>
                                 @endif
                             
                                 @if((int)$header->total_299>0)
-                                  <td scope="col" widtd="5%">RATUS</td>
+                                  <td scope="col" widtd="5%">{{ number_format($dtt_raw[$counter]->total_299,0,',','.') }}</td>
                                 @endif
                             
                                 @if((int)$header->total_300>0)
-                                  <td scope="col" widtd="5%">EBBSL</td>
+                                  <td scope="col" widtd="5%">{{ number_format($dtt_raw[$counter]->total_300,0,',','.') }}</td>
                                 @endif
                             
                                 @if((int)$header->total_301>0)
-                                  <td scope="col" widtd="5%">EBBS</td>
+                                  <td scope="col" widtd="5%">{{ number_format($dtt_raw[$counter]->total_301,0,',','.') }}</td>
                                 @endif
                             
                                 @if((int)$header->total_302>0)
-                                  <td scope="col" widtd="5%">BODY BLEACHING</td>
+                                  <td scope="col" widtd="5%">{{ number_format($dtt_raw[$counter]->total_302,0,',','.') }}</td>
                                 @endif
                             
                                 @if((int)$header->total_304>0)
-                                  <td scope="col" widtd="5%">BABSL</td>
+                                  <td scope="col" widtd="5%">{{ number_format($dtt_raw[$counter]->total_304,0,',','.') }}</td>
                                 @endif
                             
                                 @if((int)$header->total_305>0)
@@ -271,37 +276,38 @@
                                 @endif
                             
                                 @if((int)$header->total_306>0)
-                                  <td scope="col" widtd="5%">JFS</td>
+                                  <td scope="col" widtd="5%">{{ number_format($dtt_raw[$counter]->total_306,0,',','.') }}</td>
                                 @endif
                             
                                 @if((int)$header->total_307>0)
-                                  <td scope="col" widtd="5%">FOOT</td>
+                                  <td scope="col" widtd="5%">{{ number_format($dtt_raw[$counter]->total_307,0,',','.') }}</td>
                                 @endif
                                 @if((int)$header->total_308>0)
-                                  <td scope="col" widtd="5%">FOOT EXSPRESS</td>
+                                  <td scope="col" widtd="5%">{{ number_format($dtt_raw[$counter]->total_308,0,',','.') }}</td>
                                   @endif
                                 @if((int)$header->total_310>0)
-                                  <td scope="col" widtd="5%">BCP</td>
+                                  <td scope="col" widtd="5%">{{ number_format($dtt_raw[$counter]->total_310,0,',','.') }}</td>
                                 @endif
                             
                                 @if((int)$header->total_312>0)
-                                  <td scope="col" widtd="5%">LA</td>
+                                  <td scope="col" widtd="5%">{{ number_format($dtt_raw[$counter]->total_312,0,',','.') }}</td>
                                 @endif
                               
                                 @if((int)$header->total_313>0)
                                   <td scope="col" widtd="5%">{{ number_format($dtt_raw[$counter]->total_313,0,',','.') }}</td>
                                   @endif
                                 @if((int)$header->total_315>0)
-                                  <td scope="col" widtd="5%">MB</td>
+                                  <td scope="col" widtd="5%">{{ number_format($dtt_raw[$counter]->total_315,0,',','.') }}</td>
                                 @endif
                               
                                 @if((int)$header->total_317>0)
-                                  <td scope="col" widtd="5%">STEAM B</td>
+                                  <td scope="col" widtd="5%">{{ number_format($dtt_raw[$counter]->total_317,0,',','.') }}</td>
                                 @endif
                                 @if((int)$header->total_321>0)
-                                  <td scope="col" widtd="5%">TP</td>
+                                  <td scope="col" widtd="5%">{{ number_format($dtt_raw[$counter]->total_321,0,',','.') }}</td>
                                 @endif
                             @endforeach
+                            <td>{{ $detail->payment_type }}</td>
                         </tr>
                         @php
                          $counter++;
@@ -313,17 +319,7 @@
                           $counter_spk = $counter_spk + $payment_data->qty_payment;
                         @endphp
                   @endforeach
-        
-                  @if ($counter<15)
-                      @for($i=0;$i<(15-$counter);$i++)
-                        <tr>
-                            <td style="text-align: left;"><br></th>
-                            <td style="text-align: center;"> </td>
-                            <td style="text-align: center;"> </td>
-                        </tr>
-                      @endfor
-                  @endif
-      
+            
                 </tbody>
               </table>
               

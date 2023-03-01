@@ -191,13 +191,14 @@ class ReportCloseDayController extends Controller
         ");
 
         $dtt_detail = DB::select("
-                select c.id,customers_name,sum(id.qty*id.price) as total
+                select c.id,customers_name,string_agg(distinct u.name,', ') as name,sum(id.qty*id.price) as total,im.payment_type,to_char(im.scheduled_at,'HH24:MI') as scheduled_at
                 from invoice_master im 
                 join invoice_detail id on id.invoice_no = im.invoice_no 
+                join users u on u.id = id.assigned_to
                 join product_sku ps on ps.id = id.product_id    
                 join customers c on c.id = im.customers_id
                 where im.dated  = '".$filter_begin_date."'  and c.branch_id = ".$filter_branch_id."  
-                group by customers_name,c.id  order by 1
+                group by customers_name,c.id,im.payment_type,im.scheduled_at  order by 1
         ");
 
         $dtt_item_only = DB::select("
