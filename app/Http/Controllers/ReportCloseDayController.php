@@ -168,6 +168,7 @@ class ReportCloseDayController extends Controller
         $act_permission = $this->act_permission[0];
         $branchs = Branch::join('users_branch as ub','ub.branch_id', '=', 'branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']);        
 
+        return $request->filter_begin_date;
         $shifts = Shift::orderBy('shift.id')->get(['shift.id','shift.remark','shift.id','shift.time_start','shift.time_end']); 
         $filter_begin_date = date(Carbon::parse($request->filter_begin_date)->format('Y-m-d'));
         $filter_branch_id =  $request->get('filter_branch_id')==null?'%':$request->get('filter_branch_id');
