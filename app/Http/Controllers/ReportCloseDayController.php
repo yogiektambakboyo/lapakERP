@@ -195,7 +195,7 @@ class ReportCloseDayController extends Controller
                 from invoice_master im 
                 join invoice_detail id on id.invoice_no = im.invoice_no 
                 join users u on u.id = id.assigned_to
-                join product_sku ps on ps.id = id.product_id    
+                join product_sku ps on ps.id = id.product_id  and ps.type_id=2 
                 join customers c on c.id = im.customers_id
                 where im.dated  = '".$filter_begin_date."'  and c.branch_id = ".$filter_branch_id."  
                 group by customers_name,c.id order by 1
