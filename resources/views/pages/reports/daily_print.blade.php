@@ -40,15 +40,136 @@
       <table style="width: 100%">
         <tbody>
           <tr>
-            <td style="width: 25%;vertical-align:top;">
+            <td style="width: 75%;vertical-align:top;">
 
               <table class="table table-striped" id="service_table">
                 <thead>
+
+   
+
                 <tr style="background-color:#FFA726;color:white;">
-                    <th>Perawatan</th>
-                    <th scope="col" width="10%">@lang('general.lbl_price')</th>
-                    <th scope="col" width="5%">@lang('general.lbl_qty')</th>
-                    <th scope="col" width="10%">Total</th>
+                    <th>No</th>
+                    <th>Nama Tamu</th>
+                    @foreach($dtt_raw_oneline as $header)
+                      @if((int)$header->total_280>0)
+                        <th scope="col" width="5%">TH</th>
+                      @endif
+                      @if((int)$header->total_281>0)
+                        <th scope="col" width="5%">FAC</th>
+                      @endif
+                      @if((int)$header->total_282>0)
+                        <th scope="col" width="5%">BHC</th>
+                      @endif
+                      @if((int)$header->total_283>0)
+                        <th scope="col" width="5%">ST</th>
+                      @endif                  
+                      @if((int)$header->total_284>0)
+                        <th scope="col" width="5%">TT</th>
+                      @endif
+                      @if((int)$header->total_285>0)
+                        <th scope="col" width="5%">FR</th>
+                      @endif
+                      @if((int)$header->total_286>0)
+                        <th scope="col" width="5%">HS</th>
+                      @endif
+                      @if((int)$header->total_287>0)
+                          <th scope="col" width="5%">EC</th>
+                      @endif
+                      @if((int)$header->total_288>0)
+                        <th scope="col" width="5%">FBT</th>
+                      @endif
+                        @if((int)$header->total_290>0)
+                          <th scope="col" width="5%">AA</th>
+                        @endif
+      
+                        @if((int)$header->total_291>0)
+                          <th scope="col" width="5%">FBR</th>
+                        @endif
+                     
+                        @if((int)$header->total_292>0)
+                          <th scope="col" width="5%">V SPA</th>
+                        @endif
+                     
+                        @if((int)$header->total_293>0)
+                          <th scope="col" width="5%">BACK DRY</th>
+                        @endif
+                     
+                      @if((int)$header->total_294>0)
+                        <th scope="col" width="5%">BACK</th>
+                      @endif
+                   
+                      @if((int)$header->total_295>0)
+                        <th scope="col" width="5%">BCM</th>
+                      @endif
+                   
+                      @if((int)$header->total_296>0)
+                        <th scope="col" width="5%">SLIMMING & BREAST</th>
+                      @endif
+                
+                      @if((int)$header->total_297>0)
+                        <th scope="col" width="5%">SLIM</th>
+                      @endif
+                      @if((int)$header->total_298>0)
+                        <th scope="col" width="5%">BREAST</th>
+                      @endif
+                   
+                      @if((int)$header->total_299>0)
+                        <th scope="col" width="5%">RATUS</th>
+                      @endif
+                   
+                      @if((int)$header->total_300>0)
+                        <th scope="col" width="5%">EBBSL</th>
+                      @endif
+                   
+                      @if((int)$header->total_301>0)
+                        <th scope="col" width="5%">EBBS</th>
+                      @endif
+                  
+                      @if((int)$header->total_302>0)
+                        <th scope="col" width="5%">BODY BLEACHING</th>
+                      @endif
+                   
+                      @if((int)$header->total_304>0)
+                        <th scope="col" width="5%">BABSL</th>
+                      @endif
+                   
+                      @if((int)$header->total_305>0)
+                        <th scope="col" width="5%">BABS</th>
+                      @endif
+                   
+                      @if((int)$header->total_306>0)
+                        <th scope="col" width="5%">JFS</th>
+                      @endif
+                   
+                      @if((int)$header->total_307>0)
+                        <th scope="col" width="5%">FOOT</th>
+                      @endif
+                      @if((int)$header->total_308>0)
+                        <th scope="col" width="5%">FOOT EXSPRESS</th>
+                        @endif
+                      @if((int)$header->total_310>0)
+                        <th scope="col" width="5%">BCP</th>
+                      @endif
+                  
+                      @if((int)$header->total_312>0)
+                        <th scope="col" width="5%">LA</th>
+                      @endif
+                    
+                      @if((int)$header->total_313>0)
+                        <th scope="col" width="5%">MSU</th>
+                        @endif
+                      @if((int)$header->total_315>0)
+                        <th scope="col" width="5%">MB</th>
+                      @endif
+                    
+                      @if((int)$header->total_317>0)
+                        <th scope="col" width="5%">STEAM B</th>
+                      @endif
+                      @if((int)$header->total_321>0)
+                        <th scope="col" width="5%">TP</th>
+                      @endif
+                  @endforeach
+
                 </tr>
                 </thead>
                 <tbody>
@@ -58,21 +179,134 @@
                     $counter = 0;   
                     $counter_spk = 0;
                   @endphp
-                  @foreach($report_datas as $report_data)
-                      @if($report_data->type_id==2)
+                  @foreach($dtt_detail as $detail)
                         <tr>
-                            <td style="text-align: left;">{{ $report_data->abbr }}</td>
-                            <td style="text-align: center;">{{ number_format($report_data->price,0,',','.') }}</td>
-                            <td style="text-align: center;">{{ number_format($report_data->qty,0,',','.') }}</td>
-                            <td style="text-align: right;">{{ number_format($report_data->total,0,',','.') }}</td>
+                            <td style="text-align: left;">{{ $counter }}</td>
+                            <td style="text-align: left;">{{ $detail->customers_name }}</td>
+                            @foreach($dtt_raw_oneline as $header)
+                                @if((int)$header->total_280>0)
+                                  <td scope="col" widtd="5%">{{ number_format($dtt_raw[$counter]->total_280,0,',','.') }}</td>
+                                @endif
+                                @if((int)$header->total_281>0)
+                                  <td scope="col" widtd="5%">{{ number_format($dtt_raw[$counter]->total_281,0,',','.') }}</td>
+                                @endif
+                                @if((int)$header->total_282>0)
+                                  <td scope="col" widtd="5%">{{ number_format($dtt_raw[$counter]->total_282,0,',','.') }}</td>
+                                @endif
+                                @if((int)$header->total_283>0)
+                                  <td scope="col" widtd="5%">{{ number_format($dtt_raw[$counter]->total_283,0,',','.') }}</td>
+                                @endif                  
+                                @if((int)$header->total_284>0)
+                                  <td scope="col" widtd="5%">{{ number_format($dtt_raw[$counter]->total_284,0,',','.') }}</td>
+                                @endif
+                                @if((int)$header->total_285>0)
+                                  <td scope="col" widtd="5%">{{ number_format($dtt_raw[$counter]->total_285,0,',','.') }}</td>
+                                @endif
+                                @if((int)$header->total_286>0)
+                                  <td scope="col" widtd="5%">{{ number_format($dtt_raw[$counter]->total_286,0,',','.') }}</td>
+                                @endif
+                                @if((int)$header->total_287>0)
+                                    <td scope="col" widtd="5%">{{ number_format($dtt_raw[$counter]->total_287,0,',','.') }}</td>
+                                @endif
+                                @if((int)$header->total_288>0)
+                                  <td scope="col" widtd="5%">{{ number_format($dtt_raw[$counter]->total_288,0,',','.') }}</td>
+                                @endif
+                                  @if((int)$header->total_290>0)
+                                    <td scope="col" widtd="5%">{{ number_format($dtt_raw[$counter]->total_290,0,',','.') }}</td>
+                                  @endif
+                
+                                  @if((int)$header->total_291>0)
+                                    <td scope="col" widtd="5%">{{ number_format($dtt_raw[$counter]->total_291,0,',','.') }}</td>
+                                  @endif
+                              
+                                  @if((int)$header->total_292>0)
+                                    <td scope="col" widtd="5%">{{ number_format($dtt_raw[$counter]->total_292,0,',','.') }}</td>
+                                  @endif
+                              
+                                  @if((int)$header->total_293>0)
+                                    <td scope="col" widtd="5%">{{ number_format($dtt_raw[$counter]->total_293,0,',','.') }}</td>
+                                  @endif
+                              
+                                @if((int)$header->total_294>0)
+                                  <td scope="col" widtd="5%">BACK</td>
+                                @endif
+                            
+                                @if((int)$header->total_295>0)
+                                  <td scope="col" widtd="5%">BCM</td>
+                                @endif
+                            
+                                @if((int)$header->total_296>0)
+                                  <td scope="col" widtd="5%">{{ number_format($dtt_raw[$counter]->total_296,0,',','.') }}</td>
+                                @endif
+                          
+                                @if((int)$header->total_297>0)
+                                  <td scope="col" widtd="5%">SLIM</td>
+                                @endif
+                                @if((int)$header->total_298>0)
+                                  <td scope="col" widtd="5%">BREAST</td>
+                                @endif
+                            
+                                @if((int)$header->total_299>0)
+                                  <td scope="col" widtd="5%">RATUS</td>
+                                @endif
+                            
+                                @if((int)$header->total_300>0)
+                                  <td scope="col" widtd="5%">EBBSL</td>
+                                @endif
+                            
+                                @if((int)$header->total_301>0)
+                                  <td scope="col" widtd="5%">EBBS</td>
+                                @endif
+                            
+                                @if((int)$header->total_302>0)
+                                  <td scope="col" widtd="5%">BODY BLEACHING</td>
+                                @endif
+                            
+                                @if((int)$header->total_304>0)
+                                  <td scope="col" widtd="5%">BABSL</td>
+                                @endif
+                            
+                                @if((int)$header->total_305>0)
+                                  <td scope="col" widtd="5%">{{ number_format($dtt_raw[$counter]->total_305,0,',','.') }}</td>
+                                @endif
+                            
+                                @if((int)$header->total_306>0)
+                                  <td scope="col" widtd="5%">JFS</td>
+                                @endif
+                            
+                                @if((int)$header->total_307>0)
+                                  <td scope="col" widtd="5%">FOOT</td>
+                                @endif
+                                @if((int)$header->total_308>0)
+                                  <td scope="col" widtd="5%">FOOT EXSPRESS</td>
+                                  @endif
+                                @if((int)$header->total_310>0)
+                                  <td scope="col" widtd="5%">BCP</td>
+                                @endif
+                            
+                                @if((int)$header->total_312>0)
+                                  <td scope="col" widtd="5%">LA</td>
+                                @endif
+                              
+                                @if((int)$header->total_313>0)
+                                  <td scope="col" widtd="5%">{{ number_format($dtt_raw[$counter]->total_313,0,',','.') }}</td>
+                                  @endif
+                                @if((int)$header->total_315>0)
+                                  <td scope="col" widtd="5%">MB</td>
+                                @endif
+                              
+                                @if((int)$header->total_317>0)
+                                  <td scope="col" widtd="5%">STEAM B</td>
+                                @endif
+                                @if((int)$header->total_321>0)
+                                  <td scope="col" widtd="5%">TP</td>
+                                @endif
+                            @endforeach
                         </tr>
                         @php
-                          $total_service = $total_service + $report_data->total; 
-                          $counter++;   
-                          $total_qty = $total_qty + $report_data->qty;
+                         $counter++;
                         @endphp
-                      @endif
-                  @endforeach
+                   @endforeach
 
                   @foreach($payment_datas as $payment_data)
                         @php
@@ -84,7 +318,6 @@
                       @for($i=0;$i<(15-$counter);$i++)
                         <tr>
                             <td style="text-align: left;"><br></th>
-                            <td style="text-align: center;"> </td>
                             <td style="text-align: center;"> </td>
                             <td style="text-align: center;"> </td>
                         </tr>
