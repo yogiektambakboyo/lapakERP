@@ -41,6 +41,7 @@
                 <th scope="col">#SPK</th> 
                 <th scope="col">#Tamu</th>  
                 <th scope="col" width="2%">@lang('general.lbl_action')</th> 
+                <th scope="col" width="12%"></th> 
             </tr>
             </thead>
             <tbody>
@@ -64,6 +65,7 @@
                         <td>{{ number_format($rdata->qty_transaction,0,',','.') }}</td>
                         <td>{{ number_format($rdata->qty_customers,0,',','.') }}</td>
                         <td><button onclick="openDialog('{{ $rdata->branch_id }}','{{ $rdata->dated }}','0');" class="btn btn-warning btn-sm">Print</button></td>
+                        <td><button onclick="openDialog2('{{ $rdata->branch_id }}','{{ $rdata->dated }}','0');" class="btn btn-primary btn-sm">Print Lap. Harian</button></td>
                     </tr>
                 @endforeach
             </tbody>
@@ -182,6 +184,49 @@
             </div>
         </div>
 
+        <div class="modal fade" id="modal-filter_daily" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+            <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                <h5 class="modal-title"  id="input_expired_list_at_lbl">Konfirmasi</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form target="_blank" action="{{ route('reports.closeday.getdata_daily') }}" method="GET">   
+                        @csrf 
+                        <div class="col-md-12">
+                            <select class="form-control" 
+                                name="filter_branch_id" id="filter_branch_id_daily" hidden>
+                                @foreach($branchs as $branchx)
+                                    <option value="{{ $branchx->id }}">{{ $branchx->remark }} </option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <div class="col-md-12">
+                            Apakah anda yakin akan mencetak laporan harian?
+                        </div>
+                        <div class="col-md-12">
+                            <input type="text" 
+                            name="filter_begin_date"
+                            id="filter_begin_date_daily"
+                            class="form-control" 
+                            value="{{ old('filter_begin_date') }}" required hidden/>
+                            @if ($errors->has('filter_begin_date'))
+                                    <span class="text-danger text-left">{{ $errors->first('filter_begin_date') }}</span>
+                                @endif
+                        </div>
+
+                        <br>
+                        <div class="col-md-12">
+                            <button type="submit" class="btn btn-primary form-control">@lang('general.lbl_apply')</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            </div>
+        </div>
+
     </div>
 @endsection
 
@@ -221,6 +266,7 @@
 
           var myModal = new bootstrap.Modal(document.getElementById('modal-filter'));
           var myModal2 = new bootstrap.Modal(document.getElementById('modal-filter2'));
+          var myModal3 = new bootstrap.Modal(document.getElementById('modal-filter_daily'));
 
           function openDialog(branch_id,dated,shift_id){
             $('#filter_branch_id').val(branch_id);
@@ -230,6 +276,16 @@
             //$('#filter_shift').prop('disabled', true);
             //$('#filter_begin_date').prop('disabled', true);
             myModal.show();
+          }
+
+          function openDialog2(branch_id,dated,shift_id){
+            $('#filter_branch_id_daily').val(branch_id);
+            $('#filter_shift_daily').val(shift_id);
+            $('#filter_begin_date_daily').val(dated.substr(5,2)+"/"+dated.substr(8,2)+"/"+dated.substr(0,4));
+            //$('#filter_branch_id').prop('disabled', true);
+            //$('#filter_shift').prop('disabled', true);
+            //$('#filter_begin_date').prop('disabled', true);
+            myModal3.show();
           }
 
           function openDialogFilterSearch(command){
