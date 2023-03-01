@@ -211,7 +211,7 @@
                             name="filter_begin_date"
                             id="filter_begin_date_daily"
                             class="form-control" 
-                            value="{{ old('filter_begin_date') }}" required hidden/>
+                            value="{{ old('filter_begin_date') }}" required/>
                             @if ($errors->has('filter_begin_date'))
                                     <span class="text-danger text-left">{{ $errors->first('filter_begin_date') }}</span>
                                 @endif
