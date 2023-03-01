@@ -171,7 +171,6 @@ class ReportCloseDayController extends Controller
         $shifts = Shift::orderBy('shift.id')->get(['shift.id','shift.remark','shift.id','shift.time_start','shift.time_end']); 
         $filter_begin_date = date(Carbon::parse($request->filter_begin_date)->format('Y-m-d'));
         $filter_branch_id =  $request->get('filter_branch_id')==null?'%':$request->get('filter_branch_id');
-        return $filter_begin_date;
         $report_data = DB::select("
                 select ps.category_id,b.remark as branch_name,im.dated,id.product_name,ps.abbr,ps.type_id,id.price,sum(id.qty) as qty,sum(id.total+id.vat_total) as total,count(distinct c.id) as qty_customer
                 from invoice_master im 
