@@ -191,12 +191,13 @@ class ReportCloseDayController extends Controller
         ");
 
         $dtt_detail = DB::select("
-                select c.id,customers_name,string_agg(distinct u.name,', ') as name,sum(id.qty*id.price) as total,string_agg(distinct im.payment_type,', ') payment_type,string_agg(distinct to_char(im.scheduled_at,'HH24:MI'),', ') as scheduled_at
+                select c.id,customers_name,br.remark as branch_room,string_agg(distinct u.name,', ') as name,sum(id.qty*id.price)/1000 as total,string_agg(distinct im.payment_type,', ') payment_type,string_agg(distinct to_char(im.scheduled_at,'HH24:MI'),', ') as scheduled_at
                 from invoice_master im 
                 join invoice_detail id on id.invoice_no = im.invoice_no 
                 join users u on u.id = id.assigned_to
                 join product_sku ps on ps.id = id.product_id  and ps.type_id=2 
                 join customers c on c.id = im.customers_id
+                join branch_room br on br.id = im.branch_room_id 
                 where im.dated  = '".$filter_begin_date."'  and c.branch_id = ".$filter_branch_id."  and ps.id in (
                     '280',
                     '281',
@@ -233,20 +234,22 @@ class ReportCloseDayController extends Controller
                     '317',
                     '321'
                 )
-                group by customers_name,c.id order by 1
+                group by customers_name,c.id,br.remark order by 1
         ");
 
         $dtt_item_only = DB::select("
-                select distinct ps.id 
+                select c.id as customers_id,ps.id,ps.abbr as product_name,ps.type_id,u.conversion,id.total/1000 as total
                 from invoice_master im 
                 join invoice_detail id on id.invoice_no = im.invoice_no 
-                join product_sku ps on ps.id = id.product_id   
+                join product_sku ps on ps.id = id.product_id
+                join product_uom pu on pu.product_id = id.product_id
+                join uom u on u.id = pu.uom_id 
                 join customers c on c.id = im.customers_id
-                where im.dated  = '".$filter_begin_date."'  and c.branch_id = ".$filter_branch_id."      
+                where im.dated  = '".$filter_begin_date."'  and c.branch_id = ".$filter_branch_id."   order by c.id,id.seq   
         ");
 
         $dtt_raw = DB::select("
-            select a.customers_id,sum(total_280) as total_280,sum(total_281) as total_281,sum(total_282) as total_282,sum(total_283) as total_283,sum(total_284) as total_284,sum(total_285) as total_285,sum(total_286) as total_286,sum(total_287) as total_287,sum(total_288) as total_288,sum(total_289) as total_289,sum(total_290) as total_290,sum(total_291) as total_291,sum(total_292) as total_292,sum(total_293) as total_293,sum(total_294) as total_294,sum(total_295) as total_295,sum(total_296) as total_296,sum(total_297) as total_297,sum(total_298) as total_298,sum(total_299) as total_299,sum(total_300) as total_300,sum(total_301) as total_301,sum(total_302) as total_302,sum(total_304) as total_304,sum(total_305) as total_305,sum(total_306) as total_306,sum(total_307) as total_307,sum(total_308) as total_308,sum(total_310) as total_310,sum(total_312) as total_312,sum(total_313) as total_313,sum(total_315) as total_315,sum(total_317) as total_317,sum(total_321) as total_321 from (
+            select a.customers_id,sum(total_280)/1000 as total_280,sum(total_281)/1000 as total_281,sum(total_282)/1000 as total_282,sum(total_283)/1000 as total_283,sum(total_284)/1000 as total_284,sum(total_285)/1000 as total_285,sum(total_286)/1000 as total_286,sum(total_287)/1000 as total_287,sum(total_288)/1000 as total_288,sum(total_289)/1000 as total_289,sum(total_290)/1000 as total_290,sum(total_291)/1000 as total_291,sum(total_292)/1000 as total_292,sum(total_293)/1000 as total_293,sum(total_294)/1000 as total_294,sum(total_295)/1000 as total_295,sum(total_296)/1000 as total_296,sum(total_297)/1000 as total_297,sum(total_298)/1000 as total_298,sum(total_299)/1000 as total_299,sum(total_300)/1000 as total_300,sum(total_301)/1000 as total_301,sum(total_302)/1000 as total_302,sum(total_304)/1000 as total_304,sum(total_305)/1000 as total_305,sum(total_306)/1000 as total_306,sum(total_307)/1000 as total_307,sum(total_308)/1000 as total_308,sum(total_310)/1000 as total_310,sum(total_312)/1000 as total_312,sum(total_313)/1000 as total_313,sum(total_315)/1000 as total_315,sum(total_317)/1000 as total_317,sum(total_321)/1000 as total_321 from (
                     select im.customers_id,sum(id.total) as total_280,0 as total_281,0 as total_282,0 as total_283,0 as total_284,0 as total_285,0 as total_286,0 as total_287,0 as total_288,0 as total_289,0 as total_290,0 as total_291,0 as total_292,0 as total_293,0 as total_294,0 as total_295,0 as total_296,0 as total_297,0 as total_298,0 as total_299,0 as total_300,0 as total_301,0 as total_302,0 as total_304,0 as total_305,0 as total_306,0 as total_307,0 as total_308,0 as total_310,0 as total_312,0 as total_313,0 as total_315,0 as total_317,0 as total_321 from invoice_master im join invoice_detail id on id.invoice_no = im.invoice_no join product_sku ps on ps.id = id.product_id  and ps.id = 280 where im.dated='".$filter_begin_date."'  group by im.customers_id
                     union
                     select im.customers_id,0 as total_280,sum(id.total) as total_281,0 as total_282,0 as total_283,0 as total_284,0 as total_285,0 as total_286,0 as total_287,0 as total_288,0 as total_289,0 as total_290,0 as total_291,0 as total_292,0 as total_293,0 as total_294,0 as total_295,0 as total_296,0 as total_297,0 as total_298,0 as total_299,0 as total_300,0 as total_301,0 as total_302,0 as total_304,0 as total_305,0 as total_306,0 as total_307,0 as total_308,0 as total_310,0 as total_312,0 as total_313,0 as total_315,0 as total_317,0 as total_321 from invoice_master im join invoice_detail id on id.invoice_no = im.invoice_no join product_sku ps on ps.id = id.product_id  and ps.id = 281 where im.dated='".$filter_begin_date."'   group by im.customers_id
@@ -418,6 +421,7 @@ class ReportCloseDayController extends Controller
             'dtt_detail' => $dtt_detail,
             'dtt_raw_oneline' => $dtt_raw_oneline,
             'dtt_raw' => $dtt_raw,
+            'dtt_item_only' => $dtt_item_only,
             'settings' => Settings::get(),
         ])->setOptions(['defaultFont' => 'sans-serif'])->setPaper('a4', 'landscape');
         return $pdf->stream('report_daily.pdf');
