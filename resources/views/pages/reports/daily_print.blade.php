@@ -191,7 +191,7 @@
                     @foreach($dtt_detail as $detail)
                           <tr>
                               <td style="text-align: left;">{{ $counter+1 }}</td>
-                              <td style="text-align: left;">{{ $detail->branch_room }}</td>
+                              <td width="15%" style="text-align: left;">{{ $detail->branch_room }}</td>
                               <td style="text-align: left;">{{ $detail->customers_name }}</td>
                               <td style="text-align: left;">
                                 @php
