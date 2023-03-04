@@ -187,7 +187,7 @@
 
                   @endphp
 
-                  @if($counter<11)
+                  @if($counter<10)
                     @foreach($dtt_detail as $detail)
                           <tr>
                               <td style="text-align: left;">{{ $counter+1 }}</td>
@@ -362,7 +362,7 @@
                 </tbody>
               </table>
               
-              @if($counter>11)
+              @if($counter>10)
                   <table class="table table-striped" id="service_table">
                     <thead>
                     <tr style="background-color:#FFA726;color:white;">
@@ -508,7 +508,7 @@
 
                       @endphp
 
-                      @if($counter>11)
+                      @if($counter>10)
                         @foreach($dtt_detail as $detail)
                               <tr>
                                   <td style="text-align: left;">{{ $counter+1 }}</td>
