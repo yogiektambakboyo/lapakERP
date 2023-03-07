@@ -11,6 +11,7 @@
         #header_inv { column-count: 2}
         table, th, td {
           padding: 2px;
+          font-size: 14px;
         }
         td, th {
             border: .01px solid black;
@@ -109,13 +110,13 @@
               
 
             </td>
-            <td style="width: 25%; vertical-align:top;">
+            <td style="width: 18%; vertical-align:top;">
               <table class="table table-striped" id="service_table">
                 <thead>
                 <tr style="background-color:#FFA726;color:white;">
                     <th>Produk</th>
                     <th scope="col" width="10%">@lang('general.lbl_price')</th>
-                    <th scope="col" width="5%">@lang('general.lbl_qty')</th>
+                    <th scope="col" width="5%">Jml</th>
                     <th scope="col" width="10%">Total</th>
                 </tr>
                 </thead>
@@ -271,21 +272,23 @@
 
             </td>
 
-            <td style="width: 22%; vertical-align:top;">
+            <td style="width: 27%; vertical-align:top;">
               <table class="table table-striped" id="service_table">
                 <thead>
                 <tr>
-                  <th colspan="4" style="text-align: center;width:20%;background-color:#FFA726;">Transaksi</th>
+                  <th colspan="6" style="text-align: center;width:20%;background-color:#FFA726;">Transaksi</th>
                 </tr>
                 <tr>
                   <th colspan="2" style="text-align: center;width:20%;background-color:#FFA726;">BCA</th>
                   <th colspan="2" style="text-align: center;width:20%;background-color:#FFA726;">MANDIRI</th>
+                  <th rowspan="2" style="text-align: center;width:20%;background-color:#FFA726;">QRIS</th>
+                  <th rowspan="2" style="text-align: center;width:20%;background-color:#FFA726;">TRF</th>
                 </tr>
                 <tr style="background-color:#FFA726;color:white;">
-                    <th scope="col" width="25%">Debit</th>
-                    <th scope="col" width="25%">Kredit</th>
-                    <th scope="col" width="25%">Debit</th>
-                    <th scope="col" width="25%">Kredit</th>
+                    <th scope="col" width="20%">Debit</th>
+                    <th scope="col" width="20%">Kredit</th>
+                    <th scope="col" width="20%">Debit</th>
+                    <th scope="col" width="20%">Kredit</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -307,6 +310,8 @@
                     $arr_bca_k = array();
                     $arr_man_d = array();
                     $arr_man_k = array();
+                    $arr_qr = array();
+                    $arr_tr = array();
                   @endphp
                   @foreach($payment_datas as $payment_d)
                         @if($payment_d->payment_type!='Cash')
@@ -333,10 +338,24 @@
                               array_push($arr_man_k,"0");
                            }
 
+                           if($payment_d->payment_type=='QRIS'){
+                              array_push($arr_qr,$payment_d->total_payment);
+                           }else{
+                              array_push($arr_qr,"0");
+                           }
+
+                           if($payment_d->payment_type=='Transfer'){
+                              array_push($arr_tr,$payment_d->total_payment);
+                           }else{
+                              array_push($arr_tr,"0");
+                           }
+
                            rsort($arr_bca_d,1);
                            rsort($arr_bca_k,1);
                            rsort($arr_man_d,1);
                            rsort($arr_man_k,1);
+                           rsort($arr_qr,1);
+                           rsort($arr_tr,1);
                           @endphp   
                         @endif
                   @endforeach
@@ -350,6 +369,8 @@
                             <td style="text-align: center;">{{ number_format($arr_bca_k[$cp],0,',','.') }}</td>
                             <td style="text-align: center;">{{number_format($arr_man_d[$cp],0,',','.') }}</td>
                             <td style="text-align: center;">{{ number_format($arr_man_k[$cp],0,',','.') }}</td>
+                            <td style="text-align: center;">{{ number_format($arr_qr[$cp],0,',','.') }}</td>
+                            <td style="text-align: center;">{{ number_format($arr_tr[$cp],0,',','.') }}</td>
                         </tr> 
                         @php
                           $cp++; 
@@ -385,6 +406,8 @@
                             <td style="text-align: center;"> </td>
                             <td style="text-align: center;"> </td>
                             <td style="text-align: center;"> </td>
+                            <td style="text-align: center;"> </td>
+                            <td style="text-align: center;"> </td>
                         </tr>
                       @endfor
                   @endif
@@ -392,38 +415,38 @@
                   
                   <tr>
                     <td colspan="2" style="text-align: left;">Cash</td>
-                    <td colspan="2" style="text-align: right;">{{ number_format($payment_cash,0,',','.') }}</td>
+                    <td colspan="4" style="text-align: right;">{{ number_format($payment_cash,0,',','.') }}</td>
                   </tr>
                   <tr>
                     <td colspan="2" style="text-align: left;">BCA - Debit</td>
-                    <td colspan="2" style="text-align: right;">{{ number_format($payment_bca_debit,0,',','.') }}</td>
+                    <td colspan="4" style="text-align: right;">{{ number_format($payment_bca_debit,0,',','.') }}</td>
                   </tr>
                   <tr>
                     <td colspan="2" style="text-align: left;">BCA - Kredit</td>
-                    <td colspan="2" style="text-align: right;">{{ number_format($payment_bca_kredit,0,',','.') }}</td>
+                    <td colspan="4" style="text-align: right;">{{ number_format($payment_bca_kredit,0,',','.') }}</td>
                   </tr>
                   <tr>
                     <td colspan="2" style="text-align: left;">Mandiri - Debit</td>
-                    <td colspan="2" style="text-align: right;">{{ number_format($payment_mandiri_debit,0,',','.') }}</td>
+                    <td colspan="4" style="text-align: right;">{{ number_format($payment_mandiri_debit,0,',','.') }}</td>
                   </tr>
                   <tr>
                     <td colspan="2" style="text-align: left;">Mandiri - Kredit</td>
-                    <td colspan="2" style="text-align: right;">{{ number_format($payment_mandiri_kredit,0,',','.') }}</td>
+                    <td colspan="4" style="text-align: right;">{{ number_format($payment_mandiri_kredit,0,',','.') }}</td>
                   </tr>
 
                   <tr>
                     <td colspan="2" style="text-align: left;">QRIS</td>
-                    <td colspan="2" style="text-align: right;">{{ number_format($payment_qr,0,',','.') }}</td>
+                    <td colspan="4" style="text-align: right;">{{ number_format($payment_qr,0,',','.') }}</td>
                   </tr>
 
                   <tr>
                     <td colspan="2" style="text-align: left;">Transfer</td>
-                    <td colspan="2" style="text-align: right;">{{ number_format($payment_tr,0,',','.') }}</td>
+                    <td colspan="4" style="text-align: right;">{{ number_format($payment_tr,0,',','.') }}</td>
                   </tr>
 
                   <tr>
                     <th colspan="2" style="text-align: left;width:20%;">Total</th>
-                    <th colspan="2" style="text-align: right;">{{ number_format($total_payment,0,',','.') }} </th>
+                    <th colspan="4" style="text-align: right;">{{ number_format($total_payment,0,',','.') }} </th>
                   </tr>
                 </tbody>
               </table>           
