@@ -215,7 +215,9 @@
                             @endif
                         @endforeach
                       </td>
-                      <td style="text-align: left;">{{ $detail->name }}</td>          
+                      <td style="text-align: left;">{{ $detail->name }}</td>    
+                      @php $c_p=0; @endphp      
+                      @php $t_p=0; @endphp
                       @foreach($dtt_raw_oneline as $header)
                           @if((int)$header->total_280>0)
                             <td scope="col" width="5%">{{ number_format($dtt_raw[$counter]->total_280,0,',','.') }}</td>
@@ -337,7 +339,7 @@
                       @endforeach
                     <td>{{ $detail->payment_type }}</td>
                     <td style="text-align: left;">
-                      @php $c_p=0; @endphp
+
                       @foreach($dtt_item_only as $diox)
                           @if($diox->type_id==1 && $diox->customers_id == $detail->id)
                                 {{ $diox->product_name }} <br>
@@ -346,11 +348,13 @@
                       @endforeach
                     </td>
                     <td style="text-align: left;">
-                      @php $t_p=0; @endphp
+
                       @foreach($dtt_item_only as $diox)
                           @if($diox->type_id==1 && $diox->customers_id == $detail->id)
                                 {{ number_format($diox->total,0,',','.') }} <br>
-                                @php $t_p=$t_p+$diox->total; @endphp
+                                @php 
+                                $t_p=$t_p+$diox->total; 
+                                @endphp
                           @endif
                       @endforeach
                     </td>
