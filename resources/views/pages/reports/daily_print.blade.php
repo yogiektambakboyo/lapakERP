@@ -361,121 +361,121 @@
                   <td colspan="5">JUMLAH</td>
                   @foreach($dtt_raw_oneline as $header)
                     @if((int)$header->total_280>0)
-                      <th scope="col" width="5%">TH</th>
+                      <th scope="col" width="5%">{{ number_format($header->total_280,0,',','.') }} </th>
                     @endif
                     @if((int)$header->total_281>0)
-                      <th scope="col" width="5%">FAC</th>
+                      <th scope="col" width="5%">{{ number_format($header->total_281,0,',','.') }} </th>
                     @endif
                     @if((int)$header->total_282>0)
-                      <th scope="col" width="5%">BHC</th>
+                      <th scope="col" width="5%">{{ number_format($header->total_282,0,',','.') }} </th>
                     @endif
                     @if((int)$header->total_283>0)
-                      <th scope="col" width="5%">ST</th>
+                      <th scope="col" width="5%">{{ number_format($header->total_283,0,',','.') }} </th>
                     @endif                  
                     @if((int)$header->total_284>0)
-                      <th scope="col" width="5%">TT</th>
+                      <th scope="col" width="5%">{{ number_format($header->total_284,0,',','.') }} </th>
                     @endif
                     @if((int)$header->total_285>0)
-                      <th scope="col" width="5%">FR</th>
+                      <th scope="col" width="5%">{{ number_format($header->total_285,0,',','.') }} </th>
                     @endif
                     @if((int)$header->total_286>0)
-                      <th scope="col" width="5%">HS</th>
+                      <th scope="col" width="5%">{{ number_format($header->total_286,0,',','.') }} </th>
                     @endif
                     @if((int)$header->total_287>0)
-                        <th scope="col" width="5%">EC</th>
+                        <th scope="col" width="5%">{{ number_format($header->total_287,0,',','.') }} </th>
                     @endif
                     @if((int)$header->total_288>0)
-                      <th scope="col" width="5%">FBT</th>
+                      <th scope="col" width="5%">{{ number_format($header->total_288,0,',','.') }} </th>
                     @endif
                       @if((int)$header->total_290>0)
-                        <th scope="col" width="5%">AA</th>
+                        <th scope="col" width="5%">{{ number_format($header->total_290,0,',','.') }} </th>
                       @endif
       
                       @if((int)$header->total_291>0)
-                        <th scope="col" width="5%">FBR</th>
+                        <th scope="col" width="5%">{{ number_format($header->total_291,0,',','.') }} </th>
                       @endif
                   
                       @if((int)$header->total_292>0)
-                        <th scope="col" width="5%">V SPA</th>
+                        <th scope="col" width="5%">{{ number_format($header->total_292,0,',','.') }} </th>
                       @endif
                   
                       @if((int)$header->total_293>0)
-                        <th scope="col" width="5%">BACK DRY</th>
+                        <th scope="col" width="5%">{{ number_format($header->total_293,0,',','.') }} </th>
                       @endif
                   
                     @if((int)$header->total_294>0)
-                      <th scope="col" width="5%">BACK</th>
+                      <th scope="col" width="5%">{{ number_format($header->total_294,0,',','.') }} </th>
                     @endif
                 
                     @if((int)$header->total_295>0)
-                      <th scope="col" width="5%">BCM</th>
+                      <th scope="col" width="5%">{{ number_format($header->total_295,0,',','.') }} </th>
                     @endif
                 
                     @if((int)$header->total_296>0)
-                      <th scope="col" width="5%">SLIMMING & BREAST</th>
+                      <th scope="col" width="5%">{{ number_format($header->total_296,0,',','.') }} </th>
                     @endif
               
                     @if((int)$header->total_297>0)
-                      <th scope="col" width="5%">SLIM</th>
+                      <th scope="col" width="5%">{{ number_format($header->total_297,0,',','.') }} </th>
                     @endif
                     @if((int)$header->total_298>0)
-                      <th scope="col" width="5%">BREAST</th>
+                      <th scope="col" width="5%">{{ number_format($header->total_298,0,',','.') }} </th>
                     @endif
                 
                     @if((int)$header->total_299>0)
-                      <th scope="col" width="5%">RATUS</th>
+                      <th scope="col" width="5%">{{ number_format($header->total_299,0,',','.') }} </th>
                     @endif
                 
                     @if((int)$header->total_300>0)
-                      <th scope="col" width="5%">EBBSL</th>
+                      <th scope="col" width="5%">{{ number_format($header->total_300,0,',','.') }} </th>
                     @endif
                 
                     @if((int)$header->total_301>0)
-                      <th scope="col" width="5%">EBBS</th>
+                      <th scope="col" width="5%">{{ number_format($header->total_301,0,',','.') }} </th>
                     @endif
                 
                     @if((int)$header->total_302>0)
-                      <th scope="col" width="5%">BODY BLEACHING</th>
+                      <th scope="col" width="5%">{{ number_format($header->total_302,0,',','.') }} </th>
                     @endif
                 
                     @if((int)$header->total_304>0)
-                      <th scope="col" width="5%">BABSL</th>
+                      <th scope="col" width="5%">{{ number_format($header->total_304,0,',','.') }} </th>
                     @endif
                 
                     @if((int)$header->total_305>0)
-                      <th scope="col" width="5%">BABS</th>
+                      <th scope="col" width="5%">{{ number_format($header->total_305,0,',','.') }} </th>
                     @endif
                 
                     @if((int)$header->total_306>0)
-                      <th scope="col" width="5%">JFS</th>
+                      <th scope="col" width="5%">{{ number_format($header->total_306,0,',','.') }} </th>
                     @endif
                 
                     @if((int)$header->total_307>0)
-                      <th scope="col" width="5%">FOOT</th>
+                      <th scope="col" width="5%">{{ number_format($header->total_307,0,',','.') }} </th>
                     @endif
                     @if((int)$header->total_308>0)
-                      <th scope="col" width="5%">FOOT EXSPRESS</th>
+                      <th scope="col" width="5%">{{ number_format($header->total_308,0,',','.') }} </th>
                       @endif
                     @if((int)$header->total_310>0)
-                      <th scope="col" width="5%">BCP</th>
+                      <th scope="col" width="5%">{{ number_format($header->total_310,0,',','.') }} </th>
                     @endif
                 
                     @if((int)$header->total_312>0)
-                      <th scope="col" width="5%">LA</th>
+                      <th scope="col" width="5%">{{ number_format($header->total_312,0,',','.') }} </th>
                     @endif
                   
                     @if((int)$header->total_313>0)
-                      <th scope="col" width="5%">MSU</th>
+                      <th scope="col" width="5%">{{ number_format($header->total_313,0,',','.') }} </th>
                       @endif
                     @if((int)$header->total_315>0)
-                      <th scope="col" width="5%">MB</th>
+                      <th scope="col" width="5%">{{ number_format($header->total_315,0,',','.') }} </th>
                     @endif
                   
                     @if((int)$header->total_317>0)
-                      <th scope="col" width="5%">STEAM B</th>
+                      <th scope="col" width="5%">{{ number_format($header->total_317,0,',','.') }} </th>
                     @endif
                     @if((int)$header->total_321>0)
-                      <th scope="col" width="5%">TP</th>
+                      <th scope="col" width="5%">{{ number_format($header->total_321,0,',','.') }} </th>
                     @endif
                     <th>Pembayaran</th>
                     <th>Produk</th>
