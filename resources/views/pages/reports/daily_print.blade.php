@@ -46,11 +46,11 @@
                       <table class="table table-striped" id="service_table">
                         <thead>
                         <tr style="background-color:#FFA726;color:white;">
-                            <th scope="col" width="4%">No</th>
-                            <th>Ruangan</th>
-                            <th>Nama Tamu</th>
-                            <th  scope="col" width="18%">Jam Kerja</th>
-                            <th>MU</th>
+                          <th scope="col" width="4%">No</th>
+                          <th width="12%" >Ruangan</th>
+                          <th width="12%" >Nama Tamu</th>
+                          <th  scope="col" width="18%">Jam Kerja</th>
+                            <th width="15%" >MU</th>
                             @foreach($dtt_raw_oneline as $header)
                               @if((int)$header->total_280>0)
                                 <th scope="col" width="5%">TH</th>
@@ -372,10 +372,10 @@
                             <thead>
                             <tr style="background-color:#FFA726;color:white;">
                                 <th scope="col" width="4%">No</th>
-                                <th>Ruangan</th>
-                                <th>Nama Tamu</th>
+                                <th width="12%" >Ruangan</th>
+                                <th width="12%" >Nama Tamu</th>
                                 <th  scope="col" width="18%">Jam Kerja</th>
-                                <th>MU</th>
+                                <th width="15%" >MU</th>
                                 @foreach($dtt_raw_oneline as $header)
                                   @if((int)$header->total_280>0)
                                     <th scope="col" width="5%">TH</th>
