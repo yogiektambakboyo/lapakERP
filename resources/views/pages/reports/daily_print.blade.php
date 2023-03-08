@@ -189,7 +189,7 @@
                           @endphp
         
                             @foreach($dtt_detail as $detail)
-                            @if($counter<=10)
+                            @if($counter<=20)
                                   <tr>
                                       <td style="text-align: left;">{{ $counter+1 }}</td>
                                       <td width="12%" style="text-align: left;">{{ $detail->branch_room }}</td>
@@ -362,7 +362,7 @@
                         </tbody>
                       </table>
                       
-                      @if($counter>10)
+                      @if($counter>20)
                           <table class="table table-striped" id="service_table">
                             <thead>
                             <tr style="background-color:#FFA726;color:white;">
