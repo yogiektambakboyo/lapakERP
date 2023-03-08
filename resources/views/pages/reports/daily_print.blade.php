@@ -365,7 +365,7 @@
                 @endphp
            @endforeach
                 <tr>
-                  <td colspan="5">JUMLAH</td>
+                  <th colspan="5">JUMLAH</th>
                   @foreach($dtt_raw_oneline as $header)
                     @if((int)$header->total_280>0)
                       <th scope="col" width="5%">{{ number_format($header->total_280,0,',','.') }} </th>
