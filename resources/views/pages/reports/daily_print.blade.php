@@ -361,8 +361,13 @@
                            @endforeach
                         </tbody>
                       </table>
-                      
-                      @if($counter>20)
+                    </td>
+                  </tr>
+
+                <tr>
+
+
+                  @if($counter>20)
                           <table class="table table-striped" id="service_table">
                             <thead>
                             <tr style="background-color:#FFA726;color:white;">
@@ -515,7 +520,7 @@
                                           <td style="text-align: left;">{{ $detail->branch_room }}</td>
                                           <td style="text-align: left;">{{ $detail->customers_name }}</td>
                                           <td style="text-align: left;">
-
+                                            
                                           </td>
                                           <td style="text-align: left;">{{ $detail->name }}</td>          
                                           @foreach($dtt_raw_oneline as $header)
@@ -667,11 +672,9 @@
         
         
                       @endif
-        
-                    </td>
-                
-        
-                  </tr>
+
+
+                </tr>
                 </tbody>
               </table>
 
