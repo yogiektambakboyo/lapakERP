@@ -357,6 +357,132 @@
                  $counterall++;
                 @endphp
            @endforeach
+                <tr>
+                  <td colspan="5">JUMLAH</td>
+                  @foreach($dtt_raw_oneline as $header)
+                    @if((int)$header->total_280>0)
+                      <th scope="col" width="5%">TH</th>
+                    @endif
+                    @if((int)$header->total_281>0)
+                      <th scope="col" width="5%">FAC</th>
+                    @endif
+                    @if((int)$header->total_282>0)
+                      <th scope="col" width="5%">BHC</th>
+                    @endif
+                    @if((int)$header->total_283>0)
+                      <th scope="col" width="5%">ST</th>
+                    @endif                  
+                    @if((int)$header->total_284>0)
+                      <th scope="col" width="5%">TT</th>
+                    @endif
+                    @if((int)$header->total_285>0)
+                      <th scope="col" width="5%">FR</th>
+                    @endif
+                    @if((int)$header->total_286>0)
+                      <th scope="col" width="5%">HS</th>
+                    @endif
+                    @if((int)$header->total_287>0)
+                        <th scope="col" width="5%">EC</th>
+                    @endif
+                    @if((int)$header->total_288>0)
+                      <th scope="col" width="5%">FBT</th>
+                    @endif
+                      @if((int)$header->total_290>0)
+                        <th scope="col" width="5%">AA</th>
+                      @endif
+      
+                      @if((int)$header->total_291>0)
+                        <th scope="col" width="5%">FBR</th>
+                      @endif
+                  
+                      @if((int)$header->total_292>0)
+                        <th scope="col" width="5%">V SPA</th>
+                      @endif
+                  
+                      @if((int)$header->total_293>0)
+                        <th scope="col" width="5%">BACK DRY</th>
+                      @endif
+                  
+                    @if((int)$header->total_294>0)
+                      <th scope="col" width="5%">BACK</th>
+                    @endif
+                
+                    @if((int)$header->total_295>0)
+                      <th scope="col" width="5%">BCM</th>
+                    @endif
+                
+                    @if((int)$header->total_296>0)
+                      <th scope="col" width="5%">SLIMMING & BREAST</th>
+                    @endif
+              
+                    @if((int)$header->total_297>0)
+                      <th scope="col" width="5%">SLIM</th>
+                    @endif
+                    @if((int)$header->total_298>0)
+                      <th scope="col" width="5%">BREAST</th>
+                    @endif
+                
+                    @if((int)$header->total_299>0)
+                      <th scope="col" width="5%">RATUS</th>
+                    @endif
+                
+                    @if((int)$header->total_300>0)
+                      <th scope="col" width="5%">EBBSL</th>
+                    @endif
+                
+                    @if((int)$header->total_301>0)
+                      <th scope="col" width="5%">EBBS</th>
+                    @endif
+                
+                    @if((int)$header->total_302>0)
+                      <th scope="col" width="5%">BODY BLEACHING</th>
+                    @endif
+                
+                    @if((int)$header->total_304>0)
+                      <th scope="col" width="5%">BABSL</th>
+                    @endif
+                
+                    @if((int)$header->total_305>0)
+                      <th scope="col" width="5%">BABS</th>
+                    @endif
+                
+                    @if((int)$header->total_306>0)
+                      <th scope="col" width="5%">JFS</th>
+                    @endif
+                
+                    @if((int)$header->total_307>0)
+                      <th scope="col" width="5%">FOOT</th>
+                    @endif
+                    @if((int)$header->total_308>0)
+                      <th scope="col" width="5%">FOOT EXSPRESS</th>
+                      @endif
+                    @if((int)$header->total_310>0)
+                      <th scope="col" width="5%">BCP</th>
+                    @endif
+                
+                    @if((int)$header->total_312>0)
+                      <th scope="col" width="5%">LA</th>
+                    @endif
+                  
+                    @if((int)$header->total_313>0)
+                      <th scope="col" width="5%">MSU</th>
+                      @endif
+                    @if((int)$header->total_315>0)
+                      <th scope="col" width="5%">MB</th>
+                    @endif
+                  
+                    @if((int)$header->total_317>0)
+                      <th scope="col" width="5%">STEAM B</th>
+                    @endif
+                    @if((int)$header->total_321>0)
+                      <th scope="col" width="5%">TP</th>
+                    @endif
+                    <th>Pembayaran</th>
+                    <th>Produk</th>
+                    <th>Nilai</th>
+                    <th>Keterangan</th>
+                @endforeach
+                </tr>
         </tbody>
       </table>
 
