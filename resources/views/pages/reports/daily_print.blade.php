@@ -366,7 +366,21 @@
 
                 <tr>
                   <td>
-                  @if($counter>20)
+                  
+                  </td>
+
+
+                </tr>
+                </tbody>
+              </table>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <br>
+
+      @if($counter>20)
                           <table class="table table-striped" id="service_table">
                             <thead>
                             <tr style="background-color:#FFA726;color:white;">
@@ -693,20 +707,8 @@
         
         
                       @endif
-                        </td>
-
-
-                </tr>
-                </tbody>
-              </table>
 
 
 
-
-
-            </td>
-          </tr>
-        </tbody>
-      </table>
    </body> 
 </html> 
