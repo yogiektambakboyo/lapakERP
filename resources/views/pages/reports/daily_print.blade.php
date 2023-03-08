@@ -337,16 +337,20 @@
                       @endforeach
                     <td>{{ $detail->payment_type }}</td>
                     <td style="text-align: left;">
+                      @php $c_p=0; @endphp
                       @foreach($dtt_item_only as $diox)
                           @if($diox->type_id==1 && $diox->customers_id == $detail->id)
                                 {{ $diox->product_name }} <br>
+                                @php $c_p++; @endphp
                           @endif
                       @endforeach
                     </td>
                     <td style="text-align: left;">
+                      @php $t_p=0; @endphp
                       @foreach($dtt_item_only as $diox)
                           @if($diox->type_id==1 && $diox->customers_id == $detail->id)
                                 {{ number_format($diox->total,0,',','.') }} <br>
+                                @php $t_p=$t_p+$diox->total; @endphp
                           @endif
                       @endforeach
                     </td>
@@ -477,10 +481,10 @@
                     @if((int)$header->total_321>0)
                       <th scope="col" width="5%">{{ number_format($header->total_321,0,',','.') }} </th>
                     @endif
-                    <th>Pembayaran</th>
-                    <th>Produk</th>
-                    <th>Nilai</th>
-                    <th>Keterangan</th>
+                    <th></th>
+                    <th>{{ number_format($c_p,0,',','.') }}</th>
+                    <th>{{ number_format($t_p,0,',','.') }}</th>
+                    <th></th>
                 @endforeach
                 </tr>
         </tbody>
