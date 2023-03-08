@@ -365,8 +365,7 @@
                   </tr>
 
                 <tr>
-
-
+                  <td>
                   @if($counter>20)
                           <table class="table table-striped" id="service_table">
                             <thead>
