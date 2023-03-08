@@ -515,11 +515,7 @@
                                           <td style="text-align: left;">{{ $detail->branch_room }}</td>
                                           <td style="text-align: left;">{{ $detail->customers_name }}</td>
                                           <td style="text-align: left;">
-                                            @foreach($dtt_item_only2 as $dio2)
-                                                @if($dio2->type_id==2 && $dio2->customers_id == $detail->customers_id)
-                                                {{ $detail->scheduled_at }} - {{ $detail->scheduled_at }}<br>
-                                                @endif
-                                            @endforeach
+
                                           </td>
                                           <td style="text-align: left;">{{ $detail->name }}</td>          
                                           @foreach($dtt_raw_oneline as $header)
