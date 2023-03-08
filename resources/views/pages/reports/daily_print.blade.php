@@ -50,7 +50,7 @@
                           <th width="12%" >Ruangan</th>
                           <th width="12%" >Nama Tamu</th>
                           <th  scope="col" width="18%">Jam Kerja</th>
-                            <th width="18%" >MU</th>
+                            <th width="20%" >MU</th>
                             @foreach($dtt_raw_oneline as $header)
                               @if((int)$header->total_280>0)
                                 <th scope="col" width="5%">TH</th>
@@ -375,7 +375,7 @@
                                 <th width="12%" >Ruangan</th>
                                 <th width="12%" >Nama Tamu</th>
                                 <th  scope="col" width="18%">Jam Kerja</th>
-                                <th width="18%" >MU</th>
+                                <th width="20%" >MU</th>
                                 @foreach($dtt_raw_oneline as $header)
                                   @if((int)$header->total_280>0)
                                     <th scope="col" width="5%">TH</th>
@@ -518,7 +518,7 @@
                                 @if($counter>=20)
                                       <tr>
                                           <td style="text-align: left;">{{ $counter+1 }}</td>
-                                          <td width="12%" style="text-align: left;">{{ $detail->branch_room }}</td>
+                                          <td style="text-align: left;">{{ $detail->branch_room }}</td>
                                           <td style="text-align: left;">{{ $detail->customers_name }}</td>
                                           <td style="text-align: left;">
                                             @php
