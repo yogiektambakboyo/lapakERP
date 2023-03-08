@@ -50,7 +50,7 @@
                           <th width="12%" >Ruangan</th>
                           <th width="12%" >Nama Tamu</th>
                           <th  scope="col" width="18%">Jam Kerja</th>
-                            <th width="20%" >MU</th>
+                          <th width="20%" >MU</th>
                             @foreach($dtt_raw_oneline as $header)
                               @if((int)$header->total_280>0)
                                 <th scope="col" width="5%">TH</th>
