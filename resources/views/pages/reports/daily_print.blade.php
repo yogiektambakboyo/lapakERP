@@ -515,7 +515,7 @@
                               @endphp
             
                                 @foreach($dtt_detail as $detail)
-                                @if($counter<20)
+                                @if($counter>20)
                                       <tr>
                                           <td style="text-align: left;">{{ $counter+1 }}</td>
                                           <td width="12%" style="text-align: left;">{{ $detail->branch_room }}</td>
