@@ -422,6 +422,7 @@ class ReportCloseDayController extends Controller
             'dtt_raw_oneline' => $dtt_raw_oneline,
             'dtt_raw' => $dtt_raw,
             'dtt_item_only' => $dtt_item_only,
+            'dtt_item_only2' => $dtt_item_only,
             'settings' => Settings::get(),
         ])->setOptions(['defaultFont' => 'sans-serif'])->setPaper('a4', 'landscape');
         return $pdf->stream('report_daily.pdf');
