@@ -185,7 +185,8 @@
             $counterall = 0;   
             $counter_spk = 0;
             $divider_page = 17;
-
+            $c_p=0; 
+            $t_p=0; 
           @endphp
 
             @foreach($dtt_detail as $detail)
@@ -216,8 +217,6 @@
                         @endforeach
                       </td>
                       <td style="text-align: left;">{{ $detail->name }}</td>    
-                      @php $c_p=0; @endphp      
-                      @php $t_p=0; @endphp
                       @foreach($dtt_raw_oneline as $header)
                           @if((int)$header->total_280>0)
                             <td scope="col" width="5%">{{ number_format($dtt_raw[$counter]->total_280,0,',','.') }}</td>
