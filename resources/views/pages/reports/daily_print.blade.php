@@ -502,6 +502,193 @@
         
                             </tr>
                             </thead>
+
+                            <tbody>
+                              @php
+                                $total_qty = 0;
+                                $total_service = 0; 
+                                $counter = 0;   
+                                $counterall = 0;   
+                                $counter_spk = 0;
+                                $divider_page = 17;
+            
+                              @endphp
+            
+                                @foreach($dtt_detail as $detail)
+                                @if($counter<20)
+                                      <tr>
+                                          <td style="text-align: left;">{{ $counter+1 }}</td>
+                                          <td width="12%" style="text-align: left;">{{ $detail->branch_room }}</td>
+                                          <td style="text-align: left;">{{ $detail->customers_name }}</td>
+                                          <td style="text-align: left;">
+                                            @php
+                                                $c = 1;
+                                                $sumconversion = 0;
+                                                $lastsch = "";
+                                            @endphp
+                                            @foreach($dtt_item_only as $dio)
+                                                @if($dio->type_id==2 && $dio->customers_id == $detail->id)
+                                                    @php
+                                                      $sumconversion = $sumconversion+$dio->conversion;
+                                                      if ($lastsch=="") {
+                                                        $lastsch = $detail->scheduled_at;
+                                                      }
+                                                    @endphp
+                                                      {{ \Carbon\Carbon::parse($lastsch)->isoFormat('H:mm') }} - {{ \Carbon\Carbon::parse($detail->scheduled_at)->add($sumconversion.' minutes')->isoFormat('H:mm') }} <br>
+                                                      @php
+                                                        $c++;
+                                                        $lastsch = \Carbon\Carbon::parse($detail->scheduled_at)->add($sumconversion.' minutes')->isoFormat('H:mm');
+                                                      @endphp
+                                                @endif
+                                            @endforeach
+                                          </td>
+                                          <td style="text-align: left;">{{ $detail->name }}</td>          
+                                          @foreach($dtt_raw_oneline as $header)
+                                              @if((int)$header->total_280>0)
+                                                <td scope="col" width="5%">{{ number_format($dtt_raw[$counter]->total_280,0,',','.') }}</td>
+                                              @endif
+                                              @if((int)$header->total_281>0)
+                                                <td scope="col" width="5%">{{ number_format($dtt_raw[$counter]->total_281,0,',','.') }}</td>
+                                              @endif
+                                              @if((int)$header->total_282>0)
+                                                <td scope="col" width="5%">{{ number_format($dtt_raw[$counter]->total_282,0,',','.') }}</td>
+                                              @endif
+                                              @if((int)$header->total_283>0)
+                                                <td scope="col" width="5%">{{ number_format($dtt_raw[$counter]->total_283,0,',','.') }}</td>
+                                              @endif                  
+                                              @if((int)$header->total_284>0)
+                                                <td scope="col" width="5%">{{ number_format($dtt_raw[$counter]->total_284,0,',','.') }}</td>
+                                              @endif
+                                              @if((int)$header->total_285>0)
+                                                <td scope="col" width="5%">{{ number_format($dtt_raw[$counter]->total_285,0,',','.') }}</td>
+                                              @endif
+                                              @if((int)$header->total_286>0)
+                                                <td scope="col" width="5%">{{ number_format($dtt_raw[$counter]->total_286,0,',','.') }}</td>
+                                              @endif
+                                              @if((int)$header->total_287>0)
+                                                  <td scope="col" width="5%">{{ number_format($dtt_raw[$counter]->total_287,0,',','.') }}</td>
+                                              @endif
+                                              @if((int)$header->total_288>0)
+                                                <td scope="col" width="5%">{{ number_format($dtt_raw[$counter]->total_288,0,',','.') }}</td>
+                                              @endif
+                                                @if((int)$header->total_290>0)
+                                                  <td scope="col" width="5%">{{ number_format($dtt_raw[$counter]->total_290,0,',','.') }}</td>
+                                                @endif
+                              
+                                                @if((int)$header->total_291>0)
+                                                  <td scope="col" width="5%">{{ number_format($dtt_raw[$counter]->total_291,0,',','.') }}</td>
+                                                @endif
+                                            
+                                                @if((int)$header->total_292>0)
+                                                  <td scope="col" width="5%">{{ number_format($dtt_raw[$counter]->total_292,0,',','.') }}</td>
+                                                @endif
+                                            
+                                                @if((int)$header->total_293>0)
+                                                  <td scope="col" width="5%">{{ number_format($dtt_raw[$counter]->total_293,0,',','.') }}</td>
+                                                @endif
+                                            
+                                              @if((int)$header->total_294>0)
+                                                <td scope="col" width="5%">{{ number_format($dtt_raw[$counter]->total_294,0,',','.') }}</td>
+                                              @endif
+                                          
+                                              @if((int)$header->total_295>0)
+                                                <td scope="col" width="5%">{{ number_format($dtt_raw[$counter]->total_295,0,',','.') }}</td>
+                                              @endif
+                                          
+                                              @if((int)$header->total_296>0)
+                                                <td scope="col" width="5%">{{ number_format($dtt_raw[$counter]->total_296,0,',','.') }}</td>
+                                              @endif
+                                        
+                                              @if((int)$header->total_297>0)
+                                                <td scope="col" width="5%">{{ number_format($dtt_raw[$counter]->total_297,0,',','.') }}</td>
+                                              @endif
+                                              @if((int)$header->total_298>0)
+                                                <td scope="col" width="5%">{{ number_format($dtt_raw[$counter]->total_298,0,',','.') }}</td>
+                                              @endif
+                                          
+                                              @if((int)$header->total_299>0)
+                                                <td scope="col" width="5%">{{ number_format($dtt_raw[$counter]->total_299,0,',','.') }}</td>
+                                              @endif
+                                          
+                                              @if((int)$header->total_300>0)
+                                                <td scope="col" width="5%">{{ number_format($dtt_raw[$counter]->total_300,0,',','.') }}</td>
+                                              @endif
+                                          
+                                              @if((int)$header->total_301>0)
+                                                <td scope="col" width="5%">{{ number_format($dtt_raw[$counter]->total_301,0,',','.') }}</td>
+                                              @endif
+                                          
+                                              @if((int)$header->total_302>0)
+                                                <td scope="col" width="5%">{{ number_format($dtt_raw[$counter]->total_302,0,',','.') }}</td>
+                                              @endif
+                                          
+                                              @if((int)$header->total_304>0)
+                                                <td scope="col" width="5%">{{ number_format($dtt_raw[$counter]->total_304,0,',','.') }}</td>
+                                              @endif
+                                          
+                                              @if((int)$header->total_305>0)
+                                                <td scope="col" width="5%">{{ number_format($dtt_raw[$counter]->total_305,0,',','.') }}</td>
+                                              @endif
+                                          
+                                              @if((int)$header->total_306>0)
+                                                <td scope="col" width="5%">{{ number_format($dtt_raw[$counter]->total_306,0,',','.') }}</td>
+                                              @endif
+                                          
+                                              @if((int)$header->total_307>0)
+                                                <td scope="col" width="5%">{{ number_format($dtt_raw[$counter]->total_307,0,',','.') }}</td>
+                                              @endif
+                                              @if((int)$header->total_308>0)
+                                                <td scope="col" width="5%">{{ number_format($dtt_raw[$counter]->total_308,0,',','.') }}</td>
+                                                @endif
+                                              @if((int)$header->total_310>0)
+                                                <td scope="col" width="5%">{{ number_format($dtt_raw[$counter]->total_310,0,',','.') }}</td>
+                                              @endif
+                                          
+                                              @if((int)$header->total_312>0)
+                                                <td scope="col" width="5%">{{ number_format($dtt_raw[$counter]->total_312,0,',','.') }}</td>
+                                              @endif
+                                            
+                                              @if((int)$header->total_313>0)
+                                                <td scope="col" width="5%">{{ number_format($dtt_raw[$counter]->total_313,0,',','.') }}</td>
+                                                @endif
+                                              @if((int)$header->total_315>0)
+                                                <td scope="col" width="5%">{{ number_format($dtt_raw[$counter]->total_315,0,',','.') }}</td>
+                                              @endif
+                                            
+                                              @if((int)$header->total_317>0)
+                                                <td scope="col" width="5%">{{ number_format($dtt_raw[$counter]->total_317,0,',','.') }}</td>
+                                              @endif
+                                              @if((int)$header->total_321>0)
+                                                <td scope="col" width="5%">{{ number_format($dtt_raw[$counter]->total_321,0,',','.') }}</td>
+                                              @endif
+                                          @endforeach
+                                        <td>{{ $detail->payment_type }}</td>
+                                        <td style="text-align: left;">
+                                          @foreach($dtt_item_only as $diox)
+                                              @if($diox->type_id==1 && $diox->customers_id == $detail->id)
+                                                    {{ $diox->product_name }} <br>
+                                              @endif
+                                          @endforeach
+                                        </td>
+                                        <td style="text-align: left;">
+                                          @foreach($dtt_item_only as $diox)
+                                              @if($diox->type_id==1 && $diox->customers_id == $detail->id)
+                                                    {{ number_format($diox->total,0,',','.') }} <br>
+                                              @endif
+                                          @endforeach
+                                        </td>
+                                        <td></td>
+                                    </tr>
+                                    @endif
+                                    @php
+                                     $counter++;
+                                     $counterall++;
+                                    @endphp
+                               @endforeach
+                            </tbody>
+
+
+
                           </table>
         
         
