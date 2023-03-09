@@ -251,7 +251,7 @@ class ServicesController extends Controller
         $productsw = Product::join('product_type as pt','pt.id','=','product_sku.type_id')
         ->join('product_category as pc','pc.id','=','product_sku.category_id')
         ->join('product_brand as pb','pb.id','=','product_sku.brand_id')
-        ->where('product_sku.id','!=',$product->id)
+        ->where('product_sku.id','!=',$product->id)->orderBy('product_sku.remark','ASC')
         ->get(['product_sku.id','product_sku.remark']);
 
 
