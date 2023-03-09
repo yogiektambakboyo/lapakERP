@@ -173,6 +173,8 @@
           });
           $('#input_date').val(formattedToday);
 
+          $('#input_product_id_material').select2();
+
 
           $('#input_submit').on('click',function(){
           if($('#input_product_id_material option:selected').val()==''){
