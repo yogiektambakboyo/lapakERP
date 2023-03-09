@@ -513,9 +513,14 @@
                           @php
                           @endphp    
                           <tr>
-                              <td style="text-align: left;">{{ $petty_data->abbr }}</th>                            
+                              <td style="text-align: left;">{{ $petty_data->abbr }} ({{ $petty_data->qty }})</th>                            
                           </tr>
                           @endif    
+                        @endforeach
+                        @foreach($out_datas as $out_data) 
+                          <tr>
+                              <td style="text-align: left;">{{ $out_data->abbr }} ({{ $out_data->qty }})</th>                            
+                          </tr>   
                         @endforeach
                       <tr>
                         <td style="text-align: left;width:80px;">Masuk : </th>

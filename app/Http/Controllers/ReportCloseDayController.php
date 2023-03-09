@@ -117,6 +117,18 @@ class ReportCloseDayController extends Controller
                 where im.dated = '".$filter_begin_date."'  and c.branch_id = ".$filter_branch_id."
                 group by ps.category_id,b.remark,im.dated,id.product_name,ps.abbr,id.price,ps.type_id                         
         ");
+        $out_data = DB::select("
+                select ps2.abbr,sum(pi2.qty) as qty 
+                from invoice_master im 
+                join invoice_detail id on id.invoice_no = im.invoice_no 
+                join customers c on c.id = im.customers_id 
+                join branch b on b.id=c.branch_id
+                join product_sku ps on ps.id = id.product_id 
+                join product_ingredients pi2 on pi2.product_id = ps.id 
+                join product_sku ps2 on ps2.id = pi2.product_id_material  
+                where im.dated = '".$filter_begin_date."'  and c.branch_id = ".$filter_branch_id."
+                group by ps2.abbr                    
+        ");
         $payment_data = DB::select("
                 select im.invoice_no,im.total_payment,im.payment_type,count(distinct im.invoice_no) as qty_payment
                 from invoice_master im 
@@ -127,7 +139,7 @@ class ReportCloseDayController extends Controller
         ");
 
         $petty_datas = DB::select("
-            select ps.abbr,pc.type,sum(pcd.line_total) as total  from petty_cash pc 
+            select ps.abbr,pc.type,sum(pcd.qty) qty,sum(pcd.line_total) as total  from petty_cash pc 
             join petty_cash_detail pcd on pcd.doc_no = pc.doc_no
             join product_sku ps on ps.id = pcd.product_id 
             where pc.dated  = '".$filter_begin_date."'  and pc.branch_id = ".$filter_branch_id."  
@@ -147,6 +159,7 @@ class ReportCloseDayController extends Controller
         $pdf = PDF::setOptions(['isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true])->loadView('pages.reports.close_day_print', [
             'data' => $data,
             'payment_datas' => $payment_data,
+            'out_datas' => $out_data,
             'report_datas' => $report_data,
             'petty_datas' => $petty_datas,
             'cust' => $cust,
