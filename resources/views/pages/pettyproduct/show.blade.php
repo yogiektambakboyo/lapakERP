@@ -7,7 +7,7 @@
   @csrf
   <div class="panel text-white">
     <div class="panel-heading  bg-teal-600">
-      <div class="panel-title"><h4 class="">Alur Produk #{{ $invoice->doc_no }}</h4></div>
+      <div class="panel-title"><h4 class="">Produk Terpakai #{{ $invoice->doc_no }}</h4></div>
       <div class="">
         <a href="{{ route('pettyproduct.index') }}" class="btn btn-default">@lang('general.lbl_back')</a>
       </div>
@@ -99,9 +99,7 @@
               <th scope="col" width="5%">No</th>
               <th scope="col">@lang('general.product')</th>
               <th scope="col" width="10%">@lang('general.lbl_uom')</th>
-              <th scope="col" width="10%">@lang('general.lbl_price')</th>
               <th scope="col" width="5%">@lang('general.lbl_qty')</th>
-              <th scope="col" width="10%">Total</th>  
           </tr>
           </thead>
           <tbody>
@@ -129,7 +127,7 @@
               </div>
             </div>
             <div class="col-md-12">
-              <div class="col-auto text-end">
+              <div class="col-auto text-end  d-none">
                 <label class="col-md-2"><h1>Total </h1></label>
                 <label class="col-md-8 display-5" id="result-total"> <h1>0</h1></label>
               </div>
@@ -189,9 +187,7 @@
             { data: 'seq' },
             { data: 'abbr' },
             { data: 'uom' },
-            { data: 'price',render: DataTable.render.number( '.', null, 0, '' ) },
             { data: 'qty' },
-            { data: 'total',render: DataTable.render.number( '.', null, 0, '' ) },
         ],
         });
 

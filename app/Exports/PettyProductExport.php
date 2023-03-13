@@ -37,7 +37,6 @@ class PettyProductExport implements FromCollection,WithColumnFormatting, WithHea
             'Document No',
             'Dated',
             'Type',
-            'Total',
             'Remark',
         ];
     }
@@ -54,7 +53,7 @@ class PettyProductExport implements FromCollection,WithColumnFormatting, WithHea
                 ->where('b.id','like','%'.$this->branch.'%') 
                 ->where('petty_cash.type','!=','Kas Keluar')
                 ->whereBetween('petty_cash.dated',$fil) 
-                ->get(['b.remark as branch_name','petty_cash.doc_no','petty_cash.dated','petty_cash.type','petty_cash.total','petty_cash.remark' ]);
+                ->get(['b.remark as branch_name','petty_cash.doc_no','petty_cash.dated','petty_cash.type','petty_cash.remark' ]);
     }
 
     public function columnFormats(): array
