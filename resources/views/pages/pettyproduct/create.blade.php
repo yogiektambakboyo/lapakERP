@@ -112,13 +112,13 @@
           </div>
 
           <div class="col-md-2">
-            <label class="form-label col-form-label">Total</label>
+            <label class="form-label col-form-label d-none">Total</label>
             <input type="hidden" 
             name="input_product_vat_total"
             id="input_product_vat_total"
             class="form-control" 
             value="{{ old('input_product_vat_total') }}" required disabled/>
-            <input type="text" 
+            <input type="hidden" 
             name="input_product_total"
             id="input_product_total"
             class="form-control" 
@@ -138,9 +138,7 @@
               <th scope="col" width="5%">No</th>
               <th scope="col">@lang('general.product')</th>
               <th scope="col" width="10%">@lang('general.lbl_uom')</th>
-              <th scope="col" width="10%">@lang('general.lbl_price')</th>
               <th scope="col" width="5%">@lang('general.lbl_qty')</th>
-              <th scope="col" width="10%">Total</th>  
               <th scope="col" width="20%">@lang('general.lbl_action')</th> 
           </tr>
           </thead>
@@ -154,7 +152,7 @@
 
 
           <div class="col-md-6">
-            <div class="col-md-12 d-none">
+            <div class="col-md-12">
               <div class="col-auto text-end">
                 <label class="col-md-2"><h2>Sub Total </h2></label>
                 <label class="col-md-8" id="sub-total"> <h3>0</h3></label>
@@ -167,7 +165,7 @@
               </div>
             </div>
             <div class="col-md-12">
-              <div class="col-auto text-end">
+              <div class="col-auto text-end d-none">
                 <label class="col-md-2"><h1>Total </h1></label>
                 <label class="col-md-8 display-5" id="result-total"> <h1>0</h1></label>
               </div>
@@ -322,9 +320,7 @@
             { data: 'seq' },
             { data: 'abbr' },
             { data: 'uom' },
-            { data: 'price',render: DataTable.render.number( '.', null, 0, '' ) },
             { data: 'qty' },
-            { data: 'total',render: DataTable.render.number( '.', null, 0, '' ) },
             { data: null},
         ],
         });
@@ -342,9 +338,7 @@
             { data: 'seq' },
             { data: 'abbr' },
             { data: 'uom' },
-            { data: 'price',render: DataTable.render.number( '.', null, 0, '' ) },
             { data: 'qty' },
-            { data: 'total',render: DataTable.render.number( '.', null, 0, '' ) },
             { data: null},
         ],
         });
