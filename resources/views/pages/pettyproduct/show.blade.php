@@ -1,13 +1,13 @@
 @extends('layouts.default', ['appSidebarSearch' => true])
 
-@section('title', 'Edit Invoice')
+@section('title', 'Alur Produk')
 
 @section('content')
 <form method="POST" action="{{ route('pettyproduct.store') }}"  enctype="multipart/form-data">
   @csrf
   <div class="panel text-white">
     <div class="panel-heading  bg-teal-600">
-      <div class="panel-title"><h4 class="">@lang('general.lbl_petty') #{{ $invoice->doc_no }}</h4></div>
+      <div class="panel-title"><h4 class="">Alur Produk #{{ $invoice->doc_no }}</h4></div>
       <div class="">
         <a href="{{ route('pettyproduct.index') }}" class="btn btn-default">@lang('general.lbl_back')</a>
       </div>

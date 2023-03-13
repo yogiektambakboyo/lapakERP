@@ -28,7 +28,7 @@ use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
 use Spatie\Permission\Models\Permission;
 use Maatwebsite\Excel\Facades\Excel;
-use App\Exports\PettyCashExport;
+use App\Exports\PettyProductExport;
 use App\Http\Controllers\Controller;
 use Yajra\Datatables\Datatables;
 use Auth;
@@ -99,7 +99,7 @@ class PettyProductController extends Controller
                 ->join('users_branch as ub', function($join){
                     $join->on('ub.branch_id', '=', 'b.id')
                     ->whereColumn('ub.branch_id', 'petty_cash.branch_id');
-                })->where('ub.user_id', $user->id)->where('petty_cash.dated','>=',Carbon::now()->subDay(7))
+                })->where('ub.user_id', $user->id)->where('petty_cash.type','!=','Kas Keluar')->where('petty_cash.dated','>=',Carbon::now()->subDay(7))
               ->get(['petty_cash.id','b.remark as branch_name','petty_cash.doc_no','petty_cash.dated','petty_cash.total','petty_cash.remark','petty_cash.type' ]);
         return view('pages.pettyproduct.index',['company' => Company::get()->first()], compact('invoices','data','keyword','act_permission','branchs'))->with('i', ($request->input('page', 1) - 1) * 5);
     }
@@ -122,7 +122,7 @@ class PettyProductController extends Controller
 
         if($request->export=='Export Excel'){
             $strencode = base64_encode($keyword.'#'.$begindate.'#'.$enddate.'#'.$branchx.'#'.Auth::user()->id);
-            return Excel::download(new PettyCashExport($strencode), 'pettycash_'.Carbon::now()->format('YmdHis').'.xlsx');
+            return Excel::download(new PettyProductExport($strencode), 'pettycash_'.Carbon::now()->format('YmdHis').'.xlsx');
         }else{
             $invoices = PettyCash::orderBy('id', 'ASC')
                 ->join('branch as b','b.id','=','petty_cash.branch_id')
@@ -132,6 +132,7 @@ class PettyProductController extends Controller
                 })->where('ub.user_id', $user->id)  
                 ->where('petty_cash.doc_no','ilike','%'.$keyword.'%') 
                 ->where('b.id','like','%'.$branchx.'%') 
+                ->where('petty_cash.type','!=','Kas Keluar')
                 ->whereBetween('petty_cash.dated',$fil) 
                 ->get(['petty_cash.id','b.remark as branch_name','petty_cash.doc_no','petty_cash.dated','petty_cash.total','petty_cash.remark','petty_cash.type' ]);
 
@@ -142,7 +143,7 @@ class PettyProductController extends Controller
     public function export(Request $request) 
     {
         $keyword = $request->search;
-        return Excel::download(new PettyCashExport, 'pettycash_'.Carbon::now()->format('YmdHis').'.xlsx');
+        return Excel::download(new PettyProductExport, 'pettycash_'.Carbon::now()->format('YmdHis').'.xlsx');
     }
 
     /**

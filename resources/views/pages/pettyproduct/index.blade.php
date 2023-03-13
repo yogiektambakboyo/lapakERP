@@ -8,7 +8,7 @@
         <div class="lead row mb-3">
             <div class="col-md-10">
                 <div class="col-md-12">
-                    @lang('general.lbl_petty_title')
+                    Alur Produk
                 </div>
                 <div class="col-md-10"> 	
                     <form action="{{ route('pettyproduct.search') }}" method="GET" class="row row-cols-lg-auto g-3 align-items-center">

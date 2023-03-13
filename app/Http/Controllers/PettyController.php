@@ -99,7 +99,7 @@ class PettyController extends Controller
                 ->join('users_branch as ub', function($join){
                     $join->on('ub.branch_id', '=', 'b.id')
                     ->whereColumn('ub.branch_id', 'petty_cash.branch_id');
-                })->where('ub.user_id', $user->id)->where('petty_cash.dated','>=',Carbon::now()->subDay(7))
+                })->where('ub.user_id', $user->id)->where('petty_cash.dated','>=',Carbon::now()->subDay(7))->where('petty_cash.type','=','Kas Keluar')
               ->get(['petty_cash.id','b.remark as branch_name','petty_cash.doc_no','petty_cash.dated','petty_cash.total','petty_cash.remark','petty_cash.type' ]);
         return view('pages.petty.index',['company' => Company::get()->first()], compact('invoices','data','keyword','act_permission','branchs'))->with('i', ($request->input('page', 1) - 1) * 5);
     }
@@ -132,7 +132,7 @@ class PettyController extends Controller
                 })->where('ub.user_id', $user->id)  
                 ->where('petty_cash.doc_no','ilike','%'.$keyword.'%') 
                 ->where('b.id','like','%'.$branchx.'%') 
-                ->whereBetween('petty_cash.dated',$fil) 
+                ->whereBetween('petty_cash.dated',$fil)->where('petty_cash.type','=','Kas Keluar')
                 ->get(['petty_cash.id','b.remark as branch_name','petty_cash.doc_no','petty_cash.dated','petty_cash.total','petty_cash.remark','petty_cash.type' ]);
 
         return view('pages.petty.index',['company' => Company::get()->first()], compact('invoices','data','keyword','act_permission','branchs'))->with('i', ($request->input('page', 1) - 1) * 5);
