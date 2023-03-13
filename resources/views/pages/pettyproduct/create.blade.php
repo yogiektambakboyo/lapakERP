@@ -153,7 +153,7 @@
 
           <div class="col-md-6">
             <div class="col-md-12">
-              <div class="col-auto text-end">
+              <div class="col-auto text-end d-none">
                 <label class="col-md-2"><h2>Sub Total </h2></label>
                 <label class="col-md-8" id="sub-total"> <h3>0</h3></label>
               </div>
