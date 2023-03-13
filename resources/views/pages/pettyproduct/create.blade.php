@@ -111,6 +111,13 @@
             value="{{ old('input_product_qty') }}" required/>
           </div>
 
+
+
+          <div class="col-md-2">
+            <div class="col-md-12"><label class="form-label col-form-label">_</label></div>
+            <a href="#" id="input_product_submit" class="btn btn-green"><div class="fa-1x"><i class="fas fa-plus fa-fw"></i>@lang('general.lbl_add_product')</div></a>
+          </div>
+
           <div class="col-md-2">
             <label class="form-label col-form-label d-none">Total</label>
             <input type="hidden" 
@@ -123,11 +130,6 @@
             id="input_product_total"
             class="form-control" 
             value="{{ old('input_product_total') }}" required disabled/>
-          </div>
-
-          <div class="col-md-2">
-            <div class="col-md-12"><label class="form-label col-form-label">_</label></div>
-            <a href="#" id="input_product_submit" class="btn btn-green"><div class="fa-1x"><i class="fas fa-plus fa-fw"></i>@lang('general.lbl_add_product')</div></a>
           </div>
 
         </div>
