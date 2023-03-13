@@ -247,7 +247,7 @@ class ReportCloseDayController extends Controller
                     '317',
                     '321'
                 )
-                group by customers_name,c.id,br.remark order by 2
+                group by customers_name,c.id,br.remark order by 7
         ");
 
         $dtt_item_only = DB::select("
