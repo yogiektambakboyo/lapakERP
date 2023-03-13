@@ -38,7 +38,7 @@ use charlieuki\ReceiptPrinter\ReceiptPrinter as ReceiptPrinter;
 use App\Http\Controllers\Lang;
 
 
-class PettyController extends Controller
+class PettyProductController extends Controller
 {
     /**
      * Display all users
@@ -101,7 +101,7 @@ class PettyController extends Controller
                     ->whereColumn('ub.branch_id', 'petty_cash.branch_id');
                 })->where('ub.user_id', $user->id)->where('petty_cash.dated','>=',Carbon::now()->subDay(7))
               ->get(['petty_cash.id','b.remark as branch_name','petty_cash.doc_no','petty_cash.dated','petty_cash.total','petty_cash.remark','petty_cash.type' ]);
-        return view('pages.petty.index',['company' => Company::get()->first()], compact('invoices','data','keyword','act_permission','branchs'))->with('i', ($request->input('page', 1) - 1) * 5);
+        return view('pages.pettyproduct.index',['company' => Company::get()->first()], compact('invoices','data','keyword','act_permission','branchs'))->with('i', ($request->input('page', 1) - 1) * 5);
     }
 
     public function search(Request $request) 
@@ -135,7 +135,7 @@ class PettyController extends Controller
                 ->whereBetween('petty_cash.dated',$fil) 
                 ->get(['petty_cash.id','b.remark as branch_name','petty_cash.doc_no','petty_cash.dated','petty_cash.total','petty_cash.remark','petty_cash.type' ]);
 
-        return view('pages.petty.index',['company' => Company::get()->first()], compact('invoices','data','keyword','act_permission','branchs'))->with('i', ($request->input('page', 1) - 1) * 5);
+        return view('pages.pettyproduct.index',['company' => Company::get()->first()], compact('invoices','data','keyword','act_permission','branchs'))->with('i', ($request->input('page', 1) - 1) * 5);
         }
     }
 
@@ -159,11 +159,11 @@ class PettyController extends Controller
         $data = $this->data;
         $user = Auth::user();
         $payment_type = ['Cash','BCA - Debit','BCA - Kredit','Mandiri - Debit','Mandiri - Kredit','Transfer','QRIS'];
-        $doc_type = ['Kas - Keluar'];
+        $doc_type = ['Produk - Keluar','Produk - Masuk'];
         $type_customer = ['Sendiri','Berdua','Keluarga','Rombongan'];
         $users = User::join('users_branch as ub','ub.branch_id', '=', 'users.branch_id')->where('ub.user_id','=',$user->id)->where('users.job_id','=',2)->orderBy('users.name','ASC')->get(['users.id','users.name']);
         $usersall = User::join('users_branch as ub','ub.branch_id', '=', 'users.branch_id')->where('ub.user_id','=',$user->id)->whereIn('users.job_id',[1,2])->orderBy('users.name','ASC')->get(['users.id','users.name']);
-        return view('pages.petty.create',[
+        return view('pages.pettyproduct.create',[
             'customers' => Customer::join('users_branch as ub','ub.branch_id', '=', 'customers.branch_id')->join('branch as b','b.id','=','ub.branch_id')->where('ub.user_id',$user->id)->orderBy('customers.name')->get(['customers.id','customers.name','b.remark']),
             'data' => $data,
             'users' => $users,
@@ -191,11 +191,11 @@ class PettyController extends Controller
         $data = $this->data;
         $user = Auth::user();
         $payment_type = ['Cash','BCA - Debit','BCA - Kredit','Mandiri - Debit','Mandiri - Kredit','Transfer','QRIS'];
-        $doc_type = ['Kas - Keluar'];
+        $doc_type = ['Produk - Keluar','Produk - Masuk'];
         $type_customer = ['Sendiri','Berdua','Keluarga','Rombongan'];
         $users = User::join('users_branch as ub','ub.branch_id', '=', 'users.branch_id')->where('ub.user_id','=',$user->id)->where('users.job_id','=',2)->orderBy('users.name','ASC')->get(['users.id','users.name']);
         $usersall = User::join('users_branch as ub','ub.branch_id', '=', 'users.branch_id')->where('ub.user_id','=',$user->id)->whereIn('users.job_id',[1,2])->orderBy('users.name','ASC')->get(['users.id','users.name']);
-        return view('pages.petty.create',[
+        return view('pages.pettyproduct.create',[
             'customers' => Customer::join('users_branch as ub','ub.branch_id', '=', 'customers.branch_id')->join('branch as b','b.id','=','ub.branch_id')->where('ub.user_id',$user->id)->orderBy('customers.name')->get(['customers.id','customers.name','b.remark']),
             'data' => $data,
             'users' => $users,
@@ -358,12 +358,12 @@ class PettyController extends Controller
         $data = $this->data;
 
         $payment_type = ['Cash','BCA - Debit','BCA - Kredit','Mandiri - Debit','Mandiri - Kredit','Transfer','QRIS'];
-        $doc_type = ['Kas - Keluar','Produk - Keluar','Produk - Masuk'];
+        $doc_type = ['Produk - Keluar','Produk - Masuk'];
         $usersall = User::join('users_branch as ub','ub.branch_id', '=', 'users.branch_id')->where('ub.user_id','=',$user->id)->whereIn('users.job_id',[1,2])->orderBy('users.name','ASC')->get(['users.id','users.name']);
         $users = User::join('users_branch as ub','ub.branch_id', '=', 'users.branch_id')->where('ub.user_id','=',$user->id)->where('users.job_id','=',2)->orderBy('users.name','ASC')->get(['users.id','users.name']);
         $usersReferral = User::get(['users.id','users.name']);
         $type_customer = ['Sendiri','Berdua','Keluarga','Rombongan'];
-        return view('pages.petty.show',[
+        return view('pages.pettyproduct.show',[
             'customers' => Customer::join('users_branch as ub','ub.branch_id', '=', 'customers.branch_id')->join('branch as b','b.id','=','ub.branch_id')->where('ub.user_id',$user->id)->get(['customers.id','customers.name','b.remark']),
             'data' => $data,
             'invoice' => $petty,
@@ -397,7 +397,7 @@ class PettyController extends Controller
             )
         );
         
-        $pdf = PDF::setOptions(['isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true])->loadView('pages.petty.print', [
+        $pdf = PDF::setOptions(['isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true])->loadView('pages.pettyproduct.print', [
             'data' => $data,
             'settings' => Settings::get(),
             'invoice' => Invoice::join('users as u','u.id','=','invoice_master.created_by')->where('invoice_master.id',$invoice->id)->get(['invoice_master.*','u.name'])->first(),
@@ -423,7 +423,7 @@ class PettyController extends Controller
             )
         );
         
-        $pdf = PDF::setOptions(['isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true])->loadView('pages.petty.printsj', [
+        $pdf = PDF::setOptions(['isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true])->loadView('pages.pettyproduct.printsj', [
             'data' => $data,
             'settings' => Settings::get(),
             'invoice' => Invoice::join('users as u','u.id','=','invoice_master.created_by')->where('invoice_master.id',$invoice->id)->get(['invoice_master.*','u.name'])->first(),
@@ -444,7 +444,7 @@ class PettyController extends Controller
         $payment_type = ['Cash','BCA - Debit','BCA - Kredit','Mandiri - Debit','Mandiri - Kredit','Transfer','QRIS'];
         $users = User::join('users_branch as ub','ub.branch_id', '=', 'users.branch_id')->where('ub.user_id','=',$user->id)->where('users.job_id','=',2)->get(['users.id','users.name']);
 
-        $pdf = PDF::setOptions(['isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true])->loadView('pages.petty.printspk', [
+        $pdf = PDF::setOptions(['isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true])->loadView('pages.pettyproduct.printspk', [
             'data' => $data,
             'customers' => Customer::join('invoice_master as om','om.customers_id','customers.id')->join('branch_room as br','br.id','om.branch_room_id')->join('branch as b','b.id','=','customers.branch_id')->get(['br.remark as room_name','b.remark as branch_name','customers.id','customers.name']),
             'branchs' => Branch::join('users_branch as ub','ub.branch_id', '=', 'branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']),
@@ -550,7 +550,7 @@ class PettyController extends Controller
         $room = Room::where('branch_room.id','=',$invoice->branch_room_id)->get(['branch_room.remark'])->first();
         $payment_type = ['Cash','BCA - Debit','BCA - Kredit','Mandiri - Debit','Mandiri - Kredit','Transfer','QRIS'];
         $usersReferral = User::get(['users.id','users.name']);
-        return view('pages.petty.show',[
+        return view('pages.pettyproduct.show',[
             'customers' => Customer::join('users_branch as ub','ub.branch_id', '=', 'customers.branch_id')->join('branch as b','b.id','=','ub.branch_id')->where('ub.user_id',$user->id)->get(['customers.id','customers.name','b.remark']),
             'data' => $data,
             'invoice' => $invoice,
@@ -577,13 +577,13 @@ class PettyController extends Controller
         $data = $this->data;
 
         $payment_type = ['Cash','BCA - Debit','BCA - Kredit','Mandiri - Debit','Mandiri - Kredit','Transfer','QRIS'];
-        $doc_type = ['Kas - Keluar'];
+        $doc_type = ['Kas - Keluar','Produk - Keluar','Produk - Masuk'];
         $usersall = User::join('users_branch as ub','ub.branch_id', '=', 'users.branch_id')->where('ub.user_id','=',$user->id)->whereIn('users.job_id',[1,2])->orderBy('users.name','ASC')->get(['users.id','users.name']);
         $users = User::join('users_branch as ub','ub.branch_id', '=', 'users.branch_id')->where('ub.user_id','=',$user->id)->where('users.job_id','=',2)->orderBy('users.name','ASC')->get(['users.id','users.name']);
         $usersReferral = User::get(['users.id','users.name']);
         $type_customer = ['Sendiri','Berdua','Keluarga','Rombongan'];
 
-        return view('pages.petty.edit',[
+        return view('pages.pettyproduct.edit',[
             'customers' => Customer::join('users_branch as ub','ub.branch_id', '=', 'customers.branch_id')->join('branch as b','b.id','=','ub.branch_id')->where('ub.user_id',$user->id)->get(['customers.id','customers.name','b.remark']),
             'data' => $data,
             'invoice' => $petty,

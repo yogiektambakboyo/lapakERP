@@ -337,6 +337,29 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
             Route::get('/export', 'PettyController@export')->name('petty.export');
         });
 
+         /**
+         * Petty Product Cash
+         */
+        Route::group(['prefix' => 'pettyproduct'], function() {
+            Route::get('/', 'PettyProductController@index')->name('pettyproduct.index');
+            Route::get('/create', 'PettyProductController@create')->name('pettyproduct.create');
+            Route::post('/create', 'PettyProductController@store')->name('pettyproduct.store');
+            Route::get('/search', 'PettyProductController@search')->name('pettyproduct.search');
+            Route::get('/{petty}/show', 'PettyProductController@show')->name('pettyproduct.show');
+            Route::patch('/{petty}/checkout', 'PettyProductController@checkout')->name('pettyproduct.checkout');
+            Route::get('/{petty}/edit', 'PettyProductController@edit')->name('pettyproduct.edit');
+            Route::get('/{petty}/print', 'PettyProductController@print')->name('pettyproduct.print');
+            Route::get('/{petty}/printsj', 'PettyProductController@printsj')->name('pettyproduct.printsj');
+            Route::get('/{petty}/printspk', 'PettyProductController@printspk')->name('pettyproduct.printspk');
+            Route::get('/{petty}/printthermal', 'PettyProductController@printthermal')->name('pettyproduct.printthermal');
+            Route::get('/getproduct', 'PettyProductController@getproduct')->name('pettyproduct.getproduct');
+            Route::get('/gettimetable', 'PettyProductController@gettimetable')->name('pettyproduct.gettimetable');
+            Route::get('/{petty}/getinvoice', 'PettyProductController@getinvoice')->name('pettyproduct.getinvoice');
+            Route::patch('/{petty}/update', 'PettyProductController@update')->name('pettyproduct.update');
+            Route::delete('/{petty}/delete', 'PettyProductController@destroy')->name('pettyproduct.destroy');
+            Route::get('/export', 'PettyProductController@export')->name('pettyproduct.export');
+        });
+
         /**
          * Service Price
          */
