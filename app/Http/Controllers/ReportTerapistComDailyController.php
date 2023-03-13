@@ -62,7 +62,7 @@ class ReportTerapistComDailyController extends Controller
         $branchs = Branch::join('users_branch as ub','ub.branch_id', '=', 'branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']);        
 
         $report_data = DB::select("
-                    select a.branch_name,a.com_type,a.dated,a.qtyinv,a.work_year,a.name,a.commisions,a.point_qty,coalesce(pc2.point_value,0)  as point_value from (
+                    select a.branch_name,a.com_type,a.dated,a.qtyinv,a.work_year,a.name,a.commisions,a.point_qty,coalesce(pc2.point_value,0)  as point_value,a.commisions+coalesce(pc2.point_value,0) as total from (
                         select b.remark as branch_name,'work_commision' as com_type,im.dated,count(ps.id) as qtyinv,u.work_year,u.name,sum(pc.values*id.qty) as commisions,sum(coalesce(pp.point,0)*id.qty) as point_qty
                         from invoice_master im 
                         join invoice_detail id on id.invoice_no = im.invoice_no
@@ -91,7 +91,7 @@ class ReportTerapistComDailyController extends Controller
                         where pc.referral_fee+pc.assigned_to_fee+pc.created_by_fee  > 0  and im.dated >= now()-interval'7 days'
                         group by  b.remark,im.dated,u.join_date,u.name
 
-                ) a left join point_conversion pc2 on pc2.point_qty = a.point_qty;
+                ) a left join point_conversion pc2 on pc2.point_qty = a.point_qty  order by a.branch_name,a.dated,a.name;
         ");
         $data = $this->data;
         $keyword = "";
@@ -125,7 +125,7 @@ class ReportTerapistComDailyController extends Controller
                     ->paginate(10,['product_brand.id','product_brand.remark']);
 
             $report_data = DB::select("
-            select a.branch_name,a.com_type,a.dated,a.qtyinv,a.work_year,a.name,a.commisions,a.point_qty,coalesce(pc2.point_value,0)  as point_value from (
+            select a.branch_name,a.com_type,a.dated,a.qtyinv,a.work_year,a.name,a.commisions,a.point_qty,coalesce(pc2.point_value,0)  as point_value,a.commisions+coalesce(pc2.point_value,0) as total from (
                 select b.remark as branch_name,'work_commision' as com_type,im.dated,count(ps.id) as qtyinv,u.work_year,u.name,sum(pc.values*id.qty) as commisions,sum(coalesce(pp.point,0)*id.qty) as point_qty
                 from invoice_master im 
                 join invoice_detail id on id.invoice_no = im.invoice_no
@@ -151,7 +151,7 @@ class ReportTerapistComDailyController extends Controller
                 join users u on u.job_id = 2  and u.id = id.referral_by  
                 where pc.referral_fee  > 0 and im.dated between '".$begindate."' and '".$enddate."'  
                 group by  b.remark,im.dated,u.join_date,u.name
-        ) a left join point_conversion pc2 on pc2.point_qty = a.point_qty;          
+        ) a left join point_conversion pc2 on pc2.point_qty = a.point_qty order by a.branch_name,a.dated,a.name;          
         ");  
                
             return view('pages.reports.commision_terapist_summary',['company' => Company::get()->first()], compact('report_data','branchs','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);

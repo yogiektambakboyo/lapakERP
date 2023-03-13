@@ -90,7 +90,7 @@ class ReportTerapistComController extends Controller
                                         join product_commisions pc on pc.product_id = id.product_id and pc.branch_id = c.branch_id
                                         join users u on u.job_id = 2  and u.id = id.referral_by  
                                         where pc.referral_fee+pc.assigned_to_fee+pc.created_by_fee  > 0  and im.dated >= now()-interval'7 days'
-                                        ) a order by a.name
+                                        ) a order by a.branch_name,a.dated,a.name
         ");
         $data = $this->data;
         $keyword = "";
@@ -147,7 +147,7 @@ class ReportTerapistComController extends Controller
                                         join product_commisions pc on pc.product_id = id.product_id and pc.branch_id = c.branch_id
                                         join users u on u.job_id = 2  and u.id = id.referral_by  
                                         where pc.referral_fee  > 0  and im.dated between '".$begindate."' and '".$enddate."' 
-                                    ) a order by a.name             
+                                    ) a order by a.branch_name,a.dated,a.name            
         ");            
             return view('pages.reports.commision_terapist',['company' => Company::get()->first()], compact('report_data','branchs','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
         }

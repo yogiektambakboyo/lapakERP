@@ -50,7 +50,7 @@ class ReportCommisionTerapistExport implements FromCollection,WithColumnFormatti
     public function collection()
     {
         return collect(DB::select("
-                select  b.remark as branch_name,im.dated,u.name,im.invoice_no,ps.remark,id.price,id.qty,id.total,'work_commission' as com_type,pc.values base_commision,pc.values  * id.qty as commisions,coalesce(pp.point,0) as point_qty
+        select * from ( select  b.remark as branch_name,im.dated,u.name,im.invoice_no,ps.remark,id.price,id.qty,id.total,'work_commission' as com_type,pc.values base_commision,pc.values  * id.qty as commisions,coalesce(pp.point,0) as point_qty
                 from invoice_master im 
                 join invoice_detail id on id.invoice_no = im.invoice_no
                 join product_sku ps on ps.id = id.product_id 
@@ -72,7 +72,7 @@ class ReportCommisionTerapistExport implements FromCollection,WithColumnFormatti
                 join branch b on b.id = c.branch_id
                 join product_commisions pc on pc.product_id = id.product_id and pc.branch_id = c.branch_id
                 join users u on u.job_id = 2  and u.id = id.referral_by  
-                where pc.referral_fee  > 0  and im.dated between '".$this->begindate."' and '".$this->enddate."'          
+                where pc.referral_fee  > 0  and im.dated between '".$this->begindate."' and '".$this->enddate."' ) a order by a.dated,a.name           
         ")); 
     }
 

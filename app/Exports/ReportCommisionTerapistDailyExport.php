@@ -39,13 +39,13 @@ class ReportCommisionTerapistDailyExport implements FromCollection,WithColumnFor
             'Total Commision',
             'Point',
             'Point Value',
+            'Total',
         ];
     }
     public function collection()
     {
-        return collect(DB::select("
-                
-                select a.branch_name,a.dated,a.name,a.commisions,a.point_qty,coalesce(pc2.point_value,0)  as point_value from (
+        return collect(DB::select("  
+                select a.branch_name,a.dated,a.name,a.commisions,a.point_qty,coalesce(pc2.point_value,0)  as point_value,a.commisions+coalesce(pc2.point_value,0) as total from (
                     select b.remark as branch_name,'work_commision' as com_type,im.dated,count(ps.id) as qtyinv,u.work_year,u.name,sum(pc.values*id.qty) as commisions,sum(coalesce(pp.point,0)*id.qty) as point_qty
                     from invoice_master im 
                     join invoice_detail id on id.invoice_no = im.invoice_no
@@ -71,7 +71,7 @@ class ReportCommisionTerapistDailyExport implements FromCollection,WithColumnFor
                     join users u on u.job_id = 2  and u.id = id.referral_by  
                     where pc.referral_fee  > 0 and im.dated between '".$this->begindate."' and '".$this->enddate."'  
                     group by  b.remark,im.dated,u.join_date,u.name
-            ) a left join point_conversion pc2 on pc2.point_qty = a.point_qty;  
+            ) a left join point_conversion pc2 on pc2.point_qty = a.point_qty  order by a.branch_name,a.dated,a.name
         ")); 
     }
 
