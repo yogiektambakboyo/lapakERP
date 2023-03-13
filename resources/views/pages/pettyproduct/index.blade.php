@@ -4,11 +4,11 @@
 
 @section('content')
     <div class="bg-light p-4 rounded">
-        <h1>@lang('general.lbl_petty')</h1>
+        <h1>Produk Terpakai</h1>
         <div class="lead row mb-3">
             <div class="col-md-10">
                 <div class="col-md-12">
-                    Alur Produk
+                    Produk Terpakai
                 </div>
                 <div class="col-md-10"> 	
                     <form action="{{ route('pettyproduct.search') }}" method="GET" class="row row-cols-lg-auto g-3 align-items-center">

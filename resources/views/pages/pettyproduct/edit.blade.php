@@ -7,7 +7,7 @@
   @csrf
   <div class="panel text-white">
     <div class="panel-heading  bg-teal-600">
-      <div class="panel-title"><h4 class="">Alur Produk #{{ $invoice->doc_no }}</h4></div>
+      <div class="panel-title"><h4 class="">Produk Terpakai #{{ $invoice->doc_no }}</h4></div>
       <div class="">
         <a href="{{ route('pettyproduct.index') }}" class="btn btn-default">@lang('general.lbl_cancel')</a>
         <button type="button" id="save-btn" class="btn btn-info">@lang('general.lbl_save')</button>
