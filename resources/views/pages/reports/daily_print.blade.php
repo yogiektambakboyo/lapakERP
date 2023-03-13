@@ -77,6 +77,9 @@
                   <th scope="col" width="5%">EC</th>
               @endif
               @if((int)$header->total_288>0)
+                <th scope="col" width="5%">DRY</th>
+              @endif
+              @if((int)$header->total_289>0)
                 <th scope="col" width="5%">FBT</th>
               @endif
                 @if((int)$header->total_290>0)
@@ -197,6 +200,7 @@
             $c_286 = 0;
             $c_287 = 0;
             $c_288 = 0;
+            $c_289 = 0;
             $c_290 = 0;
             $c_291 = 0;
             $c_292 = 0;
@@ -288,6 +292,12 @@
                           @php if((int)$dtt_raw[$counter]->total_288>0){ $c_288++; } @endphp
                             <td scope="col" width="5%">{{ number_format($dtt_raw[$counter]->total_288,0,',','.') }}</td>
                           @endif
+
+                          @if((int)$header->total_289>0)
+                          @php if((int)$dtt_raw[$counter]->total_289>0){ $c_289++; } @endphp
+                            <td scope="col" width="5%">{{ number_format($dtt_raw[$counter]->total_289,0,',','.') }}</td>
+                          @endif
+
                             @if((int)$header->total_290>0)
                             @php if((int)$dtt_raw[$counter]->total_290>0){ $c_290++; } @endphp
                               <td scope="col" width="5%">{{ number_format($dtt_raw[$counter]->total_290,0,',','.') }}</td>
@@ -461,6 +471,9 @@
                     @endif
                     @if((int)$header->total_288>0)
                       <th scope="col" width="5%">{{ number_format($header->total_288,0,',','.') }}  / {{ $c_288 }} </th>
+                    @endif
+                    @if((int)$header->total_289>0)
+                      <th scope="col" width="5%">{{ number_format($header->total_289,0,',','.') }}  / {{ $c_289 }} </th>
                     @endif
                       @if((int)$header->total_290>0)
                         <th scope="col" width="5%">{{ number_format($header->total_290,0,',','.') }}  / {{ $c_290 }} </th>
