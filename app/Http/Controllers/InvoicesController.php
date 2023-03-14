@@ -18,6 +18,7 @@ use App\Models\SettingsDocumentNumber;
 use App\Models\OrderDetail;
 use App\Models\PurchaseDetail;
 use App\Models\Invoice;
+use App\Models\ProductIngredients;
 use Barryvdh\DomPDF\Facade\Pdf;
 use App\Models\InvoiceDetail;
 use App\Models\Customer;
@@ -308,8 +309,15 @@ class InvoicesController extends Controller
             DB::update("update public.period_stock set qty_out=qty_out+".$request->get('product')[$i]['qty']." ,updated_at = now(), balance_end = balance_end - ".$request->get('product')[$i]['qty']." where branch_id = ".$branch_id['branch_id']." and product_id = ".$request->get('product')[$i]['id']." and periode = to_char(now(),'YYYYMM')::int;");
 
             $price_purchase = PeriodSellPrice::whereRaw("period=to_char(now()::date ,'YYYYMM')::int and product_id='".$request->get('product')[$i]['id']."' and branch_id =".$branch_id['branch_id'])->get(['value'])->first();
-            DB::update("UPDATE invoice_detail set price_purchase=".$price_purchase->value." WHERE invoice_no='". $invoice_no."' and product_id = ".$request->get('product')[$i]['id']);
+            if($price_purchase != null){
+                DB::update("UPDATE invoice_detail set price_purchase=".$price_purchase->value." WHERE invoice_no='". $invoice_no."' and product_id = ".$request->get('product')[$i]['id']);
+            }
 
+            $productigredients = ProductIngredients::where('product_id','=',$request->get('product')[$i]["id"])->get(['product_id_material','qty']);
+            foreach($productigredients as $productigredient){
+                DB::update("UPDATE product_stock set qty = qty-".($productigredient->qty*$request->get('product')[$i]['qty'])." WHERE branch_id = ".$branch_id['branch_id']." and product_id = ".$productigredient->product_id_material);
+                DB::update("update public.period_stock set qty_out=qty_out+".($productigredient->qty*$request->get('product')[$i]['qty'])." ,updated_at = now(), balance_end = balance_end - ".($productigredient->qty*$request->get('product')[$i]['qty'])." where branch_id = ".$branch_id['branch_id']." and product_id = ".$productigredient->product_id_material." and periode = to_char(now(),'YYYYMM')::int;");    
+            }
         }
 
 
