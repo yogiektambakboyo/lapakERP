@@ -1,6 +1,6 @@
 @extends('layouts.default', ['appSidebarSearch' => true])
 
-@section('title', 'Kas Kecil')
+@section('title', 'Produk Terpakai')
 
 @section('content')
     <div class="bg-light p-4 rounded">
