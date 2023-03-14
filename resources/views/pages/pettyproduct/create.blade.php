@@ -93,14 +93,7 @@
             value="{{ old('input_product_uom') }}" required disabled/>
           </div>
 
-          <div class="col-md-2">
-            <label class="form-label col-form-label">@lang('general.lbl_price')</label>
-            <input type="text" 
-            name="input_product_price"
-            id="input_product_price"
-            class="form-control" 
-            value="{{ old('input_product_price') }}" required disabled/>
-          </div>
+       
 
           <div class="col-md-1">
             <label class="form-label col-form-label">@lang('general.lbl_qty')</label>
@@ -130,6 +123,14 @@
             id="input_product_total"
             class="form-control" 
             value="{{ old('input_product_total') }}" required disabled/>
+          </div>
+
+          <div class="col-md-2">
+            <input type="hidden" 
+            name="input_product_price"
+            id="input_product_price"
+            class="form-control" 
+            value="{{ old('input_product_price') }}" required disabled/>
           </div>
 
         </div>

@@ -113,14 +113,7 @@
             value="{{ old('input_product_uom') }}" required disabled/>
           </div>
 
-          <div class="col-md-2">
-            <label class="form-label col-form-label">@lang('general.lbl_price')</label>
-            <input type="text" 
-            name="input_product_price"
-            id="input_product_price"
-            class="form-control" 
-            value="{{ old('input_product_price') }}" required disabled/>
-          </div>
+          
 
           <div class="col-md-1">
             <label class="form-label col-form-label">@lang('general.lbl_qty')</label>
@@ -131,14 +124,20 @@
             value="{{ old('input_product_qty') }}" required/>
           </div>
 
+         
+
           <div class="col-md-2">
-            <label class="form-label col-form-label">Total</label>
+            <div class="col-md-12"><label class="form-label col-form-label">_</label></div>
+            <a href="#" id="input_product_submit" class="btn btn-green"><div class="fa-1x"><i class="fas fa-plus fa-fw"></i>@lang('general.lbl_add_product')</div></a>
+          </div>
+
+          <div class="col-md-2">
             <input type="hidden" 
             name="input_product_vat_total"
             id="input_product_vat_total"
             class="form-control" 
             value="{{ old('input_product_vat_total') }}" required disabled/>
-            <input type="text" 
+            <input type="hidden" 
             name="input_product_total"
             id="input_product_total"
             class="form-control" 
@@ -146,8 +145,11 @@
           </div>
 
           <div class="col-md-2">
-            <div class="col-md-12"><label class="form-label col-form-label">_</label></div>
-            <a href="#" id="input_product_submit" class="btn btn-green"><div class="fa-1x"><i class="fas fa-plus fa-fw"></i>@lang('general.lbl_add_product')</div></a>
+            <input type="hidden" 
+            name="input_product_price"
+            id="input_product_price"
+            class="form-control" 
+            value="{{ old('input_product_price') }}" required disabled/>
           </div>
 
         </div>
@@ -158,9 +160,7 @@
               <th scope="col" width="5%">No</th>
               <th scope="col">@lang('general.product')</th>
               <th scope="col" width="10%">@lang('general.lbl_uom')</th>
-              <th scope="col" width="10%">@lang('general.lbl_price')</th>
               <th scope="col" width="5%">@lang('general.lbl_qty')</th>
-              <th scope="col" width="10%">Total</th>  
               <th scope="col" width="20%">@lang('general.lbl_action')</th> 
           </tr>
           </thead>
@@ -189,7 +189,7 @@
               </div>
             </div>
             <div class="col-md-12">
-              <div class="col-auto text-end">
+              <div class="col-auto text-end d-none">
                 <label class="col-md-2"><h1>Total </h1></label>
                 <label class="col-md-8 display-5" id="result-total"> <h1>0</h1></label>
               </div>
@@ -347,9 +347,7 @@
             { data: 'seq' },
             { data: 'abbr' },
             { data: 'uom' },
-            { data: 'price',render: DataTable.render.number( '.', null, 0, '' ) },
             { data: 'qty' },
-            { data: 'total',render: DataTable.render.number( '.', null, 0, '' ) },
             { data: null},
         ],
         });
