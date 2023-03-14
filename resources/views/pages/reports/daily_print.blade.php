@@ -152,7 +152,7 @@
                 <th scope="col" width="5%">FOOT EXSPRESS</th>
                 @endif
               @if((int)$header->total_310>0)
-                <th scope="col" width="5%">BCP</th>
+                <th scope="col" width="5%">BCP</th> 
               @endif
           
               @if((int)$header->total_312>0)
@@ -190,6 +190,7 @@
             $divider_page = 17;
             $c_p=0; 
             $t_p=0; 
+            $c_pn=0;
 
             $c_280 = 0;
             $c_281 = 0;
@@ -246,6 +247,7 @@
                                     $lastsch = $detail->scheduled_at;
                                   }
                                 @endphp
+                                
                                   {{ \Carbon\Carbon::parse($lastsch)->isoFormat('H:mm') }} - {{ \Carbon\Carbon::parse($detail->scheduled_at)->add($sumconversion.' minutes')->isoFormat('H:mm') }} <br>
                                   @php
                                     $c++;
@@ -418,16 +420,15 @@
                     <td style="text-align: left;">
 
                       @foreach($dtt_item_only as $diox)
-                          @if($diox->type_id==1 && $diox->customers_id == $detail->id)
+                          @if($diox->type_id==1 && $diox->customers_id == $detail->id && $diox->refbuy > 0)
                                 {{ $diox->product_name }} <br>
                                 @php $c_p++; @endphp
                           @endif
                       @endforeach
                     </td>
                     <td style="text-align: left;">
-
                       @foreach($dtt_item_only as $diox)
-                          @if($diox->type_id==1 && $diox->customers_id == $detail->id)
+                          @if($diox->type_id==1 && $diox->customers_id == $detail->id && $diox->refbuy > 0)
                                 {{ number_format($diox->total,0,',','.') }} <br>
                                 @php 
                                 $t_p=$t_p+$diox->total; 
@@ -435,7 +436,14 @@
                           @endif
                       @endforeach
                     </td>
-                    <td></td>
+                    <td>
+                      @foreach($dtt_item_only as $diox)
+                          @if($diox->type_id==1 && $diox->customers_id == $detail->id && $diox->refbuy == 0)
+                                {{ $diox->product_name }} / {{ $diox->qty }}<br>
+                                @php $c_pn=$c_pn+$diox->qty; @endphp
+                          @endif
+                      @endforeach
+                    </td>
                 </tr>
                 @php
                  $counter++;
@@ -568,7 +576,7 @@
                     <th></th>
                     <th>{{ number_format($c_p,0,',','.') }}</th>
                     <th>{{ number_format($t_p,0,',','.') }}</th>
-                    <th></th>
+                    <th>{{ number_format($c_pn,0,',','.') }}</th>
                 @endforeach
                 </tr>
         </tbody>

@@ -148,6 +148,19 @@ class ReportCloseShiftController extends Controller
             where pc.dated  = '".$filter_begin_date."' and pc.created_at::time between s.time_start and s.time_end  and pc.branch_id = ".$filter_branch_id."  
             group by ps.abbr,pc.type order by 1                   
         ");
+        $out_data = DB::select("
+                select ps2.abbr,sum(pi2.qty) as qty 
+                from invoice_master im 
+                join invoice_detail id on id.invoice_no = im.invoice_no 
+                join customers c on c.id = im.customers_id 
+                join branch b on b.id=c.branch_id
+                join product_sku ps on ps.id = id.product_id 
+                join product_ingredients pi2 on pi2.product_id = ps.id 
+                join product_sku ps2 on ps2.id = pi2.product_id_material 
+                join shift s on s.id = ".$filter_shift." 
+                where im.dated = '".$filter_begin_date."'  and im.created_at::time between s.time_start and s.time_end and c.branch_id = ".$filter_branch_id."
+                group by ps2.abbr                    
+        ");
         $payment_type = ['Cash','BCA - Debit','BCA - Kredit','Mandiri - Debit','Mandiri - Kredit','Transfer','QRIS'];
         $users = User::join('users_branch as ub','ub.branch_id', '=', 'users.branch_id')->where('ub.user_id','=',$user->id)->where('users.job_id','=',2)->get(['users.id','users.name']);
 
@@ -155,6 +168,7 @@ class ReportCloseShiftController extends Controller
             'data' => $data,
             'payment_datas' => $payment_data,
             'report_datas' => $report_data,
+            'out_datas' => $out_data,
             'settings' => Settings::get(),
             'petty_datas' => $petty_datas,
             'cust' => $cust,

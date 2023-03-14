@@ -524,18 +524,23 @@
                       </tr>
                       @endif    
                     @endforeach
-                  <tr>
-                    <td style="text-align: left;width:80px;">Masuk : </th>
-                  </tr>     
-                  @foreach($petty_datas as $petty_data)
-                    @if($petty_data->type == 'Produk - Masuk')
-                    @php
-                    @endphp    
-                    <tr>
-                        <td style="text-align: left;">{{ $petty_data->abbr }}</th>                            
-                    </tr>
-                    @endif    
-                  @endforeach
+                  @foreach($out_datas as $out_data) 
+                          <tr>
+                              <td style="text-align: left;">{{ $out_data->abbr }} ({{ $out_data->qty }})</th>                            
+                          </tr>   
+                        @endforeach
+                      <tr>
+                        <td style="text-align: left;width:80px;">Masuk : </th>
+                      </tr>     
+                      @foreach($petty_datas as $petty_data)
+                        @if($petty_data->type == 'Produk - Masuk')
+                        @php
+                        @endphp    
+                        <tr>
+                            <td style="text-align: left;">{{ $petty_data->abbr }}</th>                            
+                        </tr>
+                        @endif    
+                      @endforeach
                 </tbody>
               </table>           
             </td>
