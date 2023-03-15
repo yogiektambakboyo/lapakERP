@@ -444,8 +444,10 @@
                           @endif
                       @endforeach
                       @foreach($out_datas as $out_data) 
-                         {{ $out_data->abbr }} / {{ $out_data->qty }} <br>
-                       @php $c_pn=$c_pn+$out_data->qty; @endphp
+                          @if($diox->customers_id == $out_data->id )
+                                {{ $out_data->abbr }} / {{ $out_data->qty }} <br>
+                                @php $c_pn=$c_pn+$out_data->qty; @endphp
+                          @endif
                       @endforeach
                     </td>
                 </tr>

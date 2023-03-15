@@ -196,7 +196,7 @@ class ReportCloseDayController extends Controller
         ");
 
         $out_data = DB::select("
-                select ps2.abbr,sum(pi2.qty) as qty 
+                select c.id,ps2.abbr,sum(pi2.qty) as qty 
                 from invoice_master im 
                 join invoice_detail id on id.invoice_no = im.invoice_no 
                 join customers c on c.id = im.customers_id 
@@ -205,7 +205,7 @@ class ReportCloseDayController extends Controller
                 join product_ingredients pi2 on pi2.product_id = ps.id 
                 join product_sku ps2 on ps2.id = pi2.product_id_material  
                 where im.dated = '".$filter_begin_date."'  and c.branch_id = ".$filter_branch_id."
-                group by ps2.abbr                    
+                group by ps2.abbr,c.id                   
         ");
         $payment_data = DB::select("
                 select im.invoice_no,im.total_payment,im.payment_type,count(distinct im.invoice_no) as qty_payment
