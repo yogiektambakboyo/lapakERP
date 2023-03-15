@@ -443,6 +443,10 @@
                                 @php $c_pn=$c_pn+$diox->qty; @endphp
                           @endif
                       @endforeach
+                      @foreach($out_datas as $out_data) 
+                         {{ $out_data->abbr }} / {{ $out_data->qty }} <br>
+                       @php $c_pn=$c_pn+$out_data->qty; @endphp
+                      @endforeach
                     </td>
                 </tr>
                 @php

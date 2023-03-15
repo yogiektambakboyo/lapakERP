@@ -194,6 +194,19 @@ class ReportCloseDayController extends Controller
                 where im.dated = '".$filter_begin_date."'  and c.branch_id = ".$filter_branch_id."
                 group by ps.category_id,b.remark,im.dated,id.product_name,ps.abbr,id.price,ps.type_id                         
         ");
+
+        $out_data = DB::select("
+                select ps2.abbr,sum(pi2.qty) as qty 
+                from invoice_master im 
+                join invoice_detail id on id.invoice_no = im.invoice_no 
+                join customers c on c.id = im.customers_id 
+                join branch b on b.id=c.branch_id
+                join product_sku ps on ps.id = id.product_id 
+                join product_ingredients pi2 on pi2.product_id = ps.id 
+                join product_sku ps2 on ps2.id = pi2.product_id_material  
+                where im.dated = '".$filter_begin_date."'  and c.branch_id = ".$filter_branch_id."
+                group by ps2.abbr                    
+        ");
         $payment_data = DB::select("
                 select im.invoice_no,im.total_payment,im.payment_type,count(distinct im.invoice_no) as qty_payment
                 from invoice_master im 
@@ -436,6 +449,7 @@ class ReportCloseDayController extends Controller
             'dtt_raw' => $dtt_raw,
             'dtt_item_only' => $dtt_item_only,
             'dtt_item_only2' => $dtt_item_only,
+            'out_datas' => $out_data,
             'settings' => Settings::get(),
         ])->setOptions(['defaultFont' => 'sans-serif'])->setPaper('a4', 'landscape');
         return $pdf->stream('report_daily.pdf');
