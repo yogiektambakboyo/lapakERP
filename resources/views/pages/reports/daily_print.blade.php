@@ -340,7 +340,6 @@
                             <td scope="col" width="5%">{{ number_format($dtt_raw[$counter]->total_297,0,',','.') }}</td>
                           @endif
                           @if((int)$header->total_298>0)
-                          @php $c_298++; @endphp
                           @php if((int)$dtt_raw[$counter]->total_298>0){ $c_298++; } @endphp
                             <td scope="col" width="5%">{{ number_format($dtt_raw[$counter]->total_298,0,',','.') }}</td>
                           @endif
