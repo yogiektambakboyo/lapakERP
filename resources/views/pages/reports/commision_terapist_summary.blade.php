@@ -13,6 +13,7 @@
                 <div class="col-md-10"> 	
                         <button onclick="openDialogFilterSearch('Filter');" class="btn btn-sm btn-lime">@lang('general.btn_filter')</button> 
                         <button onclick="openDialogFilterSearch('Export Excel');" class="btn btn-sm btn-success">Export</button>  
+                        <button onclick="openDialogFilterSearch('Export Sum');" class="btn btn-sm btn-success">Export Summary</button>  
                 </div>
             </div>
         </div>
@@ -24,7 +25,7 @@
         <table class="table table-striped" id="example">
             <thead>
                 <tr>
-                    <th scope="col" width="8%">@lang('general.lbl_branch')</th>
+                    <th scope="col" width="12%">@lang('general.lbl_branch')</th>
                     <th scope="col" width="8%">@lang('general.lbl_dated')</th>
                     <th scope="col" width="15%">@lang('general.lbl_name')</th>
                     <th scope="col" width="12%">Total Comm</th>    
@@ -158,6 +159,8 @@
             </div>
             </div>
         </div>
+
+       
 
     </div>
 @endsection

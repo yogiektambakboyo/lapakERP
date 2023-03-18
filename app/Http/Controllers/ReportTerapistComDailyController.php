@@ -18,6 +18,7 @@ use App\Http\Requests\UpdateUserRequest;
 use Spatie\Permission\Models\Permission;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\ReportCommisionTerapistDailyExport;
+use App\Exports\SumExport;
 use App\Http\Controllers\Controller;
 use Yajra\Datatables\Datatables;
 use Auth;
@@ -120,6 +121,8 @@ class ReportTerapistComDailyController extends Controller
         if($request->export=='Export Excel'){
             $strencode = base64_encode($begindate.'#'.$enddate.'#'.$branchx.'#'.$user->id);
             return Excel::download(new ReportCommisionTerapistDailyExport($strencode), 'report_commision_terapist_sum_'.Carbon::now()->format('YmdHis').'.xlsx');
+        }else if($request->export=='Export Sum'){
+            return Excel::download(new SumExport(), 'report_commision_terapist_sumex_'.Carbon::now()->format('YmdHis').'.xlsx');
         }else{
             $brands = ProductBrand::orderBy('product_brand.remark', 'ASC')
                     ->paginate(10,['product_brand.id','product_brand.remark']);

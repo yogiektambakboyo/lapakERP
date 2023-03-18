@@ -222,13 +222,20 @@ class ReportCloseDayController extends Controller
         ");
         $out_datas_total_drink = DB::select("
                 select ps.abbr,sum(id.qty) as qty,(sum(coalesce(id.total,0))/1000)::int as total
-                from invoice_master im 
-                join invoice_detail id on id.invoice_no = im.invoice_no 
-                join customers c on c.id = im.customers_id 
-                join branch b on b.id=c.branch_id
-                join product_sku ps on ps.id = id.product_id  and ps.category_id=26
-                where im.dated = '".$filter_begin_date."'  and c.branch_id = ".$filter_branch_id."
-                group by ps.abbr order by 1                  
+                        from invoice_master im 
+                        join invoice_detail id on id.invoice_no = im.invoice_no
+                        join customers c on c.id = im.customers_id 
+                        join branch b on b.id=c.branch_id
+                        join product_sku ps on ps.id = id.product_id  and ps.category_id=26
+                        where im.dated = '".$filter_begin_date."'  and c.branch_id = ".$filter_branch_id." and im.invoice_no in (
+                            select im.invoice_no
+                            from invoice_master im 
+                            join invoice_detail id on id.invoice_no = im.invoice_no
+                            join customers c on c.id = im.customers_id 
+                            where im.dated = '".$filter_begin_date."'  and c.branch_id = ".$filter_branch_id."
+                            group by im.invoice_no having count(id.product_id)=1
+                        )
+                group by ps.remark,ps.abbr having count(im.invoice_no)=1 and sum(ps.type_id)<=1 order by 1      
         ");
         $out_datas_total_other = DB::select("
                 select ps.abbr,sum(id.qty) as qty,(sum(coalesce(id.total,0))/1000)::int as total
