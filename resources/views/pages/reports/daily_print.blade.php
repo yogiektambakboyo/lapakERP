@@ -582,6 +582,11 @@
                               echo $out_datas_total_drink->abbr."/".$out_datas_total_drink->qty."/".$out_datas_total_drink->total."<br>";
                           @endphp
                       @endforeach
+                      @foreach($out_datas_total_other as $out_datas_total_other) 
+                          @php
+                              echo $out_datas_total_other->abbr."/".$out_datas_total_other->qty."/".$out_datas_total_other->total."<br>";
+                          @endphp
+                      @endforeach
                       @foreach($out_datas_total as $out_data_total) 
                           @php
                               echo $out_data_total->abbr."/".$out_data_total->qty."<br>";
