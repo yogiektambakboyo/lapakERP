@@ -220,6 +220,16 @@ class ReportCloseDayController extends Controller
                 where im.dated = '".$filter_begin_date."'  and c.branch_id = ".$filter_branch_id."
                 group by ps2.abbr order by 1                  
         ");
+        $out_datas_total_drink = DB::select("
+                select ps.abbr,sum(id.qty) as qty 
+                from invoice_master im 
+                join invoice_detail id on id.invoice_no = im.invoice_no 
+                join customers c on c.id = im.customers_id 
+                join branch b on b.id=c.branch_id
+                join product_sku ps on ps.id = id.product_id  and ps.category_id=26
+                where im.dated = '".$filter_begin_date."'  and c.branch_id = ".$filter_branch_id."
+                group by ps.abbr order by 1                  
+        ");
         $payment_data = DB::select("
                 select im.invoice_no,im.total_payment,im.payment_type,count(distinct im.invoice_no) as qty_payment
                 from invoice_master im 
@@ -277,7 +287,7 @@ class ReportCloseDayController extends Controller
         ");
 
         $dtt_item_only = DB::select("
-                select c.id as customers_id,ps.id,ps.abbr as product_name,ps.type_id,u.conversion,id.qty,id.total/1000 as total,coalesce(id.referral_by,'0') as refbuy 
+                select ps.category_id,c.id as customers_id,ps.id,ps.abbr as product_name,ps.type_id,u.conversion,id.qty,id.total/1000 as total,coalesce(id.referral_by,'0') as refbuy 
                 from invoice_master im 
                 join invoice_detail id on id.invoice_no = im.invoice_no 
                 join product_sku ps on ps.id = id.product_id
@@ -285,6 +295,17 @@ class ReportCloseDayController extends Controller
                 join uom u on u.id = pu.uom_id 
                 join customers c on c.id = im.customers_id
                 where im.dated  = '".$filter_begin_date."'  and c.branch_id = ".$filter_branch_id."   order by c.id,id.seq   
+        ");
+
+        $dtt_item_only_total = DB::select("
+                select ps.category_id,ps.id,ps.abbr as product_name,ps.type_id,u.conversion,id.qty,id.total/1000 as total,coalesce(id.referral_by,'0') as refbuy 
+                from invoice_master im 
+                join invoice_detail id on id.invoice_no = im.invoice_no 
+                join product_sku ps on ps.id = id.product_id
+                join product_uom pu on pu.product_id = id.product_id
+                join uom u on u.id = pu.uom_id 
+                join customers c on c.id = im.customers_id
+                where im.dated  = '".$filter_begin_date."'  and c.branch_id = ".$filter_branch_id." and coalesce(id.referral_by,'0')='0'  order by ps.abbr  
         ");
 
         $dtt_raw = DB::select("
@@ -462,6 +483,8 @@ class ReportCloseDayController extends Controller
             'dtt_raw' => $dtt_raw,
             'dtt_item_only' => $dtt_item_only,
             'dtt_item_only2' => $dtt_item_only,
+            'dtt_item_only_total' => $dtt_item_only_total,
+            'out_datas_total_drink' => $out_datas_total_drink,
             'out_datas' => $out_datas,
             'out_datas_total' => $out_datas_total,
             'settings' => Settings::get(),

@@ -419,16 +419,16 @@
                     <td style="text-align: left;">
 
                       @foreach($dtt_item_only as $diox)
-                          @if($diox->type_id==1 && $diox->customers_id == $detail->id && $diox->refbuy == 0)
-                                {{ $diox->product_name }} <br>
-                                @php $c_p++; @endphp
+                          @if($diox->type_id==1 && $diox->customers_id == $detail->id && $diox->refbuy == 0 && $diox->category_id<>"26")
+                                {{ $diox->product_name }}  / {{ $diox->qty }} <br>
+                                @php $c_p=$c_p+$diox->qty; @endphp
                           @endif
                       @endforeach
                     </td>
                     <td style="text-align: left;">
                       @foreach($dtt_item_only as $diox)
-                          @if($diox->type_id==1 && $diox->customers_id == $detail->id && $diox->refbuy == 0)
-                                {{ number_format($diox->total,0,',','.') }} <br>
+                          @if($diox->type_id==1 && $diox->customers_id == $detail->id && $diox->refbuy == 0  && $diox->category_id<>"26" )
+                                {{ number_format($diox->total,0,',','.') }}<br>
                                 @php 
                                 $t_p=$t_p+$diox->total; 
                                 @endphp
@@ -437,7 +437,7 @@
                     </td>
                     <td style="text-align: left;">
                       @foreach($dtt_item_only as $diox)
-                          @if($diox->type_id==1 && $diox->customers_id == $detail->id && $diox->refbuy > 0)
+                          @if($diox->type_id==1 && $diox->customers_id == $detail->id && $diox->refbuy == 0 && $diox->category_id=="26" )
                                 {{ $diox->product_name }} / {{ $diox->qty }}<br>
                                 @php $c_pn=$c_pn+$diox->qty; @endphp
                           @endif
@@ -576,6 +576,11 @@
                     <th>{{ number_format($c_p,0,',','.') }}</th>
                     <th>{{ number_format($t_p,0,',','.') }}</th>
                     <th style="text-align: left;">
+                      @foreach($out_datas_total_drink as $out_datas_total_drink) 
+                          @php
+                              echo $out_datas_total_drink->abbr."/".$out_datas_total_drink->qty."<br>";
+                          @endphp
+                      @endforeach
                       @foreach($out_datas_total as $out_data_total) 
                           @php
                               echo $out_data_total->abbr."/".$out_data_total->qty."<br>";
