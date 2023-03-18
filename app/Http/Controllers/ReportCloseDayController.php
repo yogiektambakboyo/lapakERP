@@ -221,7 +221,7 @@ class ReportCloseDayController extends Controller
                 group by ps2.abbr order by 1                  
         ");
         $out_datas_total_drink = DB::select("
-                select ps.abbr,sum(id.qty) as qty 
+                select ps.abbr,sum(id.qty) as qty,(sum(coalesce(id.total,0))/1000)::int as total
                 from invoice_master im 
                 join invoice_detail id on id.invoice_no = im.invoice_no 
                 join customers c on c.id = im.customers_id 

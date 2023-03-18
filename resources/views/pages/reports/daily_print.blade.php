@@ -439,7 +439,7 @@
                     <td style="text-align: left;">
                       @foreach($dtt_item_only as $diox)
                           @if($diox->type_id==1 && $diox->customers_id == $detail->id && ($diox->refbuy > 0 || $diox->category_id=="26") )
-                                {{ $diox->product_name }} / {{ $diox->qty }}<br>
+                                {{ $diox->product_name }} / {{ $diox->qty }}  / {{ $diox->total }}<br>
                                 @php $c_pn=$c_pn+$diox->qty; @endphp
                           @endif
                       @endforeach
@@ -579,7 +579,7 @@
                     <th style="text-align: left;">
                       @foreach($out_datas_total_drink as $out_datas_total_drink) 
                           @php
-                              echo $out_datas_total_drink->abbr."/".$out_datas_total_drink->qty."<br>";
+                              echo $out_datas_total_drink->abbr."/".$out_datas_total_drink->qty."/".$out_datas_total_drink->total."<br>";
                           @endphp
                       @endforeach
                       @foreach($out_datas_total as $out_data_total) 
