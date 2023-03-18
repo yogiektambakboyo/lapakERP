@@ -437,17 +437,13 @@
                       @endforeach
                     </td>
                     <td>
-                      @foreach($dtt_item_only as $diox)
-                          @if($diox->type_id==1 && $diox->customers_id == $detail->id && $diox->refbuy == 0)
-                                {{ $diox->product_name }} / {{ $diox->qty }}<br>
-                                @php $c_pn=$c_pn+$diox->qty; @endphp
-                          @endif
-                      @endforeach
                       @foreach($out_datas as $out_data) 
-                          @if($diox->customers_id == $out_data->id )
-                                {{ $out_data->abbr }} / {{ $out_data->qty }} <br>
-                                @php $c_pn=$c_pn+$out_data->qty; @endphp
-                          @endif
+                          @php
+                            if($detail->id == $out_data->id ){
+                                  echo $out_data->abbr."/".$out_data->qty."<br>";
+                                  $c_pn=$c_pn+$out_data->qty;
+                            }            
+                          @endphp
                       @endforeach
                     </td>
                 </tr>
@@ -582,7 +578,13 @@
                     <th></th>
                     <th>{{ number_format($c_p,0,',','.') }}</th>
                     <th>{{ number_format($t_p,0,',','.') }}</th>
-                    <th>{{ number_format($c_pn,0,',','.') }}</th>
+                    <th>
+                      @foreach($out_datas_total as $out_data_total) 
+                          @php
+                              echo $out_data_total->abbr."/".$out_data_total->qty."<br>";
+                          @endphp
+                      @endforeach
+                    </th>
                 @endforeach
                 </tr>
         </tbody>
