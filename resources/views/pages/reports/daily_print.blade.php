@@ -425,6 +425,7 @@
                           @endif
                       @endforeach
                     </td>
+
                     <td style="text-align: left;">
                       @foreach($dtt_item_only as $diox)
                           @if($diox->type_id==1 && $diox->customers_id == $detail->id && $diox->refbuy == 0  && $diox->category_id<>"26" )
@@ -437,7 +438,7 @@
                     </td>
                     <td style="text-align: left;">
                       @foreach($dtt_item_only as $diox)
-                          @if($diox->type_id==1 && $diox->customers_id == $detail->id && $diox->refbuy == 0 && $diox->category_id=="26" )
+                          @if($diox->type_id==1 && $diox->customers_id == $detail->id && ($diox->refbuy > 0 || $diox->category_id=="26") )
                                 {{ $diox->product_name }} / {{ $diox->qty }}<br>
                                 @php $c_pn=$c_pn+$diox->qty; @endphp
                           @endif
