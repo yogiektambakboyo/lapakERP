@@ -168,7 +168,7 @@ class ReportTerapistComDailyController extends Controller
 
             $report_data_total = DB::select("
 
-                        select a.branch_name,a.dated,a.name,a.id,sum(a.commisions+coalesce(pc2.point_value,0)) as total from (
+                        select a.branch_name,a.dated,a.name,a.id,sum(coalesce(pc2.point_value,0)) as total_point,sum(a.commisions+coalesce(pc2.point_value,0)) as total from (
                             select u.id,b.remark as branch_name,'work_commision' as com_type,im.dated,count(ps.id) as qtyinv,u.work_year,u.name,sum(pc.values*id.qty) as commisions,sum(coalesce(pp.point,0)*id.qty) as point_qty
                             from invoice_master im 
                             join invoice_detail id on id.invoice_no = im.invoice_no
@@ -265,6 +265,36 @@ class ReportTerapistComDailyController extends Controller
                        
             ");
 
+            $report_data_detail_t = DB::select("
+
+                select distinct name,dated,id from ( 
+                    select distinct u.name,im.dated,u.id
+                    from invoice_master im 
+                    join invoice_detail id on id.invoice_no = im.invoice_no
+                    join product_sku ps on ps.id = id.product_id 
+                    join customers c on c.id = im.customers_id 
+                    join branch b on b.id = c.branch_id
+                    join product_commision_by_year pc on pc.product_id = id.product_id and pc.branch_id = c.branch_id
+                    join (
+                        select r.id,r.name,r.job_id,case when date_part('year', age(now(),join_date))::int=0 then 1 else date_part('year', age(now(),join_date)) end as work_year 
+                        from users r
+                        ) u on u.id = id.assigned_to and u.job_id = pc.jobs_id  and u.id = id.assigned_to  and u.work_year = pc.years 
+                    left join product_point pp on pp.product_id=ps.id and pp.branch_id=b.id 
+                    where pc.values > 0 and im.dated  between '".$filter_begin_date."' and  '".$filter_begin_end."'   and c.branch_id::character varying like  '".$filter_branch_id."'
+                    union all            
+                    select distinct u.name,im.dated,u.id
+                    from invoice_master im 
+                    join invoice_detail id on id.invoice_no = im.invoice_no 
+                    join product_sku ps on ps.id = id.product_id 
+                    join customers c on c.id = im.customers_id 
+                    join branch b on b.id = c.branch_id
+                    join product_commisions pc on pc.product_id = id.product_id and pc.branch_id = c.branch_id
+                    join users u on u.job_id = 2  and u.id = id.referral_by  
+                    where pc.referral_fee+pc.assigned_to_fee+pc.created_by_fee  > 0  and im.dated  between '".$filter_begin_date."' and  '".$filter_begin_end."'   and c.branch_id::character varying like  '".$filter_branch_id."'
+                    ) a order by dated,name
+                       
+            ");
+
             $report_data_com_from1 = DB::select("
 
                     select a.dated,a.id,sum(a.commisions+coalesce(pc2.point_value,0)) as total from (
@@ -311,7 +341,8 @@ class ReportTerapistComDailyController extends Controller
                 'report_data_total' => $report_data_total,
                 'report_data_com_from1' => $report_data_com_from1,
                 'report_datas_detail' => $report_data_detail,
-                'report_data_detail_inv' => $report_data_detail_inv,
+                'report_data_detail_invs' => $report_data_detail_inv,
+                'report_data_detail_t' => $report_data_detail_t,
                 'settings' => Settings::get(),
             ])->setOptions(['defaultFont' => 'sans-serif'])->setPaper('a4', 'landscape');
             return $pdf->stream('report_daily.pdf');
