@@ -13,6 +13,7 @@
                 <div class="col-md-10"> 	
                         <button onclick="openDialogFilterSearch('Filter');" class="btn btn-sm btn-lime">@lang('general.btn_filter')</button> 
                         <button onclick="openDialogFilterSearch('Export Excel');" class="btn btn-sm btn-success">Export</button>  
+                        <button onclick="openDialogFilterSearch('Export Sum');" class="btn btn-sm btn-success">Export Summary</button>  
                 </div>
             </div>
         </div>
@@ -24,15 +25,15 @@
         <table class="table table-striped" id="example">
             <thead>
                 <tr>
-                    <th scope="col" width="6%">@lang('general.lbl_dated')</th>
+                    <th scope="col" width="8%">@lang('general.lbl_dated')</th>
                     <th>@lang('general.invoice_no')</th>
-                    <th scope="col" width="17%">@lang('general.product')</th>
-                    <th scope="col" width="15%">@lang('general.lbl_name')</th>
+                    <th scope="col" width="15%">@lang('general.product')</th>
+                    <th scope="col" width="13%">@lang('general.lbl_name')</th>
                     <th scope="col" width="5%">@lang('general.lbl_price')</th>
                     <th scope="col" width="4%">@lang('general.lbl_qty')</th>
                     <th scope="col" width="8%">Total</th>  
-                    <th scope="col" width="10%">@lang('general.lbl_type_commision')</th>   
-                    <th scope="col" width="12%">@lang('general.lbl_base_commision')</th>
+                    <th scope="col" width="8%">@lang('general.lbl_type_commision')</th>   
+                    <th scope="col" width="8%">@lang('general.lbl_base_commision')</th>
                     <th scope="col" width="12%">@lang('general.lbl_total_commision')</th>    
                 </tr>
                 </thead>
@@ -89,7 +90,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form action="{{ route('reports.cashier.search') }}" method="GET">   
+                    <form action="{{ route('reports.cashier.search') }}" method="GET"  target="_blank">   
                         @csrf 
                         <div class="col-md-10">
                             <label class="form-label col-form-label col-md-4">@lang('general.lbl_branch')</label>

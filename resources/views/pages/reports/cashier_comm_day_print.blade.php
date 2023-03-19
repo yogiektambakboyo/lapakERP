@@ -3,7 +3,7 @@
 <html>  
    <head> 
       <meta charset = "utf-8"> 
-      <title>Laporan Komisi Terapist</title>
+      <title>Laporan Komisi Kasir</title>
       <style>
         body {background-color: whitesmoke;}
         h1   {color: blue;}
@@ -11,7 +11,7 @@
         #header_inv { column-count: 2}
         table, th, td {
           padding: 2px;
-          font-size: 12px;
+          font-size: 14px;
         }
         td, th {
             border: .01px solid black;
@@ -28,7 +28,7 @@
         <tbody>
           <tr style="text-align: center;background-color:#FFA726;">
               <td style="text-align: left; padding:2px;"><img src="data:image/png;base64,{{ base64_encode(file_get_contents(url("images/user-files/".$settings[0]->icon_file))) }}" width="80px"></td>
-              <td style="width: 40%;">Laporan Komisi Terapist</td>
+              <td style="width: 40%;">Laporan Komisi Kasir</td>
               <td style="width: 30%;">Cabang  : {{ count($report_datas)>0?$report_datas[0]->branch_name:"" }}</td>
           </tr>
         </tbody>
@@ -45,18 +45,11 @@
             <th rowspan="2">Tgl</th>
             <th rowspan="2">MU</th>
             <th rowspan="2">No Faktur</th>
-            <th colspan="3">Perawatan</th>
-            <th colspan="2">Poin</th>
             <th colspan="5">Produk</th>
             <th rowspan="2">Extra Charge</th>
             <th colspan="2">Total</th>
           </tr>
           <tr style="background-color:#FFA726;color:white;">
-            <th>Jenis</th>
-            <th scope="col" width="5%">Total</th>
-            <th scope="col" width="5%">Komisi</th>
-            <th scope="col" width="3%">P</th>
-            <th scope="col">Nilai</th>
             <th>Jenis</th>
             <th scope="col" width="5%">Harga</th>
             <th scope="col" width="5%">Komisi</th>
@@ -76,57 +69,6 @@
                 @foreach($report_data_detail_invs as $report_data_detail_inv)
                    @if($report_data_detail_ts->dated == $report_data_detail_inv->dated && $report_data_detail_ts->id == $report_data_detail_inv->id)
                       {{ $report_data_detail_inv->invoice_no }}<br>
-                    @endif
-                @endforeach
-              </td>
-              <td style="vertical-align:top;">
-                @foreach($report_data_detail_invs as $report_data_detail_inv)
-                   @if($report_data_detail_ts->dated == $report_data_detail_inv->dated && $report_data_detail_ts->id == $report_data_detail_inv->id)
-                      @foreach($report_datas_detail as $report_data_detail)
-                          @if($report_data_detail->type_id==2 && ($report_data_detail_inv->invoice_no==$report_data_detail->invoice_no ) && ($report_data_detail_inv->id==$report_data_detail->id))
-                                {{ $report_data_detail->abbr }}<br>
-                          @endif
-                      @endforeach
-                    @endif
-                @endforeach
-              </td>
-              <td style="vertical-align:top;">
-                @foreach($report_data_detail_invs as $report_data_detail_inv)
-                   @if($report_data_detail_ts->dated == $report_data_detail_inv->dated && $report_data_detail_ts->id == $report_data_detail_inv->id)
-                      @foreach($report_datas_detail as $report_data_detail)
-                          @if($report_data_detail->type_id==2 && ($report_data_detail_inv->invoice_no==$report_data_detail->invoice_no ) && ($report_data_detail_inv->id==$report_data_detail->id))
-                          {{ number_format($report_data_detail->total,0,',','.') }}<br>
-                          @endif
-                      @endforeach
-                    @endif
-                @endforeach
-              </td>
-              <td style="vertical-align:top;">
-                @foreach($report_data_detail_invs as $report_data_detail_inv)
-                   @if($report_data_detail_ts->dated == $report_data_detail_inv->dated && $report_data_detail_ts->id == $report_data_detail_inv->id)
-                      @foreach($report_datas_detail as $report_data_detail)
-                          @if($report_data_detail->type_id==2 && ($report_data_detail_inv->invoice_no==$report_data_detail->invoice_no ) && ($report_data_detail_inv->id==$report_data_detail->id))
-                          {{ number_format($report_data_detail->commisions,0,',','.') }}<br>
-                          @endif
-                      @endforeach
-                    @endif
-                @endforeach
-              </td>
-              <td style="vertical-align:top;">
-                @foreach($report_data_detail_invs as $report_data_detail_inv)
-                   @if($report_data_detail_ts->dated == $report_data_detail_inv->dated && $report_data_detail_ts->id == $report_data_detail_inv->id)
-                      @foreach($report_datas_detail as $report_data_detail)
-                          @if($report_data_detail->type_id==2 && ($report_data_detail_inv->invoice_no==$report_data_detail->invoice_no ) && ($report_data_detail_inv->id==$report_data_detail->id))
-                          {{ number_format($report_data_detail->point_qty,0,',','.') }}<br>
-                          @endif
-                      @endforeach
-                    @endif
-                @endforeach
-              </td>
-              <td style="vertical-align:top;">
-                @foreach($report_data_total as $report_data_totals)
-                    @if($report_data_detail_ts->id == $report_data_totals->id && ($report_data_detail_ts->dated == $report_data_totals->dated))
-                          {{ number_format($report_data_totals->total_point,0,',','.') }}<br>
                     @endif
                 @endforeach
               </td>

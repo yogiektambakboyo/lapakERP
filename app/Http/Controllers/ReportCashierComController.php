@@ -24,6 +24,8 @@ use Auth;
 use Illuminate\Support\Facades\DB;
 use App\Models\Company;
 use App\Http\Controllers\Lang;
+use Barryvdh\DomPDF\Facade\Pdf;
+use App\Models\Settings;
 
 
 class ReportCashierComController extends Controller
@@ -79,7 +81,7 @@ class ReportCashierComController extends Controller
                     join product_commisions pc on pc.product_id = id.product_id and pc.branch_id = c.branch_id
                     join users u on u.id = im.created_by and u.job_id = 1 and u.id = id.referral_by 
                     where pc.created_by_fee <= 0 and pc.referral_fee > 0       
-                ) a order by a.name 
+                ) a where dated>=now()-interval'7 days' order by a.name,dated 
         ");
         $data = $this->data;
         $keyword = "";
@@ -107,6 +109,185 @@ class ReportCashierComController extends Controller
         if($request->export=='Export Excel'){
             $strencode = base64_encode($begindate.'#'.$enddate.'#'.$branchx.'#'.$user->id);
             return Excel::download(new ReportCommisionCashierExport($strencode), 'report_commision_cashier_'.Carbon::now()->format('YmdHis').'.xlsx');
+        }else if($request->export=='Export Sum'){
+
+            $branchs = Branch::join('users_branch as ub','ub.branch_id', '=', 'branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']);        
+
+            $filter_begin_date = $begindate;
+            $filter_begin_end = $enddate;
+            $filter_branch_id =  $branchx;
+            $report_data = DB::select("
+
+            
+                        select a.branch_name,a.com_type,a.dated,a.qtyinv,a.work_year,a.name,a.commisions,a.point_qty,coalesce(pc2.point_value,0)  as point_value,a.commisions+coalesce(pc2.point_value,0) as total from (
+                            select b.remark as branch_name,'work_commision' as com_type,im.dated,count(ps.id) as qtyinv,u.work_year,u.name,sum(pc.values*id.qty) as commisions,sum(coalesce(pp.point,0)*id.qty) as point_qty
+                            from invoice_master im 
+                            join invoice_detail id on id.invoice_no = im.invoice_no
+                            join product_sku ps on ps.id = id.product_id 
+                            join customers c on c.id = im.customers_id 
+                            join branch b on b.id = c.branch_id
+                            join product_commision_by_year pc on pc.product_id = id.product_id and pc.branch_id = c.branch_id
+                            join (
+                                select r.id,r.name,r.job_id,case when date_part('year', age(now(),join_date))::int=0 then 1 else date_part('year', age(now(),join_date)) end as work_year 
+                                from users r
+                                ) u on u.id = id.assigned_to and u.job_id = pc.jobs_id  and u.id = id.assigned_to  and u.work_year = pc.years 
+                            left join product_point pp on pp.product_id=ps.id and pp.branch_id=b.id 
+                            where pc.values > 0 and im.dated  between '".$filter_begin_date."' and  '".$filter_begin_end."'  and c.branch_id::character varying like  '".$filter_branch_id."'
+                            group by  b.remark,im.dated,u.work_year,u.name
+                            union all                                  
+                            select  b.remark as branch_name,'referral' as com_type,im.dated,count(ps.id) as qtyinv,case when date_part('year', age(now(),join_date))::int=0 then 1 else date_part('year', age(now(),join_date)) end as work_year,u.name,
+                            sum(case when pc.referral_fee<=0 then pc.assigned_to_fee * id.qty else pc.referral_fee * id.qty end) as commisions,
+                            0 as point_qty
+                            from invoice_master im 
+                            join invoice_detail id on id.invoice_no = im.invoice_no 
+                            join product_sku ps on ps.id = id.product_id 
+                            join customers c on c.id = im.customers_id 
+                            join branch b on b.id = c.branch_id
+                            join product_commisions pc on pc.product_id = id.product_id and pc.branch_id = c.branch_id
+                            join users u on u.job_id = 2  and u.id = id.referral_by  
+                            where pc.referral_fee+pc.assigned_to_fee+pc.created_by_fee  > 0  and im.dated  between '".$filter_begin_date."' and  '".$filter_begin_end."'  and c.branch_id::character varying like  '".$filter_branch_id."'
+                            group by  b.remark,im.dated,u.join_date,u.name
+
+                        ) a left join point_conversion pc2 on pc2.point_qty = a.point_qty  order by a.branch_name,a.dated,a.name;
+                       
+            ");
+
+            $report_data_total = DB::select("
+
+                            select name,dated,id,0 as total_point,sum(commisions) as total from (
+                                select  u.id,'work_commission' as com_type,im.dated,im.invoice_no,ps.abbr,ps.remark,im.created_by,u.name,id.price,id.qty,id.total,pc.created_by_fee base_commision,pc.created_by_fee * id.qty as commisions  
+                                from invoice_master im 
+                                join invoice_detail id on id.invoice_no = im.invoice_no 
+                                join product_sku ps on ps.id = id.product_id 
+                                join customers c on c.id = im.customers_id  and c.branch_id::character varying like '%".$branchx."%' 
+                                join product_commisions pc on pc.product_id = id.product_id and pc.branch_id = c.branch_id
+                                join users u on u.id = im.created_by and u.job_id = 1  and u.id = im.created_by  and coalesce(id.assigned_to,0) > 0
+                                where pc.created_by_fee > 0 and im.dated between '".$begindate."' and '".$enddate."' 
+                                union 
+                                select  u.id,'referral' as com_type,im.dated,im.invoice_no,ps.abbr,ps.remark,im.created_by,u.name,id.price,id.qty,id.total,pc.referral_fee base_commision,pc.referral_fee  * id.qty as commisions  
+                                from invoice_master im 
+                                join invoice_detail id on id.invoice_no = im.invoice_no
+                                join product_sku ps on ps.id = id.product_id 
+                                join customers c on c.id = im.customers_id  and c.branch_id::character varying like '%".$branchx."%' 
+                                join product_commisions pc on pc.product_id = id.product_id and pc.branch_id = c.branch_id
+                                join users u on u.id = im.created_by and u.job_id = 1 and u.id = id.referral_by 
+                                where pc.created_by_fee <= 0 and pc.referral_fee > 0 and im.dated between '".$begindate."' and '".$enddate."'   
+                        ) a group by name,dated,id
+            ");
+
+            $report_data_detail = DB::select("
+
+
+            select * from (
+                    select  ps.type_id,u.id,'work_commission' as com_type,im.dated,right(im.invoice_no,6) as invoice_no,ps.abbr,ps.remark,im.created_by,u.name,id.price,id.qty,id.total,pc.created_by_fee base_commision,pc.created_by_fee * id.qty as commisions  
+                    from invoice_master im 
+                    join invoice_detail id on id.invoice_no = im.invoice_no 
+                    join product_sku ps on ps.id = id.product_id 
+                    join customers c on c.id = im.customers_id  and c.branch_id::character varying like '%".$branchx."%' 
+                    join product_commisions pc on pc.product_id = id.product_id and pc.branch_id = c.branch_id
+                    join users u on u.id = im.created_by and u.job_id = 1  and u.id = im.created_by  and coalesce(id.assigned_to,0) > 0
+                    where pc.created_by_fee > 0 and im.dated between '".$begindate."' and '".$enddate."' 
+                    union 
+                    select  ps.type_id,u.id,'referral' as com_type,im.dated,right(im.invoice_no,6) as invoice_no,ps.abbr,ps.remark,im.created_by,u.name,id.price,id.qty,id.total,pc.referral_fee base_commision,pc.referral_fee  * id.qty as commisions  
+                    from invoice_master im 
+                    join invoice_detail id on id.invoice_no = im.invoice_no
+                    join product_sku ps on ps.id = id.product_id 
+                    join customers c on c.id = im.customers_id  and c.branch_id::character varying like '%".$branchx."%' 
+                    join product_commisions pc on pc.product_id = id.product_id and pc.branch_id = c.branch_id
+                    join users u on u.id = im.created_by and u.job_id = 1 and u.id = id.referral_by 
+                    where pc.created_by_fee <= 0 and pc.referral_fee > 0 and im.dated between '".$begindate."' and '".$enddate."'   
+            ) a order by dated,a.name
+                       
+            ");
+
+            $report_data_detail_inv = DB::select("
+
+
+                select distinct right(invoice_no,6) as invoice_no,name,dated,id from (
+                        select  u.id,'work_commission' as com_type,im.dated,im.invoice_no,ps.abbr,ps.remark,im.created_by,u.name,id.price,id.qty,id.total,pc.created_by_fee base_commision,pc.created_by_fee * id.qty as commisions  
+                        from invoice_master im 
+                        join invoice_detail id on id.invoice_no = im.invoice_no 
+                        join product_sku ps on ps.id = id.product_id 
+                        join customers c on c.id = im.customers_id  and c.branch_id::character varying like '%".$branchx."%' 
+                        join product_commisions pc on pc.product_id = id.product_id and pc.branch_id = c.branch_id
+                        join users u on u.id = im.created_by and u.job_id = 1  and u.id = im.created_by  and coalesce(id.assigned_to,0) > 0
+                        where pc.created_by_fee > 0 and im.dated between '".$begindate."' and '".$enddate."' 
+                        union 
+                        select  u.id,'referral' as com_type,im.dated,im.invoice_no,ps.abbr,ps.remark,im.created_by,u.name,id.price,id.qty,id.total,pc.referral_fee base_commision,pc.referral_fee  * id.qty as commisions  
+                        from invoice_master im 
+                        join invoice_detail id on id.invoice_no = im.invoice_no
+                        join product_sku ps on ps.id = id.product_id 
+                        join customers c on c.id = im.customers_id  and c.branch_id::character varying like '%".$branchx."%' 
+                        join product_commisions pc on pc.product_id = id.product_id and pc.branch_id = c.branch_id
+                        join users u on u.id = im.created_by and u.job_id = 1 and u.id = id.referral_by 
+                        where pc.created_by_fee <= 0 and pc.referral_fee > 0 and im.dated between '".$begindate."' and '".$enddate."'   
+                ) a order by dated,a.name
+
+            ");
+
+            $report_data_detail_t = DB::select("
+
+                select distinct name,dated,id from (
+                        select  u.id,'work_commission' as com_type,im.dated,im.invoice_no,ps.abbr,ps.remark,im.created_by,u.name,id.price,id.qty,id.total,pc.created_by_fee base_commision,pc.created_by_fee * id.qty as commisions  
+                        from invoice_master im 
+                        join invoice_detail id on id.invoice_no = im.invoice_no 
+                        join product_sku ps on ps.id = id.product_id 
+                        join customers c on c.id = im.customers_id  and c.branch_id::character varying like '%".$branchx."%' 
+                        join product_commisions pc on pc.product_id = id.product_id and pc.branch_id = c.branch_id
+                        join users u on u.id = im.created_by and u.job_id = 1  and u.id = im.created_by  and coalesce(id.assigned_to,0) > 0
+                        where pc.created_by_fee > 0 and im.dated between '".$begindate."' and '".$enddate."' 
+                        union 
+                        select  u.id,'referral' as com_type,im.dated,im.invoice_no,ps.abbr,ps.remark,im.created_by,u.name,id.price,id.qty,id.total,pc.referral_fee base_commision,pc.referral_fee  * id.qty as commisions  
+                        from invoice_master im 
+                        join invoice_detail id on id.invoice_no = im.invoice_no
+                        join product_sku ps on ps.id = id.product_id 
+                        join customers c on c.id = im.customers_id  and c.branch_id::character varying like '%".$branchx."%' 
+                        join product_commisions pc on pc.product_id = id.product_id and pc.branch_id = c.branch_id
+                        join users u on u.id = im.created_by and u.job_id = 1 and u.id = id.referral_by 
+                        where pc.created_by_fee <= 0 and pc.referral_fee > 0 and im.dated between '".$begindate."' and '".$enddate."'   
+                ) a order by dated,a.name
+            ");
+
+            $report_data_com_from1 = DB::select("
+
+                        select dated,id,sum(commisions) as total from (
+                            select  u.id,'work_commission' as com_type,im.dated,im.invoice_no,ps.abbr,ps.remark,im.created_by,u.name,id.price,id.qty,id.total,pc.created_by_fee base_commision,pc.created_by_fee * id.qty as commisions  
+                            from invoice_master im 
+                            join invoice_detail id on id.invoice_no = im.invoice_no 
+                            join product_sku ps on ps.id = id.product_id 
+                            join customers c on c.id = im.customers_id  and c.branch_id::character varying like '%".$branchx."%' 
+                            join product_commisions pc on pc.product_id = id.product_id and pc.branch_id = c.branch_id
+                            join users u on u.id = im.created_by and u.job_id = 1  and u.id = im.created_by  and coalesce(id.assigned_to,0) > 0
+                            where pc.created_by_fee > 0 and  im.dated between date_trunc('month', '".$begindate."'::date)::date and '".$enddate."' 
+                            union 
+                            select  u.id,'referral' as com_type,im.dated,im.invoice_no,ps.abbr,ps.remark,im.created_by,u.name,id.price,id.qty,id.total,pc.referral_fee base_commision,pc.referral_fee  * id.qty as commisions  
+                            from invoice_master im 
+                            join invoice_detail id on id.invoice_no = im.invoice_no
+                            join product_sku ps on ps.id = id.product_id 
+                            join customers c on c.id = im.customers_id  and c.branch_id::character varying like '%".$branchx."%' 
+                            join product_commisions pc on pc.product_id = id.product_id and pc.branch_id = c.branch_id
+                            join users u on u.id = im.created_by and u.job_id = 1 and u.id = id.referral_by 
+                            where pc.created_by_fee <= 0 and pc.referral_fee > 0 and im.dated between date_trunc('month', '".$begindate."'::date)::date and '".$enddate."'   
+                    ) a group by dated,id     
+            ");
+    
+           
+            $users = User::join('users_branch as ub','ub.branch_id', '=', 'users.branch_id')->where('ub.user_id','=',$user->id)->where('users.job_id','=',2)->get(['users.id','users.name']);
+    
+            $pdf = PDF::setOptions(['isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true])->loadView('pages.reports.cashier_comm_day_print', [
+                'data' => $data,
+                'report_datas' => $report_data,
+                'report_data_total' => $report_data_total,
+                'report_data_com_from1' => $report_data_com_from1,
+                'report_datas_detail' => $report_data_detail,
+                'report_data_detail_invs' => $report_data_detail_inv,
+                'report_data_detail_t' => $report_data_detail_t,
+                'settings' => Settings::get(),
+            ])->setOptions(['defaultFont' => 'sans-serif'])->setPaper('a4', 'landscape');
+            return $pdf->stream('report_daily.pdf');
+
+
+
         }else{
             $report_data = DB::select("
                 select * from (
