@@ -141,7 +141,7 @@ class ReportCloseShiftController extends Controller
         ");
 
         $petty_datas = DB::select("
-            select ps.abbr,pc.type,sum(pcd.line_total) as total  from petty_cash pc 
+            select ps.abbr,pc.type,sum(pcd.qty) qty,sum(pcd.line_total) as total  from petty_cash pc 
             join petty_cash_detail pcd on pcd.doc_no = pc.doc_no
             join product_sku ps on ps.id = pcd.product_id 
             join shift s on s.id = ".$filter_shift."
