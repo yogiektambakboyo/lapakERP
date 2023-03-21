@@ -200,7 +200,7 @@ class ReportCashierComController extends Controller
                         from users r
                         ) u on u.id = im.created_by and u.job_id = pc.jobs_id  and u.id = im.created_by  and u.work_year = pc.years 
                     left join product_point pp on pp.product_id=ps.id and pp.branch_id=b.id 
-                    where pc.values > 0 and im.dated  '".$begindate."' and '".$enddate."'   and c.branch_id::character varying like '%".$branchx."%' 
+                    where pc.values > 0 and im.dated  between '".$begindate."' and '".$enddate."'   and c.branch_id::character varying like '%".$branchx."%' 
                     group by  ps.type_id,u.id,b.remark,im.dated,u.work_year,u.name,im.invoice_no,ps.abbr,ps.remark,im.created_by,id.price,id.total,pc.values 
                     union
                     select  ps.type_id,u.id,'referral' as com_type,im.dated,right(im.invoice_no,6) as invoice_no,ps.abbr,ps.remark,im.created_by,u.name,id.price,id.qty,id.total,pc.referral_fee base_commision,pc.referral_fee  * id.qty as commisions  
