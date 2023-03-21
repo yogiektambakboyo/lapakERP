@@ -138,6 +138,7 @@ class ReportCloseDayController extends Controller
                 group by im.invoice_no,im.total_payment,im.payment_type                       
         ");
 
+
         $petty_datas = DB::select("
             select ps.abbr,pc.type,sum(pcd.qty) qty,sum(pcd.line_total) as total  from petty_cash pc 
             join petty_cash_detail pcd on pcd.doc_no = pc.doc_no
@@ -194,6 +195,7 @@ class ReportCloseDayController extends Controller
                 where im.dated = '".$filter_begin_date."'  and c.branch_id = ".$filter_branch_id."
                 group by ps.category_id,b.remark,im.dated,id.product_name,ps.abbr,id.price,ps.type_id                         
         ");
+        
 
         $out_datas = DB::select("
                 select c.id,ps2.abbr,sum(pi2.qty) as qty 
@@ -479,7 +481,7 @@ class ReportCloseDayController extends Controller
         //Buat hard ciode column berdasarkan banyak perawatan, perwatan yg tidak ada pembelian akan di hide
 
         $petty_datas = DB::select("
-            select ps.abbr,pc.type,sum(pcd.line_total) as total  from petty_cash pc 
+            select ps.abbr,pc.type,sum(pcd.qty) as qty,sum(pcd.line_total) as total  from petty_cash pc 
             join petty_cash_detail pcd on pcd.doc_no = pc.doc_no
             join product_sku ps on ps.id = pcd.product_id 
             where pc.dated  = '".$filter_begin_date."'  and pc.branch_id = ".$filter_branch_id."  

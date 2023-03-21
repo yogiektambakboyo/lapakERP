@@ -286,6 +286,7 @@
                           @php if((int)$dtt_raw[$counter]->total_286>0){ $c_286++; } @endphp
                             <td scope="col" width="5%">{{ number_format($dtt_raw[$counter]->total_286,0,',','.') }}</td>
                           @endif
+
                           @if((int)$header->total_287>0)
                           @php if((int)$dtt_raw[$counter]->total_287>0){ $c_287++; } @endphp
                               <td scope="col" width="5%">{{ number_format($dtt_raw[$counter]->total_287,0,',','.') }}</td>
@@ -591,6 +592,19 @@
                           @php
                               echo $out_data_total->abbr."/".$out_data_total->qty."<br>";
                           @endphp
+                      @endforeach
+                      
+                      @php echo "Keluar :<br>"; @endphp 
+                      @foreach($petty_datas as $petty_data)
+                          @if($petty_data->type == 'Produk - Keluar')
+                            {{ $petty_data->abbr }} / ({{ $petty_data->qty }})  @php echo "<br>"; @endphp                       
+                          @endif    
+                      @endforeach
+                      @php echo "Masuk :<br>"; @endphp     
+                      @foreach($petty_datas as $petty_data)
+                          @if($petty_data->type == 'Produk - Masuk')
+                            {{ $petty_data->abbr }} / ({{ $petty_data->qty }})  @php echo "<br>"; @endphp                      
+                          @endif    
                       @endforeach
                     </th>
                 @endforeach
