@@ -530,7 +530,7 @@
                         @php
                         @endphp    
                         <tr>
-                            <td style="text-align: left;">{{ $petty_data->abbr }}</th>                            
+                            <td style="text-align: left;">{{ $petty_data->abbr }} ({{ $petty_data->qty }})</th>                            
                         </tr>
                         @endif    
                       @endforeach
