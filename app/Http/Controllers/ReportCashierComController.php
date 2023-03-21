@@ -70,7 +70,7 @@ class ReportCashierComController extends Controller
                     join product_sku ps on ps.id = id.product_id 
                     join customers c on c.id = im.customers_id 
                     join product_commisions pc on pc.product_id = id.product_id and pc.branch_id = c.branch_id
-                    join users u on u.id = im.created_by and u.job_id = 1  and u.id = im.created_by  and coalesce(id.assigned_to,0) > 0
+                    join users u on u.id = im.created_by and u.job_id = 1  and u.id = im.created_by  
                     where pc.created_by_fee > 0
                     union 
                     select  'referral' as com_type,im.dated,im.invoice_no,ps.abbr,ps.remark,im.created_by,u.name,id.price,id.qty,id.total,pc.referral_fee base_commision,pc.referral_fee  * id.qty as commisions  
@@ -161,7 +161,7 @@ class ReportCashierComController extends Controller
                                 join product_sku ps on ps.id = id.product_id 
                                 join customers c on c.id = im.customers_id  and c.branch_id::character varying like '%".$branchx."%' 
                                 join product_commisions pc on pc.product_id = id.product_id and pc.branch_id = c.branch_id
-                                join users u on u.id = im.created_by and u.job_id = 1  and u.id = im.created_by  and coalesce(id.assigned_to,0) > 0
+                                join users u on u.id = im.created_by and u.job_id = 1  and u.id = im.created_by 
                                 where pc.created_by_fee > 0 and im.dated between '".$begindate."' and '".$enddate."' 
                                 union 
                                 select  u.id,'referral' as com_type,im.dated,im.invoice_no,ps.abbr,ps.remark,im.created_by,u.name,id.price,id.qty,id.total,pc.referral_fee base_commision,pc.referral_fee  * id.qty as commisions  
@@ -185,7 +185,7 @@ class ReportCashierComController extends Controller
                     join product_sku ps on ps.id = id.product_id 
                     join customers c on c.id = im.customers_id  and c.branch_id::character varying like '%".$branchx."%' 
                     join product_commisions pc on pc.product_id = id.product_id and pc.branch_id = c.branch_id
-                    join users u on u.id = im.created_by and u.job_id = 1  and u.id = im.created_by  and coalesce(id.assigned_to,0) > 0
+                    join users u on u.id = im.created_by and u.job_id = 1  and u.id = im.created_by 
                     where pc.created_by_fee > 0 and im.dated between '".$begindate."' and '".$enddate."' 
                     union 
                     select  ps.type_id,u.id,'referral' as com_type,im.dated,right(im.invoice_no,6) as invoice_no,ps.abbr,ps.remark,im.created_by,u.name,id.price,id.qty,id.total,pc.referral_fee base_commision,pc.referral_fee  * id.qty as commisions  
@@ -210,7 +210,7 @@ class ReportCashierComController extends Controller
                         join product_sku ps on ps.id = id.product_id 
                         join customers c on c.id = im.customers_id  and c.branch_id::character varying like '%".$branchx."%' 
                         join product_commisions pc on pc.product_id = id.product_id and pc.branch_id = c.branch_id
-                        join users u on u.id = im.created_by and u.job_id = 1  and u.id = im.created_by  and coalesce(id.assigned_to,0) > 0
+                        join users u on u.id = im.created_by and u.job_id = 1  and u.id = im.created_by 
                         where pc.created_by_fee > 0 and im.dated between '".$begindate."' and '".$enddate."' 
                         union 
                         select  u.id,'referral' as com_type,im.dated,im.invoice_no,ps.abbr,ps.remark,im.created_by,u.name,id.price,id.qty,id.total,pc.referral_fee base_commision,pc.referral_fee  * id.qty as commisions  
@@ -234,7 +234,7 @@ class ReportCashierComController extends Controller
                         join product_sku ps on ps.id = id.product_id 
                         join customers c on c.id = im.customers_id  and c.branch_id::character varying like '%".$branchx."%' 
                         join product_commisions pc on pc.product_id = id.product_id and pc.branch_id = c.branch_id
-                        join users u on u.id = im.created_by and u.job_id = 1  and u.id = im.created_by  and coalesce(id.assigned_to,0) > 0
+                        join users u on u.id = im.created_by and u.job_id = 1  and u.id = im.created_by 
                         where pc.created_by_fee > 0 and im.dated between '".$begindate."' and '".$enddate."' 
                         union 
                         select  u.id,'referral' as com_type,im.dated,im.invoice_no,ps.abbr,ps.remark,im.created_by,u.name,id.price,id.qty,id.total,pc.referral_fee base_commision,pc.referral_fee  * id.qty as commisions  
@@ -257,7 +257,7 @@ class ReportCashierComController extends Controller
                             join product_sku ps on ps.id = id.product_id 
                             join customers c on c.id = im.customers_id  and c.branch_id::character varying like '%".$branchx."%' 
                             join product_commisions pc on pc.product_id = id.product_id and pc.branch_id = c.branch_id
-                            join users u on u.id = im.created_by and u.job_id = 1  and u.id = im.created_by  and coalesce(id.assigned_to,0) > 0
+                            join users u on u.id = im.created_by and u.job_id = 1  and u.id = im.created_by 
                             where pc.created_by_fee > 0 and  im.dated between date_trunc('month', '".$begindate."'::date)::date and '".$enddate."' 
                             union 
                             select  u.id,'referral' as com_type,im.dated,im.invoice_no,ps.abbr,ps.remark,im.created_by,u.name,id.price,id.qty,id.total,pc.referral_fee base_commision,pc.referral_fee  * id.qty as commisions  
@@ -297,7 +297,7 @@ class ReportCashierComController extends Controller
                         join product_sku ps on ps.id = id.product_id 
                         join customers c on c.id = im.customers_id  and c.branch_id::character varying like '%".$branchx."%' 
                         join product_commisions pc on pc.product_id = id.product_id and pc.branch_id = c.branch_id
-                        join users u on u.id = im.created_by and u.job_id = 1  and u.id = im.created_by  and coalesce(id.assigned_to,0) > 0
+                        join users u on u.id = im.created_by and u.job_id = 1  and u.id = im.created_by  
                         where pc.created_by_fee > 0 and im.dated between '".$begindate."' and '".$enddate."' 
                         union 
                         select  'referral' as com_type,im.dated,im.invoice_no,ps.abbr,ps.remark,im.created_by,u.name,id.price,id.qty,id.total,pc.referral_fee base_commision,pc.referral_fee  * id.qty as commisions  
