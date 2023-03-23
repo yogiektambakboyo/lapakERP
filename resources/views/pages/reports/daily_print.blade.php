@@ -172,6 +172,18 @@
               @if((int)$header->total_321>0)
                 <th scope="col" width="5%">TP</th>
               @endif
+              @if((int)$header->total_316>0)
+                <th scope="col" width="5%">ET</th>
+              @endif
+              @if((int)$header->total_309>0)
+                <th scope="col" width="5%">ETHC</th>
+              @endif
+              @if((int)$header->total_318>0)
+                <th scope="col" width="5%">CASMID21</th>
+              @endif
+              @if((int)$header->total_319>0)
+                <th scope="col" width="5%">CASMID22</th>
+              @endif
               <th>Pembayaran</th>
               <th>Produk</th>
               <th>Nilai</th>
@@ -226,6 +238,10 @@
             $c_315 = 0;
             $c_317 = 0;
             $c_321 = 0;
+            $c_319 = 0;
+            $c_316 = 0;
+            $c_309 = 0;
+            $c_318 = 0;
           @endphp
 
             @foreach($dtt_detail as $detail)
@@ -415,6 +431,23 @@
                           @php if((int)$dtt_raw[$counter]->total_321>0){ $c_321++; } @endphp
                             <td scope="col" width="5%">{{ number_format($dtt_raw[$counter]->total_321,0,',','.') }}</td>
                           @endif
+                           
+                          @if((int)$header->total_316>0)
+                          @php if((int)$dtt_raw[$counter]->total_316>0){ $c_316++; } @endphp
+                            <td scope="col" width="5%">{{ number_format($dtt_raw[$counter]->total_316,0,',','.') }}</td>
+                          @endif
+                          @if((int)$header->total_309>0)
+                          @php if((int)$dtt_raw[$counter]->total_309>0){ $c_309++; } @endphp
+                            <td scope="col" width="5%">{{ number_format($dtt_raw[$counter]->total_309,0,',','.') }}</td>
+                          @endif
+                          @if((int)$header->total_318>0)
+                          @php if((int)$dtt_raw[$counter]->total_318>0){ $c_318++; } @endphp
+                            <td scope="col" width="5%">{{ number_format($dtt_raw[$counter]->total_318,0,',','.') }}</td>
+                          @endif
+                          @if((int)$header->total_319>0)
+                          @php if((int)$dtt_raw[$counter]->total_319>0){ $c_319++; } @endphp
+                            <td scope="col" width="5%">{{ number_format($dtt_raw[$counter]->total_319,0,',','.') }}</td>
+                          @endif
                       @endforeach
                     <td>{{ $detail->payment_type }}</td>
                     <td style="text-align: left;">
@@ -573,6 +606,19 @@
                     @endif
                     @if((int)$header->total_321>0)
                       <th scope="col" width="5%">{{ number_format($header->total_321,0,',','.') }}  / {{ $c_321 }} </th>
+                    @endif
+
+                    @if((int)$header->total_316>0)
+                      <th scope="col" width="5%">{{ number_format($header->total_316,0,',','.') }}  / {{ $c_316 }} </th>
+                    @endif
+                    @if((int)$header->total_309>0)
+                      <th scope="col" width="5%">{{ number_format($header->total_309,0,',','.') }}  / {{ $c_309 }} </th>
+                    @endif
+                    @if((int)$header->total_318>0)
+                      <th scope="col" width="5%">{{ number_format($header->total_318,0,',','.') }}  / {{ $c_318 }} </th>
+                    @endif
+                    @if((int)$header->total_319>0)
+                      <th scope="col" width="5%">{{ number_format($header->total_319,0,',','.') }}  / {{ $c_319 }} </th>
                     @endif
                     <th></th>
                     <th>{{ number_format($c_p,0,',','.') }}</th>
