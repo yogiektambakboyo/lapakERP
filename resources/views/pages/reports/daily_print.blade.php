@@ -179,10 +179,10 @@
                 <th scope="col" width="5%">ETHC</th>
               @endif
               @if((int)$header->total_318>0)
-                <th scope="col" width="5%">CASMID21</th>
+                <th scope="col" width="5%">21:00</th>
               @endif
               @if((int)$header->total_319>0)
-                <th scope="col" width="5%">CASMID22</th>
+                <th scope="col" width="5%">22:00</th>
               @endif
               <th>Pembayaran</th>
               <th>Produk</th>
