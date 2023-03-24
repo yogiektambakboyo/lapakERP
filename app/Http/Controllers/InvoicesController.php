@@ -23,6 +23,7 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use App\Models\InvoiceDetail;
 use App\Models\Customer;
 use App\Models\Department;
+use App\Models\Voucher;
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
 use Spatie\Permission\Models\Permission;
@@ -259,6 +260,16 @@ class InvoicesController extends Controller
                 ['customer_type' => $request->get('customer_type')],
             )
         );
+
+        if($request->get('voucher_code')!=""){
+            Voucher::where('voucher.voucher_code','=',$request->get('voucher_code'))
+            ->update(
+                array_merge(
+                    ['is_used' => 1]
+                )
+            );
+        }
+
 
         $branch_id = Room::where('id',$request->get('branch_room_id'))->get(['branch_id'])->first();
 

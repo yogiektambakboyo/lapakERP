@@ -1127,6 +1127,7 @@
                   customer_type : $('#customer_type').val(),
                   ref_no : $('#ref_no').val(),
                   tax : _vat_total,
+                  voucher_code :  $("#input-apply-voucher").val()
                 }
               );
               const res = axios.post("{{ route('invoices.store') }}", json, {
@@ -1942,7 +1943,6 @@
                           $("#remark").val($("#remark").val()+"["+resp.data[j].remark+"]");
                           counterVoucherHit++;
                           voucherNo = $("#input-apply-voucher").val();
-                          $("#voucher_code").val(voucherNo);
                           voucherNoPID = resp.data[j].product_id;
                         }
                       }
