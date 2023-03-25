@@ -502,7 +502,7 @@
                       <th scope="col" width="5%">{{ number_format($header->total_283,0,',','.') }}  / {{ $c_283 }} </th>
                     @endif                  
                     @if((int)$header->total_284>0)
-                      <th scope="col" width="5%">{{ number_format($dtt_raw_oneline_disc[0]->total_284,0,',','.') }}  / {{ $c_284 }} </th>
+                      <th scope="col" width="5%">{{ number_format($dtt_raw_oneline_discs[0]->total_284,0,',','.') }}  / {{ $c_284 }} </th>
                     @endif
                     @if((int)$header->total_285>0)
                       <th scope="col" width="5%">{{ number_format($header->total_285,0,',','.') }}  / {{ $c_285 }} </th>
@@ -517,14 +517,14 @@
                       <th scope="col" width="5%">{{ number_format($header->total_288,0,',','.') }}  / {{ $c_288 }} </th>
                     @endif
                     @if((int)$header->total_289>0)
-                      <th scope="col" width="5%">{{ number_format($dtt_raw_oneline_disc[0]->total_289,0,',','.') }}  / {{ $c_289 }} </th>
+                      <th scope="col" width="5%">{{ number_format($dtt_raw_oneline_discs[0]->total_289,0,',','.') }}  / {{ $c_289 }} </th>
                     @endif
                       @if((int)$header->total_290>0)
                         <th scope="col" width="5%">{{ number_format($header->total_290,0,',','.') }}  / {{ $c_290 }} </th>
                       @endif
       
                       @if((int)$header->total_291>0)
-                        <th scope="col" width="5%">{{ number_format($dtt_raw_oneline_disc[0]->total_291,0,',','.') }}  / {{ $c_291 }} </th>
+                        <th scope="col" width="5%">{{ number_format($dtt_raw_oneline_discs[0]->total_291,0,',','.') }}  / {{ $c_291 }} </th>
                       @endif
                   
                       @if((int)$header->total_292>0)
