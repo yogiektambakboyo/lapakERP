@@ -43,7 +43,6 @@ class ProductsStockExport implements FromCollection,WithColumnFormatting, WithHe
         ->join('branch as bc','bc.id','=','pr.branch_id')
         ->where('pt.id','=','1')
         ->whereRaw($whereclause)
-        ->where('bc.id','like','%'.$this->branch.'%') 
         ->get(['product_sku.remark as product_name','bc.remark as branch_name','pr.qty as product_qty']);
     
         
