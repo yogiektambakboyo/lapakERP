@@ -292,7 +292,7 @@
                           @endif                  
                           @if((int)$header->total_284>0)
                             @php  $c_284++; @endphp
-                              <td scope="col" width="5%"> @php if((int)$dtt_raw[$counter]->total_284>0 && (int)$dtt_raw_disc[$counter]->total_284<=0){ echo number_format($dtt_raw[$counter]->total_284,0,',','.'); }else{ echo 'Free'; } @endphp </td>
+                              <td scope="col" width="5%"> @php if((int)$dtt_raw[$counter]->total_284<=0 && (int)$dtt_raw_disc[$counter]->total_284>0){ echo echo 'Free'; }else{ number_format($dtt_raw[$counter]->total_284,0,',','.'); } @endphp </td>
                           @endif
                           @if((int)$header->total_285>0)
                           @php if((int)$dtt_raw[$counter]->total_285>0){ $c_285++; } @endphp
@@ -314,7 +314,7 @@
 
                           @if((int)$header->total_289>0)
                             @php  $c_289++; @endphp
-                              <td scope="col" width="5%"> @php if((int)$dtt_raw[$counter]->total_289>0 && (int)$dtt_raw_disc[$counter]->total_289<=0){ echo number_format($dtt_raw[$counter]->total_289,0,',','.'); }else{ echo 'Free'; } @endphp </td>
+                              <td scope="col" width="5%"> @php if((int)$dtt_raw[$counter]->total_289<=0 && (int)$dtt_raw_disc[$counter]->total_289>0){ echo echo 'Free'; }else{ number_format($dtt_raw[$counter]->total_289,0,',','.'); } @endphp </td>
                           @endif
 
                             @if((int)$header->total_290>0)
@@ -324,7 +324,7 @@
         
                             @if((int)$header->total_291>0)
                               @php  $c_291++; @endphp
-                                <td scope="col" width="5%"> @php if((int)$dtt_raw[$counter]->total_291>0 && (int)$dtt_raw_disc[$counter]->total_291<=0){ echo number_format($dtt_raw[$counter]->total_291,0,',','.'); }else{ echo 'Free'; } @endphp </td>
+                                <td scope="col" width="5%"> @php if((int)$dtt_raw[$counter]->total_291<=0 && (int)$dtt_raw_disc[$counter]->total_291>0){ echo echo 'Free'; }else{ number_format($dtt_raw[$counter]->total_291,0,',','.'); } @endphp </td>
                             @endif
 
                             
