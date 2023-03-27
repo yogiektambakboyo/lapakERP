@@ -71,6 +71,19 @@ class ReportCommisionTerapistDailyExport implements FromCollection,WithColumnFor
                     join users u on u.job_id = 2  and u.id = id.referral_by  
                     where pc.referral_fee  > 0 and im.dated between '".$this->begindate."' and '".$this->enddate."'  
                     group by  b.remark,im.dated,u.join_date,u.name
+                    union all            
+                    select b.remark as branch_name,'extra' as com_type,im.dated,count(ps.id) as qtyinv,case when date_part('year', age(now(),join_date))::int=0 then 1 else date_part('year', age(now(),join_date)) end as work_year,u.name,
+                    sum(pc.assigned_to_fee * id.qty) commisions,
+                    0 as point_qty
+                    from invoice_master im 
+                    join invoice_detail id on id.invoice_no = im.invoice_no 
+                    join product_sku ps on ps.id = id.product_id 
+                    join customers c on c.id = im.customers_id 
+                    join branch b on b.id = c.branch_id
+                    join product_commisions pc on pc.product_id = id.product_id and pc.branch_id = c.branch_id
+                    join users u on u.job_id = 2  and u.id = id.assigned_to  
+                    where pc.referral_fee+pc.assigned_to_fee+pc.created_by_fee  > 0  and im.dated  between '".$this->begindate."' and '".$this->enddate."'     and c.branch_id::character varying like  '%".$this->branch."%'
+                    group by  u.id,b.remark,im.dated,u.join_date,u.name
             ) a left join point_conversion pc2 on pc2.point_qty = a.point_qty  order by a.branch_name,a.dated,a.name
         ")); 
     }
