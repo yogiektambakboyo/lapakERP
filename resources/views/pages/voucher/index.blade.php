@@ -38,8 +38,8 @@
                 <th scope="col" width="15%">@lang('general.lbl_service_name')</th> 
                 <th scope="col" width="10%">@lang('general.lbl_date_start')</th>
                 <th scope="col" width="10%">@lang('general.lbl_date_end')</th>
-                <th scope="col" width="10%">@lang('general.lbl_values')</th>
-                <th scope="col" width="10%">@lang('general.lbl_price')</th>
+                <th scope="col" width="7%">@lang('general.lbl_values')</th>
+                <th scope="col" width="7%">@lang('general.lbl_price')</th>
                 <th scope="col" width="10%">Sudah digunakan?</th>
                 <th scope="col" width="2%">@lang('general.lbl_action')</th>  
                 <th scope="col" width="2%"></th>
