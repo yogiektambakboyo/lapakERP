@@ -477,7 +477,7 @@ class ReportTerapistComDailyController extends Controller
                 join branch b on b.id = c.branch_id
                 join product_commisions pc on pc.product_id = id.product_id and pc.branch_id = c.branch_id
                 join users u on u.job_id = 2  and u.id = id.assigned_to  
-                where pc.referral_fee+pc.assigned_to_fee+pc.created_by_fee  > 0  and im.dated  between '".$filter_begin_date."' and  '".$filter_begin_end."'   and c.branch_id::character varying like  '".$filter_branch_id."'
+                where pc.referral_fee+pc.assigned_to_fee+pc.created_by_fee  > 0  and im.dated  between '".$begindate."' and  '".$enddate."'   and c.branch_id::character varying like  '".$filter_branch_id."'
                 group by  b.remark,im.dated,u.join_date,u.name
         ) a left join point_conversion pc2 on pc2.point_qty = a.point_qty order by a.branch_name,a.dated,a.name;          
         ");  
