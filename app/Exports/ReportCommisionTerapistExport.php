@@ -77,8 +77,7 @@ class ReportCommisionTerapistExport implements FromCollection,WithColumnFormatti
                 select  b.remark as branch_name,'extra' as com_type,im.dated,im.invoice_no,ps.abbr,ps.remark,case when date_part('year', age(now(),join_date))::int=0 then 1 else date_part('year', age(now(),join_date)) end as work_year,u.name,id.price,id.qty,id.total,
                 pc.assigned_to_fee base_commision,
                 pc.assigned_to_fee * id.qty as commisions,
-                0 as point_qty,
-                0 as point_value   
+                0 as point_qty
                 from invoice_master im 
                 join invoice_detail id on id.invoice_no = im.invoice_no 
                 join product_sku ps on ps.id = id.product_id 
