@@ -532,19 +532,19 @@
                   <th colspan="5">JUMLAH</th>
                   @foreach($dtt_raw_oneline as $header)
                     @if((int)$header->total_324>0)
-                      <th scope="col" width="5%">{{ number_format($header->total_324,0,',','.') }} / {{ $c_324 }} </th>
+                      <th scope="col" width="5%">{{ number_format($header->total_324,0,',','.') }} / {{ $dtt_raw_oneline_qty[0]->total_324 }} </th>
                     @endif
                     @if((int)$header->total_325>0)
-                      <th scope="col" width="5%">{{ number_format($header->total_325,0,',','.') }} / {{ $c_325 }} </th>
+                      <th scope="col" width="5%">{{ number_format($header->total_325,0,',','.') }} / {{ $dtt_raw_oneline_qty[0]->total_325 }} </th>
                     @endif
                     @if((int)$header->total_326>0)
-                      <th scope="col" width="5%">{{ number_format($header->total_326,0,',','.') }} / {{ $c_326 }} </th>
+                      <th scope="col" width="5%">{{ number_format($header->total_326,0,',','.') }} / {{ $dtt_raw_oneline_qty[0]->total_326 }} </th>
                     @endif
                     @if((int)$header->total_327>0)
-                      <th scope="col" width="5%">{{ number_format($header->total_327,0,',','.') }} / {{ $c_327 }} </th>
+                      <th scope="col" width="5%">{{ number_format($header->total_327,0,',','.') }} / {{ $dtt_raw_oneline_qty[0]->total_327 }} </th>
                     @endif
                     @if((int)$header->total_328>0)
-                      <th scope="col" width="5%">{{ number_format($header->total_328,0,',','.') }} / {{ $c_328 }} </th>
+                      <th scope="col" width="5%">{{ number_format($header->total_328,0,',','.') }} / {{ $dtt_raw_oneline_qty[0]->total_328 }} </th>
                     @endif
 
 
