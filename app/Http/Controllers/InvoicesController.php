@@ -271,7 +271,8 @@ class InvoicesController extends Controller
             Voucher::where('voucher.voucher_code','=',$request->get('voucher_code'))
             ->update(
                 array_merge(
-                    ['is_used' => 1]
+                    ['is_used' => 1],
+                    ['invoice_no' => $invoice_no],
                 )
             );
         }
@@ -685,6 +686,16 @@ class InvoicesController extends Controller
                 ['customer_type' => $request->get('customer_type')],
             )
         );
+
+        if($request->get('voucher_code')!=""){
+            Voucher::where('voucher.voucher_code','=',$request->get('voucher_code'))
+            ->update(
+                array_merge(
+                    ['is_used' => 1],
+                    ['invoice_no' => $invoice_no],
+                )
+            );
+        }
 
         if(!$res_invoice){
             $result = array_merge(
