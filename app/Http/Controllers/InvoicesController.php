@@ -451,7 +451,7 @@ class InvoicesController extends Controller
 
         $pdf = PDF::setOptions(['isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true])->loadView('pages.invoices.printspk', [
             'data' => $data,
-            'customers' => Customer::join('invoice_master as om','om.customers_id','customers.id')->join('branch_room as br','br.id','om.branch_room_id')->join('branch as b','b.id','=','customers.branch_id')->where('invoice_master.invoice_no',$invoice->invoice_no)->get(['br.remark as room_name','b.remark as branch_name','customers.id','customers.name']),
+            'customers' => Customer::join('invoice_master as om','om.customers_id','customers.id')->join('branch_room as br','br.id','om.branch_room_id')->join('branch as b','b.id','=','customers.branch_id')->where('om.invoice_no',$invoice->invoice_no)->get(['br.remark as room_name','b.remark as branch_name','customers.id','customers.name']),
             'branchs' => Branch::join('users_branch as ub','ub.branch_id', '=', 'branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']),
             'users' => $users,
             'settings' => Settings::get(),
