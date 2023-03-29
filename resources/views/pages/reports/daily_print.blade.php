@@ -618,11 +618,11 @@
                     @endif
                 
                     @if((int)$header->total_300>0)
-                      <th scope="col" width="5%">{{ number_format($header->total_300,0,',','.') }}  / {{ $c_300 }} </th>
+                      <th scope="col" width="5%">{{ number_format($dtt_raw_oneline_discs[0]->total_300,0,',','.') }}  / {{ $c_300 }} </th>
                     @endif
                 
                     @if((int)$header->total_301>0)
-                      <th scope="col" width="5%">{{ number_format($header->total_301,0,',','.') }}  / {{ $c_301 }} </th>
+                      <th scope="col" width="5%">{{ number_format($dtt_raw_oneline_discs[0]->total_301,0,',','.') }}  / {{ $c_301 }}</th>
                     @endif
                 
                     @if((int)$header->total_302>0)
