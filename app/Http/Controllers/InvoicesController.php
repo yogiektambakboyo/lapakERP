@@ -261,6 +261,12 @@ class InvoicesController extends Controller
             )
         );
 
+        SettingsDocumentNumber::where('doc_type','=','Invoice')->where('branch_id','=',$branch->branch_id)->where('period','=','Yearly')->update(
+            array_merge(
+                ['current_value' => ((int)($count_no[0]->current_value) + 1)]
+            )
+        );
+
         if($request->get('voucher_code')!=""){
             Voucher::where('voucher.voucher_code','=',$request->get('voucher_code'))
             ->update(
@@ -343,12 +349,6 @@ class InvoicesController extends Controller
             ['status' => 'success'],
             ['data' => Invoice::where('invoice_no','=',$invoice_no)->get('id')->first()->id ],
             ['message' => $invoice_no],
-        );
-
-        SettingsDocumentNumber::where('doc_type','=','Invoice')->where('branch_id','=',$branch->branch_id)->where('period','=','Yearly')->update(
-            array_merge(
-                ['current_value' => ((int)($count_no[0]->current_value) + 1)]
-            )
         );
 
         return $result;
