@@ -681,7 +681,7 @@
           });
           $('#invoice_date').val(formattedToday);
           $('#schedule_date').datepicker({
-              format : 'dd-mm-yy',
+              dateFormat : 'dd-mm-yy',
               todayHighlight: true,
           });
           $('#schedule_date').val(formattedToday);
