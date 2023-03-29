@@ -72,57 +72,7 @@
           <div class="panel-heading bg-teal-600"><h4>@lang('general.lbl_ingredient')</h4></div>
           <div class="panel-body bg-white text-black">
             
-            <div class="row mb-3">
-              <div class="col-md-4">
-                <label class="form-label col-form-label">@lang('general.lbl_name')</label>
-                <input type="hidden" 
-                name="input_product_id"
-                id="input_product_id"
-                class="form-control" 
-                value="{{ $product->product_id }}" required/>
-                <select class="form-control" 
-                  name="input_product_id_material" id="input_product_id_material" required>
-                  <option value="">@lang('general.productselect')</option>
-                  @foreach($products as $pd)
-                      <option value="{{ $pd->id }}" {{ ($pd->id==old('input_product_id_material') ) 
-                        ? 'selected'
-                        : '' }}>{{ $pd->remark }}</option>
-                  @endforeach
-                </select>  
-              </div>
-
-              <div class="col-md-2">
-                <label class="form-label col-form-label">@lang('general.lbl_uom')</label>
-                <select class="form-control" 
-                  name="input_uom" id="input_uom" required>
-                  <option value="">@lang('general.lbl_uomselect')</option>
-                  @foreach($uoms as $uom)
-                      <option value="{{ $uom->id }}" {{ ($uom->id==old('input_uom') ) 
-                        ? 'selected'
-                        : '' }}>{{ $uom->remark }}</option>
-                  @endforeach
-                </select> 
-              </div>
-
-              <div class="col-md-2">
-                <label class="form-label col-form-label">@lang('general.lbl_qty')</label>
-                <input type="text" 
-                name="input_qty"
-                id="input_qty"
-                class="form-control" 
-                value="{{ old('input_qty') }}" required/>
-                @if ($errors->has('input_qty'))
-                          <span class="text-danger text-left">{{ $errors->first('input_qty') }}</span>
-                      @endif
-              </div>
-
-              <div class="col-md-2">
-                <div class="col-md-12"><label class="form-label col-form-label">_</label></div>
-                <a href="#" id="input_submit" class="btn btn-green"><div class="fa-1x"><i class="fas fa-plus fa-fw"></i>@lang('general.lbl_ingredient_add')</div></a>
-              </div>
-
-
-
+            <div class="row mb-3">     
               <div class="col-md-12">
                 <table class="table table-striped" id="example">
                     <thead>
@@ -130,7 +80,6 @@
                       <th scope="col">@lang('general.lbl_name')</th>
                       <th scope="col" width="10%">@lang('general.lbl_uom')</th>
                       <th scope="col" width="10%">@lang('general.lbl_qty')</th>
-                      <th scope="col" width="10%">@lang('general.lbl_action')</th>
                     </tr>
                     </thead>
                     <tbody>            
@@ -139,7 +88,6 @@
                             <th scope="row">{{ $ingredient->product_name }}</th>
                             <td>{{ $ingredient->uom_name }}</td>
                             <td>{{ $ingredient->qty }}</td>
-                            <td><a href="#" onclick="deleteIngredients({{ $ingredient->product_id}},{{$ingredient->product_id_material }});" class="btn btn-danger btn-sm">@lang('general.lbl_delete')</a></td>
                         </tr>
                     @endforeach
                     </tbody>
@@ -149,6 +97,7 @@
 
           </div>
         </div>
+
 
     </div>
 @endsection
