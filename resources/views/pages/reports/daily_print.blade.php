@@ -52,6 +52,21 @@
           <th  scope="col" width="10%">Jam Kerja</th>
           <th width="20%" >MU</th>
             @foreach($dtt_raw_oneline as $header)
+              @if((int)$header->total_324>0)
+                <th scope="col" width="5%">VTT</th>
+              @endif
+              @if((int)$header->total_325>0)
+                <th scope="col" width="5%">VFBT</th>
+              @endif
+              @if((int)$header->total_326>0)
+                <th scope="col" width="5%">VFBR</th>
+              @endif
+              @if((int)$header->total_327>0)
+                <th scope="col" width="5%">VEBBSL</th>
+              @endif
+              @if((int)$header->total_328>0)
+                <th scope="col" width="5%">VEBBSSGT</th>
+              @endif
               @if((int)$header->total_280>0)
                 <th scope="col" width="5%">TH</th>
               @endif
@@ -242,6 +257,11 @@
             $c_316 = 0;
             $c_309 = 0;
             $c_318 = 0;
+            $c_324 = 0;
+            $c_325 = 0;
+            $c_326 = 0;
+            $c_327 = 0;
+            $c_328 = 0;
           @endphp
 
             @foreach($dtt_detail as $detail)
@@ -274,6 +294,28 @@
                       </td>
                       <td style="text-align: left;">{{ $detail->name }}</td>    
                       @foreach($dtt_raw_oneline as $header)
+                          @if((int)$header->total_324>0)
+                              @php if((int)$dtt_raw[$counter]->total_324>0){ $c_324++; } @endphp
+                                <td scope="col" width="5%">{{ number_format($dtt_raw[$counter]->total_324,0,',','.') }}</td>
+                          @endif
+                          @if((int)$header->total_325>0)
+                          @php if((int)$dtt_raw[$counter]->total_325>0){ $c_325++; } @endphp
+                            <td scope="col" width="5%">{{ number_format($dtt_raw[$counter]->total_325,0,',','.') }}</td>
+                          @endif
+                          @if((int)$header->total_326>0)
+                          @php if((int)$dtt_raw[$counter]->total_326>0){ $c_326++; } @endphp
+                            <td scope="col" width="5%">{{ number_format($dtt_raw[$counter]->total_326,0,',','.') }}</td>
+                          @endif
+                          @if((int)$header->total_327>0)
+                          @php if((int)$dtt_raw[$counter]->total_327>0){ $c_327++; } @endphp
+                            <td scope="col" width="5%">{{ number_format($dtt_raw[$counter]->total_327,0,',','.') }}</td>
+                          @endif
+                          @if((int)$header->total_328>0)
+                          @php if((int)$dtt_raw[$counter]->total_328>0){ $c_328++; } @endphp
+                            <td scope="col" width="5%">{{ number_format($dtt_raw[$counter]->total_328,0,',','.') }}</td>
+                          @endif
+
+
                           @if((int)$header->total_280>0)
                           @php if((int)$dtt_raw[$counter]->total_280>0){ $c_280++; } @endphp
                             <td scope="col" width="5%">{{ number_format($dtt_raw[$counter]->total_280,0,',','.') }}</td>
@@ -489,6 +531,23 @@
                 <tr>
                   <th colspan="5">JUMLAH</th>
                   @foreach($dtt_raw_oneline as $header)
+                    @if((int)$header->total_324>0)
+                      <th scope="col" width="5%">{{ number_format($header->total_324,0,',','.') }} / {{ $c_324 }} </th>
+                    @endif
+                    @if((int)$header->total_325>0)
+                      <th scope="col" width="5%">{{ number_format($header->total_325,0,',','.') }} / {{ $c_325 }} </th>
+                    @endif
+                    @if((int)$header->total_326>0)
+                      <th scope="col" width="5%">{{ number_format($header->total_326,0,',','.') }} / {{ $c_326 }} </th>
+                    @endif
+                    @if((int)$header->total_327>0)
+                      <th scope="col" width="5%">{{ number_format($header->total_327,0,',','.') }} / {{ $c_327 }} </th>
+                    @endif
+                    @if((int)$header->total_328>0)
+                      <th scope="col" width="5%">{{ number_format($header->total_328,0,',','.') }} / {{ $c_328 }} </th>
+                    @endif
+
+
                     @if((int)$header->total_280>0)
                       <th scope="col" width="5%">{{ number_format($header->total_280,0,',','.') }} / {{ $c_280 }} </th>
                     @endif
