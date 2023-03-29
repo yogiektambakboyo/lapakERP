@@ -19,7 +19,7 @@ use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
 use Spatie\Permission\Models\Permission;
 use Maatwebsite\Excel\Facades\Excel;
-use App\Exports\ProductsExport;
+use App\Exports\ProductsStockExport;
 use App\Http\Controllers\Controller;
 use Yajra\Datatables\Datatables;
 use Auth;
@@ -84,9 +84,11 @@ class ProductsStockController extends Controller
         $keyword = $request->search;
         $data = $this->data;
         $act_permission = $this->act_permission[0];
+        $branchx = "%";
 
         if($request->export=='Export Excel'){
-            return Excel::download(new ProductsExport($keyword), 'products_'.Carbon::now()->format('YmdHis').'.xlsx');
+            $strencode = base64_encode($keyword.'#'.$branchx);
+            return Excel::download(new ProductsStockExport($strencode), 'productsstock_'.Carbon::now()->format('YmdHis').'.xlsx');
         }else{
             $whereclause = " upper(product_sku.remark) like '%".strtoupper($keyword)."%'";
             $products = Product::orderBy('product_sku.remark', 'ASC')

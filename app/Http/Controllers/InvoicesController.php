@@ -23,6 +23,7 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use App\Models\InvoiceDetail;
 use App\Models\Customer;
 use App\Models\Department;
+use App\Models\Voucher;
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
 use Spatie\Permission\Models\Permission;
@@ -259,6 +260,16 @@ class InvoicesController extends Controller
                 ['customer_type' => $request->get('customer_type')],
             )
         );
+
+        if($request->get('voucher_code')!=""){
+            Voucher::where('voucher.voucher_code','=',$request->get('voucher_code'))
+            ->update(
+                array_merge(
+                    ['is_used' => 1]
+                )
+            );
+        }
+
 
         $branch_id = Room::where('id',$request->get('branch_room_id'))->get(['branch_id'])->first();
 
@@ -644,6 +655,14 @@ class InvoicesController extends Controller
 
         for ($i=0; $i < count($last_data); $i++) { 
             DB::update("UPDATE product_stock set qty = qty+".$last_data[$i]['qty']." WHERE branch_id = ".$branch_id['branch_id']." and product_id = ".$last_data[$i]["product_id"].";");
+            DB::update("update public.period_stock set qty_out=qty_out-".$last_data[$i]['qty']." ,updated_at = now(), balance_end = balance_end - ".$last_data[$i]['qty']." where branch_id = ".$branch_id['branch_id']." and product_id = ".$last_data[$i]["product_id"]." and periode = to_char(now(),'YYYYMM')::int;");
+            
+
+            $productigredients = ProductIngredients::where('product_id','=',$last_data[$i]["product_id"])->get(['product_id_material','qty']);
+            foreach($productigredients as $productigredient){
+                DB::update("UPDATE product_stock set qty = qty+".($productigredient->qty*$last_data[$i]['qty'])." WHERE branch_id = ".$branch_id['branch_id']." and product_id = ".$productigredient->product_id_material);
+                DB::update("update public.period_stock set qty_out=qty_out-".($productigredient->qty*$last_data[$i]['qty'])." ,updated_at = now(), balance_end = balance_end - ".($productigredient->qty*$last_data[$i]['qty'])." where branch_id = ".$branch_id['branch_id']." and product_id = ".$productigredient->product_id_material." and periode = to_char(now(),'YYYYMM')::int;");    
+            }
         }
 
         InvoiceDetail::where('invoice_no', $invoice_no)->delete();
@@ -700,6 +719,7 @@ class InvoicesController extends Controller
 
 
             DB::update("UPDATE product_stock set qty = qty-".$request->get('product')[$i]['qty']." WHERE branch_id = ".$branch_id['branch_id']." and product_id = ".$request->get('product')[$i]["id"]);
+            DB::update("update public.period_stock set qty_out=qty_out+".$request->get('product')[$i]['qty']." ,updated_at = now(), balance_end = balance_end - ".$request->get('product')[$i]['qty']." where branch_id = ".$branch_id['branch_id']." and product_id = ".$request->get('product')[$i]['id']." and periode = to_char(now(),'YYYYMM')::int;");
 
             if(!$res_invoice_detail){
                 $result = array_merge(
@@ -709,7 +729,14 @@ class InvoicesController extends Controller
                 );
         
                 return $result;
-            }           
+            }   
+            
+            
+            $productigredients = ProductIngredients::where('product_id','=',$request->get('product')[$i]["id"])->get(['product_id_material','qty']);
+            foreach($productigredients as $productigredient){
+                DB::update("UPDATE product_stock set qty = qty-".($productigredient->qty*$request->get('product')[$i]['qty'])." WHERE branch_id = ".$branch_id['branch_id']." and product_id = ".$productigredient->product_id_material);
+                DB::update("update public.period_stock set qty_out=qty_out+".($productigredient->qty*$request->get('product')[$i]['qty'])." ,updated_at = now(), balance_end = balance_end - ".($productigredient->qty*$request->get('product')[$i]['qty'])." where branch_id = ".$branch_id['branch_id']." and product_id = ".$productigredient->product_id_material." and periode = to_char(now(),'YYYYMM')::int;");    
+            }
         }
 
         $result = array_merge(

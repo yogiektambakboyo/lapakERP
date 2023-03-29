@@ -34,12 +34,13 @@
             <tr>
                 <th scope="col" width="10%">@lang('general.lbl_branch')</th>
                 <th>Remark</th>
-                <th scope="col" width="15%">@lang('general.lbl_voucher_code')</th>
+                <th scope="col" width="10%">@lang('general.lbl_voucher_code')</th>
                 <th scope="col" width="15%">@lang('general.lbl_service_name')</th> 
                 <th scope="col" width="10%">@lang('general.lbl_date_start')</th>
                 <th scope="col" width="10%">@lang('general.lbl_date_end')</th>
-                <th scope="col" width="10%">@lang('general.lbl_values')</th>
-                <th scope="col" width="10%">@lang('general.lbl_price')</th>
+                <th scope="col" width="7%">@lang('general.lbl_values')</th>
+                <th scope="col" width="7%">@lang('general.lbl_price')</th>
+                <th scope="col" width="10%">Sudah digunakan?</th>
                 <th scope="col" width="2%">@lang('general.lbl_action')</th>  
                 <th scope="col" width="2%"></th>
             </tr>
@@ -56,6 +57,7 @@
                         <td>{{ Carbon\Carbon::parse($product->dated_end)->format('d-m-Y') }}</td>
                         <td>{{ number_format($product->value,0,',','.') }}</td>
                         <td>{{ number_format($product->price,0,',','.') }}</td>
+                        <td>{{ $product->is_used }}</td>
                         <td><a href="{{ route('voucher.edit', [$product->branch_id,$product->id,$product->dated_start,$product->dated_end,$product->voucher_code]) }}" class="btn btn-info btn-sm  {{ $act_permission->allow_edit==1?'':'d-none' }}">@lang('general.lbl_edit')</a></td>
                         <td class=" {{ $act_permission->allow_delete==1?'':'d-none' }}">
                             <a onclick="showConfirm( '{{ $product->branch_id }}','{{ $product->id }}','{{ $product->dated_start }}','{{ $product->dated_end }}','{{ $product->voucher_code }}' )" class="btn btn-danger btn-sm  {{ $act_permission->allow_delete==1?'':'d-none' }} ">@lang('general.lbl_delete')</a>

@@ -915,18 +915,6 @@
                 timer: 1500
               }
             );
-          }else if(order_total<=0){
-            Swal.fire(
-              {
-                position: 'top-end',
-                icon: 'warning',
-                text: 'Please choose at least 1 product',
-                showConfirmButton: false,
-                imageHeight: 30, 
-                imageWidth: 30,   
-                timer: 1500
-              }
-            );
           }else{
 
             counterBlank = 0;

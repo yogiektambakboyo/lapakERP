@@ -66,7 +66,7 @@ class ReportCashierComController extends Controller
                 select * from (    
                     select  'work_commission' as com_type,im.dated,im.invoice_no,ps.abbr,ps.remark,im.created_by,u.name,id.price,id.qty,id.total,pc.created_by_fee base_commision,pc.created_by_fee * id.qty as commisions  
                     from invoice_master im 
-                    join invoice_detail id on id.invoice_no = im.invoice_no 
+                    join invoice_detail id on id.invoice_no = im.invoice_no  and (id.referral_by is null)
                     join product_sku ps on ps.id = id.product_id 
                     join customers c on c.id = im.customers_id 
                     join product_commisions pc on pc.product_id = id.product_id and pc.branch_id = c.branch_id
@@ -122,7 +122,7 @@ class ReportCashierComController extends Controller
                         select a.branch_name,a.com_type,a.dated,a.qtyinv,a.work_year,a.name,a.commisions,a.point_qty,coalesce(pc2.point_value,0)  as point_value,a.commisions+coalesce(pc2.point_value,0) as total from (
                             select b.remark as branch_name,'work_commision' as com_type,im.dated,count(ps.id) as qtyinv,u.work_year,u.name,sum(pc.values*id.qty) as commisions,sum(coalesce(pp.point,0)*id.qty) as point_qty
                             from invoice_master im 
-                            join invoice_detail id on id.invoice_no = im.invoice_no
+                            join invoice_detail id on id.invoice_no = im.invoice_no and (id.referral_by is null)
                             join product_sku ps on ps.id = id.product_id 
                             join customers c on c.id = im.customers_id 
                             join branch b on b.id = c.branch_id
@@ -157,7 +157,7 @@ class ReportCashierComController extends Controller
                             select name,dated,id,0 as total_point,sum(commisions) as total from (
                                 select  u.id,'work_commission' as com_type,im.dated,im.invoice_no,ps.abbr,ps.remark,im.created_by,u.name,id.price,id.qty,id.total,pc.created_by_fee base_commision,pc.created_by_fee * id.qty as commisions  
                                 from invoice_master im 
-                                join invoice_detail id on id.invoice_no = im.invoice_no 
+                                join invoice_detail id on id.invoice_no = im.invoice_no  and (id.referral_by is null)
                                 join product_sku ps on ps.id = id.product_id 
                                 join customers c on c.id = im.customers_id  and c.branch_id::character varying like '%".$branchx."%' 
                                 join product_commisions pc on pc.product_id = id.product_id and pc.branch_id = c.branch_id
@@ -196,7 +196,7 @@ class ReportCashierComController extends Controller
             select * from (
                     select  ps.type_id,u.id,'work_commission' as com_type,im.dated,right(im.invoice_no,6) as invoice_no,ps.abbr,ps.remark,im.created_by,u.name,id.price,id.qty,id.total,pc.created_by_fee base_commision,pc.created_by_fee * id.qty as commisions  
                     from invoice_master im 
-                    join invoice_detail id on id.invoice_no = im.invoice_no 
+                    join invoice_detail id on id.invoice_no = im.invoice_no  and (id.referral_by is null)
                     join product_sku ps on ps.id = id.product_id 
                     join customers c on c.id = im.customers_id  and c.branch_id::character varying like '%".$branchx."%' 
                     join product_commisions pc on pc.product_id = id.product_id and pc.branch_id = c.branch_id
@@ -236,7 +236,7 @@ class ReportCashierComController extends Controller
                 select distinct right(invoice_no,6) as invoice_no,name,dated,id from (
                         select  u.id,'work_commission' as com_type,im.dated,im.invoice_no,ps.abbr,ps.remark,im.created_by,u.name,id.price,id.qty,id.total,pc.created_by_fee base_commision,pc.created_by_fee * id.qty as commisions  
                         from invoice_master im 
-                        join invoice_detail id on id.invoice_no = im.invoice_no 
+                        join invoice_detail id on id.invoice_no = im.invoice_no  and (id.referral_by is null)
                         join product_sku ps on ps.id = id.product_id 
                         join customers c on c.id = im.customers_id  and c.branch_id::character varying like '%".$branchx."%' 
                         join product_commisions pc on pc.product_id = id.product_id and pc.branch_id = c.branch_id
@@ -275,7 +275,7 @@ class ReportCashierComController extends Controller
                 select distinct name,dated,id from (
                         select  u.id,'work_commission' as com_type,im.dated,im.invoice_no,ps.abbr,ps.remark,im.created_by,u.name,id.price,id.qty,id.total,pc.created_by_fee base_commision,pc.created_by_fee * id.qty as commisions  
                         from invoice_master im 
-                        join invoice_detail id on id.invoice_no = im.invoice_no 
+                        join invoice_detail id on id.invoice_no = im.invoice_no  and (id.referral_by is null)
                         join product_sku ps on ps.id = id.product_id 
                         join customers c on c.id = im.customers_id  and c.branch_id::character varying like '%".$branchx."%' 
                         join product_commisions pc on pc.product_id = id.product_id and pc.branch_id = c.branch_id
@@ -298,7 +298,7 @@ class ReportCashierComController extends Controller
                         select dated,id,sum(commisions) as total from (
                             select  u.id,'work_commission' as com_type,im.dated,im.invoice_no,ps.abbr,ps.remark,im.created_by,u.name,id.price,id.qty,id.total,pc.created_by_fee base_commision,pc.created_by_fee * id.qty as commisions  
                             from invoice_master im 
-                            join invoice_detail id on id.invoice_no = im.invoice_no 
+                            join invoice_detail id on id.invoice_no = im.invoice_no  and (id.referral_by is null)
                             join product_sku ps on ps.id = id.product_id 
                             join customers c on c.id = im.customers_id  and c.branch_id::character varying like '%".$branchx."%' 
                             join product_commisions pc on pc.product_id = id.product_id and pc.branch_id = c.branch_id
@@ -353,7 +353,7 @@ class ReportCashierComController extends Controller
                 select * from (
                         select  'work_commission' as com_type,im.dated,im.invoice_no,ps.abbr,ps.remark,im.created_by,u.name,id.price,id.qty,id.total,pc.created_by_fee base_commision,pc.created_by_fee * id.qty as commisions  
                         from invoice_master im 
-                        join invoice_detail id on id.invoice_no = im.invoice_no 
+                        join invoice_detail id on id.invoice_no = im.invoice_no  and (id.referral_by is null)
                         join product_sku ps on ps.id = id.product_id 
                         join customers c on c.id = im.customers_id  and c.branch_id::character varying like '%".$branchx."%' 
                         join product_commisions pc on pc.product_id = id.product_id and pc.branch_id = c.branch_id
