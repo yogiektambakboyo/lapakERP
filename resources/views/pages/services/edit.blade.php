@@ -116,7 +116,7 @@
                 name="input_product_id"
                 id="input_product_id"
                 class="form-control" 
-                value="{{ $product->product_id }}" required/>
+                value="{{ $product->id }}" required/>
                 <select class="form-control" 
                   name="input_product_id_material" id="input_product_id_material" required>
                   <option value="">@lang('general.serviceselect')</option>
