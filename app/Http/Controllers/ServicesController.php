@@ -280,6 +280,15 @@ class ServicesController extends Controller
         $this->getpermissions($id);
 
         $data = $this->data;
+
+        $productsw = Product::join('product_type as pt','pt.id','=','product_sku.type_id')
+        ->join('product_category as pc','pc.id','=','product_sku.category_id')
+        ->join('product_brand as pb','pb.id','=','product_sku.brand_id')
+        ->where('product_sku.id','!=',$product->id)
+        ->where('product_sku.type_id','=','1')
+        ->orderBy('product_sku.remark','ASC')
+        ->get(['product_sku.id','product_sku.remark']);
+
         $products = Product::join('product_type as pt','pt.id','=','product_sku.type_id')
         ->join('product_category as pc','pc.id','=','product_sku.category_id')
         ->join('product_brand as pb','pb.id','=','product_sku.brand_id')
@@ -295,7 +304,10 @@ class ServicesController extends Controller
             'productTypesRemark' => Type::where('id','=','2')->latest()->get()->pluck('remark')->toArray(),
             'productUoms' => Uom::where('type_id','=','2')->latest()->orderBy('remark')->get(),
             'data' => $data,
+            'products' => $productsw ,
+            'uoms' => Uom::get(),
             'product' => $products, 'company' => Company::get()->first(),
+            'ingredients' => ProductIngredients::join('product_sku as ps','ps.id','product_ingredients.product_id_material')->join('uom as u','u.id','product_ingredients.uom_id')->where('product_ingredients.product_id',$product->id)->get(['product_ingredients.product_id','product_ingredients.product_id_material','u.remark as uom_name','ps.remark as product_name','product_ingredients.qty']),
         ]);
     }
 

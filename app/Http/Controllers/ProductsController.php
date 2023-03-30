@@ -307,6 +307,13 @@ class ProductsController extends Controller
         ->join('product_uom','product_uom.product_id','=','product_sku.id')
         ->where('product_sku.id',$product->id)
         ->get(['product_uom.uom_id as uom_id','product_sku.photo','product_sku.id as id','product_sku.abbr','product_sku.brand_id','product_sku.category_id','product_sku.type_id','product_sku.remark as product_name','pt.abbr as product_type','pc.remark as product_category','pb.remark as product_brand'])->first();
+
+        $productsw = Product::join('product_type as pt','pt.id','=','product_sku.type_id')
+        ->join('product_category as pc','pc.id','=','product_sku.category_id')
+        ->join('product_brand as pb','pb.id','=','product_sku.brand_id')
+        ->where('product_sku.id','!=',$product->id)
+        ->get(['product_sku.id','product_sku.remark']);
+
         return view('pages.products.edit', [
             'productCategorys' => Category::where('type_id','=','1')->latest()->get(),
             'productCategorysRemark' => Category::where('type_id','=','1')->latest()->get()->pluck('remark')->toArray(),
@@ -316,7 +323,10 @@ class ProductsController extends Controller
             'productTypesRemark' => Type::where('id','=','1')->latest()->get()->pluck('remark')->toArray(),
             'productUoms' => Uom::where('type_id','=','1')->latest()->orderBy('remark')->get(),
             'data' => $data,
+            'products' => $productsw ,
+            'uoms' => Uom::get(),
             'product' => $products, 'company' => Company::get()->first(),
+            'ingredients' => ProductIngredients::join('product_sku as ps','ps.id','product_ingredients.product_id_material')->join('uom as u','u.id','product_ingredients.uom_id')->where('product_ingredients.product_id',$product->id)->get(['product_ingredients.product_id','product_ingredients.product_id_material','u.remark as uom_name','ps.remark as product_name','product_ingredients.qty']),
         ]);
     }
 
