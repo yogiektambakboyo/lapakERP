@@ -266,7 +266,7 @@ class ReportCloseDayController extends Controller
         ");
 
         $dtt_detail = DB::select("
-                select c.id,customers_name,br.remark as branch_room,string_agg(distinct u.name,', ') as name,sum(id.qty*id.price)/1000 as total,string_agg(distinct im.payment_type,', ') payment_type,left(string_agg(distinct to_char(im.scheduled_at,'HH24:MI'),', '),5) as scheduled_at
+                select c.id,customers_name,string_agg(distinct br.remark,', ') as branch_room,string_agg(distinct u.name,', ') as name,sum(id.qty*id.price)/1000 as total,string_agg(distinct im.payment_type,', ') payment_type,left(string_agg(distinct to_char(im.scheduled_at,'HH24:MI'),', '),5) as scheduled_at
                 from invoice_master im 
                 join invoice_detail id on id.invoice_no = im.invoice_no 
                 join users u on u.id = id.assigned_to
@@ -318,7 +318,7 @@ class ReportCloseDayController extends Controller
                      '327',
                      '328'
                 )
-                group by customers_name,c.id,br.remark order by 7,1
+                group by customers_name,c.id order by 7,1
         ");
 
         $dtt_item_only = DB::select("
