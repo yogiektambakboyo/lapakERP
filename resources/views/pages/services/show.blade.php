@@ -10,7 +10,6 @@
           </div>
           <div class="col-md-2">
             <div class="mt-4">
-                <a href="{{ route('services.edit', $product->product_id) }}" class="btn btn-info">@lang('general.lbl_edit')</a>
                 <a href="{{ route('services.index') }}" class="btn btn-default">@lang('general.lbl_back')</a>
             </div>
           </div>
