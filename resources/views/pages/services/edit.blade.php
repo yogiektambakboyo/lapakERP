@@ -267,7 +267,21 @@
               }
             }).then(resp => {
                   if(resp.data.status=="success"){ 
-                    window.location.reload(); 
+                    Swal.fire({
+                        text: "Berhasil menambahkan bahan baku "+$('#input_product_id_material option:selected').text(),
+                        title : "@lang('general.lbl_success')",
+                        icon: 'success',
+                        showCancelButton: false,
+                      }).then((result) => {
+                        /* Read more about isConfirmed, isDenied below */
+                        if (result.isConfirmed) {
+                            window.location.reload(); 
+                        } else if (result.isDenied) {
+                          window.location.reload();
+                        }else{
+                          window.location.reload();
+                        }
+                      })
                   }else{
                     Swal.fire(
                       {
@@ -281,7 +295,20 @@
                       }
                     );
                   }
-            });
+            }).catch(function (error) {
+                Swal.fire(
+                        {
+                          position: 'top-end',
+                          icon: 'warning',
+                          text: "@lang('general.lbl_msg_failed')"+error.message,
+                          showConfirmButton: false,
+                          imageHeight: 30, 
+                          imageWidth: 30,   
+                          timer: 2500
+                        }
+                      );
+                console.log(error.toJSON());
+              });
           }
         });
 
