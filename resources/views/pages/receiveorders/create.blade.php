@@ -574,6 +574,16 @@
               }
             );
           }else{
+            // call Loading
+            let swal = Swal.fire({
+                  title: 'Loading...',
+                  html: 'Please wait, Request under processing',
+                  allowEscapeKey: false,
+                  allowOutsideClick: false,
+                  didOpen: () => {
+                    Swal.showLoading()
+                  }
+              });    
               const json = JSON.stringify({
                 branch_id : $('#branch_id').val(),
                 branch_name : $('#branch_id option:selected').text(),

@@ -245,6 +245,17 @@
                 }
               );
             }else{
+              // call Loading
+              let swal = Swal.fire({
+                  title: 'Loading...',
+                  html: 'Please wait, Request under processing',
+                  allowEscapeKey: false,
+                  allowOutsideClick: false,
+                  didOpen: () => {
+                    Swal.showLoading()
+                  }
+              });    
+              
               const json = JSON.stringify({
                   doc_date : $('#doc_date').val(),
                   product : orderList,
@@ -281,6 +292,19 @@
                         }
                       );
                     }
+              }).catch(function (error) {
+                Swal.fire(
+                        {
+                          position: 'top-end',
+                          icon: 'warning',
+                          text: "@lang('general.lbl_msg_failed')"+error.message,
+                          showConfirmButton: false,
+                          imageHeight: 30, 
+                          imageWidth: 30,   
+                          timer: 2500
+                        }
+                      );
+                console.log(error.toJSON());
               });
             }
           }
