@@ -64,7 +64,6 @@ class InvoicesExport implements FromCollection,WithColumnFormatting, WithHeading
     public function columnFormats(): array
     {
         return [
-            'F' => 'yyyy-mm-dd',
         ];
     }
 }
