@@ -345,6 +345,7 @@ class ProductsController extends Controller
             array_merge(
                 ['abbr' => $request->get('abbr') ],
                 ['updated_by' => $user->id],
+                ['updated_at' => Carbon::now()],
                 ['remark' => $request->get('remark') ],
                 ['type_id' => $request->get('type_id') ],
                 ['category_id' => $request->get('category_id') ],
