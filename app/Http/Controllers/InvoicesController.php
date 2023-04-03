@@ -617,7 +617,7 @@ class InvoicesController extends Controller
     {
         $data = $this->data;
         $user = Auth::user();
-        $product = DB::select(" select pt.remark as type,od.qty,od.product_id,od.discount,od.price,od.total,ps.remark,ps.abbr,um.remark as uom,od.assigned_to_name as assignedto,od.assigned_to as assignedtoid,od.vat,od.vat_total,od.referral_by,od.referral_by_name
+        $product = DB::select(" select om.scheduled_at,to_char(om.scheduled_at,'HH24:MI') as scheduled_time,pt.remark as type,od.qty,od.product_id,od.discount,od.price,od.total,ps.remark,ps.abbr,um.remark as uom,od.assigned_to_name as assignedto,od.assigned_to as assignedtoid,od.vat,od.vat_total,od.referral_by,od.referral_by_name
         from invoice_detail od 
         join invoice_master om on om.invoice_no = od.invoice_no
         join product_sku ps on ps.id=od.product_id

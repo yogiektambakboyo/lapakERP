@@ -115,9 +115,9 @@
                 name="input_product_id"
                 id="input_product_id"
                 class="form-control" 
-                value="{{ $product->id }}" required/>
+                value="{{ $product->id }}"/>
                 <select class="form-control" 
-                  name="input_product_id_material" id="input_product_id_material" required>
+                  name="input_product_id_material" id="input_product_id_material">
                   <option value="">@lang('general.productselect')</option>
                   @foreach($products as $pd)
                       <option value="{{ $pd->id }}" {{ ($pd->id==old('input_product_id_material') ) 
@@ -130,7 +130,7 @@
               <div class="col-md-2">
                 <label class="form-label col-form-label">@lang('general.lbl_uom')</label>
                 <select class="form-control" 
-                  name="input_uom" id="input_uom" required>
+                  name="input_uom" id="input_uom">
                   <option value="">@lang('general.lbl_uomselect')</option>
                   @foreach($uoms as $uom)
                       <option value="{{ $uom->id }}" {{ ($uom->id==old('input_uom') ) 
@@ -146,7 +146,7 @@
                 name="input_qty"
                 id="input_qty"
                 class="form-control" 
-                value="{{ old('input_qty') }}" required/>
+                value="{{ old('input_qty') }}"/>
                 @if ($errors->has('input_qty'))
                           <span class="text-danger text-left">{{ $errors->first('input_qty') }}</span>
                       @endif

@@ -1741,6 +1741,9 @@
                       orderList.push(product);
                   }
 
+                  $('#timepicker1').val(resp.data[0]["scheduled_time"]);
+
+
                   counterno = 0;
                   counterno_service = 0;  
                   orderList.sort(function(a, b) {
