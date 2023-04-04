@@ -57,8 +57,8 @@ class CloseShiftExport implements FromCollection,WithColumnFormatting, WithHeadi
         return collect(DB::select("
             select b.remark as branch_name,im.dated ,s.remark as shift_name,sum(id.total+id.vat_total) as total_all,
             sum(case when ps.type_id = 2 then id.total+id.vat_total else 0 end) as total_service,
-            sum(case when ps.type_id = 1 and ps.category_id !=12 then id.total+id.vat_total else 0 end) as total_product,
-            sum(case when ps.type_id = 1 and ps.category_id =12 then id.total+id.vat_total else 0 end) as total_drink,
+            sum(case when ps.type_id = 1 and ps.category_id !=26 then id.total+id.vat_total else 0 end) as total_product,
+            sum(case when ps.type_id = 1 and ps.category_id =26 then id.total+id.vat_total else 0 end) as total_drink,
             sum(case when ps.type_id = 8 then id.total+id.vat_total else 0 end) as total_extra,
             sum(case when im.payment_type = 'Cash' then id.total+id.vat_total else 0 end) as total_cash,
             sum(case when im.payment_type = 'BCA - Debit' then id.total+id.vat_total else 0 end) as total_b_d,
