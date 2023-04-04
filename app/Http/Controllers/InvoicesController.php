@@ -625,6 +625,9 @@ class InvoicesController extends Controller
         join product_uom uo on uo.product_id = od.product_id
         join uom um on um.id=uo.uom_id 
         where od.invoice_no='".$invoice_no."' order by od.seq");
+
+        DB::update("insert into invoice_log select id, invoice_no, dated, customers_id, total, tax, total_payment, total_discount, remark, payment_type, payment_nominal, voucher_code, scheduled_at, branch_room_id, ref_no, updated_by, printed_at, updated_at, created_by, created_at, is_checkout, is_canceled, customers_name, printed_count, customer_type,now() from invoice_master where invoice_no = '".$invoice_no."'");
+           
         
         return $product;
         return Datatables::of($product)
