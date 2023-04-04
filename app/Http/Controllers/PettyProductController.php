@@ -99,7 +99,7 @@ class PettyProductController extends Controller
                 ->join('users_branch as ub', function($join){
                     $join->on('ub.branch_id', '=', 'b.id')
                     ->whereColumn('ub.branch_id', 'petty_cash.branch_id');
-                })->where('ub.user_id', $user->id)->where('petty_cash.type','!=','Kas Keluar')->where('petty_cash.dated','>=',Carbon::now()->subDay(7))
+                })->where('ub.user_id', $user->id)->where('petty_cash.type','!=','Kas - Keluar')->where('petty_cash.dated','>=',Carbon::now()->subDay(7))
               ->get(['petty_cash.id','b.remark as branch_name','petty_cash.doc_no','petty_cash.dated','petty_cash.total','petty_cash.remark','petty_cash.type' ]);
         return view('pages.pettyproduct.index',['company' => Company::get()->first()], compact('invoices','data','keyword','act_permission','branchs'))->with('i', ($request->input('page', 1) - 1) * 5);
     }
@@ -132,7 +132,7 @@ class PettyProductController extends Controller
                 })->where('ub.user_id', $user->id)  
                 ->where('petty_cash.doc_no','ilike','%'.$keyword.'%') 
                 ->where('b.id','like','%'.$branchx.'%') 
-                ->where('petty_cash.type','!=','Kas Keluar')
+                ->where('petty_cash.type','!=','Kas - Keluar')
                 ->whereBetween('petty_cash.dated',$fil) 
                 ->get(['petty_cash.id','b.remark as branch_name','petty_cash.doc_no','petty_cash.dated','petty_cash.total','petty_cash.remark','petty_cash.type' ]);
 
@@ -323,9 +323,11 @@ class PettyProductController extends Controller
             }
 
             if($request->get('type')=="Produk - Keluar"){
+                DB::update(" INSERT INTO public.stock_log (product_id, qty, branch_id, doc_no,remarks, created_at) VALUES(".$request->get('product')[$i]["id"].", ".$request->get('product')[$i]['qty']." , ".$request->get('branch_id').", '".$doc_no."','Produk Keluar Created', now()) ");
                 DB::update("UPDATE product_stock set qty = qty-".$request->get('product')[$i]['qty']." WHERE branch_id = ".$request->get('branch_id')." and product_id = ".$request->get('product')[$i]["id"]);
                 DB::update("update public.period_stock set qty_out=qty_out+".$request->get('product')[$i]['qty']." ,updated_at = now(), balance_end = balance_end - ".$request->get('product')[$i]['qty']." where branch_id = ".$request->get('branch_id')." and product_id = ".$request->get('product')[$i]['id']." and periode = to_char(now(),'YYYYMM')::int;");
             }else{
+                DB::update(" INSERT INTO public.stock_log (product_id, qty, branch_id, doc_no,remarks, created_at) VALUES(".$request->get('product')[$i]["id"].", ".$request->get('product')[$i]['qty']." , ".$request->get('branch_id').", '".$doc_no."','Produk Masuk Created', now()) ");
                 DB::update("UPDATE product_stock set qty = qty+".$request->get('product')[$i]['qty']." WHERE branch_id = ".$request->get('branch_id')." and product_id = ".$request->get('product')[$i]["id"]);
                 DB::update("update public.period_stock set qty_in=qty_in+".$request->get('product')[$i]['qty']." ,updated_at = now(), balance_end = balance_end + ".$request->get('product')[$i]['qty']." where branch_id = ".$request->get('branch_id')." and product_id = ".$request->get('product')[$i]['id']." and periode = to_char(now(),'YYYYMM')::int;");
             }
@@ -693,9 +695,11 @@ class PettyProductController extends Controller
 
 
             if($request->get('type')=="Produk - Keluar"){
+                DB::update(" INSERT INTO public.stock_log (product_id, qty, branch_id, doc_no,remarks, created_at) VALUES(".$request->get('product')[$i]["id"].", ".$request->get('product')[$i]['qty']." , ".$request->get('branch_id').", '".$doc_no."','Edit Produk Keluar', now()) ");
                 DB::update("UPDATE product_stock set qty = qty-".$request->get('product')[$i]['qty']." WHERE branch_id = ".$request->get('branch_id')." and product_id = ".$request->get('product')[$i]["id"]);
                 DB::update("update public.period_stock set qty_out=qty_out+".$request->get('product')[$i]['qty']." ,updated_at = now(), balance_end = balance_end - ".$request->get('product')[$i]['qty']." where branch_id = ".$request->get('branch_id')." and product_id = ".$request->get('product')[$i]['id']." and periode = to_char(now(),'YYYYMM')::int;");
             }else{
+                DB::update(" INSERT INTO public.stock_log (product_id, qty, branch_id, doc_no,remarks, created_at) VALUES(".$request->get('product')[$i]["id"].", ".$request->get('product')[$i]['qty']." , ".$request->get('branch_id').", '".$doc_no."','Edit Produk Masuk', now()) ");
                 DB::update("UPDATE product_stock set qty = qty+".$request->get('product')[$i]['qty']." WHERE branch_id = ".$request->get('branch_id')." and product_id = ".$request->get('product')[$i]["id"]);
                 DB::update("update public.period_stock set qty_in=qty_in+".$request->get('product')[$i]['qty']." ,updated_at = now(), balance_end = balance_end + ".$request->get('product')[$i]['qty']." where branch_id = ".$request->get('branch_id')." and product_id = ".$request->get('product')[$i]['id']." and periode = to_char(now(),'YYYYMM')::int;");
             }

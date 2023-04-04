@@ -52,7 +52,7 @@ class PettyCashExport implements FromCollection,WithColumnFormatting, WithHeadin
                 })->where('ub.user_id', $this->user_id)  
                 ->where('petty_cash.doc_no','ilike','%'.$this->keyword.'%') 
                 ->where('b.id','like','%'.$this->branch.'%') 
-                ->where('petty_cash.type','=','Kas Keluar')
+                ->where('petty_cash.type','=','Kas - Keluar')
                 ->whereBetween('petty_cash.dated',$fil) 
                 ->get(['b.remark as branch_name','petty_cash.doc_no','petty_cash.dated','petty_cash.type','petty_cash.total','petty_cash.remark' ]);
     }
