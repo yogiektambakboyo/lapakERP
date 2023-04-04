@@ -40,6 +40,8 @@ class InvoicesExport implements FromCollection,WithColumnFormatting, WithHeading
             'Total',
             'Total Discount',
             'Total Payment',
+            'Updated_at',
+            'Created_at'
         ];
     }
     public function collection()
@@ -56,13 +58,12 @@ class InvoicesExport implements FromCollection,WithColumnFormatting, WithHeading
                 ->where('b.id','like','%'.$this->branch.'%') 
                 ->where('invoice_master.invoice_no','ilike','INV-%')
                 ->whereBetween('invoice_master.dated',$fil) 
-              ->get(['b.remark as branch_name','invoice_master.invoice_no','invoice_master.dated','jt.name as customer','invoice_master.total','invoice_master.total_discount','invoice_master.total_payment' ]);
+              ->get(['b.remark as branch_name','invoice_master.invoice_no','invoice_master.dated','jt.name as customer','invoice_master.total','invoice_master.total_discount','invoice_master.total_payment','invoice_master.updated_at','invoice_master.created_at' ]);
     }
 
     public function columnFormats(): array
     {
         return [
-            'F' => 'yyyy-mm-dd',
         ];
     }
 }
