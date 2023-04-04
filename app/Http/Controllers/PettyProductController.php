@@ -655,7 +655,11 @@ class PettyProductController extends Controller
         $last_data = PettyCashDetail::where('petty_cash_detail.doc_no','=',$doc_no)->get('petty_cash_detail.*');
 
         for ($i=0; $i < count($last_data); $i++) { 
-            DB::update("UPDATE product_stock set qty = qty+".$last_data[$i]['qty']." WHERE branch_id = ".$request->get('branch_id')." and product_id = ".$last_data[$i]["product_id"].";");
+            if($request->get('type')=="Produk - Keluar"){
+                DB::update("UPDATE product_stock set qty = qty+".$last_data[$i]['qty']." WHERE branch_id = ".$request->get('branch_id')." and product_id = ".$last_data[$i]["product_id"].";");
+            }else{
+                 DB::update("UPDATE product_stock set qty = qty-".$last_data[$i]['qty']." WHERE branch_id = ".$request->get('branch_id')." and product_id = ".$last_data[$i]["product_id"].";");
+            }
         }
 
         PettyCashDetail::where('doc_no', $doc_no)->delete();
