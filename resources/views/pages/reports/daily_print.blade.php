@@ -11,7 +11,7 @@
         #header_inv { column-count: 2}
         table, th, td {
           padding: 2px;
-          font-size: 14px;
+          font-size: 12px;
         }
         td, th {
             border: .01px solid black;
@@ -267,7 +267,7 @@
             @foreach($dtt_detail as $detail)
                   <tr>
                       <td style="text-align: left;">{{ $counter+1 }}</td>
-                      <td width="12%" style="text-align: left;">{{ $detail->branch_room }}</td>
+                      <td width="12%" style="text-align: left;@php if($detail->remark =='SHIFT 1 PAGI') {  echo 'background-color:#fea8ff;'; } @endphp">{{ $detail->branch_room }}<br>{{ $detail->invoice_no }}</td>
                       <td style="text-align: left;">{{ $detail->customers_name }}</td>
                       <td style="text-align: left;">
                         @php

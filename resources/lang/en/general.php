@@ -79,7 +79,7 @@ return [
     "lbl_uomedit" => "Ubah Satuan",
     "lbl_categoryedit" => "Ubah Kategori",
     "lbl_photo" => "Foto",
-    "lbl_qty" => "Jumlah",
+    "lbl_qty" => "Jml",
     "lbl_information" => "Informasi",
     "lbl_id" => "ID",
     "lbl_creditlimit" => "Credit Limit",
