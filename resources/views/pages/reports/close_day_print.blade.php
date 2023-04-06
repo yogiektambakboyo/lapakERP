@@ -546,6 +546,16 @@
         </tbody>
       </table>
 
+      <table style="width: 100%">
+        <tbody>
+          <tr style="text-align: left;background-color:#white;">
+            <td style="width: 100%;font-size:10px;font-style: italic;">
+              <label>Printed at : {{ \Carbon\Carbon::now() }}</label>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
        
    </body> 
 </html> 
