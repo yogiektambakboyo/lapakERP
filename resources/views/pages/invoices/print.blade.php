@@ -150,7 +150,7 @@
         <tbody>
           <tr style="text-align: left;background-color:#white;">
             <td style="width: 100%;font-size:10px;font-style: italic;">
-              <label>Printed at : {{ \Carbon\Carbon::now()->add('7 hours') }}, Print No : {{ $invoice->printed_count }}</label>
+              <label>Printed at : {{ \Carbon\Carbon::now() }}, Print No : {{ $invoice->printed_count }}</label>
             </td>
           </tr>
         </tbody>
