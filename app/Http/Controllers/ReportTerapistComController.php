@@ -71,13 +71,13 @@ class ReportTerapistComController extends Controller
                                         join branch b on b.id = c.branch_id
                                         join product_commision_by_year pc on pc.product_id = id.product_id and pc.branch_id = c.branch_id
                                         join (
-                                            select r.id,r.name,r.job_id,case when date_part('year', age(now(),join_date))::int=0 then 1 else date_part('year', age(now(),join_date)) end as work_year 
+                                            select r.id,r.name,r.job_id,case when date_part('year', age(now(),join_date))::int=0 then 1 when date_part('year', age(now(),join_date))::int>10 then 10  else date_part('year', age(now(),join_date)) end as work_year 
                                             from users r
                                             ) u on u.id = id.assigned_to and u.job_id = pc.jobs_id  and u.id = id.assigned_to  and u.work_year = pc.years 
                                         left join product_point pp on pp.product_id=ps.id and pp.branch_id=b.id 
                                         where pc.values > 0 and im.dated >= now()-interval'7 days'
                                         union all            
-                                        select  b.remark as branch_name,'referral' as com_type,im.dated,im.invoice_no,ps.abbr,ps.remark,case when date_part('year', age(now(),join_date))::int=0 then 1 else date_part('year', age(now(),join_date)) end as work_year,u.name,id.price,id.qty,id.total,
+                                        select  b.remark as branch_name,'referral' as com_type,im.dated,im.invoice_no,ps.abbr,ps.remark,case when date_part('year', age(now(),join_date))::int=0 then 1 when date_part('year', age(now(),join_date))::int>10 then 10  else date_part('year', age(now(),join_date)) end as work_year,u.name,id.price,id.qty,id.total,
                                         case when pc.referral_fee<=0 then pc.assigned_to_fee else pc.referral_fee end base_commision,
                                         case when pc.referral_fee<=0 then pc.assigned_to_fee * id.qty else pc.referral_fee * id.qty end as commisions,
                                         0 as point_qty,
@@ -91,7 +91,7 @@ class ReportTerapistComController extends Controller
                                         join users u on u.job_id = 2  and u.id = id.referral_by  
                                         where pc.referral_fee+pc.assigned_to_fee+pc.created_by_fee  > 0  and im.dated >= now()-interval'7 days'
                                         union all            
-                                        select  b.remark as branch_name,'extra' as com_type,im.dated,im.invoice_no,ps.abbr,ps.remark,case when date_part('year', age(now(),join_date))::int=0 then 1 else date_part('year', age(now(),join_date)) end as work_year,u.name,id.price,id.qty,id.total,
+                                        select  b.remark as branch_name,'extra' as com_type,im.dated,im.invoice_no,ps.abbr,ps.remark,case when date_part('year', age(now(),join_date))::int=0 then 1 when date_part('year', age(now(),join_date))::int>10 then 10  else date_part('year', age(now(),join_date)) end as work_year,u.name,id.price,id.qty,id.total,
                                         pc.assigned_to_fee base_commision,
                                         pc.assigned_to_fee * id.qty as commisions,
                                         0 as point_qty,
@@ -146,13 +146,13 @@ class ReportTerapistComController extends Controller
                                         join branch b on b.id = c.branch_id
                                         join product_commision_by_year pc on pc.product_id = id.product_id and pc.branch_id = c.branch_id
                                         join (
-                                            select r.id,r.name,r.job_id,case when date_part('year', age(now(),join_date))::int=0 then 1 else date_part('year', age(now(),join_date)) end as work_year 
+                                            select r.id,r.name,r.job_id,case when date_part('year', age(now(),join_date))::int=0 then 1 when date_part('year', age(now(),join_date))::int>10 then 10  else date_part('year', age(now(),join_date)) end as work_year 
                                             from users r
                                             ) u on u.id = id.assigned_to and u.job_id = pc.jobs_id  and u.id = id.assigned_to  and u.work_year = pc.years 
                                         left join product_point pp on pp.product_id=ps.id and pp.branch_id=b.id 
                                         where pc.values > 0 and im.dated between '".$begindate."' and '".$enddate."'  
                                         union all            
-                                        select  b.remark as branch_name,'referral' as com_type,im.dated,im.invoice_no,ps.abbr,ps.remark,case when date_part('year', age(now(),join_date))::int=0 then 1 else date_part('year', age(now(),join_date)) end as work_year,u.name,id.price,id.qty,id.total,pc.referral_fee base_commision,pc.referral_fee * id.qty as commisions,0 as point_qty,0 as point_value
+                                        select  b.remark as branch_name,'referral' as com_type,im.dated,im.invoice_no,ps.abbr,ps.remark,case when date_part('year', age(now(),join_date))::int=0 then 1 when date_part('year', age(now(),join_date))::int>10 then 10  else date_part('year', age(now(),join_date)) end as work_year,u.name,id.price,id.qty,id.total,pc.referral_fee base_commision,pc.referral_fee * id.qty as commisions,0 as point_qty,0 as point_value
                                         from invoice_master im 
                                         join invoice_detail id on id.invoice_no = im.invoice_no 
                                         join product_sku ps on ps.id = id.product_id 
@@ -162,7 +162,7 @@ class ReportTerapistComController extends Controller
                                         join users u on u.job_id = 2  and u.id = id.referral_by  
                                         where pc.referral_fee  > 0  and im.dated between '".$begindate."' and '".$enddate."' 
                                         union all            
-                                        select  b.remark as branch_name,'extra' as com_type,im.dated,im.invoice_no,ps.abbr,ps.remark,case when date_part('year', age(now(),join_date))::int=0 then 1 else date_part('year', age(now(),join_date)) end as work_year,u.name,id.price,id.qty,id.total,
+                                        select  b.remark as branch_name,'extra' as com_type,im.dated,im.invoice_no,ps.abbr,ps.remark,case when date_part('year', age(now(),join_date))::int=0 then 1 when date_part('year', age(now(),join_date))::int>10 then 10  else date_part('year', age(now(),join_date)) end as work_year,u.name,id.price,id.qty,id.total,
                                         pc.assigned_to_fee base_commision,
                                         pc.assigned_to_fee * id.qty as commisions,
                                         0 as point_qty,

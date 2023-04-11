@@ -128,14 +128,14 @@ class ReportCashierComController extends Controller
                             join branch b on b.id = c.branch_id
                             join product_commision_by_year pc on pc.product_id = id.product_id and pc.branch_id = c.branch_id
                             join (
-                                select r.id,r.name,r.job_id,case when date_part('year', age(now(),join_date))::int=0 then 1 else date_part('year', age(now(),join_date)) end as work_year 
+                                select r.id,r.name,r.job_id,case when date_part('year', age(now(),join_date))::int=0 then 1 when date_part('year', age(now(),join_date))::int>10 then 10  else date_part('year', age(now(),join_date)) end as work_year 
                                 from users r
                                 ) u on u.id = id.assigned_to and u.job_id = pc.jobs_id  and u.id = id.assigned_to  and u.work_year = pc.years 
                             left join product_point pp on pp.product_id=ps.id and pp.branch_id=b.id 
                             where pc.values > 0 and im.dated  between '".$filter_begin_date."' and  '".$filter_begin_end."'  and c.branch_id::character varying like  '".$filter_branch_id."'
                             group by  b.remark,im.dated,u.work_year,u.name
                             union all                                  
-                            select  b.remark as branch_name,'referral' as com_type,im.dated,count(ps.id) as qtyinv,case when date_part('year', age(now(),join_date))::int=0 then 1 else date_part('year', age(now(),join_date)) end as work_year,u.name,
+                            select  b.remark as branch_name,'referral' as com_type,im.dated,count(ps.id) as qtyinv,case when date_part('year', age(now(),join_date))::int=0 then 1 when date_part('year', age(now(),join_date))::int>10 then 10  else date_part('year', age(now(),join_date)) end as work_year,u.name,
                             sum(case when pc.referral_fee<=0 then pc.assigned_to_fee * id.qty else pc.referral_fee * id.qty end) as commisions,
                             0 as point_qty
                             from invoice_master im 
@@ -172,7 +172,7 @@ class ReportCashierComController extends Controller
                                 join branch b on b.id = c.branch_id
                                 join product_commision_by_year pc on pc.product_id = id.product_id and pc.branch_id = c.branch_id
                                 join (
-                                    select r.id,r.name,r.job_id,case when date_part('year', age(now(),join_date))::int=0 then 1 else date_part('year', age(now(),join_date)) end as work_year 
+                                    select r.id,r.name,r.job_id,case when date_part('year', age(now(),join_date))::int=0 then 1 when date_part('year', age(now(),join_date))::int>10 then 10  else date_part('year', age(now(),join_date)) end as work_year 
                                     from users r
                                     ) u on u.id = im.created_by and u.job_id = pc.jobs_id  and u.id = im.created_by  and u.work_year = pc.years 
                                 left join product_point pp on pp.product_id=ps.id and pp.branch_id=b.id 
@@ -211,7 +211,7 @@ class ReportCashierComController extends Controller
                     join branch b on b.id = c.branch_id
                     join product_commision_by_year pc on pc.product_id = id.product_id and pc.branch_id = c.branch_id
                     join (
-                        select r.id,r.name,r.job_id,case when date_part('year', age(now(),join_date))::int=0 then 1 else date_part('year', age(now(),join_date)) end as work_year 
+                        select r.id,r.name,r.job_id,case when date_part('year', age(now(),join_date))::int=0 then 1 when date_part('year', age(now(),join_date))::int>10 then 10  else date_part('year', age(now(),join_date)) end as work_year 
                         from users r
                         ) u on u.id = im.created_by and u.job_id = pc.jobs_id  and u.id = im.created_by  and u.work_year = pc.years 
                     left join product_point pp on pp.product_id=ps.id and pp.branch_id=b.id 
@@ -251,7 +251,7 @@ class ReportCashierComController extends Controller
                         join branch b on b.id = c.branch_id
                         join product_commision_by_year pc on pc.product_id = id.product_id and pc.branch_id = c.branch_id
                         join (
-                            select r.id,r.name,r.job_id,case when date_part('year', age(now(),join_date))::int=0 then 1 else date_part('year', age(now(),join_date)) end as work_year 
+                            select r.id,r.name,r.job_id,case when date_part('year', age(now(),join_date))::int=0 then 1 when date_part('year', age(now(),join_date))::int>10 then 10  else date_part('year', age(now(),join_date)) end as work_year 
                             from users r
                             ) u on u.id = im.created_by and u.job_id = pc.jobs_id  and u.id = im.created_by  and u.work_year = pc.years 
                         left join product_point pp on pp.product_id=ps.id and pp.branch_id=b.id 
@@ -313,7 +313,7 @@ class ReportCashierComController extends Controller
                             join branch b on b.id = c.branch_id
                             join product_commision_by_year pc on pc.product_id = id.product_id and pc.branch_id = c.branch_id
                             join (
-                                select r.id,r.name,r.job_id,case when date_part('year', age(now(),join_date))::int=0 then 1 else date_part('year', age(now(),join_date)) end as work_year 
+                                select r.id,r.name,r.job_id,case when date_part('year', age(now(),join_date))::int=0 then 1 when date_part('year', age(now(),join_date))::int>10 then 10  else date_part('year', age(now(),join_date)) end as work_year 
                                 from users r
                                 ) u on u.id = im.created_by and u.job_id = pc.jobs_id  and u.id = im.created_by  and u.work_year = pc.years 
                             left join product_point pp on pp.product_id=ps.id and pp.branch_id=b.id 
