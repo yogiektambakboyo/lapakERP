@@ -43,7 +43,6 @@
         <thead>
           <tr style="background-color:#FFA726;color:white;">
             <th rowspan="2">Tgl</th>
-            <th rowspan="2">MU</th>
             <th rowspan="2">No Faktur</th>
             <th colspan="5">Produk</th>
             <th rowspan="2">Extra Charge</th>
@@ -64,7 +63,6 @@
 
             <tr>
               <td style="text-align: left;vertical-align:top;">{{ $report_data_detail_ts->dated }}</td>
-              <td style="text-align: left;vertical-align:top;">{{ $report_data_detail_ts->name }}</td>
               <td style="text-align: left;vertical-align:top;">
                 @foreach($report_data_detail_invs as $report_data_detail_inv)
                    @if($report_data_detail_ts->dated == $report_data_detail_inv->dated && $report_data_detail_ts->id == $report_data_detail_inv->id)
