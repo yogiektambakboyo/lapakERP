@@ -950,6 +950,7 @@
                   branch_room_id : $('#room_id').val(),
                   ref_no : $('#ref_no').val(),
                   customer_type : $('#customer_type').val(),
+                  voucher_code :  $("#input-apply-voucher").val(),
                   tax : _vat_total,
                 }
               );
