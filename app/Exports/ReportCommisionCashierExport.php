@@ -31,7 +31,7 @@ class ReportCommisionCashierExport implements FromCollection,WithColumnFormattin
 
     public function headings(): array
     {
-        //b.remark as branch_name,'work_commission' as com_type,im.dated,im.invoice_no,ps.remark,u.name,id.price,id.qty,id.total,pc.values base_commision,pc.values  * id.qty as commisions  
+        //b.remark as branch_name,'work_commission' as com_type,to_char(im.dated,'dd-MM-YYYY') as dated,im.invoice_no,ps.remark,u.name,id.price,id.qty,id.total,pc.values base_commision,pc.values  * id.qty as commisions  
         return [
             'Branch',
             'Dated',
@@ -49,7 +49,7 @@ class ReportCommisionCashierExport implements FromCollection,WithColumnFormattin
     public function collection()
     {
         return collect(DB::select("
-            select  b.remark as branch_name,im.dated,im.invoice_no,ps.remark,im.created_by,u.name,id.price,id.qty,id.total,'work_commission' as com_type,pc.created_by_fee base_commision,pc.created_by_fee * id.qty as commisions  
+            select  b.remark as branch_name,to_char(im.dated,'dd-MM-YYYY') as dated,im.invoice_no,ps.remark,im.created_by,u.name,id.price,id.qty,id.total,'work_commission' as com_type,pc.created_by_fee base_commision,pc.created_by_fee * id.qty as commisions  
             from invoice_master im 
             join invoice_detail id on id.invoice_no = im.invoice_no 
             join product_sku ps on ps.id = id.product_id 
@@ -59,7 +59,7 @@ class ReportCommisionCashierExport implements FromCollection,WithColumnFormattin
             join users u on u.id = im.created_by and u.job_id = 1  and u.id = im.created_by and coalesce(id.assigned_to,0) > 0
             where pc.created_by_fee > 0 and im.dated between '".$this->begindate."' and '".$this->enddate."' 
             union 
-            select  b.remark as branch_name,im.dated,im.invoice_no,ps.remark,im.created_by,u.name,id.price,id.qty,id.total,'referral' as com_type,pc.referral_fee base_commision,pc.referral_fee  * id.qty as commisions  
+            select  b.remark as branch_name,to_char(im.dated,'dd-MM-YYYY') as dated,im.invoice_no,ps.remark,im.created_by,u.name,id.price,id.qty,id.total,'referral' as com_type,pc.referral_fee base_commision,pc.referral_fee  * id.qty as commisions  
             from invoice_master im 
             join invoice_detail id on id.invoice_no = im.invoice_no
             join product_sku ps on ps.id = id.product_id 

@@ -147,8 +147,8 @@
                   @php  $tot=0; @endphp
                   @foreach($report_data_com_from1 as $report_data_com_from1s)
                             @php 
-                                    $date1 = \Carbon\Carbon::createFromFormat('Y-m-d', $report_data_com_from1s->dated);
-                                    $date2 = \Carbon\Carbon::createFromFormat('Y-m-d', $report_data_detail_ts->dated);
+                                    $date1 = \Carbon\Carbon::createFromFormat('d-m-Y', $report_data_com_from1s->dated);
+                                    $date2 = \Carbon\Carbon::createFromFormat('d-m-Y', $report_data_detail_ts->dated);
                       
                                     
                                     $result = $date1->lte($date2);

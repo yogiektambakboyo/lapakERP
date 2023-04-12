@@ -66,7 +66,7 @@ class ReportTerapistComDailyController extends Controller
         $branchs = Branch::join('users_branch as ub','ub.branch_id', '=', 'branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']);        
 
         $report_data = DB::select("
-                    select a.branch_name,a.com_type,a.dated,a.qtyinv,a.work_year,a.name,a.commisions,a.point_qty,coalesce(pc2.point_value,0)  as point_value,a.commisions+coalesce(pc2.point_value,0) as total from (
+                    select a.branch_name,a.com_type,to_char(a.dated,'dd-mm-YYYY') as dated,a.qtyinv,a.work_year,a.name,a.commisions,a.point_qty,coalesce(pc2.point_value,0)  as point_value,a.commisions+coalesce(pc2.point_value,0) as total from (
                         select b.remark as branch_name,'work_commision' as com_type,im.dated,count(ps.id) as qtyinv,u.work_year,u.name,sum(pc.values*id.qty) as commisions,sum(coalesce(pp.point,0)*id.qty) as point_qty
                         from invoice_master im 
                         join invoice_detail id on id.invoice_no = im.invoice_no
@@ -147,7 +147,7 @@ class ReportTerapistComDailyController extends Controller
             $report_data = DB::select("
 
             
-                        select a.branch_name,a.com_type,a.dated,a.qtyinv,a.work_year,a.name,a.commisions,a.point_qty,coalesce(pc2.point_value,0)  as point_value,a.commisions+coalesce(pc2.point_value,0) as total from (
+                        select a.branch_name,a.com_type,to_char(a.dated,'dd-mm-YYYY') as dated,a.qtyinv,a.work_year,a.name,a.commisions,a.point_qty,coalesce(pc2.point_value,0)  as point_value,a.commisions+coalesce(pc2.point_value,0) as total from (
                             select b.remark as branch_name,'work_commision' as com_type,im.dated,count(ps.id) as qtyinv,u.work_year,u.name,sum(pc.values*id.qty) as commisions,sum(coalesce(pp.point,0)*id.qty) as point_qty
                             from invoice_master im 
                             join invoice_detail id on id.invoice_no = im.invoice_no
@@ -440,7 +440,7 @@ class ReportTerapistComDailyController extends Controller
                     ->paginate(10,['product_brand.id','product_brand.remark']);
 
             $report_data = DB::select("
-            select a.branch_name,a.com_type,a.dated,a.qtyinv,a.work_year,a.name,a.commisions,a.point_qty,coalesce(pc2.point_value,0)  as point_value,a.commisions+coalesce(pc2.point_value,0) as total from (
+            select a.branch_name,a.com_type,to_char(a.dated,'dd-mm-YYYY') as dated,a.qtyinv,a.work_year,a.name,a.commisions,a.point_qty,coalesce(pc2.point_value,0)  as point_value,a.commisions+coalesce(pc2.point_value,0) as total from (
                 select b.remark as branch_name,'work_commision' as com_type,im.dated,count(ps.id) as qtyinv,u.work_year,u.name,sum(pc.values*id.qty) as commisions,sum(coalesce(pp.point,0)*id.qty) as point_qty
                 from invoice_master im 
                 join invoice_detail id on id.invoice_no = im.invoice_no

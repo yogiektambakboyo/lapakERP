@@ -45,7 +45,7 @@ class ReportCommisionTerapistDailyExport implements FromCollection,WithColumnFor
     public function collection()
     {
         return collect(DB::select("  
-                select a.branch_name,a.dated,a.name,a.commisions,a.point_qty,coalesce(pc2.point_value,0)  as point_value,a.commisions+coalesce(pc2.point_value,0) as total from (
+                select a.branch_name,to_char(a.dated,'dd-mm-YYYY') as dated,a.name,a.commisions,a.point_qty,coalesce(pc2.point_value,0)  as point_value,a.commisions+coalesce(pc2.point_value,0) as total from (
                     select b.remark as branch_name,'work_commision' as com_type,im.dated,count(ps.id) as qtyinv,u.work_year,u.name,sum(pc.values*id.qty) as commisions,sum(coalesce(pp.point,0)*id.qty) as point_qty
                     from invoice_master im 
                     join invoice_detail id on id.invoice_no = im.invoice_no
