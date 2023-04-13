@@ -63,8 +63,8 @@ class ReportCashierComController extends Controller
         $branchs = Branch::join('users_branch as ub','ub.branch_id', '=', 'branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']);        
 
         $report_data = DB::select("
-                select * from (    
-                    select  'work_commission' as com_type,to_char(im.dated,'dd-MM-YYYY') as dated,im.invoice_no,ps.abbr,ps.remark,im.created_by,u.name,id.price,id.qty,id.total,pc.created_by_fee base_commision,pc.created_by_fee * id.qty as commisions  
+                select com_type,to_char(dated,'dd-MM-YYYY') as dated,invoice_no,abbr,remark,created_by,name,price,qty,total,base_commision,commisions from (    
+                    select  'work_commission' as com_type,im.dated,im.invoice_no,ps.abbr,ps.remark,im.created_by,u.name,id.price,id.qty,id.total,pc.created_by_fee base_commision,pc.created_by_fee * id.qty as commisions  
                     from invoice_master im 
                     join invoice_detail id on id.invoice_no = im.invoice_no  and (id.referral_by is null)
                     join product_sku ps on ps.id = id.product_id 
@@ -73,7 +73,7 @@ class ReportCashierComController extends Controller
                     join users u on u.id = im.created_by and u.job_id = 1  and u.id = im.created_by  
                     where pc.created_by_fee > 0
                     union 
-                    select  'referral' as com_type,to_char(im.dated,'dd-MM-YYYY') as dated,im.invoice_no,ps.abbr,ps.remark,im.created_by,u.name,id.price,id.qty,id.total,pc.referral_fee base_commision,pc.referral_fee  * id.qty as commisions  
+                    select  'referral' as com_type,im.dated,im.invoice_no,ps.abbr,ps.remark,im.created_by,u.name,id.price,id.qty,id.total,pc.referral_fee base_commision,pc.referral_fee  * id.qty as commisions  
                     from invoice_master im 
                     join invoice_detail id on id.invoice_no = im.invoice_no
                     join product_sku ps on ps.id = id.product_id 
