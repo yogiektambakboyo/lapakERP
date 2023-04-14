@@ -11,7 +11,7 @@
         #header_inv { column-count: 2}
         table, th, td {
           padding: 2px;
-          font-size: 14px;
+          font-size: 12px;
         }
         td, th {
             border: .01px solid black;
@@ -371,14 +371,16 @@
                      $cp = 0; 
                   @endphp
                   @foreach($arr_bca_d as $dat)
-                        <tr>
-                            <td style="text-align: left;">{{ number_format($arr_bca_d[$cp],0,',','.') }}</td>
-                            <td style="text-align: center;">{{ number_format($arr_bca_k[$cp],0,',','.') }}</td>
-                            <td style="text-align: center;">{{number_format($arr_man_d[$cp],0,',','.') }}</td>
-                            <td style="text-align: center;">{{ number_format($arr_man_k[$cp],0,',','.') }}</td>
-                            <td style="text-align: center;">{{ number_format($arr_qr[$cp],0,',','.') }}</td>
-                            <td style="text-align: center;">{{ number_format($arr_tr[$cp],0,',','.') }}</td>
-                        </tr> 
+                        @if(($arr_bca_d[$cp]+$arr_bca_k[$cp]+$arr_man_d[$cp]+$arr_man_k[$cp]+$arr_qr[$cp]+$arr_tr[$cp])>0)
+                            <tr>
+                              <td style="text-align: left;">{{ number_format($arr_bca_d[$cp],0,',','.') }}</td>
+                              <td style="text-align: center;">{{ number_format($arr_bca_k[$cp],0,',','.') }}</td>
+                              <td style="text-align: center;">{{number_format($arr_man_d[$cp],0,',','.') }}</td>
+                              <td style="text-align: center;">{{ number_format($arr_man_k[$cp],0,',','.') }}</td>
+                              <td style="text-align: center;">{{ number_format($arr_qr[$cp],0,',','.') }}</td>
+                              <td style="text-align: center;">{{ number_format($arr_tr[$cp],0,',','.') }}</td>
+                          </tr> 
+                        @endif
                         @php
                           $cp++; 
                       @endphp  

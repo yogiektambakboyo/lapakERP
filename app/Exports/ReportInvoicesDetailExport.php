@@ -44,7 +44,7 @@ class ReportInvoicesDetailExport implements FromCollection,WithColumnFormatting,
     public function collection()
     {
         return collect(DB::select("
-                select b.remark as branch_name,im.dated,im.invoice_no,id.product_name,pc.remark as category_name,id.qty,id.uom,id.total+id.vat_total as total
+                select b.remark as branch_name,to_char(im.dated,'dd-MM-YYYY') as dated,im.invoice_no,id.product_name,pc.remark as category_name,id.qty,id.uom,id.total+id.vat_total as total
                 from invoice_master im 
                 join invoice_detail id on id.invoice_no = im.invoice_no 
                 join product_sku ps on ps.id = id.product_id 
@@ -59,7 +59,6 @@ class ReportInvoicesDetailExport implements FromCollection,WithColumnFormatting,
     public function columnFormats(): array
     {
         return [
-            'B' => 'yyyy-mm-dd',
         ];
     }
 }

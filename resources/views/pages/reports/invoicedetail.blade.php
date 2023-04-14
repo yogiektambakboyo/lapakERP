@@ -24,8 +24,8 @@
         <table class="table table-striped" id="example">
             <thead>
             <tr>
-                <th scope="col" width="10%">@lang('general.lbl_branch')</th>
-                <th scope="col" width="10%">@lang('general.lbl_dated')</th>
+                <th scope="col" width="12%">@lang('general.lbl_branch')</th>
+                <th scope="col" width="8%">@lang('general.lbl_dated')</th>
                 <th scope="col">@lang('general.invoice_no')</th>    
                 <th scope="col">@lang('general.lbl_product_name')</th>     
                 <th scope="col">@lang('general.lbl_category')</th>     
@@ -39,7 +39,7 @@
                 @foreach($report_data as $rdata)
                     <tr>
                         <th scope="row">{{ $rdata->branch_name }}</th>
-                        <td>{{ $rdata->dated }}</td>
+                        <td>{{  Carbon\Carbon::parse($rdata->dated)->format('d-m-Y') }}</td>
                         <td>{{ $rdata->invoice_no }}</td>
                         <td>{{ $rdata->product_name }}</td>
                         <td>{{ $rdata->category_name }}</td>
@@ -180,24 +180,24 @@
           if (dd < 10) dd = '0' + dd;
           if (mm < 10) mm = '0' + mm;
 
-          const formattedToday = mm + '/' + dd + '/' + yyyy;
-          const formattedNextYear = mm + '/' + dd + '/' + yyyy1;
+          const formattedToday = dd + '-' + mm + '-' + yyyy;
+          const formattedNextYear = dd + '-' + mm + '-' + yyyy1;
 
           $('#filter_begin_date').datepicker({
-              format : 'yyyy-mm-dd',
+            dateFormat : 'dd-mm-yy',
               todayHighlight: true,
           });
           $('#filter_begin_date').val(formattedToday);
 
           $('#filter_begin_date_in').datepicker({
-              format : 'yyyy-mm-dd',
+            dateFormat : 'dd-mm-yy',
               todayHighlight: true,
           });
           $('#filter_begin_date_in').val(formattedToday);
 
 
           $('#filter_end_date_in').datepicker({
-              format : 'yyyy-mm-dd',
+            dateFormat : 'dd-mm-yy',
               todayHighlight: true,
           });
           $('#filter_end_date_in').val(formattedToday);
@@ -274,4 +274,11 @@
         $('#app').removeClass('app app-sidebar-fixed app-header-fixed-minified').addClass('app app-sidebar-fixed app-header-fixed-minified app-sidebar-minified');
 
     </script>
+@endpush
+@push('scripts')
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#example').DataTable();
+    });
+</script>
 @endpush

@@ -24,7 +24,7 @@
         <table class="table table-striped" id="example">
             <thead>
             <tr>
-                <th scope="col" width="10%">@lang('general.lbl_branch')</th>
+                <th scope="col" width="14%">@lang('general.lbl_branch')</th>
                 <th scope="col">@lang('general.lbl_customer')</th>     
                 <th scope="col">@lang('general.lbl_address')</th>    
                 <th scope="col">@lang('general.lbl_phoneno')</th>    
@@ -189,4 +189,11 @@
         $('#app').removeClass('app app-sidebar-fixed app-header-fixed-minified').addClass('app app-sidebar-fixed app-header-fixed-minified app-sidebar-minified');
 
     </script>
+@endpush
+@push('scripts')
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#example').DataTable();
+    });
+</script>
 @endpush

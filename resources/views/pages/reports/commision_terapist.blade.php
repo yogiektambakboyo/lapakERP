@@ -227,3 +227,10 @@
 
     </script>
 @endpush
+@push('scripts')
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#example').DataTable();
+    });
+</script>
+@endpush

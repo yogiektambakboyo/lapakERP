@@ -180,24 +180,24 @@
           if (dd < 10) dd = '0' + dd;
           if (mm < 10) mm = '0' + mm;
 
-          const formattedToday = mm + '/' + dd + '/' + yyyy;
-          const formattedNextYear = mm + '/' + dd + '/' + yyyy1;
+          const formattedToday = dd + '-' + mm + '-' + yyyy;
+          const formattedNextYear = dd + '-' + mm + '-' + yyyy1;
 
           $('#filter_begin_date').datepicker({
-              format : 'yyyy-mm-dd',
+            dateFormat : 'dd-mm-yy',
               todayHighlight: true,
           });
           $('#filter_begin_date').val(formattedToday);
 
           $('#filter_begin_date_in').datepicker({
-              format : 'yyyy-mm-dd',
+            dateFormat : 'dd-mm-yy',
               todayHighlight: true,
           });
           $('#filter_begin_date_in').val(formattedToday);
 
 
           $('#filter_end_date_in').datepicker({
-              format : 'yyyy-mm-dd',
+            dateFormat : 'dd-mm-yy',
               todayHighlight: true,
           });
           $('#filter_end_date_in').val(formattedToday);
@@ -224,4 +224,11 @@
         $('#app').removeClass('app app-sidebar-fixed app-header-fixed-minified').addClass('app app-sidebar-fixed app-header-fixed-minified app-sidebar-minified');
 
     </script>
+@endpush
+@push('scripts')
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#example').DataTable();
+    });
+</script>
 @endpush
