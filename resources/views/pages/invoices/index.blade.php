@@ -62,6 +62,8 @@
                         <td>
                             <a onclick="showErrorCheckout({{ $order->id }}, '{{ $order->invoice_no }}')" class="btn btn-success btn-sm  {{ $act_permission->allow_show==1?'':'d-none' }}">@lang('general.lbl_checkout')</a>
                         </td>
+                        @else
+                        <td></td>
                         @endif
                         <td><a href="{{ route('invoices.edit', $order->id) }}" class="btn btn-info btn-sm  {{ $act_permission->allow_edit==1?'':'d-none' }} ">@lang('general.lbl_edit')</a></td>
                         <td class=" {{ $act_permission->allow_delete==1?'':'d-none' }}">
