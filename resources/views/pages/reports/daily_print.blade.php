@@ -518,7 +518,12 @@
                       @foreach($dtt_item_only as $diox)
                           @if($diox->type_id==1 && $diox->customers_id == $detail->id && ($diox->refbuy > 0 || $diox->category_id=="26")   && $diox->invoice_no== $detail->invoice_no )
                                 {{ $diox->product_name }} / {{ $diox->qty }}  / {{ $diox->total }}<br>
-                                @php $c_pn=$c_pn+$diox->qty; @endphp
+                                @php $c_pn=$c_pn+$diox->qty; @endphp<br>
+                          @endif
+                      @endforeach
+                      @foreach($dtt_item_only as $diox)
+                          @if($diox->type_id==1 && $diox->customers_id == $detail->id && $diox->invoice_no== $detail->invoice_no )
+                                {{ $diox->voucher_code }}
                           @endif
                       @endforeach
                     </td>

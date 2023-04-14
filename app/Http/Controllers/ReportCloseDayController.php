@@ -279,7 +279,7 @@ class ReportCloseDayController extends Controller
         ");
 
         $dtt_item_only = DB::select("
-                select right(im.invoice_no,6) as invoice_no,ps.category_id,c.id as customers_id,ps.id,ps.abbr as product_name,ps.type_id,u.conversion,id.qty,(id.total/1000)::int as total,coalesce(id.referral_by,'0') as refbuy 
+                select im.voucher_code,right(im.invoice_no,6) as invoice_no,ps.category_id,c.id as customers_id,ps.id,ps.abbr as product_name,ps.type_id,u.conversion,id.qty,(id.total/1000)::int as total,coalesce(id.referral_by,'0') as refbuy 
                 from invoice_master im 
                 join invoice_detail id on id.invoice_no = im.invoice_no 
                 join product_sku ps on ps.id = id.product_id
