@@ -50,7 +50,7 @@ class ReportInvoicesExport implements FromCollection,WithColumnFormatting, WithH
     public function collection()
     {
         return collect(DB::select("
-            select b.remark as branch_name,im.dated,s.remark as shift_name,im.invoice_no,im.customers_name,im.total,im.total_payment,im.payment_type,coalesce(im.ref_no,'-') ref_no,u.name as created_by_name,im.created_at,im.updated_at
+            select b.remark as branch_name,to_char(im.dated,'dd-MM-YYYY') as dated,s.remark as shift_name,im.invoice_no,im.customers_name,im.total,im.total_payment,im.payment_type,coalesce(im.ref_no,'-') ref_no,u.name as created_by_name,im.created_at,im.updated_at
             from invoice_master im 
             join customers c on c.id = im.customers_id and c.branch_id::character varying like '%".$this->branch."%'
             join users u on u.id=im.created_by

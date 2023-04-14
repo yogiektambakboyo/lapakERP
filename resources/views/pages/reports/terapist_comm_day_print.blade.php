@@ -70,7 +70,7 @@
           @foreach($report_data_detail_t as $report_data_detail_ts)
 
             <tr>
-              <td style="text-align: left;vertical-align:top;">{{ $report_data_detail_ts->dated }}</td>
+              <td style="text-align: left;vertical-align:top;">{{ Carbon\Carbon::parse($report_data_detail_ts->dated)->format('d-m-Y') }}</td>
               <td style="text-align: left;vertical-align:top;">{{ $report_data_detail_ts->name }}</td>
               <td style="text-align: left;vertical-align:top;">
                 @foreach($report_data_detail_invs as $report_data_detail_inv)

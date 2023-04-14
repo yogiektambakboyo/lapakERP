@@ -37,7 +37,7 @@
                 <th scope="col">Mandiri D</th>    
                 <th scope="col">Mandiri K</th> 
                 <th scope="col">QRIS</th> 
-                <th scope="col">Transfer</th> 
+                <th scope="col">Tfr</th> 
                 <th scope="col">#SPK</th> 
                 <th scope="col">#Tamu</th>  
                 <th scope="col" width="2%">@lang('general.lbl_action')</th> 
@@ -347,4 +347,11 @@
         $('#app').removeClass('app app-sidebar-fixed app-header-fixed-minified').addClass('app app-sidebar-fixed app-header-fixed-minified app-sidebar-minified');
 
     </script>
+@endpush
+@push('scripts')
+<script type="text/javascript">
+    $(document).ready(function () {
+        //$('#example').DataTable();
+    });
+</script>
 @endpush

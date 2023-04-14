@@ -50,7 +50,7 @@ class ReportCommisionTerapistExport implements FromCollection,WithColumnFormatti
     public function collection()
     {
         return collect(DB::select("
-        select * from ( select  b.remark as branch_name,im.dated,u.name,im.invoice_no,ps.remark,id.price,id.qty,id.total,'work_commission' as com_type,pc.values base_commision,pc.values  * id.qty as commisions,coalesce(pp.point,0) as point_qty
+        select * from ( select  b.remark as branch_name,to_char(im.dated,'dd-MM-YYYY') as dated,u.name,im.invoice_no,ps.remark,id.price,id.qty,id.total,'work_commission' as com_type,pc.values base_commision,pc.values  * id.qty as commisions,coalesce(pp.point,0) as point_qty
                 from invoice_master im 
                 join invoice_detail id on id.invoice_no = im.invoice_no
                 join product_sku ps on ps.id = id.product_id 
@@ -64,7 +64,7 @@ class ReportCommisionTerapistExport implements FromCollection,WithColumnFormatti
                 left join product_point pp on pp.product_id=ps.id and pp.branch_id=b.id 
                 where pc.values > 0 and im.dated between '".$this->begindate."' and '".$this->enddate."'  
                 union all            
-                select  b.remark as branch_name,im.dated,u.name,im.invoice_no,ps.remark,id.price,id.qty,id.total,'referral' as com_type,pc.referral_fee base_commision,pc.referral_fee * id.qty as commisions,0 as point_qty
+                select  b.remark as branch_name,to_char(im.dated,'dd-MM-YYYY') as dated,u.name,im.invoice_no,ps.remark,id.price,id.qty,id.total,'referral' as com_type,pc.referral_fee base_commision,pc.referral_fee * id.qty as commisions,0 as point_qty
                 from invoice_master im 
                 join invoice_detail id on id.invoice_no = im.invoice_no 
                 join product_sku ps on ps.id = id.product_id 
@@ -74,7 +74,7 @@ class ReportCommisionTerapistExport implements FromCollection,WithColumnFormatti
                 join users u on u.job_id = 2  and u.id = id.referral_by  
                 where pc.referral_fee  > 0  and im.dated between '".$this->begindate."' and '".$this->enddate."' 
                 union all            
-                select  b.remark as branch_name,im.dated,u.name,im.invoice_no,ps.remark,id.price,id.qty,id.total,'extra' as com_type,pc.assigned_to_fee base_commision,pc.assigned_to_fee * id.qty as commisions,0 as point_qty
+                select  b.remark as branch_name,to_char(im.dated,'dd-MM-YYYY') as dated,u.name,im.invoice_no,ps.remark,id.price,id.qty,id.total,'extra' as com_type,pc.assigned_to_fee base_commision,pc.assigned_to_fee * id.qty as commisions,0 as point_qty
                 from invoice_master im 
                 join invoice_detail id on id.invoice_no = im.invoice_no 
                 join product_sku ps on ps.id = id.product_id 

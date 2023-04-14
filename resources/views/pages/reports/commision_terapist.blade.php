@@ -24,17 +24,17 @@
         <table class="table table-striped" id="example">
             <thead>
                 <tr>
-                    <th scope="col" width="8%">@lang('general.lbl_branch')</th>
+                    <th scope="col" width="12%">@lang('general.lbl_branch')</th>
                     <th scope="col" width="8%">@lang('general.lbl_dated')</th>
                     <th>@lang('general.invoice_no')</th>
-                    <th scope="col" width="17%">@lang('general.product')</th>
-                    <th scope="col" width="15%">@lang('general.lbl_name')</th>
-                    <th scope="col" width="5%">@lang('general.lbl_price')</th>
+                    <th scope="col" width="13%">@lang('general.product')</th>
+                    <th scope="col" width="12%">@lang('general.lbl_name')</th>
+                    <th scope="col" width="6%">@lang('general.lbl_price')</th>
                     <th scope="col" width="4%">@lang('general.lbl_qty')</th>
                     <th scope="col" width="8%">Total</th>  
                     <th scope="col" width="8%">Base Comm.</th>
-                    <th scope="col" width="12%">Total Comm</th>    
-                    <th scope="col" width="8%">Point</th>    
+                    <th scope="col" width="8%">Total Comm</th>    
+                    <th scope="col" width="6%">Point</th>    
                 </tr>
                 </thead>
                 <tbody>
@@ -42,7 +42,7 @@
                     @foreach($report_data as $user)
                         <tr>
                             <th scope="row">{{ $user->branch_name }}</th>
-                            <th scope="row">{{ $user->dated }}</th>
+                            <th scope="row">{{ Carbon\Carbon::parse($user->dated)->format('d-m-Y') }}</th>
                             <td>{{ $user->invoice_no }}</td>
                             <td>{{ $user->abbr }}</td>
                             <td>{{ $user->name }}</td>
