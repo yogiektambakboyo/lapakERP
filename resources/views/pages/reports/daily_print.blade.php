@@ -522,7 +522,7 @@
                           @endif
                       @endforeach
                       @foreach($dtt_item_only as $diox)
-                          @if($diox->type_id==1 && $diox->customers_id == $detail->id && $diox->invoice_no== $detail->invoice_no )
+                          @if($diox->customers_id == $detail->id && $diox->invoice_no== $detail->invoice_no )
                                 {{ $diox->voucher_code }}
                           @endif
                       @endforeach
