@@ -48,9 +48,9 @@
         <tr style="background-color:#FFA726;color:white;">
           <th scope="col" width="4%">No</th>
           <th width="12%" >Ruangan</th>
-          <th width="12%" >Nama Tamu</th>
+          <th width="10%" >Nama Tamu</th>
           <th  scope="col" width="10%">Jam Kerja</th>
-          <th width="20%" >MU</th>
+          <th width="14%" >MU</th>
             @foreach($dtt_raw_oneline as $header)
               @if((int)$header->total_324>0)
                 <th scope="col" width="5%">VTT</th>
