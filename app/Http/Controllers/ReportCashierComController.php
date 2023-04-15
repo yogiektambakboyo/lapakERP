@@ -293,12 +293,17 @@ class ReportCashierComController extends Controller
                 ) a order by dated
             ");
 
-            $date26 = '';
-            $today_date = (int)date("d");
+            $time = strtotime($begindate);
+            $newformat = date('Y-m-d',$time);
+            $newformatd = date('Y-m',$time);
+            $newformatlastm = date('Y-m', strtotime('-1 months', strtotime($newformat)));
+
+            $date26 = substr($begindate, 0, 2);
+            $today_date = (int)$date26;
             if ($today_date>=26){
-                $date26 = date("Y-m").'-26';
+                $date26 = newformatd.'-26';
             }else{
-                $date26 = date("Y-m",strtotime("-1 month")).'-26';
+                $date26 = $newformatlastm.'-26';
             }
 
             $report_data_com_from1 = DB::select("
