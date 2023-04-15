@@ -373,13 +373,14 @@ class ReportTerapistComDailyController extends Controller
             $newformatd = date('Y-m',$time);
             $newformatlastm = date('Y-m', strtotime('-1 months', strtotime($newformat)));
 
-            $date26 = substr($filter_begin_date, 0, 2);
+            $date26 = substr($filter_begin_date, 8, 2);
             $today_date = (int)$date26;
             if ($today_date>=26){
-                $date26 = newformatd.'-26';
+                $date26 = $newformatd.'-26';
             }else{
                 $date26 = $newformatlastm.'-26';
             }
+
             $report_data_com_from1 = DB::select("
 
                     select a.dated,a.id,sum(a.commisions+coalesce(pc2.point_value,0)) as total from (

@@ -293,15 +293,17 @@ class ReportCashierComController extends Controller
                 ) a order by dated
             ");
 
+
             $time = strtotime($begindate);
             $newformat = date('Y-m-d',$time);
             $newformatd = date('Y-m',$time);
             $newformatlastm = date('Y-m', strtotime('-1 months', strtotime($newformat)));
 
-            $date26 = substr($begindate, 0, 2);
+            $date26 = substr($begindate, 8, 2);
+
             $today_date = (int)$date26;
             if ($today_date>=26){
-                $date26 = newformatd.'-26';
+                $date26 = $newformatd.'-26';
             }else{
                 $date26 = $newformatlastm.'-26';
             }
