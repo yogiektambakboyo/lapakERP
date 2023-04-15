@@ -33,6 +33,11 @@ $(function () {
         showMeridian : false
     });
 });
+$(function () {
+    $('#timepicker2').timepicker({
+        showMeridian : false
+    });
+});
 $(".multiple-select2").select2({ placeholder: "Select a branch" });
 $('#branch_id').select2({ placeholder: "Select a branch" });
 if(($("#hide_val").val())!=null){

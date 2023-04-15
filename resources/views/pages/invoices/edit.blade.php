@@ -132,16 +132,27 @@
                   <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                   </div>
                   <div class="modal-body">
-                    <label class="form-label col-form-label col-md-8" id="product_id_selected_lbl">@lang('general.lbl_assignselect') </label>
-                    <input type="hidden" id="product_id_selected" value="">
-                    <div class="col-md-8">
-                      <select class="form-control" 
-                          name="assign_id" id="assign_id" required>
-                          <option value="">@lang('general.lbl_assignselect') </option>
-                          @foreach($users as $user)
-                              <option value="{{ $user->id }}">{{ $user->name }}</option>
-                          @endforeach
-                      </select>
+                    <div class="form-group row">
+                      <label class="form-label col-form-label col-md-12" id="product_id_selected_lbl">@lang('general.lbl_assignselect') </label>
+                      <input type="hidden" id="product_id_selected" value="">
+                      <div class="col-md-8">
+                        <select class="form-control" 
+                            name="assign_id" id="assign_id" required>
+                            <option value="">@lang('general.lbl_assignselect') </option>
+                            @foreach($users as $user)
+                                <option value="{{ $user->id }}">{{ $user->name }}</option>
+                            @endforeach
+                        </select>
+                      </div>
+                    </div>
+                    <div class="form-group row">
+                      <label class="form-label col-form-label col-md-12" id="product_id_selected_lbl">@lang('general.lbl_schedule') </label>
+                      <div class="col-md-4">
+                        <div class="input-group bootstrap-timepicker timepicker">
+                          <input id="timepicker2" name="timepicker2" type="text" class="form-control input-small">
+                          <span class="btn btn-indigo input-group-addon"><i class="fas fa-clock"></i></span>
+                        </div>
+                      </div>
                     </div>
                   </div>
                   <div class="modal-footer">
@@ -586,7 +597,7 @@
                                 "discount"  : obj["discount"],
                                 "qty"       : obj["qty"],
                                 "total"     : obj["total"],
-                                "assignedto": obj["assignedto"],
+                                "assignedto": obj["assignedto"] + " (" + obj["executed_at"] + ")",
                                 "referralby" : obj["referralby"],
                                 "action"    : "",
                           }).draw(false);
@@ -688,6 +699,7 @@
             if($('#product_id_selected').val()==obj["id"]){
               orderList[i]["assignedto"] = $('#assign_id option:selected').text();
               orderList[i]["assignedtoid"] = $('#assign_id').val();
+              orderList[i]["executed_at"] = $('#timepicker2').val();
             }
           }
 
@@ -713,7 +725,7 @@
                       "discount"  : obj["discount"],
                       "qty"       : obj["qty"],
                       "total"     : obj["total"],
-                      "assignedto": obj["assignedto"],
+                      "assignedto": obj["assignedto"] + " (" + obj["executed_at"] + ")",
                       "referralby" : obj["referralby"],
                       "action"    : "",
                 }).draw(false);
@@ -798,7 +810,7 @@
                       "discount"  : obj["discount"],
                       "qty"       : obj["qty"],
                       "total"     : obj["total"],
-                      "assignedto": obj["assignedto"],
+                      "assignedto": obj["assignedto"] + " (" + obj["executed_at"] + ")",
                       "referralby" : obj["referralby"],
                       "action"    : "",
                 }).draw(false);
@@ -1079,6 +1091,7 @@
                 "total"     : total,
                 "assignedto" : "",
                 "assignedtoid" : "",
+                "executed_at" : "",
                 "referralby" : "",
                 "referralbyid" : "",
                 "uom" : uom,
@@ -1127,7 +1140,7 @@
                       "discount"  : obj["discount"],
                       "qty"       : obj["qty"],
                       "total"     : obj["total"],
-                      "assignedto": obj["assignedto"],
+                      "assignedto": obj["assignedto"] + " (" + obj["executed_at"] + ")",
                       "referralby" : obj["referralby"],
                       "action"    : "",
                 }).draw(false);
@@ -1207,6 +1220,7 @@
                 if(data["id"]==obj["id"]){
                   $('#product_id_selected').val(data["id"]);
                   $('#product_id_selected_lbl').text("Choose terapist for product "+data["abbr"]);
+                  $('#timepicker2').val(obj["executed_at"]);
                 }
               }
 
@@ -1238,7 +1252,7 @@
                       "discount"  : obj["discount"],
                       "qty"       : obj["qty"],
                       "total"     : obj["total"],
-                      "assignedto": obj["assignedto"],
+                      "assignedto": obj["assignedto"] + " (" + obj["executed_at"] + ")",
                       "referralby" : obj["referralby"],
                       "action"    : "",
                 }).draw(false);
@@ -1728,6 +1742,7 @@
                             "uom"      : resp.data[i]["uom"],
                             "price"     : resp.data[i]["price"],
                             "discount"  : resp.data[i]["discount"],
+                            "executed_at"  : resp.data[i]["executed_at"],
                             "qty"       : resp.data[i]["qty"],
                             "total"     : resp.data[i]["total"],
                             "assignedto"     : resp.data[i]["assignedto"],
@@ -1743,6 +1758,7 @@
                   }
 
                   $('#timepicker1').val(resp.data[0]["scheduled_time"]);
+                  //$('#timepicker2').val(resp.data[0]["executed_at"]);
 
 
                   counterno = 0;
@@ -1765,7 +1781,7 @@
                                 "discount"  : obj["discount"],
                                 "qty"       : obj["qty"],
                                 "total"     : obj["total"],
-                                "assignedto": obj["assignedto"],
+                                "assignedto": obj["assignedto"] + " (" + obj["executed_at"] + ")",
                                 "referralby" : obj["referralby"],
                                 "action"    : "",
                           }).draw(false);
@@ -1842,6 +1858,7 @@
 
               if($(this).attr("id")=="assign_row"){
                 if(data["id"]==obj["id"]){
+                  $('#timepicker2').val(obj["executed_at"]);
                   $('#product_id_selected').val(data["id"]);
                   $('#product_id_selected_lbl').text("Pilih terapis untuk produk/perawatan "+data["abbr"]);
                 }
@@ -1874,7 +1891,7 @@
                         "discount"  : obj["discount"],
                         "qty"       : obj["qty"],
                         "total"     : obj["total"],
-                        "assignedto": obj["assignedto"],
+                        "assignedto": obj["assignedto"] + " (" + obj["executed_at"] + ")",
                         "referralby" : obj["referralby"],
                         "action"    : "",
                   }).draw(false);

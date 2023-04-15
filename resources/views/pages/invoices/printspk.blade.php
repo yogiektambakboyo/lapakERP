@@ -75,7 +75,9 @@
                 $tmpInvDetail = $invoiceDetails;
                 $arrTerapist = [];
                 for ($i = 0; $i < count($tmpInvDetail); $i++){
-                  array_push($arrTerapist, $tmpInvDetail[$i]->assigned_to);
+                  if($tmpInvDetail[$i]->assigned_to!=''){
+                    array_push($arrTerapist, $tmpInvDetail[$i]->assigned_to);
+                  }
                 }
                 $arrTerapist = array_unique($arrTerapist);
               @endphp
@@ -163,25 +165,14 @@
             <td style="text-align: left;width: 80%;font-size:15px;padding-left:10px;vertical-align: text-top;">
               @php
               $c = 1;
-              $sumconversion = 0;
-              $lastsch = "";
+              //$sumconversion = 0;
+              for ($i=0; $i <  count($invoiceDetails); $i++) { 
+                if (($invoiceDetails[$i]->type_id==2)&&($invoiceDetails[$i]->executed_at!='')){
+                   echo '<label>'.($c).'. '.\Carbon\Carbon::parse($invoiceDetails[$i]->executed_at)->format("H:i").'-'.\Carbon\Carbon::parse($invoiceDetails[$i]->executed_at)->add($invoiceDetails[$i]->conversion." minutes")->format("H:i").' ('.$invoiceDetails[$i]->uom.') </label><br>';
+                   $c++;
+                }
+              }
               @endphp
-              @for ($i = 0; $i < count($invoiceDetails); $i++)
-                  @if ($invoiceDetails[$i]->type_id==2)
-                    @php
-                      $sumconversion = $sumconversion+$invoiceDetails[$i]->conversion;
-                      if ($lastsch=="") {
-                        $lastsch = $invoiceDetails[$i]->scheduled_at;
-                      }
-                    @endphp
-                    <label>{{ $c }}. {{ \Carbon\Carbon::parse($lastsch)->isoFormat('H:mm') }} - {{ \Carbon\Carbon::parse($invoiceDetails[$i]->scheduled_at)->add($sumconversion.' minutes')->isoFormat('H:mm') }} ( {{ $invoiceDetails[$i]->uom  }} )</label><br>
-                    @php
-                    $c++;
-                    $lastsch = \Carbon\Carbon::parse($invoiceDetails[$i]->scheduled_at)->add($sumconversion.' minutes')->isoFormat('H:mm');
-                    @endphp
-                  @endif
-                  
-              @endfor
             </td>
           </tr>
         </tbody>

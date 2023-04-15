@@ -32,6 +32,7 @@ class InvoiceDetail extends Model
         'assigned_to_name',
         'referral_by_name',
         'vat',
+        'executed_at',
         'vat_total',
         'product_name',
         'uom'

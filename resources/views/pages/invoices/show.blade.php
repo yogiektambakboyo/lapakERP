@@ -148,7 +148,7 @@
                         <td>{{ number_format($orderDetail->discount, 0, ',', '.') }}</td>
                         <td>{{ $orderDetail->qty }}</td>
                         <td>{{ number_format($orderDetail->total, 0, ',', '.') }}</td>
-                        <td>{{ $orderDetail->assigned_to }}</td>
+                        <td>{{ $orderDetail->assigned_to }} @php echo $orderDetail->executed_at!=''?'('.Carbon\Carbon::parse($orderDetail->executed_at)->format('H:i').')':''; @endphp</td>
                         <td>{{ $orderDetail->referral_by }}</td>
                     </tr>
                 @endforeach

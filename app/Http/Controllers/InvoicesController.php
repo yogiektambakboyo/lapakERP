@@ -303,6 +303,7 @@ class InvoicesController extends Controller
                     ['total' => $request->get('product')[$i]["total"]],
                     ['discount' => $request->get('product')[$i]["discount"]],
                     ['seq' => $i ],
+                    ['executed_at' => $request->get('product')[$i]["executed_at"] ],
                     ['assigned_to' => $request->get('product')[$i]["assignedtoid"]],
                     ['referral_by' => $request->get('product')[$i]["referralbyid"]],
                     ['assigned_to_name' => $request->get('product')[$i]["assignedtoid"]==""?"":User::where('id','=',$request->get('product')[$i]["assignedtoid"])->get('name')->first()->name ],
@@ -384,7 +385,7 @@ class InvoicesController extends Controller
             'invoice' => $invoice,
             'room' => $room,
             'type_customers' => $type_customer,
-            'orderDetails' => InvoiceDetail::join('invoice_master as om','om.invoice_no','=','invoice_detail.invoice_no')->join('product_sku as ps','ps.id','=','invoice_detail.product_id')->join('product_uom as u','u.product_id','=','invoice_detail.product_id')->join('uom as um','um.id','=','u.uom_id')->leftjoin('users as us','us.id','=','invoice_detail.assigned_to')->leftjoin('users as usm','usm.id','=','invoice_detail.referral_by')->where('invoice_detail.invoice_no',$invoice->invoice_no)->orderByRaw(' ps.type_id DESC, invoice_detail.seq  ASC')->get(['usm.name as referral_by','us.name as assigned_to','um.remark as uom','invoice_detail.qty','invoice_detail.price','invoice_detail.total','ps.id','ps.remark as product_name','invoice_detail.discount','om.tax','om.voucher_code']),
+            'orderDetails' => InvoiceDetail::join('invoice_master as om','om.invoice_no','=','invoice_detail.invoice_no')->join('product_sku as ps','ps.id','=','invoice_detail.product_id')->join('product_uom as u','u.product_id','=','invoice_detail.product_id')->join('uom as um','um.id','=','u.uom_id')->leftjoin('users as us','us.id','=','invoice_detail.assigned_to')->leftjoin('users as usm','usm.id','=','invoice_detail.referral_by')->where('invoice_detail.invoice_no',$invoice->invoice_no)->orderByRaw(' ps.type_id DESC, invoice_detail.seq  ASC')->get(['usm.name as referral_by','us.name as assigned_to','um.remark as uom','invoice_detail.qty','invoice_detail.price','invoice_detail.total','ps.id','ps.remark as product_name','invoice_detail.discount','om.tax','om.voucher_code','invoice_detail.executed_at']),
             'usersReferrals' => $usersReferral,
             'payment_type' => $payment_type, 'company' => Company::get()->first(),
         ]);
@@ -454,6 +455,7 @@ class InvoicesController extends Controller
         $payment_type = ['Cash','BCA - Debit','BCA - Kredit','Mandiri - Debit','Mandiri - Kredit','Transfer','QRIS'];
         $users = User::join('users_branch as ub','ub.branch_id', '=', 'users.branch_id')->where('ub.user_id','=',$user->id)->where('users.job_id','=',2)->get(['users.id','users.name']);
 
+        //return InvoiceDetail::join('invoice_master as om','om.invoice_no','=','invoice_detail.invoice_no')->join('product_sku as ps','ps.id','=','invoice_detail.product_id')->join('product_uom as u','u.product_id','=','invoice_detail.product_id')->join('uom as um','um.id','=','u.uom_id')->leftjoin('users as us','us.id','=','invoice_detail.assigned_to')->where('invoice_detail.invoice_no',$invoice->invoice_no)->orderBy('invoice_detail.seq')->get(['invoice_detail.executed_at','om.customers_name','om.tax','om.voucher_code','us.name as assigned_to','um.remark as uom','invoice_detail.qty','invoice_detail.price','invoice_detail.total','ps.id','invoice_detail.product_name','invoice_detail.discount','ps.type_id','om.scheduled_at','um.conversion']);
         $pdf = PDF::setOptions(['isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true])->loadView('pages.invoices.printspk', [
             'data' => $data,
             'customers' => Customer::join('invoice_master as om','om.customers_id','customers.id')->join('branch_room as br','br.id','om.branch_room_id')->join('branch as b','b.id','=','customers.branch_id')->where('om.invoice_no',$invoice->invoice_no)->get(['br.remark as room_name','b.remark as branch_name','customers.id','customers.name']),
@@ -461,7 +463,8 @@ class InvoicesController extends Controller
             'users' => $users,
             'settings' => Settings::get(),
             'invoice' => $invoice,
-            'invoiceDetails' => InvoiceDetail::join('invoice_master as om','om.invoice_no','=','invoice_detail.invoice_no')->join('product_sku as ps','ps.id','=','invoice_detail.product_id')->join('product_uom as u','u.product_id','=','invoice_detail.product_id')->join('uom as um','um.id','=','u.uom_id')->leftjoin('users as us','us.id','=','invoice_detail.assigned_to')->where('invoice_detail.invoice_no',$invoice->invoice_no)->orderBy('invoice_detail.seq')->get(['om.customers_name','om.tax','om.voucher_code','us.name as assigned_to','um.remark as uom','invoice_detail.qty','invoice_detail.price','invoice_detail.total','ps.id','invoice_detail.product_name','invoice_detail.discount','ps.type_id','om.scheduled_at','um.conversion']),
+            'invoiceDetails' => InvoiceDetail::join('invoice_master as om','om.invoice_no','=','invoice_detail.invoice_no')->join('product_sku as ps','ps.id','=','invoice_detail.product_id')->join('product_uom as u','u.product_id','=','invoice_detail.product_id')->join('uom as um','um.id','=','u.uom_id')->leftjoin('users as us','us.id','=','invoice_detail.assigned_to')->where('invoice_detail.invoice_no',$invoice->invoice_no)->orderBy('invoice_detail.seq')->get(['invoice_detail.executed_at','om.customers_name','om.tax','om.voucher_code','us.name as assigned_to','um.remark as uom','invoice_detail.qty','invoice_detail.price','invoice_detail.total','ps.id','invoice_detail.product_name','invoice_detail.discount','ps.type_id','om.scheduled_at','um.conversion']),
+            //'invoiceDetails' => DB::select("select * from invoice_detail id join invoice_master im on im.invoice_no=id.invoice_no where id.invoice_no= "),
             'usersReferrals' => User::get(['users.id','users.name']),
             'payment_type' => $payment_type,
         ])->setOptions(['defaultFont' => 'sans-serif'])->setPaper('a5', 'potrait');
@@ -621,7 +624,7 @@ class InvoicesController extends Controller
     {
         $data = $this->data;
         $user = Auth::user();
-        $product = DB::select(" select om.scheduled_at,to_char(om.scheduled_at,'HH24:MI') as scheduled_time,pt.remark as type,od.qty,od.product_id,od.discount,od.price,od.total,ps.remark,ps.abbr,um.remark as uom,od.assigned_to_name as assignedto,od.assigned_to as assignedtoid,od.vat,od.vat_total,od.referral_by,od.referral_by_name
+        $product = DB::select(" select om.scheduled_at,coalesce(to_char(od.executed_at,'HH24:MI'),'') as executed_at,to_char(om.scheduled_at,'HH24:MI') as scheduled_time,pt.remark as type,od.qty,od.product_id,od.discount,od.price,od.total,ps.remark,ps.abbr,um.remark as uom,od.assigned_to_name as assignedto,od.assigned_to as assignedtoid,od.vat,od.vat_total,od.referral_by,od.referral_by_name
         from invoice_detail od 
         join invoice_master om on om.invoice_no = od.invoice_no
         join product_sku ps on ps.id=od.product_id
@@ -725,6 +728,7 @@ class InvoicesController extends Controller
                     ['price' => $request->get('product')[$i]["price"]],
                     ['total' => $request->get('product')[$i]["total"]],
                     ['discount' => $request->get('product')[$i]["discount"]],
+                    ['executed_at' => $request->get('product')[$i]["executed_at"]],
                     ['seq' => $i ],
                     ['assigned_to' => $request->get('product')[$i]["assignedtoid"]],
                     ['referral_by' => $request->get('product')[$i]["referralbyid"]],
