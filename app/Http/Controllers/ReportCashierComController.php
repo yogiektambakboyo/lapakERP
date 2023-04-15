@@ -293,6 +293,14 @@ class ReportCashierComController extends Controller
                 ) a order by dated
             ");
 
+            $date26 = '';
+            $today_date = (int)date("d");
+            if ($today_date>=26){
+                $date26 = date("Y-m").'-26';
+            }else{
+                $date26 = date("Y-m",strtotime("-1 month")).'-26';
+            }
+
             $report_data_com_from1 = DB::select("
 
                         select dated,'0' as id,sum(commisions) as total from (
@@ -303,7 +311,7 @@ class ReportCashierComController extends Controller
                             join customers c on c.id = im.customers_id  and c.branch_id::character varying like '%".$branchx."%' 
                             join product_commisions pc on pc.product_id = id.product_id and pc.branch_id = c.branch_id
                             join users u on u.id = im.created_by and u.job_id = 1  and u.id = im.created_by 
-                            where pc.created_by_fee > 0 and  im.dated between date_trunc('month', '".$begindate."'::date)::date and '".$enddate."' 
+                            where pc.created_by_fee > 0 and  im.dated between '".$date26."' and '".$enddate."' 
                             union 
                             select u.id,'extra_commision' as com_type,to_char(im.dated,'dd-MM-YYYY') as dated,im.invoice_no,ps.abbr,ps.remark,im.created_by,u.name,id.price,id.qty,id.total,pc.values as base_commision ,sum(pc.values*id.qty) as commisions
                             from invoice_master im 
@@ -317,7 +325,7 @@ class ReportCashierComController extends Controller
                                 from users r
                                 ) u on u.id = im.created_by and u.job_id = pc.jobs_id  and u.id = im.created_by  and u.work_year = pc.years 
                             left join product_point pp on pp.product_id=ps.id and pp.branch_id=b.id 
-                            where pc.values > 0 and im.dated  between '".$begindate."' and '".$enddate."'   and c.branch_id::character varying like '%".$branchx."%' 
+                            where pc.values > 0 and im.dated  between '".$date26."' and '".$enddate."'   and c.branch_id::character varying like '%".$branchx."%' 
                             group by u.id,b.remark,im.dated,u.work_year,u.name,im.invoice_no,ps.abbr,ps.remark,im.created_by,id.price,id.total,pc.values,id.qty 
                             union 
                             select  u.id,'referral' as com_type,to_char(im.dated,'dd-MM-YYYY') as dated,im.invoice_no,ps.abbr,ps.remark,im.created_by,u.name,id.price,id.qty,id.total,pc.referral_fee base_commision,pc.referral_fee  * id.qty as commisions  
@@ -327,7 +335,7 @@ class ReportCashierComController extends Controller
                             join customers c on c.id = im.customers_id  and c.branch_id::character varying like '%".$branchx."%' 
                             join product_commisions pc on pc.product_id = id.product_id and pc.branch_id = c.branch_id
                             join users u on u.id = im.created_by and u.job_id = 1 and u.id = id.referral_by 
-                            where pc.created_by_fee <= 0 and pc.referral_fee > 0 and im.dated between date_trunc('month', '".$begindate."'::date)::date and '".$enddate."'   
+                            where pc.created_by_fee <= 0 and pc.referral_fee > 0 and im.dated between '".$date26."' and '".$enddate."'   
                     ) a group by dated     
             ");
     

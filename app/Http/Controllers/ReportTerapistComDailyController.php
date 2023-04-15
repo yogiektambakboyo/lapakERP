@@ -368,6 +368,13 @@ class ReportTerapistComDailyController extends Controller
                        
             ");
 
+            $date26 = '';
+            $today_date = (int)date("d");
+            if ($today_date>=26){
+                $date26 = date("Y-m").'-26';
+            }else{
+                $date26 = date("Y-m",strtotime("-1 month")).'-26';
+            }
             $report_data_com_from1 = DB::select("
 
                     select a.dated,a.id,sum(a.commisions+coalesce(pc2.point_value,0)) as total from (
@@ -383,7 +390,7 @@ class ReportTerapistComDailyController extends Controller
                             from users r
                             ) u on u.id = id.assigned_to and u.job_id = pc.jobs_id  and u.id = id.assigned_to  and u.work_year = pc.years 
                         left join product_point pp on pp.product_id=ps.id and pp.branch_id=b.id 
-                        where pc.values > 0 and im.dated  between date_trunc('month', '".$filter_begin_date."'::date)::date and '".$filter_begin_end."'  and c.branch_id::character varying like  '".$filter_branch_id."'
+                        where pc.values > 0 and im.dated  between '".$date26."'  and '".$filter_begin_end."'  and c.branch_id::character varying like  '".$filter_branch_id."'
                         group by  u.id,b.remark,im.dated,u.work_year,u.name
                         union all                                  
                         select  u.id,b.remark as branch_name,'referral' as com_type,im.dated,count(ps.id) as qtyinv,case when date_part('year', age(now(),join_date))::int=0 then 1 when date_part('year', age(now(),join_date))::int>10 then 10  else date_part('year', age(now(),join_date)) end as work_year,u.name,
@@ -396,7 +403,7 @@ class ReportTerapistComDailyController extends Controller
                         join branch b on b.id = c.branch_id
                         join product_commisions pc on pc.product_id = id.product_id and pc.branch_id = c.branch_id
                         join users u on u.job_id = 2  and u.id = id.referral_by  
-                        where pc.referral_fee+pc.assigned_to_fee+pc.created_by_fee  > 0 and im.dated  between date_trunc('month', '".$filter_begin_date."'::date)::date and '".$filter_begin_end."'  and c.branch_id::character varying like  '".$filter_branch_id."'
+                        where pc.referral_fee+pc.assigned_to_fee+pc.created_by_fee  > 0 and im.dated  between '".$date26."'  and '".$filter_begin_end."'  and c.branch_id::character varying like  '".$filter_branch_id."'
                         group by  u.id,b.remark,im.dated,u.join_date,u.name
                         union all            
                         select u.id,b.remark as branch_name,'extra' as com_type,im.dated,count(ps.id) as qtyinv,case when date_part('year', age(now(),join_date))::int=0 then 1 when date_part('year', age(now(),join_date))::int>10 then 10  else date_part('year', age(now(),join_date)) end as work_year,u.name,
@@ -409,7 +416,7 @@ class ReportTerapistComDailyController extends Controller
                         join branch b on b.id = c.branch_id
                         join product_commisions pc on pc.product_id = id.product_id and pc.branch_id = c.branch_id
                         join users u on u.job_id = 2  and u.id = id.assigned_to  
-                        where pc.referral_fee+pc.assigned_to_fee+pc.created_by_fee  > 0  and im.dated  between '".$filter_begin_date."' and  '".$filter_begin_end."'   and c.branch_id::character varying like  '".$filter_branch_id."'
+                        where pc.referral_fee+pc.assigned_to_fee+pc.created_by_fee  > 0  and im.dated  between '".$date26."'  and  '".$filter_begin_end."'   and c.branch_id::character varying like  '".$filter_branch_id."'
                         group by  u.id,b.remark,im.dated,u.join_date,u.name
 
                     ) a left join point_conversion pc2 on pc2.point_qty = a.point_qty group by a.id,a.dated  order by a.dated;
