@@ -117,6 +117,14 @@ class ReportCloseDayController extends Controller
                 where im.dated = '".$filter_begin_date."'  and c.branch_id = ".$filter_branch_id."
                 group by ps.category_id,b.remark,im.dated,id.product_name,ps.abbr,id.price,ps.type_id                         
         ");
+
+        $creator = DB::select("
+                select string_agg(distinct created_by,', ') created_by from (select coalesce(u.name,'-') as created_by
+                from invoice_master im 
+                join customers c on c.id= im.customers_id 
+                join users u on u.id= im.created_by
+                where im.dated = '".$filter_begin_date."'  and c.branch_id = ".$filter_branch_id." order by im.invoice_no ) a                      
+        ");
         $out_data = DB::select("
                 select ps2.abbr,sum(pi2.qty) as qty 
                 from invoice_master im 
@@ -164,6 +172,7 @@ class ReportCloseDayController extends Controller
             'report_datas' => $report_data,
             'petty_datas' => $petty_datas,
             'cust' => $cust,
+            'creator' => $creator,
             'settings' => Settings::get(),
         ])->setOptions(['defaultFont' => 'sans-serif'])->setPaper('a4', 'landscape');
         return $pdf->stream('invoice.pdf');

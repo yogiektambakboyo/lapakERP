@@ -542,7 +542,7 @@
 
           </tr>
           <tr>
-            <th colspan="2" style="text-align: center;">TTD Kasir<br><br><br>( {{auth()->user()->name}} )</th>
+            <th colspan="2" style="text-align: center;">TTD Kasir<br><br><br>( {{ $creator[0]->created_by }} )</th>
             <th colspan="3" style="text-align: center;">TTD Penerima<br><br><br>( . . . . . . . . . )</th>
           </tr>
         </tbody>

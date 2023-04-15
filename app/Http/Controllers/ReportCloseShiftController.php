@@ -122,6 +122,18 @@ class ReportCloseShiftController extends Controller
                 where im.dated = '".$filter_begin_date."' and im.created_at::time  between s.time_start and s.time_end  and c.branch_id = ".$filter_branch_id."
                 group by ps.category_id,s.remark,b.remark,im.dated,id.product_name,ps.abbr,id.price,ps.type_id                         
         ");
+
+        $creator = DB::select("
+                select coalesce(string_agg(distinct created_by,', '),'-') as created_by from (select coalesce(u.name,'-') as created_by
+                from invoice_master im 
+                join customers c on c.id= im.customers_id 
+                join users u on u.id= im.created_by
+                join branch_shift bs on bs.branch_id = c.branch_id
+                join shift s on s.id = ".$filter_shift."  and s.id = bs.shift_id
+                where im.dated = '".$filter_begin_date."'  and c.branch_id = ".$filter_branch_id."  and im.created_at::time  between s.time_start and s.time_end  order by im.invoice_no   
+                ) a             
+        ");
+
         $payment_data = DB::select("
                 select im.invoice_no,im.total_payment,im.payment_type,count(distinct im.invoice_no) as qty_payment
                 from invoice_master im 
@@ -169,6 +181,7 @@ class ReportCloseShiftController extends Controller
             'payment_datas' => $payment_data,
             'report_datas' => $report_data,
             'out_datas' => $out_data,
+            'creator' => $creator,
             'settings' => Settings::get(),
             'petty_datas' => $petty_datas,
             'cust' => $cust,
