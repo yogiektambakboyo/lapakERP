@@ -276,19 +276,8 @@
                             $lastsch = "";
                         @endphp
                         @foreach($dtt_item_only as $dio)
-                            @if($dio->type_id==2 && $dio->customers_id == $detail->id)
-                                @php
-                                  $sumconversion = $sumconversion+$dio->conversion;
-                                  if ($lastsch=="") {
-                                    $lastsch = $detail->scheduled_at;
-                                  }
-                                @endphp
-                                
-                                  {{ \Carbon\Carbon::parse($lastsch)->isoFormat('H:mm') }} - {{ \Carbon\Carbon::parse($detail->scheduled_at)->add($sumconversion.' minutes')->isoFormat('H:mm') }} <br>
-                                  @php
-                                    $c++;
-                                    $lastsch = \Carbon\Carbon::parse($detail->scheduled_at)->add($sumconversion.' minutes')->isoFormat('H:mm');
-                                  @endphp
+                            @if($dio->type_id==2 && $dio->customers_id == $detail->id && $dio->executed_at!='' && $dio->invoice_no==$detail->invoice_no)
+                                {{ \Carbon\Carbon::parse($dio->executed_at)->format('H:i') }} - {{ \Carbon\Carbon::parse($dio->executed_at)->add($dio->conversion.' minutes')->format('H:i') }} <br>
                             @endif
                         @endforeach
                       </td>
