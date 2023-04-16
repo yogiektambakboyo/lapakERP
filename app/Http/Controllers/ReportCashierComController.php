@@ -272,25 +272,25 @@ class ReportCashierComController extends Controller
 
             $report_data_detail_t = DB::select("
 
-                select distinct '0' as name,dated,'0' as id from (
-                        select  u.id,'work_commission' as com_type,to_char(im.dated,'dd-MM-YYYY') as dated,im.invoice_no,ps.abbr,ps.remark,im.created_by,u.name,id.price,id.qty,id.total,pc.created_by_fee base_commision,pc.created_by_fee * id.qty as commisions  
-                        from invoice_master im 
-                        join invoice_detail id on id.invoice_no = im.invoice_no  and (id.referral_by is null)
-                        join product_sku ps on ps.id = id.product_id 
-                        join customers c on c.id = im.customers_id  and c.branch_id::character varying like '%".$branchx."%' 
-                        join product_commisions pc on pc.product_id = id.product_id and pc.branch_id = c.branch_id
-                        join users u on u.id = im.created_by and u.job_id = 1  and u.id = im.created_by 
-                        where pc.created_by_fee > 0 and im.dated between '".$begindate."' and '".$enddate."' 
-                        union 
-                        select  u.id,'referral' as com_type,to_char(im.dated,'dd-MM-YYYY') as dated,im.invoice_no,ps.abbr,ps.remark,im.created_by,u.name,id.price,id.qty,id.total,pc.referral_fee base_commision,pc.referral_fee  * id.qty as commisions  
-                        from invoice_master im 
-                        join invoice_detail id on id.invoice_no = im.invoice_no
-                        join product_sku ps on ps.id = id.product_id 
-                        join customers c on c.id = im.customers_id  and c.branch_id::character varying like '%".$branchx."%' 
-                        join product_commisions pc on pc.product_id = id.product_id and pc.branch_id = c.branch_id
-                        join users u on u.id = im.created_by and u.job_id = 1 and u.id = id.referral_by 
-                        where pc.created_by_fee <= 0 and pc.referral_fee > 0 and im.dated between '".$begindate."' and '".$enddate."'   
-                ) a order by dated
+                select distinct to_char(dated,'dd-MM-YYYY') as dated,'0' as name,'0' as id,to_char(dated,'YYYY-MM-dd') as datedorder from (
+                    select  u.id,'work_commission' as com_type,im.dated,im.invoice_no,ps.abbr,ps.remark,im.created_by,u.name,id.price,id.qty,id.total,pc.created_by_fee base_commision,pc.created_by_fee * id.qty as commisions  
+                    from invoice_master im 
+                    join invoice_detail id on id.invoice_no = im.invoice_no  and (id.referral_by is null)
+                    join product_sku ps on ps.id = id.product_id 
+                    join customers c on c.id = im.customers_id  and c.branch_id::character varying like '%".$branchx."%' 
+                    join product_commisions pc on pc.product_id = id.product_id and pc.branch_id = c.branch_id
+                    join users u on u.id = im.created_by and u.job_id = 1  and u.id = im.created_by 
+                    where pc.created_by_fee > 0 and im.dated between '".$begindate."' and '".$enddate."' 
+                    union 
+                    select  u.id,'referral' as com_type,im.dated,im.invoice_no,ps.abbr,ps.remark,im.created_by,u.name,id.price,id.qty,id.total,pc.referral_fee base_commision,pc.referral_fee  * id.qty as commisions  
+                    from invoice_master im 
+                    join invoice_detail id on id.invoice_no = im.invoice_no
+                    join product_sku ps on ps.id = id.product_id 
+                    join customers c on c.id = im.customers_id  and c.branch_id::character varying like '%".$branchx."%' 
+                    join product_commisions pc on pc.product_id = id.product_id and pc.branch_id = c.branch_id
+                    join users u on u.id = im.created_by and u.job_id = 1 and u.id = id.referral_by 
+                    where pc.created_by_fee <= 0 and pc.referral_fee > 0 and im.dated between '".$begindate."' and '".$enddate."'   
+            ) a order by to_char(dated,'YYYY-MM-dd')
             ");
 
 
