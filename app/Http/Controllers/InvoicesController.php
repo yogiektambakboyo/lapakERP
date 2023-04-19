@@ -94,7 +94,7 @@ class InvoicesController extends Controller
         $user = Auth::user();
         $act_permission = $this->act_permission[0];
         
-        $invoices = Invoice::orderBy('id', 'ASC')
+        $invoices = Invoice::orderBy('invoice_master.dated', 'DESC')->orderBy('is_checkout','ASC')
                 ->join('customers as jt','jt.id','=','invoice_master.customers_id')
                 ->join('branch as b','b.id','=','jt.branch_id')
                 ->join('users_branch as ub', function($join){
