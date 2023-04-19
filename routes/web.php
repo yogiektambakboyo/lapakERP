@@ -118,6 +118,7 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
             Route::get('/{invoice}/printthermal', 'InvoicesController@printthermal')->name('invoices.printthermal');
             Route::get('/getproduct', 'InvoicesController@getproduct')->name('invoices.getproduct');
             Route::get('/gettimetable', 'InvoicesController@gettimetable')->name('invoices.gettimetable');
+            Route::get('/getterapisttable', 'InvoicesController@getterapisttable')->name('invoices.getterapisttable');
             Route::get('/{invoice}/getinvoice', 'InvoicesController@getinvoice')->name('invoices.getinvoice');
             Route::patch('/{invoice}/update', 'InvoicesController@update')->name('invoices.update');
             Route::delete('/{invoice}/delete', 'InvoicesController@destroy')->name('invoices.destroy');

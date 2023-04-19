@@ -207,7 +207,7 @@ class InvoicesController extends Controller
     {
         $data = $this->data;
         $user = Auth::user();
-        $timetable = DB::select(" select br.remark as branch_room_name,om.invoice_no,c.name as customer_name,to_char(om.scheduled_at,'YYYY-MM-DD HH24:MI') scheduled_at,case when sum(u.conversion)<30 then 30 else sum(u.conversion) end as duration,
+        $timetable = DB::select(" select br.remark as branch_room_name,right(om.invoice_no,6) as invoice_no,c.name as customer_name,to_char(om.scheduled_at,'YYYY-MM-DD HH24:MI') scheduled_at,case when sum(u.conversion)<30 then 30 else sum(u.conversion) end as duration,
         case when sum(u.conversion)<30 then to_char(om.scheduled_at+interval'30 minutes','YYYY-MM-DD HH24:MI') 
         else to_char((om.scheduled_at+interval '1 minutes' * sum(u.conversion)),'YYYY-MM-DD HH24:MI') end as est_end
         from invoice_master om
@@ -220,6 +220,22 @@ class InvoicesController extends Controller
         where scheduled_at >= now()::date and om.is_checkout='0'
         group by br.remark,om.invoice_no,om.customers_id,om.scheduled_at,c.name
         order by 1,4 ");
+        return Datatables::of($timetable)->make();
+    }
+
+    public function getterapisttable() 
+    {
+        $data = $this->data;
+        $user = Auth::user();
+        $timetable = DB::select(" select right(id.invoice_no,6) as invoice_no,br.remark as room,u.name as terapist_name,ps.abbr,to_char(id.executed_at,'HH24:MI') as start_time,to_char(id.executed_at+(interval '1 minutes' * uo.conversion),'HH24:MI') end_time,to_char(age((now()::date||' '||(id.executed_at+(interval '1 minutes' * uo.conversion)))::timestamp,now()),'HH24:MI') as remain_time ,uo.conversion
+        from invoice_master im 
+        join invoice_detail id on id.invoice_no = im.invoice_no 
+        join branch_room br on br.id = im.branch_room_id 
+        join users u on u.id = id.assigned_to 
+        join product_sku ps on ps.id = id.product_id and ps.type_id = 2
+        join product_uom pu on pu.product_id = ps.id 
+        join uom uo on uo.id = pu.uom_id 
+        where im.dated = now()::date and is_checkout = '0' order by 6 ");
         return Datatables::of($timetable)->make();
     }
 

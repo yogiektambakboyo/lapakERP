@@ -125,17 +125,17 @@
                 
             </div>
             <div class="modal fade" id="modal-filter" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-              <div class="modal-dialog">
+              <div class="modal-dialog modal-lg">
               <div class="modal-content">
                   <div class="modal-header">
-                  <h5 class="modal-title" id="staticBackdropLabel">@lang('general.lbl_assign')</h5>
+                  <h5 class="modal-title" id="product_id_selected_lbl">Pilih Terapist</h5>
                   <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                   </div>
                   <div class="modal-body">
                     <div class="form-group row">
-                      <label class="form-label col-form-label col-md-12" id="product_id_selected_lbl">@lang('general.lbl_assignselect') </label>
+                      <label class="form-label col-form-label col-md-2">Pilih Terapist </label>
                       <input type="hidden" id="product_id_selected" value="">
-                      <div class="col-md-8">
+                      <div class="col-md-4">
                         <select class="form-control" 
                             name="assign_id" id="assign_id" required>
                             <option value="">@lang('general.lbl_assignselect') </option>
@@ -144,14 +144,31 @@
                             @endforeach
                         </select>
                       </div>
-                    </div>
-                    <div class="form-group row">
-                      <label class="form-label col-form-label col-md-12" id="product_id_selected_lbl">@lang('general.lbl_schedule') </label>
+                      <label class="form-label col-form-label col-md-2" id="product_id_selected_lbl">@lang('general.lbl_schedule') </label>
                       <div class="col-md-4">
                         <div class="input-group bootstrap-timepicker timepicker">
                           <input id="timepicker2" name="timepicker2" type="text" class="form-control input-small">
                           <span class="btn btn-indigo input-group-addon"><i class="fas fa-clock"></i></span>
                         </div>
+                      </div>
+                    </div>
+                    <div class="form-group row mt-2">
+                      <div class="col-md-12">
+                        <table class="table table-striped" id="order_terapist_table" style="width:100%">
+                          <thead>
+                          <tr>
+                              <th scope="col" width="13%">No Faktur</th>
+                              <th>@lang('general.lbl_room')   </th>
+                              <th scope="col" width="15%">@lang('general.lbl_terapist')</th>
+                              <th scope="col" width="15%">Perawatan</th>
+                              <th scope="col" width="7%">Mulai</th>
+                              <th scope="col" width="7%">Selesai</th>
+                              <th scope="col" width="8%">Sisa</th>
+                          </tr>
+                          </thead>
+                          <tbody>
+                          </tbody>
+                        </table> 
                       </div>
                     </div>
                   </div>
@@ -171,7 +188,7 @@
                   <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                   </div>
                   <div class="modal-body">
-                    <label class="form-label col-form-label col-md-8" id="referral_selected_lbl">@lang('general.lbl_assignselect')  </label>
+                    <label class="form-label col-form-label col-md-12" id="referral_selected_lbl">@lang('general.lbl_assignselect')  </label>
                     <input type="hidden" id="referral_selected" value="">
                     <div class="col-md-8">
                       <select class="form-control" 
@@ -1018,9 +1035,31 @@
         ],
         }); 
 
+        $('#order_terapist_table').DataTable({
+          "bInfo" : false,
+          pagingType: 'numbers',
+          ajax: "{{ route('invoices.getterapisttable') }}",
+          columns: [
+            { data: 'invoice_no' },
+            { data: 'room' },
+            { data: 'terapist_name' },
+            { data: 'abbr' },
+            { data: 'start_time' },
+            { data: 'end_time' },
+            { data: 'remain_time' },
+        ],
+        }); 
+
         $('#modal-scheduled').on('shown.bs.modal', function () {
-            var table = $('#order_time_table').DataTable();
-            table.columns.adjust();
+            var timetable = $('#order_time_table').DataTable();
+            timetable.ajax.reload();
+            timetable.columns.adjust();
+        });
+
+        $('#modal-filter').on('shown.bs.modal', function () {
+            var terapisttable = $('#order_terapist_table').DataTable();
+            terapisttable.ajax.reload();
+            terapisttable.columns.adjust();
         });
 
         var table = $('#order_table').DataTable({
