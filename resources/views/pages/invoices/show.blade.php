@@ -80,10 +80,7 @@
               <div class="col-md-3">
 
                   <div class="input-group">
-                    <input type="text" class="form-control" value="{{ $room->remark }} - {{ Carbon\Carbon::parse($invoice->scheduled_at)->format('d-m-Y') }}" id="scheduled" disabled>
-                    <button type="button" class="btn btn-indigo" data-bs-toggle="modal" data-bs-target="#modal-scheduled" >
-                      <span class="fas fa-calendar-days"></span>
-                    </button>
+                    <input type="text" class="form-control" value="{{ $room->remark }} - {{ Carbon\Carbon::parse($invoice->scheduled_at)->format('H:i') }}" id="scheduled" disabled>
                   </div>
               </div>
             </div>

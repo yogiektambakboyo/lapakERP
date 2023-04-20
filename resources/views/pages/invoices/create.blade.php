@@ -262,7 +262,7 @@
                             <th scope="col" width="15%">@lang('general.lbl_customer')</th>
                             <th scope="col" width="15%">@lang('general.lbl_schedule_at')   </th>
                             <th scope="col" width="5%">@lang('general.lbl_duration')   </th>
-                            <th scope="col" width="15%">@lang('general.lbl_end_estimation') </th>
+                            <th scope="col" width="20%">@lang('general.lbl_end_estimation') </th>
                         </tr>
                         </thead>
                         <tbody>

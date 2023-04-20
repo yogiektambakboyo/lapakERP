@@ -207,9 +207,9 @@ class InvoicesController extends Controller
     {
         $data = $this->data;
         $user = Auth::user();
-        $timetable = DB::select(" select br.remark as branch_room_name,right(om.invoice_no,6) as invoice_no,c.name as customer_name,to_char(om.scheduled_at,'YYYY-MM-DD HH24:MI') scheduled_at,case when sum(u.conversion)<30 then 30 else sum(u.conversion) end as duration,
-        case when sum(u.conversion)<30 then to_char(om.scheduled_at+interval'30 minutes','YYYY-MM-DD HH24:MI') 
-        else to_char((om.scheduled_at+interval '1 minutes' * sum(u.conversion)),'YYYY-MM-DD HH24:MI') end as est_end
+        $timetable = DB::select(" select br.remark as branch_room_name,right(om.invoice_no,6) as invoice_no,c.name as customer_name,to_char(min(od.executed_at),'HH24:MI') scheduled_at,case when sum(u.conversion)<30 then 30 else sum(u.conversion) end as duration,
+        case when sum(u.conversion)<30 then to_char(min(od.executed_at)+interval'30 minutes','HH24:MI') 
+        else to_char((min(od.executed_at)+interval '1 minutes' * sum(u.conversion)),'HH24:MI') end as est_end
         from invoice_master om
         join invoice_detail od on od.invoice_no = om.invoice_no 
         join product_uom pu on pu.product_id = od.product_id 
@@ -218,7 +218,7 @@ class InvoicesController extends Controller
         join branch_room br on br.branch_id = c.branch_id and br.id = om.branch_room_id 
         join users_branch ub on ub.branch_id = br.branch_id and ub.branch_id = c.branch_id and ub.user_id = ".$user->id."
         where scheduled_at >= now()::date and om.is_checkout='0'
-        group by br.remark,om.invoice_no,om.customers_id,om.scheduled_at,c.name
+        group by br.remark,om.invoice_no,om.customers_id,c.name
         order by 1,4 ");
         return Datatables::of($timetable)->make();
     }
@@ -232,6 +232,8 @@ class InvoicesController extends Controller
         join invoice_detail id on id.invoice_no = im.invoice_no 
         join branch_room br on br.id = im.branch_room_id 
         join users u on u.id = id.assigned_to 
+        join customers c on c.id = im.customers_id 
+        join users_branch ub on ub.branch_id = br.branch_id and ub.branch_id = c.branch_id and ub.user_id = ".$user->id."
         join product_sku ps on ps.id = id.product_id and ps.type_id = 2
         join product_uom pu on pu.product_id = ps.id 
         join uom uo on uo.id = pu.uom_id 
