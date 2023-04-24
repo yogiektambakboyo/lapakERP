@@ -481,6 +481,8 @@
                   <button type="button" id="apply-voucher-btn" class="btn btn-warning">@lang('general.lbl_apply_voucher')</button>
                 </div>
             </div>
+            <label class="fst-italic">Setelah masukkan Kode Voucher, Klik tombol "Gunakan Voucher" untuk memotong pembayaran</label>
+
           </div>
 
 
@@ -1063,7 +1065,7 @@
               {
                 position: 'top-end',
                 icon: 'warning',
-                text: 'Please choose date',
+                text: 'Silahkan pilih tanggal ',
                 showConfirmButton: false,
                 imageHeight: 30, 
                 imageWidth: 30,   
@@ -1076,7 +1078,7 @@
               {
                 position: 'top-end',
                 icon: 'warning',
-                text: 'Please choose customer',
+                text: 'Silahkan pilih tamu',
                 showConfirmButton: false,
                 imageHeight: 30, 
                 imageWidth: 30,   
@@ -1089,7 +1091,7 @@
               {
                 position: 'top-end',
                 icon: 'warning',
-                text: 'Please choose payment type',
+                text: 'Silahkan pilih tipe pembayaran',
                 showConfirmButton: false,
                 imageHeight: 30, 
                 imageWidth: 30,   
@@ -1102,7 +1104,7 @@
               {
                 position: 'top-end',
                 icon: 'warning',
-                text: 'Please choose payment nominal',
+                text: 'Silahkan masukkan nominal pembayaran',
                 showConfirmButton: false,
                 imageHeight: 30, 
                 imageWidth: 30,   
@@ -1115,7 +1117,7 @@
               {
                 position: 'top-end',
                 icon: 'warning',
-                text: 'Please choose schedule',
+                text: 'Silahkan pilih jadwal',
                 showConfirmButton: false,
                 imageHeight: 30, 
                 imageWidth: 30,   
@@ -1137,7 +1139,7 @@
               {
                   position: 'top-end',
                   icon: 'warning',
-                  text: 'Please choose terapist for service',
+                  text: 'Silahkan pilih terapis untuk perawatan',
                   showConfirmButton: false,
                   imageHeight: 30, 
                   imageWidth: 30,   
