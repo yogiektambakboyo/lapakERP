@@ -510,10 +510,14 @@
                                 @php $c_pn=$c_pn+$diox->qty; @endphp<br>
                           @endif
                       @endforeach
+                      <?php $last_vc = ""; ?>
                       @foreach($dtt_item_only as $diox)
-                          @if($diox->customers_id == $detail->id && $diox->invoice_no== $detail->invoice_no )
-                                {{ $diox->voucher_code }}
-                          @endif
+                          <?php 
+                            if($diox->customers_id == $detail->id && $diox->invoice_no== $detail->invoice_no && $last_vc!=$diox->voucher_code ){
+                                $last_vc = $diox->voucher_code;
+                                echo $diox->voucher_code;
+                            }
+                          ?>
                       @endforeach
                     </td>
                 </tr>

@@ -28,8 +28,6 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use App\Models\Company;
 use App\Http\Controllers\Lang;
 
-
-
 class ReportCloseDayController extends Controller
 {
     /**
@@ -783,6 +781,7 @@ class ReportCloseDayController extends Controller
         ");
         $payment_type = ['Cash','BCA - Debit','BCA - Kredit','Mandiri - Debit','Mandiri - Kredit','Transfer','QRIS'];
         $users = User::join('users_branch as ub','ub.branch_id', '=', 'users.branch_id')->where('ub.user_id','=',$user->id)->where('users.job_id','=',2)->get(['users.id','users.name']);
+
 
         $pdf = PDF::setOptions(['isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true])->loadView('pages.reports.daily_print', [
             'data' => $data,
