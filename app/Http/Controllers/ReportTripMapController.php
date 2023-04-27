@@ -11,31 +11,34 @@ use App\Models\Branch;
 use App\Models\JobTitle;
 use App\Models\Department;
 use App\Models\ProductType;
+use App\Models\Settings;
 use App\Models\ProductBrand;
+use App\Models\Shift;
 use App\Models\ProductCategory;
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
 use Spatie\Permission\Models\Permission;
 use Maatwebsite\Excel\Facades\Excel;
-use App\Exports\ReportUserTrackingExport;
+use App\Exports\ReportTripMapExport;
 use App\Http\Controllers\Controller;
 use Yajra\Datatables\Datatables;
 use Auth;
 use Illuminate\Support\Facades\DB;
+use Barryvdh\DomPDF\Facade\Pdf;
 use App\Models\Company;
 use App\Http\Controllers\Lang;
 
 
 
-class ReportUserTrackingController extends Controller
+class ReportTripMapController extends Controller
 {
     /**
      * Display all products
-     * Key gmaps AIzaSyA9W1-Eiw2i3-U1QXOGkw9JDKWa2fYgr0s AIzaSyBWboYbcRk8oHrrjJ_lQN1aG86xVJarK_s
+     * 
      * @return \Illuminate\Http\Response
      */
 
-    private $data,$act_permission,$module="productsbrand",$id=1;
+    private $data,$act_permission,$module="reports.purchase",$id=1;
 
     public function __construct()
     {
@@ -49,9 +52,7 @@ class ReportUserTrackingController extends Controller
                 union 
                 select 0 as allow_create,0 as allow_delete,0 as allow_show,count(1) as allow_edit from permissions p  join role_has_permissions rp on rp.permission_id = p.id where rp.role_id = 1 and p.name like '%.edit' and p.name like '".$this->module.".%'
             ) a
-        ");
-        
-        
+        "); 
     }
 
     public function index(Request $request) 
@@ -61,20 +62,10 @@ class ReportUserTrackingController extends Controller
         $this->getpermissions($id);
         $branchs = Branch::join('users_branch as ub','ub.branch_id', '=', 'branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']);        
 
-        $report_data = DB::select("
-            select u.name,b.remark as branch_name,jt.remark  as job_title ,um.created_at  from users_mutation um 
-            join users u on u.id = um.user_id 
-            join users_branch ub on ub.user_id = u.id
-            join branch b on b.id = um.branch_id 
-            join job_title jt on jt.id = um.job_id where um.created_at > now()-interval'7 days'
-            order by created_at      
-        ");
         $data = $this->data;
         $keyword = "";
         $act_permission = $this->act_permission[0];
-        $brands = ProductBrand::orderBy('product_brand.remark', 'ASC')
-                    ->paginate(10,['product_brand.id','product_brand.remark']);
-        return view('pages.reports.usertracking',['company' => Company::get()->first()] ,compact('brands','branchs','data','keyword','act_permission','report_data'))->with('i', ($request->input('page', 1) - 1) * 5);
+        return view('pages.reports.trip_map',['company' => Company::get()->first()], compact('branchs','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
     }
 
     public function search(Request $request) 
@@ -86,159 +77,38 @@ class ReportUserTrackingController extends Controller
         $keyword = $request->search;
         $data = $this->data;
         $act_permission = $this->act_permission[0];
+        
         $branchs = Branch::join('users_branch as ub','ub.branch_id', '=', 'branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']);        
-
+        $shifts = Shift::orderBy('shift.id')->get(['shift.id','shift.remark','shift.id','shift.time_start','shift.time_end']); 
+        
         $begindate = date(Carbon::parse($request->filter_begin_date_in)->format('Y-m-d'));
         $enddate = date(Carbon::parse($request->filter_end_date_in)->format('Y-m-d'));
         $branchx = $request->filter_branch_id_in;
 
         if($request->export=='Export Excel'){
-            $strencode = base64_encode($begindate.'#'.$enddate.'#'.$branchx.'#'.$user->id);
-            return Excel::download(new ReportUserTrackingExport($strencode), 'report_usertracking_cashier_'.Carbon::now()->format('YmdHis').'.xlsx');
+             $strencode = base64_encode($begindate.'#'.$branchx.'#'.$user->id);
+            return Excel::download(new ReportTripMapExport($strencode), 'report_stock_'.Carbon::now()->format('YmdHis').'.xlsx');
         }else{
             $report_data = DB::select("
-                select u.name,b.remark as branch_name,jt.remark  as job_title ,um.created_at  from users_mutation um 
-                join users u on u.id = um.user_id 
-                join users_branch ub on ub.user_id = u.id and ub.branch_id::character varying like '%".$branchx."%' 
-                join branch b on b.id = um.branch_id 
-                join job_title jt on jt.id = um.job_id 
-                where um.created_at between '".$begindate."' and '".$enddate."' 
-                order by um.created_at      
-            ");          
-            return view('pages.reports.usertracking',['company' => Company::get()->first()], compact('report_data','branchs','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
+                select std.id,b.remark,s.name,std.latitude,std.longitude,std.georeverse,to_char(std.created_at,'YYYY-MM-DD HH24:MI:ss') as created_at  from sales_trip st 
+                join sales_trip_detail std on std.trip_id = st.id 
+                join sales s on s.id = st.sales_id
+                join branch b on b.id = s.branch_id  and b.id::character varying like '%".$branchx."%'
+                join users_branch ub on ub.branch_id = b.id 
+                join users u on u.id = ".$user->id." and u.id = ub.user_id 
+                where st.dated = '".$begindate."' order by name asc,std.created_at asc          
+            ");
+
+            $result = array_merge(
+                ['status' => 'success'],
+                ['data' => $report_data],
+                ['message' => 'Save Successfully'],
+            );
+    
+            return $result;
         }
     }
 
-    public function export(Request $request) 
-    {
-        $keyword = $request->search;
-        return Excel::download(new ProductsExport, 'products_'.Carbon::now()->format('YmdHis').'.xlsx');
-    }
-
-    /**
-     * Show form for creating user
-     * 
-     * @return \Illuminate\Http\Response
-     */
-    public function create() 
-    {
-        $user = Auth::user();
-        $id = $user->roles->first()->id;
-        $this->getpermissions($id);
-
-        $data = $this->data;
-        return view('pages.productsbrand.create',[
-            'data' => $data, 'company' => Company::get()->first(),
-        ]);
-    }
-
-    /**
-     * Store a newly created user
-     * 
-     * @param ProductBrand $product
-     * @param Request $request
-     * 
-     * @return \Illuminate\Http\Response
-     */
-    public function store(ProductBrand $productbrand, Request $request) 
-    {
-        //For demo purposes only. When creating user or inviting a user
-        // you should create a generated random password and email it to the user
-    
-        $user = Auth::user();
-        $productbrand->create(
-            array_merge(
-                ['remark' => $request->get('remark') ],
-            )
-        );
-        return redirect()->route('productsbrand.index')
-            ->withSuccess(__('Brand created successfully.'));
-    }
-
-    /**
-     * Show user data
-     * 
-     * @param User $user
-     * 
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Product $product) 
-    {
-        $user = Auth::user();
-        $id = $user->roles->first()->id;
-        $this->getpermissions($id);
-
-        $data = $this->data;
-        //return $product->id;
-        $products = Product::join('product_type as pt','pt.id','=','product_sku.type_id')
-        ->join('product_category as pc','pc.id','=','product_sku.category_id')
-        ->join('product_brand as pb','pb.id','=','product_sku.brand_id')
-        ->where('product_sku.id',$product->id)
-        ->get(['product_sku.id as product_id','product_sku.abbr','product_sku.remark as product_name','pt.remark as product_type','pc.remark as product_category','pb.remark as product_brand'])->first();
-
-        return view('pages.productsbrand.show', [
-            'product' => $products ,
-            'data' => $data, 'company' => Company::get()->first(),
-        ]);
-    }
-
-    /**
-     * Edit user data
-     * 
-     * @param Product $product
-     * 
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(ProductBrand $productbrand) 
-    {
-        $user = Auth::user();
-        $id = $user->roles->first()->id;
-        $this->getpermissions($id);
-
-        $data = $this->data;
-        $brand = ProductBrand::where('product_brand.id',$productbrand->id)
-        ->get(['product_brand.id as id','product_brand.remark'])->first();
-        return view('pages.productsbrand.edit', [
-            'data' => $data,
-            'brand' => $brand, 'company' => Company::get()->first(),
-        ]);
-    }
-
-    /**
-     * Update user data
-     * 
-     * @param ProductBrand $productbrand
-     * @param Request $request
-     * 
-     * @return \Illuminate\Http\Response
-     */
-    public function update(ProductBrand $productbrand, Request $request) 
-    {
-        $user = Auth::user();
-        $productbrand->update(
-            array_merge(
-                ['remark' => $request->get('remark') ],
-            )
-        );
-        
-        return redirect()->route('productsbrand.index')
-            ->withSuccess(__('Product updated successfully.'));
-    }
-
-    /**
-     * Delete user data
-     * 
-     * @param ProductBrand $productbrand
-     * 
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(ProductBrand $productbrand) 
-    {
-        $productbrand->delete();
-
-        return redirect()->route('productsbrand.index')
-            ->withSuccess(__('Brand deleted successfully.'));
-    }
 
     public function getpermissions($role_id){
         $id = $role_id;

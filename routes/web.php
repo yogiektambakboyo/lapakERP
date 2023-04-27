@@ -780,6 +780,8 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
             Route::get('/receive', 'ReportReceiveController@index')->name('reports.receive.index');
             Route::get('/receive_search', 'ReportReceiveController@search')->name('reports.receive.search');
             Route::get('/stock', 'ReportStockController@index')->name('reports.stock.index');
+            Route::get('/trip_map', 'ReportTripMapController@index')->name('reports.trip_map.index');
+            Route::get('/trip_map_search', 'ReportTripMapController@search')->name('reports.trip_map.search');
             Route::get('/stock_search', 'ReportStockController@search')->name('reports.stock.search');
             Route::get('/stockmutation', 'ReportStockMutationController@index')->name('reports.stockmutation.index');
             Route::get('/stockmutation_search', 'ReportStockMutationController@search')->name('reports.stockmutation.search');
