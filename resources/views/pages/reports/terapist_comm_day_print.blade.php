@@ -29,7 +29,7 @@
           <tr style="text-align: center;background-color:#FFA726;">
               <td style="text-align: left; padding:2px;"><img src="data:image/png;base64,{{ base64_encode(file_get_contents(url("images/user-files/".$settings[0]->icon_file))) }}" width="80px"></td>
               <td style="width: 40%;">Laporan Komisi Terapist</td>
-              <td style="width: 30%;">Cabang  : {{ count($report_datas)>0?$report_datas[0]->branch_name:"" }}</td>
+              <td style="width: 30%;">Cabang  : {{ count($report_datas_detail)>0?$report_datas_detail[0]->branch_name:"" }}</td>
           </tr>
         </tbody>
       </table>
@@ -231,5 +231,17 @@
             
         </tbody>
       </table>
+      <table style="width: 100%">
+        <tbody>
+          <tr style="text-align: left;background-color:#white;">
+            <td style="width: 100%;font-size:10px;font-style: italic;">
+              <label>Printed at : {{ \Carbon\Carbon::now() }}</label>
+            </td>
+          </tr>
+        </tbody>
+      </table>
    </body> 
+   <script type="text/javascript">
+    window.print();
+ </script>
 </html> 

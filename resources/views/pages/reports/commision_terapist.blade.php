@@ -1,6 +1,6 @@
 @extends('layouts.default', ['appSidebarSearch' => true])
 
-@section('title', 'Laporan - Referral')
+@section('title', 'Laporan - Komisi Terapist')
 
 @section('content')
     <div class="bg-light p-4 rounded">
