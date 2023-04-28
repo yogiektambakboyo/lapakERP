@@ -17,7 +17,7 @@ class ReportTripMapExport implements FromCollection,WithColumnFormatting, WithHe
     */
 
     private $begindate;
-    private $enddate;
+    private $seller;
     private $branch;
     private $userid;
     public function __construct($arg1){
@@ -26,6 +26,7 @@ class ReportTripMapExport implements FromCollection,WithColumnFormatting, WithHe
         $this->begindate    = $arr[0];
         $this->branch       = $arr[1];
         $this->userid       = $arr[2];
+        $this->seller       = $arr[3];
     } 
 
     public function headings(): array
@@ -43,7 +44,7 @@ class ReportTripMapExport implements FromCollection,WithColumnFormatting, WithHe
         return collect(DB::select("
                 select b.remark,s.name,std.latitude||','||std.longitude,std.georeverse,to_char(std.created_at,'YYYY-MM-DD HH24:MI:ss') as created_at  from sales_trip st 
                 join sales_trip_detail std on std.trip_id = st.id 
-                join sales s on s.id = st.sales_id
+                join sales s on s.id = st.sales_id  and s.id::character varying like '%".$this->seller."%'
                 join branch b on b.id = s.branch_id  and b.id::character varying like '%".$this->branch."%'
                 join users_branch ub on ub.branch_id = b.id 
                 join users u on u.id = ".$this->userid." and u.id = ub.user_id 

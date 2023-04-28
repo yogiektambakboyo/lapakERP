@@ -14,6 +14,7 @@ use App\Models\ProductType;
 use App\Models\Settings;
 use App\Models\ProductBrand;
 use App\Models\Shift;
+use App\Models\Sales;
 use App\Models\ProductCategory;
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
@@ -61,11 +62,12 @@ class ReportTripMapController extends Controller
         $id = $user->roles->first()->id;
         $this->getpermissions($id);
         $branchs = Branch::join('users_branch as ub','ub.branch_id', '=', 'branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']);        
+        $sellers = Sales::where('active','=','1')->orderBy('name')->get(['id','branch_id','name']);
 
         $data = $this->data;
         $keyword = "";
         $act_permission = $this->act_permission[0];
-        return view('pages.reports.trip_map',['company' => Company::get()->first()], compact('branchs','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
+        return view('pages.reports.trip_map',['company' => Company::get()->first()], compact('sellers','branchs','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
     }
 
     public function search(Request $request) 
@@ -84,15 +86,16 @@ class ReportTripMapController extends Controller
         $begindate = date(Carbon::parse($request->filter_begin_date_in)->format('Y-m-d'));
         $enddate = date(Carbon::parse($request->filter_end_date_in)->format('Y-m-d'));
         $branchx = $request->filter_branch_id_in;
+        $sellerx = $request->filter_seller_id_in;
 
         if($request->export=='Export Excel'){
-             $strencode = base64_encode($begindate.'#'.$branchx.'#'.$user->id);
-            return Excel::download(new ReportTripMapExport($strencode), 'report_stock_'.Carbon::now()->format('YmdHis').'.xlsx');
+             $strencode = base64_encode($begindate.'#'.$branchx.'#'.$user->id.'#'.$sellerx);
+            return Excel::download(new ReportTripMapExport($strencode), 'report_trip_map_'.Carbon::now()->format('YmdHis').'.xlsx');
         }else{
             $report_data = DB::select("
                 select std.id,b.remark,s.name,std.latitude,std.longitude,std.georeverse,to_char(std.created_at,'YYYY-MM-DD HH24:MI:ss') as created_at  from sales_trip st 
                 join sales_trip_detail std on std.trip_id = st.id 
-                join sales s on s.id = st.sales_id
+                join sales s on s.id = st.sales_id and s.id::character varying like '%".$sellerx."%'
                 join branch b on b.id = s.branch_id  and b.id::character varying like '%".$branchx."%'
                 join users_branch ub on ub.branch_id = b.id 
                 join users u on u.id = ".$user->id." and u.id = ub.user_id 
@@ -136,7 +139,7 @@ class ReportTripMapController extends Controller
                         'caret' => true,
                         'sub_menu' => []
                     ],
-		   [
+		            [
                         'icon' => 'fa fa-box',
                         'title' => \Lang::get('home.service_management'),
                         'url' => 'javascript:;',

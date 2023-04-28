@@ -11,9 +11,11 @@
             </div>
             <div class="col-md-11">
                 <label id="" class="form-label-sm col-md-1">Cabang</label>
-                <label id="label_cbg" class="form-label-sm col-md-3">-</label>
+                <label id="label_cbg" class="form-label-sm col-md-2">-</label>
                 <label id="" class="form-label-sm col-md-1">Tgl</label>
-                <label id="label_tgl" class="form-label-sm col-md-3">-</label>
+                <label id="label_tgl" class="form-label-sm col-md-2">-</label>
+                <label id="" class="form-label-sm col-md-1">Seller</label>
+                <label id="label_seller" class="form-label-sm col-md-3">-</label>
             </div>
         </div>
         
@@ -67,14 +69,23 @@
                                 @endforeach
                             </select>
                         </div>
+                        <div class="col-md-10">
+                            <label class="form-label col-form-label col-md-4">Seller</label>
+                        </div>
+                        <div class="col-md-12">
+                            <select class="form-control" 
+                                name="filter_seller_id_in" id="filter_seller_id_in">
+                                <option value="%">-- All -- </option>
+                                @foreach($sellers as $seller)
+                                    <option value="{{ $seller->id }}" data-bs="{{ $seller->branch_id }}">{{ $seller->name }} </option>
+                                @endforeach
+                            </select>
+                        </div>
 
                         <br>
                         <div class="row d-flex justify-content-center">
                             <div class="col-md-4">
                                 <button type="button"  data-bs-dismiss="modal" onclick="search()" class="btn btn-primary form-control">@lang('general.lbl_apply')</button>
-                            </div>
-                            <div class="col-md-4">
-                                <button type="submit"  data-bs-dismiss="modal" class="btn btn-warning form-control">Export Excel</button>
                             </div>
                         </div>
                         
@@ -99,6 +110,7 @@
             let list_latlong;
             let flightPath;
             var marker, geo_position, last_geo_position;
+            let list_seller = [];
 
             let table = new DataTable('#table_m', {
                 dom: 'Bfrtip',
@@ -247,6 +259,8 @@
             function search(){
                 $('#label_cbg').text($('#filter_branch_id_in').find(':selected').text());
                 $('#label_tgl').text($('#filter_begin_date_in').val());
+                $('#label_seller').text($('#filter_seller_id_in').find(':selected').text());
+
                 var url = "{{ route('reports.trip_map.search') }}";
                 const res = axios.get(url,
                 {
@@ -254,7 +268,7 @@
                         'Content-Type': 'application/json'
                     },
                     params : {
-                        filter_branch_id_in : $('#filter_branch_id_in').find(':selected').val(), filter_begin_date_in : $('#filter_begin_date_in').val() , filter_end_date_in : ''
+                        filter_seller_id_in : $('#filter_seller_id_in').find(':selected').val() ,filter_branch_id_in : $('#filter_branch_id_in').find(':selected').val(), filter_begin_date_in : $('#filter_begin_date_in').val() , filter_end_date_in : ''
                     }
                 }
                 ).then(resp => {
@@ -264,6 +278,31 @@
                     }
                 });
             }
+
+            $("#filter_seller_id_in option").each(function()
+            {
+                list_seller.push({
+                    branch_id : $(this).attr('data-bs'),
+                    id : $(this).val(),
+                    seller_name : $(this).text(),
+                });
+            });
+
+            $('#filter_branch_id_in').on('change', function(){
+                $("#filter_seller_id_in option").each(function()
+                {
+                    $(this).show();
+                });
+                $selected_branch_id =  $('#filter_branch_id_in').find(':selected').val();
+                $("#filter_seller_id_in option").each(function()
+                {
+                    if($selected_branch_id != '%' && $selected_branch_id != $(this).attr('data-bs') && $(this).val() != '%' ){
+                        //$("#filter_seller_id_in option[value=" + title + "]").hide();
+                        $(this).hide();
+                    }
+                });
+                $("#filter_seller_id_in").val('%');
+            });
 
             function panTo(lat,long, distance, id){
                 map.setZoom(18);
@@ -328,6 +367,7 @@
             }
 
             $('#label_cbg').text($('#filter_branch_id_in').find(':selected').text());
+            $('#label_seller').text($('#filter_seller_id_in').find(':selected').text());
             $('#label_tgl').text(formattedToday);
 
         $('#app').removeClass('app app-sidebar-fixed app-header-fixed-minified').addClass('app app-sidebar-fixed app-header-fixed-minified app-sidebar-minified');
