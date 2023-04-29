@@ -70,7 +70,7 @@ class ServicesDistributionController extends Controller
                     ->join('product_brand as pb','pb.id','=','product_sku.brand_id')
                     ->join('product_distribution as pr','pr.product_id','=','product_sku.id')
                     ->join('branch as bc','bc.id','=','pr.branch_id')
-                    ->where('pt.id','=','2')
+                    ->where('pt.id','!=','1')
                     ->get(['product_sku.id','product_sku.remark as product_name','pr.branch_id','bc.remark as branch_name','pb.remark as product_brand','pr.active']);
         return view('pages.servicesdistribution.index', ['company' => Company::get()->first()],compact('products','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
     }
@@ -96,7 +96,7 @@ class ServicesDistributionController extends Controller
                         ->join('product_price as pr','pr.product_id','=','product_sku.id')
                         ->join('branch as bc','bc.id','=','pr.branch_id')
                         ->whereRaw($whereclause)
-                        ->where('pt.id','=','2')
+                        ->where('pt.id','!=','1')
                         ->get(['product_sku.id','product_sku.remark as product_name','pr.branch_id','bc.remark as branch_name','pr.price as product_price','pb.remark as product_brand']);           
             return view('pages.servicesdistribution.index',['company' => Company::get()->first()], compact('products','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
         }
@@ -123,7 +123,7 @@ class ServicesDistributionController extends Controller
         $data = $this->data;
         $active = ['1','0'];
         return view('pages.servicesdistribution.create',[
-            'products' => DB::select('select ps.id,ps.remark from product_sku as ps where ps.type_id=2 order by remark;'),
+            'products' => DB::select('select ps.id,ps.remark from product_sku as ps where ps.type_id in (2,8) order by remark;'),
             'data' => $data,
             'active' => $active, 'company' => Company::get()->first(),
             'branchs' => Branch::join('users_branch as ub','ub.branch_id','=','branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']),
@@ -212,7 +212,8 @@ class ServicesDistributionController extends Controller
             'data' => $data,
             'active' => $active,
             'product' => $product,
-            'products' => Product::where('type_id','=','1')->get(), 'company' => Company::get()->first(),
+            'products' => DB::select('select ps.id,ps.remark from product_sku as ps where ps.type_id in (2,8) order by remark;'),
+            'company' => Company::get()->first(),
         ]);
     }
 

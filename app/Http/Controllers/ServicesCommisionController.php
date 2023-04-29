@@ -123,7 +123,7 @@ class ServicesCommisionController extends Controller
         $user  = Auth::user();
         $data = $this->data;
         return view('pages.servicescommision.create',[
-            'products' => DB::select('select ps.id,ps.remark from product_sku as ps where ps.type_id=2 order by remark;'),
+            'products' => DB::select('select ps.id,ps.remark from product_sku as ps where ps.type_id in (2,8) order by remark;'),
             'data' => $data, 'company' => Company::get()->first(),
             'branchs' => Branch::join('users_branch as ub','ub.branch_id','=','branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']),
         ]);
@@ -209,7 +209,7 @@ class ServicesCommisionController extends Controller
             'branchs' => Branch::join('users_branch as ub','ub.branch_id','=','branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']),
             'data' => $data,
             'product' => $product, 'company' => Company::get()->first(),
-            'products' => Product::get(),
+            'products' => DB::select('select ps.id,ps.remark from product_sku as ps where ps.type_id in (2,8) order by remark;'),
         ]);
     }
 

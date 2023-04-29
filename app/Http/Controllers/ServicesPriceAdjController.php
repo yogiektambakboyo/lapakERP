@@ -71,7 +71,7 @@ class ServicesPriceAdjController extends Controller
                     ->join('product_brand as pb','pb.id','=','product_sku.brand_id')
                     ->join('price_adjustment as pr','pr.product_id','=','product_sku.id')
                     ->join('branch as bc','bc.id','=','pr.branch_id')
-                    ->where('pt.id','=','2')
+                    ->where('pt.id','!=','1')
                     ->whereRaw('now()::date between pr.dated_start and pr.dated_end')
                     ->get(['product_sku.id','product_sku.remark as product_name','pr.branch_id','bc.remark as branch_name','pr.value as value','pr.dated_start','pr.dated_end','pb.remark as product_brand']);
         return view('pages.servicespriceadj.index',['company' => Company::get()->first()] ,compact('request','branchs','products','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
@@ -109,7 +109,7 @@ class ServicesPriceAdjController extends Controller
                         ->join('price_adjustment as pr','pr.product_id','=','product_sku.id')
                         ->join('branch as bc','bc.id','=','pr.branch_id')
                         ->whereRaw($whereclause)
-                        ->where('pt.id','=','2')
+                        ->where('pt.id','!=','1')
                         ->where('bc.id','like','%'.$branchx.'%')  
                         ->get(['product_sku.id','product_sku.remark as product_name','pr.branch_id','bc.remark as branch_name','pr.value as value','pr.dated_start','pr.dated_end','pb.remark as product_brand']); 
                         $request->filter_branch_id = "";
@@ -124,7 +124,7 @@ class ServicesPriceAdjController extends Controller
                         ->join('price_adjustment as pr','pr.product_id','=','product_sku.id')
                         ->join('branch as bc','bc.id','=','pr.branch_id')
                         ->whereRaw($whereclause)
-                        ->where('pt.id','=','2')
+                        ->where('pt.id','!=','1')
                         ->where('bc.id','like','%'.$branchx.'%')  
                         ->get(['product_sku.id','product_sku.remark as product_name','pr.branch_id','bc.remark as branch_name','pr.value as value','pr.dated_start','pr.dated_end','pb.remark as product_brand']);                 
             return view('pages.servicespriceadj.index',['company' => Company::get()->first()], compact('request','branchs','products','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
@@ -151,7 +151,7 @@ class ServicesPriceAdjController extends Controller
         $user  = Auth::user();
         $data = $this->data;
         return view('pages.servicespriceadj.create',[
-            'products' => DB::select('select ps.id,ps.remark from product_sku as ps where type_id=2;'),
+            'products' => DB::select('select ps.id,ps.remark from product_sku as ps where ps.type_id in (2,8) order by remark;'),
             'data' => $data, 'company' => Company::get()->first(),
             'branchs' => Branch::join('users_branch as ub','ub.branch_id','=','branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']),
         ]);

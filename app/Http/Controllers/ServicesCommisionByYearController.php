@@ -120,7 +120,7 @@ class ServicesCommisionByYearController extends Controller
         $years = [1,2,3,4,5,6,7,8,9,10];
         $jobs = JobTitle::get(['id','remark']);
         return view('pages.servicescommisionbyyear.create',[
-            'products' => DB::select('select ps.id,ps.remark from product_sku as ps where ps.type_id=2 order by remark;'),
+            'products' => DB::select('select ps.id,ps.remark from product_sku as ps where ps.type_id in (2,8) order by remark;'),
             'data' => $data,
             'jobs' => $jobs,
             'years' => $years, 'company' => Company::get()->first(),
@@ -214,7 +214,7 @@ class ServicesCommisionByYearController extends Controller
             'years' => $yearsarr,
             'jobs' => JobTitle::get(['id','remark']),
             'product' => $product,
-            'products' => Product::get(), 'company' => Company::get()->first(),
+            'products' => DB::select('select ps.id,ps.remark from product_sku as ps where ps.type_id in (2,8) order by remark;'), 'company' => Company::get()->first(),
         ]);
     }
 
