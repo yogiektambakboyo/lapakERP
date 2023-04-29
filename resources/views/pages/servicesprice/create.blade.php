@@ -1,6 +1,6 @@
 @extends('layouts.default', ['appSidebarSearch' => true])
 
-@section('title',' New Service Price')
+@section('title','Harga Perawatan baru')
 
 @section('content')
 <form method="POST" action="{{ route('servicesprice.store') }}"  enctype="multipart/form-data">
@@ -8,7 +8,7 @@
     <div class="bg-light p-4 rounded">
         <div class="row">
           <div class="col-md-8">
-            <h1>@lang('general.lbl_add_service_new')</h1>
+            <h1>Tambah Harga Perawatan Baru</h1>
           </div>
           <div class="col-md-2">
             <div class="mt-2">
