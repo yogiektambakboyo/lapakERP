@@ -423,6 +423,67 @@ class ReportTerapistComDailyController extends Controller
             ])->setOptions(['defaultFont' => 'sans-serif'])->setPaper('a4', 'landscape');
             return $pdf->stream('report_daily.pdf');
 
+        }else if($request->export=='Export SumSS'){
+
+            $filter_begin_date = $begindate;
+            $filter_begin_end = $enddate;
+            $filter_branch_id =  $branchx;
+
+            $call_proc = DB::select("CALL public.calc_commision_terapist();");
+           
+            $report_data_detail_t = DB::select("
+                    select a.branch_name,a.id,a.dated,a.name,a.invoice_no,a.abbr,coalesce(pc2.point_value,0) as total_point,(a.commisions+coalesce(pc2.point_value,0)) as total,commisions_extra,total_abbr,total_commisions,total_point_qty,product_abbr,
+                    product_price,product_base_commision,product_qty,product_commisions
+                    from (
+                        select a.branch_name,a.user_id as id,a.dated,a.terapist_name as name,string_agg(distinct right(invoice_no,6),'##') as invoice_no,string_agg(case when type_id=2 then abbr else '' end,'##') as abbr,
+                        sum(point_qty) as point_qty,sum(a.commisions) as commisions,
+                        string_agg(case when type_id=8 then commisions::character varying else '' end,'##') as commisions_extra,
+                        string_agg(case when type_id=2 then total::character varying else '' end,'##') as total_abbr,
+                        string_agg(case when type_id=2 then commisions::character varying else '' end,'##') as total_commisions,
+                        string_agg(case when type_id=2 then point_qty::character varying else '' end,'##') as total_point_qty,
+                        string_agg(case when type_id=1 then abbr else '' end,'##') as product_abbr,
+                        string_agg(case when type_id=1 then price::character varying else '' end,'##') as product_price,
+                        string_agg(case when type_id=1 then base_commision::character varying else '' end,'##') as product_base_commision,
+                        string_agg(case when type_id=1 then qty::character varying else '' end,'##') as product_qty,      
+                        string_agg(case when type_id=1 then commisions::character varying else '' end,'##') as product_commisions     
+                        from terapist_commision a
+                        join users_branch as ub on ub.branch_id = a.branch_id and ub.user_id = '".$user->id."'
+                        where a.dated  between '".$filter_begin_date."' and  '".$filter_begin_end."'
+                        group by a.branch_name,a.user_id,a.dated,a.terapist_name
+                    ) a left join point_conversion pc2 on pc2.point_qty = a.point_qty 
+                    order by a.dated,a.name      
+            ");
+
+            $time = strtotime($filter_begin_date);
+            $newformat = date('Y-m-d',$time);
+            $newformatd = date('Y-m',$time);
+            $newformatlastm = date('Y-m', strtotime('-1 months', strtotime($newformat)));
+
+            $date26 = substr($filter_begin_date, 8, 2);
+            $today_date = (int)$date26;
+            if ($today_date>=26){
+                $date26 = $newformatd.'-26';
+            }else{
+                $date26 = $newformatlastm.'-26';
+            }
+
+            $report_data_com_from1 = DB::select("
+                    select a.dated,a.user_id as id,(a.commisions+coalesce(pc2.point_value,0)) as total
+                    from (
+                        select a.dated,a.user_id,sum(point_qty) as point_qty,sum(a.commisions) as commisions from terapist_commision a
+                        join users_branch as ub on ub.branch_id = a.branch_id and ub.user_id = '".$user->id."'
+                        where a.dated  between '".$date26."' and  '".$filter_begin_end."'
+                        group by a.dated,a.user_id
+                    ) a left join point_conversion pc2 on pc2.point_qty = a.point_qty 
+                    order by a.dated           
+            ");
+    
+        
+            return view('pages.reports.terapist_comm_day_print_2', [
+                'report_data_com_from1' => $report_data_com_from1,
+                'report_data_detail_t' => $report_data_detail_t,
+                'settings' => Settings::get(),
+            ]);
         }else{
             $report_data = DB::select("
             select a.branch_name,a.com_type,to_char(a.dated,'dd-mm-YYYY') as dated,a.qtyinv,a.work_year,a.name,a.commisions,a.point_qty,coalesce(pc2.point_value,0)  as point_value,a.commisions+coalesce(pc2.point_value,0) as total from (
