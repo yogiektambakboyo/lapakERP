@@ -68,7 +68,8 @@ class ReportCustomerController extends Controller
         $report_data = DB::select("
             select b.remark as branch_name,c.name as customers_name,c.address,c.phone_no  from customers c
             join branch b on b.id = c.branch_id 
-            join users_branch ub on ub.branch_id = b.id and ub.user_id = 1              
+            join users_branch as ub on ub.branch_id = b.id and ub.user_id = '".$user->id."'
+             
         ");
         $data = $this->data;
         $keyword = "";

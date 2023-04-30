@@ -41,7 +41,7 @@
       <table style="width: 100%">
         <tbody>
           <tr>
-            <td style="width: 25%;vertical-align:top;">
+            <td style="width: 20%;vertical-align:top;">
 
               <table class="table table-striped" id="service_table">
                 <thead>
@@ -110,7 +110,7 @@
               
 
             </td>
-            <td style="width: 18%; vertical-align:top;">
+            <td style="width: 22%; vertical-align:top;">
               <table class="table table-striped" id="service_table">
                 <thead>
                 <tr style="background-color:#FFA726;color:white;">
@@ -506,7 +506,7 @@
               </table>           
             </td>
 
-            <td style="vertical-align:top;">
+            <td  style="width: 22%; vertical-align:top;">
               <table class="table table-striped" id="service_table">
                 <thead>
                 <tr>
@@ -515,7 +515,7 @@
                 </thead>
                 <tbody>   
                   <tr>
-                    <td style="text-align: left;width:80px;">Keluar : </th>
+                    <td style="text-align: left;">Keluar : </th>
                   </tr>     
                   @foreach($petty_datas as $petty_data)
                       @if($petty_data->type == 'Produk - Keluar')
@@ -532,7 +532,7 @@
                           </tr>   
                         @endforeach
                       <tr>
-                        <td style="text-align: left;width:80px;">Masuk : </th>
+                        <td style="text-align: left;">Masuk : </th>
                       </tr>     
                       @foreach($petty_datas as $petty_data)
                         @if($petty_data->type == 'Produk - Masuk')
@@ -550,7 +550,7 @@
           </tr>
           <tr>
             <th colspan="2" style="text-align: center;">TTD Kasir<br><br><br>( {{ $creator[0]->created_by }}  )</th>
-            <th colspan="2" style="text-align: center;">TTD Penerima<br><br><br>( . . . . . . . . . )</th>
+            <th colspan="3" style="text-align: center;">TTD Penerima<br><br><br>( . . . . . . . . . )</th>
           </tr>
         </tbody>
       </table>

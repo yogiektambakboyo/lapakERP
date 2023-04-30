@@ -14,7 +14,7 @@
 
                 <div class="col-md-10"> 	
                     <form action="{{ route('suppliers.search') }}" method="GET" class="row row-cols-lg-auto g-3 align-items-center">
-                        <div class="col-2"><input type="text" class="form-control  form-control-sm" name="search" placeholder="@lang('general.lbl_search')" value="{{ $request->search }}"></div>
+                        <div class="col-2"><input type="hidden" class="form-control  form-control-sm" name="search" placeholder="@lang('general.lbl_search')" value="{{ $request->search }}"></div>
                         <input type="hidden" name="filter_branch_id" value="{{ $request->filter_branch_id }}">
                         <div class="col-2"><a href="#modal-filter"  data-bs-toggle="modal" data-bs-target="#modal-filter" class="btn btn-sm btn-lime">@lang('general.btn_filter')</a></div>   
                         <div class="col-2"><input type="submit" class="btn btn-sm btn-success" value="@lang('general.btn_export')" name="export"></div>  

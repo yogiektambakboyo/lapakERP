@@ -14,9 +14,9 @@
 
                 <div class="col-md-10"> 	
                     <form action="{{ route('shift.search') }}" method="GET" class="row row-cols-lg-auto g-3 align-items-center">
-                        <div class="col-2"><input type="text" class="form-control  form-control-sm" name="search" placeholder="@lang('general.lbl_search') Shift.." value="{{ $request->search }}"></div>
+                        <div class="col-2"><input type="hidden" class="form-control  form-control-sm" name="search" placeholder="@lang('general.lbl_search') Shift.." value="{{ $request->search }}"></div>
                         <input type="hidden" name="filter_branch_id" value="{{ $request->filter_branch_id }}">
-                        <div class="col-2"><input type="submit" class="btn btn-sm btn-secondary" value="@lang('general.btn_search')" name="src"></div>   
+                        <div class="col-2"><input type="hidden" class="btn btn-sm btn-secondary" value="@lang('general.btn_search')" name="src"></div>   
                     </form>
                 </div>
             </div>
@@ -28,14 +28,15 @@
             @include('layouts.partials.messages')
         </div>
 
-        <table class="table table-striped">
+        <table class="table table-striped" id="example">
             <thead>
             <tr>
                 <th scope="col" width="1%">#</th>
                 <th scope="col">Remark</th>
                 <th scope="col" width="15%">@lang('general.lbl_time_start')</th>
                 <th scope="col" width="15%">@lang('general.lbl_time_end')</th>
-                <th scope="col" colspan="3" width="1%"></th> 
+                <th scope="col"  width="1%"></th> 
+                <th scope="col"  width="1%"></th> 
             </tr>
             </thead>
             <tbody>
@@ -85,16 +86,15 @@
             </div>
             </div>
           </div>
-
-        <div class="d-flex">
-            {!! $shifts->links() !!}
-        </div>
-
     </div>
 @endsection
 
 @push('scripts')
     <script type="text/javascript">
+
+            $(document).ready(function () {
+                $('#example').DataTable();
+            });
         const today = new Date();
           const yyyy = today.getFullYear();
           const yyyy1 = today.getFullYear()+1;

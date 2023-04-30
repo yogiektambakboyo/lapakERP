@@ -64,7 +64,13 @@ class UsersController extends Controller
         $keyword = "";
         $act_permission = $this->act_permission[0];
         $branchs = Branch::join('users_branch as ub','ub.branch_id', '=', 'branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']);
-        $users = User::orderBy('id', 'ASC')->join('job_title as jt','jt.id','=','users.job_id')->where('users.name','!=','Admin')->get(['users.id','users.employee_id','users.name','jt.remark as job_title','users.join_date' ]);
+        $users = User::orderBy('id', 'ASC')
+        ->join('job_title as jt','jt.id','=','users.job_id')
+        ->join('users_branch as ub','ub.user_id', '=', 'users.id')
+        ->join('users_branch as ub2','ub2.branch_id', '=', 'ub.branch_id')
+        ->where('ub2.user_id','=',$user->id)
+        ->where('users.name','!=','Admin')
+        ->get(['users.id','users.employee_id','users.name','jt.remark as job_title','users.join_date' ]);
         return view('pages.users.index',['company' => Company::get()->first(),'jobtitles'=>JobTitle::orderBy('remark','asc')->get(['id','remark'])] ,compact('request','branchs','users','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
     }
 
@@ -90,6 +96,9 @@ class UsersController extends Controller
             $jobtitlex = "";
             $users = User::orderBy('id', 'ASC')->join('branch as b','b.id','=','users.branch_id')
             ->join('job_title as jt','jt.id','=','users.job_id')
+            ->join('users_branch as ub','ub.user_id', '=', 'users.id')
+            ->join('users_branch as ub2','ub2.branch_id', '=', 'ub.branch_id')
+            ->where('ub2.user_id','=',$user->id)
             ->where('users.name','!=','Admin')->where('users.name','ILIKE','%'.$keyword.'%')
             ->get(['users.id','users.employee_id','users.name','jt.remark as job_title','b.remark as branch_name','users.join_date' ]);
             $request->filter_branch_id = "";
@@ -99,6 +108,9 @@ class UsersController extends Controller
         }else{
             $users = User::orderBy('id', 'ASC')->join('branch as b','b.id','=','users.branch_id')
             ->join('job_title as jt','jt.id','=','users.job_id')
+            ->join('users_branch as ub','ub.user_id', '=', 'users.id')
+            ->join('users_branch as ub2','ub2.branch_id', '=', 'ub.branch_id')
+            ->where('ub2.user_id','=',$user->id)
             ->where('users.name','!=','Admin')->where('users.name','ILIKE','%'.$keyword.'%')
             ->where('b.id','like','%'.$branchx.'%')
             ->where('jt.id','like','%'.$jobtitlex.'%')
@@ -135,7 +147,7 @@ class UsersController extends Controller
         $usersReferral = User::get(['users.id','users.name']);
         return view('pages.users.create',[
             'roles' => Role::latest()->get(),
-            'branchs' => Branch::latest()->get(),
+            'branchs' => Branch::join('users_branch as ub','ub.branch_id', '=', 'branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']),
             'userBranchs' => Branch::latest()->get()->pluck('remark')->toArray(),
             'jobTitles' => JobTitle::latest()->get(),
             'userJobTitles' => JobTitle::latest()->get()->pluck('remark')->toArray(),
@@ -421,7 +433,7 @@ class UsersController extends Controller
             'user' => $users[0],
             'userRole' => $user->roles->pluck('name')->toArray(),
             'roles' => Role::latest()->get(),
-            'branchs' => Branch::join('users_branch as ub','ub.branch_id','=','branch.id')->where('ub.user_id','=',$user->id)->get(),
+            'branchs' => Branch::join('users_branch as ub','ub.branch_id', '=', 'branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']),
             'userBranchs' => Branch::join('users_branch as ub','ub.branch_id','=','branch.id')->where('ub.user_id','=',$user->id)->get()->pluck('remark')->toArray(),
             'departments' => Department::latest()->get(),
             'userDepartements' => Department::latest()->get()->pluck('remark')->toArray(),

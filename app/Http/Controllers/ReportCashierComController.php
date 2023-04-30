@@ -69,6 +69,8 @@ class ReportCashierComController extends Controller
                     join invoice_detail id on id.invoice_no = im.invoice_no  and (id.referral_by is null)
                     join product_sku ps on ps.id = id.product_id 
                     join customers c on c.id = im.customers_id 
+                    join branch b on b.id = c.branch_id
+                    join users_branch as ub on ub.branch_id = b.id and ub.user_id = '".$user->id."'
                     join product_commisions pc on pc.product_id = id.product_id and pc.branch_id = c.branch_id
                     join users u on u.id = im.created_by and u.job_id = 1  and u.id = im.created_by  
                     where pc.created_by_fee > 0
@@ -78,6 +80,8 @@ class ReportCashierComController extends Controller
                     join invoice_detail id on id.invoice_no = im.invoice_no
                     join product_sku ps on ps.id = id.product_id 
                     join customers c on c.id = im.customers_id 
+                    join branch b on b.id = c.branch_id
+                    join users_branch as ub on ub.branch_id = b.id and ub.user_id = '".$user->id."'
                     join product_commisions pc on pc.product_id = id.product_id and pc.branch_id = c.branch_id
                     join users u on u.id = im.created_by and u.job_id = 1 and u.id = id.referral_by 
                     where pc.created_by_fee <= 0 and pc.referral_fee > 0       

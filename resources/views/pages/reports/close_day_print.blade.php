@@ -110,7 +110,7 @@
               
 
             </td>
-            <td style="width: 20%; vertical-align:top;">
+            <td style="width: 22%; vertical-align:top;">
               <table class="table table-striped" id="service_table">
                 <thead>
                 <tr style="background-color:#FFA726;color:white;">

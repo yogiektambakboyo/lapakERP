@@ -71,8 +71,10 @@ class ServicesCommisionController extends Controller
                     ->join('product_brand as pb','pb.id','=','product_sku.brand_id')
                     ->join('product_commisions as pr','pr.product_id','=','product_sku.id')
                     ->join('branch as bc','bc.id','=','pr.branch_id')
+                    ->join('users_branch as ub2','ub2.branch_id', '=', 'pr.branch_id')
+                    ->where('ub2.user_id','=',$user->id)
                     ->where('pt.id','!=','1')
-                    ->paginate(10,['created_by_fee', 'assigned_to_fee', 'referral_fee','product_sku.id','product_sku.remark as product_name','pr.branch_id','bc.remark as branch_name','pb.remark as product_brand']);
+                    ->get(['created_by_fee', 'assigned_to_fee', 'referral_fee','product_sku.id','product_sku.remark as product_name','pr.branch_id','bc.remark as branch_name','pb.remark as product_brand']);
         return view('pages.servicescommision.index', ['company' => Company::get()->first()],compact('products','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
     }
 
@@ -96,9 +98,11 @@ class ServicesCommisionController extends Controller
                         ->join('product_brand as pb','pb.id','=','product_sku.brand_id')
                         ->join('product_commisions as pr','pr.product_id','=','product_sku.id')
                         ->join('branch as bc','bc.id','=','pr.branch_id')
+                        ->join('users_branch as ub2','ub2.branch_id', '=', 'pr.branch_id')
+                    ->where('ub2.user_id','=',$user->id)
                         ->whereRaw($whereclause)
                         ->where('pt.id','!=','1')
-                        ->paginate(10,['created_by_fee', 'assigned_to_fee', 'referral_fee','product_sku.id','product_sku.remark as product_name','pr.branch_id','bc.remark as branch_name','pb.remark as product_brand']);       
+                        ->get(['created_by_fee', 'assigned_to_fee', 'referral_fee','product_sku.id','product_sku.remark as product_name','pr.branch_id','bc.remark as branch_name','pb.remark as product_brand']);       
             return view('pages.servicescommision.index',['company' => Company::get()->first()], compact('products','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
         }
     }

@@ -66,16 +66,17 @@ class ReportPurchaseController extends Controller
 
         $shifts = Shift::orderBy('shift.id')->get(['shift.id','shift.remark','shift.id','shift.time_start','shift.time_end']); 
         $report_data = DB::select("
-        select b.remark as branch_name,im.dated,im.purchase_no,id.product_remark as product_name ,pc.remark as category_name,id.qty,id.uom,
-        id.subtotal_vat+id.subtotal  as total
-       from purchase_master im 
-       join purchase_detail id on id.purchase_no = im.purchase_no 
-       join product_sku ps on ps.id = id.product_id 
-       join product_category pc on pc.id = ps.category_id 
-       join suppliers c on c.id = im.supplier_id 
-       join users u on u.id=im.created_by
-       join branch b on b.id = c.branch_id
-       where im.dated>now()-interval'7 days' order by im.purchase_no               
+                    select b.remark as branch_name,im.dated,im.purchase_no,id.product_remark as product_name ,pc.remark as category_name,id.qty,id.uom,
+                    id.subtotal_vat+id.subtotal  as total
+                    from purchase_master im 
+                    join purchase_detail id on id.purchase_no = im.purchase_no 
+                    join product_sku ps on ps.id = id.product_id 
+                    join product_category pc on pc.id = ps.category_id 
+                    join suppliers c on c.id = im.supplier_id 
+                    join users u on u.id=im.created_by
+                    join branch b on b.id = c.branch_id
+                    join users_branch as ub on ub.branch_id = b.id and ub.user_id = '".$user->id."'
+                    where im.dated>now()-interval'7 days' order by im.purchase_no               
         ");
         $data = $this->data;
         $keyword = "";
@@ -106,16 +107,17 @@ class ReportPurchaseController extends Controller
             return Excel::download(new ReportPurchaseExport($strencode), 'report_purchase_'.Carbon::now()->format('YmdHis').'.xlsx');
         }else{
             $report_data = DB::select("
-            select b.remark as branch_name,im.dated,im.purchase_no,id.product_remark as product_name ,pc.remark as category_name,id.qty,id.uom,
-            id.subtotal_vat+id.subtotal  as total
-           from purchase_master im 
-           join purchase_detail id on id.purchase_no = im.purchase_no 
-           join product_sku ps on ps.id = id.product_id 
-           join product_category pc on pc.id = ps.category_id 
-           join suppliers c on c.id = im.supplier_id  and im.branch_id::character varying like '%".$branchx."%'
-           join users u on u.id=im.created_by
-           join branch b on b.id = c.branch_id
-           where im.dated between '".$begindate."' and '".$enddate."'                  
+                    select b.remark as branch_name,im.dated,im.purchase_no,id.product_remark as product_name ,pc.remark as category_name,id.qty,id.uom,
+                    id.subtotal_vat+id.subtotal  as total
+                    from purchase_master im 
+                    join purchase_detail id on id.purchase_no = im.purchase_no 
+                    join product_sku ps on ps.id = id.product_id 
+                    join product_category pc on pc.id = ps.category_id 
+                    join suppliers c on c.id = im.supplier_id  and im.branch_id::character varying like '%".$branchx."%'
+                    join users u on u.id=im.created_by
+                    join branch b on b.id = c.branch_id
+                    join users_branch as ub on ub.branch_id = b.id and ub.user_id = '".$user->id."'
+                    where im.dated between '".$begindate."' and '".$enddate."'                  
             ");         
             return view('pages.reports.purchase',['company' => Company::get()->first()], compact('shifts','branchs','data','keyword','act_permission','report_data'))->with('i', ($request->input('page', 1) - 1) * 5);
         }

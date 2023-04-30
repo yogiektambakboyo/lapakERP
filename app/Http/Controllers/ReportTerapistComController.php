@@ -69,6 +69,7 @@ class ReportTerapistComController extends Controller
                                         join product_sku ps on ps.id = id.product_id 
                                         join customers c on c.id = im.customers_id 
                                         join branch b on b.id = c.branch_id
+                                        join users_branch as ub on ub.branch_id = b.id and ub.user_id = '".$user->id."'
                                         join product_commision_by_year pc on pc.product_id = id.product_id and pc.branch_id = c.branch_id
                                         join (
                                             select r.id,r.name,r.job_id,case when date_part('year', age(now(),join_date))::int=0 then 1 when date_part('year', age(now(),join_date))::int>10 then 10  else date_part('year', age(now(),join_date)) end as work_year 
@@ -87,6 +88,7 @@ class ReportTerapistComController extends Controller
                                         join product_sku ps on ps.id = id.product_id 
                                         join customers c on c.id = im.customers_id 
                                         join branch b on b.id = c.branch_id
+                                        join users_branch as ub on ub.branch_id = b.id and ub.user_id = '".$user->id."'
                                         join product_commisions pc on pc.product_id = id.product_id and pc.branch_id = c.branch_id
                                         join users u on u.job_id = 2  and u.id = id.referral_by  
                                         where pc.referral_fee+pc.assigned_to_fee+pc.created_by_fee  > 0  and im.dated >= now()-interval'7 days'
@@ -101,6 +103,7 @@ class ReportTerapistComController extends Controller
                                         join product_sku ps on ps.id = id.product_id 
                                         join customers c on c.id = im.customers_id 
                                         join branch b on b.id = c.branch_id
+                                        join users_branch as ub on ub.branch_id = b.id and ub.user_id = '".$user->id."'
                                         join product_commisions pc on pc.product_id = id.product_id and pc.branch_id = c.branch_id
                                         join users u on u.job_id = 2  and u.id = id.assigned_to  
                                         where pc.referral_fee+pc.assigned_to_fee+pc.created_by_fee  > 0  and im.dated >= now()-interval'7 days'
@@ -144,6 +147,7 @@ class ReportTerapistComController extends Controller
                                         join product_sku ps on ps.id = id.product_id 
                                         join customers c on c.id = im.customers_id and c.branch_id::character varying like '%".$branchx."%' 
                                         join branch b on b.id = c.branch_id
+                                        join users_branch as ub on ub.branch_id = b.id and ub.user_id = '".$user->id."'
                                         join product_commision_by_year pc on pc.product_id = id.product_id and pc.branch_id = c.branch_id
                                         join (
                                             select r.id,r.name,r.job_id,case when date_part('year', age(now(),join_date))::int=0 then 1 when date_part('year', age(now(),join_date))::int>10 then 10  else date_part('year', age(now(),join_date)) end as work_year 
@@ -158,6 +162,7 @@ class ReportTerapistComController extends Controller
                                         join product_sku ps on ps.id = id.product_id 
                                         join customers c on c.id = im.customers_id and c.branch_id::character varying like '%".$branchx."%'
                                         join branch b on b.id = c.branch_id
+                                        join users_branch as ub on ub.branch_id = b.id and ub.user_id = '".$user->id."'
                                         join product_commisions pc on pc.product_id = id.product_id and pc.branch_id = c.branch_id
                                         join users u on u.job_id = 2  and u.id = id.referral_by  
                                         where pc.referral_fee  > 0  and im.dated between '".$begindate."' and '".$enddate."' 
@@ -172,6 +177,7 @@ class ReportTerapistComController extends Controller
                                         join product_sku ps on ps.id = id.product_id 
                                         join customers c on c.id = im.customers_id and c.branch_id::character varying like '%".$branchx."%'
                                         join branch b on b.id = c.branch_id
+                                        join users_branch as ub on ub.branch_id = b.id and ub.user_id = '".$user->id."'
                                         join product_commisions pc on pc.product_id = id.product_id and pc.branch_id = c.branch_id
                                         join users u on u.job_id = 2  and u.id = id.assigned_to  
                                         where pc.referral_fee+pc.assigned_to_fee+pc.created_by_fee  > 0  and im.dated between '".$begindate."' and '".$enddate."' 

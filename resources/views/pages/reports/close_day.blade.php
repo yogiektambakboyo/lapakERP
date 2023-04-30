@@ -21,9 +21,11 @@
             @include('layouts.partials.messages')
         </div>
 
-        <table class="table table-striped" id="example">
+        <table class="table table-striped nowrap" id="example">
             <thead>
             <tr>
+                <th scope="col" width="2%">@lang('general.lbl_action')</th> 
+                <th scope="col" width="12%"></th> 
                 <th scope="col" width="10%">@lang('general.lbl_branch')</th>
                 <th scope="col" width="6%">@lang('general.lbl_dated')</th>
                 <th scope="col">@lang('general.service')</th>     
@@ -40,14 +42,14 @@
                 <th scope="col">Tfr</th> 
                 <th scope="col">#SPK</th> 
                 <th scope="col">#Tamu</th>  
-                <th scope="col" width="2%">@lang('general.lbl_action')</th> 
-                <th scope="col" width="12%"></th> 
             </tr>
             </thead>
             <tbody>
 
                 @foreach($report_data as $rdata)
                     <tr>
+                        <td><button onclick="openDialog('{{ $rdata->branch_id }}','{{ $rdata->dated }}','0');" class="btn btn-warning btn-sm">Print</button></td>
+                        <td><button onclick="openDialog2('{{ $rdata->branch_id }}','{{ $rdata->dated }}','0');" class="btn btn-primary btn-sm">Print Lap. Harian</button></td>
                         <th scope="row">{{ $rdata->branch_name }}</th>
                         <td>{{ Carbon\Carbon::parse($rdata->dated)->format('d-m-Y')  }}</td>
                         <td>{{ number_format($rdata->total_service,0,',','.') }}</td>
@@ -63,9 +65,7 @@
                         <td>{{ number_format($rdata->total_qr,0,',','.') }}</td>
                         <td>{{ number_format($rdata->total_tr,0,',','.') }}</td>
                         <td>{{ number_format($rdata->qty_transaction,0,',','.') }}</td>
-                        <td>{{ number_format($rdata->qty_customers,0,',','.') }}</td>
-                        <td><button onclick="openDialog('{{ $rdata->branch_id }}','{{ $rdata->dated }}','0');" class="btn btn-warning btn-sm">Print</button></td>
-                        <td><button onclick="openDialog2('{{ $rdata->branch_id }}','{{ $rdata->dated }}','0');" class="btn btn-primary btn-sm">Print Lap. Harian</button></td>
+                        <td>{{ number_format($rdata->qty_customers,0,',','.') }}</td>                        
                     </tr>
                 @endforeach
             </tbody>
@@ -350,8 +350,8 @@
 @endpush
 @push('scripts')
 <script type="text/javascript">
-    $(document).ready(function () {
-        //$('#example').DataTable();
-    });
+    $('#example').DataTable({
+            "scrollX": true
+        });
 </script>
 @endpush

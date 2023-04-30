@@ -55,7 +55,9 @@ class BranchShiftController extends Controller
 
         $user = Auth::user();
         $BranchShift = BranchShift::join('branch as b','b.id','branch_shift.branch_id')
-                            ->join('shift as ub','ub.id', '=', 'branch_shift.shift_id')->paginate(10,['branch_shift.id','branch_shift.shift_id','b.remark as branch_name','ub.remark as shift_name','ub.time_start','ub.time_end']);
+                            ->join('users_branch as ub2','ub2.branch_id', '=', 'b.id')
+                            ->where('ub2.user_id','=',$user->id)
+                            ->join('shift as ub','ub.id', '=', 'branch_shift.shift_id')->get(['branch_shift.id','branch_shift.shift_id','b.remark as branch_name','ub.remark as shift_name','ub.time_start','ub.time_end']);
         $data = $this->data;
 
         $request->search = "";
@@ -89,6 +91,8 @@ class BranchShiftController extends Controller
         }else if($request->src=='Search'){
            
             $BranchShift = BranchShift::join('branch as b','b.id','branch_shift.branch_id')
+            ->join('users_branch as ub2','ub2.branch_id', '=', 'b.id')
+            ->where('ub2.user_id','=',$user->id)
             ->join('shift as ub', function($join){
                 $join->on('ub.id', '=', 'branch_shift.id');
             })->where('b.remark','ilike','%'.$keyword.'%')->paginate(10,['branch_shift.id','branch_shift.shift_id','b.remark as branch_name','ub.remark as shift_name']);
@@ -99,6 +103,8 @@ class BranchShiftController extends Controller
             ]);
         }else{
             $BranchShift = BranchShift::join('branch as b','b.id','branch_shift.branch_id')
+            ->join('users_branch as ub2','ub2.branch_id', '=', 'b.id')
+            ->where('ub2.user_id','=',$user->id)
             ->join('shift as ub', function($join){
                 $join->on('ub.id', '=', 'branch_shift.id');
             })->where('b.remark','ilike','%'.$keyword.'%')->paginate(10,['branch_shift.id','branch_shift.shift_id','b.remark as branch_name','ub.remark as shift_name']);
@@ -124,7 +130,7 @@ class BranchShiftController extends Controller
         $data = $this->data;
         return view('pages.branchshift.create',[
             'data'=>$data,
-            'branchs' => Branch::latest()->get(), 
+            'branchs' => Branch::join('users_branch as ub','ub.branch_id','=','branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']),
             'company' => Company::get()->first(),
             'userBranchs' => Branch::latest()->get()->pluck('remark')->toArray(),
             'shifts' => Shift::latest()->get(),
@@ -191,7 +197,7 @@ class BranchShiftController extends Controller
 
         return view('pages.branchshift.edit', [
             'data' => $data ,
-            'branchs' => Branch::latest()->get(),
+            'branchs' => Branch::join('users_branch as ub','ub.branch_id','=','branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']),
             'company' => Company::get()->first(),
             'shifts' => Shift::latest()->get(),
             'branchshift' => $branchshift,

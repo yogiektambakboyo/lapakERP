@@ -74,6 +74,7 @@ class ReportInvoiceDetailController extends Controller
             join customers c on c.id = im.customers_id 
             join users u on u.id=im.created_by
             join branch b on b.id = c.branch_id
+            join users_branch as ub on ub.branch_id = b.id and ub.user_id = '".$user->id."'
             join shift s on im.created_at::time  between s.time_start and s.time_end
             where im.dated>now()-interval'7 days' order by im.invoice_no               
         ");
@@ -114,6 +115,7 @@ class ReportInvoiceDetailController extends Controller
                 join customers c on c.id = im.customers_id  and c.branch_id::character varying like '%".$branchx."%'
                 join users u on u.id=im.created_by
                 join branch b on b.id = c.branch_id
+                join users_branch as ub on ub.branch_id = b.id and ub.user_id = '".$user->id."'
                 where im.dated between '".$begindate."' and '".$enddate."'                 
             ");         
             return view('pages.reports.invoicedetail',['company' => Company::get()->first()], compact('shifts','branchs','data','keyword','act_permission','report_data'))->with('i', ($request->input('page', 1) - 1) * 5);

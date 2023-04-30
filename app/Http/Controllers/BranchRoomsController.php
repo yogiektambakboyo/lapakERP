@@ -50,7 +50,10 @@ class BranchRoomsController extends Controller
         $this->getpermissions($id);
         $keyword = "";
 
-        $rooms = Room::join('branch','branch.id','=','branch_room.branch_id')->paginate(10,['branch_room.id','branch_room.remark','branch_room.branch_id','branch.remark as branch_name']);
+        $rooms = Room::join('branch','branch.id','=','branch_room.branch_id')
+        ->join('users_branch as ub2','ub2.branch_id', '=', 'branch.id')
+        ->where('ub2.user_id','=',$user->id)
+        ->get(['branch_room.id','branch_room.remark','branch_room.branch_id','branch.remark as branch_name']);
         $data = $this->data;
         $act_permission = $this->act_permission[0];
 
@@ -92,7 +95,7 @@ class BranchRoomsController extends Controller
         $data = $this->data;
         return view('pages.rooms.create',[
             'data' => $data,
-            'branchs' => Branch::latest()->get(),
+            'branchs' => Branch::join('users_branch as ub','ub.branch_id','=','branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']),
             'company' => Company::get()->first()
         ]);
     }
@@ -129,7 +132,7 @@ class BranchRoomsController extends Controller
 
         $data = $this->data;
         return view('pages.rooms.edit', [
-            'room' => $room ,'data' => $data ,'branchs' => Branch::latest()->get(),'company' => Company::get()->first()
+            'room' => $room ,'data' => $data ,'branchs' => Branch::join('users_branch as ub','ub.branch_id','=','branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']),'company' => Company::get()->first()
         ]);
     }
 

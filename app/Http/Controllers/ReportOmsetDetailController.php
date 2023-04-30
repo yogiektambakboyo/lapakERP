@@ -74,6 +74,7 @@ class ReportOmsetDetailController extends Controller
             join customers c on c.id = im.customers_id 
             join users u on u.id=im.created_by
             join branch b on b.id = c.branch_id
+            join users_branch as ub on ub.branch_id = b.id and ub.user_id = '".$user->id."'
             where im.dated>now()-interval'7 days' order by im.invoice_no               
         ");
         $data = $this->data;
@@ -113,6 +114,7 @@ class ReportOmsetDetailController extends Controller
                 join customers c on c.id = im.customers_id  and c.branch_id::character varying like '%".$branchx."%'
                 join users u on u.id=im.created_by
                 join branch b on b.id = c.branch_id
+                join users_branch as ub on ub.branch_id = b.id and ub.user_id = '".$user->id."'
                 where im.dated between '".$begindate."' and '".$enddate."'                 
             ");         
             return view('pages.reports.omsetdetail',['company' => Company::get()->first()], compact('shifts','branchs','data','keyword','act_permission','report_data'))->with('i', ($request->input('page', 1) - 1) * 5);
@@ -146,7 +148,7 @@ class ReportOmsetDetailController extends Controller
                         'caret' => true,
                         'sub_menu' => []
                     ],
-		   [
+		            [
                         'icon' => 'fa fa-box',
                         'title' => \Lang::get('home.service_management'),
                         'url' => 'javascript:;',

@@ -70,6 +70,8 @@ class ProductsDistributionController extends Controller
                     ->join('product_brand as pb','pb.id','=','product_sku.brand_id')
                     ->join('product_distribution as pr','pr.product_id','=','product_sku.id')
                     ->join('branch as bc','bc.id','=','pr.branch_id')
+                    ->join('users_branch as ub2','ub2.branch_id', '=', 'pr.branch_id')
+                    ->where('ub2.user_id','=',$user->id)
                     ->where('pt.id','=','1')
                     ->get(['product_sku.id','product_sku.remark as product_name','pr.branch_id','bc.remark as branch_name','pb.remark as product_brand','pr.active']);
         return view('pages.productsdistribution.index', ['company' => Company::get()->first()],compact('products','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
@@ -95,6 +97,8 @@ class ProductsDistributionController extends Controller
                         ->join('product_brand as pb','pb.id','=','product_sku.brand_id')
                         ->join('product_price as pr','pr.product_id','=','product_sku.id')
                         ->join('branch as bc','bc.id','=','pr.branch_id')
+                        ->join('users_branch as ub2','ub2.branch_id', '=', 'pr.branch_id')
+                        ->where('ub2.user_id','=',$user->id)
                         ->whereRaw($whereclause)
                         ->where('pt.id','=','1')
                         ->get(['product_sku.id','product_sku.remark as product_name','pr.branch_id','bc.remark as branch_name','pr.price as product_price','pb.remark as product_brand']);           

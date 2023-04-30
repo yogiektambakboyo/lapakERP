@@ -64,8 +64,8 @@ class ReportUserTrackingController extends Controller
         $report_data = DB::select("
             select u.name,b.remark as branch_name,jt.remark  as job_title ,um.created_at  from users_mutation um 
             join users u on u.id = um.user_id 
-            join users_branch ub on ub.user_id = u.id
             join branch b on b.id = um.branch_id 
+            join users_branch as ub on ub.branch_id = b.id and ub.user_id = '".$user->id."'
             join job_title jt on jt.id = um.job_id where um.created_at > now()-interval'7 days'
             order by created_at      
         ");
@@ -73,7 +73,7 @@ class ReportUserTrackingController extends Controller
         $keyword = "";
         $act_permission = $this->act_permission[0];
         $brands = ProductBrand::orderBy('product_brand.remark', 'ASC')
-                    ->paginate(10,['product_brand.id','product_brand.remark']);
+                    ->get(['product_brand.id','product_brand.remark']);
         return view('pages.reports.usertracking',['company' => Company::get()->first()] ,compact('brands','branchs','data','keyword','act_permission','report_data'))->with('i', ($request->input('page', 1) - 1) * 5);
     }
 
@@ -99,10 +99,10 @@ class ReportUserTrackingController extends Controller
             $report_data = DB::select("
                 select u.name,b.remark as branch_name,jt.remark  as job_title ,um.created_at  from users_mutation um 
                 join users u on u.id = um.user_id 
-                join users_branch ub on ub.user_id = u.id and ub.branch_id::character varying like '%".$branchx."%' 
                 join branch b on b.id = um.branch_id 
+                join users_branch as ub on ub.branch_id = b.id and ub.user_id = '".$user->id."' and ub.branch_id::character varying like '%".$branchx."%' 
                 join job_title jt on jt.id = um.job_id 
-                where um.created_at between '".$begindate."' and '".$enddate."' 
+                where um.created_at::date between '".$begindate."' and '".$enddate."' 
                 order by um.created_at      
             ");          
             return view('pages.reports.usertracking',['company' => Company::get()->first()], compact('report_data','branchs','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);

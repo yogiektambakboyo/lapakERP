@@ -71,6 +71,8 @@ class VoucherController extends Controller
                     ->join('product_brand as pb','pb.id','=','product_sku.brand_id')
                     ->join('voucher as pr','pr.product_id','=','product_sku.id')
                     ->join('branch as bc','bc.id','=','pr.branch_id')
+                    ->join('users_branch as ub2','ub2.branch_id', '=', 'pr.branch_id')
+                    ->where('ub2.user_id','=',$user->id)
                     ->whereRaw(' now()::date between pr.dated_start and pr.dated_end')
                     ->orderby('pr.voucher_code','ASC')
                     ->get(['pr.is_used','pr.price','pr.remark as voucher_remark','pr.voucher_code','product_sku.id','product_sku.remark as product_name','pr.branch_id','bc.remark as branch_name','pr.value as value','pr.dated_start','pr.dated_end','pb.remark as product_brand']);
@@ -109,6 +111,8 @@ class VoucherController extends Controller
                         ->join('product_brand as pb','pb.id','=','product_sku.brand_id')
                         ->join('voucher as pr','pr.product_id','=','product_sku.id')
                         ->join('branch as bc','bc.id','=','pr.branch_id')
+                        ->join('users_branch as ub2','ub2.branch_id', '=', 'pr.branch_id')
+                        ->where('ub2.user_id','=',$user->id)
                         ->whereRaw($whereclause)
                         ->where('bc.id','like','%'.$branchx.'%')  
                         ->get(['pr.is_used','pr.remark as voucher_remark','pr.voucher_code','product_sku.id','product_sku.remark as product_name','pr.branch_id','bc.remark as branch_name','pr.value as value','pr.dated_start','pr.dated_end']); 
@@ -123,6 +127,8 @@ class VoucherController extends Controller
                         ->join('product_brand as pb','pb.id','=','product_sku.brand_id')
                         ->join('voucher as pr','pr.product_id','=','product_sku.id')
                         ->join('branch as bc','bc.id','=','pr.branch_id')
+                        ->join('users_branch as ub2','ub2.branch_id', '=', 'pr.branch_id')
+                        ->where('ub2.user_id','=',$user->id)
                         ->whereRaw($whereclause)
                         ->where('bc.id','like','%'.$branchx.'%')  
                         ->get(['pr.is_used','pr.remark as voucher_remark','pr.voucher_code','product_sku.id','product_sku.remark as product_name','pr.branch_id','bc.remark as branch_name','pr.value as value','pr.dated_start','pr.dated_end']);                 

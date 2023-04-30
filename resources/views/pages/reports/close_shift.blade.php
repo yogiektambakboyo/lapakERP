@@ -21,9 +21,10 @@
             @include('layouts.partials.messages')
         </div>
 
-        <table class="table table-striped" id="example">
+        <table class="table table-striped nowrap" id="example">
             <thead>
             <tr>
+                <th scope="col" width="2%">@lang('general.lbl_action')</th> 
                 <th scope="col" width="10%">@lang('general.lbl_branch')</th>
                 <th scope="col" width="6%">@lang('general.lbl_dated')</th>
                 <th>Shift</th>
@@ -41,13 +42,13 @@
                 <th scope="col">Transfer</th> 
                 <th scope="col">#SPK</th> 
                 <th scope="col">#Tamu</th>  
-                <th scope="col" width="2%">@lang('general.lbl_action')</th> 
             </tr>
             </thead>
             <tbody>
 
                 @foreach($report_data as $rdata)
                     <tr>
+                        <td><button onclick="openDialog('{{ $rdata->branch_id }}','{{ $rdata->dated }}','{{ $rdata->shift_id }}');" class="btn btn-warning btn-sm">Print</button></td>
                         <th scope="row">{{ $rdata->branch_name }}</th>
                         <td>{{ Carbon\Carbon::parse($rdata->dated)->format('d-m-Y') }}</td>
                         <td>{{ $rdata->shift_name }}</td>
@@ -65,7 +66,6 @@
                         <td>{{ number_format($rdata->total_tr,0,',','.') }}</td>
                         <td>{{ number_format($rdata->qty_transaction,0,',','.') }}</td>
                         <td>{{ number_format($rdata->qty_customers,0,',','.') }}</td>
-                        <td><button onclick="openDialog('{{ $rdata->branch_id }}','{{ $rdata->dated }}','{{ $rdata->shift_id }}');" class="btn btn-warning btn-sm">Print</button></td>
                     </tr>
                 @endforeach
             </tbody>
@@ -144,7 +144,7 @@
                         </div>
                         <br>
                         <div class="col-md-12">
-                            <button type="submit" class="btn btn-primary form-control">@lang('general.lbl_apply')</button>
+                            <button type="submit" data-bs-dismiss="modal"  class="btn btn-primary form-control">@lang('general.lbl_apply')</button>
                         </div>
                     </form>
                 </div>
@@ -159,7 +159,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                 <h5 class="modal-title"  id="input_expired_list_at_lbl">Konfirmasi</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <form target="_blank" action="{{ route('reports.closeshift.getdata') }}" method="GET">   
@@ -198,7 +198,7 @@
                         </div>
                         <br>
                         <div class="col-md-12">
-                            <button type="submit" class="btn btn-primary form-control">@lang('general.lbl_apply')</button>
+                            <button type="submit" data-bs-dismiss="modal"  class="btn btn-primary form-control">@lang('general.lbl_apply')</button>
                         </div>
                     </form>
                 </div>
@@ -319,7 +319,9 @@
 @push('scripts')
 <script type="text/javascript">
     $(document).ready(function () {
-        $('#example').DataTable();
+        $('#example').DataTable({
+            "scrollX": true
+        });
     });
 </script>
 @endpush

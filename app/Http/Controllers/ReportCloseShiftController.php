@@ -84,6 +84,7 @@ class ReportCloseShiftController extends Controller
                 join product_sku ps on ps.id = id.product_id 
                 join customers c on c.id = im.customers_id 
                 join branch b on b.id = c.branch_id
+                join users_branch as ub on ub.branch_id = b.id and ub.user_id = '".$user->id."'
                 join branch_shift bs on bs.branch_id = b.id
                 join shift s on im.created_at::time  between s.time_start and s.time_end and s.id = bs.shift_id
                 where im.dated>now()-interval'7 days'
@@ -116,6 +117,7 @@ class ReportCloseShiftController extends Controller
                 join invoice_detail id on id.invoice_no = im.invoice_no 
                 join customers c on c.id = im.customers_id 
                 join branch b on b.id=c.branch_id
+                join users_branch as ub on ub.branch_id = b.id and ub.user_id = '".$user->id."'
                 join product_sku ps on ps.id = id.product_id 
                 join branch_shift bs on bs.branch_id = b.id
                 join shift s on s.id = ".$filter_shift."  and s.id = bs.shift_id
@@ -139,6 +141,7 @@ class ReportCloseShiftController extends Controller
                 from invoice_master im 
                 join customers c on c.id = im.customers_id 
                 join branch b on b.id=c.branch_id 
+                join users_branch as ub on ub.branch_id = b.id and ub.user_id = '".$user->id."'
                 join shift s on s.id = ".$filter_shift."
                 where im.dated = '".$filter_begin_date."' and im.created_at::time  between s.time_start and s.time_end  and c.branch_id = ".$filter_branch_id." 
                  group by im.invoice_no,im.total_payment,im.payment_type                       
@@ -148,6 +151,7 @@ class ReportCloseShiftController extends Controller
                 from invoice_master im 
                 join customers c on c.id = im.customers_id 
                 join branch b on b.id=c.branch_id 
+                join users_branch as ub on ub.branch_id = b.id and ub.user_id = '".$user->id."'
                 join shift s on s.id = ".$filter_shift."
                 where im.dated = '".$filter_begin_date."' and im.created_at::time  between s.time_start and s.time_end  and c.branch_id = ".$filter_branch_id."                      
         ");
@@ -157,6 +161,7 @@ class ReportCloseShiftController extends Controller
             join petty_cash_detail pcd on pcd.doc_no = pc.doc_no
             join product_sku ps on ps.id = pcd.product_id 
             join shift s on s.id = ".$filter_shift."
+            join users_branch as ub on ub.branch_id = pc.branch_id and ub.user_id = '".$user->id."'
             where pc.dated  = '".$filter_begin_date."' and pc.created_at::time between s.time_start and s.time_end  and pc.branch_id = ".$filter_branch_id."  
             group by ps.abbr,pc.type order by 1                   
         ");
@@ -166,6 +171,7 @@ class ReportCloseShiftController extends Controller
                 join invoice_detail id on id.invoice_no = im.invoice_no 
                 join customers c on c.id = im.customers_id 
                 join branch b on b.id=c.branch_id
+                join users_branch as ub on ub.branch_id = b.id and ub.user_id = '".$user->id."'
                 join product_sku ps on ps.id = id.product_id 
                 join product_ingredients pi2 on pi2.product_id = ps.id 
                 join product_sku ps2 on ps2.id = pi2.product_id_material 
@@ -232,6 +238,7 @@ class ReportCloseShiftController extends Controller
                     join product_sku ps on ps.id = id.product_id 
                     join customers c on c.id = im.customers_id and c.branch_id::character varying like '%".$branchx."%'
                     join branch b on b.id = c.branch_id
+                    join users_branch as ub on ub.branch_id = b.id and ub.user_id = '".$user->id."'
                     join branch_shift bs on bs.branch_id = b.id
                     join shift s on im.created_at::time  between s.time_start and s.time_end and s.id::character varying like '%".$shift_id."%'  and s.id = bs.shift_id
                     where im.dated between '".$begindate."' and '".$enddate."'

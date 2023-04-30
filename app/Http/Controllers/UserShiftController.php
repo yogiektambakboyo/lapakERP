@@ -135,7 +135,7 @@ class UserShiftController extends Controller
 
         return view('pages.usersshift.create',[
             'data'=>$data,
-            'branchs' => Branch::latest()->get(), 
+            'branchs' => Branch::join('users_branch as ub','ub.branch_id','=','branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']),
             'company' => Company::get()->first(),
             'userBranchs' => Branch::latest()->get()->pluck('remark')->toArray(),
             'users' => $users,
@@ -228,7 +228,7 @@ class UserShiftController extends Controller
             'usershift' => $usersshift ,
             'data' => $data ,
             'users' => $users,
-            'branchs' => Branch::latest()->get(),
+            'branchs' => Branch::join('users_branch as ub','ub.branch_id','=','branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']),
             'company' => Company::get()->first(),
             'shifts' => Shift::latest()->get(),
             'userBranchs' => Branch::latest()->get()->pluck('remark')->toArray()

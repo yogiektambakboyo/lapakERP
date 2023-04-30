@@ -82,6 +82,7 @@ class ReportCloseDayController extends Controller
                 join product_sku ps on ps.id = id.product_id 
                 join customers c on c.id = im.customers_id 
                 join branch b on b.id = c.branch_id
+                join users_branch as ub on ub.branch_id = b.id and ub.user_id = '".$user->id."'
                 where im.dated>now()-interval'7 days'
                 group by b.remark,im.dated,b.id       
         ");
@@ -394,6 +395,7 @@ class ReportCloseDayController extends Controller
             union
             select im.customers_id,im.scheduled_at,right(im.invoice_no,6) as invoice_no,0 as total_324,0 as total_325,0 as total_326,0 as total_327,0 as total_328,0 as total_316,0 as total_309,0 as total_318,0 as total_319,0 as total_280,0 as total_281,0 as total_282,0 as total_283,0 as total_284,0 as total_285,0 as total_286,0 as total_287,0 as total_288,0 as total_289,0 as total_290,0 as total_291,0 as total_292,0 as total_293,0 as total_294,0 as total_295,0 as total_296,0 as total_297,0 as total_298,0 as total_299,0 as total_300,0 as total_301,0 as total_302,0 as total_304,0 as total_305,0 as total_306,0 as total_307,0 as total_308,0 as total_310,0 as total_312,0 as total_313,0 as total_315,0 as total_317,sum(id.total) as total_321 from invoice_master im join invoice_detail id on id.invoice_no = im.invoice_no join product_sku ps on ps.id = id.product_id  and ps.id = 321 where im.dated='".$filter_begin_date."'   group by im.customers_id,right(im.invoice_no,6),im.scheduled_at
         ) a  join invoice_master im on right(im.invoice_no,6) = a.invoice_no 
+        join customers c on c.id= im.customers_id and c.branch_id = ".$filter_branch_id."
         left join shift s on im.created_at::time between s.time_start and s.time_end 
         group by a.customers_id,a.invoice_no,s.remark  order by 3,1
                 "
@@ -485,7 +487,7 @@ class ReportCloseDayController extends Controller
                 select im.customers_id,im.scheduled_at,right(im.invoice_no,6) as invoice_no,0 as total_324,0 as total_325,0 as total_326,0 as total_327,0 as total_328,0 as total_316,0 as total_309,0 as total_318,0 as total_319,0 as total_280,0 as total_281,0 as total_282,0 as total_283,0 as total_284,0 as total_285,0 as total_286,0 as total_287,0 as total_288,0 as total_289,0 as total_290,0 as total_291,0 as total_292,0 as total_293,0 as total_294,0 as total_295,0 as total_296,0 as total_297,0 as total_298,0 as total_299,0 as total_300,0 as total_301,0 as total_302,0 as total_304,0 as total_305,0 as total_306,0 as total_307,0 as total_308,0 as total_310,0 as total_312,0 as total_313,0 as total_315,sum(id.discount) as total_317,0 as total_321 from invoice_master im join invoice_detail id on id.invoice_no = im.invoice_no join product_sku ps on ps.id = id.product_id  and ps.id = 317  where im.dated='".$filter_begin_date."'  group by im.customers_id,right(im.invoice_no,6),im.scheduled_at
                 union
                 select im.customers_id,im.scheduled_at,right(im.invoice_no,6) as invoice_no,0 as total_324,0 as total_325,0 as total_326,0 as total_327,0 as total_328,0 as total_316,0 as total_309,0 as total_318,0 as total_319,0 as total_280,0 as total_281,0 as total_282,0 as total_283,0 as total_284,0 as total_285,0 as total_286,0 as total_287,0 as total_288,0 as total_289,0 as total_290,0 as total_291,0 as total_292,0 as total_293,0 as total_294,0 as total_295,0 as total_296,0 as total_297,0 as total_298,0 as total_299,0 as total_300,0 as total_301,0 as total_302,0 as total_304,0 as total_305,0 as total_306,0 as total_307,0 as total_308,0 as total_310,0 as total_312,0 as total_313,0 as total_315,0 as total_317,sum(id.discount) as total_321 from invoice_master im join invoice_detail id on id.invoice_no = im.invoice_no join product_sku ps on ps.id = id.product_id  and ps.id = 321 where im.dated='".$filter_begin_date."'   group by im.customers_id,right(im.invoice_no,6),im.scheduled_at
-        ) a group by a.customers_id,a.scheduled_at,a.invoice_no order by 3,1
+        ) a join customers c on c.id= a.customers_id and c.branch_id = ".$filter_branch_id." group by a.customers_id,a.scheduled_at,a.invoice_no order by 3,1
                     "
                 );
 
@@ -576,7 +578,7 @@ class ReportCloseDayController extends Controller
             select  im.customers_id,0 as total_324,0 as total_325,0 as total_326,0 as total_327,0 as total_328,0 as total_316,0 as total_309,0 as total_318,0 as total_319,0 as total_280,0 as total_281,0 as total_282,0 as total_283,0 as total_284,0 as total_285,0 as total_286,0 as total_287,0 as total_288,0 as total_289,0 as total_290,0 as total_291,0 as total_292,0 as total_293,0 as total_294,0 as total_295,0 as total_296,0 as total_297,0 as total_298,0 as total_299,0 as total_300,0 as total_301,0 as total_302,0 as total_304,0 as total_305,0 as total_306,0 as total_307,0 as total_308,0 as total_310,0 as total_312,0 as total_313,0 as total_315,sum(id.price*id.qty) as total_317,0 as total_321 from invoice_master im join invoice_detail id on id.invoice_no = im.invoice_no join product_sku ps on ps.id = id.product_id  and ps.id = 317  where im.dated='".$filter_begin_date."'  group by im.customers_id
             union
             select  im.customers_id,0 as total_324,0 as total_325,0 as total_326,0 as total_327,0 as total_328,0 as total_316,0 as total_309,0 as total_318,0 as total_319,0 as total_280,0 as total_281,0 as total_282,0 as total_283,0 as total_284,0 as total_285,0 as total_286,0 as total_287,0 as total_288,0 as total_289,0 as total_290,0 as total_291,0 as total_292,0 as total_293,0 as total_294,0 as total_295,0 as total_296,0 as total_297,0 as total_298,0 as total_299,0 as total_300,0 as total_301,0 as total_302,0 as total_304,0 as total_305,0 as total_306,0 as total_307,0 as total_308,0 as total_310,0 as total_312,0 as total_313,0 as total_315,0 as total_317,sum(id.price*id.qty) as total_321 from invoice_master im join invoice_detail id on id.invoice_no = im.invoice_no join product_sku ps on ps.id = id.product_id  and ps.id = 321 where im.dated='".$filter_begin_date."'   group by im.customers_id
-    ) a
+    ) a join customers c on c.id= a.customers_id and c.branch_id = ".$filter_branch_id."
         ");
 
         $dtt_raw_oneline_qty = DB::select("
@@ -666,7 +668,7 @@ class ReportCloseDayController extends Controller
             select  im.customers_id,0 as total_324,0 as total_325,0 as total_326,0 as total_327,0 as total_328,0 as total_316,0 as total_309,0 as total_318,0 as total_319,0 as total_280,0 as total_281,0 as total_282,0 as total_283,0 as total_284,0 as total_285,0 as total_286,0 as total_287,0 as total_288,0 as total_289,0 as total_290,0 as total_291,0 as total_292,0 as total_293,0 as total_294,0 as total_295,0 as total_296,0 as total_297,0 as total_298,0 as total_299,0 as total_300,0 as total_301,0 as total_302,0 as total_304,0 as total_305,0 as total_306,0 as total_307,0 as total_308,0 as total_310,0 as total_312,0 as total_313,0 as total_315,sum(id.qty) as total_317,0 as total_321 from invoice_master im join invoice_detail id on id.invoice_no = im.invoice_no join product_sku ps on ps.id = id.product_id  and ps.id = 317  where im.dated='".$filter_begin_date."'  group by im.customers_id
             union
             select  im.customers_id,0 as total_324,0 as total_325,0 as total_326,0 as total_327,0 as total_328,0 as total_316,0 as total_309,0 as total_318,0 as total_319,0 as total_280,0 as total_281,0 as total_282,0 as total_283,0 as total_284,0 as total_285,0 as total_286,0 as total_287,0 as total_288,0 as total_289,0 as total_290,0 as total_291,0 as total_292,0 as total_293,0 as total_294,0 as total_295,0 as total_296,0 as total_297,0 as total_298,0 as total_299,0 as total_300,0 as total_301,0 as total_302,0 as total_304,0 as total_305,0 as total_306,0 as total_307,0 as total_308,0 as total_310,0 as total_312,0 as total_313,0 as total_315,0 as total_317,sum(id.qty) as total_321 from invoice_master im join invoice_detail id on id.invoice_no = im.invoice_no join product_sku ps on ps.id = id.product_id  and ps.id = 321 where im.dated='".$filter_begin_date."'   group by im.customers_id
-    ) a
+    ) a join customers c on c.id= a.customers_id and c.branch_id = ".$filter_branch_id."
         ");
 
         $dtt_raw_oneline_disc = DB::select(" select sum(total_324)/1000 as total_324,sum(total_325)/1000 as total_325,sum(total_326)/1000 as total_326,sum(total_327)/1000 as total_327,sum(total_328)/1000 as total_328,sum(total_316)/1000 as total_316,sum(total_309)/1000 as total_309,sum(total_318)/1000 as total_318,sum(total_319)/1000 as total_319,sum(total_280)/1000 as total_280,sum(total_281)/1000 as total_281,sum(total_282)/1000 as total_282,sum(total_283)/1000 as total_283,sum(total_284)/1000 as total_284,sum(total_285)/1000 as total_285,sum(total_286)/1000 as total_286,sum(total_287)/1000 as total_287,sum(total_288)/1000 as total_288,sum(total_289)/1000 as total_289,sum(total_290)/1000 as total_290,sum(total_291)/1000 as total_291,sum(total_292)/1000 as total_292,sum(total_293)/1000 as total_293,sum(total_294)/1000 as total_294,sum(total_295)/1000 as total_295,sum(total_296)/1000 as total_296,sum(total_297)/1000 as total_297,sum(total_298)/1000 as total_298,sum(total_299)/1000 as total_299,sum(total_300)/1000 as total_300,sum(total_301)/1000 as total_301,sum(total_302)/1000 as total_302,sum(total_304)/1000 as total_304,sum(total_305)/1000 as total_305,sum(total_306)/1000 as total_306,sum(total_307)/1000 as total_307,sum(total_308)/1000 as total_308,sum(total_310)/1000 as total_310,sum(total_312)/1000 as total_312,sum(total_313)/1000 as total_313,sum(total_315)/1000 as total_315,sum(total_317)/1000 as total_317,sum(total_321)/1000 as total_321 from (
@@ -756,7 +758,7 @@ class ReportCloseDayController extends Controller
             union
             select  im.customers_id,0 as total_324,0 as total_325,0 as total_326,0 as total_327,0 as total_328,0 as total_316,0 as total_309,0 as total_318,0 as total_319,0 as total_280,0 as total_281,0 as total_282,0 as total_283,0 as total_284,0 as total_285,0 as total_286,0 as total_287,0 as total_288,0 as total_289,0 as total_290,0 as total_291,0 as total_292,0 as total_293,0 as total_294,0 as total_295,0 as total_296,0 as total_297,0 as total_298,0 as total_299,0 as total_300,0 as total_301,0 as total_302,0 as total_304,0 as total_305,0 as total_306,0 as total_307,0 as total_308,0 as total_310,0 as total_312,0 as total_313,0 as total_315,0 as total_317,sum(id.total) as total_321 from invoice_master im join invoice_detail id on id.invoice_no = im.invoice_no join product_sku ps on ps.id = id.product_id  and ps.id = 321 where im.dated='".$filter_begin_date."'   group by im.customers_id
            
-    ) a
+    ) a join customers c on c.id= a.customers_id and c.branch_id = ".$filter_branch_id."
         "
         );
 
@@ -848,6 +850,7 @@ class ReportCloseDayController extends Controller
                     join product_sku ps on ps.id = id.product_id 
                     join customers c on c.id = im.customers_id and c.branch_id::character varying like '%".$branchx."%'
                     join branch b on b.id = c.branch_id
+                    join users_branch as ub on ub.branch_id = b.id and ub.user_id = '".$user->id."'
                     where im.dated between '".$begindate."' and '".$enddate."'
                     group by b.remark,im.dated,b.id         
             ");         
