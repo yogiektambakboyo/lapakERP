@@ -38,7 +38,8 @@ class VoucherExport implements FromCollection,WithColumnFormatting, WithHeadings
             'Date Start',
             'Date End',
             'Price',
-            'Already Used?'
+            'Already Used?',
+            'Invoice No'
         ];
     }
     public function collection()
@@ -53,14 +54,12 @@ class VoucherExport implements FromCollection,WithColumnFormatting, WithHeadings
                         ->join('branch as bc','bc.id','=','pr.branch_id')
                         ->whereRaw($whereclause)
                         ->where('bc.id','like','%'.$this->branch.'%')  
-                        ->get(['pr.remark as voucher_remark','pr.voucher_code','product_sku.remark as product_name','bc.remark as branch_name','pr.value as value','pr.dated_start','pr.dated_end','pr.price','pr.is_used']);           
+                        ->get(['pr.remark as voucher_remark','pr.voucher_code','product_sku.remark as product_name','bc.remark as branch_name','pr.value as value','pr.dated_start','pr.dated_end','pr.price','pr.is_used','pr.invoice_no']);           
         
     }
 
     public function columnFormats(): array
     {
-        return [
-            'F' => 'yyyy-mm-dd',
-        ];
+        return [];
     }
 }
