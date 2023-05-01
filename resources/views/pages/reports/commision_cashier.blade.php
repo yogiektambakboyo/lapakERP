@@ -13,8 +13,7 @@
                 <div class="col-md-10"> 	
                         <button onclick="openDialogFilterSearch('Filter');" class="btn btn-sm btn-lime">@lang('general.btn_filter')</button> 
                         <button onclick="openDialogFilterSearch('Export Excel');" class="btn btn-sm btn-success">Export</button>  
-                        <button onclick="openDialogFilterSearch('Export Sum');" class="btn btn-sm btn-success">Export Summary</button>  
-                        <button onclick="openDialogFilterSearch('Export Sum Lite');" class="btn btn-sm btn-success">Export Summary Lite</button>  
+                        <button onclick="openDialogFilterSearch('Export Sum Lite');" class="btn btn-sm btn-success">Export Summary</button>  
                 </div>
             </div>
         </div>
