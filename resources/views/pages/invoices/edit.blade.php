@@ -879,6 +879,13 @@
       var disc_total = 0;
       var _vat_total = 0;
       var sub_total = 0;
+      var _is_use_voucher = "0";
+
+      if($("#input-apply-voucher").val()==""){
+        _is_use_voucher = "0";
+      }else{
+        _is_use_voucher = "1";
+      }
         
         $('#save-btn').on('click',function(){
           if($('#invoice_date').val()==''){
@@ -983,6 +990,7 @@
                   customer_type : $('#customer_type').val(),
                   voucher_code :  $("#input-apply-voucher").val(),
                   tax : _vat_total,
+                  is_use_voucher : _is_use_voucher
                 }
               );
               const res = axios.patch("{{ route('invoices.update',$invoice->id) }}", json, {
@@ -1597,8 +1605,6 @@
 
           });
 
-
-
           $("#apply-voucher-btn").on('click',function(){
               if($("#input-apply-voucher").val()==""){
                   Swal.fire(
@@ -1731,6 +1737,7 @@
 
 
                     if(counterVoucherHit>0){
+                      is_use_voucher = "1";
                       Swal.fire(
                       {
                           position: 'top-end',

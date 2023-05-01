@@ -1057,6 +1057,7 @@
       var disc_total = 0;
       var _vat_total = 0;
       var sub_total = 0;
+      var _is_use_voucher = "0";
         
         $('#save-btn').on('click',function(){
           if($('#invoice_date').val()==''){
@@ -1171,7 +1172,8 @@
                   customer_type : $('#customer_type').val(),
                   ref_no : $('#ref_no').val(),
                   tax : _vat_total,
-                  voucher_code :  $("#input-apply-voucher").val()
+                  voucher_code :  $("#input-apply-voucher").val(),
+                  is_use_voucher : _is_use_voucher
                 }
               );
               const res = axios.post("{{ route('invoices.store') }}", json, {
@@ -2089,6 +2091,7 @@
 
 
                     if(counterVoucherHit>0){
+                      _is_use_voucher = "1";
                       Swal.fire(
                       {
                           position: 'top-end',
