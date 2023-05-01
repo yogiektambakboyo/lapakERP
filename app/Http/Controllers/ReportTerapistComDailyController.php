@@ -63,7 +63,9 @@ class ReportTerapistComDailyController extends Controller
         $user = Auth::user();
         $id = $user->roles->first()->id;
         $this->getpermissions($id);
-        $branchs = Branch::join('users_branch as ub','ub.branch_id', '=', 'branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']);        
+        $branchs = Branch::join('users_branch as ub','ub.branch_id', '=', 'branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']);  
+        
+        $call_proc = DB::select("CALL public.calc_commision_terapist_today();");
 
         $report_data = DB::select("
                     select a.branch_name,a.com_type,to_char(a.dated,'dd-mm-YYYY') as dated,a.qtyinv,a.work_year,a.name,a.commisions,a.point_qty,coalesce(pc2.point_value,0)  as point_value,a.commisions+coalesce(pc2.point_value,0) as total from (
@@ -119,6 +121,11 @@ class ReportTerapistComDailyController extends Controller
         $brands = ProductBrand::orderBy('product_brand.remark', 'ASC')
                     ->get(['product_brand.id','product_brand.remark']);
         return view('pages.reports.commision_terapist_summary',['company' => Company::get()->first()], compact('brands','branchs','data','keyword','act_permission','report_data'))->with('i', ($request->input('page', 1) - 1) * 5);
+    }
+
+    public function calc_commision(){
+        $call_proc = DB::select("CALL public.calc_commision_terapist_today();");
+        return "Executed at ".date('d-m-Y H:i:s');
     }
 
     public function search(Request $request) 
@@ -400,9 +407,6 @@ class ReportTerapistComDailyController extends Controller
                        
             ");
     
-           
-            //$users = User::join('users_branch as ub','ub.branch_id', '=', 'users.branch_id')->where('ub.user_id','=',$user->id)->where('users.job_id','=',2)->get(['users.id','users.name']);
-    
             return view('pages.reports.terapist_comm_day_print', [
                 'data' => $data,
                 'report_data_total' => $report_data_total,
@@ -412,18 +416,7 @@ class ReportTerapistComDailyController extends Controller
                 'report_data_detail_t' => $report_data_detail_t,
                 'settings' => Settings::get(),
             ]);
-            $pdf = PDF::setOptions(['isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true])->loadView('pages.reports.terapist_comm_day_print', [
-                'data' => $data,
-                'report_data_total' => $report_data_total,
-                'report_data_com_from1' => $report_data_com_from1,
-                'report_datas_detail' => $report_data_detail,
-                'report_data_detail_invs' => $report_data_detail_inv,
-                'report_data_detail_t' => $report_data_detail_t,
-                'settings' => Settings::get(),
-            ])->setOptions(['defaultFont' => 'sans-serif'])->setPaper('a4', 'landscape');
-            return $pdf->stream('report_daily.pdf');
-
-        }else if($request->export=='Export SumSS'){
+        }else if($request->export=='Export Sum Lite'){
 
             $filter_begin_date = $begindate;
             $filter_begin_end = $enddate;
@@ -435,12 +428,14 @@ class ReportTerapistComDailyController extends Controller
                     select a.branch_name,a.id,a.dated,a.name,a.invoice_no,a.abbr,coalesce(pc2.point_value,0) as total_point,(a.commisions+coalesce(pc2.point_value,0)) as total,commisions_extra,total_abbr,total_commisions,total_point_qty,product_abbr,
                     product_price,product_base_commision,product_qty,product_commisions
                     from (
-                        select a.branch_name,a.user_id as id,a.dated,a.terapist_name as name,string_agg(distinct right(invoice_no,6),'##') as invoice_no,string_agg(case when type_id=2 then abbr else '' end,'##') as abbr,
+                        select a.branch_name,a.user_id as id,a.dated,a.terapist_name as name,
+                        string_agg(distinct right(invoice_no,6),'##') as invoice_no,
+                        string_agg(case when type_id=2 then abbr else '' end,'##' order by invoice_no) as abbr,
                         sum(point_qty) as point_qty,sum(a.commisions) as commisions,
-                        string_agg(case when type_id=8 then commisions::character varying else '' end,'##') as commisions_extra,
-                        string_agg(case when type_id=2 then total::character varying else '' end,'##') as total_abbr,
-                        string_agg(case when type_id=2 then commisions::character varying else '' end,'##') as total_commisions,
-                        string_agg(case when type_id=2 then point_qty::character varying else '' end,'##') as total_point_qty,
+                        string_agg(case when type_id=8 then commisions::character varying else '' end,'##' order by invoice_no) as commisions_extra,
+                        string_agg(case when type_id=2 then total::character varying else '' end,'##' order by invoice_no) as total_abbr,
+                        string_agg(case when type_id=2 then commisions::character varying else '' end,'##' order by invoice_no) as total_commisions,
+                        string_agg(case when type_id=2 then point_qty::character varying else '' end,'##' order by invoice_no) as total_point_qty,
                         string_agg(case when type_id=1 then abbr else '' end,'##') as product_abbr,
                         string_agg(case when type_id=1 then price::character varying else '' end,'##') as product_price,
                         string_agg(case when type_id=1 then base_commision::character varying else '' end,'##') as product_base_commision,
