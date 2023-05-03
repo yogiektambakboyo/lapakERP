@@ -4,6 +4,7 @@
    <head> 
       <meta charset = "utf-8"> 
       <title>Laporan Closing Harian</title>
+      <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet"/>
       <style>
         body {background-color: whitesmoke;}
         h1   {color: blue;}
@@ -19,11 +20,21 @@
         div{
           padding:2px;
         }
+        button.btn.print::before {
+          font-family: fontAwesome;
+          content: "\f02f\00a0";
+        }
         @page { margin:0px; }
+        @media print {
+          #printPageButton {
+            display: none;
+          }
+        }
       </style>
    </head> 
    <body> 
 
+    <button id="printPageButton" onClick="window.print();"  class="btn print">Cetak Laporan</button>
       <table style="width: 100%">
         <tbody>
           <tr style="text-align: center;background-color:#FFA726;">

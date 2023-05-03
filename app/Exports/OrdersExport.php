@@ -61,7 +61,6 @@ class OrdersExport implements FromCollection,WithColumnFormatting, WithHeadings
     public function columnFormats(): array
     {
         return [
-            'F' => 'yyyy-mm-dd',
         ];
     }
 }

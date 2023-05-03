@@ -62,7 +62,6 @@ class InvoicesInternalExport implements FromCollection,WithColumnFormatting, Wit
     public function columnFormats(): array
     {
         return [
-            'F' => 'yyyy-mm-dd',
         ];
     }
 }

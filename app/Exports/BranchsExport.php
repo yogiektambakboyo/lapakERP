@@ -40,7 +40,6 @@ class BranchsExport implements FromCollection,WithColumnFormatting, WithHeadings
     public function columnFormats(): array
     {
         return [
-            'F' => '',
         ];
     }
 }

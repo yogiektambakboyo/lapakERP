@@ -164,7 +164,7 @@ class ReportCloseDayController extends Controller
         $payment_type = ['Cash','BCA - Debit','BCA - Kredit','Mandiri - Debit','Mandiri - Kredit','Transfer','QRIS'];
         $users = User::join('users_branch as ub','ub.branch_id', '=', 'users.branch_id')->where('ub.user_id','=',$user->id)->where('users.job_id','=',2)->get(['users.id','users.name']);
 
-        $pdf = PDF::setOptions(['isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true])->loadView('pages.reports.close_day_print', [
+        return view('pages.reports.close_day_print', [
             'data' => $data,
             'payment_datas' => $payment_data,
             'out_datas' => $out_data,
@@ -173,10 +173,7 @@ class ReportCloseDayController extends Controller
             'cust' => $cust,
             'creator' => $creator,
             'settings' => Settings::get(),
-        ])->setOptions(['defaultFont' => 'sans-serif'])->setPaper('a4', 'landscape');
-        return $pdf->stream('invoice.pdf');
-
-        return view('pages.reports.print',['company' => Company::get()->first()], compact('shifts','branchs','data','keyword','act_permission','report_data'))->with('i', ($request->input('page', 1) - 1) * 5);
+        ]);
     }
 
     public function getdata_daily(Request $request) 
@@ -784,6 +781,28 @@ class ReportCloseDayController extends Controller
         $payment_type = ['Cash','BCA - Debit','BCA - Kredit','Mandiri - Debit','Mandiri - Kredit','Transfer','QRIS'];
         $users = User::join('users_branch as ub','ub.branch_id', '=', 'users.branch_id')->where('ub.user_id','=',$user->id)->where('users.job_id','=',2)->get(['users.id','users.name']);
 
+
+        return view('pages.reports.daily_print', [
+            'data' => $data,
+            'payment_datas' => $payment_data,
+            'report_datas' => $report_data,
+            'petty_datas' => $petty_datas,
+            'cust' => $cust,
+            'dtt_detail' => $dtt_detail,
+            'dtt_raw_oneline' => $dtt_raw_oneline,
+            'dtt_raw_oneline_qty' => $dtt_raw_oneline_qty,
+            'dtt_raw_oneline_discs' => $dtt_raw_oneline_disc,
+            'dtt_raw' => $dtt_raw,
+            'dtt_raw_disc' => $dtt_raw_disc,
+            'dtt_item_only' => $dtt_item_only,
+            'dtt_item_only2' => $dtt_item_only,
+            'dtt_item_only_total' => $dtt_item_only_total,
+            'out_datas_total_drink' => $out_datas_total_drink,
+            'out_datas_total_other' => $out_datas_total_other,
+            'out_datas' => $out_datas,
+            'out_datas_total' => $out_datas_total,
+            'settings' => Settings::get(),
+        ]);
 
         $pdf = PDF::setOptions(['isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true])->loadView('pages.reports.daily_print', [
             'data' => $data,
