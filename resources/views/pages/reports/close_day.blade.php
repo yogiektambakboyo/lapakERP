@@ -13,6 +13,7 @@
                 <div class="col-md-10"> 	
                         <button onclick="openDialogFilterSearch('Filter');" class="btn btn-sm btn-lime">@lang('general.btn_filter')</button> 
                         <button onclick="openDialogFilterSearch('Export Excel');" class="btn btn-sm btn-success">Export</button>  
+                        <button onclick="openDialogFilterSum('Export Sum');" class="btn btn-sm btn-success">Export Summary</button>  
                 </div>
             </div>
         </div>
@@ -32,6 +33,7 @@
                 <th scope="col">@lang('general.product')</th>    
                 <th scope="col">@lang('general.lbl_drink')</th>     
                 <th scope="col">Extra</th>    
+                <th scope="col">Charge Lebaran</th>    
                 <th scope="col">Total</th>    
                 <th scope="col">@lang('general.lbl_cash')</th>     
                 <th scope="col">BCA D</th>    
@@ -56,6 +58,7 @@
                         <td>{{ number_format($rdata->total_product,0,',','.') }}</td>
                         <td>{{ number_format($rdata->total_drink,0,',','.') }}</td>
                         <td>{{ number_format($rdata->total_extra,0,',','.') }}</td>
+                        <td>{{ number_format($rdata->total_lebaran,0,',','.') }}</td>
                         <td>{{ number_format($rdata->total_all,0,',','.') }}</td>
                         <td>{{ number_format($rdata->total_cash,0,',','.') }}</td>
                         <td>{{ number_format($rdata->total_b_d,0,',','.') }}</td>
@@ -122,6 +125,68 @@
                             <input type="text" 
                             name="filter_end_date_in"
                             id="filter_end_date_in"
+                            class="form-control" 
+                            value="{{ old('filter_end_date_in') }}" required/>
+                            @if ($errors->has('filter_end_date_in'))
+                                    <span class="text-danger text-left">{{ $errors->first('filter_end_date_in') }}</span>
+                                @endif
+                        </div>
+
+                        <br>
+                        <div class="col-md-12">
+                            <button type="submit" class="btn btn-primary form-control">@lang('general.lbl_apply')</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="modal-filtersum" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+            <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                <h5 class="modal-title"  id="input_expired_list_at_lbl">@lang('general.lbl_filterdata')</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form target="_blank" action="{{ route('reports.closeday.search') }}" method="GET">   
+                        @csrf 
+                        <div class="col-md-10">
+                            <label class="form-label col-form-label col-md-4">@lang('general.lbl_branch')</label>
+                        </div>
+                        <div class="col-md-12">
+                            <select class="form-control" 
+                                name="filter_branch_id_in" id="filter_branch_id_in">
+                                <option value="%">-- All -- </option>
+                                @foreach($branchs as $branchx)
+                                    <option value="{{ $branchx->id }}">{{ $branchx->remark }} </option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <div class="col-md-12">
+                            <label class="form-label col-form-label col-md-4">@lang('general.lbl_date_start')</label>
+                        </div>
+                        <div class="col-md-12">
+                            <input type="hidden" name="export" id="export_s" value="@lang('general.btn_search')">
+                            <input type="text" 
+                            name="filter_begin_date_in"
+                            id="filter_begin_date_ins"
+                            class="form-control" 
+                            value="{{ old('filter_begin_date_in') }}" required/>
+                            @if ($errors->has('filter_begin_date_in'))
+                                    <span class="text-danger text-left">{{ $errors->first('filter_begin_date_in') }}</span>
+                                @endif
+                        </div>
+
+                        <div class="col-md-12">
+                            <label class="form-label col-form-label col-md-4">@lang('general.lbl_date_end')</label>
+                        </div>
+                        <div class="col-md-12">
+                            <input type="text" 
+                            name="filter_end_date_in"
+                            id="filter_end_date_ins"
                             class="form-control" 
                             value="{{ old('filter_end_date_in') }}" required/>
                             @if ($errors->has('filter_end_date_in'))
@@ -257,6 +322,12 @@
           });
           $('#filter_begin_date_in').val(formattedToday);
 
+          $('#filter_begin_date_ins').datepicker({
+            dateFormat : 'dd-mm-yy',
+              todayHighlight: true,
+          });
+          $('#filter_begin_date_ins').val(formattedToday);
+
 
           $('#filter_end_date_in').datepicker({
             dateFormat : 'dd-mm-yy',
@@ -264,8 +335,15 @@
           });
           $('#filter_end_date_in').val(formattedToday);
 
+          $('#filter_end_date_ins').datepicker({
+            dateFormat : 'dd-mm-yy',
+              todayHighlight: true,
+          });
+          $('#filter_end_date_ins').val(formattedToday);
+
           var myModal = new bootstrap.Modal(document.getElementById('modal-filter'));
           var myModal2 = new bootstrap.Modal(document.getElementById('modal-filter2'));
+          var myModalsum = new bootstrap.Modal(document.getElementById('modal-filtersum'));
           var myModal3 = new bootstrap.Modal(document.getElementById('modal-filter_daily'));
 
           function openDialog(branch_id,dated,shift_id){
@@ -291,6 +369,11 @@
           function openDialogFilterSearch(command){
             $('#export').val(command);
             myModal2.show();
+          }
+
+          function openDialogFilterSum(command){
+            $('#export_s').val(command);
+            myModalsum.show();
           }
 
           function showConfirm(id,data){
