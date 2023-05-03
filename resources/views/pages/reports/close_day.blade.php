@@ -14,6 +14,7 @@
                         <button onclick="openDialogFilterSearch('Filter');" class="btn btn-sm btn-lime">@lang('general.btn_filter')</button> 
                         <button onclick="openDialogFilterSearch('Export Excel');" class="btn btn-sm btn-success">Export</button>  
                         <button onclick="openDialogFilterSum('Export Sum');" class="btn btn-sm btn-success">Export Summary</button>  
+                        <button onclick="openDialogFilterSumon('Export Sumon');" class="btn btn-sm btn-success">Export Monthly</button>  
                 </div>
             </div>
         </div>
@@ -204,6 +205,65 @@
             </div>
         </div>
 
+        <div class="modal fade" id="modal-filtersumon" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+            <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                <h5 class="modal-title"  id="input_expired_list_at_lbl">@lang('general.lbl_filterdata')</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form target="_blank" action="{{ route('reports.closeday.search') }}" method="GET">   
+                        @csrf 
+                        <div class="col-md-10">
+                            <label class="form-label col-form-label col-md-4">@lang('general.lbl_branch')</label>
+                        </div>
+                        <div class="col-md-12">
+                            <select class="form-control" 
+                                name="filter_branch_id_in" id="filter_branch_id_in">
+                                <option value="%">-- All -- </option>
+                                @foreach($branchs as $branchx)
+                                    <option value="{{ $branchx->id }}">{{ $branchx->remark }} </option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <div class="col-md-12">
+                            <label class="form-label col-form-label col-md-4">Periode Awal</label>
+                        </div>
+                        <div class="col-md-12">
+                            <input type="hidden" name="export" id="export_smon" value="@lang('general.btn_search')">
+                            <select class="form-control" 
+                                name="filter_month_in" id="filter_month_in">
+                                @foreach($period as $periodx)
+                                    <option value="{{ $periodx->period_no }}">{{ $periodx->remark }} </option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <div class="col-md-12">
+                            <label class="form-label col-form-label col-md-4">Periode Akhir</label>
+                        </div>
+                        <div class="col-md-12">
+                            <select class="form-control" 
+                                name="filter_month_out" id="filter_month_out">
+                                @foreach($period as $periodx)
+                                    <option value="{{ $periodx->period_no }}">{{ $periodx->remark }} </option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                    
+                        <br>
+                        <div class="col-md-12">
+                            <button type="submit" class="btn btn-primary form-control">@lang('general.lbl_apply')</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            </div>
+        </div>
+
         <!-- Vertically centered modal -->
         <!-- Modal -->
         <div class="modal fade" id="modal-filter" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
@@ -344,6 +404,7 @@
           var myModal = new bootstrap.Modal(document.getElementById('modal-filter'));
           var myModal2 = new bootstrap.Modal(document.getElementById('modal-filter2'));
           var myModalsum = new bootstrap.Modal(document.getElementById('modal-filtersum'));
+          var myModalsumon = new bootstrap.Modal(document.getElementById('modal-filtersumon'));
           var myModal3 = new bootstrap.Modal(document.getElementById('modal-filter_daily'));
 
           function openDialog(branch_id,dated,shift_id){
@@ -374,6 +435,11 @@
           function openDialogFilterSum(command){
             $('#export_s').val(command);
             myModalsum.show();
+          }
+
+          function openDialogFilterSumon(command){
+            $('#export_smon').val(command);
+            myModalsumon.show();
           }
 
           function showConfirm(id,data){

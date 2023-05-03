@@ -92,9 +92,9 @@
                 </div>
               </div>
               <div class="row mb-3">
-                <label class="form-label col-form-label col-md-2">Join Date  (mm/dd/YYYY)</label>
+                <label class="form-label col-form-label col-md-2">Tgl Join</label>
                 <div class="col-md-8">
-                  <input type="text" class="form-control" value="{{ \Carbon\Carbon::parse($users->join_date)->format('Y-m-d') }}" readonly />
+                  <input type="text" class="form-control" value="{{ \Carbon\Carbon::parse($users->join_date)->format('d-m-Y') }}" readonly />
                 </div>
               </div>
               <div class="row mb-3">
@@ -103,6 +103,21 @@
                   <input type="text" class="form-control" value="{{ $users->join_years }}" readonly />
                 </div>
               </div>
+
+              <div class="row mb-3">
+                <label class="form-label col-form-label col-md-2">Tahun Bekerja *</label>
+                <div class="col-md-8">
+                  <input type="number" 
+                  name="work_year"
+                  id="work_year"
+                  class="form-control" 
+                  value="{{ $user->work_year }}" readonly/>
+                  @if ($errors->has('work_year'))
+                            <span class="text-danger text-left">{{ $errors->first('work_year') }}</span>
+                        @endif
+                </div>
+              </div>
+
               </div>
             </div>
           </div>
@@ -129,13 +144,13 @@
                   </div>
                 </div>
                 <div class="row mb-3">
-                  <label class="form-label col-form-label col-md-2">Birth Place</label>
+                  <label class="form-label col-form-label col-md-2">Tempat Lahir</label>
                   <div class="col-md-8">
                     <input type="text" class="form-control" value="{{ $users->birth_place }}" readonly />
                   </div>
                 </div>
                 <div class="row mb-3">
-                  <label class="form-label col-form-label col-md-2">Birth @lang('general.lbl_dated')   </label>
+                  <label class="form-label col-form-label col-md-2">Tgl Lahir   </label>
                   <div class="col-md-8">
                     <input type="text" class="form-control" value="{{ $users->birth_date }}" readonly />
                   </div>

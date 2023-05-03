@@ -60,6 +60,9 @@ class ReportCloseDayController extends Controller
         $user = Auth::user();
         $id = $user->roles->first()->id;
         $this->getpermissions($id);
+
+        $period = DB::select("select period_no,remark from period where period_no<=to_char(now(),'YYYYMM')::int and period_no>202301  order by period_no desc");
+        
         $branchs = Branch::join('users_branch as ub','ub.branch_id', '=', 'branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']);        
 
         $shifts = Shift::orderBy('shift.id')->get(['shift.id','shift.remark','shift.id','shift.time_start','shift.time_end']); 
@@ -90,7 +93,7 @@ class ReportCloseDayController extends Controller
         $data = $this->data;
         $keyword = "";
         $act_permission = $this->act_permission[0];
-        return view('pages.reports.close_day',['company' => Company::get()->first()], compact('shifts','branchs','data','keyword','act_permission','report_data'))->with('i', ($request->input('page', 1) - 1) * 5);
+        return view('pages.reports.close_day',['company' => Company::get()->first()], compact('period','shifts','branchs','data','keyword','act_permission','report_data'))->with('i', ($request->input('page', 1) - 1) * 5);
     }
 
     public function getdata(Request $request) 
@@ -838,6 +841,8 @@ class ReportCloseDayController extends Controller
         $keyword = $request->search;
         $data = $this->data;
         $act_permission = $this->act_permission[0];
+
+        $period = DB::select("select period_no,remark from period where period_no<=to_char(now(),'YYYYMM')::int and period_no>202301  order by period_no desc");
         
         $branchs = Branch::join('users_branch as ub','ub.branch_id', '=', 'branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']);        
         $shifts = Shift::orderBy('shift.id')->get(['shift.id','shift.remark','shift.id','shift.time_start','shift.time_end']); 
@@ -879,7 +884,44 @@ class ReportCloseDayController extends Controller
             return view('pages.reports.close_day_sum_print',[
                 'company' => Company::get()->first(),
                 'settings' => Settings::get(),
-            ], compact('shifts','branchs','data','keyword','act_permission','report_data','begindate','enddate'));
+            ], compact('period','shifts','branchs','data','keyword','act_permission','report_data','begindate','enddate'));
+        }else if($request->export=='Export Sumon'){
+            $filter_month_in = $request->filter_month_in;
+            $filter_month_out = $request->filter_month_out;
+
+            $period_selected_in = DB::select("select period_no,remark from period where period_no=".$filter_month_in);
+            $period_selected_out = DB::select("select period_no,remark from period where period_no=".$filter_month_out);
+            $report_data = DB::select("
+                    select b.id as branch_id,b.remark as branch_name,pd.period_no,pd.remark as period,sum(id.total+id.vat_total) as total_all,
+                    sum(case when ps.type_id = 2 then id.total+id.vat_total else 0 end) as total_service,
+                    sum(case when ps.type_id = 1 and ps.category_id != 26 then id.total+id.vat_total else 0 end) as total_product,
+                    sum(case when ps.type_id = 1 and ps.category_id = 26 then id.total+id.vat_total else 0 end) as total_drink,
+                    sum(case when ps.type_id = 8 and ps.remark not like '%CHARGE LEBARAN%'  then id.total+id.vat_total else 0 end) as total_extra,
+                    sum(case when ps.type_id = 8 and ps.remark like '%CHARGE LEBARAN%'  then id.total+id.vat_total else 0 end) as total_lebaran,
+                    sum(case when im.payment_type = 'Cash' then id.total+id.vat_total else 0 end) as total_cash,
+                    sum(case when im.payment_type = 'BCA - Debit' then id.total+id.vat_total else 0 end) as total_b_d,
+                    sum(case when im.payment_type = 'BCA - Kredit' then id.total+id.vat_total else 0 end) as total_b_k,
+                    sum(case when im.payment_type = 'Mandiri - Debit' then id.total+id.vat_total else 0 end) as total_m_d,
+                    sum(case when im.payment_type = 'Mandiri - Kredit' then id.total+id.vat_total else 0 end) as total_m_k,
+                     sum(case when im.payment_type = 'QRIS' then id.total+id.vat_total else 0 end) as total_qr,
+                     sum(case when im.payment_type = 'Transfer' then id.total+id.vat_total else 0 end) as total_tr,
+                    count(distinct im.invoice_no) qty_transaction,count(distinct im.customers_id) qty_customers
+                    from invoice_master im 
+                    join invoice_detail id on id.invoice_no  = im.invoice_no 
+                    join product_sku ps on ps.id = id.product_id 
+                    join customers c on c.id = im.customers_id and c.branch_id::character varying like '%".$branchx."%'
+                    join branch b on b.id = c.branch_id
+                    join users_branch as ub on ub.branch_id = b.id and ub.user_id = '".$user->id."'
+                    join period pd on pd.period_no = to_char(im.dated,'YYYYMM')::int
+                    where to_char(im.dated,'YYYYMM')::int between '".$filter_month_in."'::int and '".$filter_month_out."'::int
+                    group by pd.period_no,pd.remark,b.remark,b.id  
+                    order by 3       
+            ");         
+            
+            return view('pages.reports.close_day_sumon_print',[
+                'company' => Company::get()->first(),
+                'settings' => Settings::get(),
+            ], compact('period','shifts','branchs','data','keyword','act_permission','report_data','filter_month_in','filter_month_out','period_selected_in','period_selected_out'));
         }else{
             $report_data = DB::select("
                     select b.id as branch_id,b.remark as branch_name,im.dated,sum(id.total+id.vat_total) as total_all,
@@ -903,9 +945,10 @@ class ReportCloseDayController extends Controller
                     join branch b on b.id = c.branch_id
                     join users_branch as ub on ub.branch_id = b.id and ub.user_id = '".$user->id."'
                     where im.dated between '".$begindate."' and '".$enddate."'
-                    group by b.remark,im.dated,b.id         
+                    group by b.remark,im.dated,b.id    
+                    order by 3     
             ");         
-            return view('pages.reports.close_day',['company' => Company::get()->first()], compact('shifts','begindate','enddate','branchs','data','keyword','act_permission','report_data'))->with('i', ($request->input('page', 1) - 1) * 5);
+            return view('pages.reports.close_day',['company' => Company::get()->first()], compact('period','shifts','begindate','enddate','branchs','data','keyword','act_permission','report_data'))->with('i', ($request->input('page', 1) - 1) * 5);
         }
     }
 

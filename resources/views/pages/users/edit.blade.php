@@ -103,24 +103,40 @@
             </div>
           </div>
           <div class="row mb-3">
-            <label class="form-label col-form-label col-md-2">Join @lang('general.lbl_dated_mmddYYYY') *</label>
+            <label class="form-label col-form-label col-md-2">Tgl Join *</label>
             <div class="col-md-8">
               <input type="text" 
               name="join_date"
-              id="datepicker"
+              id="join_date"
               class="form-control" 
-              value="{{ \Carbon\Carbon::parse($user->join_date)->format('m/d/Y') }}"  required/>
+              value="{{ \Carbon\Carbon::parse($user->join_date)->format('d-m-Y') }}"  required/>
               @if ($errors->has('join_date'))
                         <span class="text-danger text-left">{{ $errors->first('join_date') }}</span>
                     @endif
             </div>
           </div>
           <div class="row mb-3">
-            <label class="form-label col-form-label col-md-2">Join @lang('general.lbl_years')</label>
+            <label class="form-label col-form-label col-md-2">@lang('general.lbl_years') Join</label>
             <div class="col-md-8">
               <input type="text" name="join_years" class="form-control" value="{{ $user->join_years }}"  readonly/>
             </div>
           </div>
+
+          <div class="row mb-3">
+            <label class="form-label col-form-label col-md-2">Tahun Bekerja *</label>
+            <div class="col-md-8">
+              <input type="number" 
+              name="work_year"
+              id="work_year"
+              class="form-control" 
+              value="{{ $user->work_year }}" required/>
+              @if ($errors->has('work_year'))
+                        <span class="text-danger text-left">{{ $errors->first('work_year') }}</span>
+                    @endif
+            </div>
+          </div>
+
+
           </div>
         </div>
 
@@ -174,7 +190,7 @@
               </div>
             </div>
             <div class="row mb-3">
-              <label class="form-label col-form-label col-md-2">Birth Place</label>
+              <label class="form-label col-form-label col-md-2">Tempat Lahir</label>
               <div class="col-md-8">
                 <input type="text" 
                 name="birth_place"
@@ -183,13 +199,13 @@
               </div>
             </div>
             <div class="row mb-3">
-              <label class="form-label col-form-label col-md-2">Birth @lang('general.lbl_dated_mmddYYYY')</label>
+              <label class="form-label col-form-label col-md-2">Tgl Lahir</label>
               <div class="col-md-8">
                 <input type="text" 
                   name="birth_date"
-                  id="datepicker_2"
+                  id="birth_date"
                   class="form-control" 
-                  value="{{ \Carbon\Carbon::parse($user->birth_date)->format('m/d/Y') }}"/>
+                  value="{{ \Carbon\Carbon::parse($user->birth_date)->format('d-m-Y') }}"/>
                   @if ($errors->has('birth_date'))
                       <span class="text-danger text-left">{{ $errors->first('birth_date') }}</span>
                   @endif
@@ -306,6 +322,30 @@
 @endsection
 @push('scripts')
 <script type="text/javascript">
+
+
+      const today = new Date();
+      const yyyy = today.getFullYear();
+      let mm = today.getMonth() + 1; // Months start at 0!
+      let dd = today.getDate();
+
+      if (dd < 10) dd = '0' + dd;
+      if (mm < 10) mm = '0' + mm;
+
+      const formattedToday = dd + '-' + mm + '-' + yyyy;
+      $('#join_date').datepicker({
+          dateFormat : 'dd-mm-yy',
+          todayHighlight: true,
+      });
+
+
+      $('#birth_date').datepicker({
+          dateFormat : 'dd-mm-yy',
+          todayHighlight: true,
+      });
+
+
+
     function previewFile(input){
         var file = $("#photo").get(0).files[0];
  

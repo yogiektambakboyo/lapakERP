@@ -70,8 +70,8 @@ class UsersController extends Controller
         ->join('users_branch as ub2','ub2.branch_id', '=', 'ub.branch_id')
         ->where('ub2.user_id','=',$user->id)
         ->where('users.name','!=','Admin')
-        ->get(['users.id','users.employee_id','users.name','jt.remark as job_title','users.join_date' ]);
-        return view('pages.users.index',['company' => Company::get()->first(),'jobtitles'=>JobTitle::orderBy('remark','asc')->get(['id','remark'])] ,compact('request','branchs','users','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
+        ->get(['users.id','users.employee_id','users.name','jt.remark as job_title','users.join_date','users.work_year' ]);
+        return view('pages.users.index',['company' => Company::get()->first(),'jobtitles'=>JobTitle::orderBy('remark','asc')->get(['id','remark'])] ,compact('request','branchs','users','data','keyword','act_permission'));
     }
 
     public function search(Request $request) 
@@ -100,7 +100,7 @@ class UsersController extends Controller
             ->join('users_branch as ub2','ub2.branch_id', '=', 'ub.branch_id')
             ->where('ub2.user_id','=',$user->id)
             ->where('users.name','!=','Admin')->where('users.name','ILIKE','%'.$keyword.'%')
-            ->get(['users.id','users.employee_id','users.name','jt.remark as job_title','b.remark as branch_name','users.join_date' ]);
+            ->get(['users.id','users.employee_id','users.name','jt.remark as job_title','b.remark as branch_name','users.join_date','users.work_year' ]);
             $request->filter_branch_id = "";
             $request->filter_end_date = "";
             $request->filter_job_id = "";
@@ -115,7 +115,7 @@ class UsersController extends Controller
             ->where('b.id','like','%'.$branchx.'%')
             ->where('jt.id','like','%'.$jobtitlex.'%')
             ->where('users.join_date','<=',$enddate)
-            ->get(['users.id','users.employee_id','users.name','jt.remark as job_title','b.remark as branch_name','users.join_date' ]);
+            ->get(['users.id','users.employee_id','users.name','jt.remark as job_title','b.remark as branch_name','users.join_date','users.work_year' ]);
             return view('pages.users.index', ['company' => Company::get()->first(),'jobtitles'=>JobTitle::orderBy('remark','asc')->get(['id','remark'])],compact('request','branchs','users','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
         }
     }
@@ -182,6 +182,7 @@ class UsersController extends Controller
                 ['join_date' => Carbon::parse($request->get('join_date'))->format('Y-m-d') ],
                 ['gender' => $request->get('gender') ],
                 ['netizen_id' => $request->get('netizen_id') ],
+                ['work_year' => $request->get('work_year') ],
                 ['active' => '1' ],
                 ['city' => $request->get('city') ],
                 ['employee_id' => $request->get('employee_id') ],
@@ -382,7 +383,7 @@ class UsersController extends Controller
         $product = Product::where('type_id','=','2')->orderBy('remark','ASC')->get(['id','abbr','remark']);
         $data = $this->data;
         $usersReferral = User::where('users.id','!=',$user->id)->get(['users.id','users.name']);
-        $users = DB::select("select u.employee_status,dt.remark as department,u.id,u.employee_id,u.name,jt.remark as job_title,string_agg(b.remark,',') as branch_name,u.join_date,u.phone_no,u.email,u.username,u.address,u.netizen_id,u.photo_netizen_id,u.photo,u.join_years,u.active,u.referral_id,u.city,u.gender,u.birth_place,u.birth_date 
+        $users = DB::select("select u.work_year,u.employee_status,dt.remark as department,u.id,u.employee_id,u.name,jt.remark as job_title,string_agg(b.remark,',') as branch_name,u.join_date,u.phone_no,u.email,u.username,u.address,u.netizen_id,u.photo_netizen_id,u.photo,u.join_years,u.active,u.referral_id,u.city,u.gender,u.birth_place,u.birth_date 
                              from users u 
                              join users_branch ub on ub.user_id=u.id
                              join branch b on b.id = ub.branch_id
@@ -420,7 +421,7 @@ class UsersController extends Controller
         $data = $this->data;
         $gender = ['Male','Female'];
         $active = [1,0];
-        $users = DB::select("select u.employee_status,dt.remark as department,u.id,u.employee_id,u.name,jt.remark as job_title,string_agg(b.id::character varying,',') as branch_name,u.join_date,u.phone_no,u.email,u.username,u.address,u.netizen_id,u.photo_netizen_id,u.photo,u.join_years,u.active,u.referral_id,u.city,u.gender,u.birth_place,u.birth_date 
+        $users = DB::select("select u.work_year,u.employee_status,dt.remark as department,u.id,u.employee_id,u.name,jt.remark as job_title,string_agg(b.id::character varying,',') as branch_name,u.join_date,u.phone_no,u.email,u.username,u.address,u.netizen_id,u.photo_netizen_id,u.photo,u.join_years,u.active,u.referral_id,u.city,u.gender,u.birth_place,u.birth_date 
                              from users u 
                              join users_branch ub on ub.user_id=u.id
                              join branch b on b.id = ub.branch_id
@@ -492,6 +493,7 @@ class UsersController extends Controller
             ['gender' => $request->get('gender') ],
             ['netizen_id' => $request->get('netizen_id') ],
             ['city' => $request->get('city') ],
+            ['work_year' => $request->get('work_year') ],
             ['employee_id' => $request->get('employee_id') ],
             ['job_id' => $request->get('job_id') ],
             ['department_id' => $request->get('department_id') ],

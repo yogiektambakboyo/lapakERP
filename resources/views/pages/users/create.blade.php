@@ -17,7 +17,7 @@
             </div>
           </div>
         </div>
-    </br>
+    <br>
         <div class="panel text-white">
           <div class="panel-heading bg-teal-600"><h4>Employee Info</h4></div>
           <div class="panel-body bg-white text-black">
@@ -91,11 +91,11 @@
             </div>
           </div>
           <div class="row mb-3">
-            <label class="form-label col-form-label col-md-2">Join @lang('general.lbl_dated_mmddYYYY') *</label>
+            <label class="form-label col-form-label col-md-2">Tgl Join *</label>
             <div class="col-md-8">
               <input type="text" 
               name="join_date"
-              id="datepicker"
+              id="join_date"
               class="form-control" 
               value="{{ old('join_date') }}" required/>
               @if ($errors->has('join_date'))
@@ -103,6 +103,22 @@
                     @endif
             </div>
           </div>
+
+            <div class="row mb-3">
+              <label class="form-label col-form-label col-md-2">Tahun Bekerja *</label>
+              <div class="col-md-8">
+                <input type="number" 
+                name="work_year"
+                id="work_year"
+                class="form-control" 
+                value="{{ old('work_year') }}" required/>
+                @if ($errors->has('work_year'))
+                          <span class="text-danger text-left">{{ $errors->first('work_year') }}</span>
+                      @endif
+              </div>
+            </div>
+
+            
           </div>
         </div>
 
@@ -169,7 +185,7 @@
                 <div class="col-md-8">
                   <input type="text" 
                     name="birth_date"
-                    id="datepicker_2"
+                    id="birth_date"
                     class="form-control" 
                     value="{{ old('birth_date') }}"/>
                     @if ($errors->has('birth_date'))
@@ -300,6 +316,28 @@
 @endsection
 @push('scripts')
 <script type="text/javascript">
+
+        const today = new Date();
+          const yyyy = today.getFullYear();
+          let mm = today.getMonth() + 1; // Months start at 0!
+          let dd = today.getDate();
+
+          if (dd < 10) dd = '0' + dd;
+          if (mm < 10) mm = '0' + mm;
+
+          const formattedToday = dd + '-' + mm + '-' + yyyy;
+          $('#join_date').datepicker({
+              dateFormat : 'dd-mm-yy',
+              todayHighlight: true,
+          });
+          $('#join_date').val(formattedToday);
+
+          $('#birth_date').datepicker({
+              dateFormat : 'dd-mm-yy',
+              todayHighlight: true,
+          });
+          $('#birth_date').val(formattedToday);
+
 
     var d = new Date,
     dformat = [(d.getMonth()+1),

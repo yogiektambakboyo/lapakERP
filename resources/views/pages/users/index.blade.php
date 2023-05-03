@@ -34,11 +34,11 @@
             <thead>
             <tr>
                 <th scope="col" width="1%">#</th>
-                <th>@lang('user.lbl_name')</th>
-                <th scope="col" width="7%">@lang('user.lbl_employeeid')</th>
-                <th scope="col" width="15%">@lang('user.lbl_jobtitle')</th>
+                <th width="15%">@lang('user.lbl_name')</th>
+                <th scope="col" width="12%">@lang('user.lbl_jobtitle')</th>
                 <th scope="col" width="7%">@lang('user.lbl_appaccess')</th>
                 <th scope="col" width="7%">@lang('user.lbl_joindate')</th>
+                <th scope="col" width="9%">Tahun Kerja</th>
                 <th scope="col" width="2%">@lang('user.lbl_action')</th>   
                 <th scope="col" width="2%"></th>
                 <th scope="col" width="2%"></th>    
@@ -50,7 +50,6 @@
                     <tr>
                         <th scope="row">{{ $user->id }}</th>
                         <td>{{ $user->name }}</td>
-                        <td>{{ $user->employee_id }}</td>
                         <td>{{ $user->job_title }}</td>
                         <td>
                             @foreach($user->roles as $role)
@@ -58,6 +57,7 @@
                             @endforeach
                         </td>
                         <td>{{ $user->join_date }}</td>
+                        <td>{{ $user->work_year }}</td>
                         <td><a href="{{ route('users.show', $user->id) }}" class="btn btn-warning btn-sm {{ $act_permission->allow_show==1?'':'d-none' }}">@lang('user.lbl_show')</a></td>
                         <td><a href="{{ route('users.edit', $user->id) }}" class="btn btn-info btn-sm {{ $act_permission->allow_edit==1?'':'d-none' }}">@lang('user.lbl_edit')</a></td>
                         <td>
