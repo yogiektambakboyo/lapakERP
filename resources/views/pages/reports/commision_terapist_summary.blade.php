@@ -77,6 +77,19 @@
                         </div>
 
                         <div class="col-md-12">
+                            <label class="form-label col-form-label col-md-4">Nama Terapist</label>
+                        </div>
+                        <div class="col-md-12">
+                            <select class="form-control" 
+                                name="filter_terapist_in" id="filter_terapist_in">
+                                <option value="%">-- All -- </option>
+                                @foreach($users_terapist as $users_terapists)
+                                    <option value="{{ $users_terapists->id }}">{{ $users_terapists->name }} </option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <div class="col-md-12">
                             <label class="form-label col-form-label col-md-4">@lang('general.lbl_date_start')</label>
                         </div>
                         <div class="col-md-12">
@@ -207,7 +220,6 @@
 
           function openDialog(branch_id,dated,shift_id){
             $('#filter_branch_id').val(branch_id);
-            $('#filter_shift').val(shift_id);
             $('#filter_begin_date').val(dated.substr(5,2)+"/"+dated.substr(8,2)+"/"+dated.substr(0,4));
             myModal.show();
           }

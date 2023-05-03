@@ -20,6 +20,7 @@ class ReportCommisionTerapistDailyExport implements FromCollection,WithColumnFor
     private $enddate;
     private $branch;
     private $userid;
+    private $terapist;
     public function __construct($arg1){
         //base64_encode($keyword.'#'.$begindate.'#'.$enddate.'#'.$branchx);
         $arr = explode('#',base64_decode($arg1));
@@ -27,6 +28,7 @@ class ReportCommisionTerapistDailyExport implements FromCollection,WithColumnFor
         $this->enddate      = $arr[1];
         $this->branch       = $arr[2];
         $this->userid       = $arr[3];
+        $this->terapist       = $arr[4];
     } 
 
     public function headings(): array
@@ -56,7 +58,7 @@ class ReportCommisionTerapistDailyExport implements FromCollection,WithColumnFor
                     join (
                         select r.id,r.name,r.job_id,case when date_part('year', age(now(),join_date))::int=0 then 1 when date_part('year', age(now(),join_date))::int>10 then 10  else date_part('year', age(now(),join_date)) end as work_year 
                         from users r
-                        ) u on u.id = id.assigned_to and u.job_id = pc.jobs_id  and u.id = id.assigned_to  and u.work_year = pc.years 
+                        ) u on u.id = id.assigned_to and u.job_id = pc.jobs_id  and u.id = id.assigned_to  and u.work_year = pc.years and u.id::character varying like '".$this->terapist."'
                     left join product_point pp on pp.product_id=ps.id and pp.branch_id=b.id 
                     where pc.values > 0 and im.dated between '".$this->begindate."' and '".$this->enddate."'  
                     group by  b.remark,im.dated,u.work_year,u.name
@@ -68,7 +70,7 @@ class ReportCommisionTerapistDailyExport implements FromCollection,WithColumnFor
                     join customers c on c.id = im.customers_id  and c.branch_id::character varying like '%".$this->branch."%'
                     join branch b on b.id = c.branch_id
                     join product_commisions pc on pc.product_id = id.product_id and pc.branch_id = c.branch_id
-                    join users u on u.job_id = 2  and u.id = id.referral_by  
+                    join users u on u.job_id = 2  and u.id = id.referral_by   and u.id::character varying like '".$this->terapist."'
                     where pc.referral_fee  > 0 and im.dated between '".$this->begindate."' and '".$this->enddate."'  
                     group by  b.remark,im.dated,u.join_date,u.name
                     union all            
@@ -81,7 +83,7 @@ class ReportCommisionTerapistDailyExport implements FromCollection,WithColumnFor
                     join customers c on c.id = im.customers_id 
                     join branch b on b.id = c.branch_id
                     join product_commisions pc on pc.product_id = id.product_id and pc.branch_id = c.branch_id
-                    join users u on u.job_id = 2  and u.id = id.assigned_to  
+                    join users u on u.job_id = 2  and u.id = id.assigned_to  and u.id::character varying like '".$this->terapist."'
                     where pc.referral_fee+pc.assigned_to_fee+pc.created_by_fee  > 0  and im.dated  between '".$this->begindate."' and '".$this->enddate."'     and c.branch_id::character varying like  '%".$this->branch."%'
                     group by  u.id,b.remark,im.dated,u.join_date,u.name
             ) a left join point_conversion pc2 on pc2.point_qty = a.point_qty  order by a.branch_name,a.dated,a.name

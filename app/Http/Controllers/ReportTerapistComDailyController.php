@@ -63,6 +63,7 @@ class ReportTerapistComDailyController extends Controller
         $user = Auth::user();
         $id = $user->roles->first()->id;
         $this->getpermissions($id);
+        $users_terapist = User::join('users_branch as ub','ub.branch_id', '=', 'users.branch_id')->where('ub.user_id','=',$user->id)->where('users.job_id','=',2)->orderBy('users.name','ASC')->get(['users.id','users.name']);
         $branchs = Branch::join('users_branch as ub','ub.branch_id', '=', 'branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']);  
         
         $call_proc = DB::select("CALL public.calc_commision_terapist_today();");
@@ -120,7 +121,7 @@ class ReportTerapistComDailyController extends Controller
         $act_permission = $this->act_permission[0];
         $brands = ProductBrand::orderBy('product_brand.remark', 'ASC')
                     ->get(['product_brand.id','product_brand.remark']);
-        return view('pages.reports.commision_terapist_summary',['company' => Company::get()->first()], compact('brands','branchs','data','keyword','act_permission','report_data'))->with('i', ($request->input('page', 1) - 1) * 5);
+        return view('pages.reports.commision_terapist_summary',['company' => Company::get()->first()], compact('users_terapist','brands','branchs','data','keyword','act_permission','report_data'))->with('i', ($request->input('page', 1) - 1) * 5);
     }
 
     public function calc_commision(){
@@ -137,285 +138,18 @@ class ReportTerapistComDailyController extends Controller
         $keyword = $request->search;
         $data = $this->data;
         $act_permission = $this->act_permission[0];
+        $users_terapist = User::join('users_branch as ub','ub.branch_id', '=', 'users.branch_id')->where('ub.user_id','=',$user->id)->where('users.job_id','=',2)->orderBy('users.name','ASC')->get(['users.id','users.name']);
 
         $branchs = Branch::join('users_branch as ub','ub.branch_id', '=', 'branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']);        
         
         $begindate = date(Carbon::parse($request->filter_begin_date_in)->format('Y-m-d'));
         $enddate = date(Carbon::parse($request->filter_end_date_in)->format('Y-m-d'));
+        $terapist = $request->filter_terapist_in;
         $branchx = $request->filter_branch_id_in;
 
         if($request->export=='Export Excel'){
-            $strencode = base64_encode($begindate.'#'.$enddate.'#'.$branchx.'#'.$user->id);
+            $strencode = base64_encode($begindate.'#'.$enddate.'#'.$branchx.'#'.$user->id.'#'.$terapist);
             return Excel::download(new ReportCommisionTerapistDailyExport($strencode), 'report_commision_terapist_sum_'.Carbon::now()->format('YmdHis').'.xlsx');
-        }else if($request->export=='Export Sum'){
-
-            $filter_begin_date = $begindate;
-            $filter_begin_end = $enddate;
-            $filter_branch_id =  $branchx;
-           
-            $report_data_total = DB::select("
-
-                        select a.branch_name,a.dated,a.name,a.id,sum(coalesce(pc2.point_value,0)) as total_point,sum(a.commisions+coalesce(pc2.point_value,0)) as total from (
-                            select u.id,b.remark as branch_name,'work_commision' as com_type,im.dated,count(ps.id) as qtyinv,u.work_year,u.name,sum(pc.values*id.qty) as commisions,sum(coalesce(pp.point,0)*id.qty) as point_qty
-                            from invoice_master im 
-                            join invoice_detail id on id.invoice_no = im.invoice_no
-                            join product_sku ps on ps.id = id.product_id 
-                            join customers c on c.id = im.customers_id 
-                            join branch b on b.id = c.branch_id
-                            join users_branch as ub on ub.branch_id = b.id and ub.user_id = '".$user->id."'
-                            join product_commision_by_year pc on pc.product_id = id.product_id and pc.branch_id = c.branch_id
-                            join (
-                                select r.id,r.name,r.job_id,case when date_part('year', age(now(),join_date))::int=0 then 1 when date_part('year', age(now(),join_date))::int>10 then 10  else date_part('year', age(now(),join_date)) end as work_year 
-                                from users r
-                                ) u on u.id = id.assigned_to and u.job_id = pc.jobs_id  and u.id = id.assigned_to  and u.work_year = pc.years 
-                            left join product_point pp on pp.product_id=ps.id and pp.branch_id=b.id 
-                            where pc.values > 0 and im.dated  between '".$filter_begin_date."' and  '".$filter_begin_end."'  and c.branch_id::character varying like  '".$filter_branch_id."'
-                            group by  u.id,b.remark,im.dated,u.work_year,u.name
-                            union all                                  
-                            select  u.id,b.remark as branch_name,'referral' as com_type,im.dated,count(ps.id) as qtyinv,case when date_part('year', age(now(),join_date))::int=0 then 1 when date_part('year', age(now(),join_date))::int>10 then 10  else date_part('year', age(now(),join_date)) end as work_year,u.name,
-                            sum(case when pc.referral_fee<=0 then pc.assigned_to_fee * id.qty else pc.referral_fee * id.qty end) as commisions,
-                            0 as point_qty
-                            from invoice_master im 
-                            join invoice_detail id on id.invoice_no = im.invoice_no 
-                            join product_sku ps on ps.id = id.product_id 
-                            join customers c on c.id = im.customers_id 
-                            join branch b on b.id = c.branch_id
-                            join users_branch as ub on ub.branch_id = b.id and ub.user_id = '".$user->id."'
-                            join product_commisions pc on pc.product_id = id.product_id and pc.branch_id = c.branch_id
-                            join users u on u.job_id = 2  and u.id = id.referral_by  
-                            where pc.referral_fee+pc.assigned_to_fee+pc.created_by_fee  > 0  and im.dated  between '".$filter_begin_date."' and  '".$filter_begin_end."'  and c.branch_id::character varying like  '".$filter_branch_id."'
-                            group by  u.id,b.remark,im.dated,u.join_date,u.name
-                            union all            
-                            select u.id,b.remark as branch_name,'extra' as com_type,im.dated,count(ps.id) as qtyinv,case when date_part('year', age(now(),join_date))::int=0 then 1 when date_part('year', age(now(),join_date))::int>10 then 10  else date_part('year', age(now(),join_date)) end as work_year,u.name,
-                            sum(pc.assigned_to_fee * id.qty) commisions,
-                            0 as point_qty
-                            from invoice_master im 
-                            join invoice_detail id on id.invoice_no = im.invoice_no 
-                            join product_sku ps on ps.id = id.product_id 
-                            join customers c on c.id = im.customers_id 
-                            join branch b on b.id = c.branch_id
-                            join users_branch as ub on ub.branch_id = b.id and ub.user_id = '".$user->id."'
-                            join product_commisions pc on pc.product_id = id.product_id and pc.branch_id = c.branch_id
-                            join users u on u.job_id = 2  and u.id = id.assigned_to  
-                            where pc.referral_fee+pc.assigned_to_fee+pc.created_by_fee  > 0  and im.dated  between '".$filter_begin_date."' and  '".$filter_begin_end."'   and c.branch_id::character varying like  '".$filter_branch_id."'
-                            group by  u.id,b.remark,im.dated,u.join_date,u.name
-
-                        ) a left join point_conversion pc2 on pc2.point_qty = a.point_qty group by a.id,a.branch_name,a.dated,a.name  order by a.branch_name,a.dated,a.name;
-                       
-            ");
-
-            $report_data_detail = DB::select("
-
-                select * from ( 
-                    select u.id,right(im.invoice_no,6) as invoice_no,ps.type_id,b.remark as branch_name,'work_commission' as com_type,im.dated,ps.abbr,ps.remark,u.work_year,u.name,id.price,id.qty,id.total,pc.values base_commision,pc.values * id.qty as commisions,coalesce(pp.point,0)*id.qty as point_qty,case when coalesce(pp.point,0)*id.qty>=4 then 8000 else 0 end as point_value
-                    from invoice_master im 
-                    join invoice_detail id on id.invoice_no = im.invoice_no
-                    join product_sku ps on ps.id = id.product_id 
-                    join customers c on c.id = im.customers_id 
-                    join branch b on b.id = c.branch_id
-                    join users_branch as ub on ub.branch_id = b.id and ub.user_id = '".$user->id."'
-                    join product_commision_by_year pc on pc.product_id = id.product_id and pc.branch_id = c.branch_id
-                    join (
-                        select r.id,r.name,r.job_id,case when date_part('year', age(now(),join_date))::int=0 then 1 when date_part('year', age(now(),join_date))::int>10 then 10  else date_part('year', age(now(),join_date)) end as work_year 
-                        from users r
-                        ) u on u.id = id.assigned_to and u.job_id = pc.jobs_id  and u.id = id.assigned_to  and u.work_year = pc.years 
-                    left join product_point pp on pp.product_id=ps.id and pp.branch_id=b.id 
-                    where pc.values > 0 and im.dated  between '".$filter_begin_date."' and  '".$filter_begin_end."'   and c.branch_id::character varying like  '".$filter_branch_id."'
-                    union all            
-                    select u.id,right(im.invoice_no,6) as invoice_no,ps.type_id,b.remark as branch_name,'referral' as com_type,im.dated,ps.abbr,ps.remark,case when date_part('year', age(now(),join_date))::int=0 then 1 when date_part('year', age(now(),join_date))::int>10 then 10  else date_part('year', age(now(),join_date)) end as work_year,u.name,id.price,id.qty,id.total,
-                    case when pc.referral_fee<=0 then pc.assigned_to_fee else pc.referral_fee end base_commision,
-                    case when pc.referral_fee<=0 then pc.assigned_to_fee * id.qty else pc.referral_fee * id.qty end as commisions,
-                    0 as point_qty,
-                    0 as point_value   
-                    from invoice_master im 
-                    join invoice_detail id on id.invoice_no = im.invoice_no 
-                    join product_sku ps on ps.id = id.product_id 
-                    join customers c on c.id = im.customers_id 
-                    join branch b on b.id = c.branch_id
-                    join users_branch as ub on ub.branch_id = b.id and ub.user_id = '".$user->id."'
-                    join product_commisions pc on pc.product_id = id.product_id and pc.branch_id = c.branch_id
-                    join users u on u.job_id = 2  and u.id = id.referral_by  
-                    where pc.referral_fee+pc.assigned_to_fee+pc.created_by_fee  > 0  and im.dated  between '".$filter_begin_date."' and  '".$filter_begin_end."'   and c.branch_id::character varying like  '".$filter_branch_id."'
-                    union all            
-                    select u.id,right(im.invoice_no,6) as invoice_no,ps.type_id,b.remark as branch_name,'extra' as com_type,im.dated,ps.abbr,ps.remark,case when date_part('year', age(now(),join_date))::int=0 then 1 when date_part('year', age(now(),join_date))::int>10 then 10  else date_part('year', age(now(),join_date)) end as work_year,u.name,id.price,id.qty,id.total,
-                    pc.assigned_to_fee base_commision,
-                    pc.assigned_to_fee * id.qty commisions,
-                    0 as point_qty,
-                    0 as point_value   
-                    from invoice_master im 
-                    join invoice_detail id on id.invoice_no = im.invoice_no 
-                    join product_sku ps on ps.id = id.product_id 
-                    join customers c on c.id = im.customers_id 
-                    join branch b on b.id = c.branch_id
-                    join users_branch as ub on ub.branch_id = b.id and ub.user_id = '".$user->id."'
-                    join product_commisions pc on pc.product_id = id.product_id and pc.branch_id = c.branch_id
-                    join users u on u.job_id = 2  and u.id = id.assigned_to  
-                    where pc.referral_fee+pc.assigned_to_fee+pc.created_by_fee  > 0  and im.dated  between '".$filter_begin_date."' and  '".$filter_begin_end."'   and c.branch_id::character varying like  '".$filter_branch_id."'
-                    ) a order by a.branch_name,a.dated,a.name
-                       
-            ");
-
-            $report_data_detail_inv = DB::select("
-
-                select distinct invoice_no,name,dated,id from ( 
-                    select distinct right(im.invoice_no,6) as invoice_no,u.name,im.dated,u.id
-                    from invoice_master im 
-                    join invoice_detail id on id.invoice_no = im.invoice_no
-                    join product_sku ps on ps.id = id.product_id 
-                    join customers c on c.id = im.customers_id 
-                    join branch b on b.id = c.branch_id
-                    join users_branch as ub on ub.branch_id = b.id and ub.user_id = '".$user->id."'
-                    join product_commision_by_year pc on pc.product_id = id.product_id and pc.branch_id = c.branch_id
-                    join (
-                        select r.id,r.name,r.job_id,case when date_part('year', age(now(),join_date))::int=0 then 1 when date_part('year', age(now(),join_date))::int>10 then 10  else date_part('year', age(now(),join_date)) end as work_year 
-                        from users r
-                        ) u on u.id = id.assigned_to and u.job_id = pc.jobs_id  and u.id = id.assigned_to  and u.work_year = pc.years 
-                    left join product_point pp on pp.product_id=ps.id and pp.branch_id=b.id 
-                    where pc.values > 0 and im.dated  between '".$filter_begin_date."' and  '".$filter_begin_end."'   and c.branch_id::character varying like  '".$filter_branch_id."'
-                    union all            
-                    select distinct right(im.invoice_no,6) as invoice_no,u.name,im.dated,u.id
-                    from invoice_master im 
-                    join invoice_detail id on id.invoice_no = im.invoice_no 
-                    join product_sku ps on ps.id = id.product_id 
-                    join customers c on c.id = im.customers_id 
-                    join branch b on b.id = c.branch_id
-                    join users_branch as ub on ub.branch_id = b.id and ub.user_id = '".$user->id."'
-                    join product_commisions pc on pc.product_id = id.product_id and pc.branch_id = c.branch_id
-                    join users u on u.job_id = 2  and u.id = id.referral_by  
-                    where pc.referral_fee+pc.assigned_to_fee+pc.created_by_fee  > 0  and im.dated  between '".$filter_begin_date."' and  '".$filter_begin_end."'   and c.branch_id::character varying like  '".$filter_branch_id."'
-                    union all            
-                    select distinct right(im.invoice_no,6) as invoice_no,u.name,im.dated,u.id
-                    from invoice_master im 
-                    join invoice_detail id on id.invoice_no = im.invoice_no 
-                    join product_sku ps on ps.id = id.product_id 
-                    join customers c on c.id = im.customers_id 
-                    join branch b on b.id = c.branch_id
-                    join users_branch as ub on ub.branch_id = b.id and ub.user_id = '".$user->id."'
-                    join product_commisions pc on pc.product_id = id.product_id and pc.branch_id = c.branch_id
-                    join users u on u.job_id = 2  and u.id = id.assigned_to  
-                    where pc.referral_fee+pc.assigned_to_fee+pc.created_by_fee  > 0  and im.dated  between '".$filter_begin_date."' and  '".$filter_begin_end."'   and c.branch_id::character varying like  '".$filter_branch_id."'
-                    ) a order by dated,name,invoice_no
-                       
-            ");
-
-            $report_data_detail_t = DB::select("
-
-                select distinct name,dated,id from ( 
-                    select distinct u.name,im.dated,u.id
-                    from invoice_master im 
-                    join invoice_detail id on id.invoice_no = im.invoice_no
-                    join product_sku ps on ps.id = id.product_id 
-                    join customers c on c.id = im.customers_id 
-                    join branch b on b.id = c.branch_id
-                    join users_branch as ub on ub.branch_id = b.id and ub.user_id = '".$user->id."'
-                    join product_commision_by_year pc on pc.product_id = id.product_id and pc.branch_id = c.branch_id
-                    join (
-                        select r.id,r.name,r.job_id,case when date_part('year', age(now(),join_date))::int=0 then 1 when date_part('year', age(now(),join_date))::int>10 then 10  else date_part('year', age(now(),join_date)) end as work_year 
-                        from users r
-                        ) u on u.id = id.assigned_to and u.job_id = pc.jobs_id  and u.id = id.assigned_to  and u.work_year = pc.years 
-                    left join product_point pp on pp.product_id=ps.id and pp.branch_id=b.id 
-                    where pc.values > 0 and im.dated  between '".$filter_begin_date."' and  '".$filter_begin_end."'   and c.branch_id::character varying like  '".$filter_branch_id."'
-                    union all            
-                    select distinct u.name,im.dated,u.id
-                    from invoice_master im 
-                    join invoice_detail id on id.invoice_no = im.invoice_no 
-                    join product_sku ps on ps.id = id.product_id 
-                    join customers c on c.id = im.customers_id 
-                    join branch b on b.id = c.branch_id
-                    join users_branch as ub on ub.branch_id = b.id and ub.user_id = '".$user->id."'
-                    join product_commisions pc on pc.product_id = id.product_id and pc.branch_id = c.branch_id
-                    join users u on u.job_id = 2  and u.id = id.referral_by  
-                    where pc.referral_fee+pc.assigned_to_fee+pc.created_by_fee  > 0  and im.dated  between '".$filter_begin_date."' and  '".$filter_begin_end."'   and c.branch_id::character varying like  '".$filter_branch_id."'
-                    union all            
-                    select distinct u.name,im.dated,u.id
-                    from invoice_master im 
-                    join invoice_detail id on id.invoice_no = im.invoice_no 
-                    join product_sku ps on ps.id = id.product_id 
-                    join customers c on c.id = im.customers_id 
-                    join branch b on b.id = c.branch_id
-                    join users_branch as ub on ub.branch_id = b.id and ub.user_id = '".$user->id."'
-                    join product_commisions pc on pc.product_id = id.product_id and pc.branch_id = c.branch_id
-                    join users u on u.job_id = 2  and u.id = id.assigned_to  
-                    where pc.referral_fee+pc.assigned_to_fee+pc.created_by_fee  > 0  and im.dated  between '".$filter_begin_date."' and  '".$filter_begin_end."'   and c.branch_id::character varying like  '".$filter_branch_id."'
-                    ) a order by dated,name
-                       
-            ");
-
-            $time = strtotime($filter_begin_date);
-            $newformat = date('Y-m-d',$time);
-            $newformatd = date('Y-m',$time);
-            $newformatlastm = date('Y-m', strtotime('-1 months', strtotime($newformat)));
-
-            $date26 = substr($filter_begin_date, 8, 2);
-            $today_date = (int)$date26;
-            if ($today_date>=26){
-                $date26 = $newformatd.'-26';
-            }else{
-                $date26 = $newformatlastm.'-26';
-            }
-
-            $report_data_com_from1 = DB::select("
-
-                    select a.dated,a.id,sum(a.commisions+coalesce(pc2.point_value,0)) as total from (
-                        select u.id,b.remark as branch_name,'work_commision' as com_type,im.dated,count(ps.id) as qtyinv,u.work_year,u.name,sum(pc.values*id.qty) as commisions,sum(coalesce(pp.point,0)*id.qty) as point_qty
-                        from invoice_master im 
-                        join invoice_detail id on id.invoice_no = im.invoice_no
-                        join product_sku ps on ps.id = id.product_id 
-                        join customers c on c.id = im.customers_id 
-                        join branch b on b.id = c.branch_id
-                        join users_branch as ub on ub.branch_id = b.id and ub.user_id = '".$user->id."'
-                        join product_commision_by_year pc on pc.product_id = id.product_id and pc.branch_id = c.branch_id
-                        join (
-                            select r.id,r.name,r.job_id,case when date_part('year', age(now(),join_date))::int=0 then 1 when date_part('year', age(now(),join_date))::int>10 then 10  else date_part('year', age(now(),join_date)) end as work_year 
-                            from users r
-                            ) u on u.id = id.assigned_to and u.job_id = pc.jobs_id  and u.id = id.assigned_to  and u.work_year = pc.years 
-                        left join product_point pp on pp.product_id=ps.id and pp.branch_id=b.id 
-                        where pc.values > 0 and im.dated  between '".$date26."'  and '".$filter_begin_end."'  and c.branch_id::character varying like  '".$filter_branch_id."'
-                        group by  u.id,b.remark,im.dated,u.work_year,u.name
-                        union all                                  
-                        select  u.id,b.remark as branch_name,'referral' as com_type,im.dated,count(ps.id) as qtyinv,case when date_part('year', age(now(),join_date))::int=0 then 1 when date_part('year', age(now(),join_date))::int>10 then 10  else date_part('year', age(now(),join_date)) end as work_year,u.name,
-                        sum(case when pc.referral_fee<=0 then pc.assigned_to_fee * id.qty else pc.referral_fee * id.qty end) as commisions,
-                        0 as point_qty
-                        from invoice_master im 
-                        join invoice_detail id on id.invoice_no = im.invoice_no 
-                        join product_sku ps on ps.id = id.product_id 
-                        join customers c on c.id = im.customers_id 
-                        join branch b on b.id = c.branch_id
-                        join users_branch as ub on ub.branch_id = b.id and ub.user_id = '".$user->id."'
-                        join product_commisions pc on pc.product_id = id.product_id and pc.branch_id = c.branch_id
-                        join users u on u.job_id = 2  and u.id = id.referral_by  
-                        where pc.referral_fee+pc.assigned_to_fee+pc.created_by_fee  > 0 and im.dated  between '".$date26."'  and '".$filter_begin_end."'  and c.branch_id::character varying like  '".$filter_branch_id."'
-                        group by  u.id,b.remark,im.dated,u.join_date,u.name
-                        union all            
-                        select u.id,b.remark as branch_name,'extra' as com_type,im.dated,count(ps.id) as qtyinv,case when date_part('year', age(now(),join_date))::int=0 then 1 when date_part('year', age(now(),join_date))::int>10 then 10  else date_part('year', age(now(),join_date)) end as work_year,u.name,
-                        sum(pc.assigned_to_fee * id.qty) commisions,
-                        0 as point_qty
-                        from invoice_master im 
-                        join invoice_detail id on id.invoice_no = im.invoice_no 
-                        join product_sku ps on ps.id = id.product_id 
-                        join customers c on c.id = im.customers_id 
-                        join branch b on b.id = c.branch_id
-                        join users_branch as ub on ub.branch_id = b.id and ub.user_id = '".$user->id."'
-                        join product_commisions pc on pc.product_id = id.product_id and pc.branch_id = c.branch_id
-                        join users u on u.job_id = 2  and u.id = id.assigned_to  
-                        where pc.referral_fee+pc.assigned_to_fee+pc.created_by_fee  > 0  and im.dated  between '".$date26."'  and  '".$filter_begin_end."'   and c.branch_id::character varying like  '".$filter_branch_id."'
-                        group by  u.id,b.remark,im.dated,u.join_date,u.name
-
-                    ) a left join point_conversion pc2 on pc2.point_qty = a.point_qty group by a.id,a.dated  order by a.dated;
-                    
-                
-                       
-            ");
-    
-            return view('pages.reports.terapist_comm_day_print', [
-                'data' => $data,
-                'report_data_total' => $report_data_total,
-                'report_data_com_from1' => $report_data_com_from1,
-                'report_datas_detail' => $report_data_detail,
-                'report_data_detail_invs' => $report_data_detail_inv,
-                'report_data_detail_t' => $report_data_detail_t,
-                'settings' => Settings::get(),
-            ]);
         }else if($request->export=='Export Sum Lite'){
 
             $filter_begin_date = $begindate;
@@ -443,7 +177,7 @@ class ReportTerapistComDailyController extends Controller
                         string_agg(case when type_id=1 then commisions::character varying else '' end,'##') as product_commisions     
                         from terapist_commision a
                         join users_branch as ub on ub.branch_id = a.branch_id and ub.user_id = '".$user->id."'
-                        where a.dated  between '".$filter_begin_date."' and  '".$filter_begin_end."'
+                        where a.dated  between '".$filter_begin_date."' and  '".$filter_begin_end."' and a.user_id::character varying like '".$terapist."' 
                         group by a.branch_name,a.user_id,a.dated,a.terapist_name
                     ) a left join point_conversion pc2 on pc2.point_qty = a.point_qty 
                     order by a.dated,a.name      
@@ -467,7 +201,7 @@ class ReportTerapistComDailyController extends Controller
                     from (
                         select a.dated,a.user_id,sum(point_qty) as point_qty,sum(a.commisions) as commisions from terapist_commision a
                         join users_branch as ub on ub.branch_id = a.branch_id and ub.user_id = '".$user->id."'
-                        where a.dated  between '".$date26."' and  '".$filter_begin_end."'
+                        where a.dated  between '".$date26."' and  '".$filter_begin_end."'  and a.user_id::character varying like '".$terapist."' 
                         group by a.dated,a.user_id
                     ) a left join point_conversion pc2 on pc2.point_qty = a.point_qty 
                     order by a.dated           
@@ -493,7 +227,7 @@ class ReportTerapistComDailyController extends Controller
                 join (
                     select r.id,r.name,r.job_id,case when date_part('year', age(now(),join_date))::int=0 then 1 when date_part('year', age(now(),join_date))::int>10 then 10  else date_part('year', age(now(),join_date)) end as work_year 
                     from users r
-                    ) u on u.id = id.assigned_to and u.job_id = pc.jobs_id  and u.id = id.assigned_to  and u.work_year = pc.years 
+                    ) u on u.id = id.assigned_to and u.job_id = pc.jobs_id  and u.id = id.assigned_to  and u.work_year = pc.years  and u.id::character varying like '".$terapist."' 
                 left join product_point pp on pp.product_id=ps.id and pp.branch_id=b.id 
                 where pc.values > 0 and im.dated between '".$begindate."' and '".$enddate."'  
                 group by  b.remark,im.dated,u.work_year,u.name
@@ -506,7 +240,7 @@ class ReportTerapistComDailyController extends Controller
                 join branch b on b.id = c.branch_id
                 join users_branch as ub on ub.branch_id = b.id and ub.user_id = '".$user->id."'
                 join product_commisions pc on pc.product_id = id.product_id and pc.branch_id = c.branch_id
-                join users u on u.job_id = 2  and u.id = id.referral_by  
+                join users u on u.job_id = 2  and u.id = id.referral_by and u.id::character varying like '".$terapist."' 
                 where pc.referral_fee  > 0 and im.dated between '".$begindate."' and '".$enddate."'  
                 group by  b.remark,im.dated,u.join_date,u.name
                 union all            
@@ -520,13 +254,13 @@ class ReportTerapistComDailyController extends Controller
                 join branch b on b.id = c.branch_id
                 join users_branch as ub on ub.branch_id = b.id and ub.user_id = '".$user->id."'
                 join product_commisions pc on pc.product_id = id.product_id and pc.branch_id = c.branch_id
-                join users u on u.job_id = 2  and u.id = id.assigned_to  
+                join users u on u.job_id = 2  and u.id = id.assigned_to  and u.id::character varying like '".$terapist."' 
                 where pc.referral_fee+pc.assigned_to_fee+pc.created_by_fee  > 0  and im.dated  between '".$begindate."' and  '".$enddate."'   and c.branch_id::character varying like  '".$branchx."'
                 group by  b.remark,im.dated,u.join_date,u.name
         ) a left join point_conversion pc2 on pc2.point_qty = a.point_qty order by a.branch_name,a.dated,a.name;          
         ");  
                
-            return view('pages.reports.commision_terapist_summary',['company' => Company::get()->first()], compact('report_data','branchs','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
+            return view('pages.reports.commision_terapist_summary',['company' => Company::get()->first()], compact('users_terapist','report_data','branchs','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
         }
     }
 
