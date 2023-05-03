@@ -83,7 +83,6 @@ class CloseShiftExport implements FromCollection,WithColumnFormatting, WithHeadi
     public function columnFormats(): array
     {
         return [
-            'B' => 'yyyy-mm-dd',
         ];
     }
 }

@@ -59,7 +59,6 @@ class BranchShiftExport implements FromCollection,WithColumnFormatting, WithHead
     public function columnFormats(): array
     {
         return [
-            'A' => 'yyyy-mm-dd',
         ];
     }
 }

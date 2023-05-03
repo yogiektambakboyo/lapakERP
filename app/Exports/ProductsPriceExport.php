@@ -50,7 +50,6 @@ class ProductsPriceExport implements FromCollection,WithColumnFormatting, WithHe
     public function columnFormats(): array
     {
         return [
-            'F' => 'yyyy-mm-dd',
         ];
     }
 }

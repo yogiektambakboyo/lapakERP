@@ -80,7 +80,6 @@ class CloseDayExport implements FromCollection,WithColumnFormatting, WithHeading
     public function columnFormats(): array
     {
         return [
-            'C' => 'yyyy-mm-dd',
         ];
     }
 }

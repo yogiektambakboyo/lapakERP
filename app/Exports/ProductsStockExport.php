@@ -51,7 +51,6 @@ class ProductsStockExport implements FromCollection,WithColumnFormatting, WithHe
     public function columnFormats(): array
     {
         return [
-            'F' => 'yyyy-mm-dd',
         ];
     }
 }

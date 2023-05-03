@@ -53,7 +53,6 @@ class PurchasesExport implements FromCollection,WithColumnFormatting, WithHeadin
     public function columnFormats(): array
     {
         return [
-            'F' => 'yyyy-mm-dd',
         ];
     }
 }
