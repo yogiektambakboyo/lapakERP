@@ -225,8 +225,7 @@
                       @if($report_data_detail_ts->id == $report_data_com_from1s->id)
                             @php 
                                     $date1 = \Carbon\Carbon::createFromFormat('Y-m-d', $report_data_com_from1s->dated);
-                                    $date2 = \Carbon\Carbon::createFromFormat('Y-m-d', $report_data_detail_ts->dated);
-                      
+                                    $date2 = \Carbon\Carbon::createFromFormat('Y-m-d', $report_data_detail_ts->dated); 
                                     
                                     $result = $date1->lte($date2);
                                     if($result){

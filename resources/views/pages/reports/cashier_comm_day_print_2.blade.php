@@ -167,7 +167,6 @@
                             @php 
                                     $date1 = \Carbon\Carbon::createFromFormat('d-m-Y', $report_data_com_from1s->dated);
                                     $date2 = \Carbon\Carbon::createFromFormat('d-m-Y', $report_data_detail_ts->dated);
-                      
                                     
                                     $result = $date1->lte($date2);
                                     if($result){
