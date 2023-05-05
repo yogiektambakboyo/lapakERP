@@ -25,6 +25,7 @@
             <thead>
             <tr>
                 <th scope="col" width="14%">@lang('general.lbl_branch')</th>
+                <th scope="col" width="6%">Periode</th>
                 <th scope="col">@lang('general.lbl_product_name')</th>     
                 <th scope="col">@lang('general.lbl_balance_begin')</th>     
                 <th scope="col">@lang('general.lbl_balance_end')</th>     
@@ -37,6 +38,7 @@
                 @foreach($report_data as $rdata)
                     <tr>
                         <th scope="row">{{ $rdata->branch_name }}</th>
+                        <td>{{ $rdata->periode }}</td>
                         <td>{{ $rdata->product_name }}</td>
                         <td>{{ number_format($rdata->balance_begin,0,',','.') }}</td>
                         <td>{{ number_format($rdata->balance_end,0,',','.') }}</td>
@@ -73,6 +75,18 @@
                                 <option value="%">-- All -- </option>
                                 @foreach($branchs as $branchx)
                                     <option value="{{ $branchx->id }}">{{ $branchx->remark }} </option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <div class="col-md-12">
+                            <label class="form-label col-form-label col-md-4">Periode Awal</label>
+                        </div>
+                        <div class="col-md-12">
+                            <select class="form-control" 
+                                name="filter_month_in" id="filter_month_in">
+                                @foreach($period as $periodx)
+                                    <option value="{{ $periodx->period_no }}">{{ $periodx->remark }} </option>
                                 @endforeach
                             </select>
                         </div>

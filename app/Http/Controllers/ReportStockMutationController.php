@@ -65,8 +65,9 @@ class ReportStockMutationController extends Controller
         $branchs = Branch::join('users_branch as ub','ub.branch_id', '=', 'branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']);        
 
         $shifts = Shift::orderBy('shift.id')->get(['shift.id','shift.remark','shift.id','shift.time_start','shift.time_end']); 
+        $period = DB::select("select period_no,remark from period where period_no<=to_char(now(),'YYYYMM')::int and period_no>=202301  order by period_no desc");
         $report_data = DB::select("
-            select b.remark as branch_name,ps.remark as product_name,psd.balance_begin,psd.balance_end,psd.qty_in,psd.qty_out,psd.updated_at  from users u 
+            select psd.periode,b.remark as branch_name,ps.remark as product_name,psd.balance_begin,psd.balance_end,psd.qty_in,psd.qty_out,psd.updated_at  from users u 
             join users_branch ub on ub.user_id = u.id 
             join period_stock psd on psd.branch_id = ub.branch_id  and psd.periode = to_char(now(),'YYYYMM')::int
             join product_sku ps on ps.id = psd.product_id and ps.type_id = 1
@@ -76,7 +77,7 @@ class ReportStockMutationController extends Controller
         $data = $this->data;
         $keyword = "";
         $act_permission = $this->act_permission[0];
-        return view('pages.reports.stockmutation',['company' => Company::get()->first()], compact('shifts','branchs','data','keyword','act_permission','report_data'))->with('i', ($request->input('page', 1) - 1) * 5);
+        return view('pages.reports.stockmutation',['company' => Company::get()->first()], compact('period','shifts','branchs','data','keyword','act_permission','report_data'))->with('i', ($request->input('page', 1) - 1) * 5);
     }
 
    
@@ -92,24 +93,27 @@ class ReportStockMutationController extends Controller
         
         $branchs = Branch::join('users_branch as ub','ub.branch_id', '=', 'branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']);        
         $shifts = Shift::orderBy('shift.id')->get(['shift.id','shift.remark','shift.id','shift.time_start','shift.time_end']); 
+        $period = DB::select("select period_no,remark from period where period_no<=to_char(now(),'YYYYMM')::int and period_no>=202301  order by period_no desc");
         
         $begindate = date(Carbon::parse($request->filter_begin_date_in)->format('Y-m-d'));
         $enddate = date(Carbon::parse($request->filter_end_date_in)->format('Y-m-d'));
         $branchx = $request->filter_branch_id_in;
+        $filter_month_in = $request->filter_month_in;
+        
 
         if($request->export=='Export Excel'){
-            $strencode = base64_encode($begindate.'#'.$enddate.'#'.$branchx.'#'.$user->id);
+            $strencode = base64_encode($begindate.'#'.$enddate.'#'.$branchx.'#'.$user->id.'#'.$filter_month_in);
             return Excel::download(new ReportStockMutationExport($strencode), 'report_stockmutation_'.Carbon::now()->format('YmdHis').'.xlsx');
         }else{
             $report_data = DB::select("
-                select b.remark as branch_name,ps.remark as product_name,psd.balance_begin,psd.balance_end,psd.qty_in,psd.qty_out,psd.updated_at  from users u 
+                select b.remark as branch_name,psd.periode,ps.remark as product_name,psd.balance_begin,psd.balance_end,psd.qty_in,psd.qty_out,psd.updated_at  from users u 
                 join users_branch ub on ub.user_id = u.id 
-                join period_stock psd on psd.branch_id = ub.branch_id  and psd.branch_id::character varying like '%".$branchx."%'  and psd.periode = to_char(now(),'YYYYMM')::int
+                join period_stock psd on psd.branch_id = ub.branch_id  and psd.branch_id::character varying like '%".$branchx."%'  and psd.periode = ".$filter_month_in."::int
                 join product_sku ps on ps.id = psd.product_id and ps.type_id = 1
                 join branch b on b.id = ub.branch_id 
                 where u.id = ".$user->id." order by 1,2             
             ");         
-            return view('pages.reports.stockmutation',['company' => Company::get()->first()], compact('shifts','branchs','data','keyword','act_permission','report_data'))->with('i', ($request->input('page', 1) - 1) * 5);
+            return view('pages.reports.stockmutation',['company' => Company::get()->first()], compact('period','shifts','branchs','data','keyword','act_permission','report_data'))->with('i', ($request->input('page', 1) - 1) * 5);
         }
     }
 

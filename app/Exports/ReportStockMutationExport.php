@@ -20,6 +20,7 @@ class ReportStockMutationExport implements FromCollection,WithColumnFormatting, 
     private $enddate;
     private $branch;
     private $userid;
+    private $period;
     public function __construct($arg1){
         //base64_encode($keyword.'#'.$begindate.'#'.$enddate.'#'.$branchx);
         $arr = explode('#',base64_decode($arg1));
@@ -27,12 +28,14 @@ class ReportStockMutationExport implements FromCollection,WithColumnFormatting, 
         $this->enddate      = $arr[1];
         $this->branch       = $arr[2];
         $this->userid       = $arr[3];
+        $this->period       = $arr[4];
     } 
 
     public function headings(): array
     {
         return [
             'Branch',
+            'Periode',
             'Product Name',
             'Balance Begin',
             'Balance End',
@@ -44,9 +47,9 @@ class ReportStockMutationExport implements FromCollection,WithColumnFormatting, 
     public function collection()
     {
         return collect(DB::select("
-        select b.remark as branch_name,ps.remark as product_name,psd.balance_begin,psd.balance_end,psd.qty_in,psd.qty_out,psd.updated_at  from users u 
+        select b.remark as branch_name,psd.periode,ps.remark as product_name,psd.balance_begin,psd.balance_end,psd.qty_in,psd.qty_out,psd.updated_at  from users u 
         join users_branch ub on ub.user_id = u.id 
-        join period_stock psd on psd.branch_id = ub.branch_id  and psd.branch_id::character varying like '%".$this->branch."%'  and psd.periode = to_char(now(),'YYYYMM')::int
+        join period_stock psd on psd.branch_id = ub.branch_id  and psd.branch_id::character varying like '%".$this->branch."%'  and psd.periode = ".$this->period."::int
         join product_sku ps on ps.id = psd.product_id and ps.type_id = 1
         join branch b on b.id = ub.branch_id 
         where u.id = ".$this->userid." order by 1,2             
@@ -56,7 +59,6 @@ class ReportStockMutationExport implements FromCollection,WithColumnFormatting, 
     public function columnFormats(): array
     {
         return [
-            'B' => 'yyyy-mm-dd',
         ];
     }
 }
