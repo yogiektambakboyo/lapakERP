@@ -73,7 +73,6 @@ class UsersExport implements FromCollection,WithColumnFormatting, WithHeadings
     public function columnFormats(): array
     {
         return [
-            'I' => 'yyyy-mm-dd',
         ];
     }
 }

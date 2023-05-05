@@ -59,7 +59,6 @@ class ReportPurchaseExport implements FromCollection,WithColumnFormatting, WithH
     public function columnFormats(): array
     {
         return [
-            'B' => 'yyyy-mm-dd',
         ];
     }
 }

@@ -61,7 +61,6 @@ class ReturnSellExport implements FromCollection,WithColumnFormatting, WithHeadi
     public function columnFormats(): array
     {
         return [
-            'C' => 'yyyy-mm-dd',
         ];
     }
 }

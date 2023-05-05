@@ -63,7 +63,6 @@ class UserShiftExport implements FromCollection,WithColumnFormatting, WithHeadin
     public function columnFormats(): array
     {
         return [
-            'A' => 'yyyy-mm-dd',
         ];
     }
 }

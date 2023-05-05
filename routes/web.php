@@ -830,6 +830,8 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
             Route::get('/stock_search', 'ReportStockController@search')->name('reports.stock.search');
             Route::get('/stockmutation', 'ReportStockMutationController@index')->name('reports.stockmutation.index');
             Route::get('/stockmutation_search', 'ReportStockMutationController@search')->name('reports.stockmutation.search');
+            Route::get('/stockmutationdetail', 'ReportStockMutationDetailController@index')->name('reports.stockmutationdetail.index');
+            Route::get('/stockmutationdetail_search', 'ReportStockMutationDetailController@search')->name('reports.stockmutationdetail.search');
             Route::get('/customer', 'ReportCustomerController@index')->name('reports.customer.index');
             Route::get('/customer_search', 'ReportCustomerController@search')->name('reports.customer.search');
             Route::get('/referral', 'ReportReferralController@index')->name('reports.referral.index');

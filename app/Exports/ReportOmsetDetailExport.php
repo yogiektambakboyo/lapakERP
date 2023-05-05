@@ -61,7 +61,6 @@ class ReportOmsetDetailExport implements FromCollection,WithColumnFormatting, Wi
     public function columnFormats(): array
     {
         return [
-            'B' => 'yyyy-mm-dd',
         ];
     }
 }

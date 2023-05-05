@@ -71,7 +71,6 @@ class ReturnSellDetailExport implements FromCollection,WithColumnFormatting, Wit
     public function columnFormats(): array
     {
         return [
-            'C' => 'yyyy-mm-dd',
         ];
     }
 }
