@@ -346,9 +346,9 @@ class VoucherController extends Controller
                         'caret' => true,
                         'sub_menu' => []
                     ],
-		   [
-                        'icon' => 'fa fa-box',
-                        'title' => \Lang::get('home.service_management'),
+		                           [
+                            'icon' => 'fa fa-spa',
+                            'title' => \Lang::get('home.service_management'),
                         'url' => 'javascript:;',
                         'caret' => true,
                         'sub_menu' => []
