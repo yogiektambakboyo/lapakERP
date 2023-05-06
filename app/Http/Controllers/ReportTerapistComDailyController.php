@@ -180,7 +180,7 @@ class ReportTerapistComDailyController extends Controller
                         where a.dated  between '".$filter_begin_date."' and  '".$filter_begin_end."' and a.user_id::character varying like '".$terapist."' 
                         group by a.branch_name,a.user_id,a.dated,a.terapist_name
                     ) a left join point_conversion pc2 on pc2.point_qty = a.point_qty 
-                    order by a.dated,a.name      
+                    order by a.name,a.dated      
             ");
 
             $time = strtotime($filter_begin_date);
