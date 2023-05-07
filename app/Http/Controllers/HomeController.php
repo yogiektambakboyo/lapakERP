@@ -234,6 +234,14 @@ class HomeController extends Controller
                 FROM public.period_price_sell  where period=to_char(now()-interval '5 day','YYYYMM')::int;");
             }
 
+            $visitor = DB::select("
+                select customer_type,count(distinct customers_id) as counter  from invoice_master im where im.dated = now()::date group by customer_type 
+            ");
+
+            $visitor_dated = DB::select("
+                select dated,count(distinct customers_id) as counter  from invoice_master im where im.dated between now()-interval'7 days' and now()::date group by dated;
+            ");
+
 
             
             return view('pages.home-index',[
@@ -244,6 +252,8 @@ class HomeController extends Controller
                 'd_data_t' => $d_data_t,
                 'd_data_r_p' => $d_data_r_p,
                 'd_data_r_s' => $d_data_r_s,
+                'd_data_v' => $visitor,
+                'd_data_v_dated' => $visitor_dated,
             ])->with('data',$data)->with('company',Company::get()->first());
         }else{
             $data = [];

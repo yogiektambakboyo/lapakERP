@@ -268,6 +268,43 @@
 		<!-- END col-4 -->
 	</div>
 	<!-- END row -->
+
+	<div class="row">
+		<div class="col-xl-12">
+			<div class="widget-chart with-sidebar inverse-mode">
+				<div class="bg-gray-800" style="width: 80%">
+					<h4 class="chart-title m-3">
+						Visitors Analytics
+						<small>Where do our visitors come from</small>
+					</h4>
+					<div id="visitors-line-chart" class="dark-mode my-1 mx-5"  style="position: relative; height:50vh;">
+						<canvas id="visitor-line"></canvas>
+					</div>
+				</div>
+				<div class="widget-chart-content bg-gray-900">
+					<h4 class="chart-title">
+						<?php
+							$visitor_counter = 0;
+							for ($i=0; $i < count($d_data_v); $i++) { 
+								$visitor_counter = $visitor_counter+$d_data_v[$i]->counter;
+								echo '<input type="hidden" id="'.$d_data_v[$i]->customer_type.'" value="'.$d_data_v[$i]->counter.'"> ';
+							}
+							echo $visitor_counter;
+
+							for ($i=0; $i < count($d_data_v_dated); $i++) { 
+								$visitor_counter = $visitor_counter+$d_data_v_dated[$i]->counter;
+								echo '<input type="hidden" id="day_'.($i+1).'" name="'.$d_data_v_dated[$i]->dated.'" value="'.$d_data_v_dated[$i]->counter.'"> ';
+							}
+						?>
+						<small>Total visitors</small>
+					</h4>
+					<div class="flex-grow-1 d-flex align-items-center">
+						<canvas id="visitor-type" class="m-3"></canvas>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 @endsection
 
 @push('scripts')
@@ -282,6 +319,103 @@
 	  maxDate: "12/31/2021",
 	}, function (start, end) {
 	  $("#default-daterange input").val(start.format("MMMM D, YYYY") + " - " + end.format("MMMM D, YYYY"));
+	});
+
+	var val_berdua = $('#Berdua').val();
+	var val_keluarga = $('#Keluarga').val();
+	var val_rombongan = $('#Rombongan').val();
+	var val_sendiri = $('#Sendiri').val();
+
+	var xValues = ["Berdua","Keluarga","Rombongan","Sendiri"];
+	var yValues = [0, 0, 0, 0];
+	if(val_berdua){
+		yValues[0] = val_berdua;
+	}
+	if(val_keluarga){
+		yValues[1] = val_keluarga;
+	}
+	if(val_rombongan){
+		yValues[2] = val_rombongan;
+	}
+	if(val_sendiri){
+		yValues[3] = val_sendiri;
+	}
+	var barColors = [
+		'#4dc9f6',
+		'#f67019',
+		'#f53794',
+		'#537bc4',
+		'#acc236',
+		'#166a8f',
+		'#00a950',
+		'#58595b',
+		'#8549ba'
+	];
+
+	new Chart(document.getElementById('visitor-type'), {
+		type: "doughnut",
+		data: {
+			labels: xValues,
+			datasets: [{
+				backgroundColor: barColors,
+				data: yValues,
+				hoverOffset: 8,
+			}]
+		},
+		options: {
+			title: {
+				display: true,
+			},
+			borderWidth : 1,
+		}
+	});
+
+
+	var day_1 = $('#day_1').val();
+	var day_2 = $('#day_2').val();
+	var day_3 = $('#day_3').val();
+	var day_4 = $('#day_4').val();
+	var day_5 = $('#day_5').val();
+	var day_6 = $('#day_6').val();
+	var day_7 = $('#day_7').val();
+
+	var day_1_name = $('#day_1').attr("name");
+	var day_2_name  = $('#day_2').attr("name");
+	var day_3_name  = $('#day_3').attr("name");
+	var day_4_name  = $('#day_4').attr("name");
+	var day_5_name  = $('#day_5').attr("name");
+	var day_6_name  = $('#day_6').attr("name");
+	var day_7_name  = $('#day_7').attr("name");
+
+	// Visitor Line
+	var labels = ["","","","","","",""];
+	var data = [0,0,0,0,0,0,0];
+	if(day_1){
+		labels[0] = day_1_name;
+		data[0] = day_1;
+	}
+	if(day_2){
+		labels[1] = day_2_name;
+		data[1] = day_2;
+	}
+	new Chart(document.getElementById('visitor-line'), {
+		type: "line",
+		data: {
+			labels: labels,
+			datasets: [{
+				label: 'Visitor each Date',
+				data: data,
+				fill: false,
+				borderColor: 'rgb(75, 192, 192)',
+				tension: 0.1
+			}]
+		},
+		options: {
+			title: {
+				display: true,
+			},
+			borderWidth : 1,
+		}
 	});
   </script>
 @endpush
