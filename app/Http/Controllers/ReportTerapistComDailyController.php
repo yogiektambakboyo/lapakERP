@@ -236,6 +236,101 @@ class ReportTerapistComDailyController extends Controller
                 'report_data_com_from1' => $report_data_com_from1,
                 'report_data_detail_t' => $report_data_detail_t,
                 'report_data_terapist' => $report_data_terapist,
+                'filter_begin_date' => $filter_begin_date,
+                'filter_begin_end' => $filter_begin_end,
+                'filter_branch_id' => $branchx,
+                'filter_terapist_in' => $terapist,
+                'settings' => Settings::get(),
+            ]);
+        }else if($request->export=='Export Sum Lite API'){
+
+            
+            $filter_begin_date = $begindate;
+            $filter_begin_end = $enddate;
+            $filter_branch_id =  $branchx;
+
+            $report_data_detail_t = DB::select("
+                    select a.branch_name,a.id,a.dated,a.name,a.invoice_no,a.abbr,coalesce(pc2.point_value,0) as total_point,(a.commisions+coalesce(pc2.point_value,0)) as total,commisions_extra,total_abbr,total_commisions,total_point_qty,product_abbr,
+                    product_price,product_base_commision,product_qty,product_commisions
+                    from (
+                        select a.branch_name,a.user_id as id,a.dated,a.terapist_name as name,
+                        string_agg(distinct right(invoice_no,6),'\n') as invoice_no,
+                        string_agg(case when type_id=2 then abbr else '' end,'##' order by invoice_no) as abbr,
+                        sum(point_qty) as point_qty,sum(a.commisions) as commisions,
+                        string_agg(case when type_id=8 then commisions::character varying else '' end,'##' order by invoice_no) as commisions_extra,
+                        string_agg(case when type_id=2 then total::character varying else '' end,'##' order by invoice_no) as total_abbr,
+                        string_agg(case when type_id=2 then commisions::character varying else '' end,'##' order by invoice_no) as total_commisions,
+                        string_agg(case when type_id=2 then point_qty::character varying else '' end,'##' order by invoice_no) as total_point_qty,
+                        string_agg(case when type_id=1 then abbr else '' end,'##') as product_abbr,
+                        string_agg(case when type_id=1 then price::character varying else '' end,'##') as product_price,
+                        string_agg(case when type_id=1 then base_commision::character varying else '' end,'##') as product_base_commision,
+                        string_agg(case when type_id=1 then qty::character varying else '' end,'##') as product_qty,      
+                        string_agg(case when type_id=1 then commisions::character varying else '' end,'##') as product_commisions     
+                        from terapist_commision a
+                        join users_branch as ub on ub.branch_id = a.branch_id and ub.user_id = '".$user->id."'
+                        where a.dated  between '".$filter_begin_date."' and  '".$filter_begin_end."' and a.user_id::character varying like '".$terapist."' 
+                        group by a.branch_name,a.user_id,a.dated,a.terapist_name
+                    ) a left join point_conversion pc2 on pc2.point_qty = a.point_qty 
+                    order by a.branch_name,a.name,a.dated      
+            ");
+
+            $report_data_terapist = DB::select("
+                    select distinct a.branch_name,a.id,a.name
+                    from (
+                        select a.branch_name,a.user_id as id,a.dated,a.terapist_name as name,
+                        string_agg(distinct right(invoice_no,6),'##') as invoice_no,
+                        string_agg(case when type_id=2 then abbr else '' end,'##' order by invoice_no) as abbr,
+                        sum(point_qty) as point_qty,sum(a.commisions) as commisions,
+                        string_agg(case when type_id=8 then commisions::character varying else '' end,'##' order by invoice_no) as commisions_extra,
+                        string_agg(case when type_id=2 then total::character varying else '' end,'##' order by invoice_no) as total_abbr,
+                        string_agg(case when type_id=2 then commisions::character varying else '' end,'##' order by invoice_no) as total_commisions,
+                        string_agg(case when type_id=2 then point_qty::character varying else '' end,'##' order by invoice_no) as total_point_qty,
+                        string_agg(case when type_id=1 then abbr else '' end,'##') as product_abbr,
+                        string_agg(case when type_id=1 then price::character varying else '' end,'##') as product_price,
+                        string_agg(case when type_id=1 then base_commision::character varying else '' end,'##') as product_base_commision,
+                        string_agg(case when type_id=1 then qty::character varying else '' end,'##') as product_qty,      
+                        string_agg(case when type_id=1 then commisions::character varying else '' end,'##') as product_commisions     
+                        from terapist_commision a
+                        join users_branch as ub on ub.branch_id = a.branch_id and ub.user_id = '".$user->id."'
+                        where a.dated  between '".$filter_begin_date."' and  '".$filter_begin_end."' and a.user_id::character varying like '".$terapist."' 
+                        group by a.branch_name,a.user_id,a.dated,a.terapist_name
+                    ) a left join point_conversion pc2 on pc2.point_qty = a.point_qty 
+                    order by 1,3     
+            ");
+
+            $time = strtotime($filter_begin_date);
+            $newformat = date('Y-m-d',$time);
+            $newformatd = date('Y-m',$time);
+            $newformatlastm = date('Y-m', strtotime('-1 months', strtotime($newformat)));
+
+            $date26 = substr($filter_begin_date, 8, 2);
+            $today_date = (int)$date26;
+            if ($today_date>=26){
+                $date26 = $newformatd.'-26';
+            }else{
+                $date26 = $newformatlastm.'-26';
+            }
+
+            $report_data_com_from1 = DB::select("
+                    select a.dated,a.user_id as id,(a.commisions+coalesce(pc2.point_value,0)) as total
+                    from (
+                        select a.dated,a.user_id,sum(point_qty) as point_qty,sum(a.commisions) as commisions from terapist_commision a
+                        join users_branch as ub on ub.branch_id = a.branch_id and ub.user_id = '".$user->id."'
+                        where a.dated  between '".$date26."' and  '".$filter_begin_end."'  and a.user_id::character varying like '".$terapist."' 
+                        group by a.dated,a.user_id
+                    ) a left join point_conversion pc2 on pc2.point_qty = a.point_qty 
+                    order by a.dated           
+            ");
+    
+        
+            return array_merge([
+                'report_data_com_from1' => $report_data_com_from1,
+                'report_data_detail_t' => $report_data_detail_t,
+                'report_data_terapist' => $report_data_terapist,
+                'filter_begin_date' => $filter_begin_date,
+                'filter_begin_end' => $filter_begin_end,
+                'filter_branch_id' => $filter_branch_id,
+                'filter_terapist_in' => $terapist,
                 'settings' => Settings::get(),
             ]);
         }else{
