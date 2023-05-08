@@ -36,6 +36,7 @@
    <body> 
 
     <button id="printPageButton" onClick="window.print();"  class="btn print">Cetak Laporan Komisi</button>
+    <button id="btn_export_xls" class="btn print">Cetak XLS</button>
       <table style="width: 100%">
         <tbody>
           <tr style="text-align: center;background-color:#FFA726;">
@@ -293,6 +294,9 @@
                     report_data_com_from1 = resp.data.report_data_com_from1;
                     report_data_terapist = resp.data.report_data_terapist;
 
+                    var beginnewformat = resp.data.beginnewformat;
+                    var endnewformat = resp.data.endnewformat;
+
                     let data_filtered = [];
 
                     // Loop Terapist
@@ -302,7 +306,7 @@
                         let worksheet = workbook.addWorksheet(element.name);
 
                         /*Column headers*/
-                        worksheet.getRow(2).values = [
+                        worksheet.getRow(3).values = [
                           'Tgl', 
                           'No Faktur', 
                           'Jenis', 
@@ -320,34 +324,48 @@
                           'Pendapatan (s/d)',
                         ];
 
-                        worksheet.mergeCells('A1', 'A2');
-                        worksheet.getCell('A1').value = 'Tgl';
+
+                        worksheet.mergeCells('A1', 'E1');
+                        worksheet.getCell('A1').value = 'Cabang : '+element.branch_name;
                         worksheet.getCell('A1').alignment = { vertical: 'middle', horizontal: 'center' };
 
-                        worksheet.mergeCells('B1', 'B2');
-                        worksheet.getCell('B1').value = 'No Faktur';
-                        worksheet.getCell('B1').alignment = { vertical: 'middle', horizontal: 'center' };
-                        worksheet.getCell('B2').alignment = { vertical: 'middle', horizontal: 'center' };
-
-                        worksheet.mergeCells('C1', 'E1');
-                        worksheet.getCell('C1').value = 'Perawatan';
-                        worksheet.getCell('C1').alignment = { vertical: 'middle', horizontal: 'center' };
-
-                        worksheet.mergeCells('F1', 'G1');
-                        worksheet.getCell('F1').value = 'Poin';
+                        worksheet.mergeCells('F1', 'J1');
+                        worksheet.getCell('F1').value = 'Mitra Usaha : '+element.name;
                         worksheet.getCell('F1').alignment = { vertical: 'middle', horizontal: 'center' };
 
-                        worksheet.mergeCells('H1', 'L1');
-                        worksheet.getCell('H1').value = 'Produk';
-                        worksheet.getCell('H1').alignment = { vertical: 'middle', horizontal: 'center' };
+                        worksheet.mergeCells('K1', 'O1');
+                        worksheet.getCell('K1').value = 'Tgl : '+beginnewformat+' sd '+endnewformat;
+                        worksheet.getCell('K1').alignment = { vertical: 'middle', horizontal: 'center' };
 
-                        worksheet.mergeCells('M1', 'M2');
-                        worksheet.getCell('M1').value = 'Extra Charge';
-                        worksheet.getCell('M1').alignment = { vertical: 'middle', horizontal: 'center' };
+                        worksheet.mergeCells('A2', 'A3');
+                        worksheet.getCell('A2').value = 'Tgl';
+                        worksheet.getCell('A2').alignment = { vertical: 'middle', horizontal: 'center' };
 
-                        worksheet.mergeCells('N1', 'O1');
-                        worksheet.getCell('N1').value = 'Total';
-                        worksheet.getCell('N1').alignment = { vertical: 'middle', horizontal: 'center' };                        
+                        worksheet.mergeCells('B2', 'B3');
+                        worksheet.getCell('B2').value = 'No Faktur';
+                        worksheet.getCell('B2').alignment = { vertical: 'middle', horizontal: 'center' };
+                        worksheet.getCell('B3').alignment = { vertical: 'middle', horizontal: 'center' };
+                        worksheet.getCell('B3').alignment = { vertical: 'middle', horizontal: 'center' };
+
+                        worksheet.mergeCells('C2', 'E2');
+                        worksheet.getCell('C2').value = 'Perawatan';
+                        worksheet.getCell('C2').alignment = { vertical: 'middle', horizontal: 'center' };
+
+                        worksheet.mergeCells('F2', 'G2');
+                        worksheet.getCell('F2').value = 'Poin';
+                        worksheet.getCell('F2').alignment = { vertical: 'middle', horizontal: 'center' };
+
+                        worksheet.mergeCells('H2', 'L2');
+                        worksheet.getCell('H2').value = 'Produk';
+                        worksheet.getCell('H2').alignment = { vertical: 'middle', horizontal: 'center' };
+
+                        worksheet.mergeCells('M2', 'M3');
+                        worksheet.getCell('M2').value = 'Extra Charge';
+                        worksheet.getCell('M2').alignment = { vertical: 'middle', horizontal: 'center' };
+
+                        worksheet.mergeCells('N2', 'O2');
+                        worksheet.getCell('N2').value = 'Total';
+                        worksheet.getCell('N2').alignment = { vertical: 'middle', horizontal: 'center' };                        
 
                         worksheet.columns = [
                           { key: 'dated', width: 12 },
@@ -369,6 +387,7 @@
 
                         worksheet.getRow(1).font = { bold: true };
                         worksheet.getRow(2).font = { bold: true };
+                        worksheet.getRow(3).font = { bold: true };
                         worksheet.getCell('A1').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
                         worksheet.getCell('B1').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
                         worksheet.getCell('C1').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
@@ -401,7 +420,23 @@
                         worksheet.getCell('N2').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
                         worksheet.getCell('O2').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
 
-                        let counter = 2;
+                        worksheet.getCell('A3').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                        worksheet.getCell('B3').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                        worksheet.getCell('C3').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                        worksheet.getCell('D3').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                        worksheet.getCell('E3').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                        worksheet.getCell('F3').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                        worksheet.getCell('G3').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                        worksheet.getCell('H3').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                        worksheet.getCell('I3').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                        worksheet.getCell('J3').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                        worksheet.getCell('K3').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                        worksheet.getCell('L3').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                        worksheet.getCell('M3').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                        worksheet.getCell('N3').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                        worksheet.getCell('O3').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+
+                        let counter = 3;
                         for (let index = 0; index < report_data_detail_t.length; index++) {
                           const rowElement = report_data_detail_t[index];
                           if(rowElement.name == element.name ){
@@ -444,11 +479,39 @@
                             worksheet.getCell('L'+counter).alignment = { wrapText: true };
                             worksheet.getCell('M'+counter).alignment = { wrapText: true };                            
                             counter++;
+                            worksheet.getCell('B'+counter).alignment = { wrapText: true };
+                            worksheet.getCell('C'+counter).alignment = { wrapText: true };
+                            worksheet.getCell('D'+counter).alignment = { wrapText: true };
+                            worksheet.getCell('E'+counter).alignment = { wrapText: true };
+                            worksheet.getCell('F'+counter).alignment = { wrapText: true };
+                            worksheet.getCell('H'+counter).alignment = { wrapText: true };
+                            worksheet.getCell('I'+counter).alignment = { wrapText: true };
+                            worksheet.getCell('J'+counter).alignment = { wrapText: true };
+                            worksheet.getCell('K'+counter).alignment = { wrapText: true };
+                            worksheet.getCell('L'+counter).alignment = { wrapText: true };
+                            worksheet.getCell('M'+counter).alignment = { wrapText: true }; 
+
+                            var borderStyles = {
+                              top: { style: "thin" },
+                              left: { style: "thin" },
+                              bottom: { style: "thin" },
+                              right: { style: "thin" }
+                            };
+
+                            worksheet.eachRow({ includeEmpty: true }, function(row, rowNumber) {
+                              row.eachCell({ includeEmpty: true }, function(cell, colNumber) {
+                                cell.border = borderStyles;
+                              });
+                            });
                           }
                         }
+
+                        
                     });
 
                     //XLSX.writeFile(workbook, "Presidents.xlsx", { compression: true });
+
+
                   
                     let filename = "Report_Commission_Terapist_"+(Math.floor(Date.now() / 1000)+".xlsx");
                     workbook.xlsx.writeBuffer()

@@ -321,7 +321,9 @@ class ReportTerapistComDailyController extends Controller
                     ) a left join point_conversion pc2 on pc2.point_qty = a.point_qty 
                     order by a.dated           
             ");
-    
+
+            $beginnewformat = date('d-m-Y',strtotime($filter_begin_date));    
+            $endnewformat = date('d-m-Y',strtotime($filter_begin_end));    
         
             return array_merge([
                 'report_data_com_from1' => $report_data_com_from1,
@@ -331,6 +333,8 @@ class ReportTerapistComDailyController extends Controller
                 'filter_begin_end' => $filter_begin_end,
                 'filter_branch_id' => $filter_branch_id,
                 'filter_terapist_in' => $terapist,
+                'beginnewformat' => $beginnewformat,
+                'endnewformat' => $endnewformat,
                 'settings' => Settings::get(),
             ]);
         }else{

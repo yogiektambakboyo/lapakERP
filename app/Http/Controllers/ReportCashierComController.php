@@ -388,8 +388,70 @@ class ReportCashierComController extends Controller
             return view('pages.reports.cashier_comm_day_print_2', [
                 'report_data_com_from1' => $report_data_com_from1,
                 'report_data_detail_t' => $report_data_detail_t,
+                'filter_begin_date' => $filter_begin_date,
+                'filter_begin_end' => $filter_begin_end,
+                'filter_branch_id' => $filter_branch_id,
                 'settings' => Settings::get(),
             ]);
+        }else if($request->export=='Export Sum Lite API'){
+
+            $filter_begin_date = $begindate;
+            $filter_begin_end = $enddate;
+            $filter_branch_id =  $branchx;
+
+            $call_proc = DB::select("CALL calc_commision_cashier();");
+
+            $report_data_detail_t = DB::select("
+                select branch_name,to_char(dated,'YYYY-MM-dd') as datedorder,to_char(dated,'dd-MM-YYYY') as dated,'0' as name,'0' as id,
+                string_agg(distinct right(invoice_no,6),'##' order by right(invoice_no,6)) as invoice_no,
+                string_agg(case when type_id=1 then abbr else '' end,'##' order by right(invoice_no,6)) as product_abbr,
+                string_agg(case when type_id=1 then price::character varying else '' end,'##' order by right(invoice_no,6)) as product_price,
+                string_agg(case when type_id=1 then base_commision::character varying else '' end,'##' order by right(invoice_no,6)) as product_base_commision,
+                string_agg(case when type_id=1 then qty::character varying else '' end,'##' order by right(invoice_no,6)) as product_qty,      
+                string_agg(case when type_id=1 then commisions::character varying else '' end,'##' order by right(invoice_no,6)) as product_commisions,   
+                string_agg(case when type_id=8 then commisions::character varying else '' end,'##' order by right(invoice_no,6)) as commisions_extra,
+                sum(a.commisions) as total   
+                from cashier_commision a 
+                join users_branch as ub on ub.branch_id = a.branch_id and ub.user_id = '".$user->id."'
+                where a.dated between '".$begindate."' and '".$enddate."'  and a.branch_id::character varying like '%".$branchx."%'
+                group by branch_name,to_char(dated,'dd-MM-YYYY'),to_char(dated,'YYYY-MM-dd')
+                order by 1,2
+            ");
+
+
+            $time = strtotime($begindate);
+            $newformat = date('Y-m-d',$time);
+            $newformatd = date('Y-m',$time);
+            $newformatlastm = date('Y-m', strtotime('-1 months', strtotime($newformat)));
+
+            $date26 = substr($begindate, 8, 2);
+
+            $today_date = (int)$date26;
+            if ($today_date>=26){
+                $date26 = $newformatd.'-26';
+            }else{
+
+                $date26 = $newformatlastm.'-26';
+            }
+
+            $report_data_com_from1 = DB::select("
+                        select to_char(dated,'dd-MM-YYYY') as dated,'0' as id,sum(a.commisions) as total from cashier_commision a
+                        join users_branch as ub on ub.branch_id = a.branch_id and ub.user_id = '".$user->id."'
+                        where dated between '".$date26."'  and '".$enddate."'  and a.branch_id::character varying like  '".$filter_branch_id."' group by dated     
+            ");
+
+            $beginnewformat = date('d-m-Y',strtotime($filter_begin_date));    
+            $endnewformat = date('d-m-Y',strtotime($filter_begin_end));    
+    
+            return array_merge([
+                'report_data_com_from1' => $report_data_com_from1,
+                'report_data_detail_t' => $report_data_detail_t,
+                'settings' => Settings::get(),
+                'endnewformat' => $endnewformat,
+                'beginnewformat' => $beginnewformat,
+            ]);
+
+
         }else{
             $branchs = Branch::join('users_branch as ub','ub.branch_id', '=', 'branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']);        
 
