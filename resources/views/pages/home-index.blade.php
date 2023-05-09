@@ -398,6 +398,26 @@
 		labels[1] = day_2_name;
 		data[1] = day_2;
 	}
+	if(day_3){
+		labels[2] = day_3_name;
+		data[2] = day_3;
+	}
+	if(day_4){
+		labels[3] = day_4_name;
+		data[3] = day_4;
+	}
+	if(day_5){
+		labels[4] = day_5_name;
+		data[4] = day_5;
+	}
+	if(day_6){
+		labels[5] = day_6_name;
+		data[5] = day_6;
+	}
+	if(day_7){
+		labels[6] = day_7_name;
+		data[6] = day_7;
+	}
 	new Chart(document.getElementById('visitor-line'), {
 		type: "line",
 		data: {
