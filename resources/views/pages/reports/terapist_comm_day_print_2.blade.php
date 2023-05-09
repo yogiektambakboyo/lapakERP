@@ -26,7 +26,7 @@
         }
         @page { margin:0px; }
         @media print {
-          #printPageButton {
+          .printPageButton {
             display: none;
           }
           .pagebreak { page-break-before: always; } /* page-break-after works, as well */
@@ -35,8 +35,8 @@
    </head> 
    <body> 
 
-    <button id="printPageButton" onClick="window.print();"  class="btn print">Cetak Laporan Komisi</button>
-    <button id="btn_export_xls" class="btn print">Cetak XLS</button>
+    <button id="printPageButton" onClick="window.print();"  class="btn print printPageButton">Cetak Laporan Komisi</button>
+    <!-- <button id="btn_export_xls" class="btn print printPageButton">Cetak XLS</button> -->
       <table style="width: 100%">
         <tbody>
           <tr style="text-align: center;background-color:#FFA726;">

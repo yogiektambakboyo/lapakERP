@@ -36,7 +36,7 @@
                 @foreach($report_data as $rdata)
                     <tr>
                         <th scope="row">{{ $rdata->branch_name }}</th>
-                        <td>{{ $rdata->dated }}</td>
+                        <td>{{ $rdata->dated_display }}</td>
                         <td>{{ $rdata->product_name }}</td>
                         <td>{{ number_format($rdata->qty_in,0,',','.') }}</td>
                         <td>{{ number_format($rdata->qty_out,0,',','.') }}</td>

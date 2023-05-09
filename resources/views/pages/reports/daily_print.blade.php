@@ -26,7 +26,7 @@
         }
         @page { margin:0px; }
         @media print {
-          #printPageButton {
+          .printPageButton {
             display: none;
           }
         }

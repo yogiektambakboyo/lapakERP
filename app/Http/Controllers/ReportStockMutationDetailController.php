@@ -68,7 +68,7 @@ class ReportStockMutationDetailController extends Controller
         $shifts = Shift::orderBy('shift.id')->get(['shift.id','shift.remark','shift.id','shift.time_start','shift.time_end']); 
         $period = DB::select("select period_no,remark from period where period_no<=to_char(now(),'YYYYMM')::int and period_no>=202301  order by period_no desc");
         $report_data = DB::select("
-            select branch_name,dated,product_name,sum(qty_in) as qty_in,sum(qty_out) as qty_out from (
+            select branch_name,dated,product_name,to_char(dated,'dd-mm-YYYY') as dated_display,sum(qty_in) as qty_in,sum(qty_out) as qty_out from (
                 select b.id as branch_id,b.remark as branch_name,im.dated,id.product_id,ps.remark as product_name,id.qty as qty_out,0  as qty_in  from invoice_master im 
                 join invoice_detail id on id.invoice_no = im.invoice_no 
                 join customers c ON c.id = im.customers_id
@@ -137,7 +137,7 @@ class ReportStockMutationDetailController extends Controller
             return Excel::download(new ReportStockMutationDetailExport($strencode), 'report_stockmutation_'.Carbon::now()->format('YmdHis').'.xlsx');
         }else{
             $report_data = DB::select("
-            select branch_name,dated,product_name,sum(qty_in) as qty_in,sum(qty_out) as qty_out from (
+            select branch_name,dated,product_name,to_char(dated,'dd-mm-YYYY') as dated_display,sum(qty_in) as qty_in,sum(qty_out) as qty_out from (
                 select b.id as branch_id,b.remark as branch_name,im.dated,id.product_id,ps.remark as product_name,id.qty as qty_out,0  as qty_in  from invoice_master im 
                 join invoice_detail id on id.invoice_no = im.invoice_no 
                 join customers c ON c.id = im.customers_id

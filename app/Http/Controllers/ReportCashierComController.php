@@ -346,6 +346,15 @@ class ReportCashierComController extends Controller
 
             $call_proc = DB::select("CALL calc_commision_cashier();");
 
+            $report_data_dated = DB::select("
+                select to_char(dated,'YYYY-MM-dd') as datedorder
+                from cashier_commision a 
+                join users_branch as ub on ub.branch_id = a.branch_id and ub.user_id = '".$user->id."'
+                where a.dated between '".$begindate."' and '".$enddate."'  and a.branch_id::character varying like '%".$branchx."%'
+                group by branch_name,to_char(dated,'dd-MM-YYYY'),to_char(dated,'YYYY-MM-dd')
+                order by 1
+            ");
+
             $report_data_detail_t = DB::select("
                 select branch_name,to_char(dated,'YYYY-MM-dd') as datedorder,to_char(dated,'dd-MM-YYYY') as dated,'0' as name,'0' as id,
                 string_agg(distinct right(invoice_no,6),'##' order by right(invoice_no,6)) as invoice_no,
@@ -362,7 +371,6 @@ class ReportCashierComController extends Controller
                 group by branch_name,to_char(dated,'dd-MM-YYYY'),to_char(dated,'YYYY-MM-dd')
                 order by 1,2
             ");
-
 
             $time = strtotime($begindate);
             $newformat = date('Y-m-d',$time);
@@ -391,6 +399,7 @@ class ReportCashierComController extends Controller
                 'filter_begin_date' => $filter_begin_date,
                 'filter_begin_end' => $filter_begin_end,
                 'filter_branch_id' => $filter_branch_id,
+                'report_data_dated' => $report_data_dated,
                 'settings' => Settings::get(),
             ]);
         }else if($request->export=='Export Sum Lite API'){

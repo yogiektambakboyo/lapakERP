@@ -26,7 +26,7 @@
         }
         @page { margin:0px; }
         @media print {
-          #printPageButton {
+          .printPageButton {
             display: none;
           }
         }
@@ -34,8 +34,8 @@
    </head> 
    <body> 
 
-      <button id="printPageButton" onClick="window.print();"  class="btn print">Cetak Laporan Komisi</button>
-      <button id="btn_export_xls" class="btn print">Cetak XLS</button>
+      <button id="printPageButton" onClick="window.print();"  class="btn print printPageButton">Cetak Laporan Komisi</button>
+      <!--  <button id="btn_export_xls" class="btn print printPageButton">Cetak XLS</button> -->
     
       <table style="width: 100%">
         <tbody>
@@ -49,145 +49,155 @@
 
   
       {{-- Area Looping --}}
-  
-      <table class="table table-striped" style="width: 100%">
-        <thead>
-          <tr style="background-color:#FFA726;color:white;">
-            <th rowspan="2">Tgl</th>
-            <th rowspan="2">No Faktur</th>
-            <th colspan="5">Produk</th>
-            <th rowspan="2">Extra Charge</th>
-            <th colspan="2">Total</th>
-          </tr>
-          <tr style="background-color:#FFA726;color:white;">
-            <th>Jenis</th>
-            <th scope="col" width="5%">Harga</th>
-            <th scope="col" width="5%">Komisi</th>
-            <th scope="col" width="7%">Jml</th>
-            <th scope="col">T Komisi</th>
-            <th scope="col" width="8%">Pendapatan</th>
-            <th scope="col" width="8%">Pendapatan (s/d)</th>
-          </tr>
-        </thead>
-        <tbody>
-          @foreach($report_data_detail_t as $report_data_detail_ts)
+      <?php 
+       foreach($report_data_dated as $report_data_dateds){
+        ?>
 
-            <tr>
-              <td style="text-align: left;vertical-align:top;">{{ $report_data_detail_ts->dated }}</td>
-              <td style="text-align: left;vertical-align:top;">
-                @php  
-                if (str_contains($report_data_detail_ts->invoice_no, "##")) {
-                  $invoice_no = explode("##",$report_data_detail_ts->invoice_no);
-                  foreach ($invoice_no as $value) {
-                    echo $value==""?"":$value."<br>";
-                  }
-                }else{
-                  echo $report_data_detail_ts->invoice_no;
-                }
-                
-              @endphp
-              </td>
-              <td style="vertical-align:top;">
-                @php  
-                  if (str_contains($report_data_detail_ts->product_abbr, "##")) {
-                    $product_abbr = explode("##",$report_data_detail_ts->product_abbr);
-                    foreach ($product_abbr as $value) {
-                      echo $value==""?"":$value."<br>";
-                    }
-                  }else{
-                    echo $report_data_detail_ts->product_abbr;
-                  }
-                  
-                @endphp
-              </td>
-              <td style="vertical-align:top;">
-                @php  
-                  if (str_contains($report_data_detail_ts->product_price, "##")) {
-                    $product_price = explode("##",$report_data_detail_ts->product_price);
-                    foreach ($product_price as $value) {
-                      echo $value==""?"":number_format($value,0,',','.')."<br>";
-                    }
-                  }else{
-                    echo $report_data_detail_ts->product_price;
-                  }
-                @endphp
-              </td>
-              <td style="vertical-align:top;">
-                @php  
-                  if (str_contains($report_data_detail_ts->product_base_commision, "##")) {
-                    $product_base_commision = explode("##",$report_data_detail_ts->product_base_commision);
-                    foreach ($product_base_commision as $value) {
-                      echo $value==""?"":number_format($value,0,',','.')."<br>";
-                    }
-                  }else{
-                    echo $report_data_detail_ts->product_base_commision;
-                  }
-                @endphp
-              </td>
-              <td style="vertical-align:top;">
-                @php  
-                if (str_contains($report_data_detail_ts->product_qty, "##")) {
-                  $product_qty = explode("##",$report_data_detail_ts->product_qty);
-                  foreach ($product_qty as $value) {
-                    echo $value==""?"":number_format($value,0,',','.')."<br>";
-                  }
-                }else{
-                  echo $report_data_detail_ts->product_qty;
-                }
-              @endphp
-              </td>
-              <td style="vertical-align:top;">
-                @php  
-                if (str_contains($report_data_detail_ts->product_commisions, "##")) {
-                  $product_commisions = explode("##",$report_data_detail_ts->product_commisions);
-                  foreach ($product_commisions as $value) {
-                    echo $value==""?"":number_format($value,0,',','.')."<br>";
-                  }
-                }else{
-                  echo $report_data_detail_ts->product_commisions;
-                }
-              @endphp
-              </td>
-              <td style="vertical-align:top;">
-                @php  
-                if (str_contains($report_data_detail_ts->commisions_extra, "##")) {
-                  $commisions_extra = explode("##",$report_data_detail_ts->commisions_extra);
-                  foreach ($commisions_extra as $value) {
-                    echo $value==""?"":number_format($value,0,',','.')."<br>";
-                  }
-                }else{
-                  echo $report_data_detail_ts->commisions_extra;
-                }
-              @endphp
-              </td>
-              <td style="vertical-align:top;">
-                {{ number_format($report_data_detail_ts->total,0,',','.') }}
-              </td>
-              <td style="vertical-align:top;">
-                  @php  $tot=0; @endphp
-                  @foreach($report_data_com_from1 as $report_data_com_from1s)
-                            @php 
-                                    $date1 = \Carbon\Carbon::createFromFormat('d-m-Y', $report_data_com_from1s->dated);
-                                    $date2 = \Carbon\Carbon::createFromFormat('d-m-Y', $report_data_detail_ts->dated);
-                                    
-                                    $result = $date1->lte($date2);
-                                    if($result){
-                                      $tot=$tot+$report_data_com_from1s->total; 
-                                    }
-                            @endphp
-                  @endforeach
-                  {{ number_format($tot,0,',','.') }}
-              </td>
-
-               
+          <table class="table table-striped" style="width: 100%">
+            <thead>
+              <tr style="background-color:#FFA726;color:rgb(3, 3, 3);">
+                <th rowspan="2">Tgl</th>
+                <th rowspan="2">No Faktur</th>
+                <th colspan="5">Produk</th>
+                <th rowspan="2">Extra Charge</th>
+                <th colspan="2">Total</th>
               </tr>
+              <tr style="background-color:#FFA726;color:rgb(9, 9, 9);">
+                <th>Jenis</th>
+                <th scope="col" width="5%">Harga</th>
+                <th scope="col" width="5%">Komisi</th>
+                <th scope="col" width="7%">Jml</th>
+                <th scope="col">T Komisi</th>
+                <th scope="col" width="8%">Pendapatan</th>
+                <th scope="col" width="8%">Pendapatan (s/d)</th>
+              </tr>
+            </thead>
+            <tbody>
+              @foreach($report_data_detail_t as $report_data_detail_ts)
 
+                <?php
+                  if ($report_data_detail_ts->datedorder==$report_data_dateds->datedorder){
+                ?>
 
-          @endforeach
+                <tr>
+                    <td style="text-align: left;vertical-align:top;">{{ $report_data_detail_ts->dated }}</td>
+                    <td style="text-align: left;vertical-align:top;">
+                      @php  
+                      if (str_contains($report_data_detail_ts->invoice_no, "##")) {
+                        $invoice_no = explode("##",$report_data_detail_ts->invoice_no);
+                        foreach ($invoice_no as $value) {
+                          echo $value==""?"":$value."<br>";
+                        }
+                      }else{
+                        echo $report_data_detail_ts->invoice_no;
+                      }
+                      
+                    @endphp
+                    </td>
+                    <td style="vertical-align:top;">
+                      @php  
+                        if (str_contains($report_data_detail_ts->product_abbr, "##")) {
+                          $product_abbr = explode("##",$report_data_detail_ts->product_abbr);
+                          foreach ($product_abbr as $value) {
+                            echo $value==""?"":$value."<br>";
+                          }
+                        }else{
+                          echo $report_data_detail_ts->product_abbr;
+                        }
+                        
+                      @endphp
+                    </td>
+                    <td style="vertical-align:top;">
+                      @php  
+                        if (str_contains($report_data_detail_ts->product_price, "##")) {
+                          $product_price = explode("##",$report_data_detail_ts->product_price);
+                          foreach ($product_price as $value) {
+                            echo $value==""?"":number_format($value,0,',','.')."<br>";
+                          }
+                        }else{
+                          echo $report_data_detail_ts->product_price;
+                        }
+                      @endphp
+                    </td>
+                    <td style="vertical-align:top;">
+                      @php  
+                        if (str_contains($report_data_detail_ts->product_base_commision, "##")) {
+                          $product_base_commision = explode("##",$report_data_detail_ts->product_base_commision);
+                          foreach ($product_base_commision as $value) {
+                            echo $value==""?"":number_format($value,0,',','.')."<br>";
+                          }
+                        }else{
+                          echo $report_data_detail_ts->product_base_commision;
+                        }
+                      @endphp
+                    </td>
+                    <td style="vertical-align:top;">
+                      @php  
+                      if (str_contains($report_data_detail_ts->product_qty, "##")) {
+                        $product_qty = explode("##",$report_data_detail_ts->product_qty);
+                        foreach ($product_qty as $value) {
+                          echo $value==""?"":number_format($value,0,',','.')."<br>";
+                        }
+                      }else{
+                        echo $report_data_detail_ts->product_qty;
+                      }
+                    @endphp
+                    </td>
+                    <td style="vertical-align:top;">
+                      @php  
+                      if (str_contains($report_data_detail_ts->product_commisions, "##")) {
+                        $product_commisions = explode("##",$report_data_detail_ts->product_commisions);
+                        foreach ($product_commisions as $value) {
+                          echo $value==""?"":number_format($value,0,',','.')."<br>";
+                        }
+                      }else{
+                        echo $report_data_detail_ts->product_commisions;
+                      }
+                    @endphp
+                    </td>
+                    <td style="vertical-align:top;">
+                      @php  
+                      if (str_contains($report_data_detail_ts->commisions_extra, "##")) {
+                        $commisions_extra = explode("##",$report_data_detail_ts->commisions_extra);
+                        foreach ($commisions_extra as $value) {
+                          echo $value==""?"":number_format($value,0,',','.')."<br>";
+                        }
+                      }else{
+                        echo $report_data_detail_ts->commisions_extra;
+                      }
+                    @endphp
+                    </td>
+                    <td style="vertical-align:top;">
+                      {{ number_format($report_data_detail_ts->total,0,',','.') }}
+                    </td>
+                    <td style="vertical-align:top;">
+                        @php  $tot=0; @endphp
+                        @foreach($report_data_com_from1 as $report_data_com_from1s)
+                                  @php 
+                                          $date1 = \Carbon\Carbon::createFromFormat('d-m-Y', $report_data_com_from1s->dated);
+                                          $date2 = \Carbon\Carbon::createFromFormat('d-m-Y', $report_data_detail_ts->dated);
+                                          
+                                          $result = $date1->lte($date2);
+                                          if($result){
+                                            $tot=$tot+$report_data_com_from1s->total; 
+                                          }
+                                  @endphp
+                        @endforeach
+                        {{ number_format($tot,0,',','.') }}
+                    </td>
 
-            
-        </tbody>
-      </table>
+                  
+                  </tr>
+
+                  <?php }?>
+              @endforeach
+
+                
+            </tbody>
+          </table>
+
+      <?php }?>
+
       <table style="width: 100%">
         <tbody>
           <tr style="text-align: left;background-color:#white;">

@@ -26,7 +26,7 @@
         }
         @page { margin:0px; }
         @media print {
-          #printPageButton {
+          .printPageButton {
             display: none;
           }
         }
@@ -35,6 +35,7 @@
    <body> 
 
     <button id="printPageButton" onClick="window.print();"  class="btn print">Cetak Laporan</button>
+    <!--  <button id="btn_export_xls" class="btn print printPageButton">Cetak XLS</button> -->
       <table style="width: 100%">
         <tbody>
           <tr style="text-align: center;background-color:#FFA726;">

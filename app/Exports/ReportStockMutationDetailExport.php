@@ -42,7 +42,7 @@ class ReportStockMutationDetailExport implements FromCollection,WithColumnFormat
     public function collection()
     {
         return collect(DB::select("
-        select branch_name,dated,product_name,sum(qty_in) as qty_in,sum(qty_out) as qty_out from (
+        select branch_name,to_char(dated,'dd-mm-YYYY') as dated_display,product_name,sum(qty_in) as qty_in,sum(qty_out) as qty_out from (
             select b.id as branch_id,b.remark as branch_name,im.dated,id.product_id,ps.remark as product_name,id.qty as qty_out,0  as qty_in  from invoice_master im 
             join invoice_detail id on id.invoice_no = im.invoice_no 
             join customers c ON c.id = im.customers_id
