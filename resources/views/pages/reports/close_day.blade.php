@@ -289,6 +289,11 @@
                             Apakah anda yakin akan mencetak laporan closing harian?
                         </div>
                         <div class="col-md-12">
+                            <input type="hidden" 
+                            name="filter_type"
+                            id="filter_type"
+                            class="form-control" 
+                            value="view" required hidden/>
                             <input type="text" 
                             name="filter_begin_date"
                             id="filter_begin_date"

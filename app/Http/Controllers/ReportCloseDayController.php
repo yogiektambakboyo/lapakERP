@@ -168,16 +168,36 @@ class ReportCloseDayController extends Controller
         $payment_type = ['Cash','BCA - Debit','BCA - Kredit','Mandiri - Debit','Mandiri - Kredit','Transfer','QRIS'];
         $users = User::join('users_branch as ub','ub.branch_id', '=', 'users.branch_id')->where('ub.user_id','=',$user->id)->where('users.job_id','=',2)->get(['users.id','users.name']);
 
-        return view('pages.reports.close_day_print', [
-            'data' => $data,
-            'payment_datas' => $payment_data,
-            'out_datas' => $out_data,
-            'report_datas' => $report_data,
-            'petty_datas' => $petty_datas,
-            'cust' => $cust,
-            'creator' => $creator,
-            'settings' => Settings::get(),
-        ]);
+        if($request->filter_type == "api"){
+            return array_merge([
+                'data' => $data,
+                'payment_datas' => $payment_data,
+                'out_datas' => $out_data,
+                'report_datas' => $report_data,
+                'petty_datas' => $petty_datas,
+                'cust' => $cust,
+                'creator' => $creator,
+                'settings' => Settings::get(),
+                'filter_begin_date' => $filter_begin_date,
+                'filter_begin_end' => $filter_begin_date,
+                'filter_branch_id' => $filter_branch_id,
+            ]);
+        }else{
+            return view('pages.reports.close_day_print', [
+                'data' => $data,
+                'payment_datas' => $payment_data,
+                'out_datas' => $out_data,
+                'report_datas' => $report_data,
+                'petty_datas' => $petty_datas,
+                'cust' => $cust,
+                'creator' => $creator,
+                'settings' => Settings::get(),
+                'filter_begin_date' => $filter_begin_date,
+                'filter_begin_end' => $filter_begin_date,
+                'filter_branch_id' => $filter_branch_id,
+            ]);
+        }
+        
     }
 
     public function getdata_daily(Request $request) 
