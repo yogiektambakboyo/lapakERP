@@ -65,7 +65,7 @@
             <th style="text-align: center;background-color:#FFA726;"  scope="col">Mndr K</th> 
             <th style="text-align: center;background-color:#FFA726;"  scope="col">QRIS</th> 
             <th style="text-align: center;background-color:#FFA726;"  scope="col">Tnsfr</th> 
-            <th style="text-align: center;background-color:#FFA726;"  scope="col">Qty Perawatan</th> 
+            <th style="text-align: center;background-color:#FFA726;"  scope="col">Cases</th> 
             <th  style="text-align: center;background-color:#FFA726;"  scope="col">Total Pendapatan</th>    
         </tr>
         </thead>

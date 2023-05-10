@@ -50,7 +50,7 @@ class CloseDayExport implements FromCollection,WithColumnFormatting, WithHeading
             'Transfer',
             'Qty Transaction',
             'Qty Customer',
-            'Qty Perawatan'
+            'Cases'
         ];
     }
     public function collection()
