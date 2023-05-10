@@ -45,7 +45,7 @@
                 <th scope="col">Tfr</th> 
                 <th scope="col">#SPK</th> 
                 <th scope="col">#Tamu</th>  
-                <th scope="col">#Cases</th>  
+                <th scope="col">Cases</th>  
             </tr>
             </thead>
             <tbody>
