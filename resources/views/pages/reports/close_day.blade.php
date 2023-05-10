@@ -45,6 +45,7 @@
                 <th scope="col">Tfr</th> 
                 <th scope="col">#SPK</th> 
                 <th scope="col">#Tamu</th>  
+                <th scope="col">#Perawatan</th>  
             </tr>
             </thead>
             <tbody>
@@ -70,6 +71,7 @@
                         <td>{{ number_format($rdata->total_tr,0,',','.') }}</td>
                         <td>{{ number_format($rdata->qty_transaction,0,',','.') }}</td>
                         <td>{{ number_format($rdata->qty_customers,0,',','.') }}</td>                        
+                        <td>{{ number_format($rdata->qty_service,0,',','.') }}</td>                        
                     </tr>
                 @endforeach
             </tbody>

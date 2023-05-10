@@ -65,6 +65,7 @@
             <th style="text-align: center;background-color:#FFA726;"  scope="col">Mndr K</th> 
             <th style="text-align: center;background-color:#FFA726;"  scope="col">QRIS</th> 
             <th style="text-align: center;background-color:#FFA726;"  scope="col">Tnsfr</th> 
+            <th style="text-align: center;background-color:#FFA726;"  scope="col">Qty Perawatan</th> 
             <th  style="text-align: center;background-color:#FFA726;"  scope="col">Total Pendapatan</th>    
         </tr>
         </thead>
@@ -81,6 +82,7 @@
               $total_m_k = 0;
               $total_qr = 0;
               $total_tr = 0;
+              $qty_service = 0;
               $total_all = 0;
           ?>
         <tbody>
@@ -99,6 +101,7 @@
                     <td style="text-align: right;">{{ number_format($rdata->total_m_k,0,',','.') }}</td>
                     <td style="text-align: right;">{{ number_format($rdata->total_qr,0,',','.') }}</td>
                     <td style="text-align: right;">{{ number_format($rdata->total_tr,0,',','.') }}</td>
+                    <td style="text-align: right;">{{ number_format($rdata->qty_service,0,',','.') }}</td>
                     <td style="text-align: right;">{{ number_format($rdata->total_all,0,',','.') }}</td>                      
                 </tr>
                 <?php 
@@ -114,6 +117,7 @@
                     $total_m_k = $total_m_k + $rdata->total_m_k;
                     $total_qr = $total_qr + $rdata->total_qr;
                     $total_tr = $total_tr + $rdata->total_tr;
+                    $qty_service = $qty_service + $rdata->qty_service;
                     $total_all = $total_all + $rdata->total_all;
                 ?>
             @endforeach
@@ -131,6 +135,7 @@
                 <th style="text-align: right;">{{ number_format($total_m_k,0,',','.') }}</th>                
                 <th style="text-align: right;">{{ number_format($total_qr,0,',','.') }}</th>                
                 <th style="text-align: right;">{{ number_format($total_tr,0,',','.') }}</th>                
+                <th style="text-align: right;">{{ number_format($qty_service,0,',','.') }}</th>                
                 <th style="text-align: right;">{{ number_format($total_all,0,',','.') }}</th>                
             </tr>
         </tbody>
