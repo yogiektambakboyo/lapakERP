@@ -76,7 +76,7 @@ class ReportStockMutationDetailController extends Controller
                 join branch b on b.id = c.branch_id and b.id::character varying like '%'
                 where dated between (now()-interval'2 days')::date and now()::date
                 union 
-                select b.id as branch_id,b.remark as branch_name,im.dated,ps2.id as product_id,ps.remark as product_name,id.qty*pi2.qty as qty_out,0  as qty_in  from invoice_master im 
+                select b.id as branch_id,b.remark as branch_name,im.dated,ps2.id as product_id,ps2.remark as product_name,id.qty*pi2.qty as qty_out,0  as qty_in  from invoice_master im 
                 join invoice_detail id on id.invoice_no = im.invoice_no 
                 join customers c ON c.id = im.customers_id
                 join product_sku ps on ps.id = id.product_id

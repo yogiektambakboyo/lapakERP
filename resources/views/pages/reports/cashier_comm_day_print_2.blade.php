@@ -35,7 +35,7 @@
    <body> 
 
       <button id="printPageButton" onClick="window.print();"  class="btn print printPageButton">Cetak Laporan Komisi</button>
-      <!--  <button id="btn_export_xls" class="btn print printPageButton">Cetak XLS</button> -->
+      <button id="btn_export_xls" class="btn print printPageButton">Cetak XLS</button>
     
       <table style="width: 100%">
         <tbody>
