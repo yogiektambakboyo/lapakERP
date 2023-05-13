@@ -587,6 +587,16 @@
     let report_data_detail_t = [];
     let report_data_com_from1 = [];
     let report_data_terapist = [];
+    let report_datas = [];
+    let payment_datas = [];
+    let petty_datas = [];
+
+    let arr_bca_d = [];
+    let arr_bca_k = [];
+    let arr_man_d = [];
+    let arr_man_k = [];
+    let arr_qr = [];
+    let arr_tr = [];
 
     $(document).ready(function() {
       var url = "{{ route('reports.closeday.getdata') }}";
@@ -601,46 +611,42 @@
         const res = axios.get(url,{ params }, {
                     headers: {}
                   }).then(resp => {
-                    let report_datas = resp.data.report_datas;
-                    let payment_datas = resp.data.payment_datas;
+                    report_datas = resp.data.report_datas;
+                    payment_datas = resp.data.payment_datas;
+                    petty_datas = resp.data.petty_datas;
 
                     data_filtered = [];
 
-                        let worksheet = workbook.addWorksheet("Commision Cashier");
+                        let worksheet = workbook.addWorksheet("Laporan Closing Harian");
 
-                        worksheet.mergeCells('A1', 'G1');
+                        worksheet.mergeCells('A1', 'L1');
                         worksheet.getCell('A1').value = 'Cabang : '+report_datas[0].branch_name;
                         worksheet.getCell('A1').alignment = { vertical: 'middle', horizontal: 'center' };
 
-                        worksheet.mergeCells('H1', 'K1');
-                        worksheet.getCell('H1').value = 'Tgl : '+resp.data.filter_begin_date;
-                        worksheet.getCell('H1').alignment = { vertical: 'middle', horizontal: 'center' };
+                        worksheet.mergeCells('M1', 'U1');
+                        worksheet.getCell('M1').value = 'Tgl : '+resp.data.filter_begin_date;
+                        worksheet.getCell('M1').alignment = { vertical: 'middle', horizontal: 'center' };
                         
-                        
-
                         worksheet.getRow(1).font = { bold: true };
                         worksheet.getRow(2).font = { bold: true };
                         worksheet.getCell('A1').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
                         worksheet.getCell('B1').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
                         worksheet.getCell('C1').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
                         worksheet.getCell('D1').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
-                        worksheet.getCell('E1').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
                         worksheet.getCell('F1').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
                         worksheet.getCell('G1').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
                         worksheet.getCell('H1').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
                         worksheet.getCell('I1').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
-                        worksheet.getCell('J1').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                        worksheet.getCell('M1').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
 
                         worksheet.getCell('A2').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
                         worksheet.getCell('B2').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
                         worksheet.getCell('C2').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
                         worksheet.getCell('D2').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
-                        worksheet.getCell('E2').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
                         worksheet.getCell('F2').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
                         worksheet.getCell('G2').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
                         worksheet.getCell('H2').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
                         worksheet.getCell('I2').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
-                        worksheet.getCell('J2').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
 
                         worksheet.getCell('A2').value = 'Perawatan';
                         worksheet.getCell('B2').value = 'Harga';
@@ -652,48 +658,98 @@
                         worksheet.getCell('H2').value = 'Jml';
                         worksheet.getCell('I2').value = 'Total';
 
+                        worksheet.mergeCells('F9', 'I9');
+                        worksheet.getCell('F9').value = 'Minuman';
+                        worksheet.getCell('F9').alignment = { vertical: 'middle', horizontal: 'center' };
+
+                        worksheet.mergeCells('F15', 'I15');
+                        worksheet.getCell('F15').value = 'Extra Charge';
+                        worksheet.getCell('F15').alignment = { vertical: 'middle', horizontal: 'center' };
+
+                        worksheet.mergeCells('F23', 'I23');
+                        worksheet.getCell('F23').value = 'Pendapatan';
+                        worksheet.getCell('F23').alignment = { vertical: 'middle', horizontal: 'center' };
+
+
                         worksheet.mergeCells('K2', 'P2');
                         worksheet.getCell('K2').value = 'Transaksi';
                         worksheet.getCell('K2').alignment = { vertical: 'middle', horizontal: 'center' };
+                        worksheet.getCell('K2').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
 
                         worksheet.mergeCells('K3', 'L3');
                         worksheet.getCell('K3').value = 'BCA';
                         worksheet.getCell('K3').alignment = { vertical: 'middle', horizontal: 'center' };
+                        worksheet.getCell('K3').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+
 
                         worksheet.mergeCells('M3', 'N3');
                         worksheet.getCell('M3').value = 'Mandiri';
                         worksheet.getCell('M3').alignment = { vertical: 'middle', horizontal: 'center' };
+                        worksheet.getCell('M3').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+
 
                         worksheet.getCell('K4').value = 'Debit';
                         worksheet.getCell('K4').alignment = { vertical: 'middle', horizontal: 'center' };
+                        worksheet.getCell('K4').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+
 
                         worksheet.getCell('L4').value = 'Kredit';
                         worksheet.getCell('L4').alignment = { vertical: 'middle', horizontal: 'center' };
+                        worksheet.getCell('L4').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
 
                         worksheet.getCell('M4').value = 'Debit';
                         worksheet.getCell('M4').alignment = { vertical: 'middle', horizontal: 'center' };
+                        worksheet.getCell('M4').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
 
                         worksheet.getCell('N4').value = 'Kredit';
                         worksheet.getCell('N4').alignment = { vertical: 'middle', horizontal: 'center' };
+                        worksheet.getCell('N4').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
 
                         worksheet.mergeCells('O3', 'O4');
                         worksheet.getCell('O3').value = 'QRIS';
                         worksheet.getCell('O3').alignment = { vertical: 'middle', horizontal: 'center' };
+                        worksheet.getCell('O3').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
 
                         worksheet.mergeCells('P3', 'P4');
                         worksheet.getCell('P3').value = 'Transfer';
                         worksheet.getCell('P3').alignment = { vertical: 'middle', horizontal: 'center' };
+                        worksheet.getCell('P3').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
 
+                        worksheet.mergeCells('R3', 'S3');
+                        worksheet.getCell('R3').value = 'Pengeluaran';
+                        worksheet.getCell('R3').alignment = { vertical: 'middle', horizontal: 'center' };
+                        worksheet.getCell('R3').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+
+                        worksheet.mergeCells('R4', 'S4');
+                        worksheet.getCell('R4').value = 'Kas Masuk';
+                        worksheet.getCell('R4').alignment = { vertical: 'middle', horizontal: 'center' };
+                        worksheet.getCell('R4').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+
+                        worksheet.getCell('R5').value = 'Jenis';
+                        worksheet.getCell('R5').alignment = { vertical: 'middle', horizontal: 'center' };
+                        worksheet.getCell('R5').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+
+                        worksheet.getCell('S5').value = 'Harga';
+                        worksheet.getCell('S5').alignment = { vertical: 'middle', horizontal: 'center' };
+                        worksheet.getCell('S5').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+
+                        worksheet.getCell('U3').value = 'Ket. Produk Terpakai';
+                        worksheet.getCell('U3').alignment = { vertical: 'middle', horizontal: 'center' };
+                        worksheet.getCell('U3').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
 
                         var counter_service = 3;
                         var counter_product = 3;
-                        var total_qty=0,total_service = 0,counter_spk =0;
+                        var counter_drink = 10;
+                        var counter_extra = 16;
+                        var total_qty=0, total_qty_product = 0, total_qty_drink = 0, total_qty_extra = 0;
+                        var total_service = 0,total_drink = 0, total_product = 0, total_extra = 0;
+                        var counter_spk = 0;
                         for (let index = 0; index < report_datas.length; index++) {
                           const rowElement = report_datas[index];
                           let value_sd = 0;
                             
                             if(rowElement.type_id==2){
-                                 worksheet.getCell('A'+counter_service).value = rowElement.product_name;
+                                 worksheet.getCell('A'+counter_service).value = rowElement.abbr;
                                  worksheet.getCell('B'+counter_service).value = rowElement.price;
                                  worksheet.getCell('C'+counter_service).value = rowElement.qty;
                                  worksheet.getCell('D'+counter_service).value = rowElement.total;
@@ -703,12 +759,34 @@
                             }
 
                             if(rowElement.type_id==1&&rowElement.category_id!=26){
-                                 worksheet.getCell('F'+counter_product).value = rowElement.product_name;
+                                 worksheet.getCell('F'+counter_product).value = rowElement.abbr;
                                  worksheet.getCell('G'+counter_product).value = rowElement.price;
                                  worksheet.getCell('H'+counter_product).value = rowElement.qty;
                                  worksheet.getCell('I'+counter_product).value = rowElement.total;
                                  counter_product++;
-                            }                            
+                                 total_product = total_product + parseFloat(rowElement.total);
+                                 total_qty_product = total_qty_product + parseFloat(rowElement.qty);
+                            }        
+                            
+                            if(rowElement.category_id==26){
+                                 worksheet.getCell('F'+counter_drink).value = rowElement.abbr;
+                                 worksheet.getCell('G'+counter_drink).value = rowElement.price;
+                                 worksheet.getCell('H'+counter_drink).value = rowElement.qty;
+                                 worksheet.getCell('I'+counter_drink).value = rowElement.total;
+                                 counter_drink++;
+                                 total_drink = total_drink + parseFloat(rowElement.total);
+                                 total_qty_drink = total_qty_drink + parseFloat(rowElement.qty);
+                            }    
+
+                            if(rowElement.type_id==8){
+                                 worksheet.getCell('F'+counter_extra).value = rowElement.abbr;
+                                 worksheet.getCell('G'+counter_extra).value = rowElement.price;
+                                 worksheet.getCell('H'+counter_extra).value = rowElement.qty;
+                                 worksheet.getCell('I'+counter_extra).value = rowElement.total;
+                                 counter_extra++;
+                                 total_extra = total_extra + parseFloat(rowElement.total);
+                                 total_qty_extra = total_qty_extra + parseFloat(rowElement.qty);
+                            }    
 
                             var borderStyles = {
                               top: { style: "thin" },
@@ -728,13 +806,84 @@
                         for (let index = 0; index < payment_datas.length; index++) {
                           const rowElement = payment_datas[index];
                           counter_spk = counter_spk + parseFloat(rowElement.qty_payment);
-
                         }
 
                         worksheet.mergeCells('A20','B20');
                         worksheet.getCell('A20').value = 'Total';
                         worksheet.getCell('C20').value = total_qty;
                         worksheet.getCell('D20').value = total_service;
+
+                        worksheet.getCell('A20').font = { bold: true };
+                        worksheet.getCell('C20').font = { bold: true };
+                        worksheet.getCell('D20').font = { bold: true };
+                        worksheet.getCell('A21').font = { bold: true };
+                        worksheet.getCell('D21').font = { bold: true };
+                        worksheet.getCell('A22').font = { bold: true };
+                        worksheet.getCell('D22').font = { bold: true };
+
+                        worksheet.mergeCells('F8','G8');
+                        worksheet.getCell('F8').value = 'Total';
+                        worksheet.getCell('H8').value = total_qty_product;
+                        worksheet.getCell('I8').value = total_product;
+
+                        worksheet.getCell('F8').font = { bold: true };
+                        worksheet.getCell('H8').font = { bold: true };
+                        worksheet.getCell('I8').font = { bold: true };
+                        worksheet.getCell('F9').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                        worksheet.getCell('F15').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                        worksheet.getCell('F23').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+
+                        worksheet.getCell('F9').font = { bold: true };
+                        worksheet.getCell('F15').font = { bold: true };
+                        worksheet.getCell('F23').font = { bold: true };
+
+
+                        worksheet.mergeCells('F14','G14');
+                        worksheet.getCell('F14').value = 'Total';
+                        worksheet.getCell('H14').value = total_qty_drink;
+                        worksheet.getCell('I14').value = total_drink;
+                        worksheet.getCell('F14').font = { bold: true };
+                        worksheet.getCell('H14').font = { bold: true };
+                        worksheet.getCell('I14').font = { bold: true };
+
+                        worksheet.mergeCells('F22','G22');
+                        worksheet.getCell('F22').value = 'Total';
+                        worksheet.getCell('H22').value = total_qty_extra;
+                        worksheet.getCell('I22').value = total_extra;
+                        worksheet.getCell('F22').font = { bold: true };
+                        worksheet.getCell('H22').font = { bold: true };
+                        worksheet.getCell('I22').font = { bold: true };
+
+                        worksheet.mergeCells('F24','G24');
+                        worksheet.getCell('F24').value = 'Perawatan';
+                        worksheet.mergeCells('H24','I24');
+                        worksheet.getCell('H24').value = total_service;
+         
+
+                        worksheet.mergeCells('F25','G25');
+                        worksheet.getCell('F25').value = 'Produk';
+                        worksheet.mergeCells('H25','I25');
+                        worksheet.getCell('H25').value = total_product;
+   
+
+                        worksheet.mergeCells('F26','G26');
+                        worksheet.getCell('F26').value = 'Minuman';
+                        worksheet.mergeCells('H26','I26');
+                        worksheet.getCell('H26').value = total_drink;
+   
+
+                        worksheet.mergeCells('F27','G27');
+                        worksheet.getCell('F27').value = 'Extra';
+                        worksheet.mergeCells('H27','I27');
+                        worksheet.getCell('H27').value = total_extra;
+
+
+                        worksheet.mergeCells('F28','G28');
+                        worksheet.getCell('F28').value = 'Total';
+                        worksheet.mergeCells('H28','I28');
+                        worksheet.getCell('H28').value = total_service+total_product+total_drink+total_extra;
+                        worksheet.getCell('F28').font = { bold: true };
+                        worksheet.getCell('H28').font = { bold: true };
 
                         worksheet.mergeCells('A21','C21');
                         worksheet.getCell('A21').value = 'Tamu';
@@ -743,6 +892,198 @@
                         worksheet.mergeCells('A22','C22');
                         worksheet.getCell('A22').value = 'SPK';
                         worksheet.getCell('D22').value = counter_spk;
+
+                        // Payment Section
+
+                        total_payment = 0;
+                        counter = 0;
+                        
+                        payment_cash = 0;
+                        payment_bca_debit = 0;
+                        payment_bca_kredit = 0;
+                        payment_mandiri_debit = 0;
+                        payment_mandiri_kredit = 0;
+                        payment_qr = 0;
+                        payment_tr = 0;
+
+                        arr_bca_d = [];
+                        arr_bca_k = [];
+                        arr_man_d = [];
+                        arr_man_k = [];
+                        arr_qr = [];
+                        arr_tr = [];
+
+                        for (let index = 0; index < payment_datas.length; index++) {
+                          const rowElement = payment_datas[index];
+                          if(rowElement.payment_type=='BCA - Debit'){
+                              arr_bca_d.push(rowElement.total_payment);
+                              payment_bca_debit = payment_bca_debit + parseFloat(rowElement.total_payment);
+                          }else{
+                              arr_bca_d.push("0");
+                          }
+                          if(rowElement.payment_type=='BCA - Kredit'){
+                              arr_bca_k.push(rowElement.total_payment);
+                              payment_bca_kredit = payment_bca_kredit + parseFloat(rowElement.total_payment);
+                          }else{
+                              arr_bca_k.push("0");
+                          }
+                          if(rowElement.payment_type=='Mandiri - Debit'){
+                              arr_man_d.push(rowElement.total_payment);
+                              payment_mandiri_debit = payment_mandiri_debit + parseFloat(rowElement.total_payment);
+                          }else{
+                              arr_man_d.push("0");
+                          }
+                          if(rowElement.payment_type=='Mandiri - Kredit'){
+                              arr_man_k.push(rowElement.total_payment);
+                              payment_mandiri_kredit = payment_mandiri_kredit + parseFloat(rowElement.total_payment);
+                          }else{
+                              arr_man_k.push("0");
+                          }
+                          if(rowElement.payment_type=='QRIS'){
+                            arr_qr.push(rowElement.total_payment);
+                            payment_qr = payment_qr + parseFloat(rowElement.total_payment);
+                          }else{
+                            arr_qr.push("0");
+                          }
+                          if(rowElement.payment_type=='Transfer'){
+                            arr_tr.push(rowElement.total_payment);
+                            payment_tr = payment_tr + parseFloat(rowElement.total_payment);
+                          }else{
+                            arr_tr.push("0");
+                          }
+                          if(rowElement.payment_type=='Cash'){
+                            payment_cash = payment_cash + parseFloat(rowElement.total_payment);
+                          }
+                        }
+
+                        arr_bca_d.sort();
+                        arr_bca_k.sort();
+                        arr_man_d.sort();
+                        arr_man_k.sort();
+                        arr_qr.sort();
+                        arr_tr.sort();
+
+                        arr_bca_d.reverse();
+                        arr_bca_k.reverse();
+                        arr_man_d.reverse();
+                        arr_man_k.reverse();
+                        arr_qr.reverse();
+                        arr_tr.reverse();
+
+                        var counter_transaction = 5;
+                        var counter_transaction_ex = 5;
+
+                        for (let index = 0; index < arr_bca_d.length; index++) {
+                          if( (parseFloat(arr_bca_d[index])+parseFloat(arr_bca_k[index])+parseFloat(arr_man_d[index])+parseFloat(arr_man_k[index])+parseFloat(arr_tr[index])+parseFloat(arr_qr[index])) >0){
+                            worksheet.getCell('K'+counter_transaction_ex).value = arr_bca_d[index];
+                            worksheet.getCell('L'+counter_transaction_ex).value = arr_bca_k[index];
+                            worksheet.getCell('M'+counter_transaction_ex).value = arr_man_d[index];
+                            worksheet.getCell('N'+counter_transaction_ex).value = arr_man_k[index];
+                            worksheet.getCell('O'+counter_transaction_ex).value = arr_qr[index];
+                            worksheet.getCell('P'+counter_transaction_ex).value = arr_tr[index];
+                            counter_transaction++;
+                            worksheet.getCell('K'+counter_transaction_ex).border = borderStyles;
+                            worksheet.getCell('L'+counter_transaction_ex).border = borderStyles;
+                            worksheet.getCell('M'+counter_transaction_ex).border = borderStyles;
+                            worksheet.getCell('N'+counter_transaction_ex).border = borderStyles;
+                            worksheet.getCell('O'+counter_transaction_ex).border = borderStyles;
+                            worksheet.getCell('P'+counter_transaction_ex).border = borderStyles;
+                          }
+                          counter_transaction_ex++;
+                        }
+
+                        worksheet.mergeCells('K'+counter_transaction,'L'+counter_transaction);
+                        worksheet.getCell('K'+counter_transaction).value = 'Cash';
+                        worksheet.mergeCells('M'+counter_transaction,'P'+counter_transaction);
+                        worksheet.getCell('M'+counter_transaction).value = payment_cash;
+                        counter_transaction++;
+
+                        worksheet.mergeCells('K'+counter_transaction,'L'+counter_transaction);
+                        worksheet.getCell('K'+counter_transaction).value = 'BCA - Debit';
+                        worksheet.mergeCells('M'+counter_transaction,'P'+counter_transaction);
+                        worksheet.getCell('M'+counter_transaction).value = payment_bca_debit;
+                        counter_transaction++;
+
+                        worksheet.mergeCells('K'+counter_transaction,'L'+counter_transaction);
+                        worksheet.getCell('K'+counter_transaction).value = 'BCA - Kredit';
+                        worksheet.mergeCells('M'+counter_transaction,'P'+counter_transaction);
+                        worksheet.getCell('M'+counter_transaction).value = payment_bca_kredit;
+                        counter_transaction++;
+
+                        worksheet.mergeCells('K'+counter_transaction,'L'+counter_transaction);
+                        worksheet.getCell('K'+counter_transaction).value = 'Mandiri - Debit';
+                        worksheet.mergeCells('M'+counter_transaction,'P'+counter_transaction);
+                        worksheet.getCell('M'+counter_transaction).value = payment_mandiri_debit;
+                        counter_transaction++;
+
+                        worksheet.mergeCells('K'+counter_transaction,'L'+counter_transaction);
+                        worksheet.getCell('K'+counter_transaction).value = 'Mandiri - Kredit';
+                        worksheet.mergeCells('M'+counter_transaction,'P'+counter_transaction);
+                        worksheet.getCell('M'+counter_transaction).value = payment_mandiri_kredit;
+                        counter_transaction++;
+
+                        worksheet.mergeCells('K'+counter_transaction,'L'+counter_transaction);
+                        worksheet.getCell('K'+counter_transaction).value = 'QRIS';
+                        worksheet.mergeCells('M'+counter_transaction,'P'+counter_transaction);
+                        worksheet.getCell('M'+counter_transaction).value = payment_qr;
+                        counter_transaction++;
+
+                        worksheet.mergeCells('K'+counter_transaction,'L'+counter_transaction);
+                        worksheet.getCell('K'+counter_transaction).value = 'Transfer';
+                        worksheet.mergeCells('M'+counter_transaction,'P'+counter_transaction);
+                        worksheet.getCell('M'+counter_transaction).value = payment_tr;
+                        counter_transaction++;
+
+                        worksheet.mergeCells('K'+counter_transaction,'L'+counter_transaction);
+                        worksheet.getCell('K'+counter_transaction).value = 'Total';
+                        worksheet.mergeCells('M'+counter_transaction,'P'+counter_transaction);
+                        worksheet.getCell('M'+counter_transaction).value = payment_cash+payment_bca_debit+payment_bca_kredit+payment_tr+payment_qr+payment_mandiri_kredit+payment_mandiri_debit;
+
+                        worksheet.getCell('K'+counter_transaction).font = { bold: true };
+                        worksheet.getCell('M'+counter_transaction).font = { bold: true };
+
+                        counter_kas = 6;
+                        total_kas_out = 0;
+                        for (let index = 0; index < petty_datas.length; index++) {
+                          if(petty_datas[index].type == 'Kas - Keluar'){
+                            worksheet.getCell('R'+counter_kas).value = petty_datas[index].abbr;
+                            worksheet.getCell('S'+counter_kas).value = petty_datas[index].total;
+                            total_kas_out = total_kas_out + parseFloat(petty_datas[index].total);
+                            worksheet.getCell('R'+counter_kas).border = borderStyles;
+                            worksheet.getCell('S'+counter_kas).border = borderStyles;
+
+                            counter_kas++;
+                          }
+                        }
+
+                        counter_kas++;
+                        worksheet.getCell('R'+counter_kas).value = "Total";
+                        worksheet.getCell('S'+counter_kas).value = total_kas_out;
+
+
+                        worksheet.getCell('U4').value = "Keluar :";
+                        counter_p = 5;
+
+                        for (let index = 0; index < petty_datas.length; index++) {
+                          if(petty_datas[index].type == 'Produk - Keluar'){
+                            worksheet.getCell('U'+counter_p).value = petty_datas[index].abbr + " ("+petty_datas[index].qty+")";
+                            worksheet.getCell('U'+counter_p).border = borderStyles;
+
+                            counter_p++;
+                          }
+                        }
+
+                        worksheet.getCell('U'+counter_p).value = "Masuk :";
+                        counter_p++;
+
+                        for (let index = 0; index < petty_datas.length; index++) {
+                          if(petty_datas[index].type == 'Produk - Masuk'){
+                            worksheet.getCell('U'+counter_p).value = petty_datas[index].abbr + " ("+petty_datas[index].qty+")";
+                            worksheet.getCell('U'+counter_p).border = borderStyles;
+                            counter_p++;
+                          }
+                        }
+                        // End Payment Section 
 
 
                     // Loop Terapist
