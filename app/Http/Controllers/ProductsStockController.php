@@ -233,6 +233,8 @@ class ProductsStockController extends Controller
                 ['qty' => $request->get('qty') ],
             )
         );
+
+        DB::update(" INSERT INTO public.stock_log (product_id, qty, branch_id, doc_no,remarks, created_at) VALUES(".$product.", ".$request->get('qty')." , ".$branch.", 'Adj. Stock','Stock Edit By ".$user->name."', now()) ");
         
         return redirect()->route('productsstock.index')
             ->withSuccess(__('Product stock updated successfully.'));

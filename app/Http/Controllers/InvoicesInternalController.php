@@ -637,6 +637,7 @@ class InvoicesInternalController extends Controller
 
         for ($i=0; $i < count($last_data); $i++) { 
             DB::update("UPDATE product_stock set qty = qty+".$last_data[$i]['qty']." WHERE branch_id = ".$branch_id['branch_id']." and product_id = ".$last_data[$i]["product_id"].";");
+            DB::update("update public.period_stock set qty_out=qty_out-".$last_data[$i]['qty']." ,updated_at = now(), balance_end = balance_end + ".$last_data[$i]['qty']."  WHERE branch_id = ".$branch_id['branch_id']." and product_id = ".$last_data[$i]["product_id"]."  and periode = to_char(now(),'YYYYMM')::int;");
         }
 
         InvoiceDetail::where('invoice_no', $invoice_no)->delete();
@@ -693,6 +694,7 @@ class InvoicesInternalController extends Controller
 
 
             DB::update("UPDATE product_stock set qty = qty-".$request->get('product')[$i]['qty']." WHERE branch_id = ".$branch_id['branch_id']." and product_id = ".$request->get('product')[$i]["id"]);
+            DB::update("update public.period_stock set qty_out=qty_out+".$request->get('product')[$i]['qty']." ,updated_at = now(), balance_end = balance_end - ".$request->get('product')[$i]['qty']." where branch_id = ".$branch_id['branch_id']." and product_id = ".$request->get('product')[$i]['id']." and periode = to_char(now(),'YYYYMM')::int;");
 
             if(!$res_invoice_detail){
                 $result = array_merge(

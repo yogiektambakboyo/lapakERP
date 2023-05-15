@@ -18,7 +18,7 @@
         <div class="row mb-3">
 
           <div class="col-md-2">
-            <label class="form-label col-form-label col-md-6">@lang('general.lbl_dated_mmddYYYY')</label>
+            <label class="form-label col-form-label col-md-6">Tgl</label>
               <div class="col-md-12">
                 <input type="text" 
                 name="doc_date"

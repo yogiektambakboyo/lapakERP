@@ -67,44 +67,51 @@ class ReportStockMutationDetailController extends Controller
 
         $shifts = Shift::orderBy('shift.id')->get(['shift.id','shift.remark','shift.id','shift.time_start','shift.time_end']); 
         $period = DB::select("select period_no,remark from period where period_no<=to_char(now(),'YYYYMM')::int and period_no>=202301  order by period_no desc");
+        $calc_1 = DB::select("call calc_stock_daily_today();");
         $report_data = DB::select("
-            select branch_name,dated,product_name,to_char(dated,'dd-mm-YYYY') as dated_display,sum(qty_in) as qty_in,sum(qty_out) as qty_out from (
-                select b.id as branch_id,b.remark as branch_name,im.dated,id.product_id,ps.remark as product_name,id.qty as qty_out,0  as qty_in  from invoice_master im 
+            select branch_name,a.dated,product_name,to_char(a.dated,'dd-mm-YYYY') as dated_display,sum(a.qty_in) as qty_in,sum(a.qty_out) as qty_out,coalesce(psd.qty_stock,0) as qty_stock from (
+                select b.id as branch_id,b.remark as branch_name,im.dated,id.product_id,ps.remark as product_name,sum(id.qty) as qty_out,0  as qty_in  from invoice_master im 
                 join invoice_detail id on id.invoice_no = im.invoice_no 
                 join customers c ON c.id = im.customers_id
-                join product_sku ps on ps.id = id.product_id and ps.type_id = 1
+                join product_sku ps on ps.id = id.product_id and ps.type_id = 1 
                 join branch b on b.id = c.branch_id and b.id::character varying like '%'
-                where dated between (now()-interval'2 days')::date and now()::date
+                where im.dated between (now()-interval'2 days')::date and now()::date
+                group by b.id,b.remark,im.dated,id.product_id,ps.remark
                 union 
-                select b.id as branch_id,b.remark as branch_name,im.dated,ps2.id as product_id,ps2.remark as product_name,id.qty*pi2.qty as qty_out,0  as qty_in  from invoice_master im 
+                select b.id as branch_id,b.remark as branch_name,im.dated,ps2.id as product_id,ps2.remark as product_name,sum(id.qty*pi2.qty) as qty_out,0  as qty_in  from invoice_master im 
                 join invoice_detail id on id.invoice_no = im.invoice_no 
                 join customers c ON c.id = im.customers_id
                 join product_sku ps on ps.id = id.product_id
                 join product_ingredients pi2 on pi2.product_id = ps.id 
-                join product_sku ps2 on ps2.id = pi2.product_id_material 
+                join product_sku ps2 on ps2.id = pi2.product_id_material
                 join branch b on b.id = c.branch_id and b.id::character varying like '%'
-                where dated between (now()-interval'2 days')::date and now()::date
+                where im.dated between (now()-interval'2 days')::date and now()::date
+                group by b.id,b.remark,im.dated,ps2.id,ps2.remark
                 union
-                select b.id as branch_id,b.remark as branch_name,im.dated,id.product_id,ps.remark as product_name,id.qty as qty_out,0  as qty_in  from petty_cash im 
+                select b.id as branch_id,b.remark as branch_name,im.dated,id.product_id,ps.remark as product_name,sum(id.qty) as qty_out,0  as qty_in  from petty_cash im 
                 join petty_cash_detail id on id.doc_no  = im.doc_no
                 join product_sku ps on ps.id = id.product_id and ps.type_id = 1
                 join branch b on b.id = im.branch_id and b.id::character varying like '%'
                 where im.dated between (now()-interval'2 days')::date and now()::date and im.type='Produk - Keluar'
+                group by b.id,b.remark,im.dated,id.product_id,ps.remark
                 union
-                select b.id as branch_id,b.remark as branch_name,im.dated,id.product_id,ps.remark as product_name,0 as qty_out,id.qty  as qty_in  from petty_cash im 
+                select b.id as branch_id,b.remark as branch_name,im.dated,id.product_id,ps.remark as product_name,0 as qty_out,sum(id.qty)  as qty_in  from petty_cash im 
                 join petty_cash_detail id on id.doc_no  = im.doc_no
-                join product_sku ps on ps.id = id.product_id and ps.type_id = 1
+                join product_sku ps on ps.id = id.product_id and ps.type_id = 1 
                 join branch b on b.id = im.branch_id and b.id::character varying like '%'
                 where im.dated between (now()-interval'2 days')::date and now()::date and im.type='Produk - Masuk'
+                group by b.id,b.remark,im.dated,id.product_id,ps.remark
                 union
-                select b.id as branch_id,b.remark as branch_name,im.dated,id.product_id,ps.remark as product_name,0 as qty_out,id.qty as qty_in  from receive_master im 
+                select b.id as branch_id,b.remark as branch_name,im.dated,id.product_id,ps.remark as product_name,0 as qty_out,sum(id.qty) as qty_in  from receive_master im 
                 join receive_detail id on id.receive_no = im.receive_no 
-                join product_sku ps on ps.id = id.product_id and ps.type_id = 1
+                join product_sku ps on ps.id = id.product_id and ps.type_id = 1 
                 join branch b on b.id = im.branch_id and b.id::character varying like '%'
-                where dated between (now()-interval'2 days')::date and now()::date
+                where im.dated between (now()-interval'2 days')::date and now()::date
+                group by b.id,b.remark,im.dated,id.product_id,ps.remark
             ) a join users_branch ub on ub.branch_id = a.branch_id 
+            left join period_stock_daily psd on psd.dated = a.dated and psd.product_id = a.product_id and psd.branch_id  = a.branch_id             
             where ub.user_id = ".$user->id."
-            group by a.branch_id,a.branch_name,a.dated,product_name order by 1,2,3   
+            group by a.branch_id,a.branch_name,a.dated,product_name,coalesce(psd.qty_stock,0),to_char(a.dated,'dd-mm-YYYY') order by 1,2,3    
         ");
         $data = $this->data;
         $keyword = "";
@@ -126,6 +133,7 @@ class ReportStockMutationDetailController extends Controller
         $branchs = Branch::join('users_branch as ub','ub.branch_id', '=', 'branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']);        
         $shifts = Shift::orderBy('shift.id')->get(['shift.id','shift.remark','shift.id','shift.time_start','shift.time_end']); 
         $period = DB::select("select period_no,remark from period where period_no<=to_char(now(),'YYYYMM')::int and period_no>=202301  order by period_no desc");
+        $calc_1 = DB::select("call calc_stock_daily_today();");
         
         $begindate = date(Carbon::parse($request->filter_begin_date_in)->format('Y-m-d'));
         $enddate = date(Carbon::parse($request->filter_end_date_in)->format('Y-m-d'));
@@ -137,43 +145,49 @@ class ReportStockMutationDetailController extends Controller
             return Excel::download(new ReportStockMutationDetailExport($strencode), 'report_stockmutation_'.Carbon::now()->format('YmdHis').'.xlsx');
         }else{
             $report_data = DB::select("
-            select branch_name,dated,product_name,to_char(dated,'dd-mm-YYYY') as dated_display,sum(qty_in) as qty_in,sum(qty_out) as qty_out from (
-                select b.id as branch_id,b.remark as branch_name,im.dated,id.product_id,ps.remark as product_name,id.qty as qty_out,0  as qty_in  from invoice_master im 
+            select branch_name,a.dated,product_name,to_char(a.dated,'dd-mm-YYYY') as dated_display,sum(a.qty_in) as qty_in,sum(a.qty_out) as qty_out,coalesce(psd.qty_stock,0) as qty_stock from (
+                select b.id as branch_id,b.remark as branch_name,im.dated,id.product_id,ps.remark as product_name,sum(id.qty) as qty_out,0  as qty_in  from invoice_master im 
                 join invoice_detail id on id.invoice_no = im.invoice_no 
                 join customers c ON c.id = im.customers_id
-                join product_sku ps on ps.id = id.product_id and ps.type_id = 1
+                join product_sku ps on ps.id = id.product_id and ps.type_id = 1 
                 join branch b on b.id = c.branch_id and b.id::character varying like '".$branchx."'
-                where dated between '".$begindate."' and '".$enddate."'
+                where im.dated between '".$begindate."' and '".$enddate."'
+                group by b.id,b.remark,im.dated,id.product_id,ps.remark
                 union 
-                select b.id as branch_id,b.remark as branch_name,im.dated,ps2.id as product_id,ps2.remark as product_name,id.qty*pi2.qty as qty_out,0  as qty_in  from invoice_master im 
+                select b.id as branch_id,b.remark as branch_name,im.dated,ps2.id as product_id,ps2.remark as product_name,sum(id.qty*pi2.qty) as qty_out,0  as qty_in  from invoice_master im 
                 join invoice_detail id on id.invoice_no = im.invoice_no 
                 join customers c ON c.id = im.customers_id
                 join product_sku ps on ps.id = id.product_id
                 join product_ingredients pi2 on pi2.product_id = ps.id 
-                join product_sku ps2 on ps2.id = pi2.product_id_material 
+                join product_sku ps2 on ps2.id = pi2.product_id_material
                 join branch b on b.id = c.branch_id and b.id::character varying like '".$branchx."'
-                where dated between '".$begindate."' and '".$enddate."'
+                where im.dated between '".$begindate."' and '".$enddate."'
+                group by b.id,b.remark,im.dated,ps2.id,ps2.remark
                 union
-                select b.id as branch_id,b.remark as branch_name,im.dated,id.product_id,ps.remark as product_name,id.qty as qty_out,0  as qty_in  from petty_cash im 
+                select b.id as branch_id,b.remark as branch_name,im.dated,id.product_id,ps.remark as product_name,sum(id.qty) as qty_out,0  as qty_in  from petty_cash im 
                 join petty_cash_detail id on id.doc_no  = im.doc_no
                 join product_sku ps on ps.id = id.product_id and ps.type_id = 1
                 join branch b on b.id = im.branch_id and b.id::character varying like '".$branchx."'
                 where im.dated between '".$begindate."' and '".$enddate."' and im.type='Produk - Keluar'
+                group by b.id,b.remark,im.dated,id.product_id,ps.remark
                 union
-                select b.id as branch_id,b.remark as branch_name,im.dated,id.product_id,ps.remark as product_name,0 as qty_out,id.qty  as qty_in  from petty_cash im 
+                select b.id as branch_id,b.remark as branch_name,im.dated,id.product_id,ps.remark as product_name,0 as qty_out,sum(id.qty)  as qty_in  from petty_cash im 
                 join petty_cash_detail id on id.doc_no  = im.doc_no
-                join product_sku ps on ps.id = id.product_id and ps.type_id = 1
+                join product_sku ps on ps.id = id.product_id and ps.type_id = 1 
                 join branch b on b.id = im.branch_id and b.id::character varying like '".$branchx."'
                 where im.dated between '".$begindate."' and '".$enddate."' and im.type='Produk - Masuk'
+                group by b.id,b.remark,im.dated,id.product_id,ps.remark
                 union
-                select b.id as branch_id,b.remark as branch_name,im.dated,id.product_id,ps.remark as product_name,0 as qty_out,id.qty as qty_in  from receive_master im 
+                select b.id as branch_id,b.remark as branch_name,im.dated,id.product_id,ps.remark as product_name,0 as qty_out,sum(id.qty) as qty_in  from receive_master im 
                 join receive_detail id on id.receive_no = im.receive_no 
-                join product_sku ps on ps.id = id.product_id and ps.type_id = 1
+                join product_sku ps on ps.id = id.product_id and ps.type_id = 1 
                 join branch b on b.id = im.branch_id and b.id::character varying like '".$branchx."'
-                where dated between '".$begindate."' and '".$enddate."'
+                where im.dated between '".$begindate."' and '".$enddate."'
+                group by b.id,b.remark,im.dated,id.product_id,ps.remark
             ) a join users_branch ub on ub.branch_id = a.branch_id 
+            left join period_stock_daily psd on psd.dated = a.dated and psd.product_id = a.product_id and psd.branch_id  = a.branch_id             
             where ub.user_id = ".$user->id."
-            group by a.branch_id,a.branch_name,a.dated,product_name    order by 1,2,3        
+            group by a.branch_id,a.branch_name,a.dated,product_name,coalesce(psd.qty_stock,0),to_char(a.dated,'dd-mm-YYYY') order by 1,2,3         
             ");         
             return view('pages.reports.stockmutationdetail',['company' => Company::get()->first()], compact('period','shifts','branchs','data','keyword','act_permission','report_data'))->with('i', ($request->input('page', 1) - 1) * 5);
         }

@@ -657,8 +657,10 @@ class PettyProductController extends Controller
         for ($i=0; $i < count($last_data); $i++) { 
             if($request->get('type')=="Produk - Keluar"){
                 DB::update("UPDATE product_stock set qty = qty+".$last_data[$i]['qty']." WHERE branch_id = ".$request->get('branch_id')." and product_id = ".$last_data[$i]["product_id"].";");
+                DB::update("update public.period_stock set qty_out=qty_out-".$last_data[$i]['qty']." ,updated_at = now(), balance_end = balance_end + ".$last_data[$i]['product_id']." where branch_id = ".$request->get('branch_id')." and product_id = ".$last_data[$i]['product_id']." and periode = to_char(now(),'YYYYMM')::int;");
             }else{
                  DB::update("UPDATE product_stock set qty = qty-".$last_data[$i]['qty']." WHERE branch_id = ".$request->get('branch_id')." and product_id = ".$last_data[$i]["product_id"].";");
+                 DB::update("update public.period_stock set qty_in=qty_in-".$last_data[$i]['qty']." ,updated_at = now(), balance_end = balance_end - ".$last_data[$i]['qty']." where branch_id = ".$request->get('branch_id')." and product_id = ".$last_data[$i]['product_id']." and periode = to_char(now(),'YYYYMM')::int;");
             }
         }
 

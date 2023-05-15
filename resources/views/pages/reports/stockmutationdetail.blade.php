@@ -29,6 +29,7 @@
                 <th scope="col">@lang('general.lbl_product_name')</th>     
                 <th scope="col">@lang('general.lbl_qty_in')</th>     
                 <th scope="col">@lang('general.lbl_qty_out')</th>     
+                <th scope="col">Stok</th>     
             </tr>
             </thead>
             <tbody>
@@ -40,6 +41,7 @@
                         <td>{{ $rdata->product_name }}</td>
                         <td>{{ number_format($rdata->qty_in,0,',','.') }}</td>
                         <td>{{ number_format($rdata->qty_out,0,',','.') }}</td>
+                        <td>{{ number_format($rdata->qty_stock,0,',','.') }}</td>
                     </tr>
                 @endforeach
             </tbody>
