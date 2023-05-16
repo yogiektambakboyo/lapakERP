@@ -293,8 +293,8 @@ class VoucherController extends Controller
                         ->update(
                             array_merge(
                                 ['value' => $request->get('value') ],
-                                ['dated_end' => $request->get('dated_end') ],
-                                ['dated_start' => $request->get('dated_start') ],
+                                ['dated_end' => Carbon::createFromFormat('d-m-Y', $request->get('dated_end'))->format('Y-m-d')],
+                                ['dated_start' => Carbon::createFromFormat('d-m-Y', $request->get('dated_start'))->format('Y-m-d') ],
                             )
                         );
 
