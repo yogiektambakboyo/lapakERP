@@ -292,6 +292,7 @@ class VoucherController extends Controller
                         ->update(
                             array_merge(
                                 ['value' => $request->get('value') ],
+                                ['dated_end' => $request->get('dated_end') ],
                             )
                         );
         

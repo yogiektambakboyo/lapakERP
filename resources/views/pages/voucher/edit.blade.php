@@ -88,8 +88,9 @@
                 <input type="text" 
                 name="dated_end"
                 id="dated_end"
+                type="date"
                 class="form-control" 
-                value="{{ Carbon\Carbon::parse($product->dated_end)->format('d-m-Y') }}" disabled/>
+                value="{{ Carbon\Carbon::parse($product->dated_end)->format('d-m-Y') }}"/>
                 @if ($errors->has('dated_end'))
                         <span class="text-danger text-left">{{ $errors->first('dated_end') }}</span>
                     @endif
