@@ -73,7 +73,7 @@ class VoucherController extends Controller
                     ->join('branch as bc','bc.id','=','pr.branch_id')
                     ->join('users_branch as ub2','ub2.branch_id', '=', 'pr.branch_id')
                     ->where('ub2.user_id','=',$user->id)
-                    ->whereRaw(' now()::date between pr.dated_start and pr.dated_end')
+                   // ->whereRaw(' now()::date between pr.dated_start and pr.dated_end')
                     ->orderby('pr.voucher_code','ASC')
                     ->get(['pr.invoice_no','pr.is_used','pr.price','pr.remark as voucher_remark','pr.voucher_code','product_sku.id','product_sku.remark as product_name','pr.branch_id','bc.remark as branch_name','pr.value as value','pr.dated_start','pr.dated_end','pb.remark as product_brand']);
         return view('pages.voucher.index',['company' => Company::get()->first()] ,compact('request','branchs','products','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);

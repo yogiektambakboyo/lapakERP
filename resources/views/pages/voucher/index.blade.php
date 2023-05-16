@@ -42,8 +42,8 @@
                 <th scope="col" width="7%">@lang('general.lbl_price')</th>
                 <th scope="col" width="10%">Sudah digunakan?</th>
                 <th scope="col" width="10%">No Faktur</th>
-                <th scope="col" width="2%">@lang('general.lbl_action')</th>  
-                <th scope="col" width="2%"></th>
+                <th scope="col" width="2%" class="noexport">@lang('general.lbl_action')</th>  
+                <th scope="col" width="2%" class="noexport"></th>
             </tr>
             </thead>
             <tbody>
@@ -60,8 +60,8 @@
                         <td>{{ number_format($product->price,0,',','.') }}</td>
                         <td>{{ $product->is_used }}</td>
                         <td>{{ $product->invoice_no }}</td>
-                        <td><a href="{{ route('voucher.edit', [$product->branch_id,$product->id,$product->dated_start,$product->dated_end,$product->voucher_code]) }}" class="btn btn-info btn-sm  {{ $act_permission->allow_edit==1?'':'d-none' }}">@lang('general.lbl_edit')</a></td>
-                        <td class=" {{ $act_permission->allow_delete==1?'':'d-none' }}">
+                        <td><a href="{{ route('voucher.edit', [$product->branch_id,$product->id,$product->dated_start,$product->dated_end,$product->voucher_code]) }}" class="noexport btn btn-info btn-sm  {{ $act_permission->allow_edit==1?'':'d-none' }}">@lang('general.lbl_edit')</a></td>
+                        <td class="noexport {{ $act_permission->allow_delete==1?'':'d-none' }}">
                             <a onclick="showConfirm( '{{ $product->branch_id }}','{{ $product->id }}','{{ $product->dated_start }}','{{ $product->dated_end }}','{{ $product->voucher_code }}' )" class="btn btn-danger btn-sm  {{ $act_permission->allow_delete==1?'':'d-none' }} ">@lang('general.lbl_delete')</a>
                         </td>
                     </tr>
@@ -213,6 +213,47 @@
 <script type="text/javascript">
     $(document).ready(function () {
         $('#example').DataTable();
+
+        document.addEventListener('DOMContentLoaded', function () {
+            let table = new DataTable('#ajax-datatables', {
+                dom: 'Bfrtip',
+                buttons: [
+                        {
+                            extend: 'copy',
+                            text: 'Copy',
+                            className: 'btn btn-default',
+                            exportOptions: {
+                                columns: ':not(.noexport)'
+                            }
+                        },
+                        {
+                            extend: 'csv',
+                            text: 'CSV',
+                            className: 'btn btn-default',
+                            exportOptions: {
+                                columns: ':not(.noexport)'
+                            }
+                        },
+                        {
+                            extend: 'excel',
+                            text: 'Excel',
+                            className: 'btn btn-default',
+                            exportOptions: {
+                                columns: ':not(.noexport)'
+                            }
+                        },
+                        {
+                            extend: 'pdf',
+                            text: 'PDF',
+                            className: 'btn btn-default',
+                            exportOptions: {
+                                columns: ':not(.noexport)'
+                            }
+                        },
+                ]
+            });
+        });
+
     });
 </script>
 @endpush
