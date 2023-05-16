@@ -31,7 +31,7 @@
         <table class="table table-striped" id="example">
             <thead>
             <tr>
-                <th scope="col" width="10%">@lang('general.lbl_branch')</th>
+                <th scope="col" width="14%">@lang('general.lbl_branch')</th>
                 <th>@lang('general.invoice_no')</th>
                 <th scope="col" width="8%">@lang('general.lbl_dated')</th>
                 <th scope="col" width="15%">@lang('general.lbl_total_customer')</th>
