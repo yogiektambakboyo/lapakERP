@@ -74,7 +74,7 @@
               name="dated_start"
               id="dated_start"
               class="form-control" 
-              value="{{ Carbon\Carbon::parse($product->dated_start)->format('d-m-Y') }}" disabled/>
+              value="{{ Carbon\Carbon::parse($product->dated_start)->format('d-m-Y') }}"/>
               @if ($errors->has('dated_start'))
                       <span class="text-danger text-left">{{ $errors->first('dated_start') }}</span>
                   @endif
@@ -89,7 +89,7 @@
                 name="dated_end"
                 id="dated_end"
                 class="form-control" 
-                value="{{ Carbon\Carbon::parse($product->dated_end)->format('d-m-Y') }}" disabled/>
+                value="{{ Carbon\Carbon::parse($product->dated_end)->format('d-m-Y') }}"/>
                 @if ($errors->has('dated_end'))
                         <span class="text-danger text-left">{{ $errors->first('dated_end') }}</span>
                     @endif
@@ -107,3 +107,33 @@
         </div>
     </div>
 @endsection
+@push('scripts')
+    <script type="text/javascript">
+          const today = new Date();
+          const yyyy = today.getFullYear();
+          const yyyy1 = today.getFullYear()+1;
+          let mm = today.getMonth() + 1; // Months start at 0!
+          let dd = today.getDate();
+
+          if (dd < 10) dd = '0' + dd;
+          if (mm < 10) mm = '0' + mm;
+
+          const formattedToday =  dd + '-' + mm + '-' + yyyy;
+          const formattedNextYear =  dd + '-' + mm + '-' + yyyy1;
+
+          $('#dated_start').datepicker({
+              dateFormat: 'dd-mm-yy',
+              todayHighlight: true,
+          });
+          ///$('#dated_start').val(formattedToday);
+
+
+          $('#dated_end').datepicker({
+            dateFormat: 'dd-mm-yy',
+              todayHighlight: true,
+          });
+          //$('#dated_end').val(formattedToday);
+
+       
+    </script>
+@endpush
