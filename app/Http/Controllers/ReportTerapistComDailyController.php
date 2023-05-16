@@ -159,25 +159,28 @@ class ReportTerapistComDailyController extends Controller
             $call_proc = DB::select("CALL public.calc_commision_terapist();");
            
             $report_data_detail_e_t = DB::select("
-                    select a.branch_name,a.id,a.dated,a.name,a.invoice_no,a.abbr,coalesce(pc2.point_value,0) as total_point,(a.commisions+coalesce(pc2.point_value,0)) as total,commisions_extra,total_abbr,total_commisions,total_point_qty,product_abbr,
-                    product_price,product_base_commision,product_qty,product_commisions
-                    from (
-                        select a.branch_name,a.user_id as id,a.terapist_name as name,
-                        count(distinct right(invoice_no,6)) as invoice_no,
-                        sum(case when type_id=2 then 1 else 0 end) as abbr,
-                        sum(point_qty) as point_qty,sum(a.commisions) as commisions,
-                        sum(case when type_id=8 then commisions else 0 end) as commisions_extra,
-                        sum(case when type_id=2 then total else 0 end) as total_abbr,
-                        sum(case when type_id=2 then commisions else 0 end) as total_commisions,
-                        sum(case when type_id=2 then point_qty else 0 end) as total_point_qty,
-                        sum(case when type_id=1 then qty else 0 end) as product_qty,      
-                        sum(case when type_id=1 then commisions else 0 end) as product_commisions     
-                        from terapist_commision a
-                        join users_branch as ub on ub.branch_id = a.branch_id and ub.user_id = '".$user->id."'
-                        where a.dated  between '".$filter_begin_date."' and  '".$filter_begin_end."' and a.user_id::character varying like '".$terapist."' 
-                        group by a.branch_name,a.user_id,a.terapist_name
-                    ) a left join point_conversion pc2 on pc2.point_qty = a.point_qty 
-                    order by a.branch_name,a.name,a.dated      
+
+            select branch_name,id,b.name,sum(service) service,sum(point_qty) point_qty,sum(b.invoice) invoice,sum(total_point) total_point,sum(total) total,sum(commisions_extra) commisions_extra,sum(total_abbr) total_abbr,sum(total_commisions) total_commisions,sum(product_qty) product_qty, sum(product_commisions) product_commisions 
+            from (
+                select dated,a.branch_name,a.id,a.point_qty,a.name,a.invoice,service,coalesce(pc2.point_value,0) as total_point,(a.commisions+coalesce(pc2.point_value,0)) as total,commisions_extra,total_abbr,total_commisions,
+                                product_qty,product_commisions
+                                from (
+                                    select a.branch_name,a.dated,a.user_id as id,a.terapist_name as name,
+                                    count(distinct right(invoice_no,6)) as invoice,
+                                    sum(case when type_id=2 then 1 else 0 end) as service,
+                                    sum(point_qty) as point_qty,sum(a.commisions) as commisions,
+                                    sum(case when type_id=8 then commisions else 0 end) as commisions_extra,
+                                    sum(case when type_id=2 then total else 0 end) as total_abbr,
+                                    sum(case when type_id=2 then commisions else 0 end) as total_commisions,
+                                    sum(case when type_id=1 then qty else 0 end) as product_qty,      
+                                    sum(case when type_id=1 then commisions else 0 end) as product_commisions     
+                                    from terapist_commision a
+                                    join users_branch as ub on ub.branch_id = a.branch_id and ub.user_id = '".$user->id."'
+                                    where a.dated  between '".$filter_begin_date."' and  '".$filter_begin_end."' and a.user_id::character varying like '".$terapist."' 
+                                    group by a.branch_name,a.user_id,a.terapist_name,a.dated
+                                ) a left join point_conversion pc2 on pc2.point_qty = a.point_qty  
+            ) b group by branch_name,id,b.name
+
             ");
 
             $report_data_detail_t = DB::select("
@@ -262,6 +265,7 @@ class ReportTerapistComDailyController extends Controller
                 'filter_begin_end' => $filter_begin_end,
                 'filter_branch_id' => $branchx,
                 'filter_terapist_in' => $terapist,
+                'report_data_detail_e_t' => $report_data_detail_e_t,
                 'settings' => Settings::get(),
             ]);
         }else if($request->export=='Export Sum Lite API'){
@@ -270,6 +274,31 @@ class ReportTerapistComDailyController extends Controller
             $filter_begin_date = $begindate;
             $filter_begin_end = $enddate;
             $filter_branch_id =  $branchx;
+
+            $report_data_detail_e_t = DB::select("
+
+            select branch_name,id,b.name,sum(service) service,sum(point_qty) point_qty,sum(b.invoice) invoice,sum(total_point) total_point,sum(total) total,sum(commisions_extra) commisions_extra,sum(total_abbr) total_abbr,sum(total_commisions) total_commisions,sum(product_qty) product_qty, sum(product_commisions) product_commisions 
+            from (
+                select dated,a.branch_name,a.id,a.point_qty,a.name,a.invoice,service,coalesce(pc2.point_value,0) as total_point,(a.commisions+coalesce(pc2.point_value,0)) as total,commisions_extra,total_abbr,total_commisions,
+                                product_qty,product_commisions
+                                from (
+                                    select a.branch_name,a.dated,a.user_id as id,a.terapist_name as name,
+                                    count(distinct right(invoice_no,6)) as invoice,
+                                    sum(case when type_id=2 then 1 else 0 end) as service,
+                                    sum(point_qty) as point_qty,sum(a.commisions) as commisions,
+                                    sum(case when type_id=8 then commisions else 0 end) as commisions_extra,
+                                    sum(case when type_id=2 then total else 0 end) as total_abbr,
+                                    sum(case when type_id=2 then commisions else 0 end) as total_commisions,
+                                    sum(case when type_id=1 then qty else 0 end) as product_qty,      
+                                    sum(case when type_id=1 then commisions else 0 end) as product_commisions     
+                                    from terapist_commision a
+                                    join users_branch as ub on ub.branch_id = a.branch_id and ub.user_id = '".$user->id."'
+                                    where a.dated  between '".$filter_begin_date."' and  '".$filter_begin_end."' and a.user_id::character varying like '".$terapist."' 
+                                    group by a.branch_name,a.user_id,a.terapist_name,a.dated
+                                ) a left join point_conversion pc2 on pc2.point_qty = a.point_qty  
+            ) b group by branch_name,id,b.name
+
+            ");
 
             $report_data_detail_t = DB::select("
                     select a.branch_name,a.id,a.dated,a.name,a.invoice_no,a.abbr,coalesce(pc2.point_value,0) as total_point,(a.commisions+coalesce(pc2.point_value,0)) as total,commisions_extra,total_abbr,total_commisions,total_point_qty,product_abbr,
@@ -354,6 +383,7 @@ class ReportTerapistComDailyController extends Controller
                 'filter_begin_date' => $filter_begin_date,
                 'filter_begin_end' => $filter_begin_end,
                 'filter_branch_id' => $filter_branch_id,
+                'report_data_detail_e_t' => $report_data_detail_e_t,
                 'filter_terapist_in' => $terapist,
                 'beginnewformat' => $beginnewformat,
                 'endnewformat' => $endnewformat,

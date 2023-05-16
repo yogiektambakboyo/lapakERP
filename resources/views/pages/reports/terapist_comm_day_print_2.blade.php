@@ -85,19 +85,10 @@
                 </tr>
               </thead>
               <tbody>
-                <?php
-                      $qty_service = 0;
-                      $total_service = 0;
-                      $total_service_com = 0;
-                      $qty_point = 0;
-                      $total_point = 0;
-                      $qty_product = 0;
-                      $total_product = 0;
-                      $total_product_com = 0;
-                      $total_extra = 0;
-                      $total_com = 0;
+                
+                    <?php
+                      $total_until = 0;
                     ?>
-                    
                     @foreach($report_data_detail_t as $report_data_detail_ts)
                     {{-- Loop Foreach --}}
                         <?php if($report_data_detail_ts->id==$report_data_terapistx->id&&$report_data_detail_ts->branch_name==$report_data_terapistx->branch_name){ ?>
@@ -255,27 +246,34 @@
                                     @endif
                                 @endforeach
                                 {{ number_format($tot,0,',','.') }}
+                                @php $total_until= $tot; @endphp
                               </td>  
                             </tr>
                         <?php } ?>
                     {{-- End Loop Foreach --}}
                     @endforeach
 
-                    <tr style="background-color:#FFA726;color:black;">
-                      <th></th>
-                      <th></th>
-                      <th width="">{{ number_format($qty_service,0,',','.') }}<</th>
-                      <th scope="col" width="">{{ number_format($total_service,0,',','.') }}<</th>
-                      <th scope="col" width="">{{ number_format($total_service_com,0,',','.') }}<</th>
-                      <th scope="col" >{{ number_format($qty_point,0,',','.') }}<</th>
-                      <th scope="col">{{ number_format($total_point,0,',','.') }}<</th>
-                      <th width="8%"></th>
-                      <th scope="col">{{ number_format($total_product,0,',','.') }}<</th>
-                      <th scope="col">{{ number_format($qty_product,0,',','.') }}<</th>
-                      <th scope="col">{{ number_format($total_product_com,0,',','.') }}<</th>
-                      <th scope="col">{{ number_format($total_extra,0,',','.') }}</th>
-                      <th colspan="2">{{ number_format($total_com,0,',','.') }}</th>
-                    </tr>
+
+                    @foreach ($report_data_detail_e_t as $item)
+                        @if ($item->id == $report_data_terapistx->id)
+                          <tr style="background-color:#FFA726;color:black;">
+                            <th>Total</th>
+                            <th>{{ $item->invoice }}</th>
+                            <th scope="col" width="">{{ number_format($item->service,0,',','.') }}</th>
+                            <th width="">{{ number_format($item->total_abbr,0,',','.') }}</th>
+                            <th scope="col" width="">{{ number_format($item->total_commisions,0,',','.') }}</th>
+                            <th scope="col" width="">{{ number_format($item->point_qty,0,',','.') }}</th>
+                            <th scope="col">{{ number_format($item->total_point,0,',','.') }}</th>
+                            <th colspan=3></th>
+                            <th scope="col">{{ number_format($item->product_qty,0,',','.') }}</th>
+                            <th scope="col">{{ number_format($item->product_commisions,0,',','.') }}</th>
+                            <th scope="col">{{ number_format($item->commisions_extra,0,',','.') }}</th>
+                            <th colspan="1">{{ number_format($item->total,0,',','.') }}</th>
+                            <th colspan="1">{{ number_format($total_until,0,',','.') }}</th>
+                          </tr>
+                        @endif
+                    @endforeach
+                   
 
               </tbody>
             </table>
@@ -287,10 +285,10 @@
 
           <?php } ?>
 
-          <input type="text" name="filter_begin_date" id="filter_begin_date" value="{{ $filter_begin_date }}">
-          <input type="text" name="filter_begin_end" id="filter_begin_end" value="{{ $filter_begin_end }}">
-          <input type="text" name="filter_branch_id" id="filter_branch_id" value="{{ $filter_branch_id }}">
-          <input type="text" name="filter_terapist_in" id="filter_terapist_in" value="{{ $filter_terapist_in }}">
+          <input type="hidden" name="filter_begin_date" id="filter_begin_date" value="{{ $filter_begin_date }}">
+          <input type="hidden" name="filter_begin_end" id="filter_begin_end" value="{{ $filter_begin_end }}">
+          <input type="hidden" name="filter_branch_id" id="filter_branch_id" value="{{ $filter_branch_id }}">
+          <input type="hidden" name="filter_terapist_in" id="filter_terapist_in" value="{{ $filter_terapist_in }}">
    </body> 
    <!-- use version 0.19.3 -->
    <script src="https://code.jquery.com/jquery-3.6.4.min.js" integrity="sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8=" crossorigin="anonymous"></script>
