@@ -85,6 +85,19 @@
                 </tr>
               </thead>
               <tbody>
+                <?php
+                      $qty_service = 0;
+                      $total_service = 0;
+                      $total_service_com = 0;
+                      $qty_point = 0;
+                      $total_point = 0;
+                      $qty_product = 0;
+                      $total_product = 0;
+                      $total_product_com = 0;
+                      $total_extra = 0;
+                      $total_com = 0;
+                    ?>
+                    
                     @foreach($report_data_detail_t as $report_data_detail_ts)
                     {{-- Loop Foreach --}}
                         <?php if($report_data_detail_ts->id==$report_data_terapistx->id&&$report_data_detail_ts->branch_name==$report_data_terapistx->branch_name){ ?>
@@ -247,6 +260,23 @@
                         <?php } ?>
                     {{-- End Loop Foreach --}}
                     @endforeach
+
+                    <tr style="background-color:#FFA726;color:black;">
+                      <th></th>
+                      <th></th>
+                      <th width="">{{ number_format($qty_service,0,',','.') }}<</th>
+                      <th scope="col" width="">{{ number_format($total_service,0,',','.') }}<</th>
+                      <th scope="col" width="">{{ number_format($total_service_com,0,',','.') }}<</th>
+                      <th scope="col" >{{ number_format($qty_point,0,',','.') }}<</th>
+                      <th scope="col">{{ number_format($total_point,0,',','.') }}<</th>
+                      <th width="8%"></th>
+                      <th scope="col">{{ number_format($total_product,0,',','.') }}<</th>
+                      <th scope="col">{{ number_format($qty_product,0,',','.') }}<</th>
+                      <th scope="col">{{ number_format($total_product_com,0,',','.') }}<</th>
+                      <th scope="col">{{ number_format($total_extra,0,',','.') }}</th>
+                      <th colspan="2">{{ number_format($total_com,0,',','.') }}</th>
+                    </tr>
+
               </tbody>
             </table>
             
