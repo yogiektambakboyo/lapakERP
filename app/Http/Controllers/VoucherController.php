@@ -266,6 +266,7 @@ class VoucherController extends Controller
         ->join('branch as bc','bc.id','=','pr.branch_id')
         ->where('product_sku.id',$product_id)
         ->where('bc.id','=',$branch_id)
+        ->where('pr.voucher_code','=',$voucher_code)
         ->get(['pr.remark as voucher_remark','pr.voucher_code','product_sku.id','product_sku.remark as product_name','pr.branch_id','bc.remark as branch_name','pr.value as value','pr.dated_start','pr.dated_end'])->first(); 
         return view('pages.voucher.edit', [
             'branchs' => Branch::join('users_branch as ub','ub.branch_id','=','branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']),
@@ -292,10 +293,11 @@ class VoucherController extends Controller
                         ->update(
                             array_merge(
                                 ['value' => $request->get('value') ],
-                                ['dated_end' => $request->get('dated_end') ],
+                                ['dated_end' => Carbon::createFromFormat('d-m-Y', $request->get('dated_end'))->format('Y-m-d')],
+                                ['dated_start' => Carbon::createFromFormat('d-m-Y', $request->get('dated_start'))->format('Y-m-d') ],
                             )
                         );
-        
+
         return redirect()->route('voucher.index')
             ->withSuccess(__('Voucher updated successfully.'));
     }
