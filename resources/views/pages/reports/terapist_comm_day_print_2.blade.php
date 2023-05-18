@@ -571,6 +571,10 @@
                               worksheet.getCell('G'+counter).fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
                               worksheet.getCell('G'+counter).alignment = { wrapText: true, vertical: 'middle', horizontal: 'center' };
 
+                              worksheet.mergeCells('H'+counter, 'J'+counter);
+                              worksheet.getCell('H'+counter).fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+
+
                               worksheet.getCell('K'+counter).value = rowElement.product_qty;
                               worksheet.getCell('K'+counter).fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
                               worksheet.getCell('K'+counter).alignment = { wrapText: true, vertical: 'middle', horizontal: 'center' };
