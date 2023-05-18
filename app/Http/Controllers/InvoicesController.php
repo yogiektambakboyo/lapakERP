@@ -493,7 +493,7 @@ class InvoicesController extends Controller
             //'invoiceDetails' => DB::select("select * from invoice_detail id join invoice_master im on im.invoice_no=id.invoice_no where id.invoice_no= "),
             'usersReferrals' => User::get(['users.id','users.name']),
             'payment_type' => $payment_type,
-        ])->setOptions(['defaultFont' => 'sans-serif'])->setPaper('a5', 'potrait');
+        ])->setOptions(['defaultFont' => 'sans-serif'])->setPaper('a6', 'potrait');
         return $pdf->stream('spk.pdf');
     }
 
