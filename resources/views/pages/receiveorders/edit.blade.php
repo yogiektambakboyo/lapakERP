@@ -248,7 +248,7 @@
           const formattedNextYear = dd + '-' + mm + '-' + yyyy1;
          
       $(function () {
-          $('#app').removeClass('app app-sidebar-fixed app-header-fixed-minified').addClass('app app-sidebar-fixed app-header-fixed-minified app-sidebar-minified');          
+          //$('#app').removeClass('app app-sidebar-fixed app-header-fixed-minified').addClass('app app-sidebar-fixed app-header-fixed-minified app-sidebar-minified');          
           $('#doc_dated').datepicker({
             dateFormat : 'dd-mm-yy',
               todayHighlight: true,

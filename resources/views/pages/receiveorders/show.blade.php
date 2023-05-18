@@ -122,7 +122,7 @@
       var order_total = 0;
          
       $(function () {
-          $('#app').removeClass('app app-sidebar-fixed app-header-fixed-minified').addClass('app app-sidebar-fixed app-header-fixed-minified app-sidebar-minified');
+          //$('#app').removeClass('app app-sidebar-fixed app-header-fixed-minified').addClass('app app-sidebar-fixed app-header-fixed-minified app-sidebar-minified');
           const today = new Date();
           const yyyy = today.getFullYear();
           let mm = today.getMonth() + 1; // Months start at 0!
