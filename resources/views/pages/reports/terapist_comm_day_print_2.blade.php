@@ -465,6 +465,7 @@
                         worksheet.getCell('O3').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
 
                         let counter = 3;
+                        let value_sd_until = 0;
                         for (let index = 0; index < report_data_detail_t.length; index++) {
                           const rowElement = report_data_detail_t[index];
                           if(rowElement.name == element.name ){
@@ -477,6 +478,8 @@
                                 value_sd = value_sd + parseFloat(elementFrom.total);
                               }
                             }
+
+                            value_sd_until = value_sd;
                             
                             worksheet.addRow({
                               dated : rowElement.dated, 
@@ -534,8 +537,78 @@
                           }
                         }
 
+
+                        counter++;
+
+                        let report_data_detail_e_t = resp.data.report_data_detail_e_t;
+                        for (let index = 0; index < report_data_detail_e_t.length; index++) {
+                          const rowElement = report_data_detail_e_t[index];
+                          if(rowElement.name == element.name ){
+                              worksheet.getCell('A'+counter).value = "Total";
+                              worksheet.getCell('A'+counter).fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                              worksheet.getCell('A'+counter).alignment = { wrapText: true };
+                              worksheet.getCell('B'+counter).value = rowElement.invoice;
+                              worksheet.getCell('B'+counter).fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                              worksheet.getCell('B'+counter).alignment = { wrapText: true, vertical: 'middle', horizontal: 'center' };
+
+                              worksheet.getCell('C'+counter).value = rowElement.service;
+                              worksheet.getCell('C'+counter).fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                              worksheet.getCell('C'+counter).alignment = { wrapText: true, vertical: 'middle', horizontal: 'center' };
+
+                              worksheet.getCell('D'+counter).value = rowElement.total_abbr;
+                              worksheet.getCell('D'+counter).fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                              worksheet.getCell('D'+counter).alignment = { wrapText: true, vertical: 'middle', horizontal: 'center' };
+
+                              worksheet.getCell('E'+counter).value = rowElement.total_commisions;
+                              worksheet.getCell('E'+counter).fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                              worksheet.getCell('E'+counter).alignment = { wrapText: true, vertical: 'middle', horizontal: 'center' };
+
+                              worksheet.getCell('F'+counter).value = rowElement.point_qty;
+                              worksheet.getCell('F'+counter).fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                              worksheet.getCell('F'+counter).alignment = { wrapText: true, vertical: 'middle', horizontal: 'center' };
+
+                              worksheet.getCell('G'+counter).value = rowElement.total_point;
+                              worksheet.getCell('G'+counter).fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                              worksheet.getCell('G'+counter).alignment = { wrapText: true, vertical: 'middle', horizontal: 'center' };
+
+                              worksheet.getCell('K'+counter).value = rowElement.product_qty;
+                              worksheet.getCell('K'+counter).fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                              worksheet.getCell('K'+counter).alignment = { wrapText: true, vertical: 'middle', horizontal: 'center' };
+
+                              worksheet.getCell('L'+counter).value = rowElement.product_commisions;
+                              worksheet.getCell('L'+counter).fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                              worksheet.getCell('L'+counter).alignment = { wrapText: true, vertical: 'middle', horizontal: 'center' };
+
+                              worksheet.getCell('M'+counter).value = rowElement.commisions_extra;
+                              worksheet.getCell('M'+counter).fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                              worksheet.getCell('M'+counter).alignment = { wrapText: true, vertical: 'middle', horizontal: 'center' };
+
+                              worksheet.getCell('N'+counter).value = rowElement.total;
+                              worksheet.getCell('N'+counter).fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                              worksheet.getCell('N'+counter).alignment = { wrapText: true, vertical: 'middle', horizontal: 'center' };
+
+                              worksheet.getCell('O'+counter).value = value_sd_until;
+                              worksheet.getCell('O'+counter).fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                              worksheet.getCell('O'+counter).alignment = { wrapText: true, vertical: 'middle', horizontal: 'center' };
+
+                              worksheet.eachRow({ includeEmpty: true }, function(row, rowNumber) {
+                                  row.eachCell({ includeEmpty: true }, function(cell, colNumber) {
+                                    cell.border = borderStyles;
+                                  });
+                                });
+                
+                          }
+                        }
+
+                        worksheet.getRow(counter).font = { bold: true };
                         
+
+                        
+
+
+
                     });
+                    // End loop terapist
 
                     //XLSX.writeFile(workbook, "Presidents.xlsx", { compression: true });
 
