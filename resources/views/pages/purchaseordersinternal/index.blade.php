@@ -21,6 +21,9 @@
                         <div class="col-2"><input type="submit" class="btn btn-sm btn-success" value="@lang('general.btn_export')" name="export"></div>  
                     </form>
                 </div>
+                <div class="col-md-2">
+                    <a href="{{ route('purchaseordersinternal.create') }}" class="btn btn-primary float-right {{ $act_permission->allow_create==1?'':'d-none' }}"><span class="fa fa-circle-plus"></span> @lang('general.btn_create')</a>
+                </div>
             </div>
         </div>
         
