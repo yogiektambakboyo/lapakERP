@@ -34,6 +34,7 @@
                 <th scope="col" width="13%">@lang('general.lbl_branch')</th>
                 <th>@lang('general.lbl_document_no')</th>
                 <th scope="col" width="8%">@lang('general.lbl_dated')</th>
+                <th scope="col" width="14%">Type</th>
                 <th scope="col" width="30%">Remark</th>
                 <th scope="col" width="2%">@lang('general.lbl_action')</th>  
                 <th scope="col" width="2%"></th>    
@@ -47,6 +48,7 @@
                         <td>{{ $order->branch_name }}</td>
                         <td>{{ $order->doc_no }}</td>
                         <td>{{ Carbon\Carbon::parse($order->dated)->format('d-m-Y') }}</td>
+                        <td>{{ $order->type }}</td>
                         <td>{{ $order->remark }}</td>
                         <td><a href="{{ route('pettyproduct.show', $order->id) }}" class="btn btn-warning btn-sm  {{ $act_permission->allow_show==1?'':'d-none' }}">@lang('general.lbl_show')</a></td>
                         <td><a href="{{ route('pettyproduct.edit', $order->id) }}" class="btn btn-info btn-sm  {{ $act_permission->allow_edit==1?'':'d-none' }} ">@lang('general.lbl_edit')</a></td>
