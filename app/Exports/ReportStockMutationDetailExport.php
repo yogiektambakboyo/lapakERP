@@ -32,12 +32,12 @@ class ReportStockMutationDetailExport implements FromCollection,WithColumnFormat
     public function headings(): array
     {
         return [
-            'Branch',
-            'Dated',
-            'Product Name',
-            'Qty In',
-            'Qty Out',
-            'Stock',
+            'Cabang',
+            'Tgl',
+            'Nama Produk',
+            'Jumlah Masuk',
+            'Jumlah Keluar',
+            'Sisa Stok',
         ];
     }
     public function collection()

@@ -29,7 +29,7 @@
                 <th scope="col">@lang('general.lbl_product_name')</th>     
                 <th scope="col">@lang('general.lbl_qty_in')</th>     
                 <th scope="col">@lang('general.lbl_qty_out')</th>     
-                <th scope="col">Stok</th>     
+                <th scope="col">Sisa Stok</th>     
             </tr>
             </thead>
             <tbody>
