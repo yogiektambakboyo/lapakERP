@@ -31,7 +31,7 @@
    </head> 
    <body> 
 
-    <button id="printPageButton" onClick="window.print();"  class="btn print">Cetak SPK</button>
+    <button id="printPageButton" onClick="window.print();"  class="btn print">Cetak Faktur</button>
       <table style="width: 100%">
         <tbody>
           <tr style="text-align: center;height: 30px;background-color:#FFA726;">
