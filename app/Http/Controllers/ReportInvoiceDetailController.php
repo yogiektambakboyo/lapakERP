@@ -66,7 +66,7 @@ class ReportInvoiceDetailController extends Controller
 
         $shifts = Shift::orderBy('shift.id')->get(['shift.id','shift.remark','shift.id','shift.time_start','shift.time_end']); 
         $report_data = DB::select("
-            select b.remark as branch_name,im.dated,im.invoice_no,id.product_name,pc.remark as category_name,id.qty,id.uom,id.total+id.vat_total as total
+            select c.gender,b.remark as branch_name,im.dated,im.invoice_no,id.product_name,pc.remark as category_name,id.qty,id.uom,id.total+id.vat_total as total
             from invoice_master im 
             join invoice_detail id on id.invoice_no = im.invoice_no 
             join product_sku ps on ps.id = id.product_id 
@@ -107,7 +107,7 @@ class ReportInvoiceDetailController extends Controller
             return Excel::download(new ReportInvoicesDetailExport($strencode), 'report_invoice_detail_'.Carbon::now()->format('YmdHis').'.xlsx');
         }else{
             $report_data = DB::select("
-                select b.remark as branch_name,im.dated,im.invoice_no,id.product_name,pc.remark as category_name,id.qty,id.uom,id.total+id.vat_total as total
+                select c.gender,b.remark as branch_name,im.dated,im.invoice_no,id.product_name,pc.remark as category_name,id.qty,id.uom,id.total+id.vat_total as total
                 from invoice_master im 
                 join invoice_detail id on id.invoice_no = im.invoice_no 
                 join product_sku ps on ps.id = id.product_id 

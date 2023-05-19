@@ -149,6 +149,7 @@ class CustomersController extends Controller
                 ['address' => $request->get('address') ],
                 ['membership_id' => '1' ],
                 ['abbr' => '1' ],
+                ['gender' => $request->get('gender') ],
                 ['branch_id' => $request->get('branch_id') ],
             )
         );
@@ -164,6 +165,7 @@ class CustomersController extends Controller
                 ['phone_no' => $request->get('phone_no') ],
                 ['name' => $request->get('name') ],
                 ['address' => $request->get('address') ],
+                ['gender' => $request->get('gender') ],
                 ['membership_id' => '1' ],
                 ['abbr' => '1' ],
                 ['branch_id' => $request->get('branch_id') ],
@@ -214,6 +216,7 @@ class CustomersController extends Controller
                 ['name' => $request->get('name') ],
                 ['address' => $request->get('address') ],
                 ['membership_id' => '1' ],
+                ['gender' => $request->get('gender') ],
                 ['abbr' => '1' ],
                 ['branch_id' => $request->get('branch_id') ],
             )

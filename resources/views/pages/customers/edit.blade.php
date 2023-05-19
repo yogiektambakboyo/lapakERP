@@ -61,6 +61,18 @@
                         </select>
                     </div>
                   </div>
+
+                  <div class="mb-3">
+                    <label class="form-label">Jenis Kelamin</label>
+                    <div class="col-md-12">
+                      <select class="form-control" 
+                            name="gender" id="gender">
+                            <option value="">Pilih Jenis Kelamin</option>
+                            <option value="Pria" @if("Pria" == $customer->gender) selected @endif>Pria</option>
+                            <option value="Wanita" @if("Wanita" == $customer->gender) selected @endif>Wanita</option>
+                        </select>
+                    </div>
+                  </div>
            
                 <button type="submit" class="btn btn-primary">@lang('general.lbl_save')</button>
                 <a href="{{ route('customers.index') }}" class="btn btn-default">@lang('general.lbl_back') </a>

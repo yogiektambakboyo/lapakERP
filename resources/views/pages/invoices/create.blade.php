@@ -572,6 +572,19 @@
                                 </select>
                             </div>
                           </div>
+
+                          <div class="mb-3">
+                            <label class="form-label">Jenis Kelamin</label>
+                            <div class="col-md-12">
+                              <select class="form-control" 
+                                    name="cust_gender" id="cust_gender">
+                                    <option value="">Pilih Jenis Kelamin</option>
+                                    <option value="Pria">Pria</option>
+                                    <option value="Wanita">Wanita</option>
+                                  
+                                </select>
+                            </div>
+                          </div>
                 </div>
     
               </div>
@@ -654,6 +667,7 @@
                 name : $('#cust_name').val(),
                 address : $('#cust_address').val(),
                 phone_no : $('#cust_phone_no').val(),
+                gender : $('#cust_gender').find(':selected').val(),
                 branch_id : $('#cust_branch_id').val()
                 }
               );

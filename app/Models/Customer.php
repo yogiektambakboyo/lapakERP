@@ -20,6 +20,7 @@ class Customer extends Model
         'branch_id',
         'sales_id',
         'city',
+        'gender',
         'notes',
         'credit_limit',
         'longitude',
