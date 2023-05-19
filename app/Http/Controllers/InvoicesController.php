@@ -223,6 +223,25 @@ class InvoicesController extends Controller
         return Datatables::of($timetable)->make();
     }
 
+    public function gettimetable_room() 
+    {
+        $data = $this->data;
+        $user = Auth::user();
+        $timetable = DB::select(" 
+        select br.id,br.remark as branch_room  from users_branch ub 
+        join branch_room br on br.branch_id = ub.branch_id 
+        where ub.user_id = ".$user->id." and br.id not in 
+        (
+        	select om.branch_room_id 
+	        from invoice_master om
+	        join customers c on c.id = om.customers_id 
+	        join users_branch ub on ub.branch_id = c.branch_id and ub.user_id = ".$user->id."
+	        where scheduled_at >= now()::date and om.is_checkout='0'
+        ) order by 2 
+        ");
+        return $timetable;
+    }
+
     public function getterapisttable() 
     {
         $data = $this->data;

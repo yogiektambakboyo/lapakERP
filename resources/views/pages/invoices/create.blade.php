@@ -1295,6 +1295,34 @@
             var timetable = $('#order_time_table').DataTable();
             timetable.ajax.reload();
             timetable.columns.adjust();
+
+            // Here
+
+            var url = "{{ route('invoices.gettimetable_room') }}";
+                const res = axios.get(url,
+                {
+                    headers: {
+                      'Content-Type': 'application/json'
+                    },
+                    params : {
+                        
+                    }
+                  }
+                ).then(resp => {
+                    console.log(resp.data);
+                    $('#room_id')
+                    .find('option')
+                    .remove()
+                    .end()
+                    .append('<option value="">Pilih Kamar</option>');
+
+                    resp.data.forEach(element => {
+                        $('#room_id')
+                        .append('<option value="'+element.id+'">'+element.branch_room+'</option>');
+                    });
+                });
+
+
         });
 
         $('#modal-filter').on('shown.bs.modal', function () {
