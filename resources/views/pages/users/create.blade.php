@@ -104,6 +104,20 @@
             </div>
           </div>
 
+          <div class="row mb-3">
+            <label class="form-label col-form-label col-md-2">Tgl Naik Tahun *</label>
+            <div class="col-md-8">
+              <input type="text" 
+              name="level_up_date"
+              id="level_up_date"
+              class="form-control" 
+              value="{{ old('level_up_date') }}" required/>
+              @if ($errors->has('level_up_date'))
+                        <span class="text-danger text-left">{{ $errors->first('level_up_date') }}</span>
+                    @endif
+            </div>
+          </div>
+
             <div class="row mb-3">
               <label class="form-label col-form-label col-md-2">Tahun Bekerja *</label>
               <div class="col-md-8">
@@ -331,6 +345,12 @@
               todayHighlight: true,
           });
           $('#join_date').val(formattedToday);
+
+          $('#level_up_date').datepicker({
+              dateFormat : 'dd-mm-yy',
+              todayHighlight: true,
+          });
+          $('#level_up_date').val(formattedToday);
 
           $('#birth_date').datepicker({
               dateFormat : 'dd-mm-yy',

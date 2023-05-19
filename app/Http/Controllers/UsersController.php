@@ -159,7 +159,7 @@ class UsersController extends Controller
             'gender' => $gender,
             'active' => $active,
             'data' => $data,'company' => Company::get()->first(),
-            'employeestatusx' => ['On Job Training','Permanent','Outsourcing','Contract','Probation'],
+            'employeestatusx' => ['On Job Training','Permanent','Outsourcing','Contract','Probation','Leave'],
             'usersReferrals' => $usersReferral,
         ]);
     }
@@ -183,6 +183,7 @@ class UsersController extends Controller
                 ['password' => $request->get('password') ],
                 ['phone_no' => $request->get('phone_no') ],
                 ['join_date' => Carbon::parse($request->get('join_date'))->format('Y-m-d') ],
+                ['level_up_date' => Carbon::parse($request->get('level_up_date'))->format('Y-m-d') ],
                 ['gender' => $request->get('gender') ],
                 ['netizen_id' => $request->get('netizen_id') ],
                 ['work_year' => $request->get('work_year') ],
@@ -386,13 +387,13 @@ class UsersController extends Controller
         $product = Product::where('type_id','=','2')->orderBy('remark','ASC')->get(['id','abbr','remark']);
         $data = $this->data;
         $usersReferral = User::where('users.id','!=',$user->id)->get(['users.id','users.name']);
-        $users = DB::select("select u.work_year,u.employee_status,dt.remark as department,u.id,u.employee_id,u.name,jt.remark as job_title,string_agg(b.remark,',') as branch_name,u.join_date,u.phone_no,u.email,u.username,u.address,u.netizen_id,u.photo_netizen_id,u.photo,u.join_years,u.active,u.referral_id,u.city,u.gender,u.birth_place,u.birth_date 
+        $users = DB::select("select coalesce(u.level_up_date,'1988-01-01'::date) level_up_date,u.work_year,u.employee_status,dt.remark as department,u.id,u.employee_id,u.name,jt.remark as job_title,string_agg(b.remark,',') as branch_name,u.join_date,u.phone_no,u.email,u.username,u.address,u.netizen_id,u.photo_netizen_id,u.photo,u.join_years,u.active,u.referral_id,u.city,u.gender,u.birth_place,u.birth_date 
                              from users u 
                              join users_branch ub on ub.user_id=u.id
                              join branch b on b.id = ub.branch_id
                              join departments dt on dt.id=u.department_id
                              join job_title jt on jt.id=u.job_id
-                             where u.id = ? and u.name!='Admin' group by dt.remark,u.id,u.employee_id,u.name,jt.remark,u.join_date,u.phone_no,u.email,u.username,u.address,u.netizen_id,u.photo_netizen_id,u.photo,u.join_years,u.active,u.referral_id,u.city,u.gender,u.birth_place,u.birth_date  ; "
+                             where u.id = ? and u.name!='Admin' group by u.level_up_date,dt.remark,u.id,u.employee_id,u.name,jt.remark,u.join_date,u.phone_no,u.email,u.username,u.address,u.netizen_id,u.photo_netizen_id,u.photo,u.join_years,u.active,u.referral_id,u.city,u.gender,u.birth_place,u.birth_date  ; "
                              , [$user->id]);
         return view('pages.users.show', [
             'users' => $users[0],
@@ -402,7 +403,7 @@ class UsersController extends Controller
             'userTrainers' => User::where('job_id','=','7')->get(['id','name']),
             'userSkills' => $user_skill,
             'userExperiences' => UserExperience::get(),
-            'employeestatusx' => ['On Job Training','Permanent','Outsourcing','Contract','Probation'],
+            'employeestatusx' => ['On Job Training','Permanent','Outsourcing','Contract','Probation','Leave'],
             'usersReferrals' => $usersReferral,'company' => Company::get()->first(),
             'usersMutations' => UserMutation::join('job_title as j','j.id','=','users_mutation.job_id')->join('departments as d','d.id','=','users_mutation.department_id')->join('branch as b','b.id','=','users_mutation.branch_id')->where('users_mutation.user_id',$user->id)->orderBy('users_mutation.created_at','ASC')->get(['users_mutation.*','j.remark as job_name','b.remark as branch_name','d.remark as department_name']),
         ],compact('data'));
@@ -424,13 +425,13 @@ class UsersController extends Controller
         $data = $this->data;
         $gender = ['Male','Female'];
         $active = [1,0];
-        $users = DB::select("select u.work_year,u.employee_status,dt.remark as department,u.id,u.employee_id,u.name,jt.remark as job_title,string_agg(b.id::character varying,',') as branch_name,u.join_date,u.phone_no,u.email,u.username,u.address,u.netizen_id,u.photo_netizen_id,u.photo,u.join_years,u.active,u.referral_id,u.city,u.gender,u.birth_place,u.birth_date 
+        $users = DB::select("select coalesce(u.level_up_date,'1988-01-01'::date) level_up_date,u.work_year,u.employee_status,dt.remark as department,u.id,u.employee_id,u.name,jt.remark as job_title,string_agg(b.id::character varying,',') as branch_name,u.join_date,u.phone_no,u.email,u.username,u.address,u.netizen_id,u.photo_netizen_id,u.photo,u.join_years,u.active,u.referral_id,u.city,u.gender,u.birth_place,u.birth_date 
                              from users u 
                              join users_branch ub on ub.user_id=u.id
                              join branch b on b.id = ub.branch_id
                              join departments dt on dt.id=u.department_id
                              join job_title jt on jt.id=u.job_id
-                             where u.id = ? and u.name!='Admin' group by dt.remark,u.id,u.employee_id,u.name,jt.remark,u.join_date,u.phone_no,u.email,u.username,u.address,u.netizen_id,u.photo_netizen_id,u.photo,u.join_years,u.active,u.referral_id,u.city,u.gender,u.birth_place,u.birth_date  ; "
+                             where u.id = ? and u.name!='Admin' group by u.level_up_date,u.level_up_date,dt.remark,u.id,u.employee_id,u.name,jt.remark,u.join_date,u.phone_no,u.email,u.username,u.address,u.netizen_id,u.photo_netizen_id,u.photo,u.join_years,u.active,u.referral_id,u.city,u.gender,u.birth_place,u.birth_date  ; "
                              , [$user->id]);
         $usersReferral = User::where('users.id','!=',$user->id)->get(['users.id','users.name']);
         return view('pages.users.edit', [
@@ -446,7 +447,7 @@ class UsersController extends Controller
             'gender' => $gender,
             'active' => $active,
             'data' => $data,
-            'employeestatusx' => ['On Job Training','Permanent','Outsourcing','Contract','Probation'],
+            'employeestatusx' => ['On Job Training','Permanent','Outsourcing','Contract','Probation','Leave'],
             'usersReferrals' => $usersReferral,
         ]);
     }
@@ -493,6 +494,7 @@ class UsersController extends Controller
             $request->validated(), 
             ['phone_no' => $request->get('phone_no') ],
             ['join_date' => Carbon::parse($request->get('join_date'))->format('Y-m-d') ],
+            ['level_up_date' => Carbon::parse($request->get('level_up_date'))->format('Y-m-d') ],
             ['gender' => $request->get('gender') ],
             ['netizen_id' => $request->get('netizen_id') ],
             ['city' => $request->get('city') ],

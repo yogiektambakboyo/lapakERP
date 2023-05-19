@@ -104,6 +104,21 @@
                 </div>
               </div>
 
+
+              <div class="row mb-3">
+                <label class="form-label col-form-label col-md-2">Tgl Naik Tahun *</label>
+                <div class="col-md-8">
+                  <input type="text" 
+                  name="level_up_date"
+                  id="level_up_date"
+                  class="form-control" 
+                  value="{{ \Carbon\Carbon::parse($users->level_up_date)->format('d-m-Y') }}" disabled/>
+                  @if ($errors->has('level_up_date'))
+                            <span class="text-danger text-left">{{ $errors->first('level_up_date') }}</span>
+                        @endif
+                </div>
+              </div>
+
               <div class="row mb-3">
                 <label class="form-label col-form-label col-md-2">Tahun Bekerja *</label>
                 <div class="col-md-8">

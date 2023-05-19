@@ -35,6 +35,7 @@ class User extends Authenticatable
         'join_date',
         'gender',
         'netizen_id',
+        'level_up_date',
         'active',
         'city',
         'employee_id',
