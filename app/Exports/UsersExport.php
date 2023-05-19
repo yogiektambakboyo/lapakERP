@@ -53,11 +53,12 @@ class UsersExport implements FromCollection,WithColumnFormatting, WithHeadings
             'Gender',
             'Netizen ID',
             'Job Title',
+            'Active'
         ];
     }
     public function collection()
     {
-        return collect(DB::select("select u.id,u.name,string_agg(b.remark,',') as branch_name,u.email,u.employee_id,u.employee_status,d.remark as department,u.username,u.birth_place,u.birth_date ,u.phone_no,u.address,u.city,u.join_date,u.join_years,u.gender,u.netizen_id,jt.remark as job_title 
+        return collect(DB::select("select u.id,u.name,string_agg(b.remark,',') as branch_name,u.email,u.employee_id,u.employee_status,d.remark as department,u.username,u.birth_place,u.birth_date ,u.phone_no,u.address,u.city,u.join_date,u.join_years,u.gender,u.netizen_id,jt.remark as job_title,u.active 
         from users u
         join users_branch ub on ub.user_id = u.id
         join branch b on b.id = ub.branch_id 

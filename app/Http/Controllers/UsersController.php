@@ -68,9 +68,10 @@ class UsersController extends Controller
         ->join('job_title as jt','jt.id','=','users.job_id')
         ->join('users_branch as ub','ub.user_id', '=', 'users.id')
         ->join('users_branch as ub2','ub2.branch_id', '=', 'ub.branch_id')
+        ->join('branch as bd','bd.id','=','ub.branch_id')
         ->where('ub2.user_id','=',$user->id)
         ->where('users.name','!=','Admin')
-        ->get(['users.id','users.employee_id','users.name','jt.remark as job_title','users.join_date','users.work_year' ]);
+        ->get(['bd.remark as branch_name','users.active','users.id','users.employee_id','users.name','jt.remark as job_title','users.join_date','users.work_year' ]);
         return view('pages.users.index',['company' => Company::get()->first(),'jobtitles'=>JobTitle::orderBy('remark','asc')->get(['id','remark'])] ,compact('request','branchs','users','data','keyword','act_permission'));
     }
 
@@ -99,8 +100,9 @@ class UsersController extends Controller
             ->join('users_branch as ub','ub.user_id', '=', 'users.id')
             ->join('users_branch as ub2','ub2.branch_id', '=', 'ub.branch_id')
             ->where('ub2.user_id','=',$user->id)
+            ->join('branch as bd','bd.id','=','ub.branch_id')
             ->where('users.name','!=','Admin')->where('users.name','ILIKE','%'.$keyword.'%')
-            ->get(['users.id','users.employee_id','users.name','jt.remark as job_title','b.remark as branch_name','users.join_date','users.work_year' ]);
+            ->get(['bd.remark as branch_name','users.active','users.id','users.employee_id','users.name','jt.remark as job_title','b.remark as branch_name','users.join_date','users.work_year' ]);
             $request->filter_branch_id = "";
             $request->filter_end_date = "";
             $request->filter_job_id = "";
@@ -110,12 +112,13 @@ class UsersController extends Controller
             ->join('job_title as jt','jt.id','=','users.job_id')
             ->join('users_branch as ub','ub.user_id', '=', 'users.id')
             ->join('users_branch as ub2','ub2.branch_id', '=', 'ub.branch_id')
+            ->join('branch as bd','bd.id','=','ub.branch_id')
             ->where('ub2.user_id','=',$user->id)
             ->where('users.name','!=','Admin')->where('users.name','ILIKE','%'.$keyword.'%')
             ->where('b.id','like','%'.$branchx.'%')
             ->where('jt.id','like','%'.$jobtitlex.'%')
             ->where('users.join_date','<=',$enddate)
-            ->get(['users.id','users.employee_id','users.name','jt.remark as job_title','b.remark as branch_name','users.join_date','users.work_year' ]);
+            ->get(['bd.remark as branch_name','users.active','users.id','users.employee_id','users.name','jt.remark as job_title','b.remark as branch_name','users.join_date','users.work_year' ]);
             return view('pages.users.index', ['company' => Company::get()->first(),'jobtitles'=>JobTitle::orderBy('remark','asc')->get(['id','remark'])],compact('request','branchs','users','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
         }
     }

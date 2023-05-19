@@ -35,9 +35,10 @@
             <tr>
                 <th scope="col" width="1%">#</th>
                 <th width="15%">@lang('user.lbl_name')</th>
-                <th scope="col" width="12%">@lang('user.lbl_jobtitle')</th>
-                <th scope="col" width="7%">@lang('user.lbl_appaccess')</th>
-                <th scope="col" width="7%">@lang('user.lbl_joindate')</th>
+                <th scope="col" width="10%">@lang('user.lbl_jobtitle')</th>
+                <th scope="col" width="7%">Active</th>
+                <th scope="col" width="13%">Cabang</th>
+                <th scope="col" width="13%">@lang('user.lbl_joindate')</th>
                 <th scope="col" width="9%">Tahun Kerja</th>
                 <th scope="col" width="2%">@lang('user.lbl_action')</th>   
                 <th scope="col" width="2%"></th>
@@ -52,9 +53,10 @@
                         <td>{{ $user->name }}</td>
                         <td>{{ $user->job_title }}</td>
                         <td>
-                            @foreach($user->roles as $role)
-                                <span class="badge bg-primary">{{ $role->name }}</span>
-                            @endforeach
+                            {{ $user->active }}
+                        </td>
+                        <td>
+                            {{ $user->branch_name }}
                         </td>
                         <td>{{ $user->join_date }}</td>
                         <td>{{ $user->work_year }}</td>
