@@ -1,6 +1,6 @@
 @extends('layouts.default', ['appSidebarSearch' => true])
 
-@section('title', 'Customers')
+@section('title', 'Pelanggan')
 
 @section('content')
     <div class="bg-light p-4 rounded">
@@ -13,12 +13,12 @@
                 </div>
 
                 <div class="col-md-10"> 	
-                    <form action="{{ route('customers.search') }}" method="GET" class="row row-cols-lg-auto g-3 align-items-center">
+                    {{-- <form action="{{ route('customers.search') }}" method="GET" class="row row-cols-lg-auto g-3 align-items-center">
                         <div class="col-2"><input type="hidden" class="form-control  form-control-sm" name="search" placeholder="@lang('general.lbl_search')" value="{{ $request->search }}"></div>
                         <input type="hidden" name="filter_branch_id" value="{{ $request->filter_branch_id }}">
                         <div class="col-2"><a href="#modal-filter"  data-bs-toggle="modal" data-bs-target="#modal-filter" class="btn btn-sm btn-lime">@lang('general.btn_filter')</a></div>   
                         <div class="col-2"><input type="submit" class="btn btn-sm btn-success" value="@lang('general.btn_export')" name="export"></div>  
-                    </form>
+                    </form> --}}
                 </div>
             </div>
             <div class="col-md-2">
@@ -37,8 +37,8 @@
                 <th scope="col">@lang('general.lbl_name')</th>
                 <th scope="col" width="15%">@lang('general.lbl_address')</th>
                 <th scope="col" width="12%">@lang('general.lbl_phoneno')</th>
-                <th scope="col" width="1%"></th> 
-                <th scope="col" width="1%"></th> 
+                <th scope="col" width="1%" class="nex"></th> 
+                <th scope="col" width="1%" class="nex"></th> 
             </tr>
             </thead>
             <tbody>
@@ -107,9 +107,6 @@
           const formattedToday = mm + '/' + dd + '/' + yyyy;
           const formattedNextYear = mm + '/' + dd + '/' + yyyy1;
 
-          $(document).ready(function () {
-                $('#example').DataTable();
-            });
           $('#filter_begin_date').datepicker({
               format : 'yyyy-mm-dd',
               todayHighlight: true,
@@ -172,4 +169,29 @@
                 })
         }
     </script>
+@endpush
+@push('scripts')
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#example').DataTable(
+            {
+                dom: 'Bfrtip',
+                buttons: [
+                    {
+                        extend: 'copyHtml5',
+                        exportOptions: {
+                            columns: ':not(.nex)'
+                        }
+                    },
+                    {
+                        extend: 'excelHtml5',
+                        exportOptions: {
+                            columns: ':not(.nex)'
+                        }
+                    }
+                ]
+            }
+        );
+    });
+</script>
 @endpush

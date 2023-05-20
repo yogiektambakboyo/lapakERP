@@ -13,7 +13,7 @@
           </div>
           <div class="col-md-2">
             <div class="mt-4">
-                <button type="submit" class="btn btn-info">Update</button>
+                <button type="submit" id="btn-save" class="btn btn-info">Update</button>
                 <a href="{{ route('users.index') }}" class="btn btn-default">@lang('general.lbl_cancel')</a>
             </div>
           </div>
@@ -170,16 +170,17 @@
             </div>
           
             <div class="row mb-3">
-              <label class="form-label col-form-label col-md-2">Netizen ID</label>
+              <label class="form-label col-form-label col-md-2">Nomor KTP/ No Domisili *</label>
               <div class="col-md-8">
                 <input type="text" 
-                name="netizen_id"
+                name="netizen_id" id="netizen_id"
                 class="form-control" 
-                value="{{ $user->netizen_id }}"  />
+                value="{{ $user->netizen_id }}" required />
                 </div>
+                <label id="netizen_id_lbl" class="form-label d-none col-form-label bg-secondary text-danger"></label>
             </div>
             <div class="row mb-3">
-                <label class="form-label col-form-label col-md-2">Netizen ID Photo</label>
+                <label class="form-label col-form-label col-md-2">Foto KTP</label>
                 <div class="col-md-8">
                   <a href="/images/user-files/{{ $user->photo_netizen_id }}" target="_blank"><img id="photo_netizen_preview" src="/images/user-files/{{ $user->photo_netizen_id }}" width="200" height="100" class="rounded float-start" alt="..."></a>
                   <input type="file"  onchange="previewFileNetizen(this);"
@@ -392,5 +393,26 @@
             reader.readAsDataURL(file);
         }
     }
+
+    $('#netizen_id').on('input', function(){
+            var url = "{{ route('users.checknetizen','XX') }}";
+            url = url.replace('XX', $('#netizen_id').val());
+            const res = axios.get(url, {
+              headers: {
+                  'Content-Type': 'application/json'
+                }
+            }).then(resp => {
+                console.log(resp.data);
+                if(resp.data.data.length>0){
+                  $('#netizen_id_lbl').removeClass('d-none');
+                  $('#btn-save').addClass('d-none');
+                  $('#netizen_id_lbl').text('NIK sudah digunakan oleh '+resp.data.data[0].name);
+                }else{
+                  $('#netizen_id_lbl').text('');
+                  $('#netizen_id_lbl').addClass('d-none');
+                  $('#btn-save').removeClass('d-none');
+                }
+            });
+    });
 </script>
 @endpush

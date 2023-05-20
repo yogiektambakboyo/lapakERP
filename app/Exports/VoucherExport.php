@@ -30,16 +30,16 @@ class VoucherExport implements FromCollection,WithColumnFormatting, WithHeadings
     public function headings(): array
     {
         return [
-            'Voucher Name',
-            'Voucher Code',
-            'Service Name',
-            'Branch Name',
-            'Value',
-            'Date Start',
-            'Date End',
-            'Price',
-            'Already Used?',
-            'Invoice No'
+            'Nama Voucher',
+            'Kode Voucher',
+            'Nama Perawatan',
+            'Cabang',
+            'Nilai',
+            'Tgl Awal',
+            'Tgl Akhir',
+            'Harga',
+            'Sudah Digunakan?',
+            'No Faktur Jual'
         ];
     }
     public function collection()

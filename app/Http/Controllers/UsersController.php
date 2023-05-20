@@ -297,6 +297,18 @@ class UsersController extends Controller
         return $result;
     }
 
+    public function checknetizen(String $netizen_id) 
+    {
+
+        $users = DB::select("select * from users where netizen_id='".$netizen_id."';");
+        $result = array_merge(
+            ['status' => 'success'],
+            ['data' => $users],
+            ['message' => 'Save Successfully'],
+        );    
+        return $result;
+    }
+
 
     /**
      * Store a newly created user skill

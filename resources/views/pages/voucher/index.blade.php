@@ -42,7 +42,7 @@
                 <th scope="col" width="7%">@lang('general.lbl_price')</th>
                 <th scope="col" width="10%">Sudah digunakan?</th>
                 <th scope="col" width="10%">No Faktur</th>
-                <th scope="col" width="2%" class="noexport">@lang('general.lbl_action')</th>  
+                <th scope="col" width="2%" class="noexport" class="nex">@lang('general.lbl_action')</th>  
                 <th scope="col" width="2%" class="noexport"></th>
             </tr>
             </thead>

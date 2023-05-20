@@ -34,9 +34,9 @@ class ReportStockMutationExport implements FromCollection,WithColumnFormatting, 
     public function headings(): array
     {
         return [
-            'Branch',
+            'Cabang',
             'Periode',
-            'Product Name',
+            'Nama Produk/Perawatan',
             'Balance Begin',
             'Balance End',
             'Qty In',

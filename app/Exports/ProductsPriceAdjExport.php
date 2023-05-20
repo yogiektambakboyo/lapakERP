@@ -31,7 +31,7 @@ class ProductsPriceAdjExport implements FromCollection,WithColumnFormatting, Wit
     {
         return [
             'Branch Name',
-            'Product Name',
+            'Nama Produk/Perawatan',
             'Value',
             'Date Start',
             'Date End',

@@ -32,8 +32,8 @@ class ReportSalesTripDetailExport implements FromCollection,WithColumnFormatting
     public function headings(): array
     {
         return [
-            'Branch',
-            'Dated',
+            'Cabang',
+            'Tanggal',
             'Seller Name',
             'Trip ID',
             'Longitude',

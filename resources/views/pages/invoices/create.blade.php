@@ -371,7 +371,7 @@
               <th scope="col" width="10%">Total</th>  
               <th scope="col" width="10%">@lang('general.lbl_terapist')</th>  
               <th scope="col" width="10%">@lang('general.lbl_ref_by')</th>
-              <th scope="col" width="20%">@lang('general.lbl_action')</th> 
+              <th scope="col" width="20%" class="nex">@lang('general.lbl_action')</th> 
           </tr>
           </thead>
           <tbody>
@@ -462,7 +462,7 @@
               <th scope="col" width="10%">Total</th>  
               <th scope="col" width="10%">@lang('general.lbl_terapist')</th>  
               <th scope="col" width="10%">@lang('general.lbl_ref_by')</th>
-              <th scope="col" width="20%">@lang('general.lbl_action')</th> 
+              <th scope="col" width="20%" class="nex">@lang('general.lbl_action')</th> 
           </tr>
           </thead>
           <tbody>

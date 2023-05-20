@@ -1,21 +1,21 @@
 @extends('layouts.default', ['appSidebarSearch' => true])
 
-@section('title', 'Branchs')
+@section('title', 'Ruangan')
 
 @section('content')
     <div class="bg-light p-4 rounded">
-        <h2>@lang('general.lbl_room')</h2>
+        <h2>Ruangan</h2>
         <div class="lead row mb-3">
             <div class="col-md-10">
                 <div class="col-md-8">
                     @lang('general.lbl_title')
                 </div>
                 <div class="col-md-8"> 	
-                    <form action="{{ route('rooms.search') }}" method="GET" class="row row-cols-lg-auto g-3 align-items-center">
+                    {{-- <form action="{{ route('rooms.search') }}" method="GET" class="row row-cols-lg-auto g-3 align-items-center">
                         <div class="col-12"><input type="hidden" class="form-control  form-control-lg" name="search" placeholder="@lang('general.lbl_search') . . ." value="{{ $keyword }}"></div>
                         <div class="col-12"><input type="hidden" class="btn btn-secondary" value="@lang('general.btn_search')" name="submit"></div>   
                         <div class="col-12"><input type="submit" class="btn btn-success" value="@lang('general.btn_export')" name="export"></div>   
-                    </form>
+                    </form> --}}
                 </div>
             </div>
             <div class="col-md-2">
@@ -33,8 +33,8 @@
                 <th scope="col" width="5%">#</th>
                 <th scope="col" width="15%">@lang('general.lbl_branch')</th>
                 <th scope="col" width="15%">@lang('general.lbl_name')</th>
-                <th scope="col" width="1%"></th> 
-                <th scope="col" width="1%"></th> 
+                <th scope="col" width="1%" class="nex"></th> 
+                <th scope="col" width="1%" class="nex"></th> 
             </tr>
             </thead>
             <tbody>
@@ -66,9 +66,27 @@
           if (dd < 10) dd = '0' + dd;
           if (mm < 10) mm = '0' + mm;
 
-          $(document).ready(function () {
-                $('#example').DataTable();
-            });
+$(document).ready(function () {
+        $('#example').DataTable(
+            {
+                dom: 'Bfrtip',
+                buttons: [
+                    {
+                        extend: 'copyHtml5',
+                        exportOptions: {
+                            columns: ':not(.nex)'
+                        }
+                    },
+                    {
+                        extend: 'excelHtml5',
+                        exportOptions: {
+                            columns: ':not(.nex)'
+                        }
+                    }
+                ]
+            }
+        );
+    });
 
           const formattedToday = mm + '/' + dd + '/' + yyyy;
           const formattedNextYear = mm + '/' + dd + '/' + yyyy1;

@@ -141,13 +141,13 @@
               <div class="panel-heading bg-teal-600"><h4>Personal Info</h4></div>
               <div class="panel-body bg-white text-black">
                 <div class="row mb-3">
-                  <label class="form-label col-form-label col-md-2">Netizen ID</label>
+                  <label class="form-label col-form-label col-md-2">Nomor KTP/No Domisili</label>
                   <div class="col-md-8">
                     <input type="text" class="form-control" value="{{ $users->netizen_id }}" readonly />
                     </div>
                 </div>
                 <div class="row mb-3">
-                    <label class="form-label col-form-label col-md-2">Netizen ID Photo</label>
+                    <label class="form-label col-form-label col-md-2">Foto KTP</label>
                     <div class="col-md-8">
                       <a href="/images/user-files/{{ $users->photo_netizen_id }}" target="_blank"><img src="/images/user-files/{{ $users->photo_netizen_id }}" width="200" height="100" class="rounded float-start"></a>
                     </div>

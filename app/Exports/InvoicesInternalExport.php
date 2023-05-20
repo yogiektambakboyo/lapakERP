@@ -33,9 +33,9 @@ class InvoicesInternalExport implements FromCollection,WithColumnFormatting, Wit
     public function headings(): array
     {
         return [
-            'Branch',
-            'Invoice No',
-            'Dated',
+            'Cabang',
+            'No Faktur Jual',
+            'Tanggal',
             'Customer',
             'Total',
             'Total Discount',

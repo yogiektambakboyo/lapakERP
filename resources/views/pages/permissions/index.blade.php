@@ -1,10 +1,10 @@
 @extends('layouts.default', ['appSidebarSearch' => true])
 
-@section('title', 'Permissions')
+@section('title', 'Hak Akses')
 
 @section('content')
     <div class="bg-light p-4 rounded">
-        <h2>Permissions</h2>
+        <h2>Hak Akses</h2>
         <div class="lead row mb-3">
             <div class="col-md-10">
                 <div class="col-md-4">
@@ -25,8 +25,8 @@
             <tr>
                 <th scope="col" width="1%">#</th>
                 <th scope="col" width="15%">@lang('general.lbl_name')</th>
-                <th scope="col">Guard</th> 
-                <th scope="col" colspan="3" width="1%"></th> 
+                <th scope="col">Keamanan</th> 
+                <th scope="col" colspan="3" width="1%" class="nex"></th> 
             </tr>
             </thead>
             <tbody>

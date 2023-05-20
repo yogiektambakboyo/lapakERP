@@ -99,7 +99,7 @@
 							<th width="10%">PREVIEW</th>
 							<th>FILE INFO</th>
 							<th>UPLOAD PROGRESS</th>
-							<th width="1%"></th>
+							<th width="1%" class="nex"></th>
 						</tr>
 					</thead>
 					<tbody class="files">

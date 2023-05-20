@@ -33,9 +33,9 @@ class PettyCashExport implements FromCollection,WithColumnFormatting, WithHeadin
     public function headings(): array
     {
         return [
-            'Branch',
+            'Cabang',
             'Document No',
-            'Dated',
+            'Tanggal',
             'Type',
             'Total',
             'Remark',

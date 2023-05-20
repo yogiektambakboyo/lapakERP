@@ -33,8 +33,8 @@ class CloseDayExport implements FromCollection,WithColumnFormatting, WithHeading
     public function headings(): array
     {
         return [
-            'Branch',
-            'Dated',
+            'Cabang',
+            'Tanggal',
             'Total All',
             'Total Service',
             'Total Product',

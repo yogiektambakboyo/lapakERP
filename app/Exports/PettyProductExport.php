@@ -33,9 +33,9 @@ class PettyProductExport implements FromCollection,WithColumnFormatting, WithHea
     public function headings(): array
     {
         return [
-            'Branch',
+            'Cabang',
             'Document No',
-            'Dated',
+            'Tanggal',
             'Type',
             'Remark',
         ];

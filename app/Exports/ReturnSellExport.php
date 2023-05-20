@@ -33,9 +33,9 @@ class ReturnSellExport implements FromCollection,WithColumnFormatting, WithHeadi
     public function headings(): array
     {
         return [
-            'Branch',
+            'Cabang',
             'Return Sell No',
-            'Dated',
+            'Tanggal',
             'Customer',
             'Total',
             'Total Discount',

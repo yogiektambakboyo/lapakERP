@@ -35,7 +35,7 @@
                 <th scope="col">@lang('general.lbl_address')</th>
                 <th scope="col">@lang('general.lbl_city')</th> 
                 <th scope="col">@lang('general.lbl_abbr')</th>  
-                <th scope="col" colspan="3" width="1%"></th> 
+                <th scope="col" colspan="3" width="1%" class="nex"></th> 
             </tr>
             </thead>
             <tbody>

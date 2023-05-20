@@ -32,7 +32,7 @@ class ReportCustomerRegExport implements FromCollection,WithColumnFormatting, Wi
     public function headings(): array
     {
         return [
-            'Branch',
+            'Cabang',
             'Seller Name',
             '#ID',
             'Name',

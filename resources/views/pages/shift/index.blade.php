@@ -32,11 +32,11 @@
             <thead>
             <tr>
                 <th scope="col" width="1%">#</th>
-                <th scope="col">Remark</th>
+                <th scope="col">Nama Shift</th>
                 <th scope="col" width="15%">@lang('general.lbl_time_start')</th>
                 <th scope="col" width="15%">@lang('general.lbl_time_end')</th>
-                <th scope="col"  width="1%"></th> 
-                <th scope="col"  width="1%"></th> 
+                <th scope="col"  width="1%" class="nex"></th> 
+                <th scope="col"  width="1%" class="nex"></th> 
             </tr>
             </thead>
             <tbody>
@@ -92,9 +92,27 @@
 @push('scripts')
     <script type="text/javascript">
 
-            $(document).ready(function () {
-                $('#example').DataTable();
-            });
+  $(document).ready(function () {
+        $('#example').DataTable(
+            {
+                dom: 'Bfrtip',
+                buttons: [
+                    {
+                        extend: 'copyHtml5',
+                        exportOptions: {
+                            columns: ':not(.nex)'
+                        }
+                    },
+                    {
+                        extend: 'excelHtml5',
+                        exportOptions: {
+                            columns: ':not(.nex)'
+                        }
+                    }
+                ]
+            }
+        );
+    });
         const today = new Date();
           const yyyy = today.getFullYear();
           const yyyy1 = today.getFullYear()+1;

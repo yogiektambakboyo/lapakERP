@@ -1,10 +1,10 @@
 @extends('layouts.default', ['appSidebarSearch' => true])
 
-@section('title', 'Laporan - Customer')
+@section('title', 'Laporan - Tamu')
 
 @section('content')
     <div class="bg-light p-4 rounded">
-        <h1>Laporan - Customer</h1>
+        <h1>Laporan - Tamu</h1>
         <div class="lead row mb-3">
             <div class="col-md-10">
                 <div class="col-md-8">
@@ -28,6 +28,7 @@
                 <th scope="col">@lang('general.lbl_customer')</th>     
                 <th scope="col">@lang('general.lbl_address')</th>    
                 <th scope="col">@lang('general.lbl_phoneno')</th>    
+                <th scope="col">Jenis Kelamin</th>    
             </tr>
             </thead>
             <tbody>
@@ -38,6 +39,7 @@
                         <td>{{ $rdata->customers_name }}</td>
                         <td>{{ $rdata->address }}</td>
                         <td>{{ $rdata->phone_no }}</td>
+                        <td>{{ $rdata->gender }}</td>
                     </tr>
                 @endforeach
             </tbody>
@@ -193,7 +195,9 @@
 @push('scripts')
 <script type="text/javascript">
     $(document).ready(function () {
-        $('#example').DataTable();
+        $('#example').DataTable(
+            
+        );
     });
 </script>
 @endpush

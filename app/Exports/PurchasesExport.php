@@ -31,9 +31,9 @@ class PurchasesExport implements FromCollection,WithColumnFormatting, WithHeadin
     public function headings(): array
     {
         return [
-            'Branch',
+            'Cabang',
             'Purchase No',
-            'Dated',
+            'Tanggal',
             'Supplier',
             'Total',
         ];

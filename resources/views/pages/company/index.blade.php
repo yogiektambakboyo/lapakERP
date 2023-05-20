@@ -4,7 +4,7 @@
 
 @section('content')
     <div class="bg-light p-4 rounded">
-        <h2>Company</h2>
+        <h2>Perusahaan</h2>
         <div class="lead row mb-3">
             <div class="col-md-10">
                 <div class="col-md-8">
@@ -25,7 +25,7 @@
                 <th scope="col">@lang('general.lbl_city')</th> 
                 <th scope="col">Email</th>
                 <th scope="col">@lang('general.lbl_phoneno')</th> 
-                <th scope="col" colspan="3" width="1%"></th> 
+                <th scope="col" colspan="3" width="1%" class="nex"></th> 
             </tr>
             </thead>
             <tbody>

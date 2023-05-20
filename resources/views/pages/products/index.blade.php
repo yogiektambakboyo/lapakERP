@@ -11,10 +11,10 @@
                     @lang('general.label')
                 </div>
                 <div class="col-md-10"> 	
-                    <form action="{{ route('products.search') }}" method="GET" class="row row-cols-lg-auto g-3 align-items-center">
+                    {{-- <form action="{{ route('products.search') }}" method="GET" class="row row-cols-lg-auto g-3 align-items-center">
                         <div class="col-2"><input type="hidden" class="form-control  form-control-sm" name="search" placeholder="@lang('general.label_search')" value="{{ $keyword }}"></div>
                         <div class="col-2"><input type="submit" class="btn btn-sm btn-success" value="@lang('general.btn_export')" name="export"></div>  
-                    </form>
+                    </form> --}}
                 </div>
             </div>
             <div class="col-md-2">
@@ -34,9 +34,9 @@
                 <th scope="col" width="15%">@lang('general.category')</th>
                 <th scope="col" width="10%">@lang('general.brand')</th>
                 <th scope="col" width="5%">@lang('general.tipe')</th>
-                <th scope="col" width="2%">@lang('general.lbl_action')</th>   
-                <th scope="col" width="2%"></th>
-                <th scope="col" width="2%"></th>    
+                <th scope="col" width="2%" class="nex">@lang('general.lbl_action')</th>   
+                <th scope="col" width="2%" class="nex"></th>
+                <th scope="col" width="2%" class="nex"></th>    
             </tr>
             </thead>
             <tbody>
@@ -69,9 +69,27 @@
           let mm = today.getMonth() + 1;
           let dd = today.getDate();
 
-          $(document).ready(function () {
-                $('#example').DataTable();
-            });
+$(document).ready(function () {
+        $('#example').DataTable(
+            {
+                dom: 'Bfrtip',
+                buttons: [
+                    {
+                        extend: 'copyHtml5',
+                        exportOptions: {
+                            columns: ':not(.nex)'
+                        }
+                    },
+                    {
+                        extend: 'excelHtml5',
+                        exportOptions: {
+                            columns: ':not(.nex)'
+                        }
+                    }
+                ]
+            }
+        );
+    });
 
           if (dd < 10) dd = '0' + dd;
           if (mm < 10) mm = '0' + mm;

@@ -1,6 +1,6 @@
 @extends('layouts.default', ['appSidebarSearch' => true])
 
-@section('title', 'Customers')
+@section('title', 'User Shift')
 
 @section('content')
     <div class="bg-light p-4 rounded">
@@ -40,8 +40,8 @@
                 <th scope="col" width="10%">@lang('general.lbl_time_start')</th>
                 <th scope="col" width="10%">@lang('general.lbl_time_end')</th>
                 <th scope="col" width="5%">Remark</th>
-                <th scope="col" width="1%"></th> 
-                <th scope="col" width="1%"></th> 
+                <th scope="col" width="1%" class="nex"></th> 
+                <th scope="col" width="1%" class="nex"></th> 
             </tr>
             </thead>
             <tbody>

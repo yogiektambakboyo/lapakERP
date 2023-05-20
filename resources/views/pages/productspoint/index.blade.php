@@ -32,8 +32,8 @@
                 <th>@lang('general.lbl_name')</th>
                 <th scope="col" width="15%">@lang('general.lbl_branch')</th>
                 <th scope="col" width="10%">@lang('general.lbl_point')</th>
-                <th scope="col" width="2%">@lang('general.lbl_action')</th>   
-                <th scope="col" width="2%"></th>  
+                <th scope="col" width="2%" class="nex">@lang('general.lbl_action')</th>   
+                <th scope="col" width="2%" class="nex"></th>  
             </tr>
             </thead>
             <tbody>
@@ -58,7 +58,25 @@
 @push('scripts')
 <script type="text/javascript">
     $(document).ready(function () {
-        $('#example').DataTable();
+        $('#example').DataTable(
+            {
+                dom: 'Bfrtip',
+                buttons: [
+                    {
+                        extend: 'copyHtml5',
+                        exportOptions: {
+                            columns: ':not(.nex)'
+                        }
+                    },
+                    {
+                        extend: 'excelHtml5',
+                        exportOptions: {
+                            columns: ':not(.nex)'
+                        }
+                    }
+                ]
+            }
+        );
     });
 </script>
 @endpush

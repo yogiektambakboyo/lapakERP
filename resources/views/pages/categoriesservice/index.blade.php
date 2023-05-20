@@ -1,6 +1,6 @@
 @extends('layouts.default', ['appSidebarSearch' => true])
 
-@section('title', 'Category')
+@section('title', 'Kategori Perawatan')
 
 @section('content')
     <div class="bg-light p-4 rounded">
@@ -25,8 +25,8 @@
             <tr>
                 <th scope="col" width="1%">#</th>
                 <th scope="col" width="15%">@lang('general.lbl_name')</th>
-                <th scope="col" width="1%"></th> 
-                <th scope="col" width="1%"></th> 
+                <th scope="col" width="1%" class="nex"></th> 
+                <th scope="col" width="1%" class="nex"></th> 
             </tr>
             </thead>
             <tbody>
@@ -51,7 +51,25 @@
 @push('scripts')
 <script type="text/javascript">
     $(document).ready(function () {
-        $('#example').DataTable();
+        $('#example').DataTable(
+            {
+                dom: 'Bfrtip',
+                buttons: [
+                    {
+                        extend: 'copyHtml5',
+                        exportOptions: {
+                            columns: ':not(.nex)'
+                        }
+                    },
+                    {
+                        extend: 'excelHtml5',
+                        exportOptions: {
+                            columns: ':not(.nex)'
+                        }
+                    }
+                ]
+            }
+        );
     });
 </script>
 @endpush

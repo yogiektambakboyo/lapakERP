@@ -142,7 +142,7 @@
               <th scope="col">@lang('general.product')</th>
               <th scope="col" width="10%">@lang('general.lbl_uom')</th>
               <th scope="col" width="5%">@lang('general.lbl_qty')</th>
-              <th scope="col" width="20%">@lang('general.lbl_action')</th> 
+              <th scope="col" width="20%" class="nex">@lang('general.lbl_action')</th> 
           </tr>
           </thead>
           <tbody>

@@ -33,9 +33,9 @@ class OrdersExport implements FromCollection,WithColumnFormatting, WithHeadings
     public function headings(): array
     {
         return [
-            'Branch',
+            'Cabang',
             'Order No',
-            'Dated',
+            'Tanggal',
             'Customer',
             'Total',
             'Total Discount',

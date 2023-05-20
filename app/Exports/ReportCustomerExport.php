@@ -33,16 +33,17 @@ class ReportCustomerExport implements FromCollection,WithColumnFormatting, WithH
     public function headings(): array
     {
         return [
-            'Branch',
-            'Customer Name',
-            'Address',
-            'Phone No',
+            'Cabang',
+            'Nama Tamu',
+            'Alamat',
+            'No Telepon',
+            'Jenis Kelamin'
         ];
     }
     public function collection()
     {
         return collect(DB::select("
-            select b.remark as branch_name,c.name as customers_name,c.address,c.phone_no  from customers c
+            select b.remark as branch_name,c.name as customers_name,c.address,c.phone_no,c.gender  from customers c
             join branch b on b.id = c.branch_id 
             join users_branch ub on ub.branch_id = b.id and ub.user_id = ".$this->userid." and ub.branch_id::character varying like '%".$this->branch."%'                       
         ")); 

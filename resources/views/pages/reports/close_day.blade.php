@@ -26,8 +26,8 @@
         <table class="table table-striped nowrap" id="example">
             <thead>
             <tr>
-                <th scope="col" width="2%">@lang('general.lbl_action')</th> 
-                <th scope="col" width="12%"></th> 
+                <th scope="col" width="2%" class="nex">@lang('general.lbl_action')</th> 
+                <th scope="col" width="12%" class="nex"></th> 
                 <th scope="col" width="10%">@lang('general.lbl_branch')</th>
                 <th scope="col" width="6%">@lang('general.lbl_dated')</th>
                 <th scope="col">@lang('general.service')</th>     

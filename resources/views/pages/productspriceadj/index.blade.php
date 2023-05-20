@@ -37,8 +37,8 @@
                 <th scope="col" width="10%">@lang('general.lbl_date_start')</th>
                 <th scope="col" width="10%">@lang('general.lbl_date_end')</th>
                 <th scope="col" width="10%">@lang('general.lbl_values')</th>
-                <th scope="col" width="2%">@lang('general.lbl_action')</th>  
-                <th scope="col" width="2%"></th>  
+                <th scope="col" width="2%" class="nex">@lang('general.lbl_action')</th>  
+                <th scope="col" width="2%" class="nex"></th>  
             </tr>
             </thead>
             <tbody>
@@ -123,9 +123,27 @@
           if (dd < 10) dd = '0' + dd;
           if (mm < 10) mm = '0' + mm;
 
-          $(document).ready(function () {
-                $('#example').DataTable();
-            });
+$(document).ready(function () {
+        $('#example').DataTable(
+            {
+                dom: 'Bfrtip',
+                buttons: [
+                    {
+                        extend: 'copyHtml5',
+                        exportOptions: {
+                            columns: ':not(.nex)'
+                        }
+                    },
+                    {
+                        extend: 'excelHtml5',
+                        exportOptions: {
+                            columns: ':not(.nex)'
+                        }
+                    }
+                ]
+            }
+        );
+    });
 
           const formattedToday = mm + '/' + dd + '/' + yyyy;
           const formattedNextYear = mm + '/' + dd + '/' + yyyy1;

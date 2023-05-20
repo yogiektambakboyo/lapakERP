@@ -11,10 +11,10 @@
                     @lang('general.label')
                 </div>
                 <div class="col-md-10"> 	
-                    <form action="{{ route('productsstock.search') }}" method="GET" class="row row-cols-lg-auto g-3 align-items-center">
+                    {{-- <form action="{{ route('productsstock.search') }}" method="GET" class="row row-cols-lg-auto g-3 align-items-center">
                         <div class="col-2"><input type="hidden" class="form-control  form-control-sm" name="search" placeholder="@lang('general.lbl_search')" value="{{ $keyword }}"></div>
                         <div class="col-2"><input type="submit" class="btn btn-sm btn-success" value="@lang('general.btn_export')" name="export"></div>  
-                    </form>
+                    </form> --}}
                 </div>
             </div>
             <div class="col-md-2">
@@ -32,8 +32,8 @@
                 <th>@lang('general.lbl_name')</th>
                 <th scope="col" width="15%">@lang('general.lbl_branch')</th>
                 <th scope="col" width="10%">@lang('general.lbl_qty')</th>
-                <th scope="col" width="2%">@lang('general.lbl_action')</th>   
-                <th scope="col" width="2%"></th>
+                <th scope="col" width="2%" class="nex">@lang('general.lbl_action')</th>   
+                <th scope="col" width="2%" class="nex"></th>
             </tr>
             </thead>
             <tbody>
@@ -60,7 +60,25 @@
 @push('scripts')
 <script type="text/javascript">
     $(document).ready(function () {
-        $('#example').DataTable();
+        $('#example').DataTable(
+            {
+                dom: 'Bfrtip',
+                buttons: [
+                    {
+                        extend: 'copyHtml5',
+                        exportOptions: {
+                            columns: ':not(.nex)'
+                        }
+                    },
+                    {
+                        extend: 'excelHtml5',
+                        exportOptions: {
+                            columns: ':not(.nex)'
+                        }
+                    }
+                ]
+            }
+        );
     });
 </script>
 @endpush

@@ -1,9 +1,9 @@
 @extends('layouts.default', ['appSidebarSearch' => true])
 
-@section('title', 'Roles')
+@section('title', 'Aturan')
 @section('content')
     <div class="bg-light p-4 rounded">
-        <h1>Roles</h1>
+        <h1>Aturan</h1>
         <div class="lead row mb-3">
             <div class="col-md-10">
                 <div class="col-md-4">
@@ -24,7 +24,7 @@
           <tr>
              <th width="1%">No</th>
              <th>@lang('general.lbl_name')</th>
-             <th width="3%" colspan="3">Action</th>
+             <th width="3%" colspan="3">Aksi</th>
           </tr>
         </thead> 
         <tbody>
@@ -33,14 +33,14 @@
                 <th>{{ $role->id }}</th>
                 <td>{{ $role->name }}</td>
                 <td>
-                    <a class="btn btn-warning btn-sm" href="{{ route('roles.show', $role->id) }}">Show</a>
+                    <a class="btn btn-warning btn-sm" href="{{ route('roles.show', $role->id) }}">Lihat</a>
                 </td>
                 <td>
-                    <a class="btn btn-info btn-sm" href="{{ route('roles.edit', $role->id) }}">Edit</a>
+                    <a class="btn btn-info btn-sm" href="{{ route('roles.edit', $role->id) }}">Ubah</a>
                 </td>
                 <td>
                     {!! Form::open(['method' => 'DELETE','route' => ['roles.destroy', $role->id],'style'=>'display:inline']) !!}
-                    {!! Form::submit('Delete', ['class' => 'btn btn-danger btn-sm']) !!}
+                    {!! Form::submit('Hapus', ['class' => 'btn btn-danger btn-sm']) !!}
                     {!! Form::close() !!}
                 </td>
             </tr>

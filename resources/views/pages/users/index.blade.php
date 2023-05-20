@@ -1,6 +1,6 @@
 @extends('layouts.default', ['appSidebarSearch' => true])
 
-@section('title', 'Users')
+@section('title', 'Pengguna')
 
 @section('content')
     <div class="bg-light p-4 rounded">
@@ -10,7 +10,7 @@
                 <div class="col-md-4">
                     @lang('user.label')
                 </div>
-                <div class="col-md-10"> 	
+                {{-- <div class="col-md-10"> 	
                     <form action="{{ route('users.search') }}" method="GET" class="row row-cols-lg-auto g-3 align-items-center">
                         <div class="col-2"><input type="text" class="form-control  form-control-sm" name="search" placeholder="@lang('user.label_search')" value="{{ $request->search }}"></div>
                         <input type="hidden" class="form-control  form-control-sm" name="filter_branch_id" value="{{ $request->filter_branch_id }}">
@@ -19,7 +19,7 @@
                         <div class="col-2"><a href="#modal-filter"  data-bs-toggle="modal" data-bs-target="#modal-filter" class="btn btn-sm btn-lime">@lang('user.btn_filter')</a></div>   
                         <div class="col-2"><input type="submit" class="btn btn-sm btn-success" value="@lang('user.btn_export')" name="export"></div>  
                     </form>
-                </div>
+                </div> --}}
             </div>
             <div class="col-md-2">
                 <a href="{{ route('users.create') }}" class="btn btn-primary float-right {{ $act_permission->allow_create==1?'':'d-none' }}"><span class="fa fa-plus-circle"></span>  @lang('user.btn_create')</a>
@@ -36,13 +36,13 @@
                 <th scope="col" width="1%">#</th>
                 <th width="15%">@lang('user.lbl_name')</th>
                 <th scope="col" width="10%">@lang('user.lbl_jobtitle')</th>
-                <th scope="col" width="7%">Active</th>
+                <th scope="col" width="7%">Aktif</th>
                 <th scope="col" width="13%">Cabang</th>
-                <th scope="col" width="13%">@lang('user.lbl_joindate')</th>
+                <th scope="col" width="13%">NIK</th>
                 <th scope="col" width="9%">Tahun Kerja</th>
-                <th scope="col" width="2%">@lang('user.lbl_action')</th>   
-                <th scope="col" width="2%"></th>
-                <th scope="col" width="2%"></th>    
+                <th scope="col" width="2%" class="nex">@lang('user.lbl_action')</th>   
+                <th scope="col" width="2%" class="nex"></th>
+                <th scope="col" width="2%" class="nex"></th>    
             </tr>
             </thead>
             <tbody>
@@ -58,11 +58,11 @@
                         <td>
                             {{ $user->branch_name }}
                         </td>
-                        <td>{{ $user->join_date }}</td>
+                        <td>{{ $user->netizen_id }}</td>
                         <td>{{ $user->work_year }}</td>
-                        <td><a href="{{ route('users.show', $user->id) }}" class="btn btn-warning btn-sm {{ $act_permission->allow_show==1?'':'d-none' }}">@lang('user.lbl_show')</a></td>
-                        <td><a href="{{ route('users.edit', $user->id) }}" class="btn btn-info btn-sm {{ $act_permission->allow_edit==1?'':'d-none' }}">@lang('user.lbl_edit')</a></td>
-                        <td>
+                        <td class="nex"><a href="{{ route('users.show', $user->id) }}" class="btn btn-warning btn-sm {{ $act_permission->allow_show==1?'':'d-none' }}">@lang('user.lbl_show')</a></td>
+                        <td class="nex"><a href="{{ route('users.edit', $user->id) }}" class="btn btn-info btn-sm {{ $act_permission->allow_edit==1?'':'d-none' }}">@lang('user.lbl_edit')</a></td>
+                        <td class="nex">
                             <a onclick="showConfirm({{ $user->id }}, '{{ $user->remark }}')" class="btn btn-danger btn-sm  {{ $act_permission->allow_delete==1?'':'d-none' }} ">@lang('user.lbl_delete')</a>
                         </td>
 
@@ -213,7 +213,25 @@
 @push('scripts')
 <script type="text/javascript">
     $(document).ready(function () {
-        $('#example').DataTable();
+        $('#example').DataTable(
+            {
+                dom: 'Bfrtip',
+                buttons: [
+                    {
+                        extend: 'copyHtml5',
+                        exportOptions: {
+                            columns: ':not(.nex)'
+                        }
+                    },
+                    {
+                        extend: 'excelHtml5',
+                        exportOptions: {
+                            columns: ':not(.nex)'
+                        }
+                    }
+                ]
+            }
+        );
     });
 </script>
 @endpush

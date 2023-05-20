@@ -76,7 +76,7 @@
 					<table id="data-table-select" class="table table-striped table-bordered align-middle">
 						<thead>
 							<tr>
-								<th width="1%"></th>
+								<th width="1%" class="nex"></th>
 								<th width="1%" data-orderable="false"></th>
 								<th class="text-nowrap">Rendering engine</th>
 								<th class="text-nowrap">Browser</th>

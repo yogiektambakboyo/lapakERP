@@ -32,10 +32,10 @@ class ReportUserTrackingExport implements FromCollection,WithColumnFormatting, W
     public function headings(): array
     {
         return [
-            'Name',
-            'Branch',
-            'Job Title',
-            'Created At',
+            'Nama',
+            'Cabang',
+            'Posisi',
+            'Dibuat',
         ];
     }
     public function collection()

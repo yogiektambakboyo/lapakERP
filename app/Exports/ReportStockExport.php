@@ -32,8 +32,8 @@ class ReportStockExport implements FromCollection,WithColumnFormatting, WithHead
     public function headings(): array
     {
         return [
-            'Branch',
-            'Product Name',
+            'Cabang',
+            'Nama Produk/Perawatan',
             'Qty',
         ];
     }

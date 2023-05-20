@@ -178,7 +178,7 @@
                   <th scope="col" width="10%">Expired</th>
                   <th scope="col" width="10%">Batch No</th>
                   <th scope="col" width="10%">Total</th>
-                  <th scope="col" width="15%">@lang('general.lbl_action')</th> 
+                  <th scope="col" width="15%" class="nex">@lang('general.lbl_action')</th> 
               </tr>
               </thead>
               <tbody>

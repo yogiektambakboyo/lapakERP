@@ -33,7 +33,7 @@ class ReportReferralExport implements FromCollection,WithColumnFormatting, WithH
     {
         //b.remark as branch_name,u.employee_id,u.name,u.join_date,u.join_years,uf.name 
         return [
-            'Branch',
+            'Cabang',
             'Employee ID',
             'Name',
             'Join Date',

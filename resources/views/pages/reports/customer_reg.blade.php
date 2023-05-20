@@ -24,7 +24,7 @@
         <table class="table table-striped display nowrap" id="example"  style="width:100%">
             <thead>
                 <tr>
-                    <th scope="col">@lang('general.lbl_action')</th> 
+                    <th scope="col" class="nex">@lang('general.lbl_action')</th> 
                     <th scope="col">@lang('general.lbl_branch')</th>
                     <th scope="col">@lang('general.lbl_seller')</th>
                     <th scope="col">@lang('general.lbl_id')</th>

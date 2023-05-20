@@ -31,11 +31,11 @@ class ReportReceiveExport implements FromCollection,WithColumnFormatting, WithHe
     public function headings(): array
     {
         return [
-            'Branch',
-            'Dated',
+            'Cabang',
+            'Tanggal',
             'Purchase No',
-            'Product Name',
-            'Category Name',
+            'Nama Produk/Perawatan',
+            'Nama Kategori',
             'Qty',
             'UOM',
             'Total'

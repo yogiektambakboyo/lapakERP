@@ -40,9 +40,9 @@
                 <th scope="col" width="15%">Supplier</th>
                 <th scope="col" width="8%">Remark</th>
                 <th scope="col" width="10%">Total</th>
-                <th scope="col" width="2%">@lang('general.lbl_action')</th>  
-                <th scope="col" width="2%"></th>
-                <th scope="col" width="2%"></th>    
+                <th scope="col" width="2%" class="nex">@lang('general.lbl_action')</th>  
+                <th scope="col" width="2%" class="nex"></th>
+                <th scope="col" width="2%" class="nex"></th>    
             </tr>
             </thead>
             <tbody>

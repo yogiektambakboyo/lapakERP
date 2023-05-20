@@ -40,7 +40,7 @@ class UserShiftExport implements FromCollection,WithColumnFormatting, WithHeadin
         //u.id,u.name,u.email,u.employee_id,u.employee_status,d.remark as department,u.username,u.birth_place,u.birth_date ,u.phone_no,u.address,u.city,u.join_date,u.join_years,
         //u.gender,u.netizen_id,jt.remark as job_title ,string_agg(b.remark,',') as branch_name
         return [
-            'Dated',
+            'Tanggal',
             'Name',
             'Branch Name',
             'Shift Name',

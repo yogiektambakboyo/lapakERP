@@ -36,9 +36,9 @@
                 <th scope="col" width="8%">@lang('general.lbl_dated')</th>
                 <th scope="col" width="14%">Type</th>
                 <th scope="col" width="30%">Remark</th>
-                <th scope="col" width="2%">@lang('general.lbl_action')</th>  
-                <th scope="col" width="2%"></th>    
-                <th scope="col" width="2%"></th>    
+                <th scope="col" width="2%" class="nex">@lang('general.lbl_action')</th>  
+                <th scope="col" width="2%" class="nex"></th>    
+                <th scope="col" width="2%" class="nex"></th>    
             </tr>
             </thead>
             <tbody>
@@ -275,7 +275,9 @@
 @push('scripts')
 <script type="text/javascript">
     $(document).ready(function () {
-        $('#example').DataTable();
+        $('#example').DataTable(
+            
+        );
     });
 </script>
 @endpush

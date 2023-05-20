@@ -31,15 +31,15 @@ class ReportOmsetDetailExport implements FromCollection,WithColumnFormatting, Wi
     public function headings(): array
     {
         return [
-            'Branch',
-            'Dated',
-            'Invoice No',
-            'Product Name',
-            'Category Name',
+            'Cabang',
+            'Tanggal',
+            'No Faktur Jual',
+            'Nama Produk/Perawatan',
+            'Nama Kategori',
             'Qty',
             'UOM',
             'Total',
-            'Price Purchase',
+            'Harga Beli',
             'Margin'
         ];
     }

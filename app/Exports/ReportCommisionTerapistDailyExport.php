@@ -35,8 +35,8 @@ class ReportCommisionTerapistDailyExport implements FromCollection,WithColumnFor
     {
         //b.remark as branch_name,'work_commission' as com_type,im.dated,im.invoice_no,ps.remark,u.name,id.price,id.qty,id.total,pc.values base_commision,pc.values  * id.qty as commisions  
         return [
-            'Branch',
-            'Dated',
+            'Cabang',
+            'Tanggal',
             'Nama Terapist',
             'Total Commision',
             'Point',

@@ -33,11 +33,11 @@ class ReturnSellDetailExport implements FromCollection,WithColumnFormatting, Wit
     public function headings(): array
     {
         return [
-            'Branch',
+            'Cabang',
             'Return Sell No',
-            'Dated',
+            'Tanggal',
             'Customer',
-            'Product Name',
+            'Nama Produk/Perawatan',
             'Qty',
             'Total',
         ];

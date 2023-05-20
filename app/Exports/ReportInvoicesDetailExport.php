@@ -31,11 +31,11 @@ class ReportInvoicesDetailExport implements FromCollection,WithColumnFormatting,
     public function headings(): array
     {
         return [
-            'Branch',
-            'Dated',
-            'Invoice No',
-            'Product Name',
-            'Category Name',
+            'Cabang',
+            'Tanggal',
+            'No Faktur Jual',
+            'Nama Produk/Perawatan',
+            'Nama Kategori',
             'Qty',
             'UOM',
             'Total'

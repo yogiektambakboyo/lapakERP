@@ -403,7 +403,7 @@
 									<th>#</th>
 									<th>Username</th>
 									<th>Email Address</th>
-									<th width="1%"></th>
+									<th width="1%" class="nex"></th>
 								</tr>
 							</thead>
 							<tbody>

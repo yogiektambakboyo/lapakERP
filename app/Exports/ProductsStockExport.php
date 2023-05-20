@@ -26,7 +26,7 @@ class ProductsStockExport implements FromCollection,WithColumnFormatting, WithHe
     public function headings(): array
     {
         return [
-            'Product Name',
+            'Nama Produk/Perawatan',
             'Branch Name',
             'Qty',
         ];

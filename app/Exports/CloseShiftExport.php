@@ -33,8 +33,8 @@ class CloseShiftExport implements FromCollection,WithColumnFormatting, WithHeadi
     public function headings(): array
     {
         return [
-            'Branch',
-            'Dated',
+            'Cabang',
+            'Tanggal',
             'Shift Name',
             'Total All',
             'Total Service',
