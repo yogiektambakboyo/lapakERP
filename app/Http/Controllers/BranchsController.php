@@ -104,6 +104,8 @@ class BranchsController extends Controller
 
         Branch::create($request->all());
 
+        DB::select("insert into users_branch select 1,id,now(),now()  from branch where id not in ( select branch_id from users_branch where user_id = 1 )");
+
         return redirect()->route('branchs.index')
             ->withSuccess(__('Branch '.$request->remark.' created successfully.'));
     }

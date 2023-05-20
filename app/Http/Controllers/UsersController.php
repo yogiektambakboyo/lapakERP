@@ -438,7 +438,7 @@ class UsersController extends Controller
             'user' => $users[0],
             'userRole' => $user->roles->pluck('name')->toArray(),
             'roles' => Role::latest()->get(),
-            'branchs' => Branch::join('users_branch as ub','ub.branch_id', '=', 'branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']),
+            'branchs' => Branch::join('users_branch as ub','ub.branch_id', '=', 'branch.id')->where('ub.user_id','=',$userx->id)->get(['branch.id','branch.remark']),
             'userBranchs' => Branch::join('users_branch as ub','ub.branch_id','=','branch.id')->where('ub.user_id','=',$user->id)->get()->pluck('remark')->toArray(),
             'departments' => Department::latest()->get(),
             'userDepartements' => Department::latest()->get()->pluck('remark')->toArray(),
