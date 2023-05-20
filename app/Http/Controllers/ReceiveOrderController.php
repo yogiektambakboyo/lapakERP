@@ -105,11 +105,12 @@ class ReceiveOrderController extends Controller
         $receives = Receive::orderBy('id', 'ASC')
                 ->join('suppliers as jt','jt.id','=','receive_master.supplier_id')
                 ->join('branch as b','b.id','=','jt.branch_id')
+                ->join('purchase_master as pm','pm.purchase_no','=','receive_master.ref_no')
                 ->join('users_branch as ub', function($join){
                     $join->on('ub.branch_id', '=', 'b.id')
                     ->whereColumn('ub.branch_id', 'jt.branch_id');
                 })->where('ub.user_id', $user->id)->where('receive_master.dated','>=',Carbon::now()->subDay(7))    
-              ->get(['receive_master.id','b.remark as branch_name','receive_master.receive_no','receive_master.dated','jt.name as customer','receive_master.total','receive_master.total_discount','receive_master.total_payment' ]);
+              ->get(['pm.purchase_no','pm.dated as purchase_date','receive_master.id','b.remark as branch_name','receive_master.receive_no','receive_master.dated','jt.name as customer','receive_master.total','receive_master.total_discount','receive_master.total_payment' ]);
         return view('pages.receiveorders.index',['company' => Company::get()->first()], compact('receives','data','keyword','act_permission','branchs'))->with('i', ($request->input('page', 1) - 1) * 5);
     }
 
@@ -136,6 +137,7 @@ class ReceiveOrderController extends Controller
             $receives = Receive::orderBy('id', 'ASC')
                 ->join('suppliers as jt','jt.id','=','receive_master.supplier_id')
                 ->join('branch as b','b.id','=','jt.branch_id')
+                ->join('purchase_master as pm','pm.purchase_no','=','receive_master.ref_no')
                 ->join('users_branch as ub', function($join){
                     $join->on('ub.branch_id', '=', 'b.id')
                     ->whereColumn('ub.branch_id', 'jt.branch_id');
@@ -144,7 +146,7 @@ class ReceiveOrderController extends Controller
                 ->where('b.id','like','%'.$branchx.'%')  
                 ->where('receive_master.receive_no','like','%'.$keyword.'%')  
                 ->whereBetween('receive_master.dated',$fil) 
-                ->get(['receive_master.id','b.remark as branch_name','receive_master.receive_no','receive_master.dated','jt.name as customer','receive_master.total','receive_master.total_discount','receive_master.total_payment' ]);
+                ->get(['pm.purchase_no','pm.dated as purchase_date','receive_master.id','b.remark as branch_name','receive_master.receive_no','receive_master.dated','jt.name as customer','receive_master.total','receive_master.total_discount','receive_master.total_payment' ]);
             return view('pages.receiveorders.index',['company' => Company::get()->first()], compact('branchs','receives','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
         }
     }

@@ -70,7 +70,7 @@ class UsersController extends Controller
         ->join('users_branch as ub2','ub2.branch_id', '=', 'ub.branch_id')
         ->join('branch as bd','bd.id','=','ub.branch_id')
         ->where('ub2.user_id','=',$user->id)
-        ->where('users.name','!=','Admin')
+        ->where('users.name','!=','Super Admin')
         ->get(['bd.remark as branch_name','users.active','users.id','users.employee_id','users.name','jt.remark as job_title','users.join_date','users.work_year' ]);
         return view('pages.users.index',['company' => Company::get()->first(),'jobtitles'=>JobTitle::orderBy('remark','asc')->get(['id','remark'])] ,compact('request','branchs','users','data','keyword','act_permission'));
     }
@@ -101,7 +101,7 @@ class UsersController extends Controller
             ->join('users_branch as ub2','ub2.branch_id', '=', 'ub.branch_id')
             ->where('ub2.user_id','=',$user->id)
             ->join('branch as bd','bd.id','=','ub.branch_id')
-            ->where('users.name','!=','Admin')->where('users.name','ILIKE','%'.$keyword.'%')
+            ->where('users.name','!=','Super Admin')->where('users.name','ILIKE','%'.$keyword.'%')
             ->get(['bd.remark as branch_name','users.active','users.id','users.employee_id','users.name','jt.remark as job_title','b.remark as branch_name','users.join_date','users.work_year' ]);
             $request->filter_branch_id = "";
             $request->filter_end_date = "";
@@ -114,7 +114,7 @@ class UsersController extends Controller
             ->join('users_branch as ub2','ub2.branch_id', '=', 'ub.branch_id')
             ->join('branch as bd','bd.id','=','ub.branch_id')
             ->where('ub2.user_id','=',$user->id)
-            ->where('users.name','!=','Admin')->where('users.name','ILIKE','%'.$keyword.'%')
+            ->where('users.name','!=','Super Admin')->where('users.name','ILIKE','%'.$keyword.'%')
             ->where('b.id','like','%'.$branchx.'%')
             ->where('jt.id','like','%'.$jobtitlex.'%')
             ->where('users.join_date','<=',$enddate)
@@ -393,7 +393,7 @@ class UsersController extends Controller
                              join branch b on b.id = ub.branch_id
                              join departments dt on dt.id=u.department_id
                              join job_title jt on jt.id=u.job_id
-                             where u.id = ? and u.name!='Admin' group by u.level_up_date,dt.remark,u.id,u.employee_id,u.name,jt.remark,u.join_date,u.phone_no,u.email,u.username,u.address,u.netizen_id,u.photo_netizen_id,u.photo,u.join_years,u.active,u.referral_id,u.city,u.gender,u.birth_place,u.birth_date  ; "
+                             where u.id = ? and u.name!='Super Admin' group by u.level_up_date,dt.remark,u.id,u.employee_id,u.name,jt.remark,u.join_date,u.phone_no,u.email,u.username,u.address,u.netizen_id,u.photo_netizen_id,u.photo,u.join_years,u.active,u.referral_id,u.city,u.gender,u.birth_place,u.birth_date  ; "
                              , [$user->id]);
         return view('pages.users.show', [
             'users' => $users[0],
@@ -431,7 +431,7 @@ class UsersController extends Controller
                              join branch b on b.id = ub.branch_id
                              join departments dt on dt.id=u.department_id
                              join job_title jt on jt.id=u.job_id
-                             where u.id = ? and u.name!='Admin' group by u.level_up_date,u.level_up_date,dt.remark,u.id,u.employee_id,u.name,jt.remark,u.join_date,u.phone_no,u.email,u.username,u.address,u.netizen_id,u.photo_netizen_id,u.photo,u.join_years,u.active,u.referral_id,u.city,u.gender,u.birth_place,u.birth_date  ; "
+                             where u.id = ? and u.name!='Super Admin' group by u.level_up_date,u.level_up_date,dt.remark,u.id,u.employee_id,u.name,jt.remark,u.join_date,u.phone_no,u.email,u.username,u.address,u.netizen_id,u.photo_netizen_id,u.photo,u.join_years,u.active,u.referral_id,u.city,u.gender,u.birth_place,u.birth_date  ; "
                              , [$user->id]);
         $usersReferral = User::where('users.id','!=',$user->id)->get(['users.id','users.name']);
         return view('pages.users.edit', [

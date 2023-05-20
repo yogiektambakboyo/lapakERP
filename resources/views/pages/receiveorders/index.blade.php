@@ -36,6 +36,8 @@
                 <th>@lang('general.lbl_receive_no')</th>
                 <th scope="col" width="8%">@lang('general.lbl_dated')</th>
                 <th scope="col" width="15%">Supplier</th>
+                <th scope="col" width="15%">No PO</th>
+                <th scope="col" width="15%">Tgl PO</th>
                 <th scope="col" width="10%">Total</th>
                 <th scope="col" width="2%">@lang('general.lbl_action')</th>  
                 <th scope="col" width="2%"></th>
@@ -51,6 +53,8 @@
                         <td>{{ $receive->receive_no }}</td>
                         <td>{{ Carbon\Carbon::parse($receive->dated)->format('d-m-Y') }}</td>
                         <td>{{ $receive->customer }}</td>
+                        <td>{{ $receive->purchase_no }}</td>
+                        <td>{{ $receive->purchase_date }}</td>
                         <td>{{ number_format($receive->total,0,',','.') }}</td>
                         <td><a href="{{ route('receiveorders.show', $receive->id) }}" class="btn btn-warning btn-sm  {{ $act_permission->allow_show==1?'':'d-none' }}">@lang('general.lbl_show')</a></td>
                         <td><a href="{{ route('receiveorders.edit', $receive->id) }}" class="btn btn-info btn-sm  {{ $act_permission->allow_edit==1?'':'d-none' }} ">@lang('general.lbl_edit')</a></td>
