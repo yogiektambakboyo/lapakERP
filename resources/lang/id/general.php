@@ -199,7 +199,7 @@ return [
     "lbl_tipeselect" => "Pilih Tipe",
     "lbl_spk" => "SPK",
     "lbl_spkselect" => "Pilih SPK",
-    "lbl_dated_mmddYYYY" => "Tgl (dd/mm/YYYY)",
+    "lbl_dated_mmddYYYY" => "Tgl",
     "lbl_total_discount" => "Total Diskon",
     "lbl_total_payment" => "Total Payment",
     "lbl_total_customer" => "Nama Pelanggan",

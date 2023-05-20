@@ -110,7 +110,7 @@ class ReportInvoiceController extends Controller
                 join customers c on c.id = im.customers_id and c.branch_id::character varying like '%".$branchx."%'
                 join users u on u.id=im.created_by
                 join branch b on b.id = c.branch_id
-                join users_branch as ub on ub.branch_id = b.id and ub.user_id = '".$user->id."
+                join users_branch as ub on ub.branch_id = b.id and ub.user_id = ".$user->id."
                 left join shift s on im.created_at::time  between s.time_start and s.time_end and s.id::character varying like '%".$shift_id."%'
                 where im.dated between '".$begindate."' and '".$enddate."'              
             ");         
