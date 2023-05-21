@@ -424,6 +424,18 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
             Route::get('/export', 'VoucherController@export')->name('voucher.export');
         });
 
+        Route::group(['prefix' => 'bufferstock'], function() {
+            Route::get('/', 'BufferStockController@index')->name('bufferstock.index');
+            Route::get('/create', 'BufferStockController@create')->name('bufferstock.create');
+            Route::post('/create', 'BufferStockController@store')->name('bufferstock.store');
+            Route::get('/search', 'BufferStockController@search')->name('bufferstock.search');
+            Route::get('/{id}/show', 'BufferStockController@show')->name('bufferstock.show');
+            Route::get('/{rec_id}/edit', 'BufferStockController@edit')->name('bufferstock.edit');
+            Route::patch('/{id}/update', 'BufferStockController@update')->name('bufferstock.update');
+            Route::delete('/{id}/delete', 'BufferStockController@destroy')->name('bufferstock.destroy');
+            Route::get('/export', 'BufferStockController@export')->name('bufferstock.export');
+        });
+
         /**
          * Product Distribution
          */

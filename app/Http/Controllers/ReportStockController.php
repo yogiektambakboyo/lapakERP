@@ -66,11 +66,12 @@ class ReportStockController extends Controller
 
         $shifts = Shift::orderBy('shift.id')->get(['shift.id','shift.remark','shift.id','shift.time_start','shift.time_end']); 
         $report_data = DB::select("
-        select b.remark as branch_name,ps.remark as product_name,psd.qty  from users u 
+        select b.remark as branch_name,ps.remark as product_name,psd.qty,coalesce(sb.qty,0) as qty_buffer,psd.qty-coalesce(sb.qty,0) as qty_diff  from users u 
         join users_branch ub on ub.user_id = u.id 
         join product_stock psd on psd.branch_id = ub.branch_id 
         join product_sku ps on ps.id = psd.product_id and ps.type_id = 1
         join branch b on b.id = ub.branch_id 
+        left join product_stock_buffer sb on sb.branch_id = b.id and sb.product_id = ps.id
         where u.id = ".$user->id." order by 1,2             
         ");
         $data = $this->data;
@@ -102,11 +103,12 @@ class ReportStockController extends Controller
             return Excel::download(new ReportStockExport($strencode), 'report_stock_'.Carbon::now()->format('YmdHis').'.xlsx');
         }else{
             $report_data = DB::select("
-                select b.remark as branch_name,ps.remark as product_name,psd.qty  from users u 
+                select b.remark as branch_name,ps.remark as product_name,psd.qty,coalesce(sb.qty,0) as qty_buffer,psd.qty-coalesce(sb.qty,0) as qty_diff  from users u 
                 join users_branch ub on ub.user_id = u.id 
                 join product_stock psd on psd.branch_id = ub.branch_id and psd.branch_id::character varying like '%".$branchx."%'
                 join product_sku ps on ps.id = psd.product_id and ps.type_id = 1
                 join branch b on b.id = ub.branch_id 
+                left join product_stock_buffer sb on sb.branch_id = b.id and sb.product_id = ps.id
                 where u.id = ".$user->id." order by 1,2                 
             ");         
             return view('pages.reports.stock',['company' => Company::get()->first()], compact('shifts','branchs','data','keyword','act_permission','report_data'))->with('i', ($request->input('page', 1) - 1) * 5);

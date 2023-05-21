@@ -37,11 +37,11 @@ class ReportStockMutationExport implements FromCollection,WithColumnFormatting, 
             'Cabang',
             'Periode',
             'Nama Produk/Perawatan',
-            'Balance Begin',
-            'Balance End',
-            'Qty In',
-            'Qty Out',
-            'Updated At',
+            'Stok Awala',
+            'Stok Akhir',
+            'Jumlah Masuk',
+            'Jumlah Akhir',
+            'Diedit pada',
         ];
     }
     public function collection()

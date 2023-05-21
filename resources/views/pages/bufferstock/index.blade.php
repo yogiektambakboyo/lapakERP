@@ -1,27 +1,27 @@
 @extends('layouts.default', ['appSidebarSearch' => true])
 
-@section('title', 'Voucher')
+@section('title', 'Buffer Stok')
 
 @section('content')
     <div class="bg-light p-4 rounded">
-        <h1>Voucher</h1>
+        <h1>Buffer Stok</h1>
         <div class="lead row mb-3">
             <div class="col-md-10">
                 <div class="col-md-4">
                     @lang('general.lbl_title')
                 </div>
                 <div class="col-md-10"> 	
-                    <form action="{{ route('voucher.search') }}" method="GET" class="row row-cols-lg-auto g-3 align-items-center">
+                    {{-- <form action="{{ route('bufferstock.search') }}" method="GET" class="row row-cols-lg-auto g-3 align-items-center">
                         <input type="hidden" class="form-control  form-control-sm" name="filter_branch_id" value="{{ $request->filter_branch_id }}">
                         <input type="hidden" name="filter_begin_date"  value="2022-01-01"><input type="hidden" name="filter_end_date" value="2035-01-01">
                         <div class="col-2"><input type="hidden" class="form-control  form-control-sm" name="search" placeholder="@lang('general.lbl_search')" value="{{ $keyword }}"></div>
                         <div class="col-2"><a href="#modal-filter"  data-bs-toggle="modal" data-bs-target="#modal-filter" class="btn btn-sm btn-lime">@lang('general.btn_filter')</a></div>   
                         <div class="col-2"><input type="submit" class="btn btn-sm btn-success" value="@lang('general.btn_export')" name="export"></div>  
-                    </form>
+                    </form> --}}
                 </div>
             </div>
             <div class="col-md-2">
-                <a href="{{ route('voucher.create') }}" class="btn btn-primary float-right  {{ $act_permission->allow_create==1?'':'d-none' }}"><span class="fa fa-plus-circle"></span>  @lang('general.btn_create')</a>
+                {{-- <a href="{{ route('bufferstock.create') }}" class="btn btn-primary float-right  {{ $act_permission->allow_create==1?'':'d-none' }}"><span class="fa fa-plus-circle"></span>  @lang('general.btn_create')</a> --}}
             </div>
         </div>
         
@@ -32,38 +32,24 @@
         <table class="table table-striped" id="example">
             <thead>
             <tr>
-                <th scope="col" width="10%">@lang('general.lbl_branch')</th>
-                <th>Remark</th>
-                <th scope="col" width="10%">@lang('general.lbl_voucher_code')</th>
-                <th scope="col" width="15%">@lang('general.lbl_service_name')</th> 
-                <th scope="col" width="10%">@lang('general.lbl_date_start')</th>
-                <th scope="col" width="10%">@lang('general.lbl_date_end')</th>
-                <th scope="col" width="7%">@lang('general.lbl_values')</th>
-                <th scope="col" width="7%">@lang('general.lbl_price')</th>
-                <th scope="col" width="10%">Sudah digunakan?</th>
-                <th scope="col" width="10%">No Faktur</th>
-                <th scope="col" width="2%" class="noexport" class="nex">@lang('general.lbl_action')</th>  
-                <th scope="col" width="2%" class="noexport"></th>
+                <th>Nama Produk</th>
+                <th scope="col" width="15%">@lang('general.lbl_branch')</th>
+                <th scope="col" width="7%">Jumlah</th>
+                <th scope="col" width="2%" class="nex" class="nex">@lang('general.lbl_action')</th>  
+                {{-- <th scope="col" width="2%" class="nex"></th> --}}
             </tr>
             </thead>
             <tbody>
 
                 @foreach($products as $product)
                     <tr>
-                        <td>{{ $product->branch_name }}</td>
-                        <td>{{ $product->voucher_remark }}</td>
-                        <td>{{ $product->voucher_code }}</td>
                         <td>{{ $product->product_name }}</td>
-                        <td>{{ Carbon\Carbon::parse($product->dated_start)->format('d-m-Y') }}</td>
-                        <td>{{ Carbon\Carbon::parse($product->dated_end)->format('d-m-Y') }}</td>
-                        <td>{{ number_format($product->value,0,',','.') }}</td>
-                        <td>{{ number_format($product->price,0,',','.') }}</td>
-                        <td>{{ $product->is_used }}</td>
-                        <td>{{ $product->invoice_no }}</td>
-                        <td><a href="{{ route('voucher.edit', [$product->branch_id,$product->id,$product->dated_start,$product->dated_end,$product->voucher_code]) }}" class="noexport btn btn-info btn-sm  {{ $act_permission->allow_edit==1?'':'d-none' }}">@lang('general.lbl_edit')</a></td>
-                        <td class="noexport {{ $act_permission->allow_delete==1?'':'d-none' }}">
+                        <td>{{ $product->branch_name }}</td>
+                        <td>{{ $product->qty }}</td>
+                        <td><a href="{{ route('bufferstock.edit', [$product->id]) }}" class="noexport btn btn-info btn-sm  {{ $act_permission->allow_edit==1?'':'d-none' }}">@lang('general.lbl_edit')</a></td>
+                        {{-- <td class="noexport {{ $act_permission->allow_delete==1?'':'d-none' }}">
                             <a onclick="showConfirm( '{{ $product->branch_id }}','{{ $product->id }}','{{ $product->dated_start }}','{{ $product->dated_end }}','{{ $product->voucher_code }}' )" class="btn btn-danger btn-sm  {{ $act_permission->allow_delete==1?'':'d-none' }} ">@lang('general.lbl_delete')</a>
-                        </td>
+                        </td> --}}
                     </tr>
                 @endforeach
             </tbody>
@@ -79,7 +65,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form action="{{ route('voucher.search') }}" method="GET">   
+                    <form action="{{ route('bufferstock.search') }}" method="GET">   
                         @csrf 
                         <div class="col-md-10">
                             <label class="form-label col-form-label col-md-4">@lang('general.lbl_branch')</label>
@@ -92,12 +78,9 @@
                                     <option value="{{ $branchx->id }}">{{ $branchx->remark }} </option>
                                 @endforeach
                             </select>
-                        </div>
+                        </div>            
                         <div class="col-md-12">
-                            <label class="form-label col-form-label col-md-4">@lang('general.lbl_date_start')</label>
-                        </div>
-                        <div class="col-md-12">
-                            <input type="text" 
+                            <input type="hidden" 
                             name="filter_begin_date"
                             id="filter_begin_date"
                             class="form-control" 
@@ -158,7 +141,7 @@
             confirmButtonText: "@lang('general.lbl_sure_delete')"
             }).then((result) => {
             if (result.isConfirmed) {
-                var url = "{{ route('voucher.destroy',['AA','BB','CC','DD','EE']) }}";
+                var url = "{{ route('bufferstock.destroy',['AA','BB','CC','DD','EE']) }}";
                 var lastvalurl = "AA";
                 var lastvalurl2 = "BB";
                 var lastvalurl3 = "CC";
@@ -187,7 +170,7 @@
                                 cancelButtonColor: '#d33', cancelButtonText: "@lang('general.lbl_cancel')",
                                 confirmButtonText: "@lang('general.lbl_close') "
                                 }).then((result) => {
-                                    window.location.href = "{{ route('voucher.index') }}"; 
+                                    window.location.href = "{{ route('bufferstock.index') }}"; 
                                 })
                         }else{
                             Swal.fire(
@@ -212,47 +195,26 @@
 @push('scripts')
 <script type="text/javascript">
     $(document).ready(function () {
-        $('#example').DataTable();
-
-        document.addEventListener('DOMContentLoaded', function () {
-            let table = new DataTable('#ajax-datatables', {
+        $('#example').DataTable(
+            {
                 dom: 'Bfrtip',
                 buttons: [
-                        {
-                            extend: 'copy',
-                            text: 'Copy',
-                            className: 'btn btn-default',
-                            exportOptions: {
-                                columns: ':not(.noexport)'
-                            }
-                        },
-                        {
-                            extend: 'csv',
-                            text: 'CSV',
-                            className: 'btn btn-default',
-                            exportOptions: {
-                                columns: ':not(.noexport)'
-                            }
-                        },
-                        {
-                            extend: 'excel',
-                            text: 'Excel',
-                            className: 'btn btn-default',
-                            exportOptions: {
-                                columns: ':not(.noexport)'
-                            }
-                        },
-                        {
-                            extend: 'pdf',
-                            text: 'PDF',
-                            className: 'btn btn-default',
-                            exportOptions: {
-                                columns: ':not(.noexport)'
-                            }
-                        },
+                    {
+                        extend: 'copyHtml5',
+                        exportOptions: {
+                            columns: ':not(.nex)'
+                        }
+                    },
+                    {
+                        extend: 'excelHtml5',
+                        exportOptions: {
+                            columns: ':not(.nex)'
+                        }
+                    }
                 ]
-            });
-        });
+            }
+        );
+        
 
     });
 </script>

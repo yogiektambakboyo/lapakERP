@@ -242,6 +242,13 @@ class HomeController extends Controller
                 select dated,count(distinct customers_id) as counter  from invoice_master im where im.dated between now()-interval'7 days' and now()::date group by dated;
             ");
 
+            $p_buffer_Stock = DB::select("
+                insert into product_stock_buffer(product_id,branch_id,qty) 
+                select ps.id,b.id,0 from product_sku ps
+                join branch b on 1=1
+                where b.id > 1 and ps.id||'-'||b.id not in (select product_id||'-'||branch_id  from product_stock_buffer);
+            ");
+
 
             
             return view('pages.home-index',[

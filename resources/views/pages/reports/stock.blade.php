@@ -27,6 +27,8 @@
                 <th scope="col" width="14%">@lang('general.lbl_branch')</th>
                 <th scope="col">@lang('general.lbl_product_name')</th>     
                 <th scope="col">@lang('general.lbl_qty')</th>    
+                <th scope="col">Jml Buffer</th>    
+                <th scope="col">Selisih</th>    
             </tr>
             </thead>
             <tbody>
@@ -36,6 +38,8 @@
                         <th scope="row">{{ $rdata->branch_name }}</th>
                         <td>{{ $rdata->product_name }}</td>
                         <td>{{ number_format($rdata->qty,0,',','.') }}</td>
+                        <td>{{ number_format($rdata->qty_buffer,0,',','.') }}</td>
+                        <td>{{ number_format($rdata->qty_diff,0,',','.') }}</td>
                     </tr>
                 @endforeach
             </tbody>

@@ -34,17 +34,20 @@ class ReportStockExport implements FromCollection,WithColumnFormatting, WithHead
         return [
             'Cabang',
             'Nama Produk/Perawatan',
-            'Qty',
+            'Jml',
+            'Jml Buffer',
+            'Selisih',
         ];
     }
     public function collection()
     {
         return collect(DB::select("
-            select b.remark as branch_name,ps.remark as product_name,psd.qty  from users u 
+            select b.remark as branch_name,ps.remark as product_name,psd.qty,coalesce(sb.qty,0) as qty_buffer,psd.qty-coalesce(sb.qty,0) as qty_dif  from users u 
             join users_branch ub on ub.user_id = u.id 
             join product_stock psd on psd.branch_id = ub.branch_id and psd.branch_id::character varying like '%".$this->branch."%'
             join product_sku ps on ps.id = psd.product_id and ps.type_id = 1
             join branch b on b.id = ub.branch_id 
+            left join product_stock_buffer sb on sb.branch_id = b.id and sb.product_id = ps.id
             where u.id = ".$this->userid." order by 1,2             
         ")); 
     }
