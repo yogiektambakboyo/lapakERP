@@ -13,6 +13,7 @@
                 <div class="col-md-10"> 	
                         <button onclick="openDialogFilterSearch('Filter');" class="btn btn-sm btn-lime">@lang('general.btn_filter')</button> 
                         <button onclick="openDialogFilterSearch('Export Excel');" class="btn btn-sm btn-success">Export</button>  
+                        <button onclick="openDialogFilterSearch('Export Total');" class="btn btn-sm btn-success">Export Summary</button>  
                 </div>
             </div>
         </div>
@@ -65,7 +66,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form action="{{ route('reports.invoicedetail.search') }}" method="GET">   
+                    <form action="{{ route('reports.invoicedetail.search') }}"  target="_blank" method="GET">   
                         @csrf 
                         <div class="col-md-10">
                             <label class="form-label col-form-label col-md-4">@lang('general.lbl_branch')</label>
@@ -129,7 +130,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form action="{{ route('reports.closeshift.getdata') }}" method="GET">   
+                    <form action="{{ route('reports.closeshift.getdata') }}" target="_blank" method="GET">   
                         @csrf 
                         <div class="col-md-12">
                             <select class="form-control" 
