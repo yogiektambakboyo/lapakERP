@@ -1820,6 +1820,7 @@
                     worksheet.getCell(columnadd+columnx+countery).alignment = { vertical: 'middle', horizontal: 'center' };
 
                     columnadd = "";
+                    columnx = "E";
                     dtt_raw_oneline.forEach(element => {
                         if(parseInt(element.total_324)>0){
                           worksheet.getCell(columnx+countery).value = element.total_324;
@@ -1901,8 +1902,8 @@
                           columnx = nextChar(columnx);
                         }
                         if(parseInt(element.total_286)>0){
-                          worksheet.getCell(columnadd+columnx+countery).value = element.total_286;
-                          worksheet.getCell(columnadd+columnx+countery).alignment = { vertical: 'middle', horizontal: 'center' };
+                          worksheet.getCell(columnx+countery).value = element.total_286;
+                          worksheet.getCell(columnx+countery).alignment = { vertical: 'middle', horizontal: 'center' };
 
                           if(columnx == "Z") {
                               columnx = "A";
