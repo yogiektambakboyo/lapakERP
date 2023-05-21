@@ -1901,177 +1901,240 @@
                           columnx = nextChar(columnx);
                         }
                         if(parseInt(element.total_286)>0){
-                          worksheet.getCell(columnx+countery).value = element.total_286;
-                          worksheet.getCell(columnx+countery).alignment = { vertical: 'middle', horizontal: 'center' };
+                          worksheet.getCell(columnadd+columnx+countery).value = element.total_286;
+                          worksheet.getCell(columnadd+columnx+countery).alignment = { vertical: 'middle', horizontal: 'center' };
 
-                          nextChar(columnx);
-                          columnx = nextChar(columnx);
+                          if(columnx == "Z") {
+                              columnx = "A";
+                              columnadd = "A";
+                            }else{
+                              nextChar(columnx);
+                              columnx = nextChar(columnx);
+                            }
                         }
                         if(parseInt(element.total_287)>0){
                           worksheet.getCell(columnx+countery).value = element.total_287;
                           worksheet.getCell(columnx+countery).alignment = { vertical: 'middle', horizontal: 'center' };
 
-                          nextChar(columnx);
-                          columnx = nextChar(columnx);
+                          if(columnx == "Z") {
+                              columnx = "A";
+                              columnadd = "A";
+                            }else{
+                              nextChar(columnx);
+                              columnx = nextChar(columnx);
+                            }
                         }
                         if(parseInt(element.total_289)>0){
-                          worksheet.getCell(columnx+countery).value = element.total_289;
-                          worksheet.getCell(columnx+countery).alignment = { vertical: 'middle', horizontal: 'center' };
+                          worksheet.getCell(columnadd+columnx+countery).value = element.total_289;
+                          worksheet.getCell(columnadd+columnx+countery).alignment = { vertical: 'middle', horizontal: 'center' };
 
-                          nextChar(columnx);
-                          columnx = nextChar(columnx);
+                          if(columnx == "Z") {
+                              columnx = "A";
+                              columnadd = "A";
+                            }else{
+                              nextChar(columnx);
+                              columnx = nextChar(columnx);
+                            }
                         }
                         if(parseInt(element.total_290)>0){
-                          worksheet.getCell(columnx+countery).value = element.total_290;
-                          worksheet.getCell(columnx+countery).alignment = { vertical: 'middle', horizontal: 'center' };
+                          worksheet.getCell(columnadd+columnx+countery).value = element.total_290;
+                          worksheet.getCell(columnadd+columnx+countery).alignment = { vertical: 'middle', horizontal: 'center' };
 
-                          nextChar(columnx);
-                          columnx = nextChar(columnx);
+                          if(columnx == "Z") {
+                              columnx = "A";
+                              columnadd = "A";
+                            }else{
+                              nextChar(columnx);
+                              columnx = nextChar(columnx);
+                            }
                         }
                         if(parseInt(element.total_291)>0){
-                          worksheet.getCell(columnx+countery).value = element.total_291;
-                          worksheet.getCell(columnx+countery).alignment = { vertical: 'middle', horizontal: 'center' };
+                          worksheet.getCell(columnadd+columnx+countery).value = element.total_291;
+                          worksheet.getCell(columnadd+columnx+countery).alignment = { vertical: 'middle', horizontal: 'center' };
 
                           nextChar(columnx);
                           columnx = nextChar(columnx);
                         }
                         if(parseInt(element.total_292)>0){
-                          worksheet.getCell(columnx+countery).value = element.total_292;
-                          worksheet.getCell(columnx+countery).alignment = { vertical: 'middle', horizontal: 'center' };
+                          worksheet.getCell(columnadd+columnx+countery).value = element.total_292;
+                          worksheet.getCell(columnadd+columnx+countery).alignment = { vertical: 'middle', horizontal: 'center' };
 
-                          nextChar(columnx);
-                          columnx = nextChar(columnx);
+                          if(columnx == "Z") {
+                              columnx = "A";
+                              columnadd = "A";
+                            }else{
+                              nextChar(columnx);
+                              columnx = nextChar(columnx);
+                            }
                         }
                         if(parseInt(element.total_293)>0){
-                          worksheet.getCell(columnx+countery).value = element.total_293;
-                          worksheet.getCell(columnx+countery).alignment = { vertical: 'middle', horizontal: 'center' };
+                          worksheet.getCell(columnadd+columnx+countery).value = element.total_293;
+                          worksheet.getCell(columnadd+columnx+countery).alignment = { vertical: 'middle', horizontal: 'center' };
 
-                          nextChar(columnx);
-                          columnx = nextChar(columnx);
+                          if(columnx == "Z") {
+                              columnx = "A";
+                              columnadd = "A";
+                            }else{
+                              nextChar(columnx);
+                              columnx = nextChar(columnx);
+                            }
                         }
                         if(parseInt(element.total_294)>0){
-                          worksheet.getCell(columnx+countery).value = element.total_294;
-                          worksheet.getCell(columnx+countery).alignment = { vertical: 'middle', horizontal: 'center' };
+                          worksheet.getCell(columnadd+columnx+countery).value = element.total_294;
+                          worksheet.getCell(columnadd+columnx+countery).alignment = { vertical: 'middle', horizontal: 'center' };
 
-                          nextChar(columnx);
-                          columnx = nextChar(columnx);
+                          if(columnx == "Z") {
+                              columnx = "A";
+                              columnadd = "A";
+                            }else{
+                              nextChar(columnx);
+                              columnx = nextChar(columnx);
+                            }
                         }
                         if(parseInt(element.total_295)>0){
-                          worksheet.getCell(columnx+countery).value = element.total_295;
-                          worksheet.getCell(columnx+countery).alignment = { vertical: 'middle', horizontal: 'center' };
+                          worksheet.getCell(columnadd+columnx+countery).value = element.total_295;
+                          worksheet.getCell(columnadd+columnx+countery).alignment = { vertical: 'middle', horizontal: 'center' };
 
-                          nextChar(columnx);
-                          columnx = nextChar(columnx);
+                          if(columnx == "Z") {
+                              columnx = "A";
+                              columnadd = "A";
+                            }else{
+                              nextChar(columnx);
+                              columnx = nextChar(columnx);
+                            }
                         }
                         if(parseInt(element.total_296)>0){
-                          worksheet.getCell(columnx+countery).value = element.total_296;
-                          worksheet.getCell(columnx+countery).alignment = { vertical: 'middle', horizontal: 'center' };
+                          worksheet.getCell(columnadd+columnx+countery).value = element.total_296;
+                          worksheet.getCell(columnadd+columnx+countery).alignment = { vertical: 'middle', horizontal: 'center' };
 
-                          nextChar(columnx);
-                          columnx = nextChar(columnx);
+                          if(columnx == "Z") {
+                              columnx = "A";
+                              columnadd = "A";
+                            }else{
+                              nextChar(columnx);
+                              columnx = nextChar(columnx);
+                            }
                         }
                         if(parseInt(element.total_297)>0){
-                          worksheet.getCell(columnx+countery).value = element.total_297;
-                          worksheet.getCell(columnx+countery).alignment = { vertical: 'middle', horizontal: 'center' };
+                          worksheet.getCell(columnadd+columnx+countery).value = element.total_297;
+                          worksheet.getCell(columnadd+columnx+countery).alignment = { vertical: 'middle', horizontal: 'center' };
 
-                          nextChar(columnx);
-                          columnx = nextChar(columnx);
+                          if(columnx == "Z") {
+                              columnx = "A";
+                              columnadd = "A";
+                            }else{
+                              nextChar(columnx);
+                              columnx = nextChar(columnx);
+                            }
                         }
                         if(parseInt(element.total_298)>0){
-                          if(columnx == "Z") {
-                            columnx = "A";
-                            columnadd = "A";
-                          }
-                          worksheet.getCell(columnx+countery).value = element.total_298;
-                          worksheet.getCell(columnx+countery).alignment = { vertical: 'middle', horizontal: 'center' };
 
-                          nextChar(columnx);
-                          columnx = nextChar(columnx);
+                          worksheet.getCell(columnadd+columnx+countery).value = element.total_298;
+                          worksheet.getCell(columnadd+columnx+countery).alignment = { vertical: 'middle', horizontal: 'center' };
+
+                          if(columnx == "Z") {
+                              columnx = "A";
+                              columnadd = "A";
+                            }else{
+                              nextChar(columnx);
+                              columnx = nextChar(columnx);
+                            }
                         }
                         if(parseInt(element.total_300)>0){
 
-                          if(columnx == "Z") {
-                            columnx = "A";
-                            columnadd = "A";
-                          }
+   
                           worksheet.getCell(columnadd+columnx+countery).value = element.total_300;
                           worksheet.getCell(columnadd+columnx+countery).alignment = { vertical: 'middle', horizontal: 'center' };
 
-                          nextChar(columnx);
-                          columnx = nextChar(columnx);
+                          if(columnx == "Z") {
+                              columnx = "A";
+                              columnadd = "A";
+                            }else{
+                              nextChar(columnx);
+                              columnx = nextChar(columnx);
+                            }
                         }
                         if(parseInt(element.total_301)>0){
-                          if(columnx == "Z") {
-                            columnx = "A";
-                            columnadd = "A";
-                          }
+
 
                           worksheet.getCell(columnadd+columnadd+columnx+countery).value = element.total_301;
                           worksheet.getCell(columnadd+columnadd+columnx+countery).alignment = { vertical: 'middle', horizontal: 'center' };
 
-                          nextChar(columnx);
-                          columnx = nextChar(columnx);
+                          if(columnx == "Z") {
+                              columnx = "A";
+                              columnadd = "A";
+                            }else{
+                              nextChar(columnx);
+                              columnx = nextChar(columnx);
+                            }
                         }
                         if(parseInt(element.total_302)>0){
-                          if(columnx == "Z") {
-                            columnx = "A";
-                            columnadd = "A";
-                          }
+
 
                           worksheet.getCell(columnadd+columnx+countery).value = element.total_302;
                           worksheet.getCell(columnadd+columnx+countery).alignment = { vertical: 'middle', horizontal: 'center' };
 
-                          nextChar(columnx);
-                          columnx = nextChar(columnx);
+                          if(columnx == "Z") {
+                              columnx = "A";
+                              columnadd = "A";
+                            }else{
+                              nextChar(columnx);
+                              columnx = nextChar(columnx);
+                            }
                         }
 
                         if(parseInt(element.total_304)>0){
-                          if(columnx == "Z") {
-                            columnx = "A";
-                            columnadd = "A";
-                          }
-
                           worksheet.getCell(columnadd+columnx+countery).value = element.total_304;
                           worksheet.getCell(columnadd+columnx+countery).alignment = { vertical: 'middle', horizontal: 'center' };
 
-                          nextChar(columnx);
-                          columnx = nextChar(columnx);
+                          if(columnx == "Z") {
+                              columnx = "A";
+                              columnadd = "A";
+                            }else{
+                              nextChar(columnx);
+                              columnx = nextChar(columnx);
+                            }
                         }
                         if(parseInt(element.total_305)>0){
-                          if(columnx == "Z") {
-                            columnx = "A";
-                            columnadd = "A";
-                          }
 
                           worksheet.getCell(columnadd+columnx+countery).value = element.total_305;
                           worksheet.getCell(columnadd+columnx+countery).alignment = { vertical: 'middle', horizontal: 'center' };
 
-                          nextChar(columnx);
-                          columnx = nextChar(columnx);
+                          if(columnx == "Z") {
+                              columnx = "A";
+                              columnadd = "A";
+                            }else{
+                              nextChar(columnx);
+                              columnx = nextChar(columnx);
+                            }
                         }
                         if(parseInt(element.total_306)>0){
-                          if(columnx == "Z") {
-                            columnx = "A";
-                            columnadd = "A";
-                          }
+
 
                           worksheet.getCell(columnadd+columnx+countery).value = element.total_306;
                           worksheet.getCell(columnadd+columnx+countery).alignment = { vertical: 'middle', horizontal: 'center' };
 
-                          nextChar(columnx);
-                          columnx = nextChar(columnx);
+
+                          if(columnx == "Z") {
+                              columnx = "A";
+                              columnadd = "A";
+                            }else{
+                              nextChar(columnx);
+                              columnx = nextChar(columnx);
+                            }
                         }
                         if(parseInt(element.total_307)>0){
-                          if(columnx == "Z") {
-                            columnx = "A";
-                            columnadd = "A";
-                          }
 
                           worksheet.getCell(columnadd+columnx+countery).value = element.total_307;
                           worksheet.getCell(columnadd+columnx+countery).alignment = { vertical: 'middle', horizontal: 'center' };
 
-                          nextChar(columnx);
-                          columnx = nextChar(columnx);
+                          if(columnx == "Z") {
+                              columnx = "A";
+                              columnadd = "A";
+                            }else{
+                              nextChar(columnx);
+                              columnx = nextChar(columnx);
+                            }
                         }
                         if(parseInt(element.total_308)>0){
                           if(columnx == "Z") {
