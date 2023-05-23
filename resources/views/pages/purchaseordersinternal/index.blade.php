@@ -295,7 +295,20 @@
 
         $(document).ready(function () {
             $('#example').DataTable(
-            
+                {
+                    'columnDefs': [
+                        {
+                            'targets': 0,
+                            'orderable': false,
+                            'className': 'select-checkbox',
+                        }
+                    ],
+                    'select': {
+                        'style': 'multi',
+                    },
+                     'order': [[1, 'asc']]
+                }
+        
             );
         });
     </script>
