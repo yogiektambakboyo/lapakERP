@@ -89,7 +89,7 @@ class PurchaseOrderController extends Controller
         $act_permission = $this->act_permission[0];
         $branchs = Branch::join('users_branch as ub','ub.branch_id', '=', 'branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']);
         $purchases = Purchase::orderBy('id', 'ASC')
-                ->join('users_branch as ub', 'ub.branch_id','purchase_master.branch_id')->where('ub.user_id', $user->id)->where('purchase_master.dated','>=',Carbon::now()->subDay(7))  
+                ->join('users_branch as ub', 'ub.branch_id','purchase_master.branch_id')->where('purchase_master.supplier_name','!=','PUSAT')->where('ub.user_id', $user->id)->where('purchase_master.dated','>=',Carbon::now()->subDay(7))  
               ->get(['purchase_master.id','purchase_master.branch_name','purchase_master.remark','purchase_master.purchase_no','purchase_master.dated','purchase_master.supplier_name as supplier','purchase_master.total','purchase_master.total_discount','purchase_master.total_payment' ]);
         return view('pages.purchaseorders.index',['company' => Company::get()->first()],compact('purchases','data','keyword','act_permission','branchs'))->with('i', ($request->input('page', 1) - 1) * 5);
     }
@@ -121,6 +121,7 @@ class PurchaseOrderController extends Controller
                     ->whereColumn('ub.branch_id', 'jt.branch_id');
                 })
                 ->where('ub.user_id', $user->id)
+                ->where('purchase_master.supplier_name','!=','PUSAT')
                 ->where('purchase_master.purchase_no','like','%'.$keyword.'%')
                 ->where('b.id','like','%'.$branchx.'%')  
                 ->whereBetween('purchase_master.dated',$fil)  

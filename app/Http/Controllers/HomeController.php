@@ -249,6 +249,15 @@ class HomeController extends Controller
                 where b.id > 1 and ps.id||'-'||b.id not in (select product_id||'-'||branch_id  from product_stock_buffer);
             ");
 
+            $p_Stock = DB::select("
+                    insert into product_stock
+                    select ps2.id,b.id,0,null,now(),1  from product_sku ps2
+                    join branch b on b.id > 1
+                    where ps2.type_id=1 and b.id||''||ps2.id not in (
+                    select branch_id||''||product_id  
+                    from product_stock ps);
+            ");
+
 
             
             return view('pages.home-index',[

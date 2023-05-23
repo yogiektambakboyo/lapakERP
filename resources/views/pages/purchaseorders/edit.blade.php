@@ -155,8 +155,8 @@
                 <h3 class="text-end"><label id="sub-total">{{ number_format(($purchase->total-$purchase->total_vat),0,',','.') }}</label></h3>
               </div>
 
-              <label class="form-label col-form-label col-md-9 text-end"><h2>@lang('general.lbl_tax') </h2></label>
-              <div class="col-md-3">
+              <label class="form-label col-form-label col-md-9 text-end d-none"><h2>@lang('general.lbl_tax') </h2></label>
+              <div class="col-md-3 d-none">
                 <h3 class="text-end"><label id="vat-total">{{ number_format($purchase->total_vat,0,',','.') }}</label></h3>
               </div>
 

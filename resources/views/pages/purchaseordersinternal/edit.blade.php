@@ -48,7 +48,7 @@
                     name="supplier_id" id="supplier_id" required>
                     <option value="">Select Suppliers</option>
                     @foreach($suppliers as $supplier)
-                        <option value="{{ $supplier->id }}" {{ $purchase->supplier_id == $supplier->id ? 'selected' : '' }} >{{ $supplier->id }} - {{ $supplier->name }} </option>
+                        <option value="{{ $supplier->id }}" {{ $purchase->supplier_id == $supplier->id ? 'selected' : '' }} >{{ $supplier->name }} </option>
                     @endforeach
                 </select>
               </div>
@@ -150,18 +150,18 @@
             
             
             <div class="row mb-3">
-              <label class="form-label col-form-label col-md-9 text-end"><h2>Sub Total </h2></label>
-              <div class="col-md-3">
+              <label class="form-label col-form-label col-md-8 text-end"><h2>Sub Total </h2></label>
+              <div class="col-md-4">
                 <h3 class="text-end"><label id="sub-total">{{ number_format(($purchase->total-$purchase->total_vat),0,',','.') }}</label></h3>
               </div>
 
-              <label class="form-label col-form-label col-md-9 text-end"><h2>@lang('general.lbl_tax') </h2></label>
-              <div class="col-md-3">
+              <label class="form-label col-form-label col-md-9 text-end d-none"><h2>@lang('general.lbl_tax') </h2></label>
+              <div class="col-md-3 d-none">
                 <h3 class="text-end"><label id="vat-total">{{ number_format($purchase->total_vat,0,',','.') }}</label></h3>
               </div>
 
-              <label class="form-label col-form-label col-md-9 text-end"><h1>Total</h1></label>
-              <div class="col-md-3">
+              <label class="form-label col-form-label col-md-8 text-end"><h1>Total</h1></label>
+              <div class="col-md-4">
                 <h1 class="display-5 text-end"><label id="order-total">Rp. 0</label></h1>
               </div>
             </div>
@@ -348,7 +348,7 @@
                     "disc"         : obj["disc"],
                     "total"       : obj["total"],
                   }).draw(false);
-                  order_total = order_total + (parseFloat(orderList[i]["total_vat"]));
+                  order_total = order_total + (parseFloat(orderList[i]["total"]));
                 }
 
                 $('#order-total').text(currency(order_total, { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
@@ -419,8 +419,8 @@
                 total_order : order_total,
                 dated : $('#dated').val(),
                 purchase_no : $('#purchase_no').val(),
-                total_vat : _vat_total,
-                total_discount : disc_total
+                total_vat : 0,
+                total_discount : 0
               }
             );
             const res = axios.patch("{{ route('purchaseordersinternal.update',$purchase->id) }}", json, {

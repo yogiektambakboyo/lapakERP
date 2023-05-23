@@ -15,15 +15,15 @@
                     <form action="{{ route('purchaseordersinternal.search') }}" method="POST" class="row row-cols-lg-auto g-3 align-items-center">
                         @csrf
                         <input type="hidden" name="filter_begin_date" value="2022-01-01"><input type="hidden" name="filter_end_date" value="2035-01-01">
-                        <div class="col-2"><input type="text" class="form-control  form-control-sm" name="search" placeholder="@lang('general.lbl_search') Purchase Order.." value="{{ $keyword }}"></div>
-                        <div class="col-2"><input type="submit" class="btn btn-sm btn-secondary" value="@lang('general.btn_search')" name="submit"></div>   
+                        <div class="col-2"><input type="text" class="form-control  form-control-sm d-none" name="search" placeholder="@lang('general.lbl_search') Purchase Order.." value="{{ $keyword }}"></div>
+                        <div class="col-2"><input type="submit" class="btn btn-sm btn-secondary  d-none" value="@lang('general.btn_search')" name="submit"></div>   
                         <div class="col-2"><a href="#modal-filter"  data-bs-toggle="modal" data-bs-target="#modal-filter" class="btn btn-sm btn-lime">@lang('general.btn_filter')</a></div>   
                         <div class="col-2"><input type="submit" class="btn btn-sm btn-success" value="@lang('general.btn_export')" name="export"></div>  
                     </form>
                 </div>
-                <div class="col-md-2">
-                    <a href="{{ route('purchaseordersinternal.create') }}" class="btn btn-primary float-right {{ $act_permission->allow_create==1?'':'d-none' }}"><span class="fa fa-circle-plus"></span> @lang('general.btn_create')</a>
-                </div>
+            </div>
+            <div class="col-md-2">
+                <a href="{{ route('purchaseordersinternal.create') }}" class="btn btn-primary float-right {{ $act_permission->allow_create==1?'':'d-none' }}"><span class="fa fa-circle-plus"></span> @lang('general.btn_create')</a>
             </div>
         </div>
         
@@ -34,7 +34,7 @@
         <table class="table table-striped" id="example">
             <thead>
             <tr>
-                <th scope="col" width="10%">@lang('general.lbl_branch')</th>
+                <th scope="col" width="15%">@lang('general.lbl_branch')</th>
                 <th>@lang('general.lbl_purchase_no')</th>
                 <th scope="col" width="8%">@lang('general.lbl_dated')</th>
                 <th scope="col" width="15%">Supplier</th>
@@ -56,7 +56,6 @@
                         <td>{{ $purchase->remark }}</td>
                         <td>{{ number_format($purchase->total,0,',','.') }}</td>
                         <td><a href="{{ route('purchaseordersinternal.show', $purchase->id) }}" class="btn btn-warning btn-sm  {{ $act_permission->allow_show==1?'':'d-none' }}">@lang('general.lbl_show')</a></td>
-                        <td><a onclick="showStatus({{ $purchase->id }}, '{{ $purchase->purchase_no }}')" data-toggle="tooltip" class="btn btn-success btn-sm  {{ $act_permission->allow_edit==1?'':'d-none' }} ">@lang('general.lbl_status')</a></td>
                         <td><a href="{{ route('purchaseordersinternal.edit', $purchase->id) }}" class="btn btn-info btn-sm  {{ $act_permission->allow_edit==1?'':'d-none' }} ">@lang('general.lbl_edit')</a></td>
                         <td class=" {{ $act_permission->allow_delete==1?'':'d-none' }}">
                             <a onclick="showConfirm({{ $purchase->id }}, '{{ $purchase->purchase_no }}')" class="btn btn-danger btn-sm  {{ $act_permission->allow_delete==1?'':'d-none' }} ">@lang('general.lbl_delete')</a>
@@ -293,5 +292,11 @@
                     }
                 })
         }
+
+        $(document).ready(function () {
+            $('#example').DataTable(
+            
+            );
+        });
     </script>
 @endpush

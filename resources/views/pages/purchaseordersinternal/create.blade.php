@@ -149,18 +149,18 @@
         
             <br>
             <div class="row mb-3">
-              <label class="form-label col-form-label col-md-9 text-end"><h2>Sub Total </h2></label>
-              <div class="col-md-3">
+              <label class="form-label col-form-label col-md-8 text-end"><h2>Sub Total </h2></label>
+              <div class="col-md-4">
                 <h3 class="text-end"><label id="sub-total">0</label></h3>
               </div>
 
-              <label class="form-label col-form-label col-md-9 text-end"><h2>@lang('general.lbl_tax') </h2></label>
-              <div class="col-md-3">
+              <label class="form-label col-form-label col-md-9 text-end d-none"><h2>@lang('general.lbl_tax') </h2></label>
+              <div class="col-md-3 d-none">
                 <h3 class="text-end"><label id="vat-total">0</label></h3>
               </div>
 
-              <label class="form-label col-form-label col-md-9 text-end"><h1>Total</h1></label>
-              <div class="col-md-3">
+              <label class="form-label col-form-label col-md-8 text-end"><h1>Total</h1></label>
+              <div class="col-md-4">
                 <h1 class="display-5 text-end"><label id="result-total">Rp. 0</label></h1>
               </div>
             </div>
@@ -189,15 +189,15 @@
           if (dd < 10) dd = '0' + dd;
           if (mm < 10) mm = '0' + mm;
 
-          const formattedToday = mm + '/' + dd + '/' + yyyy;
+          const formattedToday = dd + '-' + mm + '-' + yyyy;
           
           $('#doc_dated').datepicker({
-              format : 'yyyy-mm-dd',
+            dateFormat : 'dd-mm-yy',
               todayHighlight: true,
           });
           $('#doc_dated').val(formattedToday);
           $('#schedule_date').datepicker({
-              format : 'yyyy-mm-dd',
+            dateFormat : 'dd-mm-yy',
               todayHighlight: true,
           });
           $('#schedule_date').val(formattedToday);

@@ -91,7 +91,7 @@ class PurchaseOrderInternalController extends Controller
         $branchs = Branch::join('users_branch as ub','ub.branch_id', '=', 'branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']);
         $purchases = Purchase::orderBy('id', 'ASC')
                 ->join('users_branch as ub', 'ub.branch_id','purchase_master.branch_id')->where('ub.user_id', $user->id)->where('purchase_master.dated','>=',Carbon::now()->subDay(7))  
-                ->where('purchase_master.supplier_name','ilike','%HEAD QUARTER%')
+                //->where('purchase_master.supplier_name','ilike','%PUSAT%')
               ->paginate(10,['purchase_master.id','purchase_master.branch_name','purchase_master.remark','purchase_master.purchase_no','purchase_master.dated','purchase_master.supplier_name as supplier','purchase_master.total','purchase_master.total_discount','purchase_master.total_payment' ]);
         return view('pages.purchaseordersinternal.index',['company' => Company::get()->first()],compact('purchases','data','keyword','act_permission','branchs','status'))->with('i', ($request->input('page', 1) - 1) * 5);
     }
@@ -468,10 +468,10 @@ class PurchaseOrderInternalController extends Controller
                     ['qty' => $request->get('product')[$i]["qty"]],
                     ['price' => $request->get('product')[$i]["price"]],
                     ['subtotal' => $request->get('product')[$i]["total"]],
-                    ['subtotal_vat' => floatval($request->get('product')[$i]["total"])*(1+(floatval($request->get('product')[$i]["vat_total"])/100))],
-                    ['vat' => $request->get('product')[$i]["vat_total"]],
+                    //['subtotal_vat' => floatval($request->get('product')[$i]["total"])*(1+(floatval($request->get('product')[$i]["vat_total"])/100))],
+                    //['vat' => $request->get('product')[$i]["vat_total"]],
                     ['discount' => $request->get('product')[$i]["disc"]],
-                    ['vat_total' => (floatval($request->get('product')[$i]["vat_total"])*floatval($request->get('product')[$i]["total"]))/100],
+                    //['vat_total' => (floatval($request->get('product')[$i]["vat_total"])*floatval($request->get('product')[$i]["total"]))/100],
                     ['product_remark' => $request->get('product')[$i]["abbr"]],
                     ['uom' => $request->get('product')[$i]["uom"]],
                     ['seq' => $i ],

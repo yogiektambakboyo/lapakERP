@@ -174,11 +174,11 @@
                   <th scope="col" width="10%">@lang('general.lbl_uom')</th>
                   <th scope="col" width="10%">@lang('general.lbl_price')</th>
                   <th scope="col" width="5%">@lang('general.lbl_qty')</th>
-                  <th scope="col" width="10%">Disc</th>
+                  <th scope="col" width="8%">Disc</th>
                   <th scope="col" width="10%">Expired</th>
-                  <th scope="col" width="10%">Batch No</th>
+                  <th scope="col" width="8%">Batch No</th>
                   <th scope="col" width="10%">Total</th>
-                  <th scope="col" width="15%" class="nex">@lang('general.lbl_action')</th> 
+                  <th scope="col" width="17%" class="nex">@lang('general.lbl_action')</th> 
               </tr>
               </thead>
               <tbody>
@@ -193,8 +193,8 @@
                 <h3 class="text-end"><label id="sub-total">0</label></h3>
               </div>
 
-              <label class="form-label col-form-label col-md-9 text-end"><h2>@lang('general.lbl_tax') </h2></label>
-              <div class="col-md-3">
+              <label class="form-label col-form-label col-md-9 text-end d-none"><h2>@lang('general.lbl_tax') </h2></label>
+              <div class="col-md-3  d-none">
                 <h3 class="text-end"><label id="vat-total">0</label></h3>
               </div>
 
@@ -628,10 +628,10 @@
             targets: -1, 
             data: null, 
             defaultContent: 
-            '<a href="#"  data-toggle="tooltip" data-placement="top" title="Tambah"   id="add_row"  class="btn btn-green"><div class="fa-1x"><i class="fas fa-circle-plus fa-lg"></i></div></a>'+
-            '  <a href="#"  data-toggle="tooltip" data-placement="top" title="Kurangi"   id="minus_row"  class="btn btn-yellow ml-1"><div class="fa-1x"><i class="fas fa-circle-minus fa-lg"></i></div></a>'+
-            '  <a href="#" data-toggle="tooltip" data-placement="top" title="Hapus"  id="delete_row"  class="btn btn-danger"><div class="fa-1x"><i class="fas fa-circle-xmark fa-lg"></i></div></a>'+
-            '  <a href="#" href="#modal-exp" data-bs-toggle="modal" data-bs-target="#modal-exp" id="exp_row" class="btn btn-indigo"><div class="fa-1x"><i class="fas fa-calendar-days fa-fw"></i></div></a>'
+            '<a href="#"  data-toggle="tooltip" data-placement="top" title="Tambah"   id="add_row"  class="btn btn-sm btn-green"><div class="fa-1x"><i class="fas fa-circle-plus fa-lg"></i></div></a>'+
+            '  <a href="#"  data-toggle="tooltip" data-placement="top" title="Kurangi"   id="minus_row"  class="btn btn-sm btn-yellow ml-1"><div class="fa-1x"><i class="fas fa-circle-minus fa-lg"></i></div></a>'+
+            '  <a href="#" data-toggle="tooltip" data-placement="top" title="Hapus"  id="delete_row"  class="btn btn-sm btn-danger"><div class="fa-1x"><i class="fas fa-circle-xmark fa-lg"></i></div></a>'+
+            '  <a href="#" href="#modal-exp" data-bs-toggle="modal" data-bs-target="#modal-exp" id="exp_row" class="btn btn-sm btn-indigo"><div class="fa-1x"><i class="fas fa-calendar-days fa-fw"></i></div></a>'
           }],
           columns: [
             { data: 'abbr' },
