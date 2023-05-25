@@ -202,6 +202,29 @@ class OrdersController extends Controller
         return $product;
     }
 
+    public function getproduct_nostock() 
+    {
+        $user = Auth::user();
+        $id = $user->roles->first()->id;
+        $this->getpermissions($id);
+
+        $data = $this->data;
+        $user = Auth::user();
+        $product = DB::select("select '' as executed_at,m.remark as uom,product_sku.vat as vat_total,product_sku.id,product_sku.remark,product_sku.abbr,pt.remark as type,pc.remark as category_name,pb.remark as brand_name,pp.price+coalesce(pa.value,0) as price,'0' as discount,'0' as qty,'0' as total
+        from product_sku
+        join product_distribution pd  on pd.product_id = product_sku.id  and pd.active = '1'
+        join product_category pc on pc.id = product_sku.category_id 
+        join product_type pt on pt.id = product_sku.type_id 
+        join product_brand pb on pb.id = product_sku.brand_id 
+        join product_price pp on pp.product_id = pd.product_id and pp.branch_id = pd.branch_id
+        join product_uom pu on pu.product_id = product_sku.id
+        join uom m on m.id = pu.uom_id
+        join (select * from users_branch u where u.user_id = '".$user->id."' order by branch_id desc limit 1 ) ub on ub.branch_id = pp.branch_id and ub.branch_id=pd.branch_id 
+        left join price_adjustment pa on pa.product_id = pd.product_id and pa.branch_id = pd.branch_id and now()::date between pa.dated_start and pa.dated_end
+        where product_sku.active = '1'  order by product_sku.remark");
+        return $product;
+    }
+
     public function checkvoucher(Request $request){
         $user = Auth::user();
         $where = " now() between voucher.dated_start and voucher.dated_end";

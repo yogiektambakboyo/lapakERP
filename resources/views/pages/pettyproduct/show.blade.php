@@ -288,7 +288,7 @@
 
            
 
-            var url = "{{ route('orders.getproduct') }}";
+            var url = "{{ route('orders.getproduct_nostock') }}";
             var lastvalurl = "XX";
             console.log(url);
             const res = axios.get(url, {
