@@ -196,7 +196,6 @@ class OrdersController extends Controller
         join product_uom pu on pu.product_id = product_sku.id
         join uom m on m.id = pu.uom_id
         join (select * from users_branch u where u.user_id = '".$user->id."' order by branch_id desc limit 1 ) ub on ub.branch_id = pp.branch_id and ub.branch_id=pd.branch_id 
-        join product_stock pk on pk.product_id = product_sku.id and pk.branch_id = pp.branch_id and pk.qty > 0
         left join price_adjustment pa on pa.product_id = pd.product_id and pa.branch_id = pd.branch_id and now()::date between pa.dated_start and pa.dated_end
         where product_sku.active = '1'  order by product_sku.remark");
         return $product;
