@@ -258,6 +258,19 @@ class HomeController extends Controller
                     from product_stock ps);
             ");
 
+            $p_insert_s_service = DB::select("
+                    insert into product_stock
+                    select ps.id,b.id,9999,null,now(),1 from product_sku ps 
+                    join branch b on 1=1
+                    where ps.type_id > 1 and b.id||''||ps.id  not in (
+                    select branch_id||''||product_id  from product_stock
+                    );
+            ");
+
+            $p_insert_s_service = DB::select("
+                update product_stock set qty = 9999 where product_id in  (select id from product_sku where type_id>1) and qty<50;
+            ");
+
 
             
             return view('pages.home-index',[
