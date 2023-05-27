@@ -104,6 +104,18 @@
           if (mm < 10) mm = '0' + mm;
 
           
+        function reformatNumber(data, row, column, node) {
+            // replace spaces with nothing; replace commas with points.
+            if (column === 2 ) {
+                var newData = data.replace('.', '').replaceAll('.', '');
+                return newData;
+            } else {
+                return data;
+            }
+        }  
+
+
+          
 $(document).ready(function () {
         $('#example').DataTable(
             {
@@ -118,7 +130,12 @@ $(document).ready(function () {
                     {
                         extend: 'excelHtml5',
                         exportOptions: {
-                            columns: ':not(.nex)'
+                            columns: ':not(.nex)',
+                            format: {
+                                body: function ( data, row, column, node ) {
+                                    return reformatNumber(data, row, column, node);
+                                }
+                            }
                         }
                     }
                 ]
