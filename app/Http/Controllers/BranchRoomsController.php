@@ -145,9 +145,9 @@ class BranchRoomsController extends Controller
      */
     public function update(Request $request, Room $room)
     {
-        $request->validate([
-            'remark' => 'required|unique:branch_room,remark,'.$room->id
-        ]);
+        //$request->validate([
+            //'remark' => 'required|unique:branch_room,remark,'.$room->id
+        //]);
 
         $room->update($request->all());
 
