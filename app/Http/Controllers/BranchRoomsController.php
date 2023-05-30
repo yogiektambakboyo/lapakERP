@@ -108,9 +108,9 @@ class BranchRoomsController extends Controller
      */
     public function store(Request $request)
     {   
-        $request->validate([
-            'remark' => 'required|unique:branch_room'
-        ]);
+        //$request->validate([
+            //'remark' => 'required|unique:branch_room'
+        //]);
 
         Room::create($request->all());
 
