@@ -187,6 +187,26 @@ class ServicesCommisionByYearController extends Controller
         ]);
     }
 
+    public function show_year(Request $request) 
+    {
+        $user = Auth::user();
+        $id = $user->roles->first()->id;
+        $this->getpermissions($id);
+
+        $data = $this->data;
+        $data_year = DB::select("
+                select years  from product_commision_by_year pcby where branch_id = ? and product_id = ? and jobs_id = ?;
+        ",[$request->get('branch_id'),$request->get('product_id'),$request->get('jobs_id')]);
+
+        $result = array_merge(
+            ['status' => 'success'],
+            ['data' => $data_year],
+            ['message' => $request->get('branch_id')],
+        );
+
+        return $result;
+    }
+
     /**
      * Edit user data
      * 

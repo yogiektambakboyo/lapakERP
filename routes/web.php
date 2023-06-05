@@ -521,6 +521,7 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
             Route::post('/create', 'ServicesCommisionByYearController@store')->name('servicescommisionbyyear.store');
             Route::get('/search', 'ServicesCommisionByYearController@search')->name('servicescommisionbyyear.search');
             Route::get('/{branch}/{product}/{jobs_id}/show', 'ServicesCommisionByYearController@show')->name('servicescommisionbyyear.show');
+            Route::post('/show_year', 'ServicesCommisionByYearController@show_year')->name('servicescommisionbyyear.show_year');
             Route::get('/{branch}/{product}/{jobs_id}/{years}/edit', 'ServicesCommisionByYearController@edit')->name('servicescommisionbyyear.edit');
             Route::patch('/{branch}/{product}/{jobs_id}/{years}/update', 'ServicesCommisionByYearController@update')->name('servicescommisionbyyear.update');
             Route::delete('/{branch}/{product}/{jobs_id}/{years}/delete', 'ServicesCommisionByYearController@destroy')->name('servicescommisionbyyear.destroy');
