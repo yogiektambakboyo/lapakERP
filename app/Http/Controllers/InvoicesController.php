@@ -236,7 +236,7 @@ class InvoicesController extends Controller
 	        from invoice_master om
 	        join customers c on c.id = om.customers_id 
 	        join users_branch ub on ub.branch_id = c.branch_id and ub.user_id = ".$user->id."
-	        where scheduled_at >= now()::date and om.is_checkout='0'
+	        where scheduled_at >= now()::date and om.is_checkout='0' and om.branch_room_id  is not null
         ) order by 2 
         ");
         return $timetable;
