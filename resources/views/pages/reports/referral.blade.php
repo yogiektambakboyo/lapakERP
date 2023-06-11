@@ -38,8 +38,8 @@
                     <tr>
                         <th scope="row">{{ $rdata->branch_name }}</th>
                         <td>{{ $rdata->employee_id }}</td>
+                        <td>{{ $rdata->name }}</td>
                         <td>{{ $rdata->join_date }}</td>
-                        <td>{{ $rdata->employee_id }}</td>
                         <td>{{ $rdata->join_years }}</td>
                         <td>{{ $rdata->referral_name }}</td>
                     </tr>
