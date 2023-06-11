@@ -65,9 +65,6 @@
             </tbody>
         </table>
 
-        <div class="d-flex">
-            {!! $purchases->links() !!}
-        </div>
 
         <div class="modal fade" id="modal-filter" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
             <div class="modal-dialog">

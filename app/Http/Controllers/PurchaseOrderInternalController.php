@@ -91,8 +91,8 @@ class PurchaseOrderInternalController extends Controller
         $branchs = Branch::join('users_branch as ub','ub.branch_id', '=', 'branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']);
         $purchases = Purchase::orderBy('id', 'ASC')
                 ->join('users_branch as ub', 'ub.branch_id','purchase_master.branch_id')->where('ub.user_id', $user->id)->where('purchase_master.dated','>=',Carbon::now()->subDay(7))  
-                //->where('purchase_master.supplier_name','ilike','%PUSAT%')
-              ->paginate(10,['purchase_master.id','purchase_master.branch_name','purchase_master.remark','purchase_master.purchase_no','purchase_master.dated','purchase_master.supplier_name as supplier','purchase_master.total','purchase_master.total_discount','purchase_master.total_payment' ]);
+                ->where('purchase_master.supplier_name','not like','%PUSAT%')
+              ->get(['purchase_master.id','purchase_master.branch_name','purchase_master.remark','purchase_master.purchase_no','purchase_master.dated','purchase_master.supplier_name as supplier','purchase_master.total','purchase_master.total_discount','purchase_master.total_payment' ]);
         return view('pages.purchaseordersinternal.index',['company' => Company::get()->first()],compact('purchases','data','keyword','act_permission','branchs','status'))->with('i', ($request->input('page', 1) - 1) * 5);
     }
 
@@ -125,9 +125,9 @@ class PurchaseOrderInternalController extends Controller
                 ->where('ub.user_id', $user->id)
                 ->where('purchase_master.purchase_no','like','%'.$keyword.'%')
                 ->where('b.id','like','%'.$branchx.'%')  
-                ->where('purchase_master.supplier_name','ilike','%HEAD QUARTER%')
+                ->where('purchase_master.supplier_name','not like','%PUSAT%')
                 ->whereBetween('purchase_master.dated',$fil)  
-              ->paginate(10,['purchase_master.id','b.remark as branch_name','purchase_master.purchase_no','purchase_master.dated','jt.name as supplier','purchase_master.total','purchase_master.total_discount','purchase_master.total_payment' ]);
+              ->get(['purchase_master.id','b.remark as branch_name','purchase_master.purchase_no','purchase_master.dated','jt.name as supplier','purchase_master.total','purchase_master.total_discount','purchase_master.total_payment' ]);
               return view('pages.purchaseordersinternal.index',['company' => Company::get()->first()] ,compact('branchs','purchases','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
         }
     }
@@ -152,7 +152,7 @@ class PurchaseOrderInternalController extends Controller
         $data = $this->data;
         $user = Auth::user();
         $payment_type = ['Cash','BCA - Debit','BCA - Kredit','Mandiri - Debit','Mandiri - Kredit','Transfer','QRIS'];
-        $suppliers = Supplier::join('users_branch as ub','ub.branch_id', '=', 'suppliers.branch_id')->where('ub.user_id','=',$user->id)->get(['suppliers.id','suppliers.name']);
+        $suppliers = Supplier::join('users_branch as ub','ub.branch_id', '=', 'suppliers.branch_id')->where('suppliers.name','not like','%PUSAT%')->where('ub.user_id','=',$user->id)->get(['suppliers.id','suppliers.name']);
         $usersall = User::join('users_branch as ub','ub.branch_id', '=', 'users.branch_id')->where('ub.user_id','=',$user->id)->whereIn('users.job_id',[1,2])->get(['users.id','users.name']);
         return view('pages.purchaseordersinternal.create',[
             'customers' => Customer::join('users_branch as ub','ub.branch_id', '=', 'customers.branch_id')->join('branch as b','b.id','=','ub.branch_id')->where('ub.user_id',$user->id)->get(['customers.id','customers.name','b.remark']),
