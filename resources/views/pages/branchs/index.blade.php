@@ -6,7 +6,7 @@
     <div class="bg-light p-4 rounded">
         <h2>@lang('general.lbl_branch')</h2>
         <div class="lead row mb-3">
-            <div class="col-md-10">
+            <div class="col-md-9">
                 <div class="col-md-8">
                     @lang('general.lbl_title')
                 </div>
@@ -18,7 +18,8 @@
                     </form>
                 </div>
             </div>
-            <div class="col-md-2">
+            <div class="col-md-3">
+                <a href="{{ route('branchs.clone') }}" class="btn btn-warning float-right"><span class="fa fa-clone"></span> @lang('general.lbl_clone')</a>
                 <a href="{{ route('branchs.create') }}" class="btn btn-primary float-right"><span class="fa fa-plus-circle"></span> @lang('general.btn_create')</a>
             </div>
         </div>

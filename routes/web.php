@@ -597,6 +597,8 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
             Route::get('/', 'BranchsController@index')->name('branchs.index');
             Route::get('/create', 'BranchsController@create')->name('branchs.create');
             Route::post('/create', 'BranchsController@store')->name('branchs.store');
+            Route::get('/clone', 'BranchsController@clone')->name('branchs.clone');
+            Route::post('/clone_store', 'BranchsController@clone_store')->name('branchs.clone_store');
             Route::get('/{branch}/show', 'BranchsController@show')->name('branchs.show');
             Route::get('/{branch}/edit', 'BranchsController@edit')->name('branchs.edit');
             Route::patch('/{branch}/update', 'BranchsController@update')->name('branchs.update');

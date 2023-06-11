@@ -90,6 +90,65 @@ class BranchsController extends Controller
         return view('pages.branchs.create',['data'=>$data ,'company' => Company::get()->first()]);
     }
 
+     /**
+     * Show form for creating branch
+     * 
+     * @return \Illuminate\Http\Response
+     */
+    public function clone() 
+    {  
+        $user = Auth::user();
+        $id = $user->roles->first()->id;
+        $this->getpermissions($id);
+ 
+        $data = $this->data;
+        return view('pages.branchs.clone',[
+            'data'=>$data ,
+            'branchs' => Branch::join('users_branch as ub','ub.branch_id', '=', 'branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']),
+            'company' => Company::get()->first()
+        ]);
+    }
+
+    public function clone_store(Request $request) 
+    {  
+        $user = Auth::user();
+        $id = $user->roles->first()->id;
+        $this->getpermissions($id);
+
+        $branch_id_source = $request->get('branch_id_source');
+        $branch_id_destination = $request->get('branch_id_destination');
+
+        DB::update("insert into product_distribution(product_id,branch_id,created_at,updated_at,active) select pd.product_id,".$branch_id_destination.",now(),now(),pd.active from product_distribution pd where pd.branch_id = ".$branch_id_source." and ".$branch_id_destination."||''||pd.product_id  not in (select branch_id||''||product_id from product_distribution pd) ");
+        DB::update("insert into product_price(product_id, price, branch_id, updated_by, updated_at, created_by, created_at)
+        SELECT product_id, price, ".$branch_id_destination.", 1, now(), 1, now()
+        FROM product_price where branch_id=".$branch_id_source." and ".$branch_id_destination."||''||product_id  not in 
+        (select branch_id||''||product_id from product_price); ");
+
+        DB::update("insert into product_commisions(product_id, branch_id, created_by_fee, assigned_to_fee, referral_fee, created_at, created_by, remark, updated_at)
+        SELECT product_id, ".$branch_id_destination.", created_by_fee, assigned_to_fee, referral_fee, now(), 1, remark, now()
+        FROM product_commisions where branch_id=".$branch_id_source." and ".$branch_id_destination."||''||product_id  not in 
+        (select branch_id||''||product_id from product_commisions); ");
+
+        DB::update("insert into product_commision_by_year(product_id, branch_id, jobs_id, years, values, created_by, created_at, updated_at)
+        SELECT product_id, ".$branch_id_destination.", jobs_id, years, values, 1, now(), now()
+        FROM product_commision_by_year where branch_id=".$branch_id_source." and ".$branch_id_destination."||''||product_id  not in 
+        (select branch_id||''||product_id from product_commision_by_year);");
+
+        DB::update("insert into product_point(product_id, branch_id, point, created_by, created_at, updated_at)
+        SELECT product_id, ".$branch_id_destination.", point, 1, now(), now()
+        FROM product_point where branch_id=".$branch_id_source." and ".$branch_id_destination."||''||product_id  not in 
+        (select branch_id||''||product_id from product_point);");
+
+        $data = $this->data;
+        $result = array_merge(
+            ['status' => 'success'],
+            ['data' => $request->get('branch_id_source') ],
+            ['message' => "Test"],
+        );
+
+        return $result;
+    }
+
     /**
      * Store a newly created resource in storage.
      *
