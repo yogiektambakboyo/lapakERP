@@ -40,7 +40,6 @@
                 <th scope="col" width="2%" class="nex">@lang('general.lbl_action')</th>  
                 <th scope="col" width="2%" class="nex"></th>
                 <th scope="col" width="2%" class="nex"></th>    
-                <th scope="col" width="2%" class="nex"></th>    
             </tr>
             </thead>
             <tbody>
@@ -54,11 +53,6 @@
                         <td>{{ number_format($order->total,0,',','.') }}</td>
                         <td>{{ number_format($order->total_payment,0,',','.') }}</td>
                         <td><a href="{{ route('invoicesinternal.show', $order->id) }}" class="btn btn-warning btn-sm  {{ $act_permission->allow_show==1?'':'d-none' }}">@lang('general.lbl_show')</a></td>
-                        @if ($order->is_checkout == 0)
-                        <td>
-                            <a onclick="showConfirmCheckout({{ $order->id }}, '{{ $order->invoice_no }}')" class="btn btn-success btn-sm  {{ $act_permission->allow_show==1?'':'d-none' }}">@lang('general.lbl_checkout')</a>
-                        </td>
-                        @endif
                         <td><a href="{{ route('invoicesinternal.edit', $order->id) }}" class="btn btn-info btn-sm  {{ $act_permission->allow_edit==1?'':'d-none' }} ">@lang('general.lbl_edit')</a></td>
                         <td class=" {{ $act_permission->allow_delete==1?'':'d-none' }}">
                             <a onclick="showConfirm({{ $order->id }}, '{{ $order->invoice_no }}')" class="btn btn-danger btn-sm  {{ $act_permission->allow_delete==1?'':'d-none' }} ">@lang('general.lbl_delete')</a>

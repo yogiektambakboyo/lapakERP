@@ -93,13 +93,13 @@ class InvoicesInternalController extends Controller
         $act_permission = $this->act_permission[0];
         
         $invoices = Invoice::orderBy('id', 'ASC')
-                ->join('customers as jt','jt.id','=','invoice_master.customers_id')
-                ->join('branch as b','b.id','=','jt.branch_id')
+                ->join('branch as jt','jt.id','=','invoice_master.customers_id')
+                ->join('branch as b','b.id','=','jt.id')
                 ->join('users_branch as ub', function($join){
                     $join->on('ub.branch_id', '=', 'b.id')
-                    ->whereColumn('ub.branch_id', 'jt.branch_id');
+                    ->whereColumn('ub.branch_id', 'jt.id');
                 })->where('ub.user_id', $user->id)->where('invoice_master.dated','>=',Carbon::now()->subDay(7))->where('invoice_master.invoice_no','ilike','INVI-%')
-              ->get(['invoice_master.is_checkout','invoice_master.id','b.remark as branch_name','invoice_master.invoice_no','invoice_master.dated','jt.name as customer','invoice_master.total','invoice_master.total_discount','invoice_master.total_payment' ]);
+              ->get(['invoice_master.is_checkout','invoice_master.id','b.remark as branch_name','invoice_master.invoice_no','invoice_master.dated','jt.remark as customer','invoice_master.total','invoice_master.total_discount','invoice_master.total_payment' ]);
         return view('pages.invoicesinternal.index',['company' => Company::get()->first()], compact('invoices','data','keyword','act_permission','branchs'))->with('i', ($request->input('page', 1) - 1) * 5);
     }
 
@@ -124,17 +124,17 @@ class InvoicesInternalController extends Controller
             return Excel::download(new InvoicesExport($strencode), 'invoices_'.Carbon::now()->format('YmdHis').'.xlsx');
         }else{
             $invoices = Invoice::orderBy('id', 'ASC')
-                ->join('customers as jt','jt.id','=','invoice_master.customers_id')
-                ->join('branch as b','b.id','=','jt.branch_id')
+                ->join('branch as jt','jt.id','=','invoice_master.customers_id')
+                ->join('branch as b','b.id','=','jt.id')
                 ->join('users_branch as ub', function($join){
                     $join->on('ub.branch_id', '=', 'b.id')
-                    ->whereColumn('ub.branch_id', 'jt.branch_id');
+                    ->whereColumn('ub.branch_id', 'jt.id');
                 })->where('ub.user_id', $user->id)  
                 ->where('invoice_master.invoice_no','ilike','%'.$keyword.'%') 
                 ->where('b.id','like','%'.$branchx.'%')
                 ->where('invoice_master.invoice_no','ilike','INVI-%') 
                 ->whereBetween('invoice_master.dated',$fil) 
-              ->get(['invoice_master.is_checkout','invoice_master.id','b.remark as branch_name','invoice_master.invoice_no','invoice_master.dated','jt.name as customer','invoice_master.total','invoice_master.total_discount','invoice_master.total_payment' ]);
+              ->get(['invoice_master.is_checkout','invoice_master.id','b.remark as branch_name','invoice_master.invoice_no','invoice_master.dated','jt.remark as customer','invoice_master.total','invoice_master.total_discount','invoice_master.total_payment' ]);
         return view('pages.invoicesinternal.index',['company' => Company::get()->first()], compact('invoices','data','keyword','act_permission','branchs'))->with('i', ($request->input('page', 1) - 1) * 5);
         }
     }
@@ -163,7 +163,7 @@ class InvoicesInternalController extends Controller
         $users = User::join('users_branch as ub','ub.branch_id', '=', 'users.branch_id')->where('ub.user_id','=',$user->id)->where('users.job_id','=',2)->get(['users.id','users.name']);
         $usersall = User::join('users_branch as ub','ub.branch_id', '=', 'users.branch_id')->where('ub.user_id','=',$user->id)->whereIn('users.job_id',[1,2])->get(['users.id','users.name']);
         return view('pages.invoicesinternal.create',[
-            'customers' => Customer::join('users_branch as ub','ub.branch_id', '=', 'customers.branch_id')->join('branch as b','b.id','=','ub.branch_id')->where('ub.user_id',$user->id)->orderBy('customers.name')->get(['customers.id','customers.name','b.remark']),
+            'customers' => Branch::join('users_branch as ub','ub.branch_id', '=', 'branch.id')->where('branch.remark','not like','%PUSAT%')->where('branch.id','>',1)->where('ub.user_id',$user->id)->orderBy('branch.remark')->get(['branch.id','branch.remark']),
             'data' => $data,
             'users' => $users,
             'usersall' => $usersall,
@@ -235,10 +235,17 @@ class InvoicesInternalController extends Controller
         // you should create a generated random password and email it to the user
         
         $user = Auth::user();
-        $branch = Customer::where('id','=',$request->get('customer_id'))->get(['branch_id'])->first();
+        $branch = Branch::where('id','=',$request->get('customer_id'))->get(['id'])->first();
+
         //$count_no = DB::select("select max(id) as id from invoice_master om where to_char(om.dated,'YYYY')=to_char(now(),'YYYY') ");
-        $count_no = SettingsDocumentNumber::where('doc_type','=','Invoice Internal')->where('branch_id','=',$branch->branch_id)->where('period','=','Yearly')->get(['current_value','abbr']);
-        $invoice_no = $count_no[0]->abbr.'-'.substr(('000'.$branch->branch_id),-3).'-'.date("Y").'-'.substr(('00000000'.((int)($count_no[0]->current_value) + 1)),-8);
+        $count_no = SettingsDocumentNumber::where('doc_type','=','Invoice Internal')->where('branch_id','=',15)->where('period','=','Yearly')->get(['current_value','abbr']);
+        $invoice_no = $count_no[0]->abbr.'-'.substr(('0015'),-3).'-'.date("Y").'-'.substr(('00000000'.((int)($count_no[0]->current_value) + 1)),-8);
+
+        SettingsDocumentNumber::where('doc_type','=','Invoice Internal')->where('branch_id','=',15)->where('period','=','Yearly')->update(
+            array_merge(
+                ['current_value' => ((int)($count_no[0]->current_value) + 1)]
+            )
+        );
 
         $res_invoice = Invoice::create(
             array_merge(
@@ -248,7 +255,7 @@ class InvoicesInternalController extends Controller
                 ['customers_id' => $request->get('customer_id') ],
                 ['total' => $request->get('total_order') ],
                 ['remark' => $request->get('remark') ],
-                ['customers_name' => Customer::where('id','=',$request->get('customer_id'))->get(['name'])->first()->name],
+                ['customers_name' => Branch::where('id','=',$request->get('customer_id'))->get(['remark'])->first()->remark],
                 ['payment_nominal' => $request->get('payment_nominal') ],
                 ['payment_type' => $request->get('payment_type') ],
                 ['total_payment' => (int)$request->get('payment_nominal')>=(int)$request->get('total_order')?(int)$request->get('total_order'):$request->get('payment_nominal') ],
@@ -304,32 +311,20 @@ class InvoicesInternalController extends Controller
                 return $result;
             }
 
-            DB::update("UPDATE product_stock set qty = qty-".$request->get('product')[$i]['qty']." WHERE branch_id = ".$branch->branch_id." and product_id = ".$request->get('product')[$i]["id"]);
-            DB::update("update public.period_stock set qty_out=qty_out+".$request->get('product')[$i]['qty']." ,updated_at = now(), balance_end = balance_end - ".$request->get('product')[$i]['qty']." where branch_id = ".$branch->branch_id." and product_id = ".$request->get('product')[$i]['id']." and periode = to_char(now(),'YYYYMM')::int;");
 
-            $price_purchase = PeriodSellPrice::whereRaw("period=to_char(now()::date ,'YYYYMM')::int and product_id='".$request->get('product')[$i]['id']."' and branch_id =".$branch->branch_id)->get(['value'])->first();
-            DB::update("UPDATE invoice_detail set price_purchase=".$price_purchase->value." WHERE invoice_no='". $invoice_no."' and product_id = ".$request->get('product')[$i]['id']);
+            DB::update("UPDATE product_stock set qty = qty-".$request->get('product')[$i]['qty']." WHERE branch_id = 15 and product_id = ".$request->get('product')[$i]["id"]);
+            DB::update("update public.period_stock set qty_out=qty_out+".$request->get('product')[$i]['qty']." ,updated_at = now(), balance_end = balance_end - ".$request->get('product')[$i]['qty']." where branch_id = 15 and product_id = ".$request->get('product')[$i]['id']." and periode = to_char(now(),'YYYYMM')::int;");
+
+            DB::update("UPDATE product_stock set qty = qty+".$request->get('product')[$i]['qty']." WHERE branch_id = ".$branch->id." and product_id = ".$request->get('product')[$i]["id"]);
+            DB::update("update public.period_stock set qty_in=qty_in+".$request->get('product')[$i]['qty']." ,updated_at = now(), balance_end = balance_end + ".$request->get('product')[$i]['qty']." where branch_id = ".$branch->id." and product_id = ".$request->get('product')[$i]['id']." and periode = to_char(now(),'YYYYMM')::int;");
 
         }
-
-
-        Order::where('order_no',$request->get('ref_no'))->update(
-            array_merge(
-                ['is_checkout'   => '1'],
-            )
-        );
 
 
         $result = array_merge(
             ['status' => 'success'],
             ['data' => Invoice::where('invoice_no','=',$invoice_no)->get('id')->first()->id ],
             ['message' => $invoice_no],
-        );
-
-        SettingsDocumentNumber::where('doc_type','=','Invoice')->where('branch_id','=',$branch->branch_id)->where('period','=','Yearly')->update(
-            array_merge(
-                ['current_value' => ((int)($count_no[0]->current_value) + 1)]
-            )
         );
 
         return $result;
@@ -355,7 +350,7 @@ class InvoicesInternalController extends Controller
         $payment_type = ['Cash','BCA - Debit','BCA - Kredit','Mandiri - Debit','Mandiri - Kredit','Transfer','QRIS'];
         $usersReferral = User::get(['users.id','users.name']);
         return view('pages.invoicesinternal.show',[
-            'customers' => Customer::join('users_branch as ub','ub.branch_id', '=', 'customers.branch_id')->join('branch as b','b.id','=','ub.branch_id')->where('ub.user_id',$user->id)->get(['customers.id','customers.name','b.remark']),
+            'customers' => Branch::join('users_branch as ub','ub.branch_id', '=', 'branch.id')->where('branch.remark','not like','%PUSAT%')->where('branch.id','>',1)->where('ub.user_id',$user->id)->orderBy('branch.remark')->get(['branch.id','branch.remark']),
             'data' => $data,
             'invoice' => $invoice,
             'room' => $room,
@@ -387,8 +382,8 @@ class InvoicesInternalController extends Controller
             'data' => $data,
             'settings' => Settings::get(),
             'invoice' => Invoice::join('users as u','u.id','=','invoice_master.created_by')->where('invoice_master.id',$invoice->id)->get(['invoice_master.*','u.name'])->first(),
-            'customers' => Customer::where('id',$invoice->customers_id)->get(['customers.*']),
-            'invoiceDetails' => InvoiceDetail::join('invoice_master as om','om.invoice_no','=','invoice_detail.invoice_no')->join('product_sku as ps','ps.id','=','invoice_detail.product_id')->join('product_uom as u','u.product_id','=','invoice_detail.product_id')->join('uom as um','um.id','=','u.uom_id')->join('customers as us','us.id','=','om.customers_id')->join('branch as bc','bc.id','=','us.branch_id')->leftjoin('users as usm','usm.id','=','invoice_detail.referral_by')->where('invoice_detail.invoice_no',$invoice->invoice_no)->orderByRaw('ps.type_id ASC,invoice_detail.seq  ASC')->get(['bc.remark as branch_name','bc.address as branch_address','usm.name as referral_by','us.name as assigned_to','um.remark as uom','invoice_detail.qty','invoice_detail.price','invoice_detail.total','ps.id','ps.remark as product_name','invoice_detail.discount','om.tax','om.voucher_code']),
+            'customers' => Branch::where('id',$invoice->customers_id)->get(['branch.*']),
+            'invoiceDetails' => InvoiceDetail::join('invoice_master as om','om.invoice_no','=','invoice_detail.invoice_no')->join('product_sku as ps','ps.id','=','invoice_detail.product_id')->join('product_uom as u','u.product_id','=','invoice_detail.product_id')->join('uom as um','um.id','=','u.uom_id')->join('branch as us','us.id','=','om.customers_id')->join('branch as bc','bc.id','=','us.id')->leftjoin('users as usm','usm.id','=','invoice_detail.referral_by')->where('invoice_detail.invoice_no',$invoice->invoice_no)->orderByRaw('ps.type_id ASC,invoice_detail.seq  ASC')->get(['bc.remark as branch_name','bc.address as branch_address','usm.name as referral_by','us.remark as assigned_to','um.remark as uom','invoice_detail.qty','invoice_detail.price','invoice_detail.total','ps.id','ps.remark as product_name','invoice_detail.discount','om.tax','om.voucher_code']),
         ])->setOptions(['defaultFont' => 'sans-serif'])->setPaper('a4', 'landscape');
         return $pdf->stream('invoice.pdf');
     }
@@ -572,7 +567,7 @@ class InvoicesInternalController extends Controller
         $type_customer = ['Sendiri','Berdua','Keluarga','Rombongan'];
 
         return view('pages.invoicesinternal.edit',[
-            'customers' => Customer::join('users_branch as ub','ub.branch_id', '=', 'customers.branch_id')->join('branch as b','b.id','=','ub.branch_id')->where('ub.user_id',$user->id)->get(['customers.id','customers.name','b.remark']),
+            'customers' => Branch::join('users_branch as ub','ub.branch_id', '=', 'branch.id')->where('branch.remark','not like','%PUSAT%')->where('branch.id','>',1)->where('ub.user_id',$user->id)->orderBy('branch.remark')->get(['branch.id','branch.remark']),
             'data' => $data,
             'invoice' => $invoice,
             'room' => $room,
@@ -632,12 +627,15 @@ class InvoicesInternalController extends Controller
         $invoice_no = $request->get('invoice_no');
 
         $last_data = InvoiceDetail::where('invoice_detail.invoice_no','=',$invoice_no)->get('invoice_detail.*');
-        $branch_id = Customer::where('id',$request->get('customer_id'))->get(['branch_id'])->first();
+        $branch_id = $request->get('customer_id');
 
 
         for ($i=0; $i < count($last_data); $i++) { 
-            DB::update("UPDATE product_stock set qty = qty+".$last_data[$i]['qty']." WHERE branch_id = ".$branch_id['branch_id']." and product_id = ".$last_data[$i]["product_id"].";");
-            DB::update("update public.period_stock set qty_out=qty_out-".$last_data[$i]['qty']." ,updated_at = now(), balance_end = balance_end + ".$last_data[$i]['qty']."  WHERE branch_id = ".$branch_id['branch_id']." and product_id = ".$last_data[$i]["product_id"]."  and periode = to_char(now(),'YYYYMM')::int;");
+            DB::update("UPDATE product_stock set qty = qty+".$last_data[$i]['qty']." WHERE branch_id = 15 and product_id = ".$last_data[$i]["product_id"].";");
+            DB::update("update public.period_stock set qty_out=qty_out-".$last_data[$i]['qty']." ,updated_at = now(), balance_end = balance_end + ".$last_data[$i]['qty']."  WHERE branch_id = 15 and product_id = ".$last_data[$i]["product_id"]."  and periode = to_char(now(),'YYYYMM')::int;");
+
+            DB::update("UPDATE product_stock set qty = qty-".$last_data[$i]['qty']." WHERE branch_id = ".$branch_id." and product_id = ".$last_data[$i]["product_id"].";");
+            DB::update("update public.period_stock set qty_in=qty_in-".$last_data[$i]['qty']." ,updated_at = now(), balance_end = balance_end + ".$last_data[$i]['qty']."  WHERE branch_id = ".$branch_id." and product_id = ".$last_data[$i]["product_id"]."  and periode = to_char(now(),'YYYYMM')::int;");
         }
 
         InvoiceDetail::where('invoice_no', $invoice_no)->delete();
@@ -651,7 +649,7 @@ class InvoicesInternalController extends Controller
                 ['remark' => $request->get('remark') ],
                 ['payment_nominal' => $request->get('payment_nominal') ],
                 ['payment_type' => $request->get('payment_type') ],
-                ['customers_name' => Customer::where('id','=',$request->get('customer_id'))->get(['name'])->first()->name  ],
+                ['customers_name' => Branch::where('id','=',$request->get('customer_id'))->get(['remark'])->first()->remark  ],
                 ['total_payment' => (int)$request->get('payment_nominal')>=(int)$request->get('total_order')?(int)$request->get('total_order'):$request->get('payment_nominal') ],
                 ['scheduled_at' => Carbon::parse($request->get('scheduled_at'))->format('Y-m-d H:i:s.u') ],
                 ['branch_room_id' => $request->get('branch_room_id')],
@@ -693,8 +691,11 @@ class InvoicesInternalController extends Controller
             );
 
 
-            DB::update("UPDATE product_stock set qty = qty-".$request->get('product')[$i]['qty']." WHERE branch_id = ".$branch_id['branch_id']." and product_id = ".$request->get('product')[$i]["id"]);
-            DB::update("update public.period_stock set qty_out=qty_out+".$request->get('product')[$i]['qty']." ,updated_at = now(), balance_end = balance_end - ".$request->get('product')[$i]['qty']." where branch_id = ".$branch_id['branch_id']." and product_id = ".$request->get('product')[$i]['id']." and periode = to_char(now(),'YYYYMM')::int;");
+            DB::update("UPDATE product_stock set qty = qty-".$request->get('product')[$i]['qty']." WHERE branch_id = 15 and product_id = ".$request->get('product')[$i]["id"]);
+            DB::update("update public.period_stock set qty_out=qty_out+".$request->get('product')[$i]['qty']." ,updated_at = now(), balance_end = balance_end - ".$request->get('product')[$i]['qty']." where branch_id =15 and product_id = ".$request->get('product')[$i]['id']." and periode = to_char(now(),'YYYYMM')::int;");
+
+            DB::update("UPDATE product_stock set qty = qty+".$request->get('product')[$i]['qty']." WHERE branch_id = ".$branch_id." and product_id = ".$request->get('product')[$i]["id"]);
+            DB::update("update public.period_stock set qty_in=qty_in+".$request->get('product')[$i]['qty']." ,updated_at = now(), balance_end = balance_end + ".$request->get('product')[$i]['qty']." where branch_id = ".$branch_id." and product_id = ".$request->get('product')[$i]['id']." and periode = to_char(now(),'YYYYMM')::int;");
 
             if(!$res_invoice_detail){
                 $result = array_merge(

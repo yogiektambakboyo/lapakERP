@@ -3,7 +3,7 @@
 <html>  
    <head> 
       <meta charset = "utf-8"> 
-      <title>Invoice</title>
+      <title>Invoice Internal</title>
       <style>
         body {background-color: whitesmoke;}
         h1   {color: blue;}
@@ -27,9 +27,9 @@
             <td style="text-align: left;padding:15px;">
               
               <img src="data:image/png;base64,{{ base64_encode(file_get_contents(url("images/user-files/".$settings[0]->icon_file))) }}" width="150px"><br>
-              <label>{{ $invoiceDetails[0]->branch_name }}</label><br>
-              <label>{{ $invoiceDetails[0]->branch_address }}</label></td>
-            <td style="width: 50%;font-size:30px;"><p style="color: #212121;">@lang('general.lbl_invoice')</p></td>
+              <label>{{ 'KAKIKU PUSAT' }}</label><br>
+              <label>{{ 'JL. KELAPA SAWIT IX BG 3 NO.1' }}</label></td>
+            <td style="width: 50%;font-size:30px;"><p style="color: #212121;">Faktur Jual Internal</p></td>
           </tr>
           <tr style="background-color: chocolate;">
             <td colspan="2"><br></td>
@@ -41,7 +41,7 @@
           <tr style="text-align: center;height: 50px">
             <td style="text-align: left;padding-left:10px;width:20%;vertical-align: text-top;">        
               <label style="font-weight: bold;">@lang('general.lbl_customer') :</label><br>
-              <label>{{ $customers[0]->name }}</label><br>
+              <label>{{ $customers[0]->remark }}</label><br>
               <label>{{ $customers[0]->address }}</label><br>
               <label>{{ $customers[0]->phone_no }}</label><br>
             </td>
