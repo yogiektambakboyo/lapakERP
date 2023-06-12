@@ -47,7 +47,7 @@
                 @foreach($invoices as $order)
                     <tr>
                         <td>{{ $order->branch_name }}</td>
-                        <td @if ($order->is_checkout == 0) class="bg-danger" @endif>{{ $order->invoice_no }}</td>
+                        <td>{{ $order->invoice_no }}</td>
                         <td>{{ Carbon\Carbon::parse($order->dated)->format('d-m-Y') }}</td>
                         <td>{{ $order->customer }}</td>
                         <td>{{ number_format($order->total,0,',','.') }}</td>
