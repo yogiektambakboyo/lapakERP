@@ -112,14 +112,26 @@ class ReportCloseDayController extends Controller
         $filter_begin_date = date(Carbon::parse($request->filter_begin_date)->format('Y-m-d'));
         $filter_branch_id =  $request->get('filter_branch_id')==null?'%':$request->get('filter_branch_id');
         $report_data = DB::select("
+        select category_id,branch_name,dated,product_name,abbr,type_id,price,qty,case when total=0 then 'Free' else total::character varying end as total,qty_customer from (
                 select ps.category_id,b.remark as branch_name,im.dated,id.product_name,ps.abbr,ps.type_id,id.price,sum(id.qty) as qty,sum(id.total+id.vat_total) as total,count(distinct c.id) as qty_customer
                 from invoice_master im 
                 join invoice_detail id on id.invoice_no = im.invoice_no 
                 join customers c on c.id = im.customers_id 
                 join branch b on b.id=c.branch_id
                 join product_sku ps on ps.id = id.product_id 
-                where im.dated = '".$filter_begin_date."'  and c.branch_id = ".$filter_branch_id."
-                group by ps.category_id,b.remark,im.dated,id.product_name,ps.abbr,id.price,ps.type_id                         
+                where id.total>0 and im.dated = '".$filter_begin_date."'  and c.branch_id = ".$filter_branch_id."
+                group by ps.category_id,b.remark,im.dated,id.product_name,ps.abbr,id.price,ps.type_id     
+                union all
+                select ps.category_id,b.remark as branch_name,im.dated,id.product_name,ps.abbr,ps.type_id,id.price,sum(id.qty) as qty,sum(id.total+id.vat_total) as total,count(distinct c.id) as qty_customer
+                from invoice_master im 
+                join invoice_detail id on id.invoice_no = im.invoice_no 
+                join customers c on c.id = im.customers_id 
+                join branch b on b.id=c.branch_id
+                join product_sku ps on ps.id = id.product_id 
+                where id.total=0  and id.discount=id.price*id.qty  and im.dated = '".$filter_begin_date."'  and c.branch_id = ".$filter_branch_id."
+                group by ps.category_id,b.remark,im.dated,id.product_name,ps.abbr,id.price,ps.type_id     
+        ) a    
+
         ");
 
         $creator = DB::select("

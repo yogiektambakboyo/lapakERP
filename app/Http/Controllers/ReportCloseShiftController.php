@@ -112,6 +112,7 @@ class ReportCloseShiftController extends Controller
         $filter_shift = $request->get('filter_shift')==null?'%':$request->get('filter_shift');
         $filter_branch_id =  $request->get('filter_branch_id')==null?'%':$request->get('filter_branch_id');
         $report_data = DB::select("
+            select category_id,shift_name,branch_name,dated,product_name,abbr,type_id,price,qty,case when total=0 then 'Free' else total::character varying end as total,qty_customer from (
                 select ps.category_id,s.remark as shift_name,b.remark as branch_name,im.dated,id.product_name,ps.abbr,ps.type_id,id.price,sum(id.qty) as qty,sum(id.total+id.vat_total) as total,count(distinct c.id) as qty_customer
                 from invoice_master im 
                 join invoice_detail id on id.invoice_no = im.invoice_no 
@@ -121,9 +122,24 @@ class ReportCloseShiftController extends Controller
                 join product_sku ps on ps.id = id.product_id 
                 join branch_shift bs on bs.branch_id = b.id
                 join shift s on s.id = ".$filter_shift."  and s.id = bs.shift_id
-                where im.dated = '".$filter_begin_date."' and im.created_at::time  between s.time_start and s.time_end  and c.branch_id = ".$filter_branch_id."
-                group by ps.category_id,s.remark,b.remark,im.dated,id.product_name,ps.abbr,id.price,ps.type_id                         
+                where id.total>0 and id.discount<id.total and im.dated = '".$filter_begin_date."' and im.created_at::time  between s.time_start and s.time_end  and c.branch_id = ".$filter_branch_id."
+                group by ps.category_id,s.remark,b.remark,im.dated,id.product_name,ps.abbr,id.price,ps.type_id    
+                union all
+                select ps.category_id,s.remark as shift_name,b.remark as branch_name,im.dated,id.product_name,ps.abbr,ps.type_id,id.price,sum(id.qty) as qty,0 as total,count(distinct c.id) as qty_customer
+                from invoice_master im 
+                join invoice_detail id on id.invoice_no = im.invoice_no 
+                join customers c on c.id = im.customers_id 
+                join branch b on b.id=c.branch_id
+                join users_branch as ub on ub.branch_id = b.id and ub.user_id = '".$user->id."'
+                join product_sku ps on ps.id = id.product_id 
+                join branch_shift bs on bs.branch_id = b.id
+                join shift s on s.id = ".$filter_shift."  and s.id = bs.shift_id
+                where id.total=0 and id.discount=id.price*id.qty  and im.dated = '".$filter_begin_date."' and im.created_at::time  between s.time_start and s.time_end  and c.branch_id = ".$filter_branch_id."
+                group by ps.category_id,s.remark,b.remark,im.dated,id.product_name,ps.abbr,id.price,ps.type_id     
+            )  a order by abbr             
         ");
+
+        
 
         $creator = DB::select("
                 select coalesce(string_agg(distinct created_by,', '),'-') as created_by from (select coalesce(u.name,'-') as created_by
