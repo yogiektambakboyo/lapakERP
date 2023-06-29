@@ -89,10 +89,21 @@ class PurchaseOrderInternalController extends Controller
         $user = Auth::user();
         $act_permission = $this->act_permission[0];
         $branchs = Branch::join('users_branch as ub','ub.branch_id', '=', 'branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']);
-        $purchases = Purchase::orderBy('id', 'ASC')
-                ->join('users_branch as ub', 'ub.branch_id','purchase_master.branch_id')->where('ub.user_id', $user->id)->where('purchase_master.dated','>=',Carbon::now()->subDay(7))  
-                ->where('purchase_master.supplier_name','not like','%PUSAT%')
-              ->get(['purchase_master.id','purchase_master.branch_name','purchase_master.remark','purchase_master.purchase_no','purchase_master.dated','purchase_master.supplier_name as supplier','purchase_master.total','purchase_master.total_discount','purchase_master.total_payment' ]);
+        $ishq_user = 0;
+        for ($i=0; $i < count($branchs) ; $i++) { 
+            if($branchs[$i]->id==15){
+                $ishq_user = 1;
+            }
+        }
+
+        if($ishq_user == 1){
+            $purchases = DB::select("select distinct  pm.id,pm.branch_name,pm.remark,pm.purchase_no,pm.dated,pm.supplier_name as supplier,pm.total_discount,pm.total_payment,pm.total 
+            from purchase_master pm where pm.supplier_name like '%PUSAT%' and pm.dated >= '".Carbon::now()->subDay(7)."' ;");
+        }else{
+            $purchases = DB::select("select distinct  pm.id,pm.branch_name,pm.remark,pm.purchase_no,pm.dated,pm.supplier_name as supplier,pm.total_discount,pm.total_payment,pm.total 
+            from purchase_master pm join users_branch ub on ub.user_id=".$user->id." where pm.supplier_name like '%PUSAT%' and pm.dated >= '".Carbon::now()->subDay(7)."' ;");
+        
+        }
         return view('pages.purchaseordersinternal.index',['company' => Company::get()->first()],compact('purchases','data','keyword','act_permission','branchs','status'))->with('i', ($request->input('page', 1) - 1) * 5);
     }
 
@@ -104,6 +115,8 @@ class PurchaseOrderInternalController extends Controller
 
         $keyword = $request->search;
         $data = $this->data;
+        $status = ['Di Terima','Di Proses','Di Kirim','Batal'];
+
         $act_permission = $this->act_permission[0];
         $branchs = Branch::join('users_branch as ub','ub.branch_id', '=', 'branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']);
 
@@ -115,20 +128,23 @@ class PurchaseOrderInternalController extends Controller
             $strencode = base64_encode($keyword.'#'.$begindate.'#'.$enddate.'#'.$branchx);
             return Excel::download(new PurchasesExport($strencode), 'purchases_'.Carbon::now()->format('YmdHis').'.xlsx');
         }else{
-            $purchases = Purchase::orderBy('id', 'ASC')
-                ->join('suppliers as jt','jt.id','=','purchase_master.supplier_id')
-                ->join('branch as b','b.id','=','jt.branch_id')
-                ->join('users_branch as ub', function($join){
-                    $join->on('ub.branch_id', '=', 'b.id')
-                    ->whereColumn('ub.branch_id', 'jt.branch_id');
-                })
-                ->where('ub.user_id', $user->id)
-                ->where('purchase_master.purchase_no','like','%'.$keyword.'%')
-                ->where('b.id','like','%'.$branchx.'%')  
-                ->where('purchase_master.supplier_name','not like','%PUSAT%')
-                ->whereBetween('purchase_master.dated',$fil)  
-              ->get(['purchase_master.id','b.remark as branch_name','purchase_master.purchase_no','purchase_master.dated','jt.name as supplier','purchase_master.total','purchase_master.total_discount','purchase_master.total_payment' ]);
-              return view('pages.purchaseordersinternal.index',['company' => Company::get()->first()] ,compact('branchs','purchases','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
+
+        $ishq_user = 0;
+        for ($i=0; $i < count($branchs) ; $i++) { 
+            if($branchs[$i]->id==15){
+                $ishq_user = 1;
+            }
+        }
+
+        if($ishq_user == 1){
+            $purchases = DB::select("select distinct  pm.id,pm.branch_name,pm.remark,pm.purchase_no,pm.dated,pm.supplier_name as supplier,pm.total_discount,pm.total_payment,pm.total 
+            from purchase_master pm where pm.supplier_name like '%PUSAT%' and pm.branch_id::character varying like '%".$branchx."%'  and pm.dated between '".$begindate."' and '".$enddate."' ;");
+        }else{
+            $purchases = DB::select("select distinct  pm.id,pm.branch_name,pm.remark,pm.purchase_no,pm.dated,pm.supplier_name as supplier,pm.total_discount,pm.total_payment,pm.total 
+            from purchase_master pm join users_branch ub on ub.user_id=".$user->id." and ub.branch_id::character varying like '%".$branchx."%'  where pm.supplier_name like '%PUSAT%' pm.dated between '".$begindate."' and '".$enddate."' ;");
+        
+        }
+              return view('pages.purchaseordersinternal.index',['company' => Company::get()->first()] ,compact('branchs','purchases','data','keyword','act_permission','status'))->with('i', ($request->input('page', 1) - 1) * 5);
         }
     }
 
@@ -152,7 +168,7 @@ class PurchaseOrderInternalController extends Controller
         $data = $this->data;
         $user = Auth::user();
         $payment_type = ['Cash','BCA - Debit','BCA - Kredit','Mandiri - Debit','Mandiri - Kredit','Transfer','QRIS'];
-        $suppliers = Supplier::join('users_branch as ub','ub.branch_id', '=', 'suppliers.branch_id')->where('suppliers.name','not like','%PUSAT%')->where('ub.user_id','=',$user->id)->get(['suppliers.id','suppliers.name']);
+        $suppliers = Supplier::join('users_branch as ub','ub.branch_id', '=', 'suppliers.branch_id')->where('suppliers.name','like','%PUSAT%')->where('ub.user_id','=',$user->id)->get(['suppliers.id','suppliers.name']);
         $usersall = User::join('users_branch as ub','ub.branch_id', '=', 'users.branch_id')->where('ub.user_id','=',$user->id)->whereIn('users.job_id',[1,2])->get(['users.id','users.name']);
         return view('pages.purchaseordersinternal.create',[
             'customers' => Customer::join('users_branch as ub','ub.branch_id', '=', 'customers.branch_id')->join('branch as b','b.id','=','ub.branch_id')->where('ub.user_id',$user->id)->get(['customers.id','customers.name','b.remark']),
@@ -401,7 +417,7 @@ class PurchaseOrderInternalController extends Controller
     {
         $data = $this->data;
         $user = Auth::user();
-        $product = DB::select(" select od.vat,od.qty,od.product_id,od.discount,od.price,od.subtotal_vat,od.subtotal,ps.remark,ps.abbr,um.remark as uom,om.dated,om.supplier_id,om.branch_id,om.remark as d_remark
+        $product = DB::select(" select om.purchase_no,od.vat,od.qty,od.product_id,od.discount,od.price,od.subtotal_vat,od.subtotal,ps.remark,ps.abbr,um.remark as uom,om.dated,om.supplier_id,om.branch_id,om.remark as d_remark
         from purchase_detail od 
         join purchase_master om on om.purchase_no = od.purchase_no
         join product_sku ps on ps.id=od.product_id
@@ -410,12 +426,17 @@ class PurchaseOrderInternalController extends Controller
         where od.purchase_no='".$purchase_no."' ");
         
         return $product;
-        return Datatables::of($product)
-        ->addColumn('action', function ($product) {
-            return  '<a href="#"  data-toggle="tooltip" data-placement="top" title="Tambah"   id="add_row"  class="btn btn-xs btn-green"><div class="fa-1x"><i class="fas fa-circle-plus fa-fw"></i></div></a>'.
-            '<a href="#"  data-toggle="tooltip" data-placement="top" title="Kurangi"   id="minus_row"  class="btn btn-xs btn-yellow"><div class="fa-1x"><i class="fas fa-circle-minus fa-fw"></i></div></a>'.
-            '<a href="#" data-toggle="tooltip" data-placement="top" title="Hapus"  id="delete_row"  class="btn btn-xs btn-danger"><div class="fa-1x"><i class="fas fa-circle-xmark fa-fw"></i></div></a>';
-        })->make();
+    }
+
+    public function getdocdatabyvendor(String $branch_id) 
+    {
+        $data = $this->data;
+        $user = Auth::user();
+        $list_purchase = DB::select(" select distinct om.purchase_no,om.dated
+        from purchase_master om
+        where om.branch_id='".$branch_id."' ");
+        
+        return $list_purchase;
     }
 
     /**

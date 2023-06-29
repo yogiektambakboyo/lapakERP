@@ -92,6 +92,8 @@ return [
     "lbl_branch_clone" => "Cloning Data Cabang",
     "lbl_information" => "Informasi",
     "lbl_order_list" => "Daftar Pesanan",
+    "lbl_purchase_order_internal_new" => "Pembelian Internal Cabang Baru",
+    
 
     "lbl_filterdata" => "Saring Data",
     "lbl_branch" => "Cabang",

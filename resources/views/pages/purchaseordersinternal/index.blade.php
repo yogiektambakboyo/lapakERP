@@ -295,14 +295,14 @@
                 {
                     'columnDefs': [
                         {
-                            'targets': 0,
-                            'orderable': false,
-                            'className': 'select-checkbox',
+                            //'targets': 0,
+                            //'orderable': false,
+                            //'className': 'select-checkbox',
                         }
                     ],
-                    'select': {
-                        'style': 'multi',
-                    },
+                    //'select': {
+                        //'style': 'multi',
+                    //},
                      'order': [[1, 'asc']]
                 }
         

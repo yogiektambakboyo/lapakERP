@@ -634,7 +634,7 @@ class InvoicesController extends Controller
         $this->getpermissions($id);
         $data = $this->data;
 
-        DB::update(" insert into invoice_detail_log SELECT invoice_no, product_id, qty, price, total, discount, seq, assigned_to, referral_by, updated_at, created_at, uom, product_name, vat, vat_total, assigned_to_name, referral_by_name, price_purchase, executed_at, now() FROM invoice_detail where invoice_no = '".$invoice->invoice_no."'; ");
+        DB::update(" insert into invoice_detail_log SELECT invoice_no, product_id, qty, price, total, discount, seq, assigned_to, referral_by, updated_at, created_at, uom, product_name, vat, vat_total, assigned_to_name, referral_by_name, price_purchase, executed_at, now(), ref_no FROM invoice_detail where invoice_no = '".$invoice->invoice_no."'; ");
 
         $room = Room::where('branch_room.id','=',$invoice->branch_room_id)->get(['branch_room.remark'])->first();
         $payment_type = ['Cash','BCA - Debit','BCA - Kredit','Mandiri - Debit','Mandiri - Kredit','Transfer','QRIS'];

@@ -296,7 +296,8 @@ class InvoicesInternalController extends Controller
                     ['vat' => $request->get('product')[$i]["vat_total"]],
                     ['vat_total' => ((((int)$request->get('product')[$i]["qty"]*(int)$request->get('product')[$i]["price"])-(int)$request->get('product')[$i]["discount"])/100)*(int)$request->get('product')[$i]["vat_total"]],
                     ['product_name' => Product::where('id','=',$request->get('product')[$i]["id"])->get('remark')->first()->remark],
-                    ['uom' => $request->get('product')[$i]["uom"]]
+                    ['uom' => $request->get('product')[$i]["uom"]],
+                    ['ref_no' => $request->get('product')[$i]["po_no"]]
                 )
             );
 
@@ -558,6 +559,8 @@ class InvoicesInternalController extends Controller
         $this->getpermissions($id);
         $data = $this->data;
 
+        DB::update(" insert into invoice_detail_log SELECT invoice_no, product_id, qty, price, total, discount, seq, assigned_to, referral_by, updated_at, created_at, uom, product_name, vat, vat_total, assigned_to_name, referral_by_name, price_purchase, executed_at, now(), ref_no FROM invoice_detail where invoice_no = '".$invoice->invoice_no."'; ");
+
 
         $room = Room::where('branch_room.id','=',$invoice->branch_room_id)->get(['branch_room.remark'])->first();
         $payment_type = ['Cash','BCA - Debit','BCA - Kredit','Mandiri - Debit','Mandiri - Kredit','Transfer','QRIS'];
@@ -686,7 +689,9 @@ class InvoicesInternalController extends Controller
                     ['vat' => $request->get('product')[$i]["vat_total"]],
                     ['vat_total' => ((((int)$request->get('product')[$i]["qty"]*(int)$request->get('product')[$i]["price"])-(int)$request->get('product')[$i]["discount"])/100)*(int)$request->get('product')[$i]["vat_total"]],
                     ['product_name' => $request->get('product')[$i]["abbr"]],
-                    ['uom' => $request->get('product')[$i]["uom"]]
+                    ['uom' => $request->get('product')[$i]["uom"]],
+                    ['ref_no' => $request->get('product')[$i]["po_no"]],
+
                 )
             );
 

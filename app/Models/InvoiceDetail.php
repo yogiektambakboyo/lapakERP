@@ -35,6 +35,7 @@ class InvoiceDetail extends Model
         'executed_at',
         'vat_total',
         'product_name',
+        'ref_no',
         'uom'
     ];
 }

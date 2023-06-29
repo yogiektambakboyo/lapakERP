@@ -7,7 +7,7 @@
   @csrf
   <div class="panel text-white">
     <div class="panel-heading  bg-teal-600">
-      <div class="panel-title"><h4 class="">@lang('general.lbl_purchase_order_new')</h4></div>
+      <div class="panel-title"><h4 class="">@lang('general.lbl_purchase_order_internal_new')</h4></div>
       <div class="">
         <a href="{{ route('purchaseordersinternal.index') }}" class="btn btn-default">@lang('general.lbl_cancel')</a>
         <button type="button" id="save-btn" class="btn btn-info">@lang('general.lbl_save')</button>

@@ -209,6 +209,7 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
             Route::patch('/{purchase}/update', 'PurchaseOrderInternalController@update')->name('purchaseordersinternal.update');
             Route::patch('/{purchase}/updatestatus', 'PurchaseOrderInternalController@updatestatus')->name('purchaseordersinternal.updatestatus');
             Route::get('/{purchase}/getdocdata', 'PurchaseOrderInternalController@getdocdata')->name('purchaseordersinternal.getdocdata');
+            Route::get('/{branch_id}/getdocdatabyvendor', 'PurchaseOrderInternalController@getdocdatabyvendor')->name('purchaseordersinternal.getdocdatabyvendor');
             Route::delete('/{purchase}/delete', 'PurchaseOrderInternalController@destroy')->name('purchaseordersinternal.destroy');
             Route::get('/export', 'PurchaseOrderInternalController@export')->name('purchaseordersinternal.export');
         });

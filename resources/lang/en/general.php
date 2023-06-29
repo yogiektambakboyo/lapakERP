@@ -52,6 +52,7 @@ return [
     "lbl_supplier_edit" => "Ubah Vendor",
     "lbl_purchase_order" => "Pembelian Barang",
     "lbl_purchase_order_new" => "Pembelian Baru",
+    "lbl_purchase_order_internal_new" => "Pembelian Internal Cabang Baru",
     "lbl_shipto" => "Tujuan Pengiriman",
 
     "lbl_show" => "Lihat",
