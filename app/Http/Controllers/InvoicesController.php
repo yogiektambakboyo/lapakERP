@@ -413,7 +413,12 @@ class InvoicesController extends Controller
         $data = $this->data;
         $user = Auth::user();
         $type_customer = ['Sendiri','Berdua','Keluarga','Rombongan'];
-        $room = Room::where('branch_room.id','=',$invoice->branch_room_id)->get(['branch_room.remark'])->first();
+        if($invoice->branch_room_id == ""){
+            $room_id = 14;
+        }else{
+            $room_id = $invoice->branch_room_id;
+        }
+        $room = Room::where('branch_room.id','=', $room_id)->get(['branch_room.remark'])->first();
         $payment_type = ['Cash','BCA - Debit','BCA - Kredit','Mandiri - Debit','Mandiri - Kredit','Transfer','QRIS'];
         $usersReferral = User::get(['users.id','users.name']);
         return view('pages.invoices.show',[
@@ -636,7 +641,13 @@ class InvoicesController extends Controller
 
         DB::update(" insert into invoice_detail_log SELECT invoice_no, product_id, qty, price, total, discount, seq, assigned_to, referral_by, updated_at, created_at, uom, product_name, vat, vat_total, assigned_to_name, referral_by_name, price_purchase, executed_at, now(), ref_no FROM invoice_detail where invoice_no = '".$invoice->invoice_no."'; ");
 
-        $room = Room::where('branch_room.id','=',$invoice->branch_room_id)->get(['branch_room.remark'])->first();
+        if($invoice->branch_room_id == ""){
+            $room_id = 14;
+        }else{
+            $room_id = $invoice->branch_room_id;
+        }
+
+        $room = Room::where('branch_room.id','=',$room_id)->get(['branch_room.remark'])->first();
         $payment_type = ['Cash','BCA - Debit','BCA - Kredit','Mandiri - Debit','Mandiri - Kredit','Transfer','QRIS'];
         $usersall = User::join('users_branch as ub','ub.branch_id', '=', 'users.branch_id')->where('ub.user_id','=',$user->id)->whereIn('users.job_id',[1,2])->orderBy('users.name','ASC')->get(['users.id','users.name']);
         $users = User::join('users_branch as ub','ub.branch_id', '=', 'users.branch_id')->where('ub.user_id','=',$user->id)->where('users.job_id','=',2)->orderBy('users.name','ASC')->get(['users.id','users.name']);
