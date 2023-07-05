@@ -143,7 +143,7 @@
                             <td style="text-align: left;">{{ $report_data->abbr }}</td>
                             <td style="text-align: center;">{{ number_format($report_data->price,0,',','.') }}</td>
                             <td style="text-align: center;">{{ number_format($report_data->qty,0,',','.') }}</td>
-                            <td style="text-align: right;">{{ number_format($report_data->total,0,',','.') }}</td>
+                            <td style="text-align: right;">{{ $report_data->total=='Free'?'Free':number_format($report_data->total,0,',','.') }}</td>
                         </tr>
                         @php
                           $total_product = $total_product+$report_data->total; 
