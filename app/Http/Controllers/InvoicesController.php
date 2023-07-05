@@ -82,6 +82,9 @@ class InvoicesController extends Controller
             from period_stock ps where ps.periode = to_char(now()::date,'YYYYMM')::int-1;");
         }
 
+
+        DB::select("update invoice_master set branch_room_id=14 where branch_room_id is null;");
+        
         SettingsDocumentNumber::where('doc_type','=','Invoice')->whereRaw("to_char(updated_at,'YYYYY')!=to_char(now(),'YYYYY') ")->where('period','=','Yearly')->update(
             array_merge(
                 ['current_value' => 0 ],
