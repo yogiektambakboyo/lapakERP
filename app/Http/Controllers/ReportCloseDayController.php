@@ -119,7 +119,7 @@ class ReportCloseDayController extends Controller
                 join customers c on c.id = im.customers_id 
                 join branch b on b.id=c.branch_id
                 join product_sku ps on ps.id = id.product_id 
-                where id.total>0 and im.dated = '".$filter_begin_date."'  and c.branch_id = ".$filter_branch_id."
+                where id.total>0 and im.dated = '".$filter_begin_date."'  and c.branch_id = ".$filter_branch_id." and ps.id!=461
                 group by ps.category_id,b.remark,im.dated,id.product_name,ps.abbr,id.price,ps.type_id     
                 union all
                 select ps.category_id,b.remark as branch_name,im.dated,id.product_name,ps.abbr,ps.type_id,id.price,sum(id.qty) as qty,sum(id.total+id.vat_total) as total,count(distinct c.id) as qty_customer
@@ -128,7 +128,7 @@ class ReportCloseDayController extends Controller
                 join customers c on c.id = im.customers_id 
                 join branch b on b.id=c.branch_id
                 join product_sku ps on ps.id = id.product_id 
-                where id.total=0  and id.discount=id.price*id.qty  and im.dated = '".$filter_begin_date."'  and c.branch_id = ".$filter_branch_id."
+                where id.total=0  and id.discount=id.price*id.qty  and ps.id!=461 and im.dated = '".$filter_begin_date."'  and c.branch_id = ".$filter_branch_id."
                 group by ps.category_id,b.remark,im.dated,id.product_name,ps.abbr,id.price,ps.type_id     
         ) a    
 
