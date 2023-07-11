@@ -49,19 +49,19 @@
             <div class="row mb-3">
               <label class="form-label col-form-label col-md-2">@lang('general.lbl_creator_fee')</label>
               <div class="col-md-8">
-                <input type="text" class="form-control" name="created_by_fee" value="{{ old('created_by_fee') }}"/>
+                <input type="text" class="form-control" name="created_by_fee" value="0"/>
               </div>
             </div>
             <div class="row mb-3">
               <label class="form-label col-form-label col-md-2">@lang('general.lbl_referral_fee')</label>
               <div class="col-md-8">
-                <input type="text" class="form-control" name="referral_fee" value="{{ old('referral_fee') }}"/>
+                <input type="text" class="form-control" name="referral_fee" value="0"/>
               </div>
             </div>
             <div class="row mb-3">
               <label class="form-label col-form-label col-md-2">@lang('general.lbl_terapist_fee')</label>
               <div class="col-md-8">
-                <input type="text" class="form-control" name="assigned_to_fee" value="{{ old('assigned_to_fee') }}"/>
+                <input type="text" class="form-control" name="assigned_to_fee" value="0"/>
               </div>
             </div>
             </div>

@@ -197,6 +197,18 @@ class HomeController extends Controller
                 where branch_id = 1 ;                
             ");
 
+            $update_null_commision = DB::select("
+                update product_commisions set created_by_fee=0  where created_by_fee is null;
+            ");
+
+            $update_null_commision = DB::select("
+                update product_commisions set assigned_to_fee=0  where assigned_to_fee  is null; 
+            ");
+
+            $update_null_commision = DB::select("
+                update product_commisions set referral_fee=0  where referral_fee  is null; 
+            ");
+
 
             $has_period_stock = DB::select("
                 select periode  from period_stock ps where ps.periode = to_char(now()::date,'YYYYMM')::int;
