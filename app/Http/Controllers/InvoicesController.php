@@ -212,7 +212,7 @@ class InvoicesController extends Controller
         $user = Auth::user();
         $timetable = DB::select(" select br.remark as branch_room_name,right(om.invoice_no,6) as invoice_no,c.name as customer_name,to_char(min(od.executed_at),'HH24:MI') scheduled_at,case when sum(u.conversion)<30 then 30 else sum(u.conversion) end as duration,
         case when sum(u.conversion)<30 then to_char(min(od.executed_at)+interval'30 minutes','HH24:MI') 
-        else to_char((min(od.executed_at)+interval '1 minutes' * sum(u.conversion)),'HH24:MI') end as est_end
+        else to_char((min(od.executed_at)+interval '1 minutes' * sum(u.conversion)),'HH24:MI') end as est_end,string_agg(distinct od.assigned_to_name,' ') as pic 
         from invoice_master om
         join invoice_detail od on od.invoice_no = om.invoice_no 
         join product_uom pu on pu.product_id = od.product_id 

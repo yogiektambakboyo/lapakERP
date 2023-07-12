@@ -263,12 +263,13 @@
                       <table class="table table-striped" id="order_time_table" style="width:100%">
                         <thead>
                         <tr>
-                            <th>@lang('general.lbl_room')   </th>
-                            <th scope="col" width="25%">@lang('general.lbl_invoice_no')   </th>
-                            <th scope="col" width="15%">@lang('general.lbl_total_customer')</th>
-                            <th scope="col" width="15%">@lang('general.lbl_schedule_at')   </th>
-                            <th scope="col" width="5%">@lang('general.lbl_duration')   </th>
-                            <th scope="col" width="15%">@lang('general.lbl_end_estimation') </th>
+                          <th>@lang('general.lbl_room')</th>
+                          <th scope="col" width="13%">No Faktur</th>
+                          <th scope="col" width="13%">@lang('general.lbl_customer')</th>
+                          <th scope="col" width="15%">@lang('general.lbl_schedule_at')   </th>
+                          <th scope="col" width="5%">@lang('general.lbl_duration')   </th>
+                          <th scope="col" width="18%">@lang('general.lbl_end_estimation') </th>
+                          <th scope="col" width="18%">Terapis </th>
                         </tr>
                         </thead>
                         <tbody>
@@ -1042,6 +1043,7 @@
             { data: 'scheduled_at' },
             { data: 'duration' },
             { data: 'est_end' },
+            { data: 'pic' },
         ],
         }); 
 
