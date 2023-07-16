@@ -308,7 +308,7 @@ class ReportCloseDayController extends Controller
         ");
 
         $dtt_detail = DB::select("
-                select right(im.invoice_no,6) as invoice_no,s.remark,c.id,customers_name,string_agg(distinct br.remark,', ') as branch_room,string_agg(distinct u.name,', ') as name,sum(id.qty*id.price)/1000 as total,string_agg(distinct im.payment_type,', ') payment_type,left(string_agg(distinct to_char(im.scheduled_at,'HH24:MI'),', '),5) as scheduled_at
+                select right(im.invoice_no,6) as invoice_no,s.remark,c.id,customers_name,string_agg(distinct br.remark,', ') as branch_room,coalesce(im.payment_nominal,0)/1000 as payment_nominal,string_agg(distinct u.name,', ') as name,sum(id.qty*id.price)/1000 as total,string_agg(distinct im.payment_type,', ') payment_type,left(string_agg(distinct to_char(im.scheduled_at,'HH24:MI'),', '),5) as scheduled_at
                 from invoice_master im 
                 join invoice_detail id on id.invoice_no = im.invoice_no 
                 join users u on u.id = id.assigned_to
@@ -317,7 +317,7 @@ class ReportCloseDayController extends Controller
                 join branch_room br on br.id = im.branch_room_id 
                 left join shift s on im.created_at::time between s.time_start and s.time_end 
                 where im.dated  = '".$filter_begin_date."'  and c.branch_id = ".$filter_branch_id." 
-                group by im.invoice_no,customers_name,c.id,s.remark order by 1,2      
+                group by im.invoice_no,customers_name,c.id,s.remark,im.payment_nominal order by 1,2      
         ");
 
         $dtt_item_only = DB::select("

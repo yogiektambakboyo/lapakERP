@@ -54,9 +54,9 @@
         <thead>
         <tr style="background-color:#FFA726;color:white;">
           <th scope="col" width="2%">No</th>
-          <th scope="col" width="7%" >Ruangan</th>
+          <th scope="col" width="6%" >Ruangan</th>
           <th width="7%" >Nama Tamu</th>
-          <th scope="col" width="7%">Jam Kerja</th>
+          <th scope="col" width="6%">Jam Kerja</th>
           <th width="5%" >MU</th>
             @foreach($dtt_raw_oneline as $header)
               @if((int)$header->total_324>0)
@@ -113,7 +113,7 @@
                 @endif
              
                 @if((int)$header->total_292>0)
-                  <th scope="col" width="3%">V SPA</th>
+                  <th scope="col" width="3%">VSPA</th>
                 @endif
              
                 @if((int)$header->total_293>0)
@@ -129,7 +129,7 @@
               @endif
            
               @if((int)$header->total_296>0)
-                <th scope="col" width="3%">SLIM & BREAST</th>
+                <th scope="col" width="3%">SLIM BRS</th>
               @endif
         
               @if((int)$header->total_297>0)
@@ -152,7 +152,7 @@
               @endif
           
               @if((int)$header->total_302>0)
-                <th scope="col" width="3%">BODY BLEACH</th>
+                <th scope="col" width="3%">BODY BLC</th>
               @endif
            
               @if((int)$header->total_304>0)
@@ -171,7 +171,7 @@
                 <th scope="col" width="3%">FOOT</th>
               @endif
               @if((int)$header->total_308>0)
-                <th scope="col" width="3%">FOOT EXSPR</th>
+                <th scope="col" width="3%">FOOT EXS</th>
                 @endif
               @if((int)$header->total_310>0)
                 <th scope="col" width="3%">BCP</th> 
@@ -189,7 +189,7 @@
               @endif
             
               @if((int)$header->total_317>0)
-                <th scope="col" width="3%">STEAM B</th>
+                <th scope="col" width="3%">STEAMB</th>
               @endif
               @if((int)$header->total_321>0)
                 <th scope="col" width="3%">TP</th>
@@ -206,10 +206,11 @@
               @if((int)$header->total_319>0)
                 <th scope="col" width="3%">22:00</th>
               @endif
-              <th>Pembayaran</th>
-              <th>Produk</th>
-              <th>Nilai</th>
-              <th width="12%">Keterangan</th>
+              <th scope="col" width="4%">Bayar</th>
+              <th scope="col" width="7%">Produk</th>
+              <th scope="col" width="3%">Rp.</th>
+              <th scope="col" width="7%">Minuman</th>
+              <th width="15%">Keterangan</th>
           @endforeach
 
         </tr>
@@ -217,8 +218,10 @@
         <tbody>
           @php
             $total_qty = 0;
+            $total_payment = 0;
             $total_service = 0; 
             $qty_service = 0; 
+            $t_drink = 0;
             $counter = 0;   
             $counterall = 0;   
             $counter_spk = 0;
@@ -490,7 +493,24 @@
                             <td scope="col" width="3%">{{ number_format($dtt_raw[$counter]->total_319,0,',','.') }}</td>
                           @endif
                       @endforeach
-                    <td>{{ $detail->payment_type }}</td>
+                    <td>
+                      @php
+                        $payment = $detail->payment_type;
+                        if($payment == 'BCA - Debit'){
+                          $payment = 'BCAD';
+                        }else if($payment == 'BCA - Kredit'){
+                          $payment = 'BCAK';
+                        }else if($payment == 'Mandiri - Kredit'){
+                          $payment = 'MDRK';
+                        }else if($payment == 'Mandiri - Debit'){
+                          $payment = 'MDRD';
+                        }else if($payment == 'Transfer'){
+                          $payment = 'TRF';
+                        }
+                        $total_payment = $total_payment + $detail->payment_nominal;
+                      @endphp
+                      {{ $payment }} <br> {{ number_format($detail->payment_nominal,0,',','.') }}
+                    </td>
                     <td style="text-align: left;">
 
                       @foreach($dtt_item_only as $diox)
@@ -515,9 +535,11 @@
                       @foreach($dtt_item_only as $diox)
                           @if($diox->type_id==1 && $diox->customers_id == $detail->id && ($diox->refbuy > 0 || $diox->category_id=="26")   && $diox->invoice_no== $detail->invoice_no )
                                 {{ $diox->product_name }} / {{ $diox->qty }}  / {{ $diox->total }}<br>
-                                @php $c_pn=$c_pn+$diox->qty; @endphp<br>
+                                @php $c_pn=$c_pn+$diox->qty;$t_drink=$t_drink+$diox->total; @endphp<br>
                           @endif
                       @endforeach
+                    </td>
+                    <td style="text-align: left;">
                       <?php $last_vc = ""; ?>
                       @foreach($dtt_item_only as $diox)
                           <?php 
@@ -906,9 +928,10 @@
                     @endphp
                       <th scope="col" width="3%">{{ number_format($header->total_319,0,',','.') }}  / {{ $c_319 }} </th>
                     @endif
-                    <th></th>
+                    <th>{{ number_format($total_payment,0,',','.') }}</th>
                     <th>{{ number_format($c_p,0,',','.') }}</th>
                     <th>{{ number_format($t_p,0,',','.') }}</th>
+                    <th>{{ number_format($t_drink,0,',','.') }} / {{ number_format($c_pn,0,',','.') }}</th>
                     <th style="text-align: left;">
                       @foreach($out_datas_total_drink as $out_datas_total_drink) 
                           @php
@@ -942,12 +965,12 @@
                 @endforeach
                 </tr>
                 <tr>
-                  <td colspan="5"></td>
+                  <th colspan="5"></th>
                   <th colspan="{{ $count_column_service }}">{{ number_format($total_service,0,',','.') }} / {{ number_format($qty_service,0,',','.')  }}</th>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
+                  <th>{{ number_format($total_payment,0,',','.') }}</th>
+                  <th colspan="2">{{ number_format($t_p,0,',','.') }} / {{ number_format($c_p,0,',','.') }}</th>
+                  <th>{{ number_format($t_drink,0,',','.') }} / {{ number_format($c_pn,0,',','.') }}</th>
+                  <th></th>
                 </tr>
         </tbody>
       </table>
