@@ -957,9 +957,13 @@
           }else{
 
             counterBlank = 0;
+            counterBlankSell = 0;
             for (var i=0;i<orderList.length;i++){
-              if(orderList[i]["assignedto"]=="" && orderList[i]["type"] == "Services"){
+                if(orderList[i]["assignedto"]=="" && orderList[i]["type_id"] == "Services"){
                   counterBlank++;
+                }
+                if(orderList[i]["referralby"]=="" && orderList[i]["type"] == "Goods"){
+                  counterBlankSell++;
                 }
             }
 
@@ -969,6 +973,19 @@
                   position: 'top-end',
                   icon: 'warning',
                   text: 'Please choose terapist for service',
+                  showConfirmButton: false,
+                  imageHeight: 30, 
+                  imageWidth: 30,   
+                  timer: 1500
+                }
+              );
+            }else if(counterBlankSell>0){
+              console.log(orderList);
+              Swal.fire(
+              {
+                  position: 'top-end',
+                  icon: 'warning',
+                  text: 'Silahkan pilih penjual untuk produk',
                   showConfirmButton: false,
                   imageHeight: 30, 
                   imageWidth: 30,   
@@ -1072,6 +1089,32 @@
             var terapisttable = $('#order_terapist_table').DataTable();
             terapisttable.ajax.reload();
             terapisttable.columns.adjust();
+
+            var url = "{{ route('invoices.getfreeterapist') }}";
+                const res = axios.get(url,
+                {
+                    headers: {
+                      'Content-Type': 'application/json'
+                    },
+                    params : {
+                        
+                    }
+                  }
+                ).then(resp => {
+                    console.log(resp.data);
+                    $('#assign_id')
+                    .find('option')
+                    .remove()
+                    .end()
+                    .append('<option value="">Pilih Terapis</option>');
+
+                    resp.data.forEach(element => {
+                        $('#assign_id')
+                        .append('<option value="'+element.id+'">'+element.name+'</option>');
+                    });
+
+                    $('#assign_id').val(assign_selected);
+                });
         });
 
         var table = $('#order_table').DataTable({

@@ -860,6 +860,31 @@ class InvoicesController extends Controller
         return $result;
     }
 
+    /**
+     * Get Free Terapist
+     * 
+     * 
+     * 
+     * @return \Illuminate\Http\Response
+     */
+    public function getfreeterapist() 
+    {
+        $data = $this->data;
+        $user = Auth::user();
+        $timetable = DB::select(" 
+            select u.id,u.name from users u 
+            join users_branch ub on ub.user_id = u.id 
+            where u.job_id = 2 and ub.branch_id in (select branch_id from users_branch where user_id=83) and u.id not in 
+            (
+                select distinct id.assigned_to  from invoice_master im 
+                join invoice_detail id on id.invoice_no = im.invoice_no 
+                where im.is_checkout = '0' and im.dated = now()::date  and id.assigned_to is not null
+            )
+            order by u.name
+        ");
+        return $timetable;
+    }
+
     public function checkout(Invoice $invoice) 
     {
         $upd = $invoice::where('invoice_no',$invoice->invoice_no)->update(

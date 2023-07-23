@@ -607,6 +607,9 @@
 
 @push('scripts')
     <script type="text/javascript">
+          var room_selected = "";
+          var assign_selected = "";
+
       $(function () {
         $('#customer_id').select2();
 
@@ -878,7 +881,8 @@
                   }
                 );
             }else{
-            $('#scheduled').val($('#room_id option:selected').text()+" - "+$('#schedule_date').val()+" "+$('#timepicker1').val());
+              $('#scheduled').val($('#room_id option:selected').text()+" - "+$('#schedule_date').val()+" "+$('#timepicker1').val());
+              room_selected = $('#room_id').val();
             }
           });
 
@@ -898,6 +902,7 @@
               }
             );
         }else{
+          assign_selected = $('#assign_id option:selected').val();
           table.clear().draw(false);
           table_product.clear().draw(false);
           order_total = 0;
@@ -1144,9 +1149,13 @@
        
   
             counterBlank = 0;
+            counterBlankSell = 0;
             for (var i=0;i<orderList.length;i++){
                 if(orderList[i]["assignedto"]=="" && orderList[i]["type_id"] == "Services"){
                   counterBlank++;
+                }
+                if(orderList[i]["referralbyid"]=="" && orderList[i]["type_id"] == "Good"){
+                  counterBlankSell++;
                 }
             }
 
@@ -1156,6 +1165,18 @@
                   position: 'top-end',
                   icon: 'warning',
                   text: 'Silahkan pilih terapis untuk perawatan',
+                  showConfirmButton: false,
+                  imageHeight: 30, 
+                  imageWidth: 30,   
+                  timer: 1500
+                }
+              );
+            }else if(counterBlankSell>0){
+              Swal.fire(
+              {
+                  position: 'top-end',
+                  icon: 'warning',
+                  text: 'Silahkan pilih penjual untuk produk',
                   showConfirmButton: false,
                   imageHeight: 30, 
                   imageWidth: 30,   
@@ -1241,7 +1262,7 @@
                           showConfirmButton: false,
                           imageHeight: 30, 
                           imageWidth: 30,   
-                          timer: 1500
+                          timer: 3500
                         }
                       );
                     }
@@ -1254,7 +1275,7 @@
                           showConfirmButton: false,
                           imageHeight: 30, 
                           imageWidth: 30,   
-                          timer: 2500
+                          timer: 3500
                         }
                       );
                 console.log(error.toJSON());
@@ -1336,6 +1357,8 @@
                         $('#room_id')
                         .append('<option value="'+element.id+'">'+element.branch_room+'</option>');
                     });
+
+                    $('#room_id').val(room_selected);
                 });
 
 
@@ -1345,6 +1368,32 @@
             var terapisttable = $('#order_terapist_table').DataTable();
             terapisttable.ajax.reload();
             terapisttable.columns.adjust();
+
+            var url = "{{ route('invoices.getfreeterapist') }}";
+                const res = axios.get(url,
+                {
+                    headers: {
+                      'Content-Type': 'application/json'
+                    },
+                    params : {
+                        
+                    }
+                  }
+                ).then(resp => {
+                    console.log(resp.data);
+                    $('#assign_id')
+                    .find('option')
+                    .remove()
+                    .end()
+                    .append('<option value="">Pilih Terapis</option>');
+
+                    resp.data.forEach(element => {
+                        $('#assign_id')
+                        .append('<option value="'+element.id+'">'+element.name+'</option>');
+                    });
+
+                    $('#assign_id').val(assign_selected);
+                });
         });
 
         var table = $('#order_table').DataTable({

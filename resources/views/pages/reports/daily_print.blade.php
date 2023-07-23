@@ -514,7 +514,7 @@
                     <td style="text-align: left;">
 
                       @foreach($dtt_item_only as $diox)
-                          @if($diox->type_id==1 && $diox->customers_id == $detail->id && $diox->refbuy == 0 && $diox->category_id<>"26"  && $diox->invoice_no== $detail->invoice_no)
+                          @if($diox->type_id==1 && $diox->customers_id == $detail->id && $diox->category_id<>"26"  && $diox->invoice_no== $detail->invoice_no)
                                 {{ $diox->product_name }}  / {{ $diox->qty }} <br>
                                 @php $c_p=$c_p+$diox->qty; @endphp
                           @endif
@@ -523,7 +523,7 @@
 
                     <td style="text-align: left;">
                       @foreach($dtt_item_only as $diox)
-                          @if($diox->type_id==1 && $diox->customers_id == $detail->id && $diox->refbuy == 0  && $diox->category_id<>"26"   && $diox->invoice_no== $detail->invoice_no )
+                          @if($diox->type_id==1 && $diox->customers_id == $detail->id  && $diox->category_id<>"26"   && $diox->invoice_no== $detail->invoice_no )
                                 {{ number_format($diox->total,0,',','.') }}<br>
                                 @php 
                                 $t_p=$t_p+$diox->total; 
@@ -533,7 +533,7 @@
                     </td>
                     <td style="text-align: left;">
                       @foreach($dtt_item_only as $diox)
-                          @if($diox->type_id==1 && $diox->customers_id == $detail->id && ($diox->refbuy > 0 || $diox->category_id=="26")   && $diox->invoice_no== $detail->invoice_no )
+                          @if($diox->type_id==1 && $diox->customers_id == $detail->id && ($diox->category_id=="26")   && $diox->invoice_no== $detail->invoice_no )
                                 {{ $diox->product_name }} / {{ $diox->qty }}  / {{ $diox->total }}<br>
                                 @php $c_pn=$c_pn+$diox->qty;$t_drink=$t_drink+$diox->total; @endphp<br>
                           @endif
