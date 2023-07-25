@@ -212,7 +212,7 @@ class InvoicesController extends Controller
         $user = Auth::user();
         $timetable = DB::select(" select br.remark as branch_room_name,right(om.invoice_no,6) as invoice_no,c.name as customer_name,to_char(min(od.executed_at),'HH24:MI') scheduled_at,case when sum(u.conversion)<30 then 30 else sum(u.conversion) end as duration,
         case when sum(u.conversion)<30 then to_char(min(od.executed_at)+interval'30 minutes','HH24:MI') 
-        else to_char((min(od.executed_at)+interval '1 minutes' * sum(u.conversion)),'HH24:MI') end as est_end
+        else to_char((min(od.executed_at)+interval '1 minutes' * sum(u.conversion)),'HH24:MI') end as est_end,string_agg(distinct od.assigned_to_name,' ') as pic 
         from invoice_master om
         join invoice_detail od on od.invoice_no = om.invoice_no 
         join product_uom pu on pu.product_id = od.product_id 
@@ -458,7 +458,7 @@ class InvoicesController extends Controller
             'settings' => Settings::get(),
             'invoice' => Invoice::join('users as u','u.id','=','invoice_master.created_by')->where('invoice_master.id',$invoice->id)->get(['invoice_master.*','u.name'])->first(),
             'customers' => Customer::where('id',$invoice->customers_id)->get(['customers.*']),
-            'invoiceDetails' => InvoiceDetail::join('invoice_master as om','om.invoice_no','=','invoice_detail.invoice_no')->join('product_sku as ps','ps.id','=','invoice_detail.product_id')->join('product_uom as u','u.product_id','=','invoice_detail.product_id')->join('uom as um','um.id','=','u.uom_id')->leftjoin('users as us','us.id','=','invoice_detail.assigned_to')->join('branch as bc','bc.id','=','us.branch_id')->leftjoin('users as usm','usm.id','=','invoice_detail.referral_by')->where('invoice_detail.invoice_no',$invoice->invoice_no)->orderByRaw('ps.type_id ASC,invoice_detail.seq  ASC')->get(['bc.remark as branch_name','bc.address as branch_address','usm.name as referral_by','us.name as assigned_to','um.remark as uom','invoice_detail.qty','invoice_detail.price','invoice_detail.total','ps.id','ps.remark as product_name','invoice_detail.discount','om.tax','om.voucher_code']),
+            'invoiceDetails' => InvoiceDetail::join('invoice_master as om','om.invoice_no','=','invoice_detail.invoice_no')->join('product_sku as ps','ps.id','=','invoice_detail.product_id')->join('product_uom as u','u.product_id','=','invoice_detail.product_id')->join('uom as um','um.id','=','u.uom_id')->leftjoin('users as us','us.id','=','invoice_detail.assigned_to')->join('customers as c','c.id','=','om.customers_id')->join('branch as bc','bc.id','=','c.branch_id')->leftjoin('users as usm','usm.id','=','invoice_detail.referral_by')->where('invoice_detail.invoice_no',$invoice->invoice_no)->orderByRaw('ps.type_id ASC,invoice_detail.seq  ASC')->get(['bc.remark as branch_name','bc.address as branch_address','usm.name as referral_by','us.name as assigned_to','um.remark as uom','invoice_detail.qty','invoice_detail.price','invoice_detail.total','ps.id','ps.remark as product_name','invoice_detail.discount','om.tax','om.voucher_code']),
         ]);
         
         $pdf = PDF::setOptions(['isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true])->loadView('pages.invoices.print', [
@@ -466,7 +466,7 @@ class InvoicesController extends Controller
             'settings' => Settings::get(),
             'invoice' => Invoice::join('users as u','u.id','=','invoice_master.created_by')->where('invoice_master.id',$invoice->id)->get(['invoice_master.*','u.name'])->first(),
             'customers' => Customer::where('id',$invoice->customers_id)->get(['customers.*']),
-            'invoiceDetails' => InvoiceDetail::join('invoice_master as om','om.invoice_no','=','invoice_detail.invoice_no')->join('product_sku as ps','ps.id','=','invoice_detail.product_id')->join('product_uom as u','u.product_id','=','invoice_detail.product_id')->join('uom as um','um.id','=','u.uom_id')->leftjoin('users as us','us.id','=','invoice_detail.assigned_to')->join('branch as bc','bc.id','=','us.branch_id')->leftjoin('users as usm','usm.id','=','invoice_detail.referral_by')->where('invoice_detail.invoice_no',$invoice->invoice_no)->orderByRaw('ps.type_id ASC,invoice_detail.seq  ASC')->get(['bc.remark as branch_name','bc.address as branch_address','usm.name as referral_by','us.name as assigned_to','um.remark as uom','invoice_detail.qty','invoice_detail.price','invoice_detail.total','ps.id','ps.remark as product_name','invoice_detail.discount','om.tax','om.voucher_code']),
+            'invoiceDetails' => InvoiceDetail::join('invoice_master as om','om.invoice_no','=','invoice_detail.invoice_no')->join('product_sku as ps','ps.id','=','invoice_detail.product_id')->join('product_uom as u','u.product_id','=','invoice_detail.product_id')->join('uom as um','um.id','=','u.uom_id')->leftjoin('users as us','us.id','=','invoice_detail.assigned_to')->join('customers as c','c.id','=','om.customers_id')->join('branch as bc','bc.id','=','c.branch_id')->leftjoin('users as usm','usm.id','=','invoice_detail.referral_by')->where('invoice_detail.invoice_no',$invoice->invoice_no)->orderByRaw('ps.type_id ASC,invoice_detail.seq  ASC')->get(['bc.remark as branch_name','bc.address as branch_address','usm.name as referral_by','us.name as assigned_to','um.remark as uom','invoice_detail.qty','invoice_detail.price','invoice_detail.total','ps.id','ps.remark as product_name','invoice_detail.discount','om.tax','om.voucher_code']),
         ])->setOptions(['defaultFont' => 'sans-serif'])->setPaper('a4', 'landscape');
         return $pdf->stream('invoice.pdf');
     }
@@ -858,6 +858,31 @@ class InvoicesController extends Controller
             );   
         }
         return $result;
+    }
+
+    /**
+     * Get Free Terapist
+     * 
+     * 
+     * 
+     * @return \Illuminate\Http\Response
+     */
+    public function getfreeterapist() 
+    {
+        $data = $this->data;
+        $user = Auth::user();
+        $timetable = DB::select(" 
+            select u.id,u.name from users u 
+            join users_branch ub on ub.user_id = u.id 
+            where u.job_id = 2 and ub.branch_id in (select branch_id from users_branch where user_id=83) and u.id not in 
+            (
+                select distinct id.assigned_to  from invoice_master im 
+                join invoice_detail id on id.invoice_no = im.invoice_no 
+                where im.is_checkout = '0' and im.dated = now()::date  and id.assigned_to is not null
+            )
+            order by u.name
+        ");
+        return $timetable;
     }
 
     public function checkout(Invoice $invoice) 
