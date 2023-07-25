@@ -867,7 +867,7 @@ class InvoicesController extends Controller
      * 
      * @return \Illuminate\Http\Response
      */
-    public function getfreeterapist() 
+    public function getfreeterapist(Request $request) 
     {
         $data = $this->data;
         $user = Auth::user();
@@ -878,7 +878,7 @@ class InvoicesController extends Controller
             (
                 select distinct id.assigned_to  from invoice_master im 
                 join invoice_detail id on id.invoice_no = im.invoice_no 
-                where im.is_checkout = '0' and im.dated = now()::date  and id.assigned_to is not null
+                where im.is_checkout = '0' and im.invoice_no not in ('".$request->get('invoice_no')."') and im.dated = now()::date  and id.assigned_to is not null
             )
             order by u.name
         ");

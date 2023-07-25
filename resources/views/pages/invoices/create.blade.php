@@ -1369,8 +1369,13 @@
             terapisttable.ajax.reload();
             terapisttable.columns.adjust();
 
+            const json = JSON.stringify({
+                  invoice_no : '-'
+                }
+              );
+
             var url = "{{ route('invoices.getfreeterapist') }}";
-                const res = axios.get(url,
+                const res = axios.post(url, json,
                 {
                     headers: {
                       'Content-Type': 'application/json'

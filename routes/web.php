@@ -120,7 +120,7 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
             Route::get('/{invoice}/printthermal', 'InvoicesController@printthermal')->name('invoices.printthermal');
             Route::get('/getproduct', 'InvoicesController@getproduct')->name('invoices.getproduct');
             Route::get('/gettimetable', 'InvoicesController@gettimetable')->name('invoices.gettimetable');
-            Route::get('/getfreeterapist', 'InvoicesController@getfreeterapist')->name('invoices.getfreeterapist');
+            Route::post('/getfreeterapist', 'InvoicesController@getfreeterapist')->name('invoices.getfreeterapist');
             Route::get('/gettimetable_room', 'InvoicesController@gettimetable_room')->name('invoices.gettimetable_room');
             Route::get('/getterapisttable', 'InvoicesController@getterapisttable')->name('invoices.getterapisttable');
             Route::get('/{invoice}/getinvoice', 'InvoicesController@getinvoice')->name('invoices.getinvoice');
