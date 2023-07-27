@@ -75,6 +75,7 @@
         <thead>
         <tr style="background-color:#FFA726;color:white;">
             <th>@lang('general.product')</th>
+            <th>Terapis</th>
             <th scope="col" width="20%">@lang('general.lbl_uom')</th>
             <th scope="col" width="15%">@lang('general.lbl_price')</th>
             <th scope="col" width="5%">@lang('general.lbl_qty')</th>
@@ -86,6 +87,7 @@
           @foreach($invoiceDetails as $invoiceDetail)
               <tr>
                   <td style="text-align: left;">{{ $invoiceDetail->product_name }}</th>
+                  <td style="text-align: center;">{{ $invoiceDetail->assigned_to }}</td>
                   <td style="text-align: center;">{{ $invoiceDetail->uom }}</td>
                   <td style="text-align: center;">{{ number_format($invoiceDetail->price,0,',','.') }}</td>
                   <td style="text-align: center;">{{ number_format($invoiceDetail->qty,0,',','.') }}</td>
