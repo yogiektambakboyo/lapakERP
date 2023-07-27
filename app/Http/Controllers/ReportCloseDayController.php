@@ -429,7 +429,7 @@ class ReportCloseDayController extends Controller
             union
             select im.customers_id,im.scheduled_at,right(im.invoice_no,6) as invoice_no,0 as total_324,0 as total_325,0 as total_326,0 as total_327,0 as total_328,0 as total_316,0 as total_309,0 as total_318,0 as total_319,0 as total_280,0 as total_281,0 as total_282,0 as total_283,0 as total_284,0 as total_285,0 as total_286,0 as total_287,0 as total_288,0 as total_289,0 as total_290,0 as total_291,0 as total_292,0 as total_293,0 as total_294,0 as total_295,0 as total_296,0 as total_297,0 as total_298,0 as total_299,0 as total_300,0 as total_301,0 as total_302,0 as total_304,0 as total_305,0 as total_306,0 as total_307,0 as total_308,0 as total_310,0 as total_312,0 as total_313,0 as total_315,0 as total_317,sum(id.total) as total_321 from invoice_master im join invoice_detail id on id.invoice_no = im.invoice_no join product_sku ps on ps.id = id.product_id  and ps.id = 321 where im.dated='".$filter_begin_date."'   group by im.customers_id,right(im.invoice_no,6),im.scheduled_at
         ) a  join invoice_master im on right(im.invoice_no,6) = a.invoice_no 
-        join customers c on c.id= im.customers_id and c.branch_id = ".$filter_branch_id."
+        join customers c on c.id= im.customers_id and c.branch_id = ".$filter_branch_id."  and a.customers_id = c.id
         left join shift s on im.created_at::time between s.time_start and s.time_end 
         group by a.customers_id,a.invoice_no,s.remark  order by 3,1
                 "
