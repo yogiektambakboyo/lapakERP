@@ -962,7 +962,7 @@
                 if(orderList[i]["assignedto"]=="" && orderList[i]["type_id"] == "Services"){
                   counterBlank++;
                 }
-                if(orderList[i]["referralby"]=="" && orderList[i]["type"] == "Goods"){
+                if(orderList[i]["referralby"]=="" && orderList[i]["assignedto"]=="" && orderList[i]["type"] == "Goods"){
                   counterBlankSell++;
                 }
             }

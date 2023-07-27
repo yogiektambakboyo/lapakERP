@@ -1154,7 +1154,7 @@
                 if(orderList[i]["assignedto"]=="" && orderList[i]["type_id"] == "Services"){
                   counterBlank++;
                 }
-                if(orderList[i]["referralbyid"]=="" && orderList[i]["type_id"] == "Good"){
+                if(orderList[i]["assignedto"]=="" && orderList[i]["referralbyid"]=="" && orderList[i]["type_id"] == "Good"){
                   counterBlankSell++;
                 }
             }
