@@ -969,12 +969,12 @@
                 </tr>
                 <tr>
                   <th colspan="5"></th>
+                  <th colspan="{{ $count_column_service }}">{{ number_format($total_service,0,',','.') }} / {{ number_format($qty_service,0,',','.')  }}</th>
                   <?php
                       if($count_column_extra>0){
                         echo '<th colspan="'.$count_column_extra.'">'.number_format($total_extra,0,',','.').' / '.number_format($qty_extra,0,',','.').'</th>';
                       }
                   ?>
-                  <th colspan="{{ $count_column_service }}">{{ number_format($total_service,0,',','.') }} / {{ number_format($qty_service,0,',','.')  }}</th>
                   <th>{{ number_format($total_payment,0,',','.') }}</th>
                   <th colspan="2">{{ number_format($t_p,0,',','.') }} / {{ number_format($c_p,0,',','.') }}</th>
                   <th>{{ number_format($t_drink,0,',','.') }} / {{ number_format($c_pn,0,',','.') }}</th>
