@@ -221,6 +221,8 @@
             $total_payment = 0;
             $total_service = 0; 
             $qty_service = 0; 
+            $total_extra = 0; 
+            $qty_extra = 0; 
             $t_drink = 0;
             $counter = 0;   
             $counterall = 0;   
@@ -559,6 +561,7 @@
                 <tr>
                   @php
                     $count_column_service = 0;
+                    $count_column_extra = 0;
                     $qty_service = 0;
                   @endphp
                   <th colspan="5">JUMLAH</th>
@@ -914,17 +917,17 @@
                     @endif
                     @if((int)$header->total_318>0)
                     @php
-                      $count_column_service++;
-                        $total_service = $total_service + $header->total_318;
-                        $qty_service = $qty_service + $c_318;
+                        $count_column_extra++;
+                        $total_extra = $total_extra + $header->total_318;
+                        $qty_extra = $qty_extra + $c_318;
                     @endphp
                       <th scope="col" width="3%">{{ number_format($header->total_318,0,',','.') }}  / {{ $c_318 }} </th>
                     @endif
                     @if((int)$header->total_319>0)
                     @php
-                      $count_column_service++;
-                        $total_service = $total_service + $header->total_319;
-                        $qty_service = $qty_service + $c_319;
+                        $count_column_extra++;
+                        $total_extra = $total_extra + $header->total_319;
+                        $qty_extra = $qty_extra + $c_319;
                     @endphp
                       <th scope="col" width="3%">{{ number_format($header->total_319,0,',','.') }}  / {{ $c_319 }} </th>
                     @endif
@@ -966,6 +969,11 @@
                 </tr>
                 <tr>
                   <th colspan="5"></th>
+                  <?php
+                      if($count_column_extra>0){
+                        echo '<th colspan="'.$count_column_extra.'">'.number_format($total_extra,0,',','.').' / '.number_format($qty_extra,0,',','.').'</th>';
+                      }
+                  ?>
                   <th colspan="{{ $count_column_service }}">{{ number_format($total_service,0,',','.') }} / {{ number_format($qty_service,0,',','.')  }}</th>
                   <th>{{ number_format($total_payment,0,',','.') }}</th>
                   <th colspan="2">{{ number_format($t_p,0,',','.') }} / {{ number_format($c_p,0,',','.') }}</th>
