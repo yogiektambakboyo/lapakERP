@@ -194,6 +194,59 @@
               @if((int)$header->total_321>0)
                 <th scope="col" width="3%">TP</th>
               @endif
+
+
+              @if((int)$header->total_468>0)
+                <th scope="col" width="3%">FBT JR1</th>
+              @endif
+              @if((int)$header->total_469>0)
+                <th scope="col" width="3%">FBR JR1</th>
+              @endif
+              @if((int)$header->total_470>0)
+                <th scope="col" width="3%">TT JR1</th>
+              @endif
+              @if((int)$header->total_472>0)
+                <th scope="col" width="3%">BACK JR1</th>
+              @endif
+              @if((int)$header->total_474>0)
+                <th scope="col" width="3%">BCM JR1</th>
+              @endif
+              @if((int)$header->total_476>0)
+                <th scope="col" width="3%">FRB JR1</th>
+              @endif
+              @if((int)$header->total_477>0)
+                <th scope="col" width="3%">FOOT JR1</th>
+              @endif
+              @if((int)$header->total_479>0)
+                <th scope="col" width="3%">TT JR2</th>
+              @endif
+              @if((int)$header->total_480>0)
+                <th scope="col" width="3%">FBT JR2</th>
+              @endif
+              @if((int)$header->total_481>0)
+                <th scope="col" width="3%">FBR JR2</th>
+              @endif
+              @if((int)$header->total_482>0)
+                <th scope="col" width="3%">BACK JR2</th>
+              @endif
+              @if((int)$header->total_485>0)
+                <th scope="col" width="3%">BCM JR2</th>
+              @endif
+              @if((int)$header->total_486>0)
+                <th scope="col" width="3%">FRB2</th>
+              @endif
+              @if((int)$header->total_487>0)
+                <th scope="col" width="3%">FOOT JR2</th>
+              @endif
+              @if((int)$header->total_449>0)
+                <th scope="col" width="3%">EBBSLG</th>
+              @endif
+              @if((int)$header->total_453>0)
+                <th scope="col" width="3%">EBBSGT</th>
+              @endif
+
+
+
               @if((int)$header->total_316>0)
                 <th scope="col" width="3%">ET</th>
               @endif
@@ -275,6 +328,23 @@
             $c_326 = 0;
             $c_327 = 0;
             $c_328 = 0;
+            $c_449 = 0;
+            $c_453 = 0;
+
+            $c_468 = 0;
+            $c_469 = 0;
+            $c_470 = 0;
+            $c_472 = 0;
+            $c_474 = 0;
+            $c_476 = 0;
+            $c_477 = 0;
+            $c_479 = 0;
+            $c_480 = 0;
+            $c_481 = 0;
+            $c_482 = 0;
+            $c_485 = 0;
+            $c_486 = 0;
+            $c_487 = 0;
           @endphp
 
             @foreach($dtt_detail as $detail)
@@ -477,6 +547,75 @@
                           @php if((int)$dtt_raw[$counter]->total_321>0){ $c_321++; } @endphp
                             <td scope="col" width="3%">{{ number_format($dtt_raw[$counter]->total_321,0,',','.') }}</td>
                           @endif
+                         
+
+
+                          @if((int)$header->total_468>0)
+                            @php if((int)$dtt_raw[$counter]->total_468>0){ $c_468++; } @endphp
+                              <td scope="col" width="3%">{{ number_format($dtt_raw[$counter]->total_468,0,',','.') }}</td>
+                          @endif
+                          @if((int)$header->total_469>0)
+                            @php if((int)$dtt_raw[$counter]->total_469>0){ $c_469++; } @endphp
+                              <td scope="col" width="3%">{{ number_format($dtt_raw[$counter]->total_469,0,',','.') }}</td>
+                          @endif
+                          @if((int)$header->total_470>0)
+                            @php if((int)$dtt_raw[$counter]->total_470>0){ $c_470++; } @endphp
+                              <td scope="col" width="3%">{{ number_format($dtt_raw[$counter]->total_470,0,',','.') }}</td>
+                          @endif
+                          @if((int)$header->total_472>0)
+                            @php if((int)$dtt_raw[$counter]->total_472>0){ $c_472++; } @endphp
+                              <td scope="col" width="3%">{{ number_format($dtt_raw[$counter]->total_472,0,',','.') }}</td>
+                          @endif
+                          @if((int)$header->total_476>0)
+                            @php if((int)$dtt_raw[$counter]->total_474>0){ $c_476++; } @endphp
+                              <td scope="col" width="3%">{{ number_format($dtt_raw[$counter]->total_474,0,',','.') }}</td>
+                          @endif
+                          @if((int)$header->total_476>0)
+                            @php if((int)$dtt_raw[$counter]->total_476>0){ $c_476++; } @endphp
+                              <td scope="col" width="3%">{{ number_format($dtt_raw[$counter]->total_476,0,',','.') }}</td>
+                          @endif
+                          @if((int)$header->total_477>0)
+                            @php if((int)$dtt_raw[$counter]->total_477>0){ $c_477++; } @endphp
+                              <td scope="col" width="3%">{{ number_format($dtt_raw[$counter]->total_477,0,',','.') }}</td>
+                          @endif
+                          @if((int)$header->total_479>0)
+                            @php if((int)$dtt_raw[$counter]->total_479>0){ $c_479++; } @endphp
+                              <td scope="col" width="3%">{{ number_format($dtt_raw[$counter]->total_479,0,',','.') }}</td>
+                          @endif
+                          @if((int)$header->total_480>0)
+                            @php if((int)$dtt_raw[$counter]->total_480>0){ $c_480++; } @endphp
+                              <td scope="col" width="3%">{{ number_format($dtt_raw[$counter]->total_480,0,',','.') }}</td>
+                          @endif
+                          @if((int)$header->total_481>0)
+                            @php if((int)$dtt_raw[$counter]->total_481>0){ $c_481++; } @endphp
+                              <td scope="col" width="3%">{{ number_format($dtt_raw[$counter]->total_481,0,',','.') }}</td>
+                          @endif
+                          @if((int)$header->total_482>0)
+                            @php if((int)$dtt_raw[$counter]->total_482>0){ $c_482++; } @endphp
+                            <td scope="col" width="3%">{{ number_format($dtt_raw[$counter]->total_482,0,',','.') }}</td>
+                          @endif
+                          @if((int)$header->total_485>0)
+                            @php if((int)$dtt_raw[$counter]->total_485>0){ $c_485++; } @endphp
+                            <td scope="col" width="3%">{{ number_format($dtt_raw[$counter]->total_485,0,',','.') }}</td>
+                          @endif
+                          @if((int)$header->total_486>0)
+                            @php if((int)$dtt_raw[$counter]->total_486>0){ $c_486++; } @endphp
+                            <td scope="col" width="3%">{{ number_format($dtt_raw[$counter]->total_486,0,',','.') }}</td>
+                          @endif
+                          @if((int)$header->total_487>0)
+                            @php if((int)$dtt_raw[$counter]->total_487>0){ $c_487++; } @endphp
+                              <td scope="col" width="3%">{{ number_format($dtt_raw[$counter]->total_487,0,',','.') }}</td>
+                          @endif
+                          @if((int)$header->total_449>0)
+                          @php if((int)$dtt_raw[$counter]->total_449>0){ $c_449++; } @endphp
+                            <td scope="col" width="3%">{{ number_format($dtt_raw[$counter]->total_449,0,',','.') }}</td>
+                          @endif
+                          @if((int)$header->total_453>0)
+                          @php if((int)$dtt_raw[$counter]->total_453>0){ $c_453++; } @endphp
+                            <td scope="col" width="3%">{{ number_format($dtt_raw[$counter]->total_453,0,',','.') }}</td>
+                          @endif
+
+
                            
                           @if((int)$header->total_316>0)
                           @php if((int)$dtt_raw[$counter]->total_316>0){ $c_316++; } @endphp
@@ -890,6 +1029,7 @@
                     @endphp
                       <th scope="col" width="3%">{{ number_format($header->total_317,0,',','.') }}  / {{ $c_317 }} </th>
                     @endif
+
                     @if((int)$header->total_321>0)
                     @php
                       $count_column_service++;
@@ -898,6 +1038,156 @@
                     @endphp
                       <th scope="col" width="3%">{{ number_format($header->total_321,0,',','.') }}  / {{ $c_321 }} </th>
                     @endif
+
+                    
+                    
+                    
+                    @if((int)$header->total_468>0)
+                    @php
+                      $count_column_service++;
+                        $total_service = $total_service + $header->total_468;
+                        $qty_service = $qty_service + $c_468;
+                    @endphp
+                      <th scope="col" width="3%">{{ number_format($header->total_468,0,',','.') }}  / {{ $c_468 }} </th>
+                    @endif
+
+                    @if((int)$header->total_469>0)
+                    @php
+                      $count_column_service++;
+                        $total_service = $total_service + $header->total_469;
+                        $qty_service = $qty_service + $c_469;
+                    @endphp
+                      <th scope="col" width="3%">{{ number_format($header->total_469,0,',','.') }}  / {{ $c_469 }} </th>
+                    @endif
+                    
+                    @if((int)$header->total_470>0)
+                    @php
+                      $count_column_service++;
+                        $total_service = $total_service + $header->total_470;
+                        $qty_service = $qty_service + $c_470;
+                    @endphp
+                      <th scope="col" width="3%">{{ number_format($header->total_470,0,',','.') }}  / {{ $c_470 }} </th>
+                    @endif
+                    
+                    @if((int)$header->total_472>0)
+                    @php
+                      $count_column_service++;
+                        $total_service = $total_service + $header->total_472;
+                        $qty_service = $qty_service + $c_472;
+                    @endphp
+                      <th scope="col" width="3%">{{ number_format($header->total_472,0,',','.') }}  / {{ $c_472 }} </th>
+                    @endif
+                    
+                    @if((int)$header->total_474>0)
+                    @php
+                      $count_column_service++;
+                        $total_service = $total_service + $header->total_474;
+                        $qty_service = $qty_service + $c_474;
+                    @endphp
+                      <th scope="col" width="3%">{{ number_format($header->total_474,0,',','.') }}  / {{ $c_474 }} </th>
+                    @endif
+                    
+                    @if((int)$header->total_476>0)
+                    @php
+                      $count_column_service++;
+                        $total_service = $total_service + $header->total_476;
+                        $qty_service = $qty_service + $c_476;
+                    @endphp
+                      <th scope="col" width="3%">{{ number_format($header->total_476,0,',','.') }}  / {{ $c_476 }} </th>
+                    @endif
+                    
+                    @if((int)$header->total_477>0)
+                    @php
+                      $count_column_service++;
+                        $total_service = $total_service + $header->total_477;
+                        $qty_service = $qty_service + $c_477;
+                    @endphp
+                      <th scope="col" width="3%">{{ number_format($header->total_477,0,',','.') }}  / {{ $c_477 }} </th>
+                    @endif
+                    
+                    @if((int)$header->total_479>0)
+                    @php
+                      $count_column_service++;
+                        $total_service = $total_service + $header->total_479;
+                        $qty_service = $qty_service + $c_479;
+                    @endphp
+                      <th scope="col" width="3%">{{ number_format($header->total_479,0,',','.') }}  / {{ $c_479 }} </th>
+                    @endif
+                    
+                    @if((int)$header->total_480>0)
+                    @php
+                      $count_column_service++;
+                        $total_service = $total_service + $header->total_480;
+                        $qty_service = $qty_service + $c_480;
+                    @endphp
+                      <th scope="col" width="3%">{{ number_format($header->total_480,0,',','.') }}  / {{ $c_480 }} </th>
+                    @endif
+                    
+                    @if((int)$header->total_481>0)
+                    @php
+                      $count_column_service++;
+                        $total_service = $total_service + $header->total_481;
+                        $qty_service = $qty_service + $c_481;
+                    @endphp
+                      <th scope="col" width="3%">{{ number_format($header->total_481,0,',','.') }}  / {{ $c_481 }} </th>
+                    @endif
+                    
+                    @if((int)$header->total_482>0)
+                    @php
+                      $count_column_service++;
+                        $total_service = $total_service + $header->total_482;
+                        $qty_service = $qty_service + $c_482;
+                    @endphp
+                      <th scope="col" width="3%">{{ number_format($header->total_482,0,',','.') }}  / {{ $c_482 }} </th>
+                    @endif
+                    
+                    @if((int)$header->total_485>0)
+                    @php
+                      $count_column_service++;
+                        $total_service = $total_service + $header->total_485;
+                        $qty_service = $qty_service + $c_485;
+                    @endphp
+                      <th scope="col" width="3%">{{ number_format($header->total_485,0,',','.') }}  / {{ $c_485 }} </th>
+                    @endif
+                    
+                    @if((int)$header->total_486>0)
+                    @php
+                      $count_column_service++;
+                        $total_service = $total_service + $header->total_486;
+                        $qty_service = $qty_service + $c_486;
+                    @endphp
+                      <th scope="col" width="3%">{{ number_format($header->total_486,0,',','.') }}  / {{ $c_486 }} </th>
+                    @endif
+                    
+                    @if((int)$header->total_487>0)
+                    @php
+                      $count_column_service++;
+                        $total_service = $total_service + $header->total_487;
+                        $qty_service = $qty_service + $c_487;
+                    @endphp
+                      <th scope="col" width="3%">{{ number_format($header->total_487,0,',','.') }}  / {{ $c_487 }} </th>
+                    @endif
+
+                    @if((int)$header->total_449>0)
+                    @php
+                      $count_column_service++;
+                        $total_service = $total_service + $header->total_449;
+                        $qty_service = $qty_service + $c_449;
+                    @endphp
+                      <th scope="col" width="3%">{{ number_format($header->total_449,0,',','.') }}  / {{ $c_449 }} </th>
+                    @endif
+
+                    @if((int)$header->total_453>0)
+                    @php
+                      $count_column_service++;
+                        $total_service = $total_service + $header->total_453;
+                        $qty_service = $qty_service + $c_453;
+                    @endphp
+                      <th scope="col" width="3%">{{ number_format($header->total_453,0,',','.') }}  / {{ $c_453 }} </th>
+                    @endif
+
+
+
 
                     @if((int)$header->total_316>0)
                     @php
