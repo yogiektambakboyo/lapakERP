@@ -1,6 +1,6 @@
 @extends('layouts.default', ['appSidebarSearch' => true])
 
-@section('title', 'Create New SPK')
+@section('title', 'Create New Order')
 
 @section('content')
 <form method="POST" action="{{ route('orders.store') }}"  enctype="multipart/form-data">
@@ -18,8 +18,8 @@
         <div class="row mb-3">
           <div class="col-md-12">
             <div class="row mb-3">
-              <label class="form-label col-form-label col-md-2">@lang('general.lbl_dated_mmddYYYY')</label>
-              <div class="col-md-1">
+              <label class="form-label col-form-label col-md-1">@lang('general.lbl_dated_mmddYYYY')</label>
+              <div class="col-md-2">
                 <input type="hidden" 
                 name="voucher_code"
                 id="voucher_code"
@@ -47,16 +47,18 @@
               <div class="col-md-1">
                 <a type="button" id="add-customer-btn" class="btn btn-green"  href="#modal-add-customer" data-bs-toggle="modal" data-bs-target="#modal-add-customer"><span class="fas fa-user-plus"></span></a>
               </div>
-              <label class="form-label col-form-label col-md-1">@lang('general.lbl_schedule')</label>
+              <label class="form-label col-form-label col-md-2">@lang('general.lbl_nominal_payment')</label>
               <div class="col-md-3">
-                  <div class="input-group">
-                    <input type="text" class="form-control" id="scheduled" disabled>
-                    <button type="button" class="btn btn-indigo" data-bs-toggle="modal" data-bs-target="#modal-scheduled" >
-                      <span class="fas fa-calendar-days"></span>
-                    </button>
-                  </div>
-              </div>
+                <input type="text" 
+                id="payment_nominal"
+                name="payment_nominal"
+                class="form-control" 
+                value="{{ old('remark') }}"/>
+                </div>
+
+               
             </div>
+
             <div class="row mb-3">
               <label class="form-label col-form-label col-md-1">@lang('general.lbl_remark')</label>
               <div class="col-md-2">
@@ -67,7 +69,7 @@
                   value="{{ old('remark') }}"/>
               </div>
               <label class="form-label col-form-label col-md-1">@lang('general.lbl_type_payment')</label>
-              <div class="col-md-2">
+              <div class="col-md-3">
                 <select class="form-control" 
                       name="payment_type" id ="payment_type" required>
                       <option value="">@lang('general.lbl_type_paymentselect')</option>
@@ -77,19 +79,11 @@
                   </select>
               </div>
 
-                <label class="form-label col-form-label col-md-2">@lang('general.lbl_nominal_payment')</label>
-                <div class="col-md-1">
-                  <input type="text" 
-                  id="payment_nominal"
-                  name="payment_nominal"
-                  class="form-control" 
-                  value="{{ old('remark') }}"/>
-                  </div>
-
-                  <label class="form-label col-form-label col-md-1">@lang('general.lbl_charge')</label>
-                  <div class="col-md-2">
-                    <h2 class="text-end"><label id="order_charge">Rp. 0</label></h2>
-                  </div>
+              <label class="form-label col-form-label col-md-1">@lang('general.lbl_charge')</label>
+              <div class="col-md-2">
+                <h2 class="text-end"><label id="order_charge">Rp. 0</label></h2>
+              </div>
+                
                 
             </div>
 
@@ -121,7 +115,7 @@
                 name="input_product_price"
                 id="input_product_price"
                 class="form-control" 
-                value="{{ old('input_product_price') }}" required disabled/>
+                value="{{ old('input_product_price') }}" required/>
               </div>
 
 
@@ -174,7 +168,6 @@
                   <th scope="col" width="5%">@lang('general.lbl_discount')</th>
                   <th scope="col" width="5%">@lang('general.lbl_qty')</th>
                   <th scope="col" width="15%">Total</th>  
-                  <th scope="col" width="15%">@lang('general.lbl_terapist')</th>  
                   <th scope="col" width="15%" class="nex">@lang('general.lbl_action')</th> 
               </tr>
               </thead>
@@ -185,7 +178,7 @@
             
             <div class="row mb-3">
               <div class="col-md-6">
-                <div class="row mb-3">
+                <div class="row mb-3 d-none">
                     <label class="form-label col-form-label col-md-3" id="label-voucher">Voucher</label>
                     <br>
                     <div class="col-md-5">
@@ -202,13 +195,13 @@
 
 
               <div class="col-md-6">
-                <div class="col-md-12">
+                <div class="col-md-12 d-none">
                   <div class="col-auto text-end">
                     <label class="col-md-2"><h2>Sub Total </h2></label>
                     <label class="col-md-8" id="sub-total"> <h3>0</h3></label>
                   </div>
                 </div>
-                <div class="col-md-12">
+                <div class="col-md-12 d-none">
                   <div class="col-auto text-end">
                     <label class="col-md-2"><h2>@lang('general.lbl_tax') </h2></label>
                     <label class="col-md-8" id="vat-total"> <h3>0</h3></label>
@@ -371,7 +364,7 @@
                     </div>
                    
                     <div class="panel-heading bg-teal-600 text-white"><strong>@lang('general.lbl_schedule_list')   </strong></div>
-                    </br>
+                    <br>
       
                     <div class="col-md-12">
                       <table class="table table-striped" id="order_time_table" style="width:100%">
@@ -425,12 +418,12 @@
           if (dd < 10) dd = '0' + dd;
           if (mm < 10) mm = '0' + mm;
 
-          const formattedToday = mm + '/' + dd + '/' + yyyy;
+          const formattedToday = dd + '-' + mm + '-' + yyyy;
+          $('#order_date').val(formattedToday);
           $('#order_date').datepicker({
-              format : 'yyyy-mm-dd',
+              dateFormat : 'dd-mm-yy',
               todayHighlight: true,
           });
-          $('#order_date').val(formattedToday);
           $('#schedule_date').datepicker({
               format : 'yyyy-mm-dd',
               todayHighlight: true,
@@ -594,8 +587,6 @@
                     "discount"  : obj["discount"],
                     "qty"       : obj["qty"],
                     "total"     : obj["total"],
-                    "assignedto": obj["assignedto"],
-                    "assignedtoid": obj["assignedtoid"],
                     "action"    : "",
               }).draw(false);
               disc_total = disc_total + (parseFloat(orderList[i]["discount"]));
@@ -665,19 +656,6 @@
                 timer: 1500
               }
             );
-          }else if($('#scheduled').val()==''){
-            $('#scheduled').focus();
-            Swal.fire(
-              {
-                position: 'top-end',
-                icon: 'warning',
-                text: 'Please choose schedule',
-                showConfirmButton: false,
-                imageHeight: 30, 
-                imageWidth: 30,   
-                timer: 1500
-              }
-            );
           }else if(orderList.length<=0){
             Swal.fire(
               {
@@ -698,20 +676,6 @@
                   counterBlank++;
                 }
             }
-
-            if(counterBlank>0){
-              Swal.fire(
-              {
-                  position: 'top-end',
-                  icon: 'warning',
-                  text: 'Please choose terapist for service',
-                  showConfirmButton: false,
-                  imageHeight: 30, 
-                  imageWidth: 30,   
-                  timer: 1500
-                }
-              );
-            }else{
                 const json = JSON.stringify({
                   order_date : $('#order_date').val(),
                   product : orderList,
@@ -721,7 +685,7 @@
                   payment_nominal : $('#payment_nominal').val(),
                   total_order : order_total,
                   scheduled_at : $('#schedule_date').val()+" "+$('#timepicker1').val(),
-                  branch_room_id : $('#room_id').val(),
+                  branch_room_id : 1,
                   total_discount : disc_total,
                   total_vat : _vat_total,
                   voucher_code :  $("#voucher_code").val()
@@ -749,7 +713,6 @@
                       );
                     }
               });
-            }
           }
         });
         
@@ -779,8 +742,7 @@
             defaultContent: 
             '<a href="#"  data-toggle="tooltip" data-placement="top" title="Tambah"   id="add_row"  class="btn btn-green"><div class="fa-1x"><i class="fas fa-circle-plus fa-fw"></i></div></a>'+
             '<a href="#"  data-toggle="tooltip" data-placement="top" title="Kurangi"   id="minus_row"  class="btn btn-yellow"><div class="fa-1x"><i class="fas fa-circle-minus fa-fw"></i></div></a>'+
-            '<a href="#" data-toggle="tooltip" data-placement="top" title="Hapus"  id="delete_row"  class="btn btn-danger"><div class="fa-1x"><i class="fas fa-circle-xmark fa-fw"></i></div></a>'+
-            '<a href="#" href="#modal-filter" data-bs-toggle="modal" data-bs-target="#modal-filter"  data-toggle="tooltip" data-placement="top" title="Terapis" id="assign_row" class="btn btn-gray"><div class="fa-1x"><i class="fas fa-user-tag fa-fw"></i></div></a>',}],
+            '<a href="#" data-toggle="tooltip" data-placement="top" title="Hapus"  id="delete_row"  class="btn btn-danger"><div class="fa-1x"><i class="fas fa-circle-xmark fa-fw"></i></div></a>',}],
           columns: [
             { data: 'abbr' },
             { data: 'uom' },
@@ -788,7 +750,6 @@
             { data: 'discount',render: DataTable.render.number( '.', null, 0, '' ) },
             { data: 'qty',render: DataTable.render.number( '.', null, 0, '' ) },
             { data: 'total',render: DataTable.render.number( '.', null, 0, '' ) },
-            { data: 'assignedto' },
             { data: null},
         ],
         });
@@ -841,7 +802,6 @@
                     "discount"  : obj["discount"],
                     "qty"       : obj["qty"],
                     "total"     : obj["total"],
-                    "assignedto": obj["assignedto"],
                     "action"    : "",
               }).draw(false);
               disc_total = disc_total + (parseFloat(orderList[i]["discount"]));
@@ -918,7 +878,6 @@
                       "discount"  : obj["discount"],
                       "qty"       : obj["qty"],
                       "total"     : obj["total"],
-                      "assignedto" : obj["assignedto"],
                       "action"    : "",
                 }).draw(false);
               disc_total = disc_total + (parseFloat(orderList[i]["discount"]));
@@ -1033,7 +992,6 @@
                               "discount"  : obj["discount"],
                               "qty"       : obj["qty"],
                               "total"     : obj["total"],
-                              "assignedto": obj["assignedto"],
                               "action"    : "",
                         }).draw(false);
                         disc_total = disc_total + (parseFloat(orderList[i]["discount"]));

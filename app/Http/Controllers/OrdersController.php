@@ -458,17 +458,8 @@ class OrdersController extends Controller
                     ['vat' => $request->get('product')[$i]["vat_total"]],
                     ['vat_total' => $request->get('product')[$i]["total_vat"]],
                     ['seq' => $i ],
-                    ['assigned_to' => $request->get('product')[$i]["assignedtoid"]],
-                    ['assigned_to_name' => User::where('id','=',$request->get('product')[$i]["assignedtoid"])->get(['name'])->first()->name ],
-                    ['referral_by' => $user->id],
-                    ['referral_by_name' => User::where('id','=', $user->id)->get(['name'])->first()->name],
                 )
             );
-
-            $counters_ = DB::select("select count(users_id)+1 as c from shift_counter where branch_id='".$branch->branch_id."';"); 
-            DB::select("update shift_counter set queue_no=".$counters_[0]->c.",updated_at=now() where users_id=".$request->get('product')[$i]['assignedtoid']."; ");
-            DB::select("update shift_counter set queue_no=queue_no-1,updated_at=now() where  branch_id='".$branch->branch_id."'; ");
-
 
             if(!$res_order_detail){
                 $result = array_merge(
@@ -600,16 +591,13 @@ class OrdersController extends Controller
     {
         $data = $this->data;
         $user = Auth::user();
-        $product = DB::select(" select od.vat,od.vat_total,to_char(om.scheduled_at,'mm/dd/YYYY') as scheduled_date,to_char(om.scheduled_at,'HH24:MI') as scheduled_time,rm.remark as room_name,om.customers_id,om.remark as order_remark,to_char(om.dated,'mm/dd/YYYY') as dated,om.payment_type,om.payment_nominal,om.scheduled_at,om.branch_room_id,od.qty,od.product_id,od.discount,od.price,od.total,ps.remark,ps.abbr,um.remark as uom,us.name as assignedto,us.id as assignedtoid,
-        usr.name as referralby,usr.id as referralbyid   
+        $product = DB::select(" select od.vat,od.vat_total,to_char(om.scheduled_at,'mm/dd/YYYY') as scheduled_date,to_char(om.scheduled_at,'HH24:MI') as scheduled_time,'' as room_name,om.customers_id,om.remark as order_remark,to_char(om.dated,'mm/dd/YYYY') as dated,om.payment_type,om.payment_nominal,om.scheduled_at,0 as branch_room_id,od.qty,od.product_id,od.discount,od.price,od.total,ps.remark,ps.abbr,um.remark as uom,'' as assignedto,0 as assignedtoid,
+        '' as referralby,0 as referralbyid   
         from order_detail od 
         join order_master om on om.order_no = od.order_no
         join product_sku ps on ps.id=od.product_id
         join product_uom uo on uo.product_id = od.product_id
         join uom um on um.id=uo.uom_id 
-        join users us on us.id= od.assigned_to
-        join users usr on usr.id= od.referral_by
-        join branch_room rm on rm.id=om.branch_room_id
         where od.order_no='".$order_no."' ");
         
         return $product;
@@ -617,9 +605,7 @@ class OrdersController extends Controller
         ->addColumn('action', function ($product) {
             return  '<a href="#"  data-toggle="tooltip" data-placement="top" title="Tambah"   id="add_row"  class="btn btn-xs btn-green"><div class="fa-1x"><i class="fas fa-circle-plus fa-fw"></i></div></a>'.
             '<a href="#"  data-toggle="tooltip" data-placement="top" title="Kurangi"   id="minus_row"  class="btn btn-xs btn-yellow"><div class="fa-1x"><i class="fas fa-circle-minus fa-fw"></i></div></a>'.
-            '<a href="#" data-toggle="tooltip" data-placement="top" title="Hapus"  id="delete_row"  class="btn btn-xs btn-danger"><div class="fa-1x"><i class="fas fa-circle-xmark fa-fw"></i></div></a>'.
-            '<a href="#"  data-toggle="tooltip" data-placement="top" title="Terapis" id="assign_row" class="btn btn-xs btn-gray"><div class="fa-1x"><i class="fas fa-user-tag fa-fw"></i></div></a>'.
-            '<a href="#" data-toggle="tooltip" data-placement="top" title="Dijual Oleh"  id="referral_row" class="btn btn-xs btn-purple"><div class="fa-1x"><i class="fas fa-users fa-fw"></i></div></a>' ;
+            '<a href="#" data-toggle="tooltip" data-placement="top" title="Hapus"  id="delete_row"  class="btn btn-xs btn-danger"><div class="fa-1x"><i class="fas fa-circle-xmark fa-fw"></i></div></a>' ;
         })->make();
     }
 
@@ -650,7 +636,7 @@ class OrdersController extends Controller
                 ['payment_type' => $request->get('payment_type') ],
                 ['total_payment' => (int)$request->get('payment_nominal')>=(int)$request->get('total_order')?(int)$request->get('total_order'):$request->get('payment_nominal') ],
                 ['scheduled_at' => Carbon::parse($request->get('scheduled_at'))->format('Y-m-d H:i:s.u') ],
-                ['branch_room_id' => $request->get('branch_room_id')],
+                ['branch_room_id' => 0],
                 ['customers_name' => Customer::where('id','=',$request->get('customer_id'))->get(['name'])->first()->name ],
                 ['voucher_code' => $request->get('voucher_code')],
                 ['tax' => $request->get('total_vat')],
@@ -692,10 +678,6 @@ class OrdersController extends Controller
                     ['vat' => $request->get('product')[$i]["vat_total"]],
                     ['vat_total' => $request->get('product')[$i]["total_vat"]],
                     ['seq' => $i ],
-                    ['assigned_to' => $request->get('product')[$i]["assignedtoid"]],
-                    ['assigned_to_name' => User::where('id','=',$request->get('product')[$i]["assignedtoid"])->get(['name'])->first()->name ],
-                    ['referral_by' => $user->id],
-                    ['referral_by_name' => User::where('id','=', $user->id)->get(['name'])->first()->name],
                 )
             );
 

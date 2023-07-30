@@ -3,7 +3,7 @@
 <html>  
    <head> 
       <meta charset = "utf-8"> 
-      <title>Print SPK</title>
+      <title>Print Order</title>
       <style>
         body {background-color: whitesmoke;}
         h1   {color: blue;}
@@ -34,7 +34,7 @@
                     <td style="text-align: left;padding:10px;width:5%">
                       <label style="font-weight: bold;">Cabang</label><label></label><br>
                       <label style="font-weight: bold;">Tanggal</label><br>
-                      <label style="font-weight: bold;">SPK No</label><br>
+                      <label style="font-weight: bold;">Order No</label><br>
                     </td>
                     <td style="text-align: left;width: 80%;font-size:10px;">
                       <label> {{ $customers[0]->branch_name }}</label><br>

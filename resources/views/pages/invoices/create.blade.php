@@ -18,8 +18,8 @@
         <div class="row mb-3">
           <div class="col-md-3">
             <div class="row mb-3">
-              <label class="form-label col-form-label col-md-6">@lang('general.lbl_dated_mmddYYYY')</label>
-              <div class="col-md-6">
+              <label class="form-label col-form-label col-md-4">@lang('general.lbl_dated_mmddYYYY')</label>
+              <div class="col-md-8">
                 <input type="text" 
                 name="invoice_date"
                 id="invoice_date"
@@ -58,8 +58,8 @@
 
 
 
-              <label class="form-label col-form-label col-md-1">@lang('general.lbl_customer')</label>
-              <div class="col-md-2">
+              <label class="form-label col-form-label col-md-2">@lang('general.lbl_customer')</label>
+              <div class="col-md-4">
                 <select class="form-control" 
                     name="customer_id" id="customer_id" required>
                     <option value="">@lang('general.lbl_customerselect')</option>
@@ -72,8 +72,8 @@
                 <a type="button" id="add-customer-btn" class="btn btn-green"  href="#modal-add-customer" data-bs-toggle="modal" data-bs-target="#modal-add-customer"><span class="fas fa-user-plus"></span></a>
               </div>
 
-              <label class="form-label col-form-label col-md-1">@lang('general.lbl_customer_type')</label>
-              <div class="col-md-2">
+              <label class="form-label col-form-label col-md-2 d-none">@lang('general.lbl_customer_type')</label>
+              <div class="col-md-3 d-none">
                 <select class="form-control" 
                     name="customer_type" id="customer_type" required>
                     <option value="">@lang('general.lbl_tipeselect')</option>
@@ -83,8 +83,17 @@
                 </select>
               </div>
 
-              <label class="form-label col-form-label col-md-1">@lang('general.lbl_schedule')</label>
-              <div class="col-md-3">
+              <label class="form-label col-form-label col-md-3">@lang('general.lbl_nominal_payment')</label>
+              <div class="col-md-2">
+                <input type="text" 
+                id="payment_nominal"
+                name="payment_nominal"
+                class="form-control" 
+                value="{{ old('payment_nominal') }}" required/>
+              </div>
+
+              <label class="form-label col-form-label col-md-1  d-none">@lang('general.lbl_schedule')</label>
+              <div class="col-md-3 d-none">
                   <div class="input-group">
                     <input type="text" class="form-control" id="scheduled" disabled>
                     <button type="button" class="btn btn-indigo" data-bs-toggle="modal" data-bs-target="#modal-scheduled" >
@@ -93,9 +102,10 @@
                   </div>
               </div>
             </div>
+
             <div class="row mb-3">
-              <label class="form-label col-form-label col-md-1">@lang('general.lbl_type_payment')</label>
-              <div class="col-md-2">
+              <label class="form-label col-form-label col-md-2">@lang('general.lbl_type_payment')</label>
+              <div class="col-md-4">
                 <select class="form-control" 
                       name="payment_type" id ="payment_type" required>
                       <option value="">@lang('general.lbl_type_paymentselect')</option>
@@ -105,14 +115,7 @@
                   </select>
               </div>
 
-                <label class="form-label col-form-label col-md-2">@lang('general.lbl_nominal_payment')</label>
-                <div class="col-md-2">
-                  <input type="text" 
-                  id="payment_nominal"
-                  name="payment_nominal"
-                  class="form-control" 
-                  value="{{ old('payment_nominal') }}" required/>
-                  </div>
+                
 
                   <label class="form-label col-form-label col-md-1">@lang('general.lbl_charge')</label>
                   <div class="col-md-3">
@@ -251,7 +254,7 @@
                     </div>
                    
                     <div class="panel-heading bg-teal-600 text-white"><strong>@lang('general.lbl_schedule_list')   </strong></div>
-                    </br>
+                    <br>
       
                     <div class="col-md-12">
                       <table class="table table-striped" id="order_time_table" style="width:100%">
@@ -287,9 +290,9 @@
         <div class="panel-heading bg-teal-600 text-white"><strong>@lang('general.lbl_order_list')</strong></div>
         <br>
 
-        <div class="card text-center font-weight-bold my-3 p-1"><h3><i class="fas fa-fw fa-hands-praying"></i> @lang('general.service')</h3></div>
+        <div class="card text-center font-weight-bold my-3 p-1 d-none"><h3><i class="fas fa-fw fa-hands-praying"></i> @lang('general.service')</h3></div>
 
-        <div class="row mb-3">
+        <div class="row mb-3 d-none">
           
           <div class="col-md-3">
             <label class="form-label col-form-label">@lang('general.service')</label>
@@ -315,7 +318,7 @@
             name="input_service_price"
             id="input_service_price"
             class="form-control" 
-            value="{{ old('input_service_price') }}" required disabled/>
+            value="{{ old('input_service_price') }}" required/>
           </div>
 
 
@@ -359,7 +362,7 @@
 
         </div>
 
-        <table class="table table-striped" id="order_table">
+        <table class="table table-striped d-none" id="order_tabled">
           <thead>
           <tr>
               <th scope="col">No</th>
@@ -369,8 +372,6 @@
               <th scope="col" width="5%">@lang('general.lbl_discount')</th>
               <th scope="col" width="5%">@lang('general.lbl_qty')</th>
               <th scope="col" width="10%">Total</th>  
-              <th scope="col" width="10%">@lang('general.lbl_terapist')</th>  
-              <th scope="col" width="10%">@lang('general.lbl_ref_by')</th>
               <th scope="col" width="20%" class="nex">@lang('general.lbl_action')</th> 
           </tr>
           </thead>
@@ -378,7 +379,7 @@
           </tbody>
         </table> 
         
-        <div class="card text-center font-weight-bold my-3 p-1"><h3><i class="fas fa-fw fa-box"></i> @lang('general.product')</h3></div>
+        <div class="card text-center font-weight-bold my-3 p-1 d-none"><h3><i class="fas fa-fw fa-box"></i> @lang('general.product')</h3></div>
 
         <div class="row mb-3">
           
@@ -406,7 +407,7 @@
             name="input_product_price"
             id="input_product_price"
             class="form-control" 
-            value="{{ old('input_product_price') }}" required disabled/>
+            value="{{ old('input_product_price') }}" required/>
           </div>
 
 
@@ -460,8 +461,6 @@
               <th scope="col" width="5%">@lang('general.lbl_discount')</th>
               <th scope="col" width="5%">@lang('general.lbl_qty')</th>
               <th scope="col" width="10%">Total</th>  
-              <th scope="col" width="10%">@lang('general.lbl_terapist')</th>  
-              <th scope="col" width="10%">@lang('general.lbl_ref_by')</th>
               <th scope="col" width="20%" class="nex">@lang('general.lbl_action')</th> 
           </tr>
           </thead>
@@ -471,7 +470,7 @@
         
         <div class="row mb-3">
           <div class="col-md-6">
-            <div class="row mb-3">
+            <div class="row mb-3 d-none">
                 <label class="form-label col-form-label col-md-3" id="label-voucher">Voucher</label>
                 <br>
                 <div class="col-md-5">
@@ -481,7 +480,7 @@
                   <button type="button" id="apply-voucher-btn" class="btn btn-warning">@lang('general.lbl_apply_voucher')</button>
                 </div>
             </div>
-            <label class="fst-italic">Setelah masukkan Kode Voucher, Klik tombol "Gunakan Voucher" untuk memotong pembayaran</label>
+            <label class="fst-italic d-none">Setelah masukkan Kode Voucher, Klik tombol "Gunakan Voucher" untuk memotong pembayaran</label>
 
           </div>
 
@@ -1126,42 +1125,8 @@
                 timer: 1500
               }
             );
-          }else if($('#scheduled').val()==''){
-            $('#scheduled').focus();
-            Swal.fire(
-              {
-                position: 'top-end',
-                icon: 'warning',
-                text: 'Silahkan pilih jadwal',
-                showConfirmButton: false,
-                imageHeight: 30, 
-                imageWidth: 30,   
-                timer: 1500
-              }
-            );
           }else{
-       
-  
-            counterBlank = 0;
-            for (var i=0;i<orderList.length;i++){
-                if(orderList[i]["assignedto"]=="" && orderList[i]["type_id"] == "Services"){
-                  counterBlank++;
-                }
-            }
-
-            if(counterBlank>0){
-              Swal.fire(
-              {
-                  position: 'top-end',
-                  icon: 'warning',
-                  text: 'Silahkan pilih terapis untuk perawatan',
-                  showConfirmButton: false,
-                  imageHeight: 30, 
-                  imageWidth: 30,   
-                  timer: 1500
-                }
-              );
-            }else{
+      
               // call Loading
               let swal = Swal.fire({
                   title: 'Loading...',
@@ -1182,7 +1147,7 @@
                   payment_nominal : $('#payment_nominal').val(),
                   total_order : order_total,
                   scheduled_at : $('#schedule_date').val()+" "+$('#timepicker1').val(),
-                  branch_room_id : $('#room_id').val(),
+                  branch_room_id : 0,
                   customer_type : $('#customer_type').val(),
                   ref_no : $('#ref_no').val(),
                   tax : _vat_total,
@@ -1207,7 +1172,6 @@
                         denyButtonColor: '#0072b3',
                         cancelButtonText: "@lang('general.lbl_close')",
                         confirmButtonText: "@lang('general.lbl_print')",
-                        denyButtonText: "@lang('general.lbl_printspk')",
                       }).then((result) => {
                         /* Read more about isConfirmed, isDenied below */
                         if (result.isConfirmed) {
@@ -1258,7 +1222,6 @@
                       );
                 console.log(error.toJSON());
               });
-            }
           }
         });
         
@@ -1287,23 +1250,6 @@
             { data: 'est_end' },
         ],
         }); 
-
-        $('#order_terapist_table').DataTable({
-          "bInfo" : false,
-          pagingType: 'numbers',
-          ajax: "{{ route('invoices.getterapisttable') }}",
-          columns: [
-            { data: 'invoice_no' },
-            { data: 'room' },
-            { data: 'terapist_name' },
-            { data: 'abbr' },
-            { data: 'start_time' },
-            { data: 'end_time' },
-            { data: 'remain_time' },
-        ],
-        }); 
-
-        //getterapisttable
 
         $('#modal-scheduled').on('shown.bs.modal', function () {
             var timetable = $('#order_time_table').DataTable();
@@ -1352,9 +1298,7 @@
             defaultContent: 
             '<a href="#"  data-toggle="tooltip" data-placement="top" title="Tambah"   id="add_row"  class="btn btn-sm btn-green"><div class="fa-1x"><i class="fas fa-circle-plus fa-fw"></i></div></a>'+
             '<a href="#"  data-toggle="tooltip" data-placement="top" title="Kurangi"   id="minus_row"  class="btn btn-sm btn-yellow"><div class="fa-1x"><i class="fas fa-circle-minus fa-fw"></i></div></a>'+
-            '<a href="#" data-toggle="tooltip" data-placement="top" title="Hapus"  id="delete_row"  class="btn btn-sm btn-danger"><div class="fa-1x"><i class="fas fa-circle-xmark fa-fw"></i></div></a>'+
-            '<a href="#" href="#modal-filter" data-bs-toggle="modal" data-bs-target="#modal-filter"  data-toggle="tooltip" data-placement="top" title="Terapis"  data-toggle="tooltip" data-placement="top" title="Terapis" id="assign_row" class="btn btn-sm btn-gray"><div class="fa-1x"><i class="fas fa-user-tag fa-fw"></i></div></a>'+
-            '<a href="#" href="#modal-referral" data-bs-toggle="modal" data-bs-target="#modal-referral" data-toggle="tooltip" data-placement="top" title="Dijual Oleh"  id="referral_row" class="btn btn-sm btn-purple"><div class="fa-1x"><i class="fas fa-users fa-fw"></i></div></a>',
+            '<a href="#" data-toggle="tooltip" data-placement="top" title="Hapus"  id="delete_row"  class="btn btn-sm btn-danger"><div class="fa-1x"><i class="fas fa-circle-xmark fa-fw"></i></div></a>',
           }],
           columns: [
             { data: 'seq' },
@@ -1364,8 +1308,6 @@
             { data: 'discount',render: DataTable.render.number( '.', null, 0, '' ) },
             { data: 'qty' },
             { data: 'total',render: DataTable.render.number( '.', null, 0, '' ) },
-            { data: 'assignedto' },
-            { data: 'referralby' },
             { data: null},
         ],
         });
@@ -1377,9 +1319,7 @@
             defaultContent: 
             '<a href="#"  data-toggle="tooltip" data-placement="top" title="Tambah"   id="add_row"  class="btn btn-sm btn-green"><div class="fa-1x"><i class="fas fa-circle-plus fa-fw"></i></div></a>'+
             '<a href="#"  data-toggle="tooltip" data-placement="top" title="Kurangi"   id="minus_row"  class="btn btn-sm btn-yellow"><div class="fa-1x"><i class="fas fa-circle-minus fa-fw"></i></div></a>'+
-            '<a href="#" data-toggle="tooltip" data-placement="top" title="Hapus"  id="delete_row"  class="btn btn-sm btn-danger"><div class="fa-1x"><i class="fas fa-circle-xmark fa-fw"></i></div></a>'+
-            '<a href="#" href="#modal-filter" data-bs-toggle="modal" data-bs-target="#modal-filter"  data-toggle="tooltip" data-placement="top" title="Terapis"  data-toggle="tooltip" data-placement="top" title="Terapis" id="assign_row" class="btn btn-sm btn-gray"><div class="fa-1x"><i class="fas fa-user-tag fa-fw"></i></div></a>'+
-            '<a href="#" href="#modal-referral" data-bs-toggle="modal" data-bs-target="#modal-referral" data-toggle="tooltip" data-placement="top" title="Dijual Oleh"  id="referral_row" class="btn btn-sm btn-purple"><div class="fa-1x"><i class="fas fa-users fa-fw"></i></div></a>',
+            '<a href="#" data-toggle="tooltip" data-placement="top" title="Hapus"  id="delete_row"  class="btn btn-sm btn-danger"><div class="fa-1x"><i class="fas fa-circle-xmark fa-fw"></i></div></a>',
           }],
           columns: [
             { data: 'seq' },
@@ -1389,8 +1329,6 @@
             { data: 'discount',render: DataTable.render.number( '.', null, 0, '' ) },
             { data: 'qty' },
             { data: 'total',render: DataTable.render.number( '.', null, 0, '' ) },
-            { data: 'assignedto' },
-            { data: 'referralby' },
             { data: null},
         ],
         });
@@ -1459,8 +1397,6 @@
                       "discount"  : obj["discount"],
                       "qty"       : obj["qty"],
                       "total"     : obj["total"],
-                      "assignedto": obj["assignedto"] + " (" + obj["executed_at"] + ")",
-                      "referralby" : obj["referralby"],
                       "action"    : "",
                 }).draw(false);
               }else{
@@ -1474,8 +1410,6 @@
                       "discount"  : obj["discount"],
                       "qty"       : obj["qty"],
                       "total"     : obj["total"],
-                      "assignedto": obj["assignedto"],
-                      "referralby" : obj["referralby"],
                       "action"    : "",
                 }).draw(false);
               }
@@ -1573,8 +1507,6 @@
                       "discount"  : obj["discount"],
                       "qty"       : obj["qty"],
                       "total"     : obj["total"],
-                      "assignedto": obj["assignedto"] + " (" + obj["executed_at"] + ")",
-                      "referralby" : obj["referralby"],
                       "action"    : "",
                 }).draw(false);
               }else{
@@ -1588,8 +1520,6 @@
                       "discount"  : obj["discount"],
                       "qty"       : obj["qty"],
                       "total"     : obj["total"],
-                      "assignedto": obj["assignedto"],
-                      "referralby" : obj["referralby"],
                       "action"    : "",
                 }).draw(false);
               }
@@ -1685,8 +1615,6 @@
                       "discount"  : obj["discount"],
                       "qty"       : obj["qty"],
                       "total"     : obj["total"],
-                      "assignedto": obj["assignedto"] + " (" + obj["executed_at"] + ")",
-                      "referralby" : obj["referralby"],
                       "action"    : "",
                 }).draw(false);
               }else{
@@ -1700,8 +1628,6 @@
                       "discount"  : obj["discount"],
                       "qty"       : obj["qty"],
                       "total"     : obj["total"],
-                      "assignedto": obj["assignedto"],
-                      "referralby" : obj["referralby"],
                       "action"    : "",
                 }).draw(false);
               }

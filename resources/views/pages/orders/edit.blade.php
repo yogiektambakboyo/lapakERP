@@ -7,7 +7,7 @@
   @csrf
   <div class="panel text-white">
     <div class="panel-heading  bg-teal-600">
-      <div class="panel-title"><h4 class="">SPK No : {{ $order->order_no }}</h4></div>
+      <div class="panel-title"><h4 class="">Order No : {{ $order->order_no }}</h4></div>
       <div class="">
         <a href="{{ route('orders.index') }}" class="btn btn-default">@lang('general.lbl_cancel')</a>
         <button type="button" id="save-btn" class="btn btn-info">@lang('general.lbl_save')</button>
@@ -57,20 +57,28 @@
                     @endforeach
                 </select>
               </div>
-              <label class="form-label col-form-label col-md-2">@lang('general.lbl_schedule')</label>
-              <div class="col-md-4">
-
+              <label class="form-label col-form-label col-md-2  d-none">@lang('general.lbl_schedule')</label>
+              <div class="col-md-4 d-none">
                   <div class="input-group">
-                    <input type="text" class="form-control" id="scheduled" value="{{ $room->remark }} - {{ $order->scheduled_at }}">
+                    <input type="text" class="form-control" id="scheduled" value="">
                     <button type="button" class="btn btn-indigo" data-bs-toggle="modal" data-bs-target="#modal-scheduled" >
                       <span class="fas fa-calendar-days"></span>
                     </button>
                   </div>
               </div>
+              <label class="form-label col-form-label col-md-3">@lang('general.lbl_nominal_payment')</label>
+              <div class="col-md-2">
+                <input type="text" 
+                id="payment_nominal"
+                name="payment_nominal"
+                class="form-control" 
+                value="{{ $order->payment_nominal }}" />
+                </div>
+
             </div>
             <div class="row mb-3">
               <label class="form-label col-form-label col-md-2">@lang('general.lbl_type_payment')</label>
-              <div class="col-md-2">
+              <div class="col-md-4">
                 <select class="form-control" 
                       name="payment_type" id ="payment_type" >
                       <option value="">@lang('general.lbl_type_paymentselect')</option>
@@ -82,14 +90,7 @@
                   </select>
               </div>
 
-                <label class="form-label col-form-label col-md-2">@lang('general.lbl_nominal_payment')</label>
-                <div class="col-md-2">
-                  <input type="text" 
-                  id="payment_nominal"
-                  name="payment_nominal"
-                  class="form-control" 
-                  value="{{ $order->payment_nominal }}" />
-                  </div>
+               
 
                   <label class="form-label col-form-label col-md-1">@lang('general.lbl_charge')</label>
                   <div class="col-md-3">
@@ -233,7 +234,7 @@
                   name="input_product_price"
                   id="input_product_price"
                   class="form-control" 
-                  value="{{ old('input_product_price') }}" required disabled/>
+                  value="{{ old('input_product_price') }}" required/>
                 </div>
   
   
@@ -287,7 +288,6 @@
                   <th scope="col" width="5%">@lang('general.lbl_discount')</th>
                   <th scope="col" width="5%">@lang('general.lbl_qty')</th>
                   <th scope="col" width="15%">Total</th>  
-                  <th scope="col" width="15%">@lang('general.lbl_terapist')</th>  
                   <th scope="col" width="15%" class="nex">@lang('general.lbl_action')</th> 
                 </tr>
                 </thead>
@@ -298,7 +298,7 @@
 
           <div class="row mb-3">
             <div class="col-md-6">
-              <div class="row mb-3">
+              <div class="row mb-3 d-none">
                   <label class="form-label col-form-label col-md-3" id="label-voucher">Voucher</label>
                   <br>
                   <div class="col-md-5">
@@ -315,13 +315,13 @@
 
 
             <div class="col-md-6">
-              <div class="col-md-12">
+              <div class="col-md-12 d-none">
                 <div class="col-auto text-end">
                   <label class="col-md-2"><h2>Sub Total </h2></label>
                   <label class="col-md-8" id="sub-total"> <h3>Rp. {{ number_format(($order->total-$order->tax), 0, ',', '.') }}</h3></label>
                 </div>
               </div>
-              <div class="col-md-12">
+              <div class="col-md-12 d-none">
                 <div class="col-auto text-end">
                   <label class="col-md-2"><h2>@lang('general.lbl_tax') </h2></label>
                   <label class="col-md-8" id="vat-total"> <h3>Rp. {{ number_format($order->tax, 0, ',', '.') }}</h3></label>
@@ -348,7 +348,7 @@
     <script type="text/javascript">
       $(function () {
           $('#order_date').datepicker({
-              format : 'yyyy-mm-dd'
+              dateFormat : 'dd-mm-yy'
           });
 
 
@@ -358,66 +358,6 @@
           voucherNo = "";
           voucherNoPID = "";
 
-      });
-
-
-      $('#btn_assigned').on('click',function(){
-        if($('#assign_id').val()==""){
-          Swal.fire(
-              {
-                position: 'top-end',
-                icon: 'warning',
-                text: 'Please choose staff',
-                showConfirmButton: false,
-                imageHeight: 30, 
-                imageWidth: 30,   
-                timer: 1500
-              }
-            );
-        }else{
-          table.clear().draw(false);
-          order_total = 0;
-          disc_total = 0;
-          _vat_total = 0;
-          sub_total = 0;
-          for (var i = 0; i < orderList.length; i++){
-            var obj = orderList[i];
-            var value = obj["id"];
-            if($('#product_id_selected').val()==obj["id"]){
-              orderList[i]["assignedto"] = $('#assign_id option:selected').text();
-              orderList[i]["assignedtoid"] = $('#assign_id').val();
-            }
-          }
-
-
-          for (var i = 0; i < orderList.length; i++){
-            var obj = orderList[i];
-            var value = obj["abbr"];
-            table.row.add( {
-                   "id"        : obj["id"],
-                    "abbr"      : obj["abbr"],
-                    "uom"       : obj["uom"],
-                    "price"     : obj["price"],
-                    "discount"  : obj["discount"],
-                    "qty"       : obj["qty"],
-                    "total"     : obj["total"],
-                    "assignedto": obj["assignedto"],
-                    "assignedtoid": obj["assignedtoid"],
-                    "action"    : "",
-              }).draw(false);
-              disc_total = disc_total + (parseFloat(orderList[i]["discount"]));
-              sub_total = sub_total + (((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"]))-(parseFloat(orderList[i]["discount"])));
-              _vat_total = _vat_total + ((((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"]))-(parseFloat(orderList[i]["discount"])))*(parseFloat(orderList[i]["vat_total"])/100));
-              order_total = order_total + ((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"])+((((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"]))-(parseFloat(orderList[i]["discount"])))*(parseFloat(orderList[i]["vat_total"])/100)))-(parseFloat(orderList[i]["discount"]));
-              if(($('#payment_nominal').val())>order_total){
-                $('#order_charge').text(currency((($('#payment_nominal').val())-order_total), { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
-              }else{
-                $('#order_charge').text("Rp. 0");
-              }
-          }
-
-          $('#order-total').text(currency(order_total, { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
-        }
       });
 
       var productList = [];
@@ -481,19 +421,6 @@
                 timer: 1500
               }
             );
-          }else if($('#scheduled').val()==''){
-            $('#scheduled').focus();
-            Swal.fire(
-              {
-                position: 'top-end',
-                icon: 'warning',
-                text: 'Please choose schedule',
-                showConfirmButton: false,
-                imageHeight: 30, 
-                imageWidth: 30,   
-                timer: 1500
-              }
-            );
           }else if(orderList.length<=0){
             Swal.fire(
               {
@@ -507,26 +434,7 @@
               }
             );
           }else{
-            counterBlank = 0;
-            for (var i=0;i<orderList.length;i++){
-                if(orderList[i]["assignedto"]==""){
-                  counterBlank++;
-                }
-            }
 
-            if(counterBlank>0){
-              Swal.fire(
-              {
-                  position: 'top-end',
-                  icon: 'warning',
-                  text: 'Please choose terapist for service',
-                  showConfirmButton: false,
-                  imageHeight: 30, 
-                  imageWidth: 30,   
-                  timer: 1500
-                }
-              );
-            }else{
                 const json = JSON.stringify({
                   order_date : $('#order_date').val(),
                   product : orderList,
@@ -536,7 +444,7 @@
                   payment_nominal : $('#payment_nominal').val(),
                   total_order : order_total,
                   scheduled_at : $('#schedule_date').val()+" "+$('#timepicker1').val(),
-                  branch_room_id : $('#room_id').val(),
+                  branch_room_id : 0,
                   total_discount : disc_total,
                   total_vat : _vat_total,
                   order_no :  $('#order_no').val(),
@@ -566,7 +474,6 @@
                     }
               });
 
-            }
 
 
 
@@ -604,8 +511,8 @@
             defaultContent: 
             '<a href="#"  data-toggle="tooltip" data-placement="top" title="Tambah"   id="add_row"  class="btn btn-xs btn-green"><div class="fa-1x"><i class="fas fa-circle-plus fa-fw"></i></div></a>'+
             '<a href="#"  data-toggle="tooltip" data-placement="top" title="Kurangi"   id="minus_row"  class="btn btn-xs btn-yellow"><div class="fa-1x"><i class="fas fa-circle-minus fa-fw"></i></div></a>'+
-            '<a href="#" data-toggle="tooltip" data-placement="top" title="Hapus"  id="delete_row"  class="btn btn-xs btn-danger"><div class="fa-1x"><i class="fas fa-circle-xmark fa-fw"></i></div></a>'+
-            '<a href="#" href="#modal-filter" data-bs-toggle="modal" data-bs-target="#modal-filter"  data-toggle="tooltip" data-placement="top" title="Terapis" id="assign_row" class="btn btn-xs btn-gray"><div class="fa-1x"><i class="fas fa-user-tag fa-fw"></i></div></a>',}],
+            '<a href="#" data-toggle="tooltip" data-placement="top" title="Hapus"  id="delete_row"  class="btn btn-xs btn-danger"><div class="fa-1x"><i class="fas fa-circle-xmark fa-fw"></i></div></a>'
+          }],
           columns: [
             { data: 'abbr' },
             { data: 'uom' },
@@ -613,7 +520,6 @@
             { data: 'discount' },
             { data: 'qty' },
             { data: 'total',render: DataTable.render.number( '.', null, 0, '' ) },
-            { data: 'assignedto' },
             { data: null},
         ],
         });
@@ -668,7 +574,6 @@
                     "discount"  : obj["discount"],
                     "qty"       : obj["qty"],
                     "total"     : obj["total"],
-                    "assignedto": obj["assignedto"],
                     "action"    : "",
               }).draw(false);
               disc_total = disc_total + (parseFloat(orderList[i]["discount"]));
@@ -747,7 +652,6 @@
                       "discount"  : obj["discount"],
                       "qty"       : obj["qty"],
                       "total"     : obj["total"],
-                      "assignedto" : obj["assignedto"],
                       "action"    : "",
                 }).draw(false);
                 disc_total = disc_total + (parseFloat(orderList[i]["discount"]));
@@ -865,7 +769,6 @@
                               "discount"  : obj["discount"],
                               "qty"       : obj["qty"],
                               "total"     : obj["total"],
-                              "assignedto": obj["assignedto"],
                               "action"    : "",
                         }).draw(false);
                         disc_total = disc_total + (parseFloat(orderList[i]["discount"]));
@@ -956,7 +859,6 @@
                       "discount"  : obj["discount"],
                       "qty"       : obj["qty"],
                       "total"     : obj["total"],
-                      "assignedto" : obj["assignedto"],
                       "action"    : "",
                     }).draw(false);
                     disc_total = disc_total + (parseFloat(orderList[i]["discount"]));

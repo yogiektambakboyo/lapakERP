@@ -296,7 +296,7 @@ class InvoicesController extends Controller
                 ['payment_type' => $request->get('payment_type') ],
                 ['total_payment' => (int)$request->get('payment_nominal')>=(int)$request->get('total_order')?(int)$request->get('total_order'):$request->get('payment_nominal') ],
                 ['scheduled_at' => Carbon::createFromFormat('d-m-Y H:i', $request->get('scheduled_at'))->format('Y-m-d H:i') ],
-                ['branch_room_id' => $request->get('branch_room_id')],
+                ['branch_room_id' => 0],
                 ['ref_no' => $request->get('ref_no')],
                 ['tax' => $request->get('tax')],
                 ['customer_type' => $request->get('customer_type')],
@@ -320,7 +320,7 @@ class InvoicesController extends Controller
         }
 
 
-        $branch_id = Room::where('id',$request->get('branch_room_id'))->get(['branch_id'])->first();
+        //$branch_id = Room::where('id',$request->get('branch_room_id'))->get(['branch_id'])->first();
 
         if(!$res_invoice){
             $result = array_merge(
@@ -344,10 +344,6 @@ class InvoicesController extends Controller
                     ['discount' => $request->get('product')[$i]["discount"]],
                     ['seq' => $i ],
                     ['executed_at' => $request->get('product')[$i]["executed_at"] ],
-                    ['assigned_to' => $request->get('product')[$i]["assignedtoid"]],
-                    ['referral_by' => $request->get('product')[$i]["referralbyid"]],
-                    ['assigned_to_name' => $request->get('product')[$i]["assignedtoid"]==""?"":User::where('id','=',$request->get('product')[$i]["assignedtoid"])->get('name')->first()->name ],
-                    ['referral_by_name' => $request->get('product')[$i]["referralbyid"]==""?"":User::where('id','=',$request->get('product')[$i]["referralbyid"])->get('name')->first()->name],
                     ['vat' => $request->get('product')[$i]["vat_total"]],
                     ['vat_total' => ((((int)$request->get('product')[$i]["qty"]*(int)$request->get('product')[$i]["price"])-(int)$request->get('product')[$i]["discount"])/100)*(int)$request->get('product')[$i]["vat_total"]],
                     ['product_name' => Product::where('id','=',$request->get('product')[$i]["id"])->get('remark')->first()->remark],
@@ -366,21 +362,10 @@ class InvoicesController extends Controller
                 return $result;
             }
 
-            DB::update(" INSERT INTO public.stock_log (product_id, qty, branch_id, doc_no,remarks, created_at) VALUES(".$request->get('product')[$i]["id"].", ".$request->get('product')[$i]['qty']." , ".$branch_id['branch_id'].", '".$invoice_no."','Created', now()) ");
+            DB::update(" INSERT INTO public.stock_log (product_id, qty, branch_id, doc_no,remarks, created_at) VALUES(".$request->get('product')[$i]["id"].", ".$request->get('product')[$i]['qty']." , ".$branch['branch_id'].", '".$invoice_no."','Created', now()) ");
 
-            DB::update("UPDATE product_stock set qty = qty-".$request->get('product')[$i]['qty']." WHERE branch_id = ".$branch_id['branch_id']." and product_id = ".$request->get('product')[$i]["id"]);
-            DB::update("update public.period_stock set qty_out=qty_out+".$request->get('product')[$i]['qty']." ,updated_at = now(), balance_end = balance_end - ".$request->get('product')[$i]['qty']." where branch_id = ".$branch_id['branch_id']." and product_id = ".$request->get('product')[$i]['id']." and periode = to_char(now(),'YYYYMM')::int;");
-
-            $price_purchase = PeriodSellPrice::whereRaw("period=to_char(now()::date ,'YYYYMM')::int and product_id='".$request->get('product')[$i]['id']."' and branch_id =".$branch_id['branch_id'])->get(['value'])->first();
-            if($price_purchase != null){
-                DB::update("UPDATE invoice_detail set price_purchase=".$price_purchase->value." WHERE invoice_no='". $invoice_no."' and product_id = ".$request->get('product')[$i]['id']);
-            }
-
-            $productigredients = ProductIngredients::where('product_id','=',$request->get('product')[$i]["id"])->get(['product_id_material','qty']);
-            foreach($productigredients as $productigredient){
-                DB::update("UPDATE product_stock set qty = qty-".($productigredient->qty*$request->get('product')[$i]['qty'])." WHERE branch_id = ".$branch_id['branch_id']." and product_id = ".$productigredient->product_id_material);
-                DB::update("update public.period_stock set qty_out=qty_out+".($productigredient->qty*$request->get('product')[$i]['qty'])." ,updated_at = now(), balance_end = balance_end - ".($productigredient->qty*$request->get('product')[$i]['qty'])." where branch_id = ".$branch_id['branch_id']." and product_id = ".$productigredient->product_id_material." and periode = to_char(now(),'YYYYMM')::int;");    
-            }
+            DB::update("UPDATE product_stock set qty = qty-".$request->get('product')[$i]['qty']." WHERE branch_id = ".$branch['branch_id']." and product_id = ".$request->get('product')[$i]["id"]);
+            DB::update("update public.period_stock set qty_out=qty_out+".$request->get('product')[$i]['qty']." ,updated_at = now(), balance_end = balance_end - ".$request->get('product')[$i]['qty']." where branch_id = ".$branch['branch_id']." and product_id = ".$request->get('product')[$i]['id']." and periode = to_char(now(),'YYYYMM')::int;");
         }
 
 

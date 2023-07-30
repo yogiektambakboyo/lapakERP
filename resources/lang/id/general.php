@@ -10,7 +10,7 @@ return [
     "btn_filter" => "Saring",
     "btn_export" => "Export Excel",
     "btn_create" => "Buat Baru",
-    "lbl_order" => "SPK",
+    "lbl_order" => "Order",
     "lbl_return_no" => "Nomor Retur",
 
     "product" => "Produk",

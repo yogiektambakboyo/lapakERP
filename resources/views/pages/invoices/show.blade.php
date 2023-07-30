@@ -80,7 +80,7 @@
               <div class="col-md-3">
 
                   <div class="input-group">
-                    <input type="text" class="form-control" value="{{ $room->remark }} - {{ Carbon\Carbon::parse($invoice->scheduled_at)->format('H:i') }}" id="scheduled" disabled>
+                    <input type="text" class="form-control" value="" id="scheduled" disabled>
                   </div>
               </div>
             </div>
