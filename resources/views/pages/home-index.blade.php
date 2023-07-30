@@ -113,7 +113,7 @@
 				</div>
 				<!-- END col-6 -->
 				<!-- BEGIN col-6 -->
-				<div class="col-sm-6">
+				<div class="col-sm-6 d-none">
 					<!-- BEGIN card -->
 					<div class="card border-0 text-truncate mb-3 bg-gray-800 text-white">
 						<!-- BEGIN card-body -->
@@ -147,7 +147,7 @@
 	<!-- BEGIN row -->
 	<div class="row">
 		<!-- BEGIN col-4 -->
-		<div class="col-xl-4 col-lg-6">
+		<div class="col-xl-4 col-lg-6 d-none">
 			<!-- BEGIN card -->
 			<div class="card border-0 mb-3 bg-gray-900 text-white">
 				<!-- BEGIN card-body -->
@@ -230,7 +230,7 @@
 		</div>
 		<!-- END col-4 -->
 		<!-- BEGIN col-4 -->
-		<div class="col-xl-4 col-lg-6">
+		<div class="col-xl-4 col-lg-6 d-none">
 			<!-- BEGIN card -->
 			<div class="card border-0 mb-3 bg-gray-800 text-white">
 				<!-- BEGIN card-body -->
@@ -269,7 +269,7 @@
 	</div>
 	<!-- END row -->
 
-	<div class="row">
+	<div class="row  d-none">
 		<div class="col-xl-12">
 			<div class="widget-chart with-sidebar inverse-mode">
 				<div class="bg-gray-800" style="width: 80%">
