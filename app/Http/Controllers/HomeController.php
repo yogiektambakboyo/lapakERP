@@ -283,8 +283,22 @@ class HomeController extends Controller
                 update product_stock set qty = 9999 where product_id in  (select id from product_sku where type_id>1) and qty<50;
             ");
 
+            DB::select("
+                insert into product_distribution(product_id,branch_id,created_at,updated_at,active)
+                select ps.id,b.id,now(),now(),1  from product_sku ps
+                join branch b on 1=1
+                where ps.id::character varying||b.id::character varying 
+                not in (select product_id::character varying||branch_id::character varying from product_distribution)
+            ");
 
-            
+            DB::select("
+                insert into product_price(product_id,price,branch_id,updated_by,updated_at,created_by,created_at)
+                select ps.id,0,b.id,null,now(),1,now()  from product_sku ps
+                join branch b on 1=1
+                where ps.id::character varying||b.id::character varying 
+                not in (select product_id::character varying||branch_id::character varying from product_price)
+            ");
+
             return view('pages.home-index',[
                 'd_data' => $d_data,
                 'd_data_c' => $d_data_c,
