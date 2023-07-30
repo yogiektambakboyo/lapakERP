@@ -227,6 +227,14 @@ class ProductsController extends Controller
             not in (select product_id::character varying||branch_id::character varying from product_price)
         ");
 
+        DB::select("
+            insert into product_stock(product_id,branch_id,qty,updated_at,created_at,created_by)
+            select ps.id,b.id,0,null,now(),1  from product_sku ps
+            join branch b on 1=1
+            where ps.id::character varying||b.id::character varying 
+            not in (select product_id::character varying||branch_id::character varying from product_stock)
+        ");
+
         return redirect()->route('products.index')
             ->withSuccess(__('Product created successfully.'));
     }
