@@ -93,8 +93,8 @@
             
             <br>
             <div class="row mb-3">
-              <label class="form-label col-form-label col-md-8 text-end"><h2>Sub Total </h2></label>
-              <div class="col-md-4">
+              <label class="form-label col-form-label col-md-8 text-end d-none"><h2>Sub Total </h2></label>
+              <div class="col-md-4 d-none">
                 <h3 class="text-end"><label id="sub-total">0</label></h3>
               </div>
 
