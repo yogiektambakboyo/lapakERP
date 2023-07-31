@@ -810,7 +810,7 @@
                     @if((int)$header->total_284>0)
                     @php
                       $count_column_service++;
-                        $total_service = $total_service + $dtt_raw_oneline_discs[0]->total_284;
+                        $total_service = $total_service + $header->total_284;
                         $qty_service = $qty_service + $c_284;
                     @endphp
                       <th scope="col" width="3%">{{ number_format($dtt_raw_oneline_discs[0]->total_284,0,',','.') }}  / {{ $c_284 }} </th>
@@ -867,7 +867,7 @@
                       @if((int)$header->total_291>0)
                       @php
                         $count_column_service++;
-                        $total_service = $total_service + $dtt_raw_oneline_discs[0]->total_291;
+                        $total_service = $total_service + $header->total_291;
                         $qty_service = $qty_service + $c_291;
                       @endphp
                         <th scope="col" width="3%">{{ number_format($dtt_raw_oneline_discs[0]->total_291,0,',','.') }}  / {{ $c_291 }} </th>
@@ -947,7 +947,7 @@
                     @if((int)$header->total_300>0)
                     @php
                       $count_column_service++;
-                        $total_service = $total_service + $dtt_raw_oneline_discs[0]->total_300;
+                        $total_service = $total_service + $header->total_300;
                         $qty_service = $qty_service + $c_300;
                     @endphp
                       <th scope="col" width="3%">{{ number_format($dtt_raw_oneline_discs[0]->total_300,0,',','.') }}  / {{ $c_300 }} </th>
@@ -956,7 +956,7 @@
                     @if((int)$header->total_301>0)
                     @php
                       $count_column_service++;
-                        $total_service = $total_service + $dtt_raw_oneline_discs[0]->total_301;
+                        $total_service = $total_service + $header->total_301;
                         $qty_service = $qty_service + $c_301;
                     @endphp
                       <th scope="col" width="3%">{{ number_format($dtt_raw_oneline_discs[0]->total_301,0,',','.') }}  / {{ $c_301 }}</th>
