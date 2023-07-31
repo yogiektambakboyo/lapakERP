@@ -445,7 +445,7 @@
                           @endif
 
                             @if((int)$header->total_290>0)
-                            @php if((int)$dtt_raw[$counter]->total_290>0){ $c_290++; } @endphp
+                            @php if((int)$dtt_raw[$counter]->total_290>0 || (int)$dtt_raw_disc[$counter]->total_290>0){ $c_290++; } @endphp 
                               <td scope="col" width="3%"> @php if((int)$dtt_raw[$counter]->total_290<=0 && (int)$dtt_raw_disc[$counter]->total_290>0){ echo 'Free'; }else{ echo number_format($dtt_raw[$counter]->total_290,0,',','.'); } @endphp </td>
                             @endif
         
@@ -526,7 +526,7 @@
                           @endif
                       
                           @if((int)$header->total_307>0)
-                          @php if((int)$dtt_raw[$counter]->total_307>0){ $c_307++; } @endphp
+                          @php if((int)$dtt_raw[$counter]->total_307>0 || (int)$dtt_raw_disc[$counter]->total_307>0){ $c_307++; } @endphp 
                             <td scope="col" width="3%"> @php if((int)$dtt_raw[$counter]->total_307<=0 && (int)$dtt_raw_disc[$counter]->total_307>0){ echo 'Free'; }else{ echo number_format($dtt_raw[$counter]->total_307,0,',','.'); } @endphp </td>
                           @endif
                           @if((int)$header->total_308>0)
