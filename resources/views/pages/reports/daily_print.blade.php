@@ -245,6 +245,16 @@
                 <th scope="col" width="3%">EBBSGT</th>
               @endif
 
+              @if((int)$header->total_445>0)
+                <th scope="col" width="3%">TTW1</th>
+              @endif
+              @if((int)$header->total_446>0)
+                <th scope="col" width="3%">FR</th>
+              @endif
+              @if((int)$header->total_452>0)
+                <th scope="col" width="3%">LSTAND</th>
+              @endif
+
 
 
               @if((int)$header->total_316>0)
@@ -345,6 +355,9 @@
             $c_485 = 0;
             $c_486 = 0;
             $c_487 = 0;
+            $c_445 = 0;
+            $c_446 = 0;
+            $c_452 = 0;
           @endphp
 
             @foreach($dtt_detail as $detail)
@@ -613,6 +626,21 @@
                           @if((int)$header->total_453>0)
                           @php if((int)$dtt_raw[$counter]->total_453>0){ $c_453++; } @endphp
                             <td scope="col" width="3%">{{ number_format($dtt_raw[$counter]->total_453,0,',','.') }}</td>
+                          @endif
+
+                          @if((int)$header->total_445>0)
+                          @php if((int)$dtt_raw[$counter]->total_445>0){ $c_445++; } @endphp
+                            <td scope="col" width="3%">{{ number_format($dtt_raw[$counter]->total_445,0,',','.') }}</td>
+                          @endif
+
+                          @if((int)$header->total_446>0)
+                          @php if((int)$dtt_raw[$counter]->total_446>0){ $c_446++; } @endphp
+                            <td scope="col" width="3%">{{ number_format($dtt_raw[$counter]->total_446,0,',','.') }}</td>
+                          @endif
+
+                          @if((int)$header->total_452>0)
+                          @php if((int)$dtt_raw[$counter]->total_452>0){ $c_452++; } @endphp
+                            <td scope="col" width="3%">{{ number_format($dtt_raw[$counter]->total_452,0,',','.') }}</td>
                           @endif
 
 
@@ -1184,6 +1212,33 @@
                         $qty_service = $qty_service + $c_453;
                     @endphp
                       <th scope="col" width="3%">{{ number_format($header->total_453,0,',','.') }}  / {{ $c_453 }} </th>
+                    @endif
+
+
+
+                    @if((int)$header->total_445>0)
+                    @php
+                      $count_column_service++;
+                        $total_service = $total_service + $header->total_445;
+                        $qty_service = $qty_service + $c_445;
+                    @endphp
+                      <th scope="col" width="3%">{{ number_format($header->total_445,0,',','.') }}  / {{ $c_445 }} </th>
+                    @endif
+                    @if((int)$header->total_446>0)
+                    @php
+                      $count_column_service++;
+                        $total_service = $total_service + $header->total_446;
+                        $qty_service = $qty_service + $c_446;
+                    @endphp
+                      <th scope="col" width="3%">{{ number_format($header->total_446,0,',','.') }}  / {{ $c_446 }} </th>
+                    @endif
+                    @if((int)$header->total_452>0)
+                    @php
+                      $count_column_service++;
+                        $total_service = $total_service + $header->total_452;
+                        $qty_service = $qty_service + $c_452;
+                    @endphp
+                      <th scope="col" width="3%">{{ number_format($header->total_452,0,',','.') }}  / {{ $c_452 }} </th>
                     @endif
 
 
