@@ -254,6 +254,9 @@
               @if((int)$header->total_452>0)
                 <th scope="col" width="3%">LSTAND</th>
               @endif
+              @if((int)$header->total_444>0)
+                <th scope="col" width="3%">FBT1J</th>
+              @endif
 
 
 
@@ -303,6 +306,7 @@
             $c_285 = 0;
             $c_286 = 0;
             $c_287 = 0;
+            $c_444 = 0;
             $c_288 = 0;
             $c_289 = 0;
             $c_290 = 0;
@@ -641,6 +645,11 @@
                           @if((int)$header->total_452>0)
                           @php if((int)$dtt_raw[$counter]->total_452>0){ $c_452++; } @endphp
                             <td scope="col" width="3%">{{ number_format($dtt_raw[$counter]->total_452,0,',','.') }}</td>
+                          @endif
+
+                          @if((int)$header->total_444>0)
+                          @php if((int)$dtt_raw[$counter]->total_444>0){ $c_444++; } @endphp
+                            <td scope="col" width="3%">{{ number_format($dtt_raw[$counter]->total_444,0,',','.') }}</td>
                           @endif
 
 
@@ -1239,6 +1248,14 @@
                         $qty_service = $qty_service + $c_452;
                     @endphp
                       <th scope="col" width="3%">{{ number_format($dtt_raw_oneline_discs[0]->total_452,0,',','.') }}  / {{ $c_452 }} </th>
+                    @endif
+                    @if((int)$header->total_444>0)
+                    @php
+                      $count_column_service++;
+                        $total_service = $total_service + $dtt_raw_oneline_discs[0]->total_444;
+                        $qty_service = $qty_service + $c_444;
+                    @endphp
+                      <th scope="col" width="3%">{{ number_format($dtt_raw_oneline_discs[0]->total_444,0,',','.') }}  / {{ $c_444 }} </th>
                     @endif
 
 
