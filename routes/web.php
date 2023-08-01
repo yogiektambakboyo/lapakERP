@@ -97,6 +97,7 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
             Route::get('/getproduct_nostock', 'OrdersController@getproduct_nostock')->name('orders.getproduct_nostock');
             Route::get('/gettimetable', 'OrdersController@gettimetable')->name('orders.gettimetable');
             Route::get('/{order}/getorder', 'OrdersController@getorder')->name('orders.getorder');
+            Route::get('/{order}/getorder_bycustomer', 'OrdersController@getorder_bycustomer')->name('orders.getorder_bycustomer');
             Route::patch('/{order}/update', 'OrdersController@update')->name('orders.update');
             Route::delete('/{order}/delete', 'OrdersController@destroy')->name('orders.destroy');
             Route::get('/export', 'OrdersController@export')->name('orders.export');

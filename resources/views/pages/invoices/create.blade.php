@@ -729,10 +729,10 @@
           });
           $('#schedule_date').val(formattedToday);
 
-          var url = "{{ route('orders.getorder','XX') }}";
+          var url = "{{ route('orders.getorder_bycustomer','XX') }}";
           var lastvalurl = "XX";
           console.log(url);
-          $('#ref_no').change(function(){
+          $('#customer_id').change(function(){
               if($(this).val()==""){
 
               table.clear().draw(false);

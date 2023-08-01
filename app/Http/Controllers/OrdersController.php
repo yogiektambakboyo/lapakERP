@@ -609,6 +609,28 @@ class OrdersController extends Controller
         })->make();
     }
 
+    public function getorder_bycustomer(String $customer_id) 
+    {
+        $data = $this->data;
+        $user = Auth::user();
+        $product = DB::select(" select od.vat,od.vat_total,to_char(om.scheduled_at,'mm/dd/YYYY') as scheduled_date,to_char(om.scheduled_at,'HH24:MI') as scheduled_time,'' as room_name,om.customers_id,om.remark as order_remark,to_char(om.dated,'mm/dd/YYYY') as dated,om.payment_type,om.payment_nominal,om.scheduled_at,0 as branch_room_id,od.qty,od.product_id,od.discount,od.price,od.total,ps.remark,ps.abbr,um.remark as uom,'' as assignedto,0 as assignedtoid,
+        '' as referralby,0 as referralbyid   
+        from order_detail od 
+        join order_master om on om.order_no = od.order_no
+        join product_sku ps on ps.id=od.product_id
+        join product_uom uo on uo.product_id = od.product_id
+        join uom um on um.id=uo.uom_id 
+        where om.customers_id='".$customer_id."' ");
+        
+        return $product;
+        return Datatables::of($product)
+        ->addColumn('action', function ($product) {
+            return  '<a href="#"  data-toggle="tooltip" data-placement="top" title="Tambah"   id="add_row"  class="btn btn-xs btn-green"><div class="fa-1x"><i class="fas fa-circle-plus fa-fw"></i></div></a>'.
+            '<a href="#"  data-toggle="tooltip" data-placement="top" title="Kurangi"   id="minus_row"  class="btn btn-xs btn-yellow"><div class="fa-1x"><i class="fas fa-circle-minus fa-fw"></i></div></a>'.
+            '<a href="#" data-toggle="tooltip" data-placement="top" title="Hapus"  id="delete_row"  class="btn btn-xs btn-danger"><div class="fa-1x"><i class="fas fa-circle-xmark fa-fw"></i></div></a>' ;
+        })->make();
+    }
+
     /**
      * Update user data
      * 
