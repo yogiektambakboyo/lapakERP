@@ -736,81 +736,81 @@
                     @if((int)$header->total_324>0)
                       @php
                         $count_column_service++;
-                        $total_service = $total_service + $header->total_324;
+                        $total_service = $total_service + $dtt_raw_oneline_discs[0]->total_324;
                         $qty_service = $qty_service + $dtt_raw_oneline_qty[0]->total_324;
                       @endphp
-                      <th scope="col" width="3%">{{ number_format($header->total_324,0,',','.') }} / {{ $dtt_raw_oneline_qty[0]->total_324 }} </th>
+                      <th scope="col" width="3%">{{ number_format($dtt_raw_oneline_discs[0]->total_324,0,',','.') }} / {{ $dtt_raw_oneline_qty[0]->total_324 }} </th>
                     @endif
                     @if((int)$header->total_325>0)
                     @php
                       $count_column_service++;
-                        $total_service = $total_service + $header->total_325;
+                        $total_service = $total_service + $dtt_raw_oneline_discs[0]->total_325;
                         $qty_service = $qty_service + $dtt_raw_oneline_qty[0]->total_325;
                     @endphp
-                      <th scope="col" width="3%">{{ number_format($header->total_325,0,',','.') }} / {{ $dtt_raw_oneline_qty[0]->total_325 }} </th>
+                      <th scope="col" width="3%">{{ number_format($dtt_raw_oneline_discs[0]->total_325,0,',','.') }} / {{ $dtt_raw_oneline_qty[0]->total_325 }} </th>
                     @endif
                     @if((int)$header->total_326>0)
                     @php
                       $count_column_service++;
-                        $total_service = $total_service + $header->total_326;
+                        $total_service = $total_service + $dtt_raw_oneline_discs[0]->total_326;
                         $qty_service = $qty_service + $dtt_raw_oneline_qty[0]->total_326;
                     @endphp
-                      <th scope="col" width="3%">{{ number_format($header->total_326,0,',','.') }} / {{ $dtt_raw_oneline_qty[0]->total_326 }} </th>
+                      <th scope="col" width="3%">{{ number_format($dtt_raw_oneline_discs[0]->total_326,0,',','.') }} / {{ $dtt_raw_oneline_qty[0]->total_326 }} </th>
                     @endif
                     @if((int)$header->total_327>0)
                     @php
                       $count_column_service++;
-                        $total_service = $total_service + $header->total_327;
+                        $total_service = $total_service + $dtt_raw_oneline_discs[0]->total_327;
                         $qty_service = $qty_service + $dtt_raw_oneline_qty[0]->total_327;
                     @endphp
-                      <th scope="col" width="3%">{{ number_format($header->total_327,0,',','.') }} / {{ $dtt_raw_oneline_qty[0]->total_327 }} </th>
+                      <th scope="col" width="3%">{{ number_format($dtt_raw_oneline_discs[0]->total_327,0,',','.') }} / {{ $dtt_raw_oneline_qty[0]->total_327 }} </th>
                     @endif
                     @if((int)$header->total_328>0)
                     @php
                       $count_column_service++;
-                        $total_service = $total_service + $header->total_328;
+                        $total_service = $total_service + $dtt_raw_oneline_discs[0]->total_328;
                         $qty_service = $qty_service + $dtt_raw_oneline_qty[0]->total_328;
                     @endphp
-                      <th scope="col" width="3%">{{ number_format($header->total_328,0,',','.') }} / {{ $dtt_raw_oneline_qty[0]->total_328 }} </th>
+                      <th scope="col" width="3%">{{ number_format($dtt_raw_oneline_discs[0]->total_328,0,',','.') }} / {{ $dtt_raw_oneline_qty[0]->total_328 }} </th>
                     @endif
 
 
                     @if((int)$header->total_280>0)
                     @php
                       $count_column_service++;
-                        $total_service = $total_service + $header->total_280;
+                        $total_service = $total_service + $dtt_raw_oneline_discs[0]->total_280;
                         $qty_service = $qty_service + $c_280;
                     @endphp
-                      <th scope="col" width="3%">{{ number_format($header->total_280,0,',','.') }} / {{ $c_280 }} </th>
+                      <th scope="col" width="3%">{{ number_format($dtt_raw_oneline_discs[0]->total_280,0,',','.') }} / {{ $c_280 }} </th>
                     @endif
                     @if((int)$header->total_281>0)
                     @php
                       $count_column_service++;
-                        $total_service = $total_service + $header->total_281;
+                        $total_service = $total_service + $dtt_raw_oneline_discs[0]->total_281;
                         $qty_service = $qty_service + $c_281;
                     @endphp
-                      <th scope="col" width="3%">{{ number_format($header->total_281,0,',','.') }} / {{ $c_281 }}  </th>
+                      <th scope="col" width="3%">{{ number_format($dtt_raw_oneline_discs[0]->total_281,0,',','.') }} / {{ $c_281 }}  </th>
                     @endif
                     @if((int)$header->total_282>0)
                     @php
                       $count_column_service++;
-                        $total_service = $total_service + $header->total_282;
+                        $total_service = $total_service + $dtt_raw_oneline_discs[0]->total_282;
                         $qty_service = $qty_service + $c_282;
                     @endphp
-                      <th scope="col" width="3%">{{ number_format($header->total_282,0,',','.') }}  / {{ $c_282 }} </th>
+                      <th scope="col" width="3%">{{ number_format($dtt_raw_oneline_discs[0]->total_282,0,',','.') }}  / {{ $c_282 }} </th>
                     @endif
                     @if((int)$header->total_283>0)
                     @php
                       $count_column_service++;
-                        $total_service = $total_service + $header->total_283;
+                        $total_service = $total_service + $dtt_raw_oneline_discs[0]->total_283;
                         $qty_service = $qty_service + $c_283;
                     @endphp
-                      <th scope="col" width="3%">{{ number_format($header->total_283,0,',','.') }}  / {{ $c_283 }} </th>
+                      <th scope="col" width="3%">{{ number_format($dtt_raw_oneline_discs[0]->total_283,0,',','.') }}  / {{ $c_283 }} </th>
                     @endif                  
                     @if((int)$header->total_284>0)
                     @php
                       $count_column_service++;
-                        $total_service = $total_service + $header->total_284;
+                        $total_service = $total_service + $dtt_raw_oneline_discs[0]->total_284;
                         $qty_service = $qty_service + $c_284;
                     @endphp
                       <th scope="col" width="3%">{{ number_format($dtt_raw_oneline_discs[0]->total_284,0,',','.') }}  / {{ $c_284 }} </th>
@@ -818,39 +818,39 @@
                     @if((int)$header->total_285>0)
                     @php
                       $count_column_service++;
-                        $total_service = $total_service + $header->total_285;
+                        $total_service = $total_service + $dtt_raw_oneline_discs[0]->total_285;
                         $qty_service = $qty_service + $c_285;
                     @endphp
-                      <th scope="col" width="3%">{{ number_format($header->total_285,0,',','.') }}  / {{ $c_285 }} </th>
+                      <th scope="col" width="3%">{{ number_format($dtt_raw_oneline_discs[0]->total_285,0,',','.') }}  / {{ $c_285 }} </th>
                     @endif
                     @if((int)$header->total_286>0)
                     @php
                       $count_column_service++;
-                        $total_service = $total_service + $header->total_286;
+                        $total_service = $total_service + $dtt_raw_oneline_discs[0]->total_286;
                         $qty_service = $qty_service + $c_286;
                     @endphp
-                      <th scope="col" width="3%">{{ number_format($header->total_286,0,',','.') }}  / {{ $c_286 }} </th>
+                      <th scope="col" width="3%">{{ number_format($dtt_raw_oneline_discs[0]->total_286,0,',','.') }}  / {{ $c_286 }} </th>
                     @endif
                     @if((int)$header->total_287>0)
                     @php
                       $count_column_service++;
-                        $total_service = $total_service + $header->total_287;
+                        $total_service = $total_service + $dtt_raw_oneline_discs[0]->total_287;
                         $qty_service = $qty_service + $c_287;
                     @endphp
-                        <th scope="col" width="3%">{{ number_format($header->total_287,0,',','.') }}  / {{ $c_287 }} </th>
+                        <th scope="col" width="3%">{{ number_format($dtt_raw_oneline_discs[0]->total_287,0,',','.') }}  / {{ $c_287 }} </th>
                     @endif
                     @if((int)$header->total_288>0)
                     @php
                       $count_column_service++;
-                        $total_service = $total_service + $header->total_288;
+                        $total_service = $total_service + $dtt_raw_oneline_discs[0]->total_288;
                         $qty_service = $qty_service + $c_288;
                     @endphp
-                      <th scope="col" width="3%">{{ number_format($header->total_288,0,',','.') }}  / {{ $c_288 }} </th>
+                      <th scope="col" width="3%">{{ number_format($dtt_raw_oneline_discs[0]->total_288,0,',','.') }}  / {{ $c_288 }} </th>
                     @endif
                     @if((int)$header->total_289>0)
                     @php
                       $count_column_service++;
-                        $total_service = $total_service + $header->total_289;
+                        $total_service = $total_service + $dtt_raw_oneline_discs[0]->total_289;
                         $qty_service = $qty_service + $c_289;
                     @endphp
                       <th scope="col" width="3%">{{ number_format($dtt_raw_oneline_discs[0]->total_289,0,',','.') }}  / {{ $c_289 }} </th>
@@ -858,16 +858,16 @@
                       @if((int)$header->total_290>0)
                       @php
                         $count_column_service++;
-                        $total_service = $total_service + $header->total_290;
+                        $total_service = $total_service + $dtt_raw_oneline_discs[0]->total_290;
                         $qty_service = $qty_service + $c_290;
                       @endphp
-                        <th scope="col" width="3%">{{ number_format($header->total_290,0,',','.') }}  / {{ $c_290 }} </th>
+                        <th scope="col" width="3%">{{ number_format($dtt_raw_oneline_discs[0]->total_290,0,',','.') }}  / {{ $c_290 }} </th>
                       @endif
       
                       @if((int)$header->total_291>0)
                       @php
                         $count_column_service++;
-                        $total_service = $total_service + $header->total_291;
+                        $total_service = $total_service + $dtt_raw_oneline_discs[0]->total_291;
                         $qty_service = $qty_service + $c_291;
                       @endphp
                         <th scope="col" width="3%">{{ number_format($dtt_raw_oneline_discs[0]->total_291,0,',','.') }}  / {{ $c_291 }} </th>
@@ -876,78 +876,78 @@
                       @if((int)$header->total_292>0)
                       @php
                         $count_column_service++;
-                        $total_service = $total_service + $header->total_292;
+                        $total_service = $total_service + $dtt_raw_oneline_discs[0]->total_292;
                         $qty_service = $qty_service + $c_292;
                       @endphp
-                        <th scope="col" width="3%">{{ number_format($header->total_292,0,',','.') }}  / {{ $c_292 }} </th>
+                        <th scope="col" width="3%">{{ number_format($dtt_raw_oneline_discs[0]->total_292,0,',','.') }}  / {{ $c_292 }} </th>
                       @endif
                   
                       @if((int)$header->total_293>0)
                       @php
                         $count_column_service++;
-                        $total_service = $total_service + $header->total_293;
+                        $total_service = $total_service + $dtt_raw_oneline_discs[0]->total_293;
                         $qty_service = $qty_service + $c_293;
                       @endphp
-                        <th scope="col" width="3%">{{ number_format($header->total_293,0,',','.') }}  / {{ $c_293 }} </th>
+                        <th scope="col" width="3%">{{ number_format($dtt_raw_oneline_discs[0]->total_293,0,',','.') }}  / {{ $c_293 }} </th>
                       @endif
                   
                     @if((int)$header->total_294>0)
                     @php
                       $count_column_service++;
-                        $total_service = $total_service + $header->total_294;
+                        $total_service = $total_service + $dtt_raw_oneline_discs[0]->total_294;
                         $qty_service = $qty_service + $c_294;
                     @endphp
-                      <th scope="col" width="3%">{{ number_format($header->total_294,0,',','.') }}  / {{ $c_294 }} </th>
+                      <th scope="col" width="3%">{{ number_format($dtt_raw_oneline_discs[0]->total_294,0,',','.') }}  / {{ $c_294 }} </th>
                     @endif
                 
                     @if((int)$header->total_295>0)
                     @php
                       $count_column_service++;
-                        $total_service = $total_service + $header->total_295;
+                        $total_service = $total_service + $dtt_raw_oneline_discs[0]->total_295;
                         $qty_service = $qty_service + $c_295;
                     @endphp
-                      <th scope="col" width="3%">{{ number_format($header->total_295,0,',','.') }}  / {{ $c_295 }} </th>
+                      <th scope="col" width="3%">{{ number_format($dtt_raw_oneline_discs[0]->total_295,0,',','.') }}  / {{ $c_295 }} </th>
                     @endif
                 
                     @if((int)$header->total_296>0)
                     @php
                       $count_column_service++;
-                        $total_service = $total_service + $header->total_296;
+                        $total_service = $total_service + $dtt_raw_oneline_discs[0]->total_296;
                         $qty_service = $qty_service + $c_296;
                     @endphp
-                      <th scope="col" width="3%">{{ number_format($header->total_296,0,',','.') }}  / {{ $c_296 }} </th>
+                      <th scope="col" width="3%">{{ number_format($dtt_raw_oneline_discs[0]->total_296,0,',','.') }}  / {{ $c_296 }} </th>
                     @endif
               
                     @if((int)$header->total_297>0)
                     @php
                       $count_column_service++;
-                        $total_service = $total_service + $header->total_297;
+                        $total_service = $total_service + $dtt_raw_oneline_discs[0]->total_297;
                         $qty_service = $qty_service + $c_297;
                     @endphp
-                      <th scope="col" width="3%">{{ number_format($header->total_297,0,',','.') }}  / {{ $c_297 }} </th>
+                      <th scope="col" width="3%">{{ number_format($dtt_raw_oneline_discs[0]->total_297,0,',','.') }}  / {{ $c_297 }} </th>
                     @endif
                     @if((int)$header->total_298>0)
                     @php
                       $count_column_service++;
-                        $total_service = $total_service + $header->total_298;
+                        $total_service = $total_service + $dtt_raw_oneline_discs[0]->total_298;
                         $qty_service = $qty_service + $c_298;
                     @endphp
-                      <th scope="col" width="3%">{{ number_format($header->total_298,0,',','.') }}  / {{ $c_298 }} </th>
+                      <th scope="col" width="3%">{{ number_format($dtt_raw_oneline_discs[0]->total_298,0,',','.') }}  / {{ $c_298 }} </th>
                     @endif
                 
                     @if((int)$header->total_299>0)
                     @php
                       $count_column_service++;
-                        $total_service = $total_service + $header->total_299;
+                        $total_service = $total_service + $dtt_raw_oneline_discs[0]->total_299;
                         $qty_service = $qty_service + $c_299;
                     @endphp
-                      <th scope="col" width="3%">{{ number_format($header->total_299,0,',','.') }}  / {{ $c_299 }} </th>
+                      <th scope="col" width="3%">{{ number_format($dtt_raw_oneline_discs[0]->total_299,0,',','.') }}  / {{ $c_299 }} </th>
                     @endif
                 
                     @if((int)$header->total_300>0)
                     @php
                       $count_column_service++;
-                        $total_service = $total_service + $header->total_300;
+                        $total_service = $total_service + $dtt_raw_oneline_discs[0]->total_300;
                         $qty_service = $qty_service + $c_300;
                     @endphp
                       <th scope="col" width="3%">{{ number_format($dtt_raw_oneline_discs[0]->total_300,0,',','.') }}  / {{ $c_300 }} </th>
@@ -956,7 +956,7 @@
                     @if((int)$header->total_301>0)
                     @php
                       $count_column_service++;
-                        $total_service = $total_service + $header->total_301;
+                        $total_service = $total_service + $dtt_raw_oneline_discs[0]->total_301;
                         $qty_service = $qty_service + $c_301;
                     @endphp
                       <th scope="col" width="3%">{{ number_format($dtt_raw_oneline_discs[0]->total_301,0,',','.') }}  / {{ $c_301 }}</th>
@@ -965,106 +965,106 @@
                     @if((int)$header->total_302>0)
                     @php
                       $count_column_service++;
-                        $total_service = $total_service + $header->total_302;
+                        $total_service = $total_service + $dtt_raw_oneline_discs[0]->total_302;
                         $qty_service = $qty_service + $c_302;
                     @endphp
-                      <th scope="col" width="3%">{{ number_format($header->total_302,0,',','.') }}  / {{ $c_302 }} </th>
+                      <th scope="col" width="3%">{{ number_format($dtt_raw_oneline_discs[0]->total_302,0,',','.') }}  / {{ $c_302 }} </th>
                     @endif
                 
                     @if((int)$header->total_304>0)
                     @php
                       $count_column_service++;
-                        $total_service = $total_service + $header->total_304;
+                        $total_service = $total_service + $dtt_raw_oneline_discs[0]->total_304;
                         $qty_service = $qty_service + $c_304;
                     @endphp
-                      <th scope="col" width="3%">{{ number_format($header->total_304,0,',','.') }}  / {{ $c_304 }} </th>
+                      <th scope="col" width="3%">{{ number_format($dtt_raw_oneline_discs[0]->total_304,0,',','.') }}  / {{ $c_304 }} </th>
                     @endif
                 
                     @if((int)$header->total_305>0)
                     @php
                       $count_column_service++;
-                        $total_service = $total_service + $header->total_305;
+                        $total_service = $total_service + $dtt_raw_oneline_discs[0]->total_305;
                         $qty_service = $qty_service + $c_305;
                     @endphp
-                      <th scope="col" width="3%">{{ number_format($header->total_305,0,',','.') }}  / {{ $c_305 }} </th>
+                      <th scope="col" width="3%">{{ number_format($dtt_raw_oneline_discs[0]->total_305,0,',','.') }}  / {{ $c_305 }} </th>
                     @endif
                 
                     @if((int)$header->total_306>0)
                     @php
                       $count_column_service++;
-                        $total_service = $total_service + $header->total_306;
+                        $total_service = $total_service + $dtt_raw_oneline_discs[0]->total_306;
                         $qty_service = $qty_service + $c_306;
                     @endphp
-                      <th scope="col" width="3%">{{ number_format($header->total_306,0,',','.') }}  / {{ $c_306 }} </th>
+                      <th scope="col" width="3%">{{ number_format($dtt_raw_oneline_discs[0]->total_306,0,',','.') }}  / {{ $c_306 }} </th>
                     @endif
                 
                     @if((int)$header->total_307>0)
                     @php
                       $count_column_service++;
-                        $total_service = $total_service + $header->total_307;
+                        $total_service = $total_service + $dtt_raw_oneline_discs[0]->total_307;
                         $qty_service = $qty_service + $c_307;
                     @endphp
-                      <th scope="col" width="3%">{{ number_format($header->total_307,0,',','.') }}  / {{ $c_307 }} </th>
+                      <th scope="col" width="3%">{{ number_format($dtt_raw_oneline_discs[0]->total_307,0,',','.') }}  / {{ $c_307 }} </th>
                     @endif
                     @if((int)$header->total_308>0)
                     @php
                       $count_column_service++;
-                        $total_service = $total_service + $header->total_308;
+                        $total_service = $total_service + $dtt_raw_oneline_discs[0]->total_308;
                         $qty_service = $qty_service + $c_308;
                     @endphp
-                      <th scope="col" width="3%">{{ number_format($header->total_308,0,',','.') }}  / {{ $c_308 }} </th>
+                      <th scope="col" width="3%">{{ number_format($dtt_raw_oneline_discs[0]->total_308,0,',','.') }}  / {{ $c_308 }} </th>
                       @endif
                     @if((int)$header->total_310>0)
                     @php
                       $count_column_service++;
-                        $total_service = $total_service + $header->total_310;
+                        $total_service = $total_service + $dtt_raw_oneline_discs[0]->total_310;
                         $qty_service = $qty_service + $c_310;
                     @endphp
-                      <th scope="col" width="3%">{{ number_format($header->total_310,0,',','.') }}  / {{ $c_310 }} </th>
+                      <th scope="col" width="3%">{{ number_format($dtt_raw_oneline_discs[0]->total_310,0,',','.') }}  / {{ $c_310 }} </th>
                     @endif
                 
                     @if((int)$header->total_312>0)
                     @php
                       $count_column_service++;
-                        $total_service = $total_service + $header->total_312;
+                        $total_service = $total_service + $dtt_raw_oneline_discs[0]->total_312;
                         $qty_service = $qty_service + $c_312;
                     @endphp
-                      <th scope="col" width="3%">{{ number_format($header->total_312,0,',','.') }}  / {{ $c_312 }} </th>
+                      <th scope="col" width="3%">{{ number_format($dtt_raw_oneline_discs[0]->total_312,0,',','.') }}  / {{ $c_312 }} </th>
                     @endif
                   
                     @if((int)$header->total_313>0)
                     @php
                       $count_column_service++;
-                        $total_service = $total_service + $header->total_313;
+                        $total_service = $total_service + $dtt_raw_oneline_discs[0]r->total_313;
                         $qty_service = $qty_service + $c_313;
                     @endphp
-                      <th scope="col" width="3%">{{ number_format($header->total_313,0,',','.') }}  / {{ $c_313 }} </th>
+                      <th scope="col" width="3%">{{ number_format($dtt_raw_oneline_discs[0]->total_313,0,',','.') }}  / {{ $c_313 }} </th>
                       @endif
                     @if((int)$header->total_315>0)
                     @php
                       $count_column_service++;
-                        $total_service = $total_service + $header->total_315;
+                        $total_service = $total_service + $dtt_raw_oneline_discs[0]->total_315;
                         $qty_service = $qty_service + $c_315;
                     @endphp
-                      <th scope="col" width="3%">{{ number_format($header->total_315,0,',','.') }}  / {{ $c_315 }} </th>
+                      <th scope="col" width="3%">{{ number_format($dtt_raw_oneline_discs[0]->total_315,0,',','.') }}  / {{ $c_315 }} </th>
                     @endif
                   
                     @if((int)$header->total_317>0)
                     @php
                       $count_column_service++;
-                        $total_service = $total_service + $header->total_317;
+                        $total_service = $total_service + $dtt_raw_oneline_discs[0]->total_317;
                         $qty_service = $qty_service + $c_317;
                     @endphp
-                      <th scope="col" width="3%">{{ number_format($header->total_317,0,',','.') }}  / {{ $c_317 }} </th>
+                      <th scope="col" width="3%">{{ number_format($dtt_raw_oneline_discs[0]->total_317,0,',','.') }}  / {{ $c_317 }} </th>
                     @endif
 
                     @if((int)$header->total_321>0)
                     @php
                       $count_column_service++;
-                        $total_service = $total_service + $header->total_321;
+                        $total_service = $total_service + $dtt_raw_oneline_discs[0]->total_321;
                         $qty_service = $qty_service + $c_321;
                     @endphp
-                      <th scope="col" width="3%">{{ number_format($header->total_321,0,',','.') }}  / {{ $c_321 }} </th>
+                      <th scope="col" width="3%">{{ number_format($dtt_raw_oneline_discs[0]->total_321,0,',','.') }}  / {{ $c_321 }} </th>
                     @endif
 
                     
@@ -1073,145 +1073,145 @@
                     @if((int)$header->total_468>0)
                     @php
                       $count_column_service++;
-                        $total_service = $total_service + $header->total_468;
+                        $total_service = $total_service + $dtt_raw_oneline_discs[0]->total_468;
                         $qty_service = $qty_service + $c_468;
                     @endphp
-                      <th scope="col" width="3%">{{ number_format($header->total_468,0,',','.') }}  / {{ $c_468 }} </th>
+                      <th scope="col" width="3%">{{ number_format($dtt_raw_oneline_discs[0]->total_468,0,',','.') }}  / {{ $c_468 }} </th>
                     @endif
 
                     @if((int)$header->total_469>0)
                     @php
                       $count_column_service++;
-                        $total_service = $total_service + $header->total_469;
+                        $total_service = $total_service + $dtt_raw_oneline_discs[0]->total_469;
                         $qty_service = $qty_service + $c_469;
                     @endphp
-                      <th scope="col" width="3%">{{ number_format($header->total_469,0,',','.') }}  / {{ $c_469 }} </th>
+                      <th scope="col" width="3%">{{ number_format($dtt_raw_oneline_discs[0]->total_469,0,',','.') }}  / {{ $c_469 }} </th>
                     @endif
                     
                     @if((int)$header->total_470>0)
                     @php
                       $count_column_service++;
-                        $total_service = $total_service + $header->total_470;
+                        $total_service = $total_service + $dtt_raw_oneline_discs[0]->total_470;
                         $qty_service = $qty_service + $c_470;
                     @endphp
-                      <th scope="col" width="3%">{{ number_format($header->total_470,0,',','.') }}  / {{ $c_470 }} </th>
+                      <th scope="col" width="3%">{{ number_format($dtt_raw_oneline_discs[0]->total_470,0,',','.') }}  / {{ $c_470 }} </th>
                     @endif
                     
                     @if((int)$header->total_472>0)
                     @php
                       $count_column_service++;
-                        $total_service = $total_service + $header->total_472;
+                        $total_service = $total_service + $dtt_raw_oneline_discs[0]->total_472;
                         $qty_service = $qty_service + $c_472;
                     @endphp
-                      <th scope="col" width="3%">{{ number_format($header->total_472,0,',','.') }}  / {{ $c_472 }} </th>
+                      <th scope="col" width="3%">{{ number_format($dtt_raw_oneline_discs[0]->total_472,0,',','.') }}  / {{ $c_472 }} </th>
                     @endif
                     
                     @if((int)$header->total_474>0)
                     @php
                       $count_column_service++;
-                        $total_service = $total_service + $header->total_474;
+                        $total_service = $total_service + $dtt_raw_oneline_discs[0]->total_474;
                         $qty_service = $qty_service + $c_474;
                     @endphp
-                      <th scope="col" width="3%">{{ number_format($header->total_474,0,',','.') }}  / {{ $c_474 }} </th>
+                      <th scope="col" width="3%">{{ number_format($dtt_raw_oneline_discs[0]->total_474,0,',','.') }}  / {{ $c_474 }} </th>
                     @endif
                     
                     @if((int)$header->total_476>0)
                     @php
                       $count_column_service++;
-                        $total_service = $total_service + $header->total_476;
+                        $total_service = $total_service + $dtt_raw_oneline_discs[0]->total_476;
                         $qty_service = $qty_service + $c_476;
                     @endphp
-                      <th scope="col" width="3%">{{ number_format($header->total_476,0,',','.') }}  / {{ $c_476 }} </th>
+                      <th scope="col" width="3%">{{ number_format($dtt_raw_oneline_discs[0]->total_476,0,',','.') }}  / {{ $c_476 }} </th>
                     @endif
                     
                     @if((int)$header->total_477>0)
                     @php
                       $count_column_service++;
-                        $total_service = $total_service + $header->total_477;
+                        $total_service = $total_service + $dtt_raw_oneline_discs[0]->total_477;
                         $qty_service = $qty_service + $c_477;
                     @endphp
-                      <th scope="col" width="3%">{{ number_format($header->total_477,0,',','.') }}  / {{ $c_477 }} </th>
+                      <th scope="col" width="3%">{{ number_format($dtt_raw_oneline_discs[0]->total_477,0,',','.') }}  / {{ $c_477 }} </th>
                     @endif
                     
                     @if((int)$header->total_479>0)
                     @php
                       $count_column_service++;
-                        $total_service = $total_service + $header->total_479;
+                        $total_service = $total_service + $dtt_raw_oneline_discs[0]->total_479;
                         $qty_service = $qty_service + $c_479;
                     @endphp
-                      <th scope="col" width="3%">{{ number_format($header->total_479,0,',','.') }}  / {{ $c_479 }} </th>
+                      <th scope="col" width="3%">{{ number_format($dtt_raw_oneline_discs[0]->total_479,0,',','.') }}  / {{ $c_479 }} </th>
                     @endif
                     
                     @if((int)$header->total_480>0)
                     @php
                       $count_column_service++;
-                        $total_service = $total_service + $header->total_480;
+                        $total_service = $total_service + $dtt_raw_oneline_discs[0]->total_480;
                         $qty_service = $qty_service + $c_480;
                     @endphp
-                      <th scope="col" width="3%">{{ number_format($header->total_480,0,',','.') }}  / {{ $c_480 }} </th>
+                      <th scope="col" width="3%">{{ number_format($dtt_raw_oneline_discs[0]->total_480,0,',','.') }}  / {{ $c_480 }} </th>
                     @endif
                     
                     @if((int)$header->total_481>0)
                     @php
                       $count_column_service++;
-                        $total_service = $total_service + $header->total_481;
+                        $total_service = $total_service + $dtt_raw_oneline_discs[0]->total_481;
                         $qty_service = $qty_service + $c_481;
                     @endphp
-                      <th scope="col" width="3%">{{ number_format($header->total_481,0,',','.') }}  / {{ $c_481 }} </th>
+                      <th scope="col" width="3%">{{ number_format($dtt_raw_oneline_discs[0]->total_481,0,',','.') }}  / {{ $c_481 }} </th>
                     @endif
                     
                     @if((int)$header->total_482>0)
                     @php
                       $count_column_service++;
-                        $total_service = $total_service + $header->total_482;
+                        $total_service = $total_service + $dtt_raw_oneline_discs[0]->total_482;
                         $qty_service = $qty_service + $c_482;
                     @endphp
-                      <th scope="col" width="3%">{{ number_format($header->total_482,0,',','.') }}  / {{ $c_482 }} </th>
+                      <th scope="col" width="3%">{{ number_format($dtt_raw_oneline_discs[0]->total_482,0,',','.') }}  / {{ $c_482 }} </th>
                     @endif
                     
                     @if((int)$header->total_485>0)
                     @php
                       $count_column_service++;
-                        $total_service = $total_service + $header->total_485;
+                        $total_service = $total_service + $dtt_raw_oneline_discs[0]->total_485;
                         $qty_service = $qty_service + $c_485;
                     @endphp
-                      <th scope="col" width="3%">{{ number_format($header->total_485,0,',','.') }}  / {{ $c_485 }} </th>
+                      <th scope="col" width="3%">{{ number_format($dtt_raw_oneline_discs[0]->total_485,0,',','.') }}  / {{ $c_485 }} </th>
                     @endif
                     
                     @if((int)$header->total_486>0)
                     @php
                       $count_column_service++;
-                        $total_service = $total_service + $header->total_486;
+                        $total_service = $total_service + $dtt_raw_oneline_discs[0]->total_486;
                         $qty_service = $qty_service + $c_486;
                     @endphp
-                      <th scope="col" width="3%">{{ number_format($header->total_486,0,',','.') }}  / {{ $c_486 }} </th>
+                      <th scope="col" width="3%">{{ number_format($dtt_raw_oneline_discs[0]->total_486,0,',','.') }}  / {{ $c_486 }} </th>
                     @endif
                     
                     @if((int)$header->total_487>0)
                     @php
                       $count_column_service++;
-                        $total_service = $total_service + $header->total_487;
+                        $total_service = $total_service + $dtt_raw_oneline_discs[0]->total_487;
                         $qty_service = $qty_service + $c_487;
                     @endphp
-                      <th scope="col" width="3%">{{ number_format($header->total_487,0,',','.') }}  / {{ $c_487 }} </th>
+                      <th scope="col" width="3%">{{ number_format($dtt_raw_oneline_discs[0]->total_487,0,',','.') }}  / {{ $c_487 }} </th>
                     @endif
 
                     @if((int)$header->total_449>0)
                     @php
                       $count_column_service++;
-                        $total_service = $total_service + $header->total_449;
+                        $total_service = $total_service + $dtt_raw_oneline_discs[0]->total_449;
                         $qty_service = $qty_service + $c_449;
                     @endphp
-                      <th scope="col" width="3%">{{ number_format($header->total_449,0,',','.') }}  / {{ $c_449 }} </th>
+                      <th scope="col" width="3%">{{ number_format($dtt_raw_oneline_discs[0]->total_449,0,',','.') }}  / {{ $c_449 }} </th>
                     @endif
 
                     @if((int)$header->total_453>0)
                     @php
                       $count_column_service++;
-                        $total_service = $total_service + $header->total_453;
+                        $total_service = $total_service + $dtt_raw_oneline_discs[0]->total_453;
                         $qty_service = $qty_service + $c_453;
                     @endphp
-                      <th scope="col" width="3%">{{ number_format($header->total_453,0,',','.') }}  / {{ $c_453 }} </th>
+                      <th scope="col" width="3%">{{ number_format($dtt_raw_oneline_discs[0]->total_453,0,',','.') }}  / {{ $c_453 }} </th>
                     @endif
 
 
@@ -1219,26 +1219,26 @@
                     @if((int)$header->total_445>0)
                     @php
                       $count_column_service++;
-                        $total_service = $total_service + $header->total_445;
+                        $total_service = $total_service + $dtt_raw_oneline_discs[0]->total_445;
                         $qty_service = $qty_service + $c_445;
                     @endphp
-                      <th scope="col" width="3%">{{ number_format($header->total_445,0,',','.') }}  / {{ $c_445 }} </th>
+                      <th scope="col" width="3%">{{ number_format($dtt_raw_oneline_discs[0]->total_445,0,',','.') }}  / {{ $c_445 }} </th>
                     @endif
                     @if((int)$header->total_446>0)
                     @php
                       $count_column_service++;
-                        $total_service = $total_service + $header->total_446;
+                        $total_service = $total_service + $dtt_raw_oneline_discs[0]->total_446;
                         $qty_service = $qty_service + $c_446;
                     @endphp
-                      <th scope="col" width="3%">{{ number_format($header->total_446,0,',','.') }}  / {{ $c_446 }} </th>
+                      <th scope="col" width="3%">{{ number_format($dtt_raw_oneline_discs[0]->total_446,0,',','.') }}  / {{ $c_446 }} </th>
                     @endif
                     @if((int)$header->total_452>0)
                     @php
                       $count_column_service++;
-                        $total_service = $total_service + $header->total_452;
+                        $total_service = $total_service + $dtt_raw_oneline_discs[0]->total_452;
                         $qty_service = $qty_service + $c_452;
                     @endphp
-                      <th scope="col" width="3%">{{ number_format($header->total_452,0,',','.') }}  / {{ $c_452 }} </th>
+                      <th scope="col" width="3%">{{ number_format($dtt_raw_oneline_discs[0]->total_452,0,',','.') }}  / {{ $c_452 }} </th>
                     @endif
 
 
@@ -1247,34 +1247,34 @@
                     @if((int)$header->total_316>0)
                     @php
                       $count_column_service++;
-                        $total_service = $total_service + $header->total_316;
+                        $total_service = $total_service + $dtt_raw_oneline_discs[0]->total_316;
                         $qty_service = $qty_service + $c_316;
                     @endphp
-                      <th scope="col" width="3%">{{ number_format($header->total_316,0,',','.') }}  / {{ $c_316 }} </th>
+                      <th scope="col" width="3%">{{ number_format($dtt_raw_oneline_discs[0]->total_316,0,',','.') }}  / {{ $c_316 }} </th>
                     @endif
                     @if((int)$header->total_309>0)
                     @php
                       $count_column_service++;
-                        $total_service = $total_service + $header->total_309;
+                        $total_service = $total_service + $dtt_raw_oneline_discs[0]->total_309;
                         $qty_service = $qty_service + $c_309;
                     @endphp
-                      <th scope="col" width="3%">{{ number_format($header->total_309,0,',','.') }}  / {{ $c_309 }} </th>
+                      <th scope="col" width="3%">{{ number_format($dtt_raw_oneline_discs[0]->total_309,0,',','.') }}  / {{ $c_309 }} </th>
                     @endif
                     @if((int)$header->total_318>0)
                     @php
                         $count_column_extra++;
-                        $total_extra = $total_extra + $header->total_318;
+                        $total_extra = $total_extra + $dtt_raw_oneline_discs[0]->total_318;
                         $qty_extra = $qty_extra + $c_318;
                     @endphp
-                      <th scope="col" width="3%">{{ number_format($header->total_318,0,',','.') }}  / {{ $c_318 }} </th>
+                      <th scope="col" width="3%">{{ number_format($dtt_raw_oneline_discs[0]->total_318,0,',','.') }}  / {{ $c_318 }} </th>
                     @endif
                     @if((int)$header->total_319>0)
                     @php
                         $count_column_extra++;
-                        $total_extra = $total_extra + $header->total_319;
+                        $total_extra = $total_extra + $dtt_raw_oneline_discs[0]->total_319;
                         $qty_extra = $qty_extra + $c_319;
                     @endphp
-                      <th scope="col" width="3%">{{ number_format($header->total_319,0,',','.') }}  / {{ $c_319 }} </th>
+                      <th scope="col" width="3%">{{ number_format($dtt_raw_oneline_discs[0]->total_319,0,',','.') }}  / {{ $c_319 }} </th>
                     @endif
                     <th>{{ number_format($total_payment,0,',','.') }}</th>
                     <th>{{ number_format($c_p,0,',','.') }}</th>
