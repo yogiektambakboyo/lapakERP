@@ -284,6 +284,12 @@ class PettyController extends Controller
             )
         );
 
+        SettingsDocumentNumber::where('doc_type','=','Petty')->where('branch_id','=',$request->get('branch_id'))->where('period','=','Yearly')->update(
+            array_merge(
+                ['current_value' => ((int)($count_no[0]->current_value) + 1)]
+            )
+        );
+
 
         if(!$res_master){
             $result = array_merge(
@@ -336,11 +342,7 @@ class PettyController extends Controller
             ['message' => $doc_no],
         );
 
-        SettingsDocumentNumber::where('doc_type','=','Petty')->where('branch_id','=',$request->get('branch_id'))->where('period','=','Yearly')->update(
-            array_merge(
-                ['current_value' => ((int)($count_no[0]->current_value) + 1)]
-            )
-        );
+
 
         return $result;
     }
