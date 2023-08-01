@@ -273,6 +273,12 @@ class PettyProductController extends Controller
         $count_no = SettingsDocumentNumber::where('doc_type','=','Petty')->where('branch_id','=',$request->get('branch_id'))->where('period','=','Yearly')->get(['current_value','abbr']);
         $doc_no = $count_no[0]->abbr.'-'.substr(('000'.$request->get('branch_id')),-3).'-'.date("Y").'-'.substr(('00000000'.((int)($count_no[0]->current_value) + 1)),-8);
 
+        SettingsDocumentNumber::where('doc_type','=','Petty')->where('branch_id','=',$request->get('branch_id'))->where('period','=','Yearly')->update(
+            array_merge(
+                ['current_value' => ((int)($count_no[0]->current_value) + 1)]
+            )
+        );
+        
         $res_master = PettyCash::create(
             array_merge(
                 ['doc_no' => $doc_no ],
@@ -284,13 +290,6 @@ class PettyProductController extends Controller
                 ['type' => $request->get('type')],
             )
         );
-
-        SettingsDocumentNumber::where('doc_type','=','Petty')->where('branch_id','=',$request->get('branch_id'))->where('period','=','Yearly')->update(
-            array_merge(
-                ['current_value' => ((int)($count_no[0]->current_value) + 1)]
-            )
-        );
-
 
         if(!$res_master){
             $result = array_merge(
