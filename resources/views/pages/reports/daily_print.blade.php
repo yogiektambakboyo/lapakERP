@@ -1035,7 +1035,7 @@
                     @if((int)$header->total_313>0)
                     @php
                       $count_column_service++;
-                        $total_service = $total_service + $dtt_raw_oneline_discs[0]r->total_313;
+                        $total_service = $total_service + $dtt_raw_oneline_discs[0]->total_313;
                         $qty_service = $qty_service + $c_313;
                     @endphp
                       <th scope="col" width="3%">{{ number_format($dtt_raw_oneline_discs[0]->total_313,0,',','.') }}  / {{ $c_313 }} </th>
