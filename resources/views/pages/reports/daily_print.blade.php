@@ -1296,7 +1296,7 @@
                     <th>{{ number_format($total_payment,0,',','.') }}</th>
                     <th>{{ number_format($c_p,0,',','.') }}</th>
                     <th>{{ number_format($t_p,0,',','.') }}</th>
-                    <th>{{ number_format($t_drink,0,',','.') }} / {{ number_format($c_pn,0,',','.') }}</th>
+                    <th>{{ number_format($t_drink,1,',','.') }} / {{ number_format($c_pn,0,',','.') }}</th>
                     <th style="text-align: left;">
                       @foreach($out_datas_total_drink as $out_datas_total_drink) 
                           @php
@@ -1339,7 +1339,7 @@
                   ?>
                   <th>{{ number_format($total_payment,0,',','.') }}</th>
                   <th colspan="2">{{ number_format($t_p,0,',','.') }} / {{ number_format($c_p,0,',','.') }}</th>
-                  <th>{{ number_format($t_drink,0,',','.') }} / {{ number_format($c_pn,0,',','.') }}</th>
+                  <th>{{ number_format($t_drink,1,',','.') }} / {{ number_format($c_pn,0,',','.') }}</th>
                   <th></th>
                 </tr>
         </tbody>
