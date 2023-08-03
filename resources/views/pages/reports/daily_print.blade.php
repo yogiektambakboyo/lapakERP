@@ -244,6 +244,9 @@
               @if((int)$header->total_453>0)
                 <th scope="col" width="3%">EBBSGT</th>
               @endif
+              @if((int)$header->total_455>0)
+                <th scope="col" width="3%">EBBSGT3</th>
+              @endif
 
               @if((int)$header->total_445>0)
                 <th scope="col" width="3%">TTW1</th>
@@ -344,6 +347,7 @@
             $c_328 = 0;
             $c_449 = 0;
             $c_453 = 0;
+            $c_455 = 0;
 
             $c_468 = 0;
             $c_469 = 0;
@@ -630,6 +634,10 @@
                           @if((int)$header->total_453>0)
                           @php if((int)$dtt_raw[$counter]->total_453>0){ $c_453++; } @endphp
                             <td scope="col" width="3%">{{ number_format($dtt_raw[$counter]->total_453,0,',','.') }}</td>
+                          @endif
+                          @if((int)$header->total_455>0)
+                          @php if((int)$dtt_raw[$counter]->total_455>0){ $c_455++; } @endphp
+                            <td scope="col" width="3%">{{ number_format($dtt_raw[$counter]->total_455,0,',','.') }}</td>
                           @endif
 
                           @if((int)$header->total_445>0)
@@ -1221,6 +1229,15 @@
                         $qty_service = $qty_service + $c_453;
                     @endphp
                       <th scope="col" width="3%">{{ number_format($dtt_raw_oneline_discs[0]->total_453,0,',','.') }}  / {{ $c_453 }} </th>
+                    @endif
+
+                    @if((int)$header->total_455>0)
+                    @php
+                      $count_column_service++;
+                        $total_service = $total_service + $dtt_raw_oneline_discs[0]->total_455;
+                        $qty_service = $qty_service + $c_455;
+                    @endphp
+                      <th scope="col" width="3%">{{ number_format($dtt_raw_oneline_discs[0]->total_455,0,',','.') }}  / {{ $c_455 }} </th>
                     @endif
 
 
