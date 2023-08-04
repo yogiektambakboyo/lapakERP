@@ -454,8 +454,8 @@
         <table class="table table-striped" id="order_product_table">
           <thead>
           <tr>
-              <th scope="col">No</th>
-              <th scope="col" width="20%">@lang('general.product')</th>
+              <th scope="col"  width="3%">No</th>
+              <th scope="col" >@lang('general.product')</th>
               <th scope="col" width="10%">@lang('general.lbl_uom')</th>
               <th scope="col" width="10%">@lang('general.lbl_price')</th>
               <th scope="col" width="5%">@lang('general.lbl_discount')</th>
@@ -778,6 +778,7 @@
                                 "referralbyid"     : resp.data[i]["referralbyid"],
                                 "total_vat"     : resp.data[i]["vat_total"],
                                 "vat_total"     : resp.data[i]["vat"],  
+                                "ref_no"     : resp.data[i]["order_no"],  
                           }
 
                           orderList.push(product);
@@ -842,18 +843,6 @@
                     $('#result-total').text(currency(order_total, { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
                     $('#vat-total').text(currency(_vat_total, { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
                     $('#sub-total').text(currency(sub_total, { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
-
-                    $('#invoice_date').val(resp.data[0]["dated"]);
-                    $('#customer_id').val(resp.data[0]["customers_id"]);
-                    $('#remark').val(resp.data[0]["order_remark"]);
-                    $('#payment_type').val(resp.data[0]["payment_type"]);
-                    $('#payment_nominal').val(resp.data[0]["payment_nominal"]);
-                    $('#schedule_date').val(resp.data[0]["scheduled_date"]);
-                    $('#timepicker1').val(resp.data[0]["scheduled_time"]);
-                    $('#room_id').val(resp.data[0]["branch_room_id"]);
-                    $('#scheduled').val($('#room_id option:selected').text()+" - "+$('#schedule_date').val()+" "+$('#timepicker1').val());
-
-
                 });
 
               }
@@ -880,188 +869,6 @@
             }
           });
 
-      });
-
-      $('#btn_assigned').on('click',function(){
-        if($('#assign_id').val()==""){
-          Swal.fire(
-              {
-                position: 'top-end',
-                icon: 'warning',
-                text: 'Please choose staff',
-                showConfirmButton: false,
-                imageHeight: 30, 
-                imageWidth: 30,   
-                timer: 1500
-              }
-            );
-        }else{
-          table.clear().draw(false);
-          table_product.clear().draw(false);
-          order_total = 0;
-          for (var i = 0; i < orderList.length; i++){
-            var obj = orderList[i];
-            var value = obj["id"];
-            if($('#product_id_selected').val()==obj["id"]){
-              orderList[i]["assignedto"] = $('#assign_id option:selected').text();
-              orderList[i]["assignedtoid"] = $('#assign_id').val();
-              orderList[i]["executed_at"] = $('#timepicker2').val();
-            }
-          }
-
-          orderList.sort(function(a, b) {
-              return parseFloat(a.entry_time) - parseFloat(b.entry_time);
-          });
-
-
-          counterno = 0;
-          counterno_service = 0;
-          for (var i = 0; i < orderList.length; i++){
-            var obj = orderList[i];
-            var value = obj["abbr"];
-
-            if(obj["type_id"]=="Services"){
-              counterno_service  = counterno_service + 1;
-              table.row.add( {
-                      "seq" : counterno_service,
-                      "id"        : obj["id"],
-                      "abbr"      : obj["abbr"],
-                      "uom"       : obj["uom"],
-                      "price"     : obj["price"],
-                      "discount"  : obj["discount"],
-                      "qty"       : obj["qty"],
-                      "total"     : obj["total"],
-                      "assignedto": obj["assignedto"] + " (" + obj["executed_at"] + ")",
-                      "referralby" : obj["referralby"],
-                      "action"    : "",
-                }).draw(false);
-              }else{
-                counterno = counterno + 1;
-                table_product.row.add( {
-                    "seq" : counterno,
-                    "id"        : obj["id"],
-                      "abbr"      : obj["abbr"],
-                      "uom"       : obj["uom"],
-                      "price"     : obj["price"],
-                      "discount"  : obj["discount"],
-                      "qty"       : obj["qty"],
-                      "total"     : obj["total"],
-                      "assignedto": obj["assignedto"],
-                      "referralby" : obj["referralby"],
-                      "action"    : "",
-                }).draw(false);
-              }
-
-              disc_total = disc_total + (parseFloat(orderList[i]["discount"]));
-              sub_total = sub_total + (((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"]))-(parseFloat(orderList[i]["discount"])));
-              _vat_total = _vat_total + ((((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"]))-(parseFloat(orderList[i]["discount"])))*(parseFloat(orderList[i]["vat_total"])/100));
-              order_total = order_total + ((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"])+((((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"]))-(parseFloat(orderList[i]["discount"])))*(parseFloat(orderList[i]["vat_total"])/100)))-(parseFloat(orderList[i]["discount"]));
-              
-              if(($('#payment_nominal').val())>order_total){
-                $('#order_charge').css('color', 'black');
-                $('#order_charge').text(currency((($('#payment_nominal').val())-order_total), { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
-              }else{
-                $('#order_charge').text("Rp. 0");
-                $('#order_charge').css('color', 'red');
-                $('#order_charge').text(currency((($('#payment_nominal').val())-order_total), { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
-              }
-          }
-          $('#result-total').text(currency(order_total, { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
-          $('#vat-total').text(currency(_vat_total, { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
-          $('#sub-total').text(currency(sub_total, { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
-        }
-      });
-
-      $('#btn_referred').on('click',function(){
-        if($('#referral_by').val()==""){
-          Swal.fire(
-              {
-                position: 'top-end',
-                icon: 'warning',
-                text: 'Please choose staff',
-                showConfirmButton: false,
-                imageHeight: 30, 
-                imageWidth: 30,   
-                timer: 1500
-              }
-            );
-        }else{
-          table.clear().draw(false);
-          table_product.clear().draw(false);
-          order_total = 0;
-          for (var i = 0; i < orderList.length; i++){
-            var obj = orderList[i];
-            var value = obj["id"];
-            if($('#referral_selected').val()==obj["id"]){
-              orderList[i]["referralby"] = $('#referral_by option:selected').text();
-              orderList[i]["referralbyid"] = $('#referral_by').val();
-            }
-          }
-
-
-          orderList.sort(function(a, b) {
-              return parseFloat(a.entry_time) - parseFloat(b.entry_time);
-          });
-
-
-          counterno = 0;
-          counterno_service = 0;
-          for (var i = 0; i < orderList.length; i++){
-            var obj = orderList[i];
-            var value = obj["abbr"];
-
-            if(obj["type_id"]=="Services"){
-              counterno_service  = counterno_service + 1;
-              table.row.add( {
-                      "seq" : counterno_service,
-                      "id"        : obj["id"],
-                      "abbr"      : obj["abbr"],
-                      "uom"       : obj["uom"],
-                      "price"     : obj["price"],
-                      "discount"  : obj["discount"],
-                      "qty"       : obj["qty"],
-                      "total"     : obj["total"],
-                      "assignedto": obj["assignedto"] + " (" + obj["executed_at"] + ")",
-                      "referralby" : obj["referralby"],
-                      "action"    : "",
-                }).draw(false);
-              }else{
-                counterno = counterno + 1;
-                table_product.row.add( {
-                    "seq" : counterno,
-                    "id"        : obj["id"],
-                      "abbr"      : obj["abbr"],
-                      "uom"       : obj["uom"],
-                      "price"     : obj["price"],
-                      "discount"  : obj["discount"],
-                      "qty"       : obj["qty"],
-                      "total"     : obj["total"],
-                      "assignedto": obj["assignedto"],
-                      "referralby" : obj["referralby"],
-                      "action"    : "",
-                }).draw(false);
-              }
-
-              disc_total = disc_total + (parseFloat(orderList[i]["discount"]));
-              sub_total = sub_total + (((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"]))-(parseFloat(orderList[i]["discount"])));
-              _vat_total = _vat_total + ((((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"]))-(parseFloat(orderList[i]["discount"])))*(parseFloat(orderList[i]["vat_total"])/100));
-              order_total = order_total + ((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"])+((((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"]))-(parseFloat(orderList[i]["discount"])))*(parseFloat(orderList[i]["vat_total"])/100)))-(parseFloat(orderList[i]["discount"]));
-              if(($('#payment_nominal').val())>order_total){
-                $('#order_charge').css('color', 'black');
-                $('#order_charge').text(currency((($('#payment_nominal').val())-order_total), { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
-              }else{
-                $('#order_charge').text("Rp. 0");
-                $('#order_charge').css('color', 'red');
-                $('#order_charge').text(currency((($('#payment_nominal').val())-order_total), { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
-              }
-          }
-
-          $('#result-total').text(currency(order_total, { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
-          $('#vat-total').text(currency(_vat_total, { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
-          $('#sub-total').text(currency(sub_total, { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
-
-
-        }
       });
 
       var productList = [];
@@ -1357,6 +1164,7 @@
                 "type_id"     : type_id, 
                 "entry_time" : entry_time,
                 "executed_at" : "",
+                "ref_no" : "",
                 "seq" : 999,
           }
 

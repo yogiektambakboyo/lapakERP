@@ -295,8 +295,7 @@ class InvoicesController extends Controller
                 ['payment_nominal' => $request->get('payment_nominal') ],
                 ['payment_type' => $request->get('payment_type') ],
                 ['total_payment' => (int)$request->get('payment_nominal')>=(int)$request->get('total_order')?(int)$request->get('total_order'):$request->get('payment_nominal') ],
-                ['scheduled_at' => Carbon::createFromFormat('d-m-Y H:i', $request->get('scheduled_at'))->format('Y-m-d H:i') ],
-                ['branch_room_id' => 0],
+                ['is_checkout' => 1],
                 ['ref_no' => $request->get('ref_no')],
                 ['tax' => $request->get('tax')],
                 ['customer_type' => $request->get('customer_type')],
@@ -341,13 +340,19 @@ class InvoicesController extends Controller
                     ['qty' => $request->get('product')[$i]["qty"]],
                     ['price' => $request->get('product')[$i]["price"]],
                     ['total' => $request->get('product')[$i]["total"]],
+                    ['ref_no' => $request->get('product')[$i]["ref_no"]],
                     ['discount' => $request->get('product')[$i]["discount"]],
                     ['seq' => $i ],
-                    ['executed_at' => $request->get('product')[$i]["executed_at"] ],
                     ['vat' => $request->get('product')[$i]["vat_total"]],
                     ['vat_total' => ((((int)$request->get('product')[$i]["qty"]*(int)$request->get('product')[$i]["price"])-(int)$request->get('product')[$i]["discount"])/100)*(int)$request->get('product')[$i]["vat_total"]],
                     ['product_name' => Product::where('id','=',$request->get('product')[$i]["id"])->get('remark')->first()->remark],
                     ['uom' => $request->get('product')[$i]["uom"]]
+                )
+            );
+
+            Order::where('order_no',$request->get('product')[$i]["ref_no"])->update(
+                array_merge(
+                    ['is_checkout'   => '1'],
                 )
             );
 
@@ -369,11 +374,7 @@ class InvoicesController extends Controller
         }
 
 
-        Order::where('order_no',$request->get('ref_no'))->update(
-            array_merge(
-                ['is_checkout'   => '1'],
-            )
-        );
+
 
 
         $result = array_merge(
@@ -706,7 +707,7 @@ class InvoicesController extends Controller
         $invoice_no = $request->get('invoice_no');
 
         $last_data = InvoiceDetail::where('invoice_detail.invoice_no','=',$invoice_no)->get('invoice_detail.*');
-        $branch_id = Room::where('id',$request->get('branch_room_id'))->get(['branch_id'])->first();
+        $branch_id = Customer::where('id',$request->get('customer_id'))->get(['branch_id'])->first();
 
 
         for ($i=0; $i < count($last_data); $i++) { 
@@ -736,8 +737,6 @@ class InvoicesController extends Controller
                 ['payment_type' => $request->get('payment_type') ],
                 ['customers_name' => Customer::where('id','=',$request->get('customer_id'))->get(['name'])->first()->name  ],
                 ['total_payment' => (int)$request->get('payment_nominal')>=(int)$request->get('total_order')?(int)$request->get('total_order'):$request->get('payment_nominal') ],
-                ['scheduled_at' => Carbon::createFromFormat('d-m-Y H:i', $request->get('scheduled_at'))->format('Y-m-d H:i') ],
-                ['branch_room_id' => $request->get('branch_room_id')],
                 ['ref_no' => $request->get('ref_no')],
                 ['tax' => $request->get('tax')],
                 ['customer_type' => $request->get('customer_type')],
@@ -775,10 +774,6 @@ class InvoicesController extends Controller
                     ['discount' => $request->get('product')[$i]["discount"]],
                     ['executed_at' => $request->get('product')[$i]["executed_at"]],
                     ['seq' => $i ],
-                    ['assigned_to' => $request->get('product')[$i]["assignedtoid"]],
-                    ['referral_by' => $request->get('product')[$i]["referralbyid"]],
-                    ['assigned_to_name' => $request->get('product')[$i]["assignedtoid"]==""?"":User::where('id','=',$request->get('product')[$i]["assignedtoid"])->get('name')->first()->name ],
-                    ['referral_by_name' => $request->get('product')[$i]["referralbyid"]==""?"":User::where('id','=',$request->get('product')[$i]["referralbyid"])->get('name')->first()->name],
                     ['vat' => $request->get('product')[$i]["vat_total"]],
                     ['vat_total' => ((((int)$request->get('product')[$i]["qty"]*(int)$request->get('product')[$i]["price"])-(int)$request->get('product')[$i]["discount"])/100)*(int)$request->get('product')[$i]["vat_total"]],
                     ['product_name' => $request->get('product')[$i]["abbr"]],

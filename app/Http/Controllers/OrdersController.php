@@ -423,6 +423,12 @@ class OrdersController extends Controller
             )
         );
 
+        SettingsDocumentNumber::where('doc_type','=','Order')->where('branch_id','=',$branch->branch_id)->where('period','=','Yearly')->update(
+            array_merge(
+                ['current_value' => ((int)($count_no[0]->current_value) + 1)]
+            )
+        );
+
         if($request->get('voucher_code')!=""){
             Voucher::where('voucher.voucher_code','=',$request->get('voucher_code'))
             ->update(
@@ -479,11 +485,7 @@ class OrdersController extends Controller
             ['message' => 'Save Successfully'],
         );
 
-        SettingsDocumentNumber::where('doc_type','=','Order')->where('branch_id','=',$branch->branch_id)->where('period','=','Yearly')->update(
-            array_merge(
-                ['current_value' => ((int)($count_no[0]->current_value) + 1)]
-            )
-        );
+
 
         SettingsDocumentNumber::where('doc_type','=','Order_Queue')->where('branch_id','=',$branch->branch_id)->where('period','=','Daily')->update(
             array_merge(
@@ -613,14 +615,14 @@ class OrdersController extends Controller
     {
         $data = $this->data;
         $user = Auth::user();
-        $product = DB::select(" select od.vat,od.vat_total,to_char(om.scheduled_at,'mm/dd/YYYY') as scheduled_date,to_char(om.scheduled_at,'HH24:MI') as scheduled_time,'' as room_name,om.customers_id,om.remark as order_remark,to_char(om.dated,'mm/dd/YYYY') as dated,om.payment_type,om.payment_nominal,om.scheduled_at,0 as branch_room_id,od.qty,od.product_id,od.discount,od.price,od.total,ps.remark,ps.abbr,um.remark as uom,'' as assignedto,0 as assignedtoid,
+        $product = DB::select(" select od.order_no,od.vat,od.vat_total,to_char(om.scheduled_at,'mm/dd/YYYY') as scheduled_date,to_char(om.scheduled_at,'HH24:MI') as scheduled_time,'' as room_name,om.customers_id,om.remark as order_remark,to_char(om.dated,'mm/dd/YYYY') as dated,om.payment_type,om.payment_nominal,om.scheduled_at,0 as branch_room_id,od.qty,od.product_id,od.discount,od.price,od.total,ps.remark,ps.abbr,um.remark as uom,'' as assignedto,0 as assignedtoid,
         '' as referralby,0 as referralbyid   
         from order_detail od 
         join order_master om on om.order_no = od.order_no
         join product_sku ps on ps.id=od.product_id
         join product_uom uo on uo.product_id = od.product_id
         join uom um on um.id=uo.uom_id 
-        where om.customers_id='".$customer_id."' ");
+        where om.customers_id='".$customer_id."' and om.is_checkout='0' ");
         
         return $product;
         return Datatables::of($product)

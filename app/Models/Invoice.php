@@ -37,6 +37,7 @@ class Invoice extends Model
         'voucher_code',
         'customers_name',
         'printed_count',
-        'customer_type'
+        'customer_type',
+        'is_checkout'
     ];
 }
