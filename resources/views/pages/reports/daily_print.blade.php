@@ -296,7 +296,7 @@
               @if((int)$header->total_494>0)
                 <th scope="col" width="3%">CMNYK</th>
               @endif
-              @if((int)$header->total_429>0)
+              @if((int)$header->total_329>0)
                 <th scope="col" width="3%">CLBRN</th>
               @endif
               <th scope="col" width="4%">Bayar</th>
@@ -368,7 +368,7 @@
             $c_467 = 0;
             $c_488 = 0;
             $c_494 = 0;
-            $c_429 = 0;
+            $c_329 = 0;
 
             $c_316 = 0;
             $c_309 = 0;
@@ -739,9 +739,9 @@
                           @php if((int)$dtt_raw[$counter]->total_494>0){ $c_494++; } @endphp
                             <td scope="col" width="3%">{{ number_format($dtt_raw[$counter]->total_494,0,',','.') }}</td>
                           @endif
-                          @if((int)$header->total_429>0)
-                          @php if((int)$dtt_raw[$counter]->total_429>0){ $c_429++; } @endphp
-                            <td scope="col" width="3%">{{ number_format($dtt_raw[$counter]->total_429,0,',','.') }}</td>
+                          @if((int)$header->total_329>0)
+                          @php if((int)$dtt_raw[$counter]->total_329>0){ $c_329++; } @endphp
+                            <td scope="col" width="3%">{{ number_format($dtt_raw[$counter]->total_329,0,',','.') }}</td>
                           @endif
                       @endforeach
                     <td>
@@ -1433,13 +1433,13 @@
                     @endphp
                       <th scope="col" width="3%">{{ number_format($dtt_raw_oneline_discs[0]->total_494,0,',','.') }}  / {{ $c_494 }} </th>
                     @endif
-                    @if((int)$header->total_429>0)
+                    @if((int)$header->total_329>0)
                     @php
                         $count_column_extra++;
-                        $total_extra = $total_extra + $dtt_raw_oneline_discs[0]->total_429;
-                        $qty_extra = $qty_extra + $c_429;
+                        $total_extra = $total_extra + $dtt_raw_oneline_discs[0]->total_329;
+                        $qty_extra = $qty_extra + $c_329;
                     @endphp
-                      <th scope="col" width="3%">{{ number_format($dtt_raw_oneline_discs[0]->total_429,0,',','.') }}  / {{ $c_429 }} </th>
+                      <th scope="col" width="3%">{{ number_format($dtt_raw_oneline_discs[0]->total_329,0,',','.') }}  / {{ $c_329 }} </th>
                     @endif
                     <th>{{ number_format($total_payment,0,',','.') }}</th>
                     <th>{{ number_format($c_p,0,',','.') }}</th>
