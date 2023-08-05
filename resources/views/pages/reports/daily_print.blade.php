@@ -278,6 +278,15 @@
               @if((int)$header->total_319>0)
                 <th scope="col" width="3%">22:00</th>
               @endif
+              @if((int)$header->total_467>0)
+                <th scope="col" width="3%">CGEN</th>
+              @endif
+              @if((int)$header->total_488>0)
+                <th scope="col" width="3%">CROOM</th>
+              @endif
+              @if((int)$header->total_494>0)
+                <th scope="col" width="3%">CMNYK</th>
+              @endif
               <th scope="col" width="4%">Bayar</th>
               <th scope="col" width="7%">Produk</th>
               <th scope="col" width="3%">Rp.</th>
@@ -341,6 +350,10 @@
             $c_317 = 0;
             $c_321 = 0;
             $c_319 = 0;
+            $c_467 = 0;
+            $c_488 = 0;
+            $c_494 = 0;
+
             $c_316 = 0;
             $c_309 = 0;
             $c_318 = 0;
@@ -685,6 +698,18 @@
                           @if((int)$header->total_319>0)
                           @php if((int)$dtt_raw[$counter]->total_319>0){ $c_319++; } @endphp
                             <td scope="col" width="3%">{{ number_format($dtt_raw[$counter]->total_319,0,',','.') }}</td>
+                          @endif
+                          @if((int)$header->total_467>0)
+                          @php if((int)$dtt_raw[$counter]->total_467>0){ $c_467++; } @endphp
+                            <td scope="col" width="3%">{{ number_format($dtt_raw[$counter]->total_467,0,',','.') }}</td>
+                          @endif
+                          @if((int)$header->total_488>0)
+                          @php if((int)$dtt_raw[$counter]->total_488>0){ $c_488++; } @endphp
+                            <td scope="col" width="3%">{{ number_format($dtt_raw[$counter]->total_488,0,',','.') }}</td>
+                          @endif
+                          @if((int)$header->total_494>0)
+                          @php if((int)$dtt_raw[$counter]->total_494>0){ $c_494++; } @endphp
+                            <td scope="col" width="3%">{{ number_format($dtt_raw[$counter]->total_494,0,',','.') }}</td>
                           @endif
                       @endforeach
                     <td>
@@ -1326,6 +1351,30 @@
                         $qty_extra = $qty_extra + $c_319;
                     @endphp
                       <th scope="col" width="3%">{{ number_format($dtt_raw_oneline_discs[0]->total_319,0,',','.') }}  / {{ $c_319 }} </th>
+                    @endif
+                    @if((int)$header->total_467>0)
+                    @php
+                        $count_column_extra++;
+                        $total_extra = $total_extra + $dtt_raw_oneline_discs[0]->total_467;
+                        $qty_extra = $qty_extra + $c_467;
+                    @endphp
+                      <th scope="col" width="3%">{{ number_format($dtt_raw_oneline_discs[0]->total_467,0,',','.') }}  / {{ $c_467 }} </th>
+                    @endif
+                    @if((int)$header->total_488>0)
+                    @php
+                        $count_column_extra++;
+                        $total_extra = $total_extra + $dtt_raw_oneline_discs[0]->total_488;
+                        $qty_extra = $qty_extra + $c_488;
+                    @endphp
+                      <th scope="col" width="3%">{{ number_format($dtt_raw_oneline_discs[0]->total_488,0,',','.') }}  / {{ $c_488 }} </th>
+                    @endif
+                    @if((int)$header->total_494>0)
+                    @php
+                        $count_column_extra++;
+                        $total_extra = $total_extra + $dtt_raw_oneline_discs[0]->total_494;
+                        $qty_extra = $qty_extra + $c_494;
+                    @endphp
+                      <th scope="col" width="3%">{{ number_format($dtt_raw_oneline_discs[0]->total_494,0,',','.') }}  / {{ $c_494 }} </th>
                     @endif
                     <th>{{ number_format($total_payment,0,',','.') }}</th>
                     <th>{{ number_format($c_p,0,',','.') }}</th>
