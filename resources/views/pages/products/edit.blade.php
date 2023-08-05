@@ -96,8 +96,22 @@
           </div>
           <div class="row mb-3">
               <label class="form-label col-form-label col-md-2">@lang('general.lbl_photo')</label>
-              <div class="col-md-8">
-                <a href="/images/user-files/{{ $product->photo }}" target="_blank"><img src="/images/user-files/{{ $product->photo }}" width="100" height="100" class="rounded float-start"></a>
+              <div class="col-md-5">
+                <a href="/images/user-files/{{ $product->photo }}" target="_blank" class="mt-2"><img  id="photo_preview"  src="/images/user-files/{{ $product->photo }}" width="100" height="100" class="rounded float-start"></a>
+              </div>
+              <div class="col-md-5">
+                <a href="/images/user-files/{{ $product->photo_2 }}" target="_blank" class="mt-2"><img  id="photo_preview_2"  src="/images/user-files/{{ $product->photo_2 }}" width="100" height="100" class="rounded float-start"></a>
+              </div>
+              <div class="col-md-2"></div>
+              <div class="col-md-5">
+                <input type="file" 
+                      name="photo"  id="photo" onchange="previewFile(this);"
+                      class="form-control mt-2"  />
+              </div>
+              <div class="col-md-5">
+                <input type="file" 
+                      name="photo_2"  id="photo_2" onchange="previewFile_2(this);"
+                      class="form-control mt-2"  />
               </div>
           </div> 
 
@@ -152,7 +166,7 @@
                       @endif
               </div>
 
-              <div class="col-md-2">
+              <div class="col-md-4">
                 <div class="col-md-12"><label class="form-label col-form-label">_</label></div>
                 <a href="#" id="input_submit" class="btn btn-green"><div class="fa-1x"><i class="fas fa-plus fa-fw"></i>@lang('general.lbl_ingredient_add')</div></a>
               </div>
@@ -188,6 +202,37 @@
     </div>
 @endsection
 
+@push('scripts')
+<script type="text/javascript">
+    function previewFile(input){
+        var file = $("#photo").get(0).files[0];
+ 
+        if(file){
+            var reader = new FileReader();
+ 
+            reader.onload = function(){
+                $("#photo_preview").attr("src", reader.result);
+            }
+ 
+            reader.readAsDataURL(file);
+        }
+    }
+
+    function previewFile_2(input){
+        var file = $("#photo_2").get(0).files[0];
+ 
+        if(file){
+            var reader = new FileReader();
+ 
+            reader.onload = function(){
+                $("#photo_preview_2").attr("src", reader.result);
+            }
+ 
+            reader.readAsDataURL(file);
+        }
+    }
+</script>
+@endpush
 
 @push('scripts')
     <script type="text/javascript">

@@ -26,10 +26,8 @@
             <tr>
                 <th scope="col" width="12%">@lang('general.lbl_branch')</th>
                 <th scope="col" width="6%">@lang('general.lbl_dated')</th>
-                <th>Shift</th>
                 <th scope="col">@lang('general.invoice_no')</th>    
-                <th scope="col">Nama Tamu</th>    
-                <th scope="col">Jenis Kelamin</th>    
+                <th scope="col">Pelanggan</th>    
                 <th scope="col">Total</th>    
                 <th scope="col" width="8%">Pembayaran</th>    
                 <th scope="col"  width="8%">@lang('general.lbl_type_payment')</th>         
@@ -43,10 +41,8 @@
                     <tr>
                         <th scope="row">{{ $rdata->branch_name }}</th>
                         <td>{{ Carbon\Carbon::parse($rdata->dated)->format('d-m-Y') }}</td>
-                        <td>{{ $rdata->shift_name }}</td>
                         <td>{{ $rdata->invoice_no }}</td>
                         <td>{{ $rdata->customers_name }}</td>
-                        <td>{{ $rdata->gender }}</td>
                         <td>{{ number_format($rdata->total,0,',','.') }}</td>
                         <td>{{ number_format($rdata->total_payment,0,',','.') }}</td>
                         <td>{{ $rdata->payment_type }}</td>

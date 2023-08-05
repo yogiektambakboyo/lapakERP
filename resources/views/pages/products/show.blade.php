@@ -59,8 +59,11 @@
 
           <div class="row mb-3">
               <label class="form-label col-form-label col-md-2">@lang('general.lbl_photo')</label>
-              <div class="col-md-8">
+              <div class="col-md-2">
                 <a href="/images/user-files/{{ $product->photo }}" target="_blank"><img src="/images/user-files/{{ $product->photo }}" width="100" height="100" class="rounded float-start"></a>
+              </div>
+              <div class="col-md-2">
+                <a href="/images/user-files/{{ $product->photo_2 }}" target="_blank"><img src="/images/user-files/{{ $product->photo_2 }}" width="100" height="100" class="rounded float-start"></a>
               </div>
           </div> 
 

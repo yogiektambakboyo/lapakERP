@@ -11,7 +11,6 @@
       <div class="">
         <a target="_blank" href="{{ route('invoices.print', $invoice->id) }}" class="btn btn-warning"><i class="fas fa-print"></i> @lang('general.lbl_print') </a>
         <a target="_blank" href="{{ route('invoices.printsj', $invoice->id) }}" class="btn btn-success"><i class="fas fa-truck-fast"></i> @lang('general.lbl_printsj') </a>
-        <a target="_blank" href="{{ route('invoices.printspk', $invoice->id) }}" class="btn btn-primary"><i class="fas fa-file-invoice"> </i>  @lang('general.lbl_printspk') </a>
         <a href="{{ route('invoices.index') }}" class="btn btn-default">@lang('general.lbl_back') </a>
       </div>
     </div>
@@ -50,8 +49,8 @@
               <div class="col-md-3 d-none">
                 <input type="text" class="form-control" value="{{ $invoice->ref_no }}" id="ref_no" disabled>
               </div>
-              <label class="form-label col-form-label col-md-1">@lang('general.lbl_customer')</label>
-              <div class="col-md-3">
+              <label class="form-label col-form-label col-md-2">@lang('general.lbl_customer')</label>
+              <div class="col-md-4">
                 <select class="form-control" 
                     name="customer_id" id="customer_id" readonly>
                     <option value="">@lang('general.lbl_customerselect')</option>
@@ -63,30 +62,19 @@
                 </select>
               </div>
 
-              <label class="form-label col-form-label col-md-2">@lang('general.lbl_customer_type')</label>
-              <div class="col-md-2">
-                <select class="form-control" 
-                    name="customer_type" id="customer_type" readonly>
-                    <option value="">@lang('general.lbl_tipeselect')</option>
-                    @foreach($type_customers as $type_customer)
-                        <option value="{{ $type_customer }}" {{ ($invoice->customer_type == $type_customer) 
-                          ? 'selected'
-                          : ''}}> {{ $type_customer }}</option>
-                    @endforeach
-                </select>
-              </div>
-
-              <label class="form-label col-form-label col-md-1">@lang('general.lbl_schedule')</label>
-              <div class="col-md-3">
-
-                  <div class="input-group">
-                    <input type="text" class="form-control" value="" id="scheduled" disabled>
+              <label class="form-label col-form-label col-md-3">@lang('general.lbl_nominal_payment')</label>
+                <div class="col-md-3">
+                  <input type="text" 
+                  id="payment_nominal"
+                  name="payment_nominal"
+                  class="form-control" 
+                  value="{{ $invoice->payment_nominal }}" readonly/>
                   </div>
-              </div>
+
             </div>
             <div class="row mb-3">
               <label class="form-label col-form-label col-md-2">@lang('general.lbl_type_payment')</label>
-              <div class="col-md-2">
+              <div class="col-md-4">
                 <select class="form-control" 
                       name="payment_type" id ="payment_type" readonly>
                       <option value="">@lang('general.lbl_type_paymentselect')</option>
@@ -98,14 +86,7 @@
                   </select>
               </div>
 
-                <label class="form-label col-form-label col-md-2">@lang('general.lbl_nominal_payment')</label>
-                <div class="col-md-2">
-                  <input type="text" 
-                  id="payment_nominal"
-                  name="payment_nominal"
-                  class="form-control" 
-                  value="{{ $invoice->payment_nominal }}" readonly/>
-                  </div>
+                
 
                   <label class="form-label col-form-label col-md-1">@lang('general.lbl_charge')</label>
                   <div class="col-md-3">
@@ -132,8 +113,6 @@
                   <th scope="col" width="5%">@lang('general.lbl_discount')</th>
                   <th scope="col" width="5%">@lang('general.lbl_qty')</th>
                   <th scope="col" width="15%">Total</th>  
-                  <th scope="col" width="15%">@lang('general.lbl_terapist')</th>  
-                  <th scope="col" width="15%">@lang('general.lbl_ref_by')</th>  
               </tr>
               </thead>
               <tbody>
@@ -145,8 +124,6 @@
                         <td>{{ number_format($orderDetail->discount, 0, ',', '.') }}</td>
                         <td>{{ $orderDetail->qty }}</td>
                         <td>{{ number_format($orderDetail->total, 0, ',', '.') }}</td>
-                        <td>{{ $orderDetail->assigned_to }} @php echo $orderDetail->executed_at!=''?'('.Carbon\Carbon::parse($orderDetail->executed_at)->format('H:i').')':''; @endphp</td>
-                        <td>{{ $orderDetail->referral_by }}</td>
                     </tr>
                 @endforeach
               </tbody>
@@ -155,11 +132,7 @@
             <div class="row mb-3">
               <div class="col-md-6">
                 <div class="row mb-3">
-                    <label class="form-label col-form-label col-md-3" id="label-voucher">Voucher</label>
-                    <br>
-                    <div class="col-md-5">
-                      <input type="text" class="form-control" id="input-apply-voucher" value="{{ $invoice->voucher_code }}" disabled>
-                    </div>
+                   
                 </div>
               </div>
 

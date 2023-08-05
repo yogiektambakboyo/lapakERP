@@ -88,13 +88,24 @@
 
           <div class="row mb-3">
             <label class="form-label col-form-label col-md-2">@lang('general.lbl_photo')</label>
-            <div class="col-md-8">
+            <div class="col-md-5">
               <a href="/images/user-files/goods.png" target="_blank"><img  id="photo_preview" src="/images/user-files/goods.png" width="100" height="100" class="rounded float-start" alt="..."></a>
-              <input type="file" 
-              name="photo"  id="photo" onchange="previewFile(this);"
-              class="form-control"  />
-              <span></span>
             </div>
+            <div class="col-md-5">
+              <a href="/images/user-files/goods.png" target="_blank"><img  id="photo_preview_2" src="/images/user-files/goods.png" width="100" height="100" class="rounded float-start" alt="..."></a>
+            </div>
+
+            <div class="col-md-2"></div>
+              <div class="col-md-5">
+                <input type="file" 
+                      name="photo"  id="photo" onchange="previewFile(this);"
+                      class="form-control mt-2"  />
+              </div>
+              <div class="col-md-5">
+                <input type="file" 
+                      name="photo_2"  id="photo_2" onchange="previewFile_2(this);"
+                      class="form-control mt-2"  />
+              </div>
           </div>
 
           </div>
@@ -112,6 +123,20 @@
  
             reader.onload = function(){
                 $("#photo_preview").attr("src", reader.result);
+            }
+ 
+            reader.readAsDataURL(file);
+        }
+    }
+
+    function previewFile_2(input){
+        var file = $("#photo_2").get(0).files[0];
+ 
+        if(file){
+            var reader = new FileReader();
+ 
+            reader.onload = function(){
+                $("#photo_preview_2").attr("src", reader.result);
             }
  
             reader.readAsDataURL(file);

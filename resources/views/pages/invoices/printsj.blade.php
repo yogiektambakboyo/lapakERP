@@ -23,36 +23,38 @@
 
       <table style="width: 100%">
         <tbody>
-          <tr style="text-align: center;height: 30px;background-color:#FFA726;">
+          <tr style="text-align: center;height: 30px;background-color:#007C78;">
             <td style="text-align: left;padding:15px;">
               
-              <img src="data:image/png;base64,{{ base64_encode(file_get_contents(url("images/user-files/".$settings[0]->icon_file))) }}" width="150px"><br>
-              <label>{{ $invoiceDetails[0]->branch_name }}</label><br>
-              <label>{{ $invoiceDetails[0]->branch_address }}</label></td>
-            <td style="width: 50%;font-size:30px;"><p style="color: #212121;">@lang('general.lbl_delivery_note')</p></td>
+              <!-- <img src="data:image/png;base64,{{ base64_encode(file_get_contents(url("images/user-files/".$settings[0]->icon_file))) }}" width="150px"><br> -->
+              <label style="font-size:18px;">{{ $settings[0]->company_name }}</label><br>
+              <label style="font-size:15px;">{{ $invoiceDetails[0]->branch_name }}</label><br>
+              <label style="font-size:13px;">{{ $invoiceDetails[0]->branch_address }}</label></td>
+            <td style="width: 50%;font-size:24px;"><p style="color: #212121;">@lang('general.lbl_delivery_note')</p></td>
           </tr>
-          <tr style="background-color: chocolate;">
-            <td colspan="2"><br></td>
+          <tr style="background-color:#777B73;height:5px;">
+            <td colspan="2" style="height:5px;"><br></td>
           </tr>
         </tbody>
       </table>
+
       <table style="width: 100%">
         <tbody>
           <tr style="text-align: center;height: 50px">
-            <td style="text-align: left;padding-left:10px;width:20%;vertical-align: text-top;">        
+            <td style="text-align: left;font-size:13px;padding-left:10px;width:30%;vertical-align: text-top;">        
               <label style="font-weight: bold;">@lang('general.lbl_customer') :</label><br>
               <label>{{ $customers[0]->name }}</label><br>
               <label>{{ $customers[0]->address }}</label><br>
               <label>{{ $customers[0]->phone_no }}</label><br>
             </td>
-            <td style="text-align: left;padding:10px;width:35%;vertical-align: text-top;">        
+            <td style="text-align: left;padding:10px;width:10%;vertical-align: text-top;">        
               
             </td>
-            <td style="text-align: right;width: 50%;font-size:15px;width:15%;vertical-align: text-top;">
+            <td style="text-align: right;width: 20%;font-size:13px;vertical-align: text-top;">
               <label>@lang('general.lbl_dated')  :</label><br>
               <label>@lang('general.lbl_invoice_no')  :</label><br>
             </td>
-            <td style="text-align: left;width: 50%;font-size:15px;width:15%;padding-left:10px;vertical-align: text-top;">
+            <td style="text-align: left;width: 32%;font-size:13px;padding-left:10px;vertical-align: text-top;">
               <label>{{ substr(explode(" ",$invoice->dated)[0],8,2) }}-{{substr(explode(" ",$invoice->dated)[0],5,2) }}-{{ substr(explode(" ",$invoice->dated)[0],0,4) }}</label><br>
               <label>{{ $invoice->invoice_no }}</label><br>
             </td>
@@ -60,9 +62,9 @@
         </tbody>
       </table>
 
-      <table class="table table-striped" id="order_table" width="100%">
+      <table style="width: 245%">
         <thead>
-        <tr style="background-color:#FFA726;color:white;">
+        <tr style="background-color:#007C78;">
             <th>@lang('general.product')</th>
             <th scope="col" width="10%">@lang('general.lbl_uom')</th>
             <th scope="col" width="5%">@lang('general.lbl_qty')</th>
@@ -71,9 +73,9 @@
         <tbody>
           @foreach($invoiceDetails as $invoiceDetail)
               <tr>
-                  <td style="text-align: left;">{{ $invoiceDetail->product_name }}</th>
-                  <td style="text-align: center;">{{ $invoiceDetail->uom }}</td>
-                  <td style="text-align: center;">{{ number_format($invoiceDetail->qty,0,',','.') }}</td>
+                  <td style="text-align: left;font-size:14px;">{{ $invoiceDetail->product_name }}</th>
+                  <td style="text-align: center;left;font-size:14px;">{{ $invoiceDetail->uom }}</td>
+                  <td style="text-align: center;left;font-size:14px;">{{ number_format($invoiceDetail->qty,0,',','.') }}</td>
               </tr>
           @endforeach
 

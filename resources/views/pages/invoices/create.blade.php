@@ -978,6 +978,7 @@
                         cancelButtonColor: '#d33',
                         denyButtonColor: '#0072b3',
                         cancelButtonText: "@lang('general.lbl_close')",
+                        denyButtonText: "Cetak SJ",
                         confirmButtonText: "@lang('general.lbl_print')",
                       }).then((result) => {
                         /* Read more about isConfirmed, isDenied below */
@@ -991,7 +992,7 @@
                           );
                           window.location.href = "{{ route('invoices.index') }}"; 
                         } else if (result.isDenied) {
-                          burl = "{{ route('invoices.printspk', 'WWWW') }}";
+                          burl = "{{ route('invoices.printsj', 'WWWW') }}";
                           burl = burl.replace('WWWW', resp.data.data)
                           window.open(
                             burl,

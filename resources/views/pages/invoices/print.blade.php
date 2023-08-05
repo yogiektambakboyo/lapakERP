@@ -30,19 +30,18 @@
       </style>
    </head> 
    <body> 
-
-    <button id="printPageButton" onClick="window.print();"  class="btn print">Cetak Faktur</button>
       <table style="width: 100%">
         <tbody>
-          <tr style="text-align: center;height: 30px;background-color:#FFA726;">
+          <tr style="text-align: center;height: 30px;background-color:#007C78;">
             <td style="text-align: left;padding:15px;">
               
-              <img src="data:image/png;base64,{{ base64_encode(file_get_contents(url("images/user-files/".$settings[0]->icon_file))) }}" width="150px"><br>
-              <label>{{ $invoiceDetails[0]->branch_name }}</label><br>
-              <label>{{ $invoiceDetails[0]->branch_address }}</label></td>
+              <!-- <img src="data:image/png;base64,{{ base64_encode(file_get_contents(url("images/user-files/".$settings[0]->icon_file))) }}" width="150px"><br>-->
+              <label style="font-size:18px;">{{ $settings[0]->company_name }}</label><br>
+              <label style="font-size:15px;">{{ $invoiceDetails[0]->branch_name }}</label><br>
+              <label style="font-size:13px;">{{ $invoiceDetails[0]->branch_address }}</label></td>
             <td style="width: 40%;font-size:30px;"><p style="color: #212121;">@lang('general.lbl_invoice')</p></td>
           </tr>
-          <tr style="background-color: chocolate;">
+          <tr style="background-color: #777B73;">
             <td colspan="2"><br></td>
           </tr>
         </tbody>
@@ -73,7 +72,7 @@
 
       <table class="table table-striped" id="order_table" width="100%">
         <thead>
-        <tr style="background-color:#FFA726;color:white;">
+        <tr style="background-color:#007C78;color:white;">
             <th>@lang('general.product')</th>
             <th scope="col" width="20%">@lang('general.lbl_uom')</th>
             <th scope="col" width="15%">@lang('general.lbl_price')</th>
@@ -115,23 +114,23 @@
         <tbody>
           <tr>
             <td style="text-align: left;width:55%;">Catatan : </td>
-            <td style="text-align: right;width:20%;background-color:#FFA726;display: none; ">Sub Total</td>
-            <td style="text-align: right;width:25%;background-color:#FFA726;display: none; ">Rp. {{ number_format(($invoice->total-$invoice->tax),0,',','.') }}</td>
+            <td style="text-align: right;width:20%;background-color:#007C78;display: none; ">Sub Total</td>
+            <td style="text-align: right;width:25%;background-color:#007C78;display: none; ">Rp. {{ number_format(($invoice->total-$invoice->tax),0,',','.') }}</td>
           </tr>
           <tr>
             <th style="text-align: left;width:55%;">{{ $invoice->payment_type }} @if($invoice->total_payment>=$invoice->total)  {{ "Lunas" }}   @endif</th>
-            <td style="text-align: right;width:20%;background-color:#FFA726;display: none; ">@lang('general.lbl_tax') </th>
-            <td style="text-align: right;width:25%;background-color:#FFA726;display: none; ">Rp. {{ number_format($invoice->tax,0,',','.') }}</th>
+            <td style="text-align: right;width:20%;background-color:#007C78;display: none; ">@lang('general.lbl_tax') </th>
+            <td style="text-align: right;width:25%;background-color:#007C78;display: none; ">Rp. {{ number_format($invoice->tax,0,',','.') }}</th>
           </tr>
           <tr>
             <th style="text-align: left;width:55%;"></th>
-            <th style="text-align: right;width:20%;background-color:#FFA726;">Total</th>
-            <th style="text-align: right;width:25%;background-color:#FFA726;">Rp. {{ number_format($invoice->total,0,',','.') }}</th>
+            <th style="text-align: right;width:20%;background-color:#007C78;">Total</th>
+            <th style="text-align: right;width:25%;background-color:#007C78;">Rp. {{ number_format($invoice->total,0,',','.') }}</th>
           </tr>
           <tr>
             <th style="text-align: left;width:55%;"></th>
-            <th style="text-align: right;width:20%;background-color:#FFA726;">@lang('general.lbl_payment') </th>
-            <th style='text-align: right;width:25%;background-color:#FFA726; @if($invoice->payment_nominal-$invoice->total<0) {{ "color : red;" }} @endif'>Rp. {{ number_format($invoice->total_payment,0,',','.') }}</th>
+            <th style="text-align: right;width:20%;background-color:#007C78;">@lang('general.lbl_payment') </th>
+            <th style='text-align: right;width:25%;background-color:#007C78; @if($invoice->payment_nominal-$invoice->total<0) {{ "color : red;" }} @endif'>Rp. {{ number_format($invoice->total_payment,0,',','.') }}</th>
           </tr>
         </tbody>
       </table> 
