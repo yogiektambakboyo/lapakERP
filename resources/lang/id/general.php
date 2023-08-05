@@ -14,6 +14,7 @@ return [
     "lbl_return_no" => "Nomor Retur",
 
     "product" => "Produk",
+    "lbl_barcode" => "Barcode",
     "productselect" => "Pilih Produk",
     "lbl_productselect" => "Pilih Produk",
     "service" => "Perawatan",

@@ -78,6 +78,7 @@ return [
     "lbl_uomselect" => "Pilih Satuan",
     "lbl_statusselect" => "Pilih Status",
     "lbl_uomedit" => "Ubah Satuan",
+    "lbl_barcode" => "Barcode",
     "lbl_categoryedit" => "Ubah Kategori",
     "lbl_photo" => "Foto",
     "lbl_qty" => "Jml",

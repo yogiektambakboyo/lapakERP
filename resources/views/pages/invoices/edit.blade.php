@@ -112,6 +112,17 @@
 
         <div class="panel-heading bg-teal-600 text-white"><strong>@lang('general.lbl_order_list')</strong></div>
         <div class="row mb-2">
+
+          <div class="col-md-1">
+            <label class="form-label col-form-label">@lang('general.lbl_barcode')</label>
+            <input type="text" 
+            name="input_product_barcode"
+            id="input_product_barcode"
+            class="form-control" 
+            value="{{ old('input_product_barcode') }}"/>
+          </div>
+
+
           <div class="col-md-3">
             <label class="form-label col-form-label">@lang('general.product')</label>
             <select class="form-control" 
@@ -130,7 +141,7 @@
             value="{{ old('input_product_uom') }}" required disabled/>
           </div>
 
-          <div class="col-md-2">
+          <div class="col-md-1">
             <label class="form-label col-form-label">@lang('general.lbl_price')</label>
             <input type="text" 
             name="input_product_price"
@@ -238,6 +249,15 @@
       $(function () {
           //$('#app').removeClass('app app-sidebar-fixed app-header-fixed-minified').addClass('app app-sidebar-fixed app-header-fixed-minified app-sidebar-minified');
           
+          $('#input_product_barcode').on('change paste keyup', function(){
+              for (var i = 0; i < productList.length; i++){
+                  var obj = productList[i];
+                  if(obj.barcode.toUpperCase() == $('#input_product_barcode').val().toUpperCase()){
+                    $('#input_product_id').val(obj.id).trigger('change');
+                  }  
+                }
+          });
+
           const today = new Date();
           const yyyy = today.getFullYear();
           let mm = today.getMonth() + 1; // Months start at 0!
@@ -889,6 +909,7 @@
                           "uom"      : resp.data[i]["uom"],
                           "price"     : resp.data[i]["price"],
                           "vat_total"     : resp.data[i]["vat_total"],
+                          "barcode"     : resp.data[i]["barcode"],
                           "type"     : resp.data[i]["type"]
                     }
 

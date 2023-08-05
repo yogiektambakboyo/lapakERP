@@ -91,6 +91,15 @@
             <br>
 
             <div class="row mb-3">
+              <div class="col-md-1">
+                <label class="form-label col-form-label">@lang('general.lbl_barcode')</label>
+                <input type="text" 
+                name="input_product_barcode"
+                id="input_product_barcode"
+                class="form-control" 
+                value="{{ old('input_product_barcode') }}"/>
+              </div>
+
               <div class="col-md-3">
                 <label class="form-label col-form-label">@lang('general.product')</label>
                 <select class="form-control" 
@@ -109,7 +118,7 @@
                 value="{{ old('input_product_uom') }}" required disabled/>
               </div>
 
-              <div class="col-md-2">
+              <div class="col-md-1">
                 <label class="form-label col-form-label">@lang('general.lbl_price')</label>
                 <input type="text" 
                 name="input_product_price"
@@ -408,6 +417,15 @@
           $("#cancel-voucher-btn").hide();
           voucherNo = "";
           voucherNoPID = "";
+
+          $('#input_product_barcode').on('change paste keyup', function(){
+              for (var i = 0; i < productList.length; i++){
+                  var obj = productList[i];
+                  if(obj.barcode.toUpperCase() == $('#input_product_barcode').val().toUpperCase()){
+                    $('#input_product_id').val(obj.id).trigger('change');
+                  }  
+                }
+          });
 
 
           const today = new Date();
@@ -1058,6 +1076,7 @@
                           "remark"      : resp.data[i]["remark"],
                           "uom"      : resp.data[i]["uom"],
                           "price"     : resp.data[i]["price"],
+                          "barcode"     : resp.data[i]["barcode"],
                           "vat_total"     : resp.data[i]["vat_total"]
                     }
 
