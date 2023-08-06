@@ -20,6 +20,11 @@ use Illuminate\Http\Request;
 Route::group(['namespace' => 'App\Http\Controllers'], function()
 {   
     /**
+     * API Routes
+     */
+    Route::post('/api_login', 'APIController@api_login')->name('api.login');
+
+    /**
      * Home Routes
      */
     Route::get('/', 'HomeController@index')->name('home.index');
@@ -39,20 +44,6 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
 
     });
 
-
-    /**Route::get('getUser', function (Request $request) {
-        if ($request->ajax()) {
-                $data = User::orderBy('id', 'ASC')->join('branch as b','b.id','=','users.branch_id')->join('job_title as jt','jt.id','=','users.job_id')->where('users.name','!=','Admin')->get(['users.id as id','users.employee_id as employee_id','users.name as name','jt.remark as job_title','b.remark as branch_name','users.join_date' ]);
-                return DataTables::of($data)
-                    ->addIndexColumn()
-                    ->addColumn('action', function($row){
-                        $actionBtn = '<a href="javascript:void(0)" class="edit btn btn-success btn-sm">Edit</a> <a href="javascript:void(0)" class="delete btn btn-danger btn-sm">@lang('general.lbl_delete')</a>';
-                        return $actionBtn;
-                    })
-                    ->rawColumns(['action'])
-                    ->make(true);
-            }
-    })->name('user.index'); **/
 
     Route::group(['middleware' => ['auth', 'permission']], function() {
         /**
