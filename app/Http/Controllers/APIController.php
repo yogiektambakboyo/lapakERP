@@ -53,13 +53,9 @@ class APIController extends Controller
             $login = DB::select( DB::raw("select '' as id,username,'' as password,name,now()::date as downloaddate,'1' as active,b.remark  as lastlogin,'99' as roles from users u join branch b on b.id = u.branch_id  where username = :username"), array(
                 'username' => $username,
             ));
-
-            $l[] = array_merge(
-                ['name' => $login[0]->name],
-            );
             $result = array_merge(
                 ['status' => 'success'],
-                ['data' => $l],
+                ['data' => $login],
                 ['message' => 'Login Succesfully'],
             ); 
         }else{
