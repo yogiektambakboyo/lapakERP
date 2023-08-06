@@ -55,7 +55,7 @@ class APIController extends Controller
             ));
             $result = array_merge(
                 ['status' => 'success'],
-                ['data' => $login],
+                ['data' => ""],
                 ['message' => 'Login Succesfully'],
             ); 
         }else{
