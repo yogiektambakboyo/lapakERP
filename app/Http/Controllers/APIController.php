@@ -54,7 +54,7 @@ class APIController extends Controller
                 'username' => $username,
             ));
 
-            $l = array_merge(
+            $l[] = array_merge(
                 ['name' => $login[0]->name],
             );
             $result = array_merge(
