@@ -66,6 +66,6 @@ class APIController extends Controller
             );  
         }
 
-        return json_encode($result);
+        return print_r(json_encode($result));
     }
 }
