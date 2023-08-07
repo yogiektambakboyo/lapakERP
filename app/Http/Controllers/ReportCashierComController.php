@@ -411,7 +411,7 @@ class ReportCashierComController extends Controller
             $call_proc = DB::select("CALL calc_commision_cashier();");
 
             $report_data_detail_t = DB::select("
-                select branch_name,to_char(dated,'YYYY-MM-dd') as datedorder,to_char(dated,'dd-MM-YYYY') as dated,'0' as name,'0' as id,
+                select  to_char(dated,'YYYYMMdd') as datedint,branch_name,to_char(dated,'YYYY-MM-dd') as datedorder,to_char(dated,'dd-MM-YYYY') as dated,'0' as name,'0' as id,
                 string_agg(distinct right(invoice_no,6),'##' order by right(invoice_no,6)) as invoice_no,
                 string_agg(case when type_id=1 then abbr else '' end,'##' order by right(invoice_no,6)) as product_abbr,
                 string_agg(case when type_id=1 then price::character varying else '' end,'##' order by right(invoice_no,6)) as product_price,
@@ -423,7 +423,7 @@ class ReportCashierComController extends Controller
                 from cashier_commision a 
                 join users_branch as ub on ub.branch_id = a.branch_id and ub.user_id = '".$user->id."'
                 where a.dated between '".$begindate."' and '".$enddate."'  and a.branch_id::character varying like '%".$branchx."%'
-                group by branch_name,to_char(dated,'dd-MM-YYYY'),to_char(dated,'YYYY-MM-dd')
+                group by branch_name,to_char(dated,'dd-MM-YYYY'),to_char(dated,'YYYY-MM-dd'),to_char(dated,'YYYYMMdd') 
                 order by 1,2
             ");
 
@@ -444,7 +444,7 @@ class ReportCashierComController extends Controller
             }
 
             $report_data_com_from1 = DB::select("
-                        select to_char(dated,'dd-MM-YYYY') as dated,'0' as id,sum(a.commisions) as total from cashier_commision a
+                        select to_char(dated,'YYYYMMdd') as datedint,to_char(dated,'dd-MM-YYYY') as dated,'0' as id,sum(a.commisions) as total from cashier_commision a
                         join users_branch as ub on ub.branch_id = a.branch_id and ub.user_id = '".$user->id."'
                         where dated between '".$date26."'  and '".$enddate."'  and a.branch_id::character varying like  '".$filter_branch_id."' group by dated     
             ");

@@ -353,8 +353,9 @@
                           let value_sd = 0;
                             for (let idx = 0; idx < report_data_com_from1.length; idx++) {
                               const elementFrom = report_data_com_from1[idx];
-                              dateNow = parseInt(rowElement.dated.replaceAll('-','').replaceAll('-','').replaceAll('-',''));
-                              dateFrom = parseInt(elementFrom.dated.replaceAll('-','').replaceAll('-','').replaceAll('-',''));
+                              dateNow = parseInt(rowElement.datedint.replaceAll('-','').replaceAll('-','').replaceAll('-',''));
+                              dateFrom = parseInt(elementFrom.datedint.replaceAll('-','').replaceAll('-','').replaceAll('-',''));
+                              
                               if(elementFrom.id == rowElement.id && dateNow>=dateFrom){
                                 value_sd = value_sd + parseFloat(elementFrom.total);
                               }
