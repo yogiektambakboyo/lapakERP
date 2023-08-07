@@ -122,7 +122,7 @@ class ReportCloseShiftController extends Controller
                 join product_sku ps on ps.id = id.product_id 
                 join branch_shift bs on bs.branch_id = b.id
                 join shift s on s.id = ".$filter_shift."  and s.id = bs.shift_id
-                where id.total>0 and id.discount<id.total and ps.id!=461 and im.dated = '".$filter_begin_date."' and im.created_at::time  between s.time_start and s.time_end  and c.branch_id = ".$filter_branch_id."
+                where id.total>0 and id.discount<id.price*id.qty and ps.id!=461 and im.dated = '".$filter_begin_date."' and im.created_at::time  between s.time_start and s.time_end  and c.branch_id = ".$filter_branch_id."
                 group by ps.category_id,s.remark,b.remark,im.dated,id.product_name,ps.abbr,id.price,ps.type_id    
                 union all
                 select ps.category_id,s.remark as shift_name,b.remark as branch_name,im.dated,id.product_name,ps.abbr,ps.type_id,id.price,sum(id.qty) as qty,0 as total,count(distinct c.id) as qty_customer
