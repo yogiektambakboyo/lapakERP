@@ -353,7 +353,7 @@ class ProductsController extends Controller
             )
         );
 
-        ProductUom::where('product_id','=',$request->id)->update(array_merge(
+        ProductUom::where('product_id','=',$request->input_product_id)->update(array_merge(
             ['uom_id' => $request->get('uom_id')],
         ));
 
