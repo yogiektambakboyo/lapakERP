@@ -38,12 +38,12 @@
                 </div>
 
                 <div class="mb-3">
-                    <label for="phone_no" class="form-label">@lang('general.lbl_phoneno')</label>
+                    <label for="phone_no" class="form-label">@lang('general.lbl_phoneno') *</label>
                     <input value="{{ old('phone_no') }}" 
                         type="text" 
                         class="form-control" 
                         name="phone_no" 
-                        placeholder="@lang('general.lbl_phoneno')">
+                        placeholder="@lang('general.lbl_phoneno')" required>
 
                     @if ($errors->has('phone_no'))
                         <span class="text-danger text-left">{{ $errors->first('phone_no') }}</span>
@@ -54,7 +54,7 @@
                     <label class="form-label">@lang('general.lbl_branch') *</label>
                     <div class="col-md-12">
                       <select class="form-control" 
-                            name="branch_id">
+                            name="branch_id" required>
                             <option value="">@lang('general.lbl_branchselect')</option>
                             @foreach($branchs as $branch)
                                 <option value="{{ $branch->id }}">{{  $branch->remark }}</option>
@@ -64,10 +64,10 @@
                   </div>
 
                   <div class="mb-3">
-                    <label class="form-label">Jenis Kelamin</label>
+                    <label class="form-label">Jenis Kelamin *</label>
                     <div class="col-md-12">
                       <select class="form-control" 
-                            name="gender" id="gender">
+                            name="gender" id="gender" required>
                             <option value="">Pilih Jenis Kelamin</option>
                             <option value="Pria">Pria</option>
                             <option value="Wanita">Wanita</option>

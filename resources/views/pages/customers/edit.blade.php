@@ -50,10 +50,10 @@
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label">@lang('general.lbl_branch')</label>
+                    <label class="form-label">@lang('general.lbl_branch') *</label>
                     <div class="col-md-12">
                       <select class="form-control" 
-                            name="branch_id">
+                            name="branch_id" required>
                             <option value="">@lang('general.lbl_branchselect')</option>
                             @foreach($branchs as $branch)
                                 <option value="{{ $branch->id }}"  @if($branch->id == $customer->branch_id) selected @endif>{{  $branch->remark }}</option>
@@ -63,10 +63,10 @@
                   </div>
 
                   <div class="mb-3">
-                    <label class="form-label">Jenis Kelamin</label>
+                    <label class="form-label">Jenis Kelamin *</label>
                     <div class="col-md-12">
                       <select class="form-control" 
-                            name="gender" id="gender">
+                            name="gender" id="gender" required>
                             <option value="">Pilih Jenis Kelamin</option>
                             <option value="Pria" @if("Pria" == $customer->gender) selected @endif>Pria</option>
                             <option value="Wanita" @if("Wanita" == $customer->gender) selected @endif>Wanita</option>

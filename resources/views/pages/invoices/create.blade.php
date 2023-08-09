@@ -620,7 +620,7 @@
               {
                 position: 'top-end',
                 icon: 'warning',
-                text: 'Please fill name',
+                text: 'Silahkan isi alamat',
                 showConfirmButton: false,
                 imageHeight: 30, 
                 imageWidth: 30,   
@@ -633,7 +633,7 @@
               {
                 position: 'top-end',
                 icon: 'warning',
-                text: 'Please fill address',
+                text: 'Silahkan isi alamat',
                 showConfirmButton: false,
                 imageHeight: 30, 
                 imageWidth: 30,   
@@ -646,7 +646,7 @@
               {
                 position: 'top-end',
                 icon: 'warning',
-                text: 'Please fill phone no',
+                text: 'Silahkan isi nomor handphone',
                 showConfirmButton: false,
                 imageHeight: 30, 
                 imageWidth: 30,   
@@ -659,7 +659,20 @@
               {
                 position: 'top-end',
                 icon: 'warning',
-                text: 'Please choose branch',
+                text: 'Silahkan pilih cabang',
+                showConfirmButton: false,
+                imageHeight: 30, 
+                imageWidth: 30,   
+                timer: 1500
+              }
+            );
+          }else if($('#cust_gender').find(':selected').val()==''){
+            $('#cust_gender').focus();
+            Swal.fire(
+              {
+                position: 'top-end',
+                icon: 'warning',
+                text: 'Silahkan pilih Jenis Kelamin',
                 showConfirmButton: false,
                 imageHeight: 30, 
                 imageWidth: 30,   
