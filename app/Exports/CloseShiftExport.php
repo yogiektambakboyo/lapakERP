@@ -67,7 +67,7 @@ class CloseShiftExport implements FromCollection,WithColumnFormatting, WithHeadi
             sum(case when im.payment_type = 'Mandiri - Kredit' then id.total+id.vat_total else 0 end) as total_m_k,
             sum(case when im.payment_type = 'QRIS' then id.total+id.vat_total else 0 end) as total_qr,
             sum(case when im.payment_type = 'Transfer' then id.total+id.vat_total else 0 end) as total_tr,
-            count(distinct im.invoice_no) qty_transaction,count(distinct im.customers_id) qty_customers
+            count(distinct im.invoice_no) qty_transaction,count(distinct im.invoice_no) qty_customers
             from invoice_master im 
             join invoice_detail id on id.invoice_no  = im.invoice_no 
             join product_sku ps on ps.id = id.product_id 
