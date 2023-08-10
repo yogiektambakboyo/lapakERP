@@ -1224,6 +1224,9 @@ class ReportCloseDayController extends Controller
             $filter_month_in = $request->filter_month_in;
             $filter_month_out = $request->filter_month_out;
 
+            $filter_month_in_date = $request->filter_month_in.'25';
+            $filter_month_out_date = $request->filter_month_out.'26';
+
             $period_selected_in = DB::select("select period_no,remark from period where period_no=".$filter_month_in);
             $period_selected_out = DB::select("select period_no,remark from period where period_no=".$filter_month_out);
             $report_data = DB::select("
@@ -1248,8 +1251,8 @@ class ReportCloseDayController extends Controller
                     join customers c on c.id = im.customers_id and c.branch_id::character varying like '%".$branchx."%'
                     join branch b on b.id = c.branch_id
                     join users_branch as ub on ub.branch_id = b.id and ub.user_id = '".$user->id."'
-                    join period pd on pd.period_no = to_char(im.dated,'YYYYMM')::int
-                    where to_char(im.dated,'YYYYMM')::int between '".$filter_month_in."'::int and '".$filter_month_out."'::int
+                    join period pd on im.dated between pd.start_cal and pd.end_cal 
+                    where pd.period_no between '".$filter_month_in."'::int and '".$filter_month_out."'::int
                     group by pd.period_no,pd.remark,b.remark,b.id  
                     order by 3       
             ");         
