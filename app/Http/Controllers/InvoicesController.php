@@ -320,7 +320,7 @@ class InvoicesController extends Controller
         }
 
 
-        $branch_id = Room::where('id',$request->get('branch_room_id'))->get(['branch_id'])->first();
+        $branch_id = Customer::where('id',$request->get('customer_id'))->get(['branch_id'])->first();
 
         if(!$res_invoice){
             $result = array_merge(
@@ -721,8 +721,7 @@ class InvoicesController extends Controller
         $invoice_no = $request->get('invoice_no');
 
         $last_data = InvoiceDetail::where('invoice_detail.invoice_no','=',$invoice_no)->get('invoice_detail.*');
-        $branch_id = Room::where('id',$request->get('branch_room_id'))->get(['branch_id'])->first();
-
+        $branch_id = Customer::where('id',$request->get('customer_id'))->get(['branch_id'])->first();
 
         for ($i=0; $i < count($last_data); $i++) { 
             DB::update("UPDATE product_stock set qty = qty+".$last_data[$i]['qty']." WHERE branch_id = ".$branch_id['branch_id']." and product_id = ".$last_data[$i]["product_id"].";");

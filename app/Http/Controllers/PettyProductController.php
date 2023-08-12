@@ -595,6 +595,8 @@ class PettyProductController extends Controller
         $usersReferral = User::get(['users.id','users.name']);
         $type_customer = ['Sendiri','Berdua','Keluarga','Rombongan'];
 
+        DB::update(" insert into petty_cash_detail_log select * from petty_cash_detail where doc_no = '".$petty->doc_no."';  ");
+        
         return view('pages.pettyproduct.edit',[
             'customers' => Customer::join('users_branch as ub','ub.branch_id', '=', 'customers.branch_id')->join('branch as b','b.id','=','ub.branch_id')->where('ub.user_id',$user->id)->get(['customers.id','customers.name','b.remark']),
             'data' => $data,
