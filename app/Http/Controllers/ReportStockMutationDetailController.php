@@ -153,7 +153,7 @@ class ReportStockMutationDetailController extends Controller
                 join branch b on b.id = c.branch_id and b.id::character varying like '".$branchx."'
                 where im.dated between '".$begindate."' and '".$enddate."'
                 group by b.id,b.remark,im.dated,id.product_id,ps.remark
-                union 
+                union all
                 select b.id as branch_id,b.remark as branch_name,im.dated,ps2.id as product_id,ps2.remark as product_name,sum(id.qty*pi2.qty) as qty_out,0  as qty_in  from invoice_master im 
                 join invoice_detail id on id.invoice_no = im.invoice_no 
                 join customers c ON c.id = im.customers_id
@@ -163,21 +163,21 @@ class ReportStockMutationDetailController extends Controller
                 join branch b on b.id = c.branch_id and b.id::character varying like '".$branchx."'
                 where im.dated between '".$begindate."' and '".$enddate."'
                 group by b.id,b.remark,im.dated,ps2.id,ps2.remark
-                union
+                union all
                 select b.id as branch_id,b.remark as branch_name,im.dated,id.product_id,ps.remark as product_name,sum(id.qty) as qty_out,0  as qty_in  from petty_cash im 
                 join petty_cash_detail id on id.doc_no  = im.doc_no
                 join product_sku ps on ps.id = id.product_id and ps.type_id = 1
                 join branch b on b.id = im.branch_id and b.id::character varying like '".$branchx."'
                 where im.dated between '".$begindate."' and '".$enddate."' and im.type='Produk - Keluar'
                 group by b.id,b.remark,im.dated,id.product_id,ps.remark
-                union
+                union all
                 select b.id as branch_id,b.remark as branch_name,im.dated,id.product_id,ps.remark as product_name,0 as qty_out,sum(id.qty)  as qty_in  from petty_cash im 
                 join petty_cash_detail id on id.doc_no  = im.doc_no
                 join product_sku ps on ps.id = id.product_id and ps.type_id = 1 
                 join branch b on b.id = im.branch_id and b.id::character varying like '".$branchx."'
                 where im.dated between '".$begindate."' and '".$enddate."' and im.type='Produk - Masuk'
                 group by b.id,b.remark,im.dated,id.product_id,ps.remark
-                union
+                union all
                 select b.id as branch_id,b.remark as branch_name,im.dated,id.product_id,ps.remark as product_name,0 as qty_out,sum(id.qty) as qty_in  from receive_master im 
                 join receive_detail id on id.receive_no = im.receive_no 
                 join product_sku ps on ps.id = id.product_id and ps.type_id = 1 
