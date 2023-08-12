@@ -66,13 +66,14 @@ class ReportInvoiceController extends Controller
 
         $shifts = Shift::orderBy('shift.id')->get(['shift.id','shift.remark','shift.id','shift.time_start','shift.time_end']); 
         $report_data = DB::select("
-                select  c.gender,b.remark as branch_name,im.dated,s.remark as shift_name,im.invoice_no,im.customers_name,im.total,im.total_payment,im.payment_type,coalesce(im.ref_no,'-') ref_no,u.name as created_by_name,im.created_at,im.updated_at,im.updated_by
+                select  u2.name as update_by_name,c.gender,b.remark as branch_name,im.dated,s.remark as shift_name,im.invoice_no,im.customers_name,im.total,im.total_payment,im.payment_type,coalesce(im.ref_no,'-') ref_no,u.name as created_by_name,im.created_at,im.updated_at,im.updated_by
                 from invoice_master im 
                 join customers c on c.id = im.customers_id 
                 join users u on u.id=im.created_by
                 join branch b on b.id = c.branch_id
                 join users_branch as ub on ub.branch_id = b.id and ub.user_id = '".$user->id."'
                 left join shift s on im.created_at::time  between s.time_start and s.time_end
+                left join users u2 on u.id=im.updated_by
                 where im.dated>now()-interval'7 days'             
         ");
         $data = $this->data;
@@ -105,12 +106,13 @@ class ReportInvoiceController extends Controller
             return Excel::download(new ReportInvoicesExport($strencode), 'report_invoice_'.Carbon::now()->format('YmdHis').'.xlsx');
         }else{
             $report_data = DB::select("
-                select  c.gender,b.remark as branch_name,im.dated,s.remark as shift_name,im.invoice_no,im.customers_name,im.total,im.total_payment,im.payment_type,coalesce(im.ref_no,'-') ref_no,u.name as created_by_name,im.created_at,im.updated_at,im.updated_by
+                select  u2.name as update_by_name,c.gender,b.remark as branch_name,im.dated,s.remark as shift_name,im.invoice_no,im.customers_name,im.total,im.total_payment,im.payment_type,coalesce(im.ref_no,'-') ref_no,u.name as created_by_name,im.created_at,im.updated_at,im.updated_by
                 from invoice_master im 
                 join customers c on c.id = im.customers_id and c.branch_id::character varying like '%".$branchx."%'
                 join users u on u.id=im.created_by
                 join branch b on b.id = c.branch_id
                 join users_branch as ub on ub.branch_id = b.id and ub.user_id = ".$user->id."
+                left join users u2 on u.id=im.updated_by
                 left join shift s on im.created_at::time  between s.time_start and s.time_end and s.id::character varying like '%".$shift_id."%'
                 where im.dated between '".$begindate."' and '".$enddate."'              
             ");         

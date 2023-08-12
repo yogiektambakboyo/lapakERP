@@ -32,7 +32,9 @@
                 <th scope="col">Jenis Kelamin</th>    
                 <th scope="col">Total</th>    
                 <th scope="col" width="8%">Pembayaran</th>    
-                <th scope="col"  width="8%">@lang('general.lbl_type_payment')</th>         
+                <th scope="col"  width="8%">@lang('general.lbl_type_payment')</th>  
+                <th scope="col" width="8%">Edit By</th>    
+                <th scope="col">Edit At</th>          
                 <th scope="col" width="8%">Created By</th>    
                 <th scope="col">Created At</th>    
             </tr>
@@ -50,6 +52,8 @@
                         <td>{{ number_format($rdata->total,0,',','.') }}</td>
                         <td>{{ number_format($rdata->total_payment,0,',','.') }}</td>
                         <td>{{ $rdata->payment_type }}</td>
+                        <td>{{ $rdata->update_by_name }}</td>
+                        <td>{{ $rdata->updated_at }}</td>
                         <td>{{ $rdata->created_by_name }}</td>
                         <td>{{ $rdata->created_at }}</td>
                     </tr>
