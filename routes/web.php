@@ -23,6 +23,7 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
      * API Routes
      */
     Route::post('/api_login', 'APIController@api_login')->name('api.login');
+    Route::post('/api_product_list', 'APIController@api_product_list')->name('api.product.list');
 
     /**
      * Home Routes

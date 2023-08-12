@@ -68,4 +68,19 @@ class APIController extends Controller
 
         return response()->json($result);
     }
+
+    public function api_product_list(Request $request)
+    { 
+        $result_query = DB::select( DB::raw("select ps.id,ps.remark,ps.abbr,ps.barcode,ps.photo,ps.photo_2,pc.remark as category_name,pb.remark as brand_name from product_sku ps 
+        join product_category pc on pc.id = ps.category_id 
+        join product_brand pb on pb.id = ps.brand_id 
+        where active = 1"), array());
+        $result = array_merge(
+            ['status' => 'success'],
+            ['data' => $result],
+            ['message' => 'Login Succesfully'],
+        ); 
+
+        return response()->json($result);
+    }
 }
