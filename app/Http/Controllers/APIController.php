@@ -56,7 +56,7 @@ class APIController extends Controller
 
         if (Auth::attempt(['username' => $username, 'password' => $password])) {
             //id,name,username,password,active,lastlogin,roles
-            $login = DB::select( DB::raw("select '' as id,username,'' as password,name,now()::date as downloaddate,'1' as active,b.remark  as lastlogin,'99' as roles from users u join branch b on b.id = u.branch_id  where username = :username"), array(
+            $login = DB::select( DB::raw("select u.id as id,username,'' as password,name,now()::date as downloaddate,'1' as active,b.remark  as lastlogin,'99' as roles from users u join branch b on b.id = u.branch_id  where username = :username"), array(
                 'username' => $username,
             ));
             $result = array_merge(
