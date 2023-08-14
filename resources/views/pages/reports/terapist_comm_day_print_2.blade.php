@@ -58,7 +58,7 @@
               <thead>
                 <tr style="background-color:#FFA726;color:black;">
                   <th colspan="7">Cabang : {{ $report_data_terapistx->branch_name  }}</th>
-                  <th colspan="8">Mitra Usaha : {{ $report_data_terapistx->name  }}</th>
+                  <th colspan="8">Mitra Usaha : {{ $report_data_terapistx->name  }} ({{ $report_data_terapistx->work_year  }})</th>
                 </tr>
                 <tr style="background-color:#FFA726;color:black;">
                   <th rowspan="2" width="6%">Tgl</th>
@@ -358,7 +358,7 @@
                         worksheet.getCell('A1').alignment = { vertical: 'middle', horizontal: 'center' };
 
                         worksheet.mergeCells('F1', 'J1');
-                        worksheet.getCell('F1').value = 'Mitra Usaha : '+element.name;
+                        worksheet.getCell('F1').value = 'Mitra Usaha : '+element.name+' ('+element.work_year+')';
                         worksheet.getCell('F1').alignment = { vertical: 'middle', horizontal: 'center' };
 
                         worksheet.mergeCells('K1', 'O1');

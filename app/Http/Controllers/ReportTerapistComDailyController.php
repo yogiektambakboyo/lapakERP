@@ -209,9 +209,9 @@ class ReportTerapistComDailyController extends Controller
             ");
 
             $report_data_terapist = DB::select("
-                    select distinct a.branch_name,a.id,a.name
+                    select distinct a.branch_name,a.id,a.name,a.work_year
                     from (
-                        select a.branch_name,a.user_id as id,a.dated,a.terapist_name as name,
+                        select a.branch_name,a.user_id as id,a.dated,a.terapist_name as name,a.work_year,
                         string_agg(distinct right(invoice_no,6),'##') as invoice_no,
                         string_agg(case when type_id=2 then abbr else '' end,'##' order by invoice_no) as abbr,
                         sum(point_qty) as point_qty,sum(a.commisions) as commisions,
@@ -227,7 +227,7 @@ class ReportTerapistComDailyController extends Controller
                         from terapist_commision a
                         join users_branch as ub on ub.branch_id = a.branch_id and ub.user_id = '".$user->id."'
                         where a.dated  between '".$filter_begin_date."' and  '".$filter_begin_end."' and a.user_id::character varying like '".$terapist."' 
-                        group by a.branch_name,a.user_id,a.dated,a.terapist_name
+                        group by a.branch_name,a.user_id,a.dated,a.terapist_name,a.work_year
                     ) a left join point_conversion pc2 on pc2.point_qty = a.point_qty 
                     order by 1,3     
             ");
@@ -326,9 +326,9 @@ class ReportTerapistComDailyController extends Controller
             ");
 
             $report_data_terapist = DB::select("
-                    select distinct a.branch_name,a.id,a.name
+                    select distinct a.branch_name,a.id,a.name,a.work_year
                     from (
-                        select a.branch_name,a.user_id as id,a.dated,a.terapist_name as name,
+                        select a.branch_name,a.user_id as id,a.dated,a.terapist_name as name,a.work_year,
                         string_agg(distinct right(invoice_no,6),'##') as invoice_no,
                         string_agg(case when type_id=2 then abbr else '' end,'##' order by invoice_no) as abbr,
                         sum(point_qty) as point_qty,sum(a.commisions) as commisions,
@@ -344,7 +344,7 @@ class ReportTerapistComDailyController extends Controller
                         from terapist_commision a
                         join users_branch as ub on ub.branch_id = a.branch_id and ub.user_id = '".$user->id."'
                         where a.dated  between '".$filter_begin_date."' and  '".$filter_begin_end."' and a.user_id::character varying like '".$terapist."' 
-                        group by a.branch_name,a.user_id,a.dated,a.terapist_name
+                        group by a.branch_name,a.user_id,a.dated,a.terapist_name,a.work_year
                     ) a left join point_conversion pc2 on pc2.point_qty = a.point_qty 
                     order by 1,3     
             ");
