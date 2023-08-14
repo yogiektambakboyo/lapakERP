@@ -77,10 +77,15 @@ class APIController extends Controller
 
     public function api_product_list(Request $request)
     { 
-        $result_query = DB::select( DB::raw("select ps.id,ps.remark,ps.abbr,ps.barcode,ps.photo,ps.photo_2,pc.remark as category_name,pb.remark as brand_name from product_sku ps 
+        $result_query = DB::select( DB::raw("
+        select pt.qty,ps.id,ps.remark,ps.abbr,ps.barcode,ps.photo,ps.photo_2,pc.remark as category_name,pb.remark as brand_name from product_sku ps 
         join product_category pc on pc.id = ps.category_id 
         join product_brand pb on pb.id = ps.brand_id 
-        where active = 1"), array());
+        left join product_stock pt on pt.product_id = ps.id 
+        join users u on u.id = :users_id and u.active=1 and pt.branch_id = u.branch_id
+        where ps.active = 1"), array(
+            'users_id' => $request->get('user_id'),
+        ));
         $result = array_merge(
             ['status' => 'success'],
             ['data' => $result_query],
