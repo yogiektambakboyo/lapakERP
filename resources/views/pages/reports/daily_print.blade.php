@@ -280,16 +280,16 @@
                 <th scope="col" width="3%">LEX</th>
               @endif
               @if((int)$header->total_518>0)
-                <th scope="col" width="3%">CATWPAN</th>
+                <th scope="col" width="3%">CATWPN</th>
               @endif
               @if((int)$header->total_544>0)
                 <th scope="col" width="3%">CRB</th>
               @endif
               @if((int)$header->total_546>0)
-                <th scope="col" width="3%">CRBBLW</th>
+                <th scope="col" width="3%">CRBBL</th>
               @endif
               @if((int)$header->total_567>0)
-                <th scope="col" width="3%">HMMKRZ</th>
+                <th scope="col" width="3%">HMMKZ</th>
               @endif
               @if((int)$header->total_537>0)
                 <th scope="col" width="3%">MP</th>
