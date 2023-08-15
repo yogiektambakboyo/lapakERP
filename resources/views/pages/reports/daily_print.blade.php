@@ -275,6 +275,10 @@
 
 
 
+              @if((int)$header->total_498>0)
+                <th scope="col" width="3%">KERIK</th>
+              @endif
+
               @if((int)$header->total_316>0)
                 <th scope="col" width="3%">ET</th>
               @endif
@@ -371,6 +375,7 @@
             $c_329 = 0;
 
             $c_316 = 0;
+            $c_498 = 0;
             $c_309 = 0;
             $c_318 = 0;
             $c_324 = 0;
@@ -710,7 +715,11 @@
                           @endif
 
 
-                           
+
+                          @if((int)$header->total_498>0)
+                          @php if((int)$dtt_raw[$counter]->total_498>0){ $c_498++; } @endphp
+                            <td scope="col" width="3%">{{ number_format($dtt_raw[$counter]->total_498,0,',','.') }}</td>
+                          @endif
                           @if((int)$header->total_316>0)
                           @php if((int)$dtt_raw[$counter]->total_316>0){ $c_316++; } @endphp
                             <td scope="col" width="3%">{{ number_format($dtt_raw[$counter]->total_316,0,',','.') }}</td>
@@ -1376,7 +1385,14 @@
 
 
 
-
+                    @if((int)$header->total_498>0)
+                    @php
+                      $count_column_service++;
+                        $total_service = $total_service + $dtt_raw_oneline_discs[0]->total_498;
+                        $qty_service = $qty_service + $c_498;
+                    @endphp
+                      <th scope="col" width="3%">{{ number_format($dtt_raw_oneline_discs[0]->total_498,0,',','.') }}  / {{ $c_498 }} </th>
+                    @endif
                     @if((int)$header->total_316>0)
                     @php
                       $count_column_service++;
