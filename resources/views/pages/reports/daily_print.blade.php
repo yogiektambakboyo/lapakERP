@@ -664,8 +664,8 @@
                             @php if((int)$dtt_raw[$counter]->total_472>0){ $c_472++; } @endphp
                               <td scope="col" width="3%">{{ number_format($dtt_raw[$counter]->total_472,0,',','.') }}</td>
                           @endif
-                          @if((int)$header->total_476>0)
-                            @php if((int)$dtt_raw[$counter]->total_474>0){ $c_476++; } @endphp
+                          @if((int)$header->total_474>0)
+                            @php if((int)$dtt_raw[$counter]->total_474>0){ $c_474++; } @endphp
                               <td scope="col" width="3%">{{ number_format($dtt_raw[$counter]->total_474,0,',','.') }}</td>
                           @endif
                           @if((int)$header->total_476>0)
