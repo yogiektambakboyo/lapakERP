@@ -26,6 +26,7 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
     Route::post('/api_product_list', 'APIController@api_product_list')->name('api.product.list');
     Route::post('/api_product_list_stock', 'APIController@api_product_list_stock')->name('api.product.list.stock');
     Route::post('/api_customer_list', 'APIController@api_customer_list')->name('api.customer.list');
+    Route::post('/api_customer_create', 'APIController@api_customer_create')->name('api.customer.create');
     Route::post('/api_order_list', 'APIController@api_order_list')->name('api.order.list');
     Route::post('/api_order_detail', 'APIController@api_order_detail')->name('api.order.detail');
     Route::post('/api_order_create', 'APIController@api_order_create')->name('api.order.create');

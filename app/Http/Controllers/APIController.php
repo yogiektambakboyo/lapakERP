@@ -19,6 +19,7 @@ use App\Models\Settings;
 use App\Models\SettingsDocumentNumber;
 use App\Models\Customer;
 use App\Models\Order;
+use App\Models\User;
 use App\Models\OrderDetail;
 use Carbon\Carbon;
 
@@ -229,6 +230,43 @@ class APIController extends Controller
                 ['status' => 'success'],
                 ['data' => $order_no],
                 ['message' => 'Save order sucess'],
+            );
+    
+            return $result;
+        }
+
+        /**
+        
+        */
+    }
+
+    public function api_customer_create(Request $request)
+    { 
+        $branch = User::where('id','=',$request->get('user_id'))->get(['branch_id'])->first();
+
+        $res_cust = Customer::create(
+            array_merge(
+                ['name' => $request->get('name') ],
+                ['created_by' => $request->get('user_id')],
+                ['dated' => date('Y-m-d') ],
+                ['branch_id' => $branch->branch_id ],
+            )
+        );
+
+        $c_id = Customer::where('branch_id',$branch->branch_id)->orderBy('id','desc')->get(['id'])->first();
+        if(!$res_cust){
+            $result = array_merge(
+                ['status' => 'failed'],
+                ['data' => ''],
+                ['message' => 'Save customer failed'],
+            );
+    
+            return $result;
+        }else{
+            $result = array_merge(
+                ['status' => 'success'],
+                ['data' => $c_id->id],
+                ['message' => 'Save customer sucess'],
             );
     
             return $result;
