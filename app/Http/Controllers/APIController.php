@@ -148,6 +148,23 @@ class APIController extends Controller
         return response()->json($result);
     }
 
+    public function api_order_detail(Request $request)
+    { 
+        $result_query = DB::select( DB::raw("select od.order_no,ps.remark as product_name,od.qty  from order_master om 
+        join order_detail od on od.order_no = om.order_no 
+        join product_sku ps on ps.id = od.product_id 
+        where om.order_no = :order_no "), array(
+            'order_no' => $request->get('order_no'),
+        ));
+        $result = array_merge(
+            ['status' => 'success'],
+            ['data' => $result_query],
+            ['message' => 'Get Orders Succesfully'],
+        ); 
+
+        return response()->json($result);
+    }
+
     public function api_customer_list(Request $request)
     { 
         $result_query = DB::select( DB::raw("select om.id,om.order_no,om.dated,c.name as customers_name,om.customers_id,om.created_at,om.created_by,u.name as creator_name,om.is_checkout 
