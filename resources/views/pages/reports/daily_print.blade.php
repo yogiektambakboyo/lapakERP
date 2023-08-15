@@ -276,6 +276,29 @@
                 <th scope="col" width="3%">GTBR</th>
               @endif
 
+              @if((int)$header->total_496>0)
+                <th scope="col" width="3%">LEX</th>
+              @endif
+              @if((int)$header->total_518>0)
+                <th scope="col" width="3%">CATWPAN</th>
+              @endif
+              @if((int)$header->total_544>0)
+                <th scope="col" width="3%">CRB</th>
+              @endif
+              @if((int)$header->total_546>0)
+                <th scope="col" width="3%">CRBBLW</th>
+              @endif
+              @if((int)$header->total_567>0)
+                <th scope="col" width="3%">HMMKRZ</th>
+              @endif
+              @if((int)$header->total_537>0)
+                <th scope="col" width="3%">MP</th>
+              @endif
+              @if((int)$header->total_538>0)
+                <th scope="col" width="3%">PD</th>
+              @endif
+              
+
 
 
               @if((int)$header->total_498>0)
@@ -379,6 +402,16 @@
 
             $c_316 = 0;
             $c_510 = 0;
+
+            $c_498 = 0;
+            $c_518 = 0;
+            $c_544 = 0;
+            $c_546 = 0;
+            $c_567 = 0;
+            $c_537 = 0;
+            $c_538 = 0;
+            
+
             $c_498 = 0;
             $c_309 = 0;
             $c_318 = 0;
@@ -721,6 +754,36 @@
                           @php if((int)$dtt_raw[$counter]->total_510>0){ $c_510++; } @endphp
                             <td scope="col" width="3%">{{ number_format($dtt_raw[$counter]->total_510,0,',','.') }}</td>
                           @endif
+                          
+                          @if((int)$header->total_496>0)
+                          @php if((int)$dtt_raw[$counter]->total_496>0){ $c_496++; } @endphp
+                            <td scope="col" width="3%">{{ number_format($dtt_raw[$counter]->total_496,0,',','.') }}</td>
+                          @endif
+                          @if((int)$header->total_518>0)
+                          @php if((int)$dtt_raw[$counter]->total_518>0){ $c_518++; } @endphp
+                            <td scope="col" width="3%">{{ number_format($dtt_raw[$counter]->total_518,0,',','.') }}</td>
+                          @endif
+                          @if((int)$header->total_544>0)
+                          @php if((int)$dtt_raw[$counter]->total_544>0){ $c_544++; } @endphp
+                            <td scope="col" width="3%">{{ number_format($dtt_raw[$counter]->total_544,0,',','.') }}</td>
+                          @endif
+                          @if((int)$header->total_546>0)
+                          @php if((int)$dtt_raw[$counter]->total_546>0){ $c_546++; } @endphp
+                            <td scope="col" width="3%">{{ number_format($dtt_raw[$counter]->total_546,0,',','.') }}</td>
+                          @endif
+                          @if((int)$header->total_567>0)
+                          @php if((int)$dtt_raw[$counter]->total_567>0){ $c_567++; } @endphp
+                            <td scope="col" width="3%">{{ number_format($dtt_raw[$counter]->total_567,0,',','.') }}</td>
+                          @endif
+                          @if((int)$header->total_537>0)
+                          @php if((int)$dtt_raw[$counter]->total_537>0){ $c_537++; } @endphp
+                            <td scope="col" width="3%">{{ number_format($dtt_raw[$counter]->total_537,0,',','.') }}</td>
+                          @endif
+                          @if((int)$header->total_538>0)
+                          @php if((int)$dtt_raw[$counter]->total_538>0){ $c_538++; } @endphp
+                            <td scope="col" width="3%">{{ number_format($dtt_raw[$counter]->total_538,0,',','.') }}</td>
+                          @endif
+                         
 
 
 
@@ -1399,6 +1462,64 @@
                       <th scope="col" width="3%">{{ number_format($dtt_raw_oneline_discs[0]->total_510,0,',','.') }}  / {{ $c_510 }} </th>
                     @endif
 
+
+
+                    @if((int)$header->total_496>0)
+                    @php
+                      $count_column_service++;
+                        $total_service = $total_service + $dtt_raw_oneline_discs[0]->total_496;
+                        $qty_service = $qty_service + $c_496;
+                    @endphp
+                      <th scope="col" width="3%">{{ number_format($dtt_raw_oneline_discs[0]->total_496,0,',','.') }}  / {{ $c_496 }} </th>
+                    @endif
+                    @if((int)$header->total_518>0)
+                    @php
+                      $count_column_service++;
+                        $total_service = $total_service + $dtt_raw_oneline_discs[0]->total_518;
+                        $qty_service = $qty_service + $c_518;
+                    @endphp
+                      <th scope="col" width="3%">{{ number_format($dtt_raw_oneline_discs[0]->total_518,0,',','.') }}  / {{ $c_518 }} </th>
+                    @endif
+                    @if((int)$header->total_544>0)
+                    @php
+                      $count_column_service++;
+                        $total_service = $total_service + $dtt_raw_oneline_discs[0]->total_544;
+                        $qty_service = $qty_service + $c_544;
+                    @endphp
+                      <th scope="col" width="3%">{{ number_format($dtt_raw_oneline_discs[0]->total_544,0,',','.') }}  / {{ $c_544 }} </th>
+                    @endif
+                    @if((int)$header->total_546>0)
+                    @php
+                      $count_column_service++;
+                        $total_service = $total_service + $dtt_raw_oneline_discs[0]->total_546;
+                        $qty_service = $qty_service + $c_546;
+                    @endphp
+                      <th scope="col" width="3%">{{ number_format($dtt_raw_oneline_discs[0]->total_546,0,',','.') }}  / {{ $c_546 }} </th>
+                    @endif
+                    @if((int)$header->total_567>0)
+                    @php
+                      $count_column_service++;
+                        $total_service = $total_service + $dtt_raw_oneline_discs[0]->total_567;
+                        $qty_service = $qty_service + $c_567;
+                    @endphp
+                      <th scope="col" width="3%">{{ number_format($dtt_raw_oneline_discs[0]->total_567,0,',','.') }}  / {{ $c_567 }} </th>
+                    @endif
+                    @if((int)$header->total_537>0)
+                    @php
+                      $count_column_service++;
+                        $total_service = $total_service + $dtt_raw_oneline_discs[0]->total_537;
+                        $qty_service = $qty_service + $c_537;
+                    @endphp
+                      <th scope="col" width="3%">{{ number_format($dtt_raw_oneline_discs[0]->total_537,0,',','.') }}  / {{ $c_537 }} </th>
+                    @endif
+                    @if((int)$header->total_538>0)
+                    @php
+                      $count_column_service++;
+                        $total_service = $total_service + $dtt_raw_oneline_discs[0]->total_538;
+                        $qty_service = $qty_service + $c_538;
+                    @endphp
+                      <th scope="col" width="3%">{{ number_format($dtt_raw_oneline_discs[0]->total_538,0,',','.') }}  / {{ $c_538 }} </th>
+                    @endif
 
 
                     @if((int)$header->total_498>0)
