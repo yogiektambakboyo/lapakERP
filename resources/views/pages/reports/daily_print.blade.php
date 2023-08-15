@@ -297,10 +297,11 @@
               @if((int)$header->total_538>0)
                 <th scope="col" width="3%">PD</th>
               @endif
+
+              @if((int)$header->total_oth_sln>0)
+                <th scope="col" width="3%">OTHER</th>
+              @endif
               
-
-
-
               @if((int)$header->total_498>0)
                 <th scope="col" width="3%">KERIK</th>
               @endif
@@ -410,6 +411,7 @@
             $c_567 = 0;
             $c_537 = 0;
             $c_538 = 0;
+            $c_oth_sln = 0;
             
 
             $c_498 = 0;
@@ -782,6 +784,10 @@
                           @if((int)$header->total_538>0)
                           @php if((int)$dtt_raw[$counter]->total_538>0){ $c_538++; } @endphp
                             <td scope="col" width="3%">{{ number_format($dtt_raw[$counter]->total_538,0,',','.') }}</td>
+                          @endif
+                          @if((int)$header->total_oth_sln>0)
+                          @php if((int)$dtt_raw[$counter]->total_oth_sln>0){ $c_oth_sln++; } @endphp
+                            <td scope="col" width="3%">{{ number_format($dtt_raw[$counter]->total_oth_sln,0,',','.') }}</td>
                           @endif
                          
 
@@ -1519,6 +1525,14 @@
                         $qty_service = $qty_service + $c_538;
                     @endphp
                       <th scope="col" width="3%">{{ number_format($dtt_raw_oneline_discs[0]->total_538,0,',','.') }}  / {{ $c_538 }} </th>
+                    @endif
+                    @if((int)$header->total_oth_sln>0)
+                    @php
+                      $count_column_service++;
+                        $total_service = $total_service + $dtt_raw_oneline_discs[0]->total_oth_sln;
+                        $qty_service = $qty_service + $c_oth_sln;
+                    @endphp
+                      <th scope="col" width="3%">{{ number_format($dtt_raw_oneline_discs[0]->total_oth_sln,0,',','.') }}  / {{ $c_oth_sln }} </th>
                     @endif
 
 
