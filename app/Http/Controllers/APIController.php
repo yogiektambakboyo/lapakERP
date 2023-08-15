@@ -167,11 +167,11 @@ class APIController extends Controller
 
     public function api_customer_list(Request $request)
     { 
-        $result_query = DB::select( DB::raw("select om.id,om.order_no,om.dated,c.name as customers_name,om.customers_id,om.created_at,om.created_by,u.name as creator_name,om.is_checkout 
-        from order_master om 
-        join customers c on c.id = om.customers_id 
-        join users u on u.id= om.created_by 
-        where om.is_checkout = 0 and om.dated = now()::date"), array());
+        $result_query = DB::select( DB::raw("select id,name as customer_name from customers c
+        join users_branch ub on ub.user_id = :users_id and ub.branch_id = c.branch_id 
+        order by c.name"), array(
+            'users_id' => $request->get('user_id'),
+        ));
         $result = array_merge(
             ['status' => 'success'],
             ['data' => $result_query],
