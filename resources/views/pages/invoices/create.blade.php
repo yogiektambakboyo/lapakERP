@@ -123,165 +123,36 @@
                   </div>
                 
             </div>
-            <div class="modal fade" id="modal-filter" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+            <div class="modal fade" id="modal-price" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
               <div class="modal-dialog  modal-lg">
               <div class="modal-content">
                   <div class="modal-header">
-                    <h5 class="modal-title" id="product_id_selected_lbl">Pilih Terapist</h5>
+                    <h5 class="modal-title" id="product_id_selected_lbl">Masukkan Harga Barang</h5>
                   <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                   </div>
                   <div class="modal-body">
                     <div class="form-group row">
-                      <label class="form-label col-form-label col-md-2">Pilih Terapist </label>
-                      <input type="hidden" id="product_id_selected" value="">
+                      <label class="form-label col-form-label col-md-2">Harga </label>
                       <div class="col-md-4">
-                        <select class="form-control" 
-                            name="assign_id" id="assign_id" required>
-                            <option value="">@lang('general.lbl_assignselect') </option>
-                            @foreach($users as $user)
-                                <option value="{{ $user->id }}">{{ $user->name }}</option>
-                            @endforeach
-                        </select>
-                      </div>
-                      <label class="form-label col-form-label col-md-2">@lang('general.lbl_schedule') </label>
-                      <div class="col-md-4">
-                        <div class="input-group bootstrap-timepicker timepicker">
-                          <input id="timepicker2" name="timepicker2" type="text" class="form-control input-small">
-                          <span class="btn btn-indigo input-group-addon"><i class="fas fa-clock"></i></span>
-                        </div>
+                        <input type="hidden" class="form-control" id="dialog_product_id" value="">
+                        <input type="number" class="form-control" id="dialog_price" value="0">
                       </div>
                     </div>
+            
                     <div class="form-group row mt-2">
-                      <div class="col-md-12">
-                        <table class="table table-striped" id="order_terapist_table" style="width:100%">
-                          <thead>
-                          <tr>
-                              <th scope="col" width="13%">No Faktur</th>
-                              <th>@lang('general.lbl_room')   </th>
-                              <th scope="col" width="15%">@lang('general.lbl_terapist')</th>
-                              <th scope="col" width="15%">Perawatan</th>
-                              <th scope="col" width="7%">Mulai</th>
-                              <th scope="col" width="7%">Selesai</th>
-                              <th scope="col" width="8%">Sisa</th>
-                          </tr>
-                          </thead>
-                          <tbody>
-                          </tbody>
-                        </table> 
+                      <label class="form-label col-form-label col-md-2">Diskon </label>
+                      <div class="col-md-4">
+                        <input type="number" class="form-control" id="dialog_discount" value="0">
                       </div>
                     </div>
                   </div>
                   <div class="modal-footer">
                   <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">@lang('general.lbl_close') </button>
-                  <button type="button" class="btn btn-primary"  data-bs-dismiss="modal" id="btn_assigned">@lang('general.lbl_apply')</button>
+                  <button type="button" class="btn btn-primary"  data-bs-dismiss="modal" id="btn_change_price">@lang('general.lbl_apply')</button>
                   </div>
               </div>
               </div>
             </div>
-
-            <div class="modal fade" id="modal-referral" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-              <div class="modal-dialog">
-              <div class="modal-content">
-                  <div class="modal-header">
-                  <h5 class="modal-title" id="staticBackdropLabel">@lang('general.lbl_ref_by') </h5>
-                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                  </div>
-                  <div class="modal-body">
-                    <label class="form-label col-form-label col-md-12" id="referral_selected_lbl">@lang('general.lbl_assignselect')  </label>
-                    <input type="hidden" id="referral_selected" value="">
-                    <div class="col-md-8">
-                      <select class="form-control" 
-                          name="referral_by" id="referral_by">
-                          <option value="">@lang('general.lbl_assignselect') </option>
-                          @foreach($usersall as $userall)
-                              <option value="{{ $userall->id }}">{{ $userall->name }}</option>
-                          @endforeach
-                      </select>
-                    </div>
-                  </div>
-                  <div class="modal-footer">
-                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">@lang('general.lbl_close') </button>
-                  <button type="button" class="btn btn-primary"  data-bs-dismiss="modal" id="btn_referred">@lang('general.lbl_apply')</button>
-                  </div>
-              </div>
-              </div>
-            </div>
-
-            <div class="modal fade" id="modal-scheduled" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-              <div class="modal-dialog modal-lg">
-              <div class="modal-content">
-                  <div class="modal-header">
-                  <h5 class="modal-title" id="staticBackdropLabel">@lang('general.lbl_scheduleselect')  </h5>
-                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                  </div>
-                  <div class="modal-body">
-
-                    <div class="row mb-3">
-                      <div class="col-md-1">
-                        <label class="form-label col-form-label col-md-8">@lang('general.lbl_room')   </label>
-                      </div>
-                      <div class="col-md-2">
-                          <select class="form-control" 
-                              name="room_id" id="room_id" required>
-                              <option value="">@lang('general.lbl_roomselect')   </option>
-                              @foreach($rooms as $room)
-                                  <option value="{{ $room->id }}">{{ $room->remark }}</option>
-                              @endforeach
-                          </select>
-                      </div>
-                      <div class="col-md-1">
-                        <label class="form-label col-form-label col-md-4">@lang('general.lbl_dated')   </label>
-                      </div>
-                      <div class="col-md-2">
-                        <input type="text" data-date-format="yyyy-mm-dd"
-                        name="schedule_date"
-                        id="schedule_date"
-                        class="form-control" 
-                        value="{{ old('invoice_date') }}" required/>
-                        @if ($errors->has('invoice_date'))
-                                  <span class="text-danger text-left">{{ $errors->first('join_date') }}</span>
-                              @endif
-                      </div>
-                      <div class="col-md-1">
-                        <label class="form-label col-form-label col-md-8">@lang('general.lbl_time')   </label>
-                      </div>
-                      <div class="col-md-2">
-                        <div class="input-group bootstrap-timepicker timepicker">
-                            <input id="timepicker1" type="text" class="form-control input-small">
-                            <span class="btn btn-indigo input-group-addon"><i class="fas fa-clock"></i></span>
-                        </div>    
-                      </div>
-                    </div>
-                   
-                    <div class="panel-heading bg-teal-600 text-white"><strong>@lang('general.lbl_schedule_list')   </strong></div>
-                    <br>
-      
-                    <div class="col-md-12">
-                      <table class="table table-striped" id="order_time_table" style="width:100%">
-                        <thead>
-                        <tr>
-                            <th>@lang('general.lbl_room')   </th>
-                            <th scope="col" width="15%">No Faktur   </th>
-                            <th scope="col" width="15%">@lang('general.lbl_customer')</th>
-                            <th scope="col" width="15%">@lang('general.lbl_schedule_at')   </th>
-                            <th scope="col" width="5%">@lang('general.lbl_duration')   </th>
-                            <th scope="col" width="20%">@lang('general.lbl_end_estimation') </th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        </tbody>
-                      </table> 
-                    </div>
-                  </div>
-                  <div class="modal-footer">
-                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">@lang('general.lbl_close') </button>
-                  <button type="button" class="btn btn-primary"  data-bs-dismiss="modal" id="btn_scheduled">@lang('general.lbl_apply')</button>
-                  </div>
-              </div>
-              </div>
-            </div>
-
-
           </div>
         </div>
 
@@ -289,98 +160,6 @@
 
         <div class="panel-heading bg-teal-600 text-white"><strong>@lang('general.lbl_order_list')</strong></div>
         <br>
-
-        <div class="card text-center font-weight-bold my-3 p-1 d-none"><h3><i class="fas fa-fw fa-hands-praying"></i> @lang('general.service')</h3></div>
-
-        <div class="row mb-3 d-none">
-          
-          <div class="col-md-3">
-            <label class="form-label col-form-label">@lang('general.service')</label>
-            <select class="form-control" 
-                  name="input_service_id" id="input_service_id" required>
-                  <option value="">@lang('general.serviceselect')</option>
-              </select>
-          </div>
-
-
-          <div class="col-md-1">
-            <label class="form-label col-form-label">@lang('general.lbl_uom')</label>
-            <input type="text" 
-            name="input_service_uom"
-            id="input_service_uom"
-            class="form-control" 
-            value="{{ old('input_service_uom') }}" required disabled/>
-          </div>
-
-          <div class="col-md-2">
-            <label class="form-label col-form-label">@lang('general.lbl_price')</label>
-            <input type="text" 
-            name="input_service_price"
-            id="input_service_price"
-            class="form-control" 
-            value="{{ old('input_service_price') }}" required/>
-          </div>
-
-
-          <div class="col-md-1">
-            <label class="form-label col-form-label">@lang('general.lbl_discountrp')</label>
-            <input type="text" 
-            name="input_service_disc"
-            id="input_service_disc"
-            class="form-control" 
-            value="{{ old('input_service_disc') }}" required/>
-          </div>
-
-
-          <div class="col-md-1">
-            <label class="form-label col-form-label">@lang('general.lbl_qty')</label>
-            <input type="text" 
-            name="input_service_qty"
-            id="input_service_qty"
-            class="form-control" 
-            value="{{ old('input_service_qty') }}" required/>
-          </div>
-
-          <div class="col-md-2">
-            <label class="form-label col-form-label">Total</label>
-            <input type="hidden" 
-            name="input_service_vat_total"
-            id="input_service_vat_total"
-            class="form-control" 
-            value="{{ old('input_service_vat_total') }}" required disabled/>
-            <input type="text" 
-            name="input_service_total"
-            id="input_service_total"
-            class="form-control" 
-            value="{{ old('input_service_total') }}" required disabled/>
-          </div>
-
-          <div class="col-md-2">
-            <div class="col-md-12"><label class="form-label col-form-label">_</label></div>
-            <a href="#" id="input_service_submit" class="btn btn-green"><div class="fa-1x"><i class="fas fa-plus fa-fw"></i>@lang('general.lbl_add_service')</div></a>
-          </div>
-
-        </div>
-
-        <table class="table table-striped d-none" id="order_tabled">
-          <thead>
-          <tr>
-              <th scope="col">No</th>
-              <th scope="col" width="20%">@lang('general.service')</th>
-              <th scope="col" width="10%">@lang('general.lbl_uom')</th>
-              <th scope="col" width="10%">@lang('general.lbl_price')</th>
-              <th scope="col" width="5%">@lang('general.lbl_discount')</th>
-              <th scope="col" width="5%">@lang('general.lbl_qty')</th>
-              <th scope="col" width="10%">Total</th>  
-              <th scope="col" width="20%" class="nex">@lang('general.lbl_action')</th> 
-          </tr>
-          </thead>
-          <tbody>
-          </tbody>
-        </table> 
-        
-        <div class="card text-center font-weight-bold my-3 p-1 d-none"><h3><i class="fas fa-fw fa-box"></i> @lang('general.product')</h3></div>
-
         <div class="row mb-3">
 
           <div class="col-md-1">
@@ -479,18 +258,6 @@
         
         <div class="row mb-3">
           <div class="col-md-6">
-            <div class="row mb-3 d-none">
-                <label class="form-label col-form-label col-md-3" id="label-voucher">Voucher</label>
-                <br>
-                <div class="col-md-5">
-                  <input type="text" class="form-control" id="input-apply-voucher">
-                </div>
-                <div class="col-md-3">
-                  <button type="button" id="apply-voucher-btn" class="btn btn-warning">@lang('general.lbl_apply_voucher')</button>
-                </div>
-            </div>
-            <label class="fst-italic d-none">Setelah masukkan Kode Voucher, Klik tombol "Gunakan Voucher" untuk memotong pembayaran</label>
-
           </div>
 
 
@@ -614,6 +381,13 @@
 
 @push('scripts')
     <script type="text/javascript">
+
+      function openModalPrice(product_id){
+        $('#modal-price').modal('show');
+        $('#dialog_product_id').val(product_id);
+      }
+
+    
       $(function () {
         $('#customer_id').select2();
 
@@ -624,6 +398,85 @@
                     $('#input_product_id').val(obj.id).trigger('change');
                   }  
                 }
+          });
+
+          $('#btn_change_price').on('click', function(){
+              if((parseInt($('#dialog_price').val())+parseInt($('#dialog_discount').val()))>0){
+                order_total = 0;
+                disc_total = 0;
+                _vat_total = 0;
+                sub_total = 0;
+                table_product.clear().draw(false);
+                var p_sel = $('#dialog_product_id').val();
+
+
+                  for (var i = 0; i < orderList.length; i++){
+                        var obj = orderList[i];
+
+                        if(p_sel==obj["id"]){
+                          orderList[i]["price"] = $('#dialog_price').val();
+                          orderList[i]["discount"] = $('#dialog_discount').val();
+                          orderList[i]["total"] = ((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"]))-parseFloat(orderList[i]["discount"]); 
+                        } 
+                  }
+
+                  orderList.sort(function(a, b) {
+                      return parseFloat(a.entry_time) - parseFloat(b.entry_time);
+                  });
+
+                counterno = 0;
+                counterno_service = 0;
+
+                for (var i = 0; i < orderList.length; i++){
+                  var obj = orderList[i];
+                  
+                  counterno = counterno + 1;
+                  table_product.row.add( {
+                      "seq" : counterno,
+                      "id"        : obj["id"],
+                        "abbr"      : obj["abbr"],
+                        "uom"       : obj["uom"],
+                        "price"     : obj["price"],
+                        "discount"  : obj["discount"],
+                        "qty"       : obj["qty"],
+                        "total"     : obj["total"],
+                        "action"    : "",
+                  }).draw(false);
+                  
+                  disc_total = disc_total + (parseFloat(orderList[i]["discount"]));
+                  sub_total = sub_total + (((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"]))-(parseFloat(orderList[i]["discount"])));
+                  _vat_total = _vat_total + ((((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"]))-(parseFloat(orderList[i]["discount"])))*(parseFloat(orderList[i]["vat_total"])/100));
+                  order_total = order_total + ((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"])+((((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"]))-(parseFloat(orderList[i]["discount"])))*(parseFloat(orderList[i]["vat_total"])/100)))-(parseFloat(orderList[i]["discount"]));
+
+                  if(($('#payment_nominal').val())>order_total){
+                    $('#order_charge').css('color', 'black');
+                    $('#order_charge').text(currency((($('#payment_nominal').val())-order_total), { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
+                  }else{
+                    $('#order_charge').text("Rp. 0");
+                    $('#order_charge').css('color', 'red');
+                    $('#order_charge').text(currency((($('#payment_nominal').val())-order_total), { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
+                  }
+
+
+                }
+
+                $('#result-total').text(currency(order_total, { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
+                $('#vat-total').text(currency(_vat_total, { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
+                $('#sub-total').text(currency(sub_total, { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
+
+              }else{
+                Swal.fire(
+                  {
+                    position: 'top-end',
+                    icon: 'warning',
+                    text: 'Silahkan isi dahulu harganya',
+                    showConfirmButton: false,
+                    imageHeight: 30, 
+                    imageWidth: 30,   
+                    timer: 1500
+                  }
+                );
+              }
           });
 
         $('#btn_save_customer').on('click', function(){
@@ -868,25 +721,6 @@
               
 
           });
-
-          $('#btn_scheduled').on('click',function(){
-            if($('#room_id').val()==""){
-              Swal.fire(
-                  {
-                    position: 'top-end',
-                    icon: 'warning',
-                    text: 'Please choose room',
-                    showConfirmButton: false,
-                    imageHeight: 30, 
-                    imageWidth: 30,   
-                    timer: 1500
-                  }
-                );
-            }else{
-            $('#scheduled').val($('#room_id option:selected').text()+" - "+$('#schedule_date').val()+" "+$('#timepicker1').val());
-            }
-          });
-
       });
 
       var productList = [];
@@ -1077,46 +911,6 @@
         ],
         }); 
 
-        $('#modal-scheduled').on('shown.bs.modal', function () {
-            var timetable = $('#order_time_table').DataTable();
-            timetable.ajax.reload();
-            timetable.columns.adjust();
-
-            // Here
-
-            var url = "{{ route('invoices.gettimetable_room') }}";
-                const res = axios.get(url,
-                {
-                    headers: {
-                      'Content-Type': 'application/json'
-                    },
-                    params : {
-                        
-                    }
-                  }
-                ).then(resp => {
-                    console.log(resp.data);
-                    $('#room_id')
-                    .find('option')
-                    .remove()
-                    .end()
-                    .append('<option value="">Pilih Kamar</option>');
-
-                    resp.data.forEach(element => {
-                        $('#room_id')
-                        .append('<option value="'+element.id+'">'+element.branch_room+'</option>');
-                    });
-                });
-
-
-        });
-
-        $('#modal-filter').on('shown.bs.modal', function () {
-            var terapisttable = $('#order_terapist_table').DataTable();
-            terapisttable.ajax.reload();
-            terapisttable.columns.adjust();
-        });
-
         var table = $('#order_table').DataTable({
           columnDefs: [{ 
             targets: -1, 
@@ -1124,6 +918,7 @@
             defaultContent: 
             '<a href="#"  data-toggle="tooltip" data-placement="top" title="Tambah"   id="add_row"  class="btn btn-sm btn-green"><div class="fa-1x"><i class="fas fa-circle-plus fa-fw"></i></div></a>'+
             '<a href="#"  data-toggle="tooltip" data-placement="top" title="Kurangi"   id="minus_row"  class="btn btn-sm btn-yellow"><div class="fa-1x"><i class="fas fa-circle-minus fa-fw"></i></div></a>'+
+            '<a href="#"  data-toggle="tooltip" data-placement="top" title="Edit Harga"   id="price_row"  class="btn btn-sm btn-gray"><div class="fa-1x"><i class="fas fa-dollar-sign fa-fw"></i></div></a>'+
             '<a href="#" data-toggle="tooltip" data-placement="top" title="Hapus"  id="delete_row"  class="btn btn-sm btn-danger"><div class="fa-1x"><i class="fas fa-circle-xmark fa-fw"></i></div></a>',
           }],
           columns: [
@@ -1145,6 +940,7 @@
             defaultContent: 
             '<a href="#"  data-toggle="tooltip" data-placement="top" title="Tambah"   id="add_row"  class="btn btn-sm btn-green"><div class="fa-1x"><i class="fas fa-circle-plus fa-fw"></i></div></a>'+
             '<a href="#"  data-toggle="tooltip" data-placement="top" title="Kurangi"   id="minus_row"  class="btn btn-sm btn-yellow"><div class="fa-1x"><i class="fas fa-circle-minus fa-fw"></i></div></a>'+
+            '<a href="#"  data-toggle="tooltip" data-placement="top" title="Edit Harga"   id="price_row"  class="btn btn-sm btn-gray"><div class="fa-1x"><i class="fas fa-dollar-sign fa-fw"></i></div></a>'+
             '<a href="#" data-toggle="tooltip" data-placement="top" title="Hapus"  id="delete_row"  class="btn btn-sm btn-danger"><div class="fa-1x"><i class="fas fa-circle-xmark fa-fw"></i></div></a>',
           }],
           columns: [
@@ -1293,6 +1089,12 @@
                 }
               }
 
+              if($(this).attr("id")=="price_row"){
+                if(data["id"]==obj["id"]){
+                  openModalPrice(data["id"]);
+                }
+              }
+
               if($(this).attr("id")=="delete_row"){
                 if(data["id"]==obj["id"]){
                   orderList.splice(i,1);
@@ -1399,6 +1201,11 @@
                   orderList[i]["qty"] = parseInt(orderList[i]["qty"])-1;
                 } else if(data["id"]==obj["id"]&&parseInt(orderList[i]["qty"])==1) {
                   orderList.splice(i,1);
+                }
+              }
+              if($(this).attr("id")=="price_row"){
+                if(data["id"]==obj["id"]){
+                  openModalPrice(data["id"]);
                 }
               }
 
