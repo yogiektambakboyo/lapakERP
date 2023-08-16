@@ -20,6 +20,8 @@ use App\Models\SettingsDocumentNumber;
 use App\Models\Customer;
 use App\Models\Order;
 use App\Models\User;
+use App\Models\Product;
+use App\Models\ProductUom;
 use App\Models\OrderDetail;
 use Carbon\Carbon;
 
@@ -267,6 +269,65 @@ class APIController extends Controller
                 ['status' => 'success'],
                 ['data' => $c_id->id],
                 ['message' => 'Save customer sucess'],
+            );
+    
+            return $result;
+        }
+    }
+
+    public function api_order_update(Request $request)
+    { 
+        $branch = Customer::where('id','=',$request->get('customer_id'))->get(['branch_id'])->first();
+        $res_order = Order::where('order_master.order_no',$request->get('order_no'))->update(
+            array_merge(
+                ['updated_by' => $request->get('user_id')],
+                ['dated' => date('Y-m-d') ],
+                ['customers_id' => $request->get('customer_id') ],
+                ['customers_name' => Customer::where('id','=',$request->get('customer_id'))->get(['name'])->first()->name ],
+            )
+        );
+
+        if(!$res_order){
+            $result = array_merge(
+                ['status' => 'failed'],
+                ['data' => ''],
+                ['message' => 'Save order failed'],
+            );
+    
+            return $result;
+        }else{
+            $order_no = $request->get('order_no');
+            OrderDetail::where('order_no', $order_no)->delete();
+
+            for ($i=0; $i < count($request->get('product')); $i++) { 
+                $uom = ProductUom::where('product_id',$request->get('product')[$i]["product_id"])->join('uom as u','product_uom.uom_id','=','u.id')->get(['u.remark'])->first();
+                $res_order_detail = OrderDetail::create(
+                    array_merge(
+                        ['order_no' => $order_no],
+                        ['product_id' => $request->get('product')[$i]["product_id"]],
+                        ['qty' => $request->get('product')[$i]["qty"]],
+                        ['product_name' => $request->get('product')[$i]["product_name"]],
+                        ['uom' => $uom->remark],
+                        ['seq' => $i ],
+                    )
+                );
+    
+    
+                if(!$res_order_detail){
+                    $result = array_merge(
+                        ['status' => 'failed'],
+                        ['data' => ''],
+                        ['message' => 'Save order detail failed'],
+                    );
+            
+                    return $result;
+                }
+            }
+
+            $result = array_merge(
+                ['status' => 'success'],
+                ['data' => $order_no],
+                ['message' => 'Save order sucess'],
             );
     
             return $result;

@@ -30,6 +30,7 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
     Route::post('/api_order_list', 'APIController@api_order_list')->name('api.order.list');
     Route::post('/api_order_detail', 'APIController@api_order_detail')->name('api.order.detail');
     Route::post('/api_order_create', 'APIController@api_order_create')->name('api.order.create');
+    Route::post('/api_order_update', 'APIController@api_order_update')->name('api.order.update');
 
     /**
      * Home Routes
