@@ -168,6 +168,18 @@ class APIController extends Controller
         return response()->json($result);
     }
 
+    public function api_db_version(Request $request)
+    { 
+        $result_query = DB::select( DB::raw("select current_value as db_version  from setting_document_counter sdc where sdc.doc_type = 'DB_Version'; "), array());
+        $result = array_merge(
+            ['status' => 'success'],
+            ['data' => $result_query[0]->db_version],
+            ['message' => 'Get DB Succesfully'],
+        ); 
+
+        return response()->json($result);
+    }
+
     public function api_customer_list(Request $request)
     { 
         $result_query = DB::select( DB::raw("select id,name as customer_name from customers c

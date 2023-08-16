@@ -22,5 +22,6 @@ class VerifyCsrfToken extends Middleware
         '/api_customer_create',
         '/api_order_create',
         '/api_order_update',
+        '/api_db_version',
     ];
 }
