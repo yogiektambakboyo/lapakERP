@@ -153,7 +153,7 @@ class APIController extends Controller
 
     public function api_order_detail(Request $request)
     { 
-        $result_query = DB::select( DB::raw("select od.order_no,ps.remark as product_name,od.qty  from order_master om 
+        $result_query = DB::select( DB::raw("select od.order_no,ps.remark as product_name,od.qty,od.product_id  from order_master om 
         join order_detail od on od.order_no = om.order_no 
         join product_sku ps on ps.id = od.product_id 
         where om.order_no = :order_no "), array(
