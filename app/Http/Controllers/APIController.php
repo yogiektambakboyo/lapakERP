@@ -180,6 +180,18 @@ class APIController extends Controller
         return response()->json($result);
     }
 
+    public function api_ml_list(Request $request)
+    { 
+        $result_query = DB::select( DB::raw("select id,remark,seq,0 as probability  from ml_list ml where active = 1 order by seq"), array());
+        $result = array_merge(
+            ['status' => 'success'],
+            ['data' => $result_query],
+            ['message' => 'Get ML List Succesfully'],
+        ); 
+
+        return response()->json($result);
+    }
+
     public function api_customer_list(Request $request)
     { 
         $result_query = DB::select( DB::raw("select id,name as customer_name from customers c
