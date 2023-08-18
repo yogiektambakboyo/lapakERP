@@ -3,7 +3,7 @@ $method = $_SERVER['HTTP_USER_AGENT'];
 set_time_limit(36000);
 //if($method == 'SFA_Borwita_Android'){
 	try {
-	   $dbh = new PDO("pgsql:dbname=didi;host=localhost", 'postgres', 'postgres'); 
+	   $dbh = new PDO("pgsql:dbname=didi;host=10.17.206.43", 'postgres', 'postgres'); 
 	   if (!$dbh) {
 			$arr[]=array("code"=>$code,"description"=>$description);
 		}else{
