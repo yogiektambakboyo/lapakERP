@@ -1,0 +1,59 @@
+<?php
+$method = $_SERVER['HTTP_USER_AGENT'];
+$user=$_GET["username"];
+$pass=$_GET["password"];
+set_time_limit(36000);
+//if($method == 'SFA_Borwita_Android'){
+	$city="-";$username="-";$password="-";$name="-";$storecode="-";$usercode="-";$userrealname="-";$useraddress="-";$longitude="0";$latitude="0";$issuspend="0";
+	try {
+	   $dbh = new PDO("pgsql:dbname=didi;host=10.17.206.43", 'postgres', 'postgres'); 
+	   if (!$dbh) {
+			$arr=array("city"=>$city,"username"=>$username,"password"=>$password,"store"=>$name,"storecode"=>$storecode,"usercode"=>$usercode,"userrealname"=>$userrealname,"useraddress"=>$useraddress,"longitude"=>$longitude,"latitude"=>$latitude,"issuspend"=>$issuspend);
+		}else{
+			$query = " INSERT INTO public.x_log_user_ticket(usercode) select usercode from x_user where username=:usercode  ";
+			$stmt = $dbh->prepare($query);
+			$stmt->bindParam(':usercode', $user, PDO::PARAM_STR,50);
+			$stmt->execute();
+			
+			$query = " INSERT INTO public.x_log_user_access(usercode, description,ticket) 
+						select t.usercode,'Login',t.ticket from x_log_user_ticket t
+						join x_user u on u.username=:usercode and u.usercode=t.usercode
+						order by created_date desc limit 1  ";
+			$stmt = $dbh->prepare($query);
+			$stmt->bindParam(':usercode', $user, PDO::PARAM_STR,50);
+			$stmt->execute();
+			
+			
+			$arr=array("city"=>$city,"username"=>$username,"password"=>$password,"store"=>$name,"storecode"=>$storecode,"usercode"=>$usercode,"userrealname"=>$userrealname,"useraddress"=>$useraddress,"longitude"=>$longitude,"latitude"=>$latitude,"issuspend"=>$issuspend);
+			$query = "select city,'0' as issuspend,username,password,name,'1' as storecode,id as usercode,city as address,'0' as longitude,'0' as latitude from x_user_delivery where username=:username and password=:password and active='1' ";
+			$stmt = $dbh->prepare($query);
+			$stmt->bindParam(':username', $user, PDO::PARAM_STR,50);
+			$stmt->bindParam(':password', $pass, PDO::PARAM_STR,50);
+			$stmt->execute();			
+			
+			while ($row = $stmt->fetch()) {
+					$username = $row["username"];
+					$password = $row["password"];
+					$name = $row["name"];
+					$storecode = $row["storecode"];
+					$usercode = $row["usercode"];
+					$userrealname = $row["name"];
+					$useraddress = $row["address"];
+					$longitude = $row["longitude"];
+					$latitude = $row["latitude"];
+					$issuspend = $row["issuspend"];
+					$city = $row["city"];
+					$arr=array("city"=>$city,"username"=>$username,"password"=>$password,"store"=>$name,"storecode"=>$storecode,"usercode"=>$usercode,"userrealname"=>$userrealname,"useraddress"=>$useraddress,"longitude"=>$longitude,"latitude"=>$latitude,"issuspend"=>$issuspend);
+				}	
+		}
+	}
+	catch(PDOException $e)
+	{
+		echo $e->getMessage();
+		$resultcabang = $arr;
+		echo json_encode($resultcabang);
+	}
+	$resultcabang = $arr;
+	echo json_encode($resultcabang);
+//}
+?>
