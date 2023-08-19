@@ -207,6 +207,9 @@
               @if((int)$header->total_319>0)
                 <th scope="col" width="5%">22:00</th>
               @endif
+              @if((int)$header->total_oth>0)
+                <th scope="col" width="5%">OTHER</th>
+              @endif
           @endforeach
           <th scope="col" width="4%">Cases</th>
 
@@ -260,6 +263,7 @@
             $c_317 = 0;
             $c_321 = 0;
             $c_319 = 0;
+            $c_oth = 0;
             $c_316 = 0;
             $c_309 = 0;
             $c_318 = 0;
@@ -474,6 +478,10 @@
                           @php if((int)$detail->total_319>0){ $c_319++; } @endphp
                             <td scope="col" width="5%">{{ number_format($detail->total_319,0,',','.') }}</td>
                           @endif     
+                          @if((int)$header->total_oth>0)
+                          @php if((int)$detail->total_oth>0){ $c_oth++; } @endphp
+                            <td scope="col" width="5%">{{ number_format($detail->total_oth,0,',','.') }}</td>
+                          @endif     
                           <td style="text-align: left;">{{ $detail->qty_total }}</td>
 
                 </tr>
@@ -637,6 +645,9 @@
                     @endif
                     @if((int)$header->total_319>0)
                       <th scope="col" width="5%">{{ number_format($header->total_319,0,',','.') }}</th>
+                    @endif
+                    @if((int)$header->total_oth>0)
+                      <th scope="col" width="5%">{{ number_format($header->total_oth,0,',','.') }}</th>
                     @endif
                 @endforeach
                 <th scope="col" width="5%">{{ number_format($header->qty_total,0,',','.') }}</th>
@@ -1158,6 +1169,18 @@
                           }
 
                           worksheet.getCell(columnadd+columnx+'3').value = '22:00';
+                          worksheet.getCell(columnadd+columnx+'3').alignment = { vertical: 'middle', horizontal: 'center' };
+
+                          nextChar(columnx);
+                          columnx = nextChar(columnx);
+                        }
+                        if(parseInt(element.total_oth)>0){
+                          if(columnx == "Z") {
+                            columnx = "A";
+                            columnadd = "A";
+                          }
+
+                          worksheet.getCell(columnadd+columnx+'3').value = 'OTHER';
                           worksheet.getCell(columnadd+columnx+'3').alignment = { vertical: 'middle', horizontal: 'center' };
 
                           nextChar(columnx);
@@ -1793,6 +1816,23 @@
                             }
                           }
 
+                          if(parseInt(elementx.total_oth)>0){
+                            if(parseInt(element.total_oth)>0){
+                                worksheet.getCell(columnadd+columnx+countery).value = element.total_oth;
+                                worksheet.getCell(columnadd+columnx+countery).alignment = { vertical: 'middle', horizontal: 'center' };
+                              }else{
+                                worksheet.getCell(columnadd+columnx+countery).value = '0';
+                                worksheet.getCell(columnadd+columnx+countery).alignment = { vertical: 'middle', horizontal: 'center' };
+                              }  
+                              if(columnx == "Z") {
+                              columnx = "A";
+                              columnadd = "A";
+                            }else{
+                              nextChar(columnx);
+                              columnx = nextChar(columnx);
+                            }
+                          }
+
                         });
 
                         worksheet.getCell(columnadd+columnx+countery).value = (element.qty_total);
@@ -2280,6 +2320,18 @@
                           }
 
                           worksheet.getCell(columnadd+columnx+countery).value = element.total_319;
+                          worksheet.getCell(columnadd+columnx+countery).alignment = { vertical: 'middle', horizontal: 'center' };
+
+                          nextChar(columnx);
+                          columnx = nextChar(columnx);
+                        }
+                        if(parseInt(element.total_oth)>0){
+                          if(columnx == "Z") {
+                            columnx = "A";
+                            columnadd = "A";
+                          }
+
+                          worksheet.getCell(columnadd+columnx+countery).value = element.total_oth;
                           worksheet.getCell(columnadd+columnx+countery).alignment = { vertical: 'middle', horizontal: 'center' };
 
                           nextChar(columnx);
