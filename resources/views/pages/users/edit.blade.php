@@ -8,11 +8,12 @@
   @csrf
     <div class="bg-light p-4 rounded">
         <div class="row">
-          <div class="col-md-10">
+          <div class="col-md-8">
             <h1>Profile User #{{ $user->id }}</h1>
           </div>
-          <div class="col-md-2">
+          <div class="col-md-4">
             <div class="mt-4">
+                <a href="{{ route('users.editpassword', $user->id ) }}" class="btn btn-danger">Update Password</a>
                 <button type="submit" id="btn-save" class="btn btn-info">Update</button>
                 <a href="{{ route('users.index') }}" class="btn btn-default">@lang('general.lbl_cancel')</a>
             </div>
