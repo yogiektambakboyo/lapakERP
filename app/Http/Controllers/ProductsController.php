@@ -409,9 +409,7 @@ class ProductsController extends Controller
 
 
         if($request->file('photo') == null){
-            Product::where(['id' => $my_id])->update( array_merge(
-                ['photo' => 'goods.png'],
-            ));
+            
         }else{
             $file_photo = $request->file('photo');
             $img_file_photo = $file_photo->getClientOriginalName().'.'.$file_photo->getClientOriginalExtension();
@@ -431,9 +429,7 @@ class ProductsController extends Controller
         }
 
         if($request->file('photo_2') == null){
-            Product::where(['id' => $my_id])->update( array_merge(
-                ['photo_2' => 'goods.png'],
-            ));
+            
         }else{
             $file_photo = $request->file('photo_2');
             $img_file_photo = $file_photo->getClientOriginalName().'.'.$file_photo->getClientOriginalExtension();
