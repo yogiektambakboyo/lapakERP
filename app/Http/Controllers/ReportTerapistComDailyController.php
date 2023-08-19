@@ -175,7 +175,7 @@ class ReportTerapistComDailyController extends Controller
                                     sum(case when type_id=1 then qty else 0 end) as product_qty,      
                                     sum(case when type_id=1 then commisions else 0 end) as product_commisions     
                                     from terapist_commision a
-                                    join users_branch as ub on ub.branch_id = a.branch_id and ub.user_id = '".$user->id."'
+                                    join users_branch as ub on ub.branch_id = a.branch_id and ub.user_id = '".$user->id."'  and ub.branch_id::character varying like '".$filter_branch_id."'
                                     where a.dated  between '".$filter_begin_date."' and  '".$filter_begin_end."' and a.user_id::character varying like '".$terapist."' 
                                     group by a.branch_name,a.user_id,a.terapist_name,a.dated
                                 ) a left join point_conversion pc2 on pc2.point_qty = a.point_qty  
@@ -201,7 +201,7 @@ class ReportTerapistComDailyController extends Controller
                         string_agg(case when type_id=1 then qty::character varying else '' end,'##') as product_qty,      
                         string_agg(case when type_id=1 then commisions::character varying else '' end,'##') as product_commisions     
                         from terapist_commision a
-                        join users_branch as ub on ub.branch_id = a.branch_id and ub.user_id = '".$user->id."'
+                        join users_branch as ub on ub.branch_id = a.branch_id and ub.user_id = '".$user->id."'  and ub.branch_id::character varying like '".$filter_branch_id."'
                         where a.dated  between '".$filter_begin_date."' and  '".$filter_begin_end."' and a.user_id::character varying like '".$terapist."' 
                         group by a.branch_name,a.user_id,a.dated,a.terapist_name
                     ) a left join point_conversion pc2 on pc2.point_qty = a.point_qty 
@@ -225,7 +225,7 @@ class ReportTerapistComDailyController extends Controller
                         string_agg(case when type_id=1 then qty::character varying else '' end,'##') as product_qty,      
                         string_agg(case when type_id=1 then commisions::character varying else '' end,'##') as product_commisions     
                         from terapist_commision a
-                        join users_branch as ub on ub.branch_id = a.branch_id and ub.user_id = '".$user->id."'
+                        join users_branch as ub on ub.branch_id = a.branch_id and ub.user_id = '".$user->id."'  and ub.branch_id::character varying like '".$filter_branch_id."'
                         where a.dated  between '".$filter_begin_date."' and  '".$filter_begin_end."' and a.user_id::character varying like '".$terapist."' 
                         group by a.branch_name,a.user_id,a.dated,a.terapist_name,a.work_year
                     ) a left join point_conversion pc2 on pc2.point_qty = a.point_qty 
@@ -249,7 +249,7 @@ class ReportTerapistComDailyController extends Controller
                     select a.dated,a.user_id as id,(a.commisions+coalesce(pc2.point_value,0)) as total
                     from (
                         select a.dated,a.user_id,sum(point_qty) as point_qty,sum(a.commisions) as commisions from terapist_commision a
-                        join users_branch as ub on ub.branch_id = a.branch_id and ub.user_id = '".$user->id."'
+                        join users_branch as ub on ub.branch_id = a.branch_id and ub.user_id = '".$user->id."'  and ub.branch_id::character varying like '".$filter_branch_id."'
                         where a.dated  between '".$date26."' and  '".$filter_begin_end."'  and a.user_id::character varying like '".$terapist."' 
                         group by a.dated,a.user_id
                     ) a left join point_conversion pc2 on pc2.point_qty = a.point_qty 
@@ -292,7 +292,7 @@ class ReportTerapistComDailyController extends Controller
                                     sum(case when type_id=1 then qty else 0 end) as product_qty,      
                                     sum(case when type_id=1 then commisions else 0 end) as product_commisions     
                                     from terapist_commision a
-                                    join users_branch as ub on ub.branch_id = a.branch_id and ub.user_id = '".$user->id."'
+                                    join users_branch as ub on ub.branch_id = a.branch_id and ub.user_id = '".$user->id."'  and ub.branch_id::character varying like '".$filter_branch_id."'
                                     where a.dated  between '".$filter_begin_date."' and  '".$filter_begin_end."' and a.user_id::character varying like '".$terapist."' 
                                     group by a.branch_name,a.user_id,a.terapist_name,a.dated
                                 ) a left join point_conversion pc2 on pc2.point_qty = a.point_qty  
@@ -318,7 +318,7 @@ class ReportTerapistComDailyController extends Controller
                         string_agg(case when type_id=1 then qty::character varying else '' end,'##') as product_qty,      
                         string_agg(case when type_id=1 then commisions::character varying else '' end,'##') as product_commisions     
                         from terapist_commision a
-                        join users_branch as ub on ub.branch_id = a.branch_id and ub.user_id = '".$user->id."'
+                        join users_branch as ub on ub.branch_id = a.branch_id and ub.user_id = '".$user->id."'  and ub.branch_id::character varying like '".$filter_branch_id."'
                         where a.dated  between '".$filter_begin_date."' and  '".$filter_begin_end."' and a.user_id::character varying like '".$terapist."' 
                         group by a.branch_name,a.user_id,a.dated,a.terapist_name
                     ) a left join point_conversion pc2 on pc2.point_qty = a.point_qty 
@@ -342,7 +342,7 @@ class ReportTerapistComDailyController extends Controller
                         string_agg(case when type_id=1 then qty::character varying else '' end,'##') as product_qty,      
                         string_agg(case when type_id=1 then commisions::character varying else '' end,'##') as product_commisions     
                         from terapist_commision a
-                        join users_branch as ub on ub.branch_id = a.branch_id and ub.user_id = '".$user->id."'
+                        join users_branch as ub on ub.branch_id = a.branch_id and ub.user_id = '".$user->id."'  and ub.branch_id::character varying like '".$filter_branch_id."'
                         where a.dated  between '".$filter_begin_date."' and  '".$filter_begin_end."' and a.user_id::character varying like '".$terapist."' 
                         group by a.branch_name,a.user_id,a.dated,a.terapist_name,a.work_year
                     ) a left join point_conversion pc2 on pc2.point_qty = a.point_qty 
@@ -366,7 +366,7 @@ class ReportTerapistComDailyController extends Controller
                     select a.dated,a.user_id as id,(a.commisions+coalesce(pc2.point_value,0)) as total
                     from (
                         select a.dated,a.user_id,sum(point_qty) as point_qty,sum(a.commisions) as commisions from terapist_commision a
-                        join users_branch as ub on ub.branch_id = a.branch_id and ub.user_id = '".$user->id."'
+                        join users_branch as ub on ub.branch_id = a.branch_id and ub.user_id = '".$user->id."'  and ub.branch_id::character varying like '".$filter_branch_id."'
                         where a.dated  between '".$date26."' and  '".$filter_begin_end."'  and a.user_id::character varying like '".$terapist."' 
                         group by a.dated,a.user_id
                     ) a left join point_conversion pc2 on pc2.point_qty = a.point_qty 
