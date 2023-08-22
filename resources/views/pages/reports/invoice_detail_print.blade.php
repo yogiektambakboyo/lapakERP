@@ -471,7 +471,7 @@
                             <td scope="col" width="5%">{{ number_format($detail->total_309,0,',','.') }}</td>
                           @endif
                           @if((int)$header->total_318>0)
-                          @php if((int)$detail->total_318>0){ $c_318++; } @endphp
+                          @php if((int)$detail->total_318>0){ $c_318=$c_318+$detail->total_318; } @endphp
                             <td scope="col" width="5%">{{ number_format($detail->total_318,0,',','.') }}</td>
                           @endif
                           @if((int)$header->total_319>0)
