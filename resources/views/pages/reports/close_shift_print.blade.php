@@ -233,7 +233,7 @@
                             <td style="text-align: right;">{{ $report_data->total=='Free'?'Free':number_format($report_data->total,0,',','.') }}</td>
                         </tr>
                         @php
-                          $total_extra = $total_extra+$report_data->total; 
+                          $total_extra = $total_extra+($report_data->total=='Free'?0:$report_data->total); 
                           $counter++;   
                           $total_qty = $total_qty + $report_data->qty;
                         @endphp
