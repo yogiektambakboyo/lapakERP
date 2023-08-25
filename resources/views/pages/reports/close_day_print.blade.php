@@ -226,19 +226,19 @@
                     $counter = 0;    
                   @endphp
                   @foreach($report_datas as $report_data)
-                      @if($report_data->type_id==8)
+                    @if($report_data->type_id==8)
                         <tr>
                             <td style="text-align: left;">{{ $report_data->abbr }}</td>
                             <td style="text-align: center;">{{ number_format($report_data->price,0,',','.') }}</td>
                             <td style="text-align: center;">{{ number_format($report_data->qty,0,',','.') }}</td>
-                            <td style="text-align: right;">{{ number_format($report_data->total,0,',','.') }}</td>
+                            <td style="text-align: right;">{{ $report_data->total=='Free'?'Free':number_format($report_data->total,0,',','.') }}</td>
                         </tr>
                         @php
-                          $total_extra = $total_extra+$report_data->total; 
+                          $total_extra = $total_extra+($report_data->total=='Free'?0:$report_data->total); 
                           $counter++;   
                           $total_qty = $total_qty + $report_data->qty;
                         @endphp
-                      @endif
+                    @endif
                   @endforeach
         
                   @if ($counter<4)
