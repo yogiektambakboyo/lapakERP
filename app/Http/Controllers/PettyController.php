@@ -329,10 +329,14 @@ class PettyController extends Controller
                 return $result;
             }
 
+            DB::update(" INSERT INTO public.stock_log (product_id, qty, branch_id, doc_no,remarks, created_at) select product_id,qty,branch_id,'Stock_Pos','P1 ".$doc_no."',now()  from product_stock where product_id = ".$request->get('product')[$i]['id']."  and branch_id = ".$request->get('branch_id')." ");
+            
             DB::update(" INSERT INTO public.stock_log (product_id, qty, branch_id, doc_no,remarks, created_at) VALUES(".$request->get('product')[$i]["id"].", ".$request->get('product')[$i]['qty']." , ".$request->get('branch_id').", '".$doc_no."','Created', now()) ");
 
             DB::update("UPDATE product_stock set qty = qty-".$request->get('product')[$i]['qty']." WHERE branch_id = ".$request->get('branch_id')." and product_id = ".$request->get('product')[$i]["id"]);
             DB::update("update public.period_stock set qty_out=qty_out+".$request->get('product')[$i]['qty']." ,updated_at = now(), balance_end = balance_end - ".$request->get('product')[$i]['qty']." where branch_id = ".$request->get('branch_id')." and product_id = ".$request->get('product')[$i]['id']." and periode = to_char(now(),'YYYYMM')::int;");
+
+            DB::update(" INSERT INTO public.stock_log (product_id, qty, branch_id, doc_no,remarks, created_at) select product_id,qty,branch_id,'Stock_Pos','P2 ".$doc_no."',now()  from product_stock where product_id = ".$request->get('product')[$i]['id']."  and branch_id = ".$request->get('branch_id')." ");
 
         }
 
@@ -654,8 +658,13 @@ class PettyController extends Controller
         $last_data = PettyCashDetail::where('petty_cash_detail.doc_no','=',$doc_no)->get('petty_cash_detail.*');
 
         for ($i=0; $i < count($last_data); $i++) { 
+            DB::update(" INSERT INTO public.stock_log (product_id, qty, branch_id, doc_no,remarks, created_at) select product_id,qty,branch_id,'Stock_Pos','R1 ".$doc_no."',now()  from product_stock where product_id = ".$last_data[$i]["product_id"]."  and branch_id = ".$request->get('branch_id')." ");
+
             DB::update("UPDATE product_stock set qty = qty+".$last_data[$i]['qty']." WHERE branch_id = ".$request->get('branch_id')." and product_id = ".$last_data[$i]["product_id"].";");
             DB::update("update public.period_stock set qty_out=qty_out-".$last_data[$i]['qty']." ,updated_at = now(), balance_end = balance_end + ".$last_data[$i]['qty']." where branch_id = ".$request->get('branch_id')." and product_id = ".$last_data[$i]["product_id"]." and periode = to_char(now(),'YYYYMM')::int;");
+
+            DB::update(" INSERT INTO public.stock_log (product_id, qty, branch_id, doc_no,remarks, created_at) select product_id,qty,branch_id,'Stock_Pos','R2 ".$doc_no."',now()  from product_stock where product_id = ".$last_data[$i]["product_id"]."  and branch_id = ".$request->get('branch_id')." ");
+
         }
 
         PettyCashDetail::where('doc_no', $doc_no)->delete();
@@ -693,11 +702,13 @@ class PettyController extends Controller
                 )
             );
 
+            DB::update(" INSERT INTO public.stock_log (product_id, qty, branch_id, doc_no,remarks, created_at) select product_id,qty,branch_id,'Stock_Pos','Q1 ".$doc_no."',now()  from product_stock where product_id = ".$request->get('product')[$i]["id"]."  and branch_id = ".$request->get('branch_id')." ");
             DB::update(" INSERT INTO public.stock_log (product_id, qty, branch_id, doc_no,remarks, created_at) VALUES(".$request->get('product')[$i]["id"].", ".$request->get('product')[$i]['qty']." , ".$request->get('branch_id').", '".$doc_no."','Edited', now()) ");
 
             DB::update("UPDATE product_stock set qty = qty-".$request->get('product')[$i]['qty']." WHERE branch_id = ".$request->get('branch_id')." and product_id = ".$request->get('product')[$i]["id"]);
             DB::update("update public.period_stock set qty_out=qty_out+".$request->get('product')[$i]['qty']." ,updated_at = now(), balance_end = balance_end - ".$request->get('product')[$i]['qty']." where branch_id = ".$request->get('branch_id')." and product_id = ".$request->get('product')[$i]['id']." and periode = to_char(now(),'YYYYMM')::int;");
 
+            DB::update(" INSERT INTO public.stock_log (product_id, qty, branch_id, doc_no,remarks, created_at) select product_id,qty,branch_id,'Stock_Pos','Q2 ".$doc_no."',now()  from product_stock where product_id = ".$request->get('product')[$i]["id"]."  and branch_id = ".$request->get('branch_id')." ");
 
             if(!$res_petty_detail){
                 $result = array_merge(

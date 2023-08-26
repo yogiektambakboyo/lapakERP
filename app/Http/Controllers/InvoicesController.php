@@ -366,10 +366,13 @@ class InvoicesController extends Controller
                 return $result;
             }
 
+            DB::update(" INSERT INTO public.stock_log (product_id, qty, branch_id, doc_no,remarks, created_at) select product_id,qty,branch_id,'Stock_Pos',' P1 ".$invoice_no."',now()  from product_stock where product_id = ".$request->get('product')[$i]["id"]."  and branch_id = ".$branch_id['branch_id']." ");
             DB::update(" INSERT INTO public.stock_log (product_id, qty, branch_id, doc_no,remarks, created_at) VALUES(".$request->get('product')[$i]["id"].", ".$request->get('product')[$i]['qty']." , ".$branch_id['branch_id'].", '".$invoice_no."','Created', now()) ");
 
             DB::update("UPDATE product_stock set qty = qty-".$request->get('product')[$i]['qty']." WHERE branch_id = ".$branch_id['branch_id']." and product_id = ".$request->get('product')[$i]["id"]);
             DB::update("update public.period_stock set qty_out=qty_out+".$request->get('product')[$i]['qty']." ,updated_at = now(), balance_end = balance_end - ".$request->get('product')[$i]['qty']." where branch_id = ".$branch_id['branch_id']." and product_id = ".$request->get('product')[$i]['id']." and periode = to_char(now(),'YYYYMM')::int;");
+
+            DB::update(" INSERT INTO public.stock_log (product_id, qty, branch_id, doc_no,remarks, created_at) select product_id,qty,branch_id,'Stock_Pos',' P2 ".$invoice_no."',now()  from product_stock where product_id = ".$request->get('product')[$i]["id"]."  and branch_id = ".$branch_id['branch_id']." ");
 
             $price_purchase = PeriodSellPrice::whereRaw("period=to_char(now()::date ,'YYYYMM')::int and product_id='".$request->get('product')[$i]['id']."' and branch_id =".$branch_id['branch_id'])->get(['value'])->first();
             if($price_purchase != null){
@@ -378,8 +381,12 @@ class InvoicesController extends Controller
 
             $productigredients = ProductIngredients::where('product_id','=',$request->get('product')[$i]["id"])->get(['product_id_material','qty']);
             foreach($productigredients as $productigredient){
+                DB::update(" INSERT INTO public.stock_log (product_id, qty, branch_id, doc_no,remarks, created_at) select product_id,qty,branch_id,'Stock_Pos','I1 ".$invoice_no."',now()  from product_stock where product_id = ".$productigredient->product_id_material."  and branch_id = ".$branch_id['branch_id']." ");
+
                 DB::update("UPDATE product_stock set qty = qty-".($productigredient->qty*$request->get('product')[$i]['qty'])." WHERE branch_id = ".$branch_id['branch_id']." and product_id = ".$productigredient->product_id_material);
-                DB::update("update public.period_stock set qty_out=qty_out+".($productigredient->qty*$request->get('product')[$i]['qty'])." ,updated_at = now(), balance_end = balance_end - ".($productigredient->qty*$request->get('product')[$i]['qty'])." where branch_id = ".$branch_id['branch_id']." and product_id = ".$productigredient->product_id_material." and periode = to_char(now(),'YYYYMM')::int;");    
+                DB::update("update public.period_stock set qty_out=qty_out+".($productigredient->qty*$request->get('product')[$i]['qty'])." ,updated_at = now(), balance_end = balance_end - ".($productigredient->qty*$request->get('product')[$i]['qty'])." where branch_id = ".$branch_id['branch_id']." and product_id = ".$productigredient->product_id_material." and periode = to_char(now(),'YYYYMM')::int;"); 
+                DB::update(" INSERT INTO public.stock_log (product_id, qty, branch_id, doc_no,remarks, created_at) select product_id,qty,branch_id,'Stock_Pos','I2 ".$invoice_no."',now()  from product_stock where product_id = ".$productigredient->product_id_material."  and branch_id = ".$branch_id['branch_id']." ");
+
             }
         }
 
@@ -722,16 +729,26 @@ class InvoicesController extends Controller
 
         $last_data = InvoiceDetail::where('invoice_detail.invoice_no','=',$invoice_no)->get('invoice_detail.*');
         $branch_id = Customer::where('id',$request->get('customer_id'))->get(['branch_id'])->first();
+        $qty_before =  0;
 
         for ($i=0; $i < count($last_data); $i++) { 
+            DB::update(" INSERT INTO public.stock_log (product_id, qty, branch_id, doc_no,remarks, created_at) select product_id,qty,branch_id,'Stock_Pos','R1 ".$invoice_no."',now()  from product_stock where product_id = ".$last_data[$i]["product_id"]."  and branch_id = ".$branch_id['branch_id']." ");
+
             DB::update("UPDATE product_stock set qty = qty+".$last_data[$i]['qty']." WHERE branch_id = ".$branch_id['branch_id']." and product_id = ".$last_data[$i]["product_id"].";");
-            DB::update("update public.period_stock set qty_out=qty_out-".$last_data[$i]['qty']." ,updated_at = now(), balance_end = balance_end - ".$last_data[$i]['qty']." where branch_id = ".$branch_id['branch_id']." and product_id = ".$last_data[$i]["product_id"]." and periode = to_char(now(),'YYYYMM')::int;");
+            DB::update("update public.period_stock set qty_out=qty_out-".$last_data[$i]['qty']." ,updated_at = now(), balance_end = balance_end + ".$last_data[$i]['qty']." where branch_id = ".$branch_id['branch_id']." and product_id = ".$last_data[$i]["product_id"]." and periode = to_char(now(),'YYYYMM')::int;");
             
+            DB::update(" INSERT INTO public.stock_log (product_id, qty, branch_id, doc_no,remarks, created_at) select product_id,qty,branch_id,'Stock_Pos','R1 ".$invoice_no."',now()  from product_stock where product_id = ".$last_data[$i]["product_id"]."  and branch_id = ".$branch_id['branch_id']." ");
+
 
             $productigredients = ProductIngredients::where('product_id','=',$last_data[$i]["product_id"])->get(['product_id_material','qty']);
             foreach($productigredients as $productigredient){
+                DB::update(" INSERT INTO public.stock_log (product_id, qty, branch_id, doc_no,remarks, created_at) select product_id,qty,branch_id,'Stock_Pos','Q1 ".$invoice_no."',now()  from product_stock where product_id = ".$productigredient->product_id_material."  and branch_id = ".$branch_id['branch_id']." ");
+
                 DB::update("UPDATE product_stock set qty = qty+".($productigredient->qty*$last_data[$i]['qty'])." WHERE branch_id = ".$branch_id['branch_id']." and product_id = ".$productigredient->product_id_material);
-                DB::update("update public.period_stock set qty_out=qty_out-".($productigredient->qty*$last_data[$i]['qty'])." ,updated_at = now(), balance_end = balance_end - ".($productigredient->qty*$last_data[$i]['qty'])." where branch_id = ".$branch_id['branch_id']." and product_id = ".$productigredient->product_id_material." and periode = to_char(now(),'YYYYMM')::int;");    
+                DB::update("update public.period_stock set qty_out=qty_out-".($productigredient->qty*$last_data[$i]['qty'])." ,updated_at = now(), balance_end = balance_end + ".($productigredient->qty*$last_data[$i]['qty'])." where branch_id = ".$branch_id['branch_id']." and product_id = ".$productigredient->product_id_material." and periode = to_char(now(),'YYYYMM')::int;");  
+                
+                DB::update(" INSERT INTO public.stock_log (product_id, qty, branch_id, doc_no,remarks, created_at) select product_id,qty,branch_id,'Stock_Pos','Q2 ".$invoice_no."',now()  from product_stock where product_id = ".$productigredient->product_id_material."  and branch_id = ".$branch_id['branch_id']." ");
+                
             }
         }
 
@@ -800,10 +817,13 @@ class InvoicesController extends Controller
                 )
             );
 
+            DB::update(" INSERT INTO public.stock_log (product_id, qty, branch_id, doc_no,remarks, created_at) select product_id,qty,branch_id,'Stock_Pos','Q1 ".$invoice_no."',now()  from product_stock where product_id = ".$request->get('product')[$i]["id"]."  and branch_id = ".$branch_id['branch_id']." ");
             DB::update(" INSERT INTO public.stock_log (product_id, qty, branch_id, doc_no,remarks, created_at) VALUES(".$request->get('product')[$i]["id"].", ".$request->get('product')[$i]['qty']." , ".$branch_id['branch_id'].", '".$invoice_no."','Edited', now()) ");
 
             DB::update("UPDATE product_stock set qty = qty-".$request->get('product')[$i]['qty']." WHERE branch_id = ".$branch_id['branch_id']." and product_id = ".$request->get('product')[$i]["id"]);
             DB::update("update public.period_stock set qty_out=qty_out+".$request->get('product')[$i]['qty']." ,updated_at = now(), balance_end = balance_end - ".$request->get('product')[$i]['qty']." where branch_id = ".$branch_id['branch_id']." and product_id = ".$request->get('product')[$i]['id']." and periode = to_char(now(),'YYYYMM')::int;");
+
+            DB::update(" INSERT INTO public.stock_log (product_id, qty, branch_id, doc_no,remarks, created_at) select product_id,qty,branch_id,'Stock_Pos','Q2 ".$invoice_no."',now()  from product_stock where product_id = ".$request->get('product')[$i]["id"]."  and branch_id = ".$branch_id['branch_id']." ");
 
             if(!$res_invoice_detail){
                 $result = array_merge(
@@ -818,7 +838,11 @@ class InvoicesController extends Controller
             
             $productigredients = ProductIngredients::where('product_id','=',$request->get('product')[$i]["id"])->get(['product_id_material','qty']);
             foreach($productigredients as $productigredient){
+                DB::update(" INSERT INTO public.stock_log (product_id, qty, branch_id, doc_no,remarks, created_at) select product_id,qty,branch_id,'Stock_Pos','I1 ".$invoice_no."',now()  from product_stock where product_id = ".$productigredient->product_id_material."  and branch_id = ".$branch_id['branch_id']." ");
+
                 DB::update("UPDATE product_stock set qty = qty-".($productigredient->qty*$request->get('product')[$i]['qty'])." WHERE branch_id = ".$branch_id['branch_id']." and product_id = ".$productigredient->product_id_material);
+                DB::update(" INSERT INTO public.stock_log (product_id, qty, branch_id, doc_no,remarks, created_at) select product_id,qty,branch_id,'Stock_Pos','I2 ".$invoice_no."',now()  from product_stock where product_id = ".$productigredient->product_id_material."  and branch_id = ".$branch_id['branch_id']." ");
+
                 DB::update("update public.period_stock set qty_out=qty_out+".($productigredient->qty*$request->get('product')[$i]['qty'])." ,updated_at = now(), balance_end = balance_end - ".($productigredient->qty*$request->get('product')[$i]['qty'])." where branch_id = ".$branch_id['branch_id']." and product_id = ".$productigredient->product_id_material." and periode = to_char(now(),'YYYYMM')::int;");    
             }
         }

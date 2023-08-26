@@ -228,13 +228,16 @@ class ProductsStockController extends Controller
     public function update(String $branch,String $product, Request $request) 
     {
         $user = Auth::user();
+
+        $prod = ProductStock::where('product_id','=',$product)->where('branch_id','=',$branch)->get(['qty']);
+        $prod_qty = $prod[0]->qty;
         ProductStock::where('product_id','=',$product)->where('branch_id','=',$branch)->update(
             array_merge(
                 ['qty' => $request->get('qty') ],
             )
         );
 
-        DB::update(" INSERT INTO public.stock_log (product_id, qty, branch_id, doc_no,remarks, created_at) VALUES(".$product.", ".$request->get('qty')." , ".$branch.", 'Adj. Stock','Stock Edit By ".$user->name."', now()) ");
+        DB::update(" INSERT INTO public.stock_log (product_id, qty, branch_id, doc_no,remarks, created_at,qty_before) VALUES(".$product.", ".$request->get('qty')." , ".$branch.", 'Adj. Stock','Stock Edit By ".$user->name."', now(),".$prod_qty.") ");
         
         return redirect()->route('productsstock.index')
             ->withSuccess(__('Product stock updated successfully.'));
