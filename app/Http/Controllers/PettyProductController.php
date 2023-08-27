@@ -668,6 +668,8 @@ class PettyProductController extends Controller
         $last_data = PettyCashDetail::where('petty_cash_detail.doc_no','=',$doc_no)->get('petty_cash_detail.*');
 
         for ($i=0; $i < count($last_data); $i++) { 
+            DB::update(" INSERT INTO public.stock_log (product_id, qty, branch_id, doc_no,remarks, created_at) select product_id,qty,branch_id,'Stock_Pos','R1 ".$doc_no."',now()  from product_stock where product_id = ".$last_data[$i]['product_id']."  and branch_id = ".$request->get('branch_id')." ");
+
             if($request->get('type')=="Produk - Keluar"){
                 DB::update("UPDATE product_stock set qty = qty+".$last_data[$i]['qty']." WHERE branch_id = ".$request->get('branch_id')." and product_id = ".$last_data[$i]["product_id"].";");
                 DB::update("update public.period_stock set qty_out=qty_out-".$last_data[$i]['qty']." ,updated_at = now(), balance_end = balance_end + ".$last_data[$i]['product_id']." where branch_id = ".$request->get('branch_id')." and product_id = ".$last_data[$i]['product_id']." and periode = to_char(now(),'YYYYMM')::int;");
@@ -675,6 +677,9 @@ class PettyProductController extends Controller
                  DB::update("UPDATE product_stock set qty = qty-".$last_data[$i]['qty']." WHERE branch_id = ".$request->get('branch_id')." and product_id = ".$last_data[$i]["product_id"].";");
                  DB::update("update public.period_stock set qty_in=qty_in-".$last_data[$i]['qty']." ,updated_at = now(), balance_end = balance_end - ".$last_data[$i]['qty']." where branch_id = ".$request->get('branch_id')." and product_id = ".$last_data[$i]['product_id']." and periode = to_char(now(),'YYYYMM')::int;");
             }
+
+            DB::update(" INSERT INTO public.stock_log (product_id, qty, branch_id, doc_no,remarks, created_at) select product_id,qty,branch_id,'Stock_Pos','R2 ".$doc_no."',now()  from product_stock where product_id = ".$last_data[$i]['product_id']."  and branch_id = ".$request->get('branch_id')." ");
+
         }
 
         PettyCashDetail::where('doc_no', $doc_no)->delete();
