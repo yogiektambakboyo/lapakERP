@@ -56,7 +56,7 @@
 		<div class="navbar-item dropdown">
 			<a href="#" data-bs-toggle="dropdown" class="navbar-link dropdown-toggle icon">
 				<i class="fa fa-bell"></i>
-				<span class="badge">5</span>
+				<span class="badge d-none" id="qty_notif"></span>
 			</a>
 			@include('includes.component.header-dropdown-notification')
 		</div>
@@ -92,3 +92,24 @@
 	<!-- END header-nav -->
 </div>
 <!-- END #header -->
+
+<div class="modal fade" id="modal-notif" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="modal-notif-title" aria-hidden="true">
+	<div class="modal-dialog modal-lg">
+	<div class="modal-content">
+		<div class="modal-header">
+		<h5 class="modal-title" id="modal-notif-title"> </h5>
+		<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+		</div>
+		<div class="modal-body">
+
+		<div class="row mb-3">
+			<div class="col-md-12" id="modal-notif-content">
+			</div>
+		</div>
+		</div>
+		<div class="modal-footer">
+		<button type="button" class="btn btn-primary"  data-bs-dismiss="modal">Close</button>
+		</div>
+	</div>
+	</div>
+</div>

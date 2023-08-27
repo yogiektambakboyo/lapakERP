@@ -815,6 +815,15 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
             Route::get('/export', 'SuppliersController@export')->name('suppliers.export');
         });
 
+        /**
+         *  Other
+         */
+        Route::group(['prefix' => 'other'], function() {
+            Route::get('/notif', 'OtherController@notif')->name('other.notif');
+            Route::post('/notifread', 'OtherController@notifread')->name('other.notifread');
+            Route::get('/notifindex', 'OtherController@notifindex')->name('other.notifindex');
+        });
+
 
         /**
          *  Report
