@@ -92,7 +92,7 @@ const resheader = axios.get("{{ route('other.notif') }}", {
 
         $('#content_notif').html(content);
 
-        Swal.fire(
+        /**Swal.fire(
             {
                 position: 'top-end',
                 icon: 'warning',
@@ -102,7 +102,7 @@ const resheader = axios.get("{{ route('other.notif') }}", {
                 imageWidth: 30,   
                 timer: 5000
             }
-        );
+        );**/
     }
 });
 
