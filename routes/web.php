@@ -154,6 +154,26 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
             Route::get('/export', 'InvoicesInternalController@export')->name('invoicesinternal.export');
         });
 
+        /**
+         * Picking Routes
+         */
+        Route::group(['prefix' => 'picking'], function() {
+            Route::get('/', 'PickingController@index')->name('picking.index');
+            Route::get('/create', 'PickingController@create')->name('picking.create');
+            Route::post('/create', 'PickingController@store')->name('picking.store');
+            Route::get('/search', 'PickingController@search')->name('picking.search');
+            Route::get('/{picking}/show', 'PickingController@show')->name('picking.show');
+            Route::patch('/{picking}/checkout', 'PickingController@checkout')->name('picking.checkout');
+            Route::get('/{picking}/edit', 'PickingController@edit')->name('picking.edit');
+            Route::get('/{picking}/print', 'PickingController@print')->name('picking.print');
+            Route::get('/getproduct', 'PickingController@getproduct')->name('picking.getproduct');
+            Route::get('/gettimetable', 'PickingController@gettimetable')->name('picking.gettimetable');
+            Route::get('/{picking}/getinvoice', 'PickingController@getinvoice')->name('picking.getinvoice');
+            Route::patch('/{picking}/update', 'PickingController@update')->name('picking.update');
+            Route::delete('/{picking}/delete', 'PickingController@destroy')->name('picking.destroy');
+            Route::get('/export', 'PickingController@export')->name('picking.export');
+        });
+
 
         /**
          * Return Sell Routes
