@@ -16,6 +16,9 @@ use App\Models\Order;
 use App\Models\Picking;
 use App\Models\PickingDetail;
 use App\Models\PickingRef;
+use App\Models\Packing;
+use App\Models\PackingDetail;
+use App\Models\PackingRef;
 use App\Models\PeriodSellPrice;
 use App\Models\SettingsDocumentNumber;
 use App\Models\OrderDetail;
@@ -39,7 +42,7 @@ use charlieuki\ReceiptPrinter\ReceiptPrinter as ReceiptPrinter;
 use App\Http\Controllers\Lang;
 
 
-class PickingController extends Controller
+class PackingController extends Controller
 {
     /**
      * Display all users
@@ -47,7 +50,7 @@ class PickingController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-    private $data,$act_permission,$module="picking",$id=1;
+    private $data,$act_permission,$module="packing",$id=1;
 
     public function __construct()
     {
@@ -83,7 +86,7 @@ class PickingController extends Controller
         join picking_detail pd  on pd.doc_no = pm.doc_no
         join users_branch ub on ub.branch_id = 15 and ub.user_id = ".$id."
         group by pm.id,pm.doc_no,pm.dated order by 2");
-        return view('pages.picking.index',['company' => Company::get()->first()], compact('invoices','data','keyword','act_permission','branchs')); 
+        return view('pages.packing.index',['company' => Company::get()->first()], compact('invoices','data','keyword','act_permission','branchs')); 
     }
 
     public function search(Request $request) 
@@ -118,7 +121,7 @@ class PickingController extends Controller
                 ->where('invoice_master.invoice_no','ilike','INVI-%') 
                 ->whereBetween('invoice_master.dated',$fil) 
               ->get(['invoice_master.is_checkout','invoice_master.id','b.remark as branch_name','invoice_master.invoice_no','invoice_master.dated','jt.remark as customer','invoice_master.total','invoice_master.total_discount','invoice_master.total_payment' ]);
-        return view('pages.picking.index',['company' => Company::get()->first()], compact('invoices','data','keyword','act_permission','branchs'))->with('i', ($request->input('page', 1) - 1) * 5);
+        return view('pages.packing.index',['company' => Company::get()->first()], compact('invoices','data','keyword','act_permission','branchs'))->with('i', ($request->input('page', 1) - 1) * 5);
         }
     }
 
@@ -145,7 +148,7 @@ class PickingController extends Controller
         $type_customer = ['Sendiri','Berdua','Keluarga','Rombongan'];
         $users = User::join('users_branch as ub','ub.branch_id', '=', 'users.branch_id')->where('ub.user_id','=',$user->id)->where('users.job_id','=',2)->get(['users.id','users.name']);
         $usersall = User::join('users_branch as ub','ub.branch_id', '=', 'users.branch_id')->where('ub.user_id','=',$user->id)->whereIn('users.job_id',[1,2])->get(['users.id','users.name']);
-        return view('pages.picking.create',[
+        return view('pages.packing.create',[
             'customers' => Branch::join('users_branch as ub','ub.branch_id', '=', 'branch.id')->where('branch.remark','not like','%PUSAT%')->where('branch.id','>',1)->where('ub.user_id',$user->id)->orderBy('branch.remark')->get(['branch.id','branch.remark']),
             'data' => $data,
             'users' => $users,
@@ -308,7 +311,7 @@ class PickingController extends Controller
         $usersReferral = User::get(['users.id','users.name']);
         $type_customer = ['Sendiri','Berdua','Keluarga','Rombongan'];
 
-        return view('pages.picking.show',[
+        return view('pages.packing.show',[
             'customers' => Branch::join('users_branch as ub','ub.branch_id', '=', 'branch.id')->where('branch.remark','not like','%PUSAT%')->where('branch.id','>',1)->where('ub.user_id',$user->id)->orderBy('branch.remark')->get(['branch.id','branch.remark']),
             'data' => $data,
             'doc_data' => $picking,
@@ -335,7 +338,7 @@ class PickingController extends Controller
         where pd.doc_no='".$picking->doc_no."' 
         group by o.remark,pd.doc_no,pd.product_id,ps.abbr,ps.remark order by 5");
 
-        $pdf = PDF::setOptions(['isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true])->loadView('pages.picking.print', [
+        $pdf = PDF::setOptions(['isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true])->loadView('pages.packing.print', [
             'customers' => Branch::join('users_branch as ub','ub.branch_id', '=', 'branch.id')->where('branch.remark','not like','%PUSAT%')->where('branch.id','>',1)->where('ub.user_id',$user->id)->orderBy('branch.remark')->get(['branch.id','branch.remark']),
             'data' => $data,
             'doc_data' => $picking,
@@ -370,7 +373,7 @@ class PickingController extends Controller
         $usersReferral = User::get(['users.id','users.name']);
         $type_customer = ['Sendiri','Berdua','Keluarga','Rombongan'];
 
-        return view('pages.picking.edit',[
+        return view('pages.packing.edit',[
             'customers' => Branch::join('users_branch as ub','ub.branch_id', '=', 'branch.id')->where('branch.remark','not like','%PUSAT%')->where('branch.id','>',1)->where('ub.user_id',$user->id)->orderBy('branch.remark')->get(['branch.id','branch.remark']),
             'data' => $data,
             'doc_data' => $picking,

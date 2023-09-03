@@ -24,6 +24,7 @@ class Picking extends Model
         'picked_by',
         'picked_at',
         'created_by',
+        'remark',
         'updated_by',
         'updated_at'
     ];

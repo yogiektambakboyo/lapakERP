@@ -176,6 +176,27 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
 
 
         /**
+         * Packing Routes
+         */
+        Route::group(['prefix' => 'packing'], function() {
+            Route::get('/', 'PackingController@index')->name('packing.index');
+            Route::get('/create', 'PackingController@create')->name('packing.create');
+            Route::post('/create', 'PackingController@store')->name('packing.store');
+            Route::get('/search', 'PackingController@search')->name('packing.search');
+            Route::get('/{packing}/show', 'PackingController@show')->name('packing.show');
+            Route::patch('/{packing}/checkout', 'PackingController@checkout')->name('packing.checkout');
+            Route::get('/{packing}/edit', 'PackingController@edit')->name('packing.edit');
+            Route::get('/{packing}/print', 'PackingController@print')->name('packing.print');
+            Route::get('/getproduct', 'PackingController@getproduct')->name('packing.getproduct');
+            Route::get('/gettimetable', 'PackingController@gettimetable')->name('packing.gettimetable');
+            Route::get('/{packing}/getdoc_data', 'PackingController@getdoc_data')->name('packing.getdoc_data');
+            Route::patch('/{packing}/update', 'PackingController@update')->name('packing.update');
+            Route::delete('/{packing}/delete', 'PackingController@destroy')->name('packing.destroy');
+            Route::get('/export', 'PackingController@export')->name('packing.export');
+        });
+
+
+        /**
          * Return Sell Routes
          */
         Route::group(['prefix' => 'returnsell'], function() {
