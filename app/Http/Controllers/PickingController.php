@@ -379,6 +379,30 @@ class PickingController extends Controller
         ]);
     }
 
+    public function getdocdatapickedlist(String $branch_id) 
+    {
+        $data = $this->data;
+        $user = Auth::user();
+        $list_purchase = DB::select(" select distinct pm.doc_no,pm.dated  from picking_master pm 
+        join picking_detail pd on pd.doc_no = pm.doc_no 
+        where dated >= now()-interval'3 days' order by 2,1 desc");
+        
+        return $list_purchase;
+    }
+
+    public function getdocdatapicked(String $doc_no) 
+    {
+        $data = $this->data;
+        $user = Auth::user();
+        $list_purchase = DB::select(" select pm.doc_no,pd.product_id,sum(pd.qty) as qty  from picking_master pm 
+        join picking_detail pd on pd.doc_no = pm.doc_no 
+        where dated >= now()-interval'3 days' and pm.doc_no = '".$doc_no."' 
+        group by pm.doc_no,pd.product_id ");
+        
+        return $list_purchase;
+    }
+
+
      /**
      * Edit user data
      * 

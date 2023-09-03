@@ -172,6 +172,9 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
             Route::patch('/{picking}/update', 'PickingController@update')->name('picking.update');
             Route::delete('/{picking}/delete', 'PickingController@destroy')->name('picking.destroy');
             Route::get('/export', 'PickingController@export')->name('picking.export');
+            Route::get('/{doc_no}/getdocdatapicked', 'PickingController@getdocdatapicked')->name('picking.getdocdatapicked');
+            Route::get('/{branch_id}/getdocdatapickedlist', 'PickingController@getdocdatapickedlist')->name('picking.getdocdatapickedlist');
+
         });
 
 

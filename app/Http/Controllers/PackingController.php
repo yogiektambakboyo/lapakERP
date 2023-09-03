@@ -81,11 +81,12 @@ class PackingController extends Controller
         $user = Auth::user();
         $act_permission = $this->act_permission[0];
         
-        $invoices = DB::select("select pm.id,pm.doc_no,pm.customer_id,pm.remark,pm.dated,count(pd.product_id)  as count_sku
+        $invoices = DB::select("select pm.remark,pm.id,pm.doc_no,pm.customer_id,b.remark as branch_name,pm.remark,pm.dated,count(pd.product_id)  as count_sku
         from packing_master pm 
         join packing_detail pd  on pd.doc_no = pm.doc_no
+        join branch b on b.id = pm.customer_id
         join users_branch ub on ub.branch_id = 15 and ub.user_id = ".$id."
-        group by pm.id,pm.doc_no,pm.dated order by 2");
+        group by pm.id,pm.doc_no,pm.dated,pm.remark,b.remark order by 2");
         return view('pages.packing.index',['company' => Company::get()->first()], compact('invoices','data','keyword','act_permission','branchs')); 
     }
 
@@ -223,22 +224,23 @@ class PackingController extends Controller
         $user = Auth::user();
         $branch = Branch::where('id','=',$request->get('customer_id'))->get(['id'])->first();
 
-        $count_no = SettingsDocumentNumber::where('doc_type','=','Picking')->where('branch_id','=',15)->where('period','=','Yearly')->get(['current_value','abbr']);
+        $count_no = SettingsDocumentNumber::where('doc_type','=','Packing')->where('branch_id','=',15)->where('period','=','Yearly')->get(['current_value','abbr']);
         $doc_no = $count_no[0]->abbr.'-'.substr(('0015'),-3).'-'.date("Y").'-'.substr(('00000000'.((int)($count_no[0]->current_value) + 1)),-8);
 
-        SettingsDocumentNumber::where('doc_type','=','Picking')->where('branch_id','=',15)->where('period','=','Yearly')->update(
+        SettingsDocumentNumber::where('doc_type','=','Packing')->where('branch_id','=',15)->where('period','=','Yearly')->update(
             array_merge(
                 ['current_value' => ((int)($count_no[0]->current_value) + 1)]
             )
         );
 
-        $res_ = Picking::create(
+        $res_ = Packing::create(
             array_merge(
                 ['doc_no' => $doc_no ],
                 ['remark' => $request->get('remark') ],
+                ['customer_id' => $request->get('customer_id') ],
                 ['created_by' => $user->id],
                 ['dated' => Carbon::createFromFormat('d-m-Y', $request->get('doc_date'))->format('Y-m-d') ],
-                ['ispicked' => "0" ],
+                ['ispacked' => "0" ],
             )
         );
 
@@ -247,7 +249,7 @@ class PackingController extends Controller
             $result = array_merge(
                 ['status' => 'failed'],
                 ['data' => ''],
-                ['message' => 'Save picking failed'],
+                ['message' => 'Save packing failed'],
             );
     
             return $result;
@@ -255,14 +257,16 @@ class PackingController extends Controller
 
 
         for ($i=0; $i < count($request->get('product')); $i++) { 
-            $res_doc_detail = PickingDetail::create(
+            $res_doc_detail = PackingDetail::create(
                 array_merge(
                     ['doc_no' => $doc_no],
                     ['product_id' => $request->get('product')[$i]["id"]],
                     ['qty' => $request->get('product')[$i]["qty"]],
+                    ['qty_pack' => $request->get('product')[$i]["qty_pack"]],
                     ['seq' => $i ],
                     ['uom' => $request->get('product')[$i]["uom"]],
-                    ['ref_no' => $request->get('product')[$i]["po_no"]]
+                    ['ref_no_po' => $request->get('product')[$i]["po_no"]],
+                    ['ref_no' => $request->get('product')[$i]["ref_no"]]
                 )
             );
 
@@ -271,7 +275,7 @@ class PackingController extends Controller
                 $result = array_merge(
                     ['status' => 'failed'],
                     ['data' => ''],
-                    ['message' => 'Save picking detail failed'],
+                    ['message' => 'Save packing detail failed'],
                 );
         
                 return $result;
@@ -279,12 +283,9 @@ class PackingController extends Controller
 
         }
 
-        $delete_doc = DB::select("delete from picking_ref where doc_no='".$doc_no."';");
-        $insert_doc = DB::select("insert into picking_ref(doc_no,ref_no,created_at) select distinct doc_no,ref_no,now() from picking_detail where doc_no='".$doc_no."';");
-
         $result = array_merge(
             ['status' => 'success'],
-            ['data' => Picking::where('doc_no','=',$doc_no)->get('id')->first()->id ],
+            ['data' => Packing::where('doc_no','=',$doc_no)->get('id')->first()->id ],
             ['message' => $doc_no],
         );
 

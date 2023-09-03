@@ -92,14 +92,14 @@
                     <input type="hidden" id="product_id_selected" value="">
                     <div class="col-md-8">
                       <select class="form-control" 
-                          name="po_list" id="po_list" required>
+                          name="picking_list" id="picking_list" required>
                           <option value=""> Pilih No Picking </option>
                       </select>
                     </div>
                   </div>
                   <div class="modal-footer">
                   <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">@lang('general.lbl_close') </button>
-                  <button type="button" class="btn btn-primary"  data-bs-dismiss="modal" id="btn_add_po">@lang('general.lbl_apply')</button>
+                  <button type="button" class="btn btn-primary"  data-bs-dismiss="modal" id="btn_add_picking">@lang('general.lbl_apply')</button>
                   </div>
               </div>
               </div>
@@ -211,9 +211,10 @@
 
 @push('scripts')
     <script type="text/javascript">
-    let list_po;
+    let list_po,list_picking;
       $(function () {
         $('#customer_id').select2();
+
         var xurl = "{{ route('purchaseordersinternal.getdocdatapicked','16') }}";
         var xlastvalurl = "16";
         $('#customer_id').on('change',function(){
@@ -240,6 +241,34 @@
           });
           // End Call API
         });
+
+        var xurlp = "{{ route('picking.getdocdatapickedlist','16') }}";
+        var xlastvalurlp = "16";
+        $('#customer_id').on('change',function(){
+          // Begin Call API
+          xurlp = xurlp.replace(xlastvalurlp, $('#customer_id').find(':selected').val())
+          xlastvalurlp = $(this).val();
+          const res = axios.get(xurlp, {
+            headers: {
+                'Content-Type': 'application/json'
+              }
+          }).then(resp => {
+              list_picking = resp.data;
+
+              $('#picking_list').find('option').remove();
+
+              for (let index = 0; index < list_picking.length; index++) {
+                const element = list_picking[index];
+                $('#picking_list').append($('<option>', {
+                    value: element.doc_no,
+                    text: element.doc_no+' ('+element.dated+')'
+                }));
+              }
+              
+          });
+          // End Call API
+        });
+
 
 
         var url = "{{ route('orders.getproduct') }}";
@@ -432,6 +461,58 @@
                 
             });
       });
+
+      $('#btn_add_picking').on('click',function(){
+          var url_ = "{{ route('picking.getdocdatapicked','16') }}";
+            url_ = url_.replace('16', $('#picking_list').find(':selected').val())
+            lastvalurl_ = $(this).val();
+            const res = axios.get(url_, {
+              headers: {
+                  'Content-Type': 'application/json'
+                }
+            }).then(resp => {
+                console.log(resp.data);
+                table_product.clear().draw(false);
+
+                for (var i = 0; i < orderList.length; i++){
+                    orderList[i]["qty_pack"] = 0;
+                    orderList[i]["ref_no"] = "-";
+                }
+
+                for (let index = 0; index < resp.data.length; index++) {
+                  const element = resp.data[index];
+                  console.log(element);
+
+                    for (var i = 0; i < orderList.length; i++){
+                      var obj = orderList[i];
+                      if(element.product_id==obj["id"]){
+                        orderList[i]["qty_pack"] = parseInt(element.qty);
+                        orderList[i]["ref_no"] = element.doc_no;
+                      }
+                    }
+
+
+                }  
+
+                counterno = 0;
+                for (var i = 0; i < orderList.length; i++){
+                  var obj = orderList[i];
+                  var value = obj["abbr"];
+
+                  counterno = counterno + 1;
+                  table_product.row.add( {
+                        "seq" : counterno,
+                        "id"        : obj["id"],
+                        "abbr"      : obj["abbr"],
+                        "uom"       : obj["uom"],
+                        "qty_pack"       : obj["qty_pack"],
+                        "po_no"      : obj["po_no"],
+                        "qty"       : obj["qty"],
+                        "action"    : "",
+                  }).draw(false);
+                }  
+            });
+      });
         
         $('#save-btn').on('click',function(){
           if($('#doc_date').val()==''){
@@ -460,7 +541,7 @@
                 timer: 1500
               }
             );
-          }else if(order_total<=0){
+          }else if(orderList.length<=0){
             Swal.fire(
               {
                 position: 'top-end',
@@ -489,10 +570,6 @@
                   product : orderList,
                   customer_id : $('#customer_id').val(),
                   remark : $('#remark').val(),
-                  total_order : order_total,
-                  ref_no : $('#ref_no').val(),
-                  payment_nominal : 0,
-                  tax : _vat_total,
                 }
               );
               const res = axios.post("{{ route('packing.store') }}", json, {
@@ -503,7 +580,7 @@
               }).then(resp => {
                     if(resp.data.status=="success"){
                       Swal.fire({
-                        text: "Dokumen berhasil dibaut dengan no : "+resp.data.message,
+                        text: "Dokumen berhasil dibuat dengan no : "+resp.data.message,
                         title : "@lang('general.lbl_success')",
                         icon: 'success',
                         showCancelButton: true,
@@ -592,6 +669,7 @@
                 "qty_pack"       : 0,
                 "entry_time" : entry_time,
                 "po_no" : po_no,
+                "ref_no" : "-",
                 "seq" : 999,
           }
 
@@ -632,16 +710,7 @@
                   "action"    : "",
             }).draw(false);
 
-              order_total = order_total + (parseFloat(obj["total"]));
-
-
-
           }
-
-          $('#result-total').text(currency(order_total, { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
-          $('#vat-total').text(currency(_vat_total, { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
-          $('#sub-total').text(currency(sub_total, { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
-
         }
 
         $('#order_product_table tbody').on('click', 'a', function () {
@@ -658,16 +727,14 @@
 
               if($(this).attr("id")=="add_row"){
                 if(data["id"]==obj["id"]){
-                  orderList[i]["total"] = (parseInt(orderList[i]["qty"])+1)*parseFloat(orderList[i]["price"]); 
-                  orderList[i]["qty"] = parseInt(orderList[i]["qty"])+1;
+                  orderList[i]["qty_pack"] = parseInt(orderList[i]["qty_pack"])+1;
                 }
               }
               
               if($(this).attr("id")=="minus_row"){
-                if(data["id"]==obj["id"]&&parseInt(orderList[i]["qty"])>1){
-                  orderList[i]["total"] = (parseInt(orderList[i]["qty"])-1)*parseFloat(orderList[i]["price"]); 
-                  orderList[i]["qty"] = parseInt(orderList[i]["qty"])-1;
-                } else if(data["id"]==obj["id"]&&parseInt(orderList[i]["qty"])==1) {
+                if(data["id"]==obj["id"]&&parseInt(orderList[i]["qty_pack"])>1){
+                  orderList[i]["qty_pack"] = parseInt(orderList[i]["qty_pack"])-1;
+                } else if(data["id"]==obj["id"]&&parseInt(orderList[i]["qty_pack"])==1) {
                   orderList.splice(i,1);
                 }
               }
@@ -675,20 +742,6 @@
               if($(this).attr("id")=="delete_row"){
                 if(data["id"]==obj["id"]){
                   orderList.splice(i,1);
-                }
-              }
-
-              if($(this).attr("id")=="assign_row"){
-                if(data["id"]==obj["id"]){
-                  $('#product_id_selected').val(data["id"]);
-                  $('#product_id_selected_lbl').text("Pilih terapis untuk produk/perawatan "+data["abbr"]);
-                }
-              }
-
-              if($(this).attr("id")=="referral_row"){
-                if(data["id"]==obj["id"]){
-                  $('#referral_selected').val(data["id"]);
-                  $('#referral_selected_lbl').text("Pilih penjual produk/perawatan "+data["abbr"]);
                 }
               }
             }
@@ -701,10 +754,7 @@
              counterno_service = 0;
             for (var i = 0; i < orderList.length; i++){
               var obj = orderList[i];
-              if(obj["type_id"]=="Services"){
-              counterno_service  = counterno_service + 1;
-              }else{
-                counterno = counterno + 1;
+              counterno = counterno + 1;
                 table_product.row.add( {
                     "seq" : counterno,
                     "id"        : obj["id"],
@@ -712,16 +762,9 @@
                       "uom"       : obj["uom"],
                       "qty"       : obj["qty"],
                   "qty_pack"       : obj["qty_pack"],
-                      "assignedto": obj["assignedto"],
                       "po_no"      : obj["po_no"],
-                      "referralby" : obj["referralby"],
                       "action"    : "",
                 }).draw(false);
-              }
-                disc_total = disc_total + (parseFloat(orderList[i]["discount"]));
-              sub_total = sub_total + (((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"]))-(parseFloat(orderList[i]["discount"])));
-              _vat_total = _vat_total + ((((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"]))-(parseFloat(orderList[i]["discount"])))*(parseFloat(orderList[i]["vat_total"])/100));
-              order_total = order_total + ((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"])+((((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"]))-(parseFloat(orderList[i]["discount"])))*(parseFloat(orderList[i]["vat_total"])/100)))-(parseFloat(orderList[i]["discount"]));
 
             }
         });
