@@ -25,6 +25,9 @@ return [
     "tipe" => "Tipe",
     "lbl_return_sell" => "Retur Jual",
     "lbl_return_new" => "Retur Jual Baru",
+    "lbl_picking" => "Pengambilan Barang",
+    "lbl_add" => "Tambah",
+
 
     "lbl_name" => "Nama",
     "lbl_report" => "Laporan",

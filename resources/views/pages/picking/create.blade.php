@@ -1,14 +1,14 @@
 @extends('layouts.default', ['appSidebarSearch' => true])
 
-@section('title', 'Create New Invoice Internal')
+@section('title', 'Create New Picking')
 
 @section('content')
   @csrf
   <div class="panel text-white">
     <div class="panel-heading  bg-teal-600">
-      <div class="panel-title"><h4 class="">@lang('general.lbl_invoice') Internal</h4></div>
+      <div class="panel-title"><h4 class="">@lang('general.lbl_picking')</h4></div>
       <div class="">
-        <a href="{{ route('invoicesinternal.index') }}" class="btn btn-default">@lang('general.lbl_cancel')</a>
+        <a href="{{ route('picking.index') }}" class="btn btn-default">@lang('general.lbl_cancel')</a>
         <button type="button" id="save-btn" class="btn btn-info">@lang('general.lbl_save')</button>
       </div>
     </div>
@@ -20,12 +20,12 @@
               <label class="form-label col-form-label col-md-6">@lang('general.lbl_dated_mmddYYYY')</label>
               <div class="col-md-6">
                 <input type="text" 
-                name="invoice_date"
-                id="invoice_date"
+                name="doc_date"
+                id="doc_date"
                 class="form-control" 
-                value="{{ old('invoice_date') }}" required/>
-                @if ($errors->has('invoice_date'))
-                          <span class="text-danger text-left">{{ $errors->first('invoice_date') }}</span>
+                value="{{ old('doc_date') }}" required/>
+                @if ($errors->has('doc_date'))
+                          <span class="text-danger text-left">{{ $errors->first('doc_date') }}</span>
                       @endif
               </div>
             </div>
@@ -33,11 +33,11 @@
 
           <div class="col-md-9">
             <div class="row mb-3">
-              <label class="form-label col-form-label col-md-1">@lang('general.lbl_customer')</label>
+              <label class="form-label col-form-label col-md-1">@lang('general.lbl_branch')</label>
               <div class="col-md-3">
                 <select class="form-control" 
                     name="customer_id" id="customer_id" required>
-                    <option value="">@lang('general.lbl_customerselect')</option>
+                    <option value="">@lang('general.lbl_branchselect')</option>
                     @foreach($customers as $customer)
                         <option value="{{ $customer->id }}">{{ $customer->remark }}</option>
                     @endforeach
@@ -86,12 +86,49 @@
 
         <div class="panel-heading bg-teal-600 text-white"><strong>@lang('general.lbl_order_list')</strong></div>
         <div class="row mb-3 mt-2">
-          <div class="col-md-10">
+          <div class="row mb-1">
+            <div class="col-md-4">
+              <label class="form-label col-form-label">@lang('general.product')</label>
+              <select class="form-control" 
+                    name="input_product_id" id="input_product_id" required>
+                    <option value="">@lang('general.lbl_productselect')</option>
+                </select>
+            </div>
+  
+  
+            <div class="col-md-2">
+              <label class="form-label col-form-label">@lang('general.lbl_uom')</label>
+              <input type="text" 
+              name="input_product_uom"
+              id="input_product_uom"
+              class="form-control" 
+              value="{{ old('input_product_uom') }}" required disabled/>
+            </div>
 
+            <div class="col-md-1">
+              <label class="form-label col-form-label">@lang('general.lbl_qty')</label>
+              <input type="text" 
+              name="input_product_qty"
+              id="input_product_qty"
+              class="form-control" 
+              value="{{ old('input_product_qty') }}" required/>
+            </div>
+  
+            <div class="col-md-2">
+              <div class="col-md-12"><label class="form-label col-form-label">_</label></div>
+              <a href="#" id="input_product_submit" class="btn btn-green"><div class="fa-1x"><i class="fas fa-plus fa-fw"></i>@lang('general.lbl_add_product')</div></a>
+            </div>
+
+            <div class="col-md-1">
+            </div>
+
+            <div class="col-md-2">
+              <div class="col-md-12"><label class="form-label col-form-label">_</label></div>
+              <button class="btn btn-primary" href="#modal-filter" data-bs-toggle="modal" data-bs-target="#modal-filter">@lang('general.lbl_add') dari PO</button>
+            </div>
+  
           </div>
-          <div class="col-md-2">
-            <button class="btn btn-primary" href="#modal-filter" data-bs-toggle="modal" data-bs-target="#modal-filter">Add PO Internal</button>
-          </div>
+          
         </div>
 
         <table class="table table-striped" id="order_product_table">
@@ -101,10 +138,7 @@
               <th scope="col" >PO No</th>
               <th scope="col" >@lang('general.product')</th>
               <th scope="col" width="10%">@lang('general.lbl_uom')</th>
-              <th scope="col" width="10%">@lang('general.lbl_price')</th>
-              <th scope="col" width="5%">@lang('general.lbl_discount')</th>
               <th scope="col" width="5%">@lang('general.lbl_qty')</th>
-              <th scope="col" width="10%">Total</th>  
               <th scope="col" width="15%" class="nex">@lang('general.lbl_action')</th> 
           </tr>
           </thead>
@@ -131,7 +165,7 @@
                 <label class="col-md-8" id="vat-total"> <h3>0</h3></label>
               </div>
             </div>
-            <div class="col-md-12">
+            <div class="col-md-12 d-none">
               <div class="col-auto text-end">
                 <label class="col-md-2"><h1>Total </h1></label>
                 <label class="col-md-8 display-5" id="result-total"> <h1>0</h1></label>
@@ -149,13 +183,13 @@
     let list_po;
       $(function () {
         $('#customer_id').select2();
-        var url = "{{ route('purchaseordersinternal.getdocdatabyvendor','16') }}";
-        var lastvalurl = "16";
+        var xurl = "{{ route('purchaseordersinternal.getdocdatanotpicked','16') }}";
+        var xlastvalurl = "16";
         $('#customer_id').on('change',function(){
           // Begin Call API
-          url = url.replace(lastvalurl, $('#customer_id').find(':selected').val())
-          lastvalurl = $(this).val();
-          const res = axios.get(url, {
+          xurl = xurl.replace(xlastvalurl, $('#customer_id').find(':selected').val())
+          xlastvalurl = $(this).val();
+          const res = axios.get(xurl, {
             headers: {
                 'Content-Type': 'application/json'
               }
@@ -176,6 +210,144 @@
           // End Call API
         });
 
+
+        var url = "{{ route('orders.getproduct') }}";
+            var lastvalurl = "XX";
+            console.log(url);
+            const res = axios.get(url, {
+              headers: {
+                'Content-Type': 'application/json'
+              }
+            }).then(resp => {
+              $('#input_product_id').select2();
+              $('#input_service_id').select2();
+              
+                for(var i=0;i<resp.data.length;i++){
+                    var product = {
+                          "id"        : resp.data[i]["id"],
+                          "abbr"      : resp.data[i]["abbr"],
+                          "remark"      : resp.data[i]["remark"],
+                          "uom"      : resp.data[i]["uom"],
+                          "price"     : resp.data[i]["price"],
+                          "vat_total"     : resp.data[i]["vat_total"],
+                          "type"     : resp.data[i]["type"]
+                    }
+
+                    productList.push(product);
+                }
+
+                for (var i = 0; i < productList.length; i++){
+                  var obj = productList[i];
+                  var newOption = new Option(obj["remark"], obj["id"], false, false);
+                  if(obj["type"]=="Services"){
+                    $('#input_service_id').append(newOption).trigger('change');  
+                  }else{
+                    $('#input_product_id').append(newOption).trigger('change');  
+                  }
+                }
+
+              $('#input_product_id').on('change.select2', function(e){
+                $.each(productList, function(i, v) {
+                    if (v.id == $('#input_product_id').find(':selected').val()) {
+                        $('#input_product_uom').val(v.uom);
+                        $('#input_product_price').val(v.price);
+                        $('#input_product_qty').val(1);
+                        $('#input_product_disc').val(0);
+                        $('#input_product_total').val(v.price);
+                        $('#input_product_vat_total').val(v.vat_total);
+                        return;
+                    }
+                });
+              });
+
+              $('#input_product_price').on('input', function(){
+                $('#input_product_total').val(($('#input_product_price').val()*$('#input_product_qty').val())-$('#input_product_disc').val());
+              });
+
+              $('#input_product_qty').on('input', function(){
+                $('#input_product_total').val(($('#input_product_price').val()*$('#input_product_qty').val())-$('#input_product_disc').val());
+              });
+
+              $('#input_product_disc').on('input', function(){
+                $('#input_product_total').val(($('#input_product_price').val()*$('#input_product_qty').val())-$('#input_product_disc').val());
+              });
+
+              $('#input_product_submit').on('click', function(){
+                if($('#input_product_id').val()==''){
+                  Swal.fire(
+                    {
+                      position: 'top-end',
+                      icon: 'warning',
+                      text: 'Please choose product',
+                      showConfirmButton: false,
+                      imageHeight: 30, 
+                      imageWidth: 30,   
+                      timer: 1500
+                    }
+                  );
+                }else if($('#input_product_qty').val()==''){
+                  Swal.fire(
+                    {
+                      position: 'top-end',
+                      icon: 'warning',
+                      text: 'Please input qty',
+                      showConfirmButton: false,
+                      imageHeight: 30, 
+                      imageWidth: 30,   
+                      timer: 1500
+                    }
+                  );
+                }else if($('#input_product_price').val()==''){
+                  Swal.fire(
+                    {
+                      position: 'top-end',
+                      icon: 'warning',
+                      text: 'Please input price',
+                      showConfirmButton: false,
+                      imageHeight: 30, 
+                      imageWidth: 30,   
+                      timer: 1500
+                    }
+                  );
+                }else if($('#input_product_disc').val()==''){
+                  Swal.fire(
+                    {
+                      position: 'top-end',
+                      icon: 'warning',
+                      text: 'Please input disc',
+                      showConfirmButton: false,
+                      imageHeight: 30, 
+                      imageWidth: 30,   
+                      timer: 1500
+                    }
+                  );
+                }else if($('#input_product_total').val()<0){
+                  Swal.fire(
+                    {
+                      position: 'top-end',
+                      icon: 'warning',
+                      text: 'Please input disc less than total',
+                      showConfirmButton: false,
+                      imageHeight: 30, 
+                      imageWidth: 30,   
+                      timer: 1500
+                    }
+                  );
+                }else{
+                  
+                  addProduct(
+                    $('#input_product_id').val(),
+                    $('#input_product_id option:selected').text(), 
+                    $('#input_product_qty').val(),
+                    $('#input_product_uom').val(),
+                    "-"
+                  )
+                }
+              });
+              
+
+          });
+
           //$('#app').removeClass('app app-sidebar-fixed app-header-fixed-minified').addClass('app app-sidebar-fixed app-header-fixed-minified app-sidebar-minified');
           
           const today = new Date();
@@ -187,11 +359,11 @@
           if (mm < 10) mm = '0' + mm;
 
           const formattedToday = dd + '-' + mm + '-' + yyyy;
-          $('#invoice_date').datepicker({
+          $('#doc_date').datepicker({
               dateFormat : 'dd-mm-yy',
               todayHighlight: true,
           });
-          $('#invoice_date').val(formattedToday);
+          $('#doc_date').val(formattedToday);
           $('#schedule_date').datepicker({
               dateFormat : 'dd-mm-yy',
               todayHighlight: true,
@@ -218,15 +390,15 @@
                 console.log(resp.data);
                 for (let index = 0; index < resp.data.length; index++) {
                   const element = resp.data[index];
-                  addProduct(element.product_id,element.remark, element.price, element.discount, element.qty, element.uom,element.subtotal_vat,element.subtotal,"1",element.purchase_no)
+                  addProduct(element.product_id,element.remark, element.qty, element.uom,element.purchase_no)
                 }
                 
             });
       });
         
         $('#save-btn').on('click',function(){
-          if($('#invoice_date').val()==''){
-            $('#invoice_date').focus();
+          if($('#doc_date').val()==''){
+            $('#doc_date').focus();
             Swal.fire(
               {
                 position: 'top-end',
@@ -276,7 +448,7 @@
               });    
 
             const json = JSON.stringify({
-                  invoice_date : $('#invoice_date').val(),
+                  doc_date : $('#doc_date').val(),
                   product : orderList,
                   customer_id : $('#customer_id').val(),
                   remark : $('#remark').val(),
@@ -286,7 +458,7 @@
                   tax : _vat_total,
                 }
               );
-              const res = axios.post("{{ route('invoicesinternal.store') }}", json, {
+              const res = axios.post("{{ route('picking.store') }}", json, {
                 headers: {
                   // Overwrite Axios's automatically set Content-Type
                   'Content-Type': 'application/json'
@@ -294,7 +466,7 @@
               }).then(resp => {
                     if(resp.data.status=="success"){
                       Swal.fire({
-                        text: "@lang('general.lbl_msg_success_invoice') "+resp.data.message,
+                        text: "Dokumen berhasil dibaut dengan no : "+resp.data.message,
                         title : "@lang('general.lbl_success')",
                         icon: 'success',
                         showCancelButton: true,
@@ -305,24 +477,16 @@
                       }).then((result) => {
                         /* Read more about isConfirmed, isDenied below */
                         if (result.isConfirmed) {
-                          burl ="{{ route('invoicesinternal.print', 'WWWW') }}";
+                          burl ="{{ route('picking.print', 'WWWW') }}";
                           burl = burl.replace('WWWW', resp.data.data)
                           //window.location.href = burl; 
                           window.open(
                             burl,
                             '_blank' // <- This is what makes it open in a new window.
                           );
-                          window.location.href = "{{ route('invoicesinternal.index') }}"; 
-                        } else if (result.isDenied) {
-                          burl = "{{ route('invoicesinternal.printspk', 'WWWW') }}";
-                          burl = burl.replace('WWWW', resp.data.data)
-                          window.open(
-                            burl,
-                            '_blank' // <- This is what makes it open in a new window.
-                          );
-                          window.location.href = "{{ route('invoicesinternal.index') }}"; 
-                        }else{
-                          window.location.href = "{{ route('invoicesinternal.index') }}"; 
+                          window.location.href = "{{ route('picking.index') }}"; 
+                        } else{
+                          window.location.href = "{{ route('picking.index') }}"; 
                         }
                       })
                     }else{
@@ -369,15 +533,13 @@
             { data: 'po_no' },
             { data: 'abbr' },
             { data: 'uom' },
-            { data: 'price',render: DataTable.render.number( '.', null, 0, '' ) },
-            { data: 'discount',render: DataTable.render.number( '.', null, 0, '' ) },
             { data: 'qty' },
-            { data: 'total',render: DataTable.render.number( '.', null, 0, '' ) },
             { data: null},
         ],
         });
 
-        function addProduct(id,abbr, price, discount, qty, uom,vat_total,total,type_id,po_no){
+        function addProduct(id,abbr, qty,uom,po_no){
+          console.log(id,abbr,qty,uom,po_no);
           table_product.clear().draw(false);
           order_total = 0;
           disc_total = 0;
@@ -387,28 +549,18 @@
           var product = {
                 "id"        : id,
                 "abbr"      : abbr,
-                "price"     : price,
-                "discount"  : discount,
+                "uom"      : uom,
                 "qty"       : qty,
-                "total"     : parseFloat(total),
-                "assignedto" : "",
-                "assignedtoid" : "",
-                "referralby" : "",
-                "referralbyid" : "",
-                "uom" : uom,
-                "vat_total"     : parseFloat(vat_total), 
-                "type_id"     : type_id, 
                 "entry_time" : entry_time,
-                "po_no" : po_no,
+                "po_no" : "-",
                 "seq" : 999,
           }
 
           var isExist = 0;
           for (var i = 0; i < orderList.length; i++){
             var obj = orderList[i];
-            if(po_no==obj["po_no"] && id==obj["id"]){
+            if("-"==obj["po_no"] && id==obj["id"]){
               isExist = 1;
-              orderList[i]["total"] = (parseInt(orderList[i]["qty"])+1)*parseFloat(orderList[i]["price"]); 
               orderList[i]["qty"] = parseInt(orderList[i]["qty"])+1;
             }
           }
@@ -429,25 +581,16 @@
             var obj = orderList[i];
             var value = obj["abbr"];
 
-            if(obj["type_id"]=="Services"){
-              counterno_service  = counterno_service + 1;
-              }else{
-                counterno = counterno + 1;
-                table_product.row.add( {
-                    "seq" : counterno,
-                    "id"        : obj["id"],
-                      "abbr"      : obj["abbr"],
-                      "po_no"      : obj["po_no"],
-                      "uom"       : obj["uom"],
-                      "price"     : obj["price"],
-                      "discount"  : obj["discount"],
-                      "qty"       : obj["qty"],
-                      "total"     : obj["total"],
-                      "assignedto": obj["assignedto"],
-                      "referralby" : obj["referralby"],
-                      "action"    : "",
-                }).draw(false);
-              }
+            counterno = counterno + 1;
+            table_product.row.add( {
+                  "seq" : counterno,
+                  "id"        : obj["id"],
+                  "abbr"      : obj["abbr"],
+                  "uom"       : obj["uom"],
+                  "po_no"      : obj["po_no"],
+                  "qty"       : obj["qty"],
+                  "action"    : "",
+            }).draw(false);
 
               order_total = order_total + (parseFloat(obj["total"]));
 
@@ -527,10 +670,7 @@
                     "id"        : obj["id"],
                       "abbr"      : obj["abbr"],
                       "uom"       : obj["uom"],
-                      "price"     : obj["price"],
-                      "discount"  : obj["discount"],
                       "qty"       : obj["qty"],
-                      "total"     : obj["total"],
                       "assignedto": obj["assignedto"],
                       "po_no"      : obj["po_no"],
                       "referralby" : obj["referralby"],
@@ -542,44 +682,8 @@
               _vat_total = _vat_total + ((((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"]))-(parseFloat(orderList[i]["discount"])))*(parseFloat(orderList[i]["vat_total"])/100));
               order_total = order_total + ((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"])+((((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"]))-(parseFloat(orderList[i]["discount"])))*(parseFloat(orderList[i]["vat_total"])/100)))-(parseFloat(orderList[i]["discount"]));
 
-              if(($('#payment_nominal').val())>order_total){
-                $('#order_charge').css('color', 'black');
-                $('#order_charge').text(currency((($('#payment_nominal').val())-order_total), { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
-              }else{
-                $('#order_charge').text("Rp. 0");
-                $('#order_charge').css('color', 'red');
-                $('#order_charge').text(currency((($('#payment_nominal').val())-order_total), { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
-              }
-
-
             }
-
-            $('#result-total').text(currency(order_total, { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
-            $('#vat-total').text(currency(_vat_total, { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
-            $('#sub-total').text(currency(sub_total, { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
-
         });
 
-
-
-
-            $("#payment_nominal").on("input", function(){
-              order_total = 0;
-              for (var i = 0; i < orderList.length; i++){
-                  var obj = orderList[i];
-                  order_total = order_total + ((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"])+((((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"]))-(parseFloat(orderList[i]["discount"])))*(parseFloat(orderList[i]["vat_total"])/100)))-(parseFloat(orderList[i]["discount"]));
-
-                  if(($('#payment_nominal').val())>order_total){
-                    $('#order_charge').css('color', 'black');
-                    $('#order_charge').text(currency((($('#payment_nominal').val())-order_total), { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
-                  }else{
-                    $('#order_charge').text("Rp. 0");
-                    $('#order_charge').css('color', 'red');
-                    $('#order_charge').text(currency((($('#payment_nominal').val())-order_total), { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
-                  }
-
-
-                }
-              });
     </script>
 @endpush

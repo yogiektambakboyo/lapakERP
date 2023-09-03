@@ -22,6 +22,7 @@ class PickingDetail extends Model
         'ispicked',
         'product_id',
         'qty',
+        'ref_no',
         'created_by',
         'updated_by',
         'updated_at'

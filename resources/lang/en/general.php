@@ -85,6 +85,7 @@ return [
     "lbl_id" => "ID",
     "lbl_creditlimit" => "Credit Limit",
     "lbl_order_list" => "Daftar Pesanan",
+    "lbl_picking" => "Picking",
 
     "lbl_filterdata" => "Saring Data",
     "lbl_branch" => "Cabang",
@@ -112,6 +113,7 @@ return [
     "lbl_product_new" => "Produk Baru",
     "lbl_add_product_new" => "Tambah Produk Baru",
     "lbl_add_product" => "Tambah Produk",
+    "lbl_add" => "Tambah",
     "lbl_add_service" => "Tambah Perawatan",
     "lbl_service_new" => "Perawatan Baru",
     "lbl_add_service_new" => "Tambah Perawatan Baru",

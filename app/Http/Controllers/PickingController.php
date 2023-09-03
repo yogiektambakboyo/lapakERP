@@ -14,6 +14,8 @@ use App\Models\Settings;
 use App\Models\Supplier;
 use App\Models\Order;
 use App\Models\Picking;
+use App\Models\PickingDetail;
+use App\Models\PickingRef;
 use App\Models\PeriodSellPrice;
 use App\Models\SettingsDocumentNumber;
 use App\Models\OrderDetail;
@@ -76,13 +78,11 @@ class PickingController extends Controller
         $user = Auth::user();
         $act_permission = $this->act_permission[0];
         
-        $invoices = Picking::orderBy('id', 'ASC')
-                ->join('branch as b','b.id','=','b.id')
-                ->join('users_branch as ub', function($join){
-                    $join->on('ub.branch_id', '=', 'b.id')
-                    ->whereColumn('ub.branch_id', 'b.id');
-                })->where('ub.user_id', $user->id)->where('picking_master.dated','>=',Carbon::now()->subDay(7))
-              ->get(['picking_master.doc_no','picking_master.id','b.remark as branch_name','picking_master.dated' ]);
+        $invoices = DB::select("select pm.id,pm.doc_no,pm.dated,count(pd.product_id)  as count_sku
+        from picking_master pm 
+        join picking_detail pd  on pd.doc_no = pm.doc_no
+        join users_branch ub on ub.branch_id = 15 and ub.user_id = ".$id."
+        group by pm.id,pm.doc_no,pm.dated order by 2");
         return view('pages.picking.index',['company' => Company::get()->first()], compact('invoices','data','keyword','act_permission','branchs')); 
     }
 
@@ -220,42 +220,30 @@ class PickingController extends Controller
         $user = Auth::user();
         $branch = Branch::where('id','=',$request->get('customer_id'))->get(['id'])->first();
 
-        //$count_no = DB::select("select max(id) as id from invoice_master om where to_char(om.dated,'YYYY')=to_char(now(),'YYYY') ");
-        $count_no = SettingsDocumentNumber::where('doc_type','=','Invoice Internal')->where('branch_id','=',15)->where('period','=','Yearly')->get(['current_value','abbr']);
-        $invoice_no = $count_no[0]->abbr.'-'.substr(('0015'),-3).'-'.date("Y").'-'.substr(('00000000'.((int)($count_no[0]->current_value) + 1)),-8);
+        $count_no = SettingsDocumentNumber::where('doc_type','=','Picking')->where('branch_id','=',15)->where('period','=','Yearly')->get(['current_value','abbr']);
+        $doc_no = $count_no[0]->abbr.'-'.substr(('0015'),-3).'-'.date("Y").'-'.substr(('00000000'.((int)($count_no[0]->current_value) + 1)),-8);
 
-        SettingsDocumentNumber::where('doc_type','=','Invoice Internal')->where('branch_id','=',15)->where('period','=','Yearly')->update(
+        SettingsDocumentNumber::where('doc_type','=','Picking')->where('branch_id','=',15)->where('period','=','Yearly')->update(
             array_merge(
                 ['current_value' => ((int)($count_no[0]->current_value) + 1)]
             )
         );
 
-        $res_invoice = Invoice::create(
+        $res_ = Picking::create(
             array_merge(
-                ['invoice_no' => $invoice_no ],
+                ['doc_no' => $doc_no ],
                 ['created_by' => $user->id],
-                ['dated' => Carbon::createFromFormat('d-m-Y', $request->get('invoice_date'))->format('Y-m-d') ],
-                ['customers_id' => $request->get('customer_id') ],
-                ['total' => $request->get('total_order') ],
-                ['remark' => $request->get('remark') ],
-                ['customers_name' => Branch::where('id','=',$request->get('customer_id'))->get(['remark'])->first()->remark],
-                ['payment_nominal' => $request->get('payment_nominal') ],
-                ['payment_type' => $request->get('payment_type') ],
-                ['total_payment' => (int)$request->get('payment_nominal')>=(int)$request->get('total_order')?(int)$request->get('total_order'):$request->get('payment_nominal') ],
-                ['is_checkout' => "1" ],
-                ['branch_room_id' => $request->get('branch_room_id')],
-                ['ref_no' => $request->get('ref_no')],
-                ['tax' => $request->get('tax')],
-                ['customer_type' => $request->get('customer_type')],
+                ['dated' => Carbon::createFromFormat('d-m-Y', $request->get('doc_date'))->format('Y-m-d') ],
+                ['ispicked' => "0" ],
             )
         );
 
         
-        if(!$res_invoice){
+        if(!$res_){
             $result = array_merge(
                 ['status' => 'failed'],
                 ['data' => ''],
-                ['message' => 'Save invoice failed'],
+                ['message' => 'Save picking failed'],
             );
     
             return $result;
@@ -263,52 +251,37 @@ class PickingController extends Controller
 
 
         for ($i=0; $i < count($request->get('product')); $i++) { 
-            $res_invoice_detail = InvoiceDetail::create(
+            $res_doc_detail = PickingDetail::create(
                 array_merge(
-                    ['invoice_no' => $invoice_no],
+                    ['doc_no' => $doc_no],
                     ['product_id' => $request->get('product')[$i]["id"]],
                     ['qty' => $request->get('product')[$i]["qty"]],
-                    ['price' => $request->get('product')[$i]["price"]],
-                    ['total' => $request->get('product')[$i]["total"]],
-                    ['discount' => $request->get('product')[$i]["discount"]],
                     ['seq' => $i ],
-                    ['assigned_to' => $request->get('product')[$i]["assignedtoid"]],
-                    ['referral_by' => $request->get('product')[$i]["referralbyid"]],
-                    ['assigned_to_name' => $request->get('product')[$i]["assignedtoid"]==""?"":User::where('id','=',$request->get('product')[$i]["assignedtoid"])->get('name')->first()->name ],
-                    ['referral_by_name' => $request->get('product')[$i]["referralbyid"]==""?"":User::where('id','=',$request->get('product')[$i]["referralbyid"])->get('name')->first()->name],
-                    ['vat' => $request->get('product')[$i]["vat_total"]],
-                    ['vat_total' => ((((int)$request->get('product')[$i]["qty"]*(int)$request->get('product')[$i]["price"])-(int)$request->get('product')[$i]["discount"])/100)*(int)$request->get('product')[$i]["vat_total"]],
-                    ['product_name' => Product::where('id','=',$request->get('product')[$i]["id"])->get('remark')->first()->remark],
                     ['uom' => $request->get('product')[$i]["uom"]],
                     ['ref_no' => $request->get('product')[$i]["po_no"]]
                 )
             );
 
 
-            if(!$res_invoice_detail){
+            if(!$res_doc_detail){
                 $result = array_merge(
                     ['status' => 'failed'],
                     ['data' => ''],
-                    ['message' => 'Save invoice detail failed'],
+                    ['message' => 'Save picking detail failed'],
                 );
         
                 return $result;
             }
 
-
-            DB::update("UPDATE product_stock set qty = qty-".$request->get('product')[$i]['qty']." WHERE branch_id = 15 and product_id = ".$request->get('product')[$i]["id"]);
-            DB::update("update public.period_stock set qty_out=qty_out+".$request->get('product')[$i]['qty']." ,updated_at = now(), balance_end = balance_end - ".$request->get('product')[$i]['qty']." where branch_id = 15 and product_id = ".$request->get('product')[$i]['id']." and periode = to_char(now(),'YYYYMM')::int;");
-
-            DB::update("UPDATE product_stock set qty = qty+".$request->get('product')[$i]['qty']." WHERE branch_id = ".$branch->id." and product_id = ".$request->get('product')[$i]["id"]);
-            DB::update("update public.period_stock set qty_in=qty_in+".$request->get('product')[$i]['qty']." ,updated_at = now(), balance_end = balance_end + ".$request->get('product')[$i]['qty']." where branch_id = ".$branch->id." and product_id = ".$request->get('product')[$i]['id']." and periode = to_char(now(),'YYYYMM')::int;");
-
         }
 
+        $delete_doc = DB::select("delete from picking_ref where doc_no='".$doc_no."';");
+        $insert_doc = DB::select("insert into picking_ref(doc_no,ref_no,created_at) select distinct doc_no,ref_no,now() from picking_detail where doc_no='".$doc_no."';");
 
         $result = array_merge(
             ['status' => 'success'],
-            ['data' => Invoice::where('invoice_no','=',$invoice_no)->get('id')->first()->id ],
-            ['message' => $invoice_no],
+            ['data' => Picking::where('doc_no','=',$doc_no)->get('id')->first()->id ],
+            ['message' => $doc_no],
         );
 
         return $result;
@@ -535,17 +508,13 @@ class PickingController extends Controller
      * 
      * @return \Illuminate\Http\Response
      */
-    public function edit(Invoice $invoice) 
+    public function edit(Picking $picking) 
     {
         $user = Auth::user();
         $id = $user->roles->first()->id;
         $this->getpermissions($id);
         $data = $this->data;
 
-        DB::update(" insert into invoice_detail_log SELECT invoice_no, product_id, qty, price, total, discount, seq, assigned_to, referral_by, updated_at, created_at, uom, product_name, vat, vat_total, assigned_to_name, referral_by_name, price_purchase, executed_at, now(), ref_no FROM invoice_detail where invoice_no = '".$invoice->invoice_no."'; ");
-
-
-        $room = Room::where('branch_room.id','=',$invoice->branch_room_id)->get(['branch_room.remark'])->first();
         $payment_type = ['Cash','BCA - Debit','BCA - Kredit','Mandiri - Debit','Mandiri - Kredit','Transfer','QRIS'];
         $usersall = User::join('users_branch as ub','ub.branch_id', '=', 'users.branch_id')->where('ub.user_id','=',$user->id)->whereIn('users.job_id',[1,2])->get(['users.id','users.name']);
         $users = User::join('users_branch as ub','ub.branch_id', '=', 'users.branch_id')->where('ub.user_id','=',$user->id)->where('users.job_id','=',2)->get(['users.id','users.name']);
@@ -555,16 +524,9 @@ class PickingController extends Controller
         return view('pages.picking.edit',[
             'customers' => Branch::join('users_branch as ub','ub.branch_id', '=', 'branch.id')->where('branch.remark','not like','%PUSAT%')->where('branch.id','>',1)->where('ub.user_id',$user->id)->orderBy('branch.remark')->get(['branch.id','branch.remark']),
             'data' => $data,
-            'invoice' => $invoice,
-            'room' => $room,
-            'usersall' => $usersall,
-            'type_customers' => $type_customer,
-            'orders' => Order::where('is_checkout','0')->get(),
-            'rooms' => Room::join('users_branch as ub','ub.branch_id', '=', 'branch_room.branch_id')->where('ub.user_id','=',$user->id)->get(['branch_room.id','branch_room.remark']),
-            'users' => $users,
-            'orderDetails' => InvoiceDetail::join('invoice_master as om','om.invoice_no','=','invoice_detail.invoice_no')->join('product_sku as ps','ps.id','=','invoice_detail.product_id')->join('product_uom as u','u.product_id','=','invoice_detail.product_id')->join('uom as um','um.id','=','u.uom_id')->leftjoin('users as us','us.id','=','invoice_detail.assigned_to')->where('invoice_detail.invoice_no',$invoice->invoice_no)->orderBy('invoice_detail.seq')->get(['invoice_detail.seq','us.name as assigned_to','um.remark as uom','invoice_detail.qty','invoice_detail.price','invoice_detail.total','ps.id','ps.remark as product_name','invoice_detail.discount']),
-            'usersReferrals' => $usersReferral,
-            'payment_type' => $payment_type, 'company' => Company::get()->first(),
+            'doc_data' => $picking,
+            'data_details' => PickingDetail::join('picking_master as om','om.doc_no','=','picking_detail.doc_no')->join('product_sku as ps','ps.id','=','picking_detail.product_id')->join('product_uom as u','u.product_id','=','picking_detail.product_id')->join('uom as um','um.id','=','u.uom_id')->where('picking_detail.doc_no',$picking->doc_no)->get(['picking_detail.qty','ps.id','ps.remark as product_name','picking_detail.ref_no as po_no']),
+            'company' => Company::get()->first(),
         ]);
     }
 
@@ -575,26 +537,23 @@ class PickingController extends Controller
      * 
      * @return \Illuminate\Http\Response
      */
-    public function getinvoice(String $invoice_no) 
+    public function getdoc_data(String $doc_no) 
     {
         $data = $this->data;
         $user = Auth::user();
-        $product = DB::select(" select pt.remark as type,od.qty,od.product_id,od.discount,od.price,od.total,ps.remark,ps.abbr,um.remark as uom,od.assigned_to_name as assignedto,od.assigned_to as assignedtoid,od.vat,od.vat_total,od.referral_by,od.referral_by_name
-        from invoice_detail od 
-        join invoice_master om on om.invoice_no = od.invoice_no
-        join product_sku ps on ps.id=od.product_id
-        join product_type pt on pt.id=ps.type_id
-        join product_uom uo on uo.product_id = od.product_id
-        join uom um on um.id=uo.uom_id 
-        where od.invoice_no='".$invoice_no."' order by od.seq");
+        $product = DB::select(" select o.remark as uom,pd.doc_no,pd.product_id,ps.abbr,ps.remark as product_name,pd.qty,pd.ref_no as po_no from picking_master pm 
+        join picking_detail pd on pd.doc_no = pm.doc_no 
+        join product_sku ps on ps.id = pd.product_id 
+        join product_uom uo on uo.product_id=ps.id
+        join uom o on o.id= uo.uom_id
+        where pd.doc_no='".$doc_no."'");
         
         return $product;
         return Datatables::of($product)
         ->addColumn('action', function ($product) {
             return  '<a href="#"  data-toggle="tooltip" data-placement="top" title="Tambah"   id="add_row"  class="btn btn-xs btn-green"><div class="fa-1x"><i class="fas fa-circle-plus fa-fw"></i></div></a>'.
             '<a href="#"  data-toggle="tooltip" data-placement="top" title="Kurangi"   id="minus_row"  class="btn btn-xs btn-yellow"><div class="fa-1x"><i class="fas fa-circle-minus fa-fw"></i></div></a>'.
-            '<a href="#" data-toggle="tooltip" data-placement="top" title="Hapus"  id="delete_row"  class="btn btn-xs btn-danger"><div class="fa-1x"><i class="fas fa-circle-xmark fa-fw"></i></div></a>'.
-            '<a href="#"  data-toggle="tooltip" data-placement="top" title="Terapis" id="assign_row" class="btn btn-xs btn-gray"><div class="fa-1x"><i class="fas fa-user-tag fa-fw"></i></div></a>';
+            '<a href="#" data-toggle="tooltip" data-placement="top" title="Hapus"  id="delete_row"  class="btn btn-xs btn-danger"><div class="fa-1x"><i class="fas fa-circle-xmark fa-fw"></i></div></a>';
         })->make();
     }
 
@@ -606,99 +565,60 @@ class PickingController extends Controller
      * 
      * @return \Illuminate\Http\Response
      */
-    public function update(Invoice $invoice, Request $request) 
+    public function update(Picking $picking, Request $request) 
     {
 
         $user = Auth::user();
-        $invoice_no = $request->get('invoice_no');
-
-        $last_data = InvoiceDetail::where('invoice_detail.invoice_no','=',$invoice_no)->get('invoice_detail.*');
+        $doc_no = $request->get('doc_no');
         $branch_id = $request->get('customer_id');
+        PickingDetail::where('doc_no', $doc_no)->delete();
 
-
-        for ($i=0; $i < count($last_data); $i++) { 
-            DB::update("UPDATE product_stock set qty = qty+".$last_data[$i]['qty']." WHERE branch_id = 15 and product_id = ".$last_data[$i]["product_id"].";");
-            DB::update("update public.period_stock set qty_out=qty_out-".$last_data[$i]['qty']." ,updated_at = now(), balance_end = balance_end + ".$last_data[$i]['qty']."  WHERE branch_id = 15 and product_id = ".$last_data[$i]["product_id"]."  and periode = to_char(now(),'YYYYMM')::int;");
-
-            DB::update("UPDATE product_stock set qty = qty-".$last_data[$i]['qty']." WHERE branch_id = ".$branch_id." and product_id = ".$last_data[$i]["product_id"].";");
-            DB::update("update public.period_stock set qty_in=qty_in-".$last_data[$i]['qty']." ,updated_at = now(), balance_end = balance_end + ".$last_data[$i]['qty']."  WHERE branch_id = ".$branch_id." and product_id = ".$last_data[$i]["product_id"]."  and periode = to_char(now(),'YYYYMM')::int;");
-        }
-
-        InvoiceDetail::where('invoice_no', $invoice_no)->delete();
-
-        $res_invoice = $invoice->update(
+        $res_= $picking->update(
             array_merge(
                 ['updated_by'   => $user->id],
-                ['dated' => Carbon::createFromFormat('d-m-Y', $request->get('invoice_date'))->format('Y-m-d') ],
-                ['customers_id' => $request->get('customer_id') ],
-                ['total' => $request->get('total_order') ],
-                ['remark' => $request->get('remark') ],
-                ['payment_nominal' => $request->get('payment_nominal') ],
-                ['payment_type' => $request->get('payment_type') ],
-                ['customers_name' => Branch::where('id','=',$request->get('customer_id'))->get(['remark'])->first()->remark  ],
-                ['total_payment' => (int)$request->get('payment_nominal')>=(int)$request->get('total_order')?(int)$request->get('total_order'):$request->get('payment_nominal') ],
-                ['scheduled_at' => Carbon::parse($request->get('scheduled_at'))->format('Y-m-d H:i:s.u') ],
-                ['branch_room_id' => $request->get('branch_room_id')],
-                ['ref_no' => $request->get('ref_no')],
-                ['tax' => $request->get('tax')],
-                ['customer_type' => $request->get('customer_type')],
+                ['dated' => Carbon::createFromFormat('d-m-Y', $request->get('dated'))->format('Y-m-d') ],
             )
         );
 
-        if(!$res_invoice){
+        if(!$res_){
             $result = array_merge(
                 ['status' => 'failed'],
                 ['data' => ''],
-                ['message' => 'Save invoice failed'],
+                ['message' => 'Save picking failed'],
             );
     
             return $result;
         }
 
         for ($i=0; $i < count($request->get('product')); $i++) { 
-            $res_invoice_detail = InvoiceDetail::create(
+            $res_detail = PickingDetail::create(
                 array_merge(
-                    ['invoice_no' => $invoice_no],
+                    ['doc_no' => $doc_no],
                     ['product_id' => $request->get('product')[$i]["id"]],
                     ['qty' => $request->get('product')[$i]["qty"]],
-                    ['price' => $request->get('product')[$i]["price"]],
-                    ['total' => $request->get('product')[$i]["total"]],
-                    ['discount' => $request->get('product')[$i]["discount"]],
                     ['seq' => $i ],
-                    ['assigned_to' => $request->get('product')[$i]["assignedtoid"]],
-                    ['referral_by' => $request->get('product')[$i]["referralbyid"]],
-                    ['assigned_to_name' => $request->get('product')[$i]["assignedtoid"]==""?"":User::where('id','=',$request->get('product')[$i]["assignedtoid"])->get('name')->first()->name ],
-                    ['referral_by_name' => $request->get('product')[$i]["referralbyid"]==""?"":User::where('id','=',$request->get('product')[$i]["referralbyid"])->get('name')->first()->name],
-                    ['vat' => $request->get('product')[$i]["vat_total"]],
-                    ['vat_total' => ((((int)$request->get('product')[$i]["qty"]*(int)$request->get('product')[$i]["price"])-(int)$request->get('product')[$i]["discount"])/100)*(int)$request->get('product')[$i]["vat_total"]],
-                    ['product_name' => $request->get('product')[$i]["abbr"]],
                     ['uom' => $request->get('product')[$i]["uom"]],
-                    ['ref_no' => $request->get('product')[$i]["po_no"]],
-
+                    ['ref_no' => $request->get('product')[$i]["po_no"]]
                 )
             );
 
-
-            DB::update("UPDATE product_stock set qty = qty-".$request->get('product')[$i]['qty']." WHERE branch_id = 15 and product_id = ".$request->get('product')[$i]["id"]);
-            DB::update("update public.period_stock set qty_out=qty_out+".$request->get('product')[$i]['qty']." ,updated_at = now(), balance_end = balance_end - ".$request->get('product')[$i]['qty']." where branch_id =15 and product_id = ".$request->get('product')[$i]['id']." and periode = to_char(now(),'YYYYMM')::int;");
-
-            DB::update("UPDATE product_stock set qty = qty+".$request->get('product')[$i]['qty']." WHERE branch_id = ".$branch_id." and product_id = ".$request->get('product')[$i]["id"]);
-            DB::update("update public.period_stock set qty_in=qty_in+".$request->get('product')[$i]['qty']." ,updated_at = now(), balance_end = balance_end + ".$request->get('product')[$i]['qty']." where branch_id = ".$branch_id." and product_id = ".$request->get('product')[$i]['id']." and periode = to_char(now(),'YYYYMM')::int;");
-
-            if(!$res_invoice_detail){
+            if(!$res_detail){
                 $result = array_merge(
                     ['status' => 'failed'],
                     ['data' => ''],
-                    ['message' => 'Save invoice detail failed'],
+                    ['message' => 'Save picking detail failed'],
                 );
         
                 return $result;
             }           
         }
 
+        $delete_doc = DB::select("delete from picking_ref where doc_no='".$doc_no."';");
+        $insert_doc = DB::select("insert into picking_ref(doc_no,ref_no,created_at) select distinct doc_no,ref_no,now() from picking_detail where doc_no='".$doc_no."';");
+
         $result = array_merge(
             ['status' => 'success'],
-            ['data' => $invoice_no],
+            ['data' => $doc_no],
             ['message' => 'Save Successfully'],
         );
 

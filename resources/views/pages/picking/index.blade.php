@@ -31,24 +31,22 @@
         <table class="table table-striped" id="example">
             <thead>
             <tr>
-                <th scope="col" width="14%">@lang('general.lbl_branch')</th>
                 <th>Document No</th>
                 <th scope="col" width="8%">@lang('general.lbl_dated')</th>
                 <th scope="col" width="10%">Total SKU</th>
                 <th scope="col" width="2%" class="nex">@lang('general.lbl_action')</th>   
+                <th scope="col" width="2%" class="nex"></th>   
             </tr>
             </thead>
             <tbody>
 
                 @foreach($invoices as $order)
                     <tr>
-                        <td>{{ $order->branch_name }}</td>
-                        <td>{{ $order->invoice_no }}</td>
+                        <td>{{ $order->doc_no }}</td>
                         <td>{{ Carbon\Carbon::parse($order->dated)->format('d-m-Y') }}</td>
-                        <td>{{ $order->customer }}</td>
-                        <td>{{ number_format($order->total,0,',','.') }}</td>
-                        <td>{{ number_format($order->total_payment,0,',','.') }}</td>
-                        <td><a href="{{ route('invoicesinternal.show', $order->id) }}" class="btn btn-warning btn-sm  {{ $act_permission->allow_show==1?'':'d-none' }}">@lang('general.lbl_show')</a></td>
+                        <td>{{ number_format($order->count_sku,0,',','.') }}</td>
+                        <td><a href="{{ route('picking.show', $order->id) }}" class="btn btn-warning btn-sm  {{ $act_permission->allow_show==1?'':'d-none' }}">@lang('general.lbl_show')</a></td>
+                        <td><a href="{{ route('picking.edit', $order->id) }}" class="btn btn-info btn-sm  {{ $act_permission->allow_edit==1?'':'d-none' }}">@lang('general.lbl_edit')</a></td>
                     </tr>
                 @endforeach
             </tbody>

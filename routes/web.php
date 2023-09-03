@@ -168,7 +168,7 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
             Route::get('/{picking}/print', 'PickingController@print')->name('picking.print');
             Route::get('/getproduct', 'PickingController@getproduct')->name('picking.getproduct');
             Route::get('/gettimetable', 'PickingController@gettimetable')->name('picking.gettimetable');
-            Route::get('/{picking}/getinvoice', 'PickingController@getinvoice')->name('picking.getinvoice');
+            Route::get('/{picking}/getdoc_data', 'PickingController@getdoc_data')->name('picking.getdoc_data');
             Route::patch('/{picking}/update', 'PickingController@update')->name('picking.update');
             Route::delete('/{picking}/delete', 'PickingController@destroy')->name('picking.destroy');
             Route::get('/export', 'PickingController@export')->name('picking.export');
@@ -233,6 +233,7 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
             Route::patch('/{purchase}/updatestatus', 'PurchaseOrderInternalController@updatestatus')->name('purchaseordersinternal.updatestatus');
             Route::get('/{purchase}/getdocdata', 'PurchaseOrderInternalController@getdocdata')->name('purchaseordersinternal.getdocdata');
             Route::get('/{branch_id}/getdocdatabyvendor', 'PurchaseOrderInternalController@getdocdatabyvendor')->name('purchaseordersinternal.getdocdatabyvendor');
+            Route::get('/{branch_id}/getdocdatanotpicked', 'PurchaseOrderInternalController@getdocdatanotpicked')->name('purchaseordersinternal.getdocdatanotpicked');
             Route::delete('/{purchase}/delete', 'PurchaseOrderInternalController@destroy')->name('purchaseordersinternal.destroy');
             Route::get('/export', 'PurchaseOrderInternalController@export')->name('purchaseordersinternal.export');
         });
