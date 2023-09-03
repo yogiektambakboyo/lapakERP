@@ -450,6 +450,18 @@ class PurchaseOrderInternalController extends Controller
         return $list_purchase;
     }
 
+    public function getdocdatapicked(String $branch_id) 
+    {
+        $data = $this->data;
+        $user = Auth::user();
+        $list_purchase = DB::select(" select distinct om.purchase_no,dated
+        from purchase_master om
+        where om.branch_id='".$branch_id."' and om.supplier_id = 5 and om.purchase_no in (select distinct ref_no from picking_ref) ");
+        
+        return $list_purchase;
+    }
+
+
     /**
      * Update user data
      * 

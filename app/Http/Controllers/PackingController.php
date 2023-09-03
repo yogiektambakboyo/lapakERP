@@ -81,9 +81,9 @@ class PackingController extends Controller
         $user = Auth::user();
         $act_permission = $this->act_permission[0];
         
-        $invoices = DB::select("select pm.id,pm.doc_no,pm.dated,count(pd.product_id)  as count_sku
-        from picking_master pm 
-        join picking_detail pd  on pd.doc_no = pm.doc_no
+        $invoices = DB::select("select pm.id,pm.doc_no,pm.customer_id,pm.remark,pm.dated,count(pd.product_id)  as count_sku
+        from packing_master pm 
+        join packing_detail pd  on pd.doc_no = pm.doc_no
         join users_branch ub on ub.branch_id = 15 and ub.user_id = ".$id."
         group by pm.id,pm.doc_no,pm.dated order by 2");
         return view('pages.packing.index',['company' => Company::get()->first()], compact('invoices','data','keyword','act_permission','branchs')); 

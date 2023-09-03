@@ -1,14 +1,14 @@
 @extends('layouts.default', ['appSidebarSearch' => true])
 
-@section('title', 'Create New Picking')
+@section('title', 'Create New Packing')
 
 @section('content')
   @csrf
   <div class="panel text-white">
     <div class="panel-heading  bg-teal-600">
-      <div class="panel-title"><h4 class="">@lang('general.lbl_picking')</h4></div>
+      <div class="panel-title"><h4 class="">Pengemasan Pesanan</h4></div>
       <div class="">
-        <a href="{{ route('picking.index') }}" class="btn btn-default">@lang('general.lbl_cancel')</a>
+        <a href="{{ route('packing.index') }}" class="btn btn-default">@lang('general.lbl_cancel')</a>
         <button type="button" id="save-btn" class="btn btn-info">@lang('general.lbl_save')</button>
       </div>
     </div>
@@ -79,6 +79,34 @@
               </div>
               </div>
             </div>
+
+            <div class="modal fade" id="modal-picking" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+              <div class="modal-dialog">
+              <div class="modal-content">
+                  <div class="modal-header">
+                  <h5 class="modal-title" id="staticBackdropLabel">Apply Picking</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
+                    <label class="form-label col-form-label col-md-8" id="product_id_selected_lbl">Silahkan pilih Dokumen Picking </label>
+                    <input type="hidden" id="product_id_selected" value="">
+                    <div class="col-md-8">
+                      <select class="form-control" 
+                          name="po_list" id="po_list" required>
+                          <option value=""> Pilih No Picking </option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">@lang('general.lbl_close') </button>
+                  <button type="button" class="btn btn-primary"  data-bs-dismiss="modal" id="btn_add_po">@lang('general.lbl_apply')</button>
+                  </div>
+              </div>
+              </div>
+            </div>
+
+
+
           </div>
         </div>
 
@@ -87,9 +115,9 @@
         <div class="panel-heading bg-teal-600 text-white"><strong>@lang('general.lbl_order_list')</strong></div>
         <div class="row mb-3 mt-2">
           <div class="row mb-1">
-            <div class="col-md-4">
+            <div class="col-md-3">
               <label class="form-label col-form-label">@lang('general.product')</label>
-              <select class="form-control" 
+              <select class="form-control form-control-sm" 
                     name="input_product_id" id="input_product_id" required>
                     <option value="">@lang('general.lbl_productselect')</option>
                 </select>
@@ -101,30 +129,32 @@
               <input type="text" 
               name="input_product_uom"
               id="input_product_uom"
-              class="form-control" 
+              class="form-control form-control-sm" 
               value="{{ old('input_product_uom') }}" required disabled/>
             </div>
 
             <div class="col-md-1">
-              <label class="form-label col-form-label">@lang('general.lbl_qty')</label>
+              <label class="form-label  col-form-label">@lang('general.lbl_qty')</label>
               <input type="text" 
               name="input_product_qty"
               id="input_product_qty"
-              class="form-control" 
+              class="form-control form-control-sm" 
               value="{{ old('input_product_qty') }}" required/>
             </div>
   
             <div class="col-md-2">
               <div class="col-md-12"><label class="form-label col-form-label">_</label></div>
-              <a href="#" id="input_product_submit" class="btn btn-green"><div class="fa-1x"><i class="fas fa-plus fa-fw"></i>@lang('general.lbl_add_product')</div></a>
-            </div>
-
-            <div class="col-md-1">
+              <a href="#" id="input_product_submit" class="btn btn-green btn-sm"><div class="fa-1x"><i class="fas fa-plus fa-fw"></i>@lang('general.lbl_add_product')</div></a>
             </div>
 
             <div class="col-md-2">
               <div class="col-md-12"><label class="form-label col-form-label">_</label></div>
-              <button class="btn btn-primary" href="#modal-filter" data-bs-toggle="modal" data-bs-target="#modal-filter">@lang('general.lbl_add') dari PO</button>
+              <button class="btn btn-primary btn-sm" href="#modal-filter" data-bs-toggle="modal" data-bs-target="#modal-filter">@lang('general.lbl_add') dari PO</button>
+            </div>
+
+            <div class="col-md-2">
+              <div class="col-md-12"><label class="form-label col-form-label">_</label></div>
+              <button class="btn btn-outline-warning btn-sm d-none" id="btn-picking" href="#modal-filter" data-bs-toggle="modal" data-bs-target="#modal-picking">Apply Picking</button>
             </div>
   
           </div>
@@ -135,10 +165,11 @@
           <thead>
           <tr>
               <th scope="col"  width="3%">No</th>
-              <th scope="col" >PO No</th>
+              <th scope="col" width="16%">PO No</th>
               <th scope="col" >@lang('general.product')</th>
               <th scope="col" width="10%">@lang('general.lbl_uom')</th>
-              <th scope="col" width="5%">@lang('general.lbl_qty')</th>
+              <th scope="col" width="10%">@lang('general.lbl_qty') Order</th>
+              <th scope="col" width="10%">@lang('general.lbl_qty') Packing</th>
               <th scope="col" width="15%" class="nex">@lang('general.lbl_action')</th> 
           </tr>
           </thead>
@@ -183,7 +214,7 @@
     let list_po;
       $(function () {
         $('#customer_id').select2();
-        var xurl = "{{ route('purchaseordersinternal.getdocdatanotpicked','16') }}";
+        var xurl = "{{ route('purchaseordersinternal.getdocdatapicked','16') }}";
         var xlastvalurl = "16";
         $('#customer_id').on('change',function(){
           // Begin Call API
@@ -390,7 +421,13 @@
                 console.log(resp.data);
                 for (let index = 0; index < resp.data.length; index++) {
                   const element = resp.data[index];
-                  addProduct(element.product_id,element.remark, element.qty, element.uom,element.purchase_no)
+                  addProduct(element.product_id,element.remark, element.qty, element.uom,element.purchase_no);
+                }
+
+                if(resp.data.length>0){
+                  $('#btn-picking').removeClass("d-none");
+                }else{
+                  $('#btn-picking').addClass("d-none");
                 }
                 
             });
@@ -458,7 +495,7 @@
                   tax : _vat_total,
                 }
               );
-              const res = axios.post("{{ route('picking.store') }}", json, {
+              const res = axios.post("{{ route('packing.store') }}", json, {
                 headers: {
                   // Overwrite Axios's automatically set Content-Type
                   'Content-Type': 'application/json'
@@ -477,16 +514,16 @@
                       }).then((result) => {
                         /* Read more about isConfirmed, isDenied below */
                         if (result.isConfirmed) {
-                          burl ="{{ route('picking.print', 'WWWW') }}";
+                          burl ="{{ route('packing.print', 'WWWW') }}";
                           burl = burl.replace('WWWW', resp.data.data)
                           //window.location.href = burl; 
                           window.open(
                             burl,
                             '_blank' // <- This is what makes it open in a new window.
                           );
-                          window.location.href = "{{ route('picking.index') }}"; 
+                          window.location.href = "{{ route('packing.index') }}"; 
                         } else{
-                          window.location.href = "{{ route('picking.index') }}"; 
+                          window.location.href = "{{ route('packing.index') }}"; 
                         }
                       })
                     }else{
@@ -534,6 +571,7 @@
             { data: 'abbr' },
             { data: 'uom' },
             { data: 'qty' },
+            { data: 'qty_pack' },
             { data: null},
         ],
         });
@@ -551,6 +589,7 @@
                 "abbr"      : abbr,
                 "uom"      : uom,
                 "qty"       : qty,
+                "qty_pack"       : 0,
                 "entry_time" : entry_time,
                 "po_no" : po_no,
                 "seq" : 999,
@@ -587,6 +626,7 @@
                   "id"        : obj["id"],
                   "abbr"      : obj["abbr"],
                   "uom"       : obj["uom"],
+                  "qty_pack"       : obj["qty_pack"],
                   "po_no"      : obj["po_no"],
                   "qty"       : obj["qty"],
                   "action"    : "",
@@ -671,6 +711,7 @@
                       "abbr"      : obj["abbr"],
                       "uom"       : obj["uom"],
                       "qty"       : obj["qty"],
+                  "qty_pack"       : obj["qty_pack"],
                       "assignedto": obj["assignedto"],
                       "po_no"      : obj["po_no"],
                       "referralby" : obj["referralby"],

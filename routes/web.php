@@ -255,6 +255,7 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
             Route::get('/{purchase}/getdocdata', 'PurchaseOrderInternalController@getdocdata')->name('purchaseordersinternal.getdocdata');
             Route::get('/{branch_id}/getdocdatabyvendor', 'PurchaseOrderInternalController@getdocdatabyvendor')->name('purchaseordersinternal.getdocdatabyvendor');
             Route::get('/{branch_id}/getdocdatanotpicked', 'PurchaseOrderInternalController@getdocdatanotpicked')->name('purchaseordersinternal.getdocdatanotpicked');
+            Route::get('/{branch_id}/getdocdatapicked', 'PurchaseOrderInternalController@getdocdatapicked')->name('purchaseordersinternal.getdocdatapicked');
             Route::delete('/{purchase}/delete', 'PurchaseOrderInternalController@destroy')->name('purchaseordersinternal.destroy');
             Route::get('/export', 'PurchaseOrderInternalController@export')->name('purchaseordersinternal.export');
         });
