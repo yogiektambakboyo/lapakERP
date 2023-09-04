@@ -3,14 +3,14 @@
 @section('title', 'Edit Picking')
 
 @section('content')
-<form method="POST" action="{{ route('invoicesinternal.store') }}"  enctype="multipart/form-data">
+<form method="POST" action="{{ route('packing.store') }}"  enctype="multipart/form-data">
   @csrf
   <div class="panel text-white">
     <div class="panel-heading  bg-teal-600">
       <div class="panel-title"><h4 class="">@lang('general.lbl_picking') </h4></div>
       <div class="">
-        <a href="{{ route('picking.print', $doc_data->id) }}" target="_blank" class="btn btn-warning"><i class="fas fa-print"></i> @lang('general.lbl_print')</a>
-        <a href="{{ route('picking.index') }}" class="btn btn-default">@lang('general.lbl_back')</a>
+        <a href="{{ route('packing.print', $doc_data->id) }}" target="_blank" class="btn btn-warning"><i class="fas fa-print"></i> @lang('general.lbl_print')</a>
+        <a href="{{ route('packing.index') }}" class="btn btn-default">@lang('general.lbl_back')</a>
       </div>
     </div>
     <div class="panel-body bg-white text-black">
@@ -137,64 +137,7 @@
       var disc_total = 0;
       var _vat_total = 0;
       var sub_total = 0;
-        
-        $('#save-btn').on('click',function(){
-          if($('#dated').val()==''){
-            $('#dated').focus();
-            Swal.fire(
-              {
-                position: 'top-end',
-                icon: 'warning',
-                text: 'Please choose date',
-                showConfirmButton: false,
-                imageHeight: 30, 
-                imageWidth: 30,   
-                timer: 1500
-              }
-            );
-          }else if(orderList.length<=0){
-            Swal.fire(
-              {
-                position: 'top-end',
-                icon: 'warning',
-                text: 'Please choose at least 1 product',
-                showConfirmButton: false,
-                imageHeight: 30, 
-                imageWidth: 30,   
-                timer: 1500
-              }
-            );
-          }else{
-            const json = JSON.stringify({
-                  dated : $('#dated').val(),
-                  doc_no : $('#doc_no').val(),
-                  product : orderList,
-                }
-              );
-              const res = axios.patch("{{ route('picking.update',$doc_data->id) }}", json, {
-                headers: {
-                  // Overwrite Axios's automatically set Content-Type
-                  'Content-Type': 'application/json'
-                }
-              }).then(resp => {
-                    if(resp.data.status=="success"){
-                      window.location.href = "{{ route('picking.index') }}"; 
-                    }else{
-                      Swal.fire(
-                        {
-                          position: 'top-end',
-                          icon: 'warning',
-                          text: "@lang('general.lbl_msg_failed')"+resp.data.message,
-                          showConfirmButton: false,
-                          imageHeight: 30, 
-                          imageWidth: 30,   
-                          timer: 1500
-                        }
-                      );
-                    }
-              });
-          }
-        });
+      
         
         var table_product = $('#order_product_table').DataTable({
           columnDefs: [{ 
@@ -465,7 +408,7 @@
           });
 
             //Get Invoice 
-            const resInvoice = axios.get("{{ route('picking.getdoc_data',$doc_data->doc_no) }}", {
+            const resInvoice = axios.get("{{ route('packing.getdoc_data',$doc_data->doc_no) }}", {
               headers: {
                 // Overwrite Axios's automatically set Content-Type
                 'Content-Type': 'application/json'
