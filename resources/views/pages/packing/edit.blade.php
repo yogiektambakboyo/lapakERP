@@ -3,13 +3,12 @@
 @section('title', 'Edit Picking')
 
 @section('content')
-<form method="POST" action=""  enctype="multipart/form-data">
   @csrf
   <div class="panel text-white">
     <div class="panel-heading  bg-teal-600">
-      <div class="panel-title"><h4 class="">@lang('general.lbl_picking') </h4></div>
+      <div class="panel-title"><h4 class="">@lang('general.lbl_picking') #{{ $doc_data->doc_no }} </h4></div>
       <div class="">
-        <a href="{{ route('picking.index') }}" class="btn btn-default">@lang('general.lbl_cancel')</a>
+        <a href="{{ route('packing.index') }}" class="btn btn-default">@lang('general.lbl_cancel')</a>
         <button type="button" id="save-btn" class="btn btn-info">@lang('general.lbl_save')</button>
       </div>
     </div>
@@ -47,7 +46,7 @@
               </div>
 
               <label class="form-label col-form-label col-md-1">@lang('general.lbl_customer')</label>
-              <div class="col-md-2">
+              <div class="col-md-4">
                 <select class="form-control" 
                     name="customer_id" id="customer_id" required>
                     <option value="">@lang('general.lbl_customerselect')</option>
@@ -111,6 +110,66 @@
             <a href="#" id="input_product_submit" class="btn btn-green"><div class="fa-1x"><i class="fas fa-plus fa-fw"></i>@lang('general.lbl_add_product')</div></a>
           </div>
 
+          <div class="col-md-2">
+            <div class="col-md-12"><label class="form-label col-form-label">_</label></div>
+            <button class="btn btn-primary btn-sm" href="#modal-filter" data-bs-toggle="modal" data-bs-target="#modal-filter">@lang('general.lbl_add') dari PO</button>
+          </div>
+
+          <div class="col-md-2">
+            <div class="col-md-12"><label class="form-label col-form-label">_</label></div>
+            <button class="btn btn-outline-warning btn-sm " id="btn-picking" href="#modal-picking" data-bs-toggle="modal" data-bs-target="#modal-picking">Apply Picking</button>
+          </div>
+
+        </div>
+
+        <div class="modal fade" id="modal-filter" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+          <div class="modal-dialog">
+          <div class="modal-content">
+              <div class="modal-header">
+              <h5 class="modal-title" id="staticBackdropLabel">Tambah PO Internal</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                <label class="form-label col-form-label col-md-8" id="product_id_selected_lbl">Silahkan pilih PO internal </label>
+                <input type="hidden" id="product_id_selected" value="">
+                <div class="col-md-8">
+                  <select class="form-control" 
+                      name="po_list" id="po_list" required>
+                      <option value=""> Pilih PO Internal </option>
+                  </select>
+                </div>
+              </div>
+              <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">@lang('general.lbl_close') </button>
+              <button type="button" class="btn btn-primary"  data-bs-dismiss="modal" id="btn_add_po">@lang('general.lbl_apply')</button>
+              </div>
+          </div>
+          </div>
+        </div>
+
+        <div class="modal fade" id="modal-picking" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+          <div class="modal-dialog">
+          <div class="modal-content">
+              <div class="modal-header">
+              <h5 class="modal-title" id="staticBackdropLabel">Apply Picking</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                <label class="form-label col-form-label col-md-8" id="product_id_selected_lbl">Silahkan pilih Dokumen Picking </label>
+                <input type="hidden" id="product_id_selected" value="">
+                <div class="col-md-8">
+                  <select class="form-control" 
+                      name="picking_list" id="picking_list" required>
+                      <option value=""> Pilih No Picking </option>
+                  </select>
+                </div>
+              </div>
+              <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">@lang('general.lbl_close') </button>
+              <button type="button" class="btn btn-primary"  data-bs-dismiss="modal" id="btn_add_picking">@lang('general.lbl_apply')</button>
+              </div>
+          </div>
+          </div>
         </div>
 
          <table class="table table-striped" id="order_product_table">
@@ -119,7 +178,8 @@
               <th scope="col" width="5%">#</th>
               <th scope="col">PO No</th>
               <th scope="col">@lang('general.product')</th>
-              <th scope="col" width="5%">@lang('general.lbl_qty')</th>
+              <th scope="col" width="5%">@lang('general.lbl_qty') Order</th>
+              <th scope="col" width="5%">@lang('general.lbl_qty') Packing</th>
               <th scope="col" width="5%">@lang('general.lbl_uom')</th>
               <th scope="col" width="15%" class="nex">@lang('general.lbl_action')</th> 
           </tr>
@@ -157,14 +217,15 @@
 
     </div>
   </div>
-</form>
 @endsection
 
 @push('scripts')
     <script type="text/javascript">
+    let list_po,list_picking;
       $(function () {
           //$('#app').removeClass('app app-sidebar-fixed app-header-fixed-minified').addClass('app app-sidebar-fixed app-header-fixed-minified app-sidebar-minified');
-          
+          $('#customer_id').select2();
+
           const today = new Date();
           const yyyy = today.getFullYear();
           let mm = today.getMonth() + 1; // Months start at 0!
@@ -178,6 +239,61 @@
               dateFormat: 'dd-mm-yy',
               todayHighlight: true,
           });
+
+          var xurl = "{{ route('purchaseordersinternal.getdocdatapicked','16') }}";
+          var xlastvalurl = "16";
+          $('#customer_id').on('change',function(){
+            // Begin Call API
+            xurl = xurl.replace(xlastvalurl, $('#customer_id').find(':selected').val())
+            xlastvalurl = $(this).val();
+            const res = axios.get(xurl, {
+              headers: {
+                  'Content-Type': 'application/json'
+                }
+            }).then(resp => {
+                list_po = resp.data;
+
+                $('#po_list').find('option').remove();
+
+                for (let index = 0; index < list_po.length; index++) {
+                  const element = list_po[index];
+                  $('#po_list').append($('<option>', {
+                      value: element.purchase_no,
+                      text: element.purchase_no+' ('+element.dated+')'
+                  }));
+                }
+                
+            });
+            // End Call API
+          });
+
+          var xurlp = "{{ route('picking.getdocdatapickedlist','16') }}";
+          var xlastvalurlp = "16";
+          $('#customer_id').on('change',function(){
+            // Begin Call API
+            xurlp = xurlp.replace(xlastvalurlp, $('#customer_id').find(':selected').val())
+            xlastvalurlp = $(this).val();
+            const res = axios.get(xurlp, {
+              headers: {
+                  'Content-Type': 'application/json'
+                }
+            }).then(resp => {
+                list_picking = resp.data;
+
+                $('#picking_list').find('option').remove();
+
+                for (let index = 0; index < list_picking.length; index++) {
+                  const element = list_picking[index];
+                  $('#picking_list').append($('<option>', {
+                      value: element.doc_no,
+                      text: element.doc_no+' ('+element.dated+')'
+                  }));
+                }
+                
+            });
+            // End Call API
+          });
+          
       });
 
       var productList = [];
@@ -221,14 +337,14 @@
                   product : orderList,
                 }
               );
-              const res = axios.patch("{{ route('picking.update',$doc_data->id) }}", json, {
+              const res = axios.patch("{{ route('packing.update',$doc_data->id) }}", json, {
                 headers: {
                   // Overwrite Axios's automatically set Content-Type
                   'Content-Type': 'application/json'
                 }
               }).then(resp => {
                     if(resp.data.status=="success"){
-                      window.location.href = "{{ route('picking.index') }}"; 
+                      window.location.href = "{{ route('packing.index') }}"; 
                     }else{
                       Swal.fire(
                         {
@@ -260,6 +376,7 @@
             { data: 'po_no' },
             { data: 'abbr' },
             { data: 'qty' },
+            { data: 'qty_pack' },
             { data: 'uom' },
             { data: null},
         ],
@@ -274,8 +391,8 @@
                 "abbr"      : abbr,
                 "uom"      : uom,
                 "qty"       : qty,
-                "uom" : uom,
-                "po_no" : "-",
+                "po_no" : po_no,
+                "qty_pack"       : 0,
                 "entry_time" : entry_time,
                 "seq" : 999,
           }
@@ -286,8 +403,7 @@
             var value = obj["id"];
             if(id==obj["id"]){
               isExist = 1;
-              orderList[i]["total"] = (parseInt(orderList[i]["qty"])+1)*parseFloat(orderList[i]["price"]); 
-              orderList[i]["qty"] = parseInt(orderList[i]["qty"])+1;
+              orderList[i]["qty_pack"] = parseInt(orderList[i]["qty_pack"])+1;
             }
           }
 
@@ -312,6 +428,7 @@
                     "id"        : obj["id"],
                      "po_no"      : obj["po_no"],
                      "uom"       : obj["uom"],
+                      "qty_pack"       : obj["qty_pack"],
                       "abbr"      : obj["abbr"],
                       "qty"       : obj["qty"],
                       "action"    : "",
@@ -338,14 +455,14 @@
 
               if($(this).attr("id")=="add_row"){
                 if(data["id"]==obj["id"]){
-                  orderList[i]["qty"] = parseInt(orderList[i]["qty"])+1;
+                  orderList[i]["qty_pack"] = parseInt(orderList[i]["qty_pack"])+1;
                 }
               }
               
               if($(this).attr("id")=="minus_row"){
-                if(data["id"]==obj["id"]&&parseInt(orderList[i]["qty"])>1){
-                  orderList[i]["qty"] = parseInt(orderList[i]["qty"])-1;
-                } else if(data["id"]==obj["id"]&&parseInt(orderList[i]["qty"])==1) {
+                if(data["id"]==obj["id"]&&parseInt(orderList[i]["qty_pack"])>1){
+                  orderList[i]["qty_pack"] = parseInt(orderList[i]["qty_pack"])-1;
+                } else if(data["id"]==obj["id"]&&parseInt(orderList[i]["qty_pack"])==1) {
                   orderList.splice(i,1);
                 }
               }
@@ -372,6 +489,7 @@
                     "no" : counterno,
                     "id"        : obj["id"],
                      "po_no"      : obj["po_no"],
+                  "qty_pack"       : obj["qty_pack"],
                      "uom"       : obj["uom"],
                       "abbr"      : obj["abbr"],
                       "qty"       : obj["qty"],
@@ -519,7 +637,7 @@
           });
 
             //Get Invoice 
-            const resInvoice = axios.get("{{ route('picking.getdoc_data',$doc_data->doc_no) }}", {
+            const resInvoice = axios.get("{{ route('packing.getdoc_data',$doc_data->doc_no) }}", {
               headers: {
                 // Overwrite Axios's automatically set Content-Type
                 'Content-Type': 'application/json'
@@ -538,6 +656,7 @@
                             "po_no"        : resp.data[i]["po_no"],
                             "id"        : resp.data[i]["product_id"],
                             "uom"        : resp.data[i]["uom"],
+                            "qty_pack"        : resp.data[i]["qty_pack"],
                             "abbr"      : resp.data[i]["product_name"],
                             "qty"       : resp.data[i]["qty"],
                       }
@@ -560,6 +679,7 @@
                           "po_no"        : obj["po_no"],
                           "id"        : obj["id"],
                           "uom"        : obj["uom"],
+                          "qty_pack"       : obj["qty_pack"],
                           "abbr"      : obj["abbr"],
                           "qty"       : obj["qty"],
                           "action"    : "",
@@ -584,16 +704,16 @@
 
               if($(this).attr("id")=="add_row"){
                 if(data["id"]==obj["id"]){
-                  orderList[i]["total"] = (parseInt(orderList[i]["qty"])+1)*parseFloat(orderList[i]["price"]); 
-                  orderList[i]["qty"] = parseInt(orderList[i]["qty"])+1;
+                  orderList[i]["total"] = (parseInt(orderList[i]["qty_pack"])+1)*parseFloat(orderList[i]["price"]); 
+                  orderList[i]["qty_pack"] = parseInt(orderList[i]["qty_pack"])+1;
                 }
               }
               
               if($(this).attr("id")=="minus_row"){
-                if(data["id"]==obj["id"]&&parseInt(orderList[i]["qty"])>1){
-                  orderList[i]["total"] = (parseInt(orderList[i]["qty"])-1)*parseFloat(orderList[i]["price"]); 
-                  orderList[i]["qty"] = parseInt(orderList[i]["qty"])-1;
-                } else if(data["id"]==obj["id"]&&parseInt(orderList[i]["qty"])==1) {
+                if(data["id"]==obj["id"]&&parseInt(orderList[i]["qty_pack"])>1){
+                  orderList[i]["total"] = (parseInt(orderList[i]["qty_pack"])-1)*parseFloat(orderList[i]["price"]); 
+                  orderList[i]["qty_pack"] = parseInt(orderList[i]["qty_pack"])-1;
+                } else if(data["id"]==obj["id"]&&parseInt(orderList[i]["qty_pack"])==1) {
                   orderList.splice(i,1);
                 }
               }
@@ -604,19 +724,6 @@
                 }
               }
 
-              if($(this).attr("id")=="assign_row"){
-                if(data["id"]==obj["id"]){
-                  $('#product_id_selected').val(data["id"]);
-                  $('#product_id_selected_lbl').text("Pilih terapis untuk produk/perawatan "+data["abbr"]);
-                }
-              }
-
-              if($(this).attr("id")=="referral_row"){
-                if(data["id"]==obj["id"]){
-                  $('#referral_selected').val(data["id"]);
-                  $('#referral_selected_lbl').text("Pilih penjual produk/perawatan "+data["abbr"]);
-                }
-              }
             }
 
             for (var i = 0; i < orderList.length; i++){
@@ -628,6 +735,7 @@
                     "po_no"        : obj["po_no"],
                     "abbr"      : obj["abbr"],
                     "qty"       : obj["qty"],
+                    "qty_pack"       : obj["qty_pack"], 
                     "action"    : "",
               }).draw(false);
 

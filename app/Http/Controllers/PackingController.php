@@ -306,46 +306,32 @@ class PackingController extends Controller
         $this->getpermissions($id);
         $data = $this->data;
 
-        $payment_type = ['Cash','BCA - Debit','BCA - Kredit','Mandiri - Debit','Mandiri - Kredit','Transfer','QRIS'];
-        $usersall = User::join('users_branch as ub','ub.branch_id', '=', 'users.branch_id')->where('ub.user_id','=',$user->id)->whereIn('users.job_id',[1,2])->get(['users.id','users.name']);
         $users = User::join('users_branch as ub','ub.branch_id', '=', 'users.branch_id')->where('ub.user_id','=',$user->id)->where('users.job_id','=',2)->get(['users.id','users.name']);
-        $usersReferral = User::get(['users.id','users.name']);
-        $type_customer = ['Sendiri','Berdua','Keluarga','Rombongan'];
 
         return view('pages.packing.show',[
             'customers' => Branch::join('users_branch as ub','ub.branch_id', '=', 'branch.id')->where('branch.remark','not like','%PUSAT%')->where('branch.id','>',1)->where('ub.user_id',$user->id)->orderBy('branch.remark')->get(['branch.id','branch.remark']),
             'data' => $data,
             'doc_data' => $packing,
-            'data_details' => PackingDetail::join('packing_master as om','om.doc_no','=','packing_detail.doc_no')->join('product_sku as ps','ps.id','=','packing_detail.product_id')->join('product_uom as u','u.product_id','=','packing_detail.product_id')->join('uom as um','um.id','=','u.uom_id')->where('packing_detail.doc_no',$packing->doc_no)->get(['packing_detail.qty','ps.id','ps.remark as product_name','packing_detail.ref_no as po_no']),
+            'data_details' => PackingDetail::join('packing_master as om','om.doc_no','=','packing_detail.doc_no')->join('product_sku as ps','ps.id','=','packing_detail.product_id')->join('product_uom as u','u.product_id','=','packing_detail.product_id')->join('uom as um','um.id','=','u.uom_id')->where('packing_detail.doc_no',$packing->doc_no)->get(['packing_detail.qty','ps.id','ps.remark as product_name','packing_detail.ref_no_po as po_no']),
             'company' => Company::get()->first(),
         ]);
     }
 
 
-    public function print(Picking $picking) 
+    public function print(Packing $packing) 
     {
         $user = Auth::user();
         $id = $user->roles->first()->id;
         $this->getpermissions($id);
 
-        $data = $this->data;
-        $users = User::where('id','=',$picking->created_by)->get(['users.id','users.name'])->first();
-
-        $report_data = DB::select(" select o.remark as uom,pd.doc_no,pd.product_id,ps.abbr,ps.remark as product_name,sum(pd.qty) as qty from picking_master pm 
-        join picking_detail pd on pd.doc_no = pm.doc_no 
-        join product_sku ps on ps.id = pd.product_id 
-        join product_uom uo on uo.product_id=ps.id
-        join uom o on o.id= uo.uom_id
-        where pd.doc_no='".$picking->doc_no."' 
-        group by o.remark,pd.doc_no,pd.product_id,ps.abbr,ps.remark order by 5");
+        $users = User::where('id','=',$packing->created_by)->get(['users.id','users.name'])->first();
 
         $pdf = PDF::setOptions(['isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true])->loadView('pages.packing.print', [
             'customers' => Branch::join('users_branch as ub','ub.branch_id', '=', 'branch.id')->where('branch.remark','not like','%PUSAT%')->where('branch.id','>',1)->where('ub.user_id',$user->id)->orderBy('branch.remark')->get(['branch.id','branch.remark']),
-            'data' => $data,
-            'doc_data' => $picking,
+            'doc_data' => $packing,
             'users' => $users,
             'settings' => Settings::get(),
-            'data_details' => $report_data,
+            'data_details' => PackingDetail::join('packing_master as om','om.doc_no','=','packing_detail.doc_no')->join('product_sku as ps','ps.id','=','packing_detail.product_id')->join('product_uom as u','u.product_id','=','packing_detail.product_id')->join('uom as um','um.id','=','u.uom_id')->where('packing_detail.doc_no',$packing->doc_no)->get(['um.remark as uom','packing_detail.qty','ps.id','ps.remark as product_name','packing_detail.ref_no_po as po_no']),
             'company' => Company::get()->first(),
         ])->setOptions(['defaultFont' => 'sans-serif'])->setPaper('a4', 'landscape');
         return $pdf->stream('picking.pdf');
@@ -361,24 +347,20 @@ class PackingController extends Controller
      * 
      * @return \Illuminate\Http\Response
      */
-    public function edit(Picking $picking) 
+    public function edit(Packing $packing) 
     {
         $user = Auth::user();
         $id = $user->roles->first()->id;
         $this->getpermissions($id);
         $data = $this->data;
 
-        $payment_type = ['Cash','BCA - Debit','BCA - Kredit','Mandiri - Debit','Mandiri - Kredit','Transfer','QRIS'];
-        $usersall = User::join('users_branch as ub','ub.branch_id', '=', 'users.branch_id')->where('ub.user_id','=',$user->id)->whereIn('users.job_id',[1,2])->get(['users.id','users.name']);
         $users = User::join('users_branch as ub','ub.branch_id', '=', 'users.branch_id')->where('ub.user_id','=',$user->id)->where('users.job_id','=',2)->get(['users.id','users.name']);
-        $usersReferral = User::get(['users.id','users.name']);
-        $type_customer = ['Sendiri','Berdua','Keluarga','Rombongan'];
 
         return view('pages.packing.edit',[
             'customers' => Branch::join('users_branch as ub','ub.branch_id', '=', 'branch.id')->where('branch.remark','not like','%PUSAT%')->where('branch.id','>',1)->where('ub.user_id',$user->id)->orderBy('branch.remark')->get(['branch.id','branch.remark']),
             'data' => $data,
-            'doc_data' => $picking,
-            'data_details' => PickingDetail::join('picking_master as om','om.doc_no','=','picking_detail.doc_no')->join('product_sku as ps','ps.id','=','picking_detail.product_id')->join('product_uom as u','u.product_id','=','picking_detail.product_id')->join('uom as um','um.id','=','u.uom_id')->where('picking_detail.doc_no',$picking->doc_no)->get(['picking_detail.qty','ps.id','ps.remark as product_name','picking_detail.ref_no as po_no']),
+            'doc_data' => $packing,
+            'data_details' => PackingDetail::join('packing_master as om','om.doc_no','=','packing_detail.doc_no')->join('product_sku as ps','ps.id','=','packing_detail.product_id')->join('product_uom as u','u.product_id','=','packing_detail.product_id')->join('uom as um','um.id','=','u.uom_id')->where('packing_detail.doc_no',$packing->doc_no)->get(['packing_detail.qty','ps.id','ps.remark as product_name','packing_detail.ref_no_po as po_no']),
             'company' => Company::get()->first(),
         ]);
     }
@@ -394,7 +376,7 @@ class PackingController extends Controller
     {
         $data = $this->data;
         $user = Auth::user();
-        $product = DB::select(" select o.remark as uom,pd.doc_no,pd.product_id,ps.abbr,ps.remark as product_name,pd.qty,pd.ref_no as po_no from packing_master pm 
+        $product = DB::select(" select pd.qty_pack,o.remark as uom,pd.doc_no,pd.product_id,ps.abbr,ps.remark as product_name,pd.qty,pd.ref_no_po as po_no from packing_master pm 
         join packing_detail pd on pd.doc_no = pm.doc_no 
         join product_sku ps on ps.id = pd.product_id 
         join product_uom uo on uo.product_id=ps.id
@@ -418,15 +400,15 @@ class PackingController extends Controller
      * 
      * @return \Illuminate\Http\Response
      */
-    public function update(Picking $picking, Request $request) 
+    public function update(Packing $packing, Request $request) 
     {
 
         $user = Auth::user();
         $doc_no = $request->get('doc_no');
         $branch_id = $request->get('customer_id');
-        PickingDetail::where('doc_no', $doc_no)->delete();
+        PackingDetail::where('doc_no', $doc_no)->delete();
 
-        $res_= $picking->update(
+        $res_= $packing->update(
             array_merge(
                 ['updated_by'   => $user->id],
                 ['remark' => $request->get('remark') ],
@@ -445,14 +427,16 @@ class PackingController extends Controller
         }
 
         for ($i=0; $i < count($request->get('product')); $i++) { 
-            $res_detail = PickingDetail::create(
+            $res_detail = PackingDetail::create(
                 array_merge(
                     ['doc_no' => $doc_no],
                     ['product_id' => $request->get('product')[$i]["id"]],
                     ['qty' => $request->get('product')[$i]["qty"]],
+                    ['qty_pack' => $request->get('product')[$i]["qty_pack"]],
                     ['seq' => $i ],
                     ['uom' => $request->get('product')[$i]["uom"]],
-                    ['ref_no' => $request->get('product')[$i]["po_no"]]
+                    ['ref_no_po' => $request->get('product')[$i]["po_no"]],
+                    ['ref_no' => $request->get('product')[$i]["ref_no"]]
                 )
             );
 
@@ -460,15 +444,13 @@ class PackingController extends Controller
                 $result = array_merge(
                     ['status' => 'failed'],
                     ['data' => ''],
-                    ['message' => 'Save picking detail failed'],
+                    ['message' => 'Save packing detail failed'],
                 );
         
                 return $result;
             }           
         }
 
-        $delete_doc = DB::select("delete from picking_ref where doc_no='".$doc_no."';");
-        $insert_doc = DB::select("insert into picking_ref(doc_no,ref_no,created_at) select distinct doc_no,ref_no,now() from picking_detail where doc_no='".$doc_no."';");
 
         $result = array_merge(
             ['status' => 'success'],

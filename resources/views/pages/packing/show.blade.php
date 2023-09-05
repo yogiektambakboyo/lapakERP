@@ -1,6 +1,6 @@
 @extends('layouts.default', ['appSidebarSearch' => true])
 
-@section('title', 'Edit Picking')
+@section('title', 'Show Picking')
 
 @section('content')
 <form method="POST" action="{{ route('packing.store') }}"  enctype="multipart/form-data">

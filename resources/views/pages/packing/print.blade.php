@@ -3,7 +3,7 @@
 <html>  
    <head> 
       <meta charset = "utf-8"> 
-      <title>Picking</title>
+      <title>Packing</title>
       <style>
         body {background-color: whitesmoke;}
         h1   {color: blue;}
@@ -29,7 +29,7 @@
               <img src="data:image/png;base64,{{ base64_encode(file_get_contents(url("images/user-files/".$settings[0]->icon_file))) }}" width="150px"><br>
               <label>{{ 'KAKIKU PUSAT' }}</label><br>
               <label>{{ 'JL. KELAPA SAWIT IX BG 3 NO.1' }}</label></td>
-            <td style="width: 50%;font-size:30px;"><p style="color: #212121;">Picking Gudang</p></td>
+            <td style="width: 50%;font-size:30px;"><p style="color: #212121;">Packing Gudang</p></td>
           </tr>
           <tr style="background-color: chocolate;">
             <td colspan="2"><br></td>
@@ -60,6 +60,7 @@
         <thead>
         <tr style="background-color:#FFA726;color:white;">
             <th width="3%">No</th>
+            <th width="20%">PO No</th>
             <th width="78%">@lang('general.product')</th>
             <th scope="col" width="8%">@lang('general.lbl_qty')</th>
             <th scope="col" width="10%">@lang('general.lbl_uom')</th>
@@ -70,7 +71,8 @@
           @foreach($data_details as $invoiceDetail)
               <tr>
                   <td style="text-align: left;">{{ $counter++; }}</th>
-                  <td style="text-align: left;">{{ $invoiceDetail->product_name }}</th>
+                  <td style="text-align: left;">{{ $invoiceDetail->po_no }}</th>
+                    <td style="text-align: left;">{{ $invoiceDetail->product_name }}</th>
                   <td style="text-align: center;">{{ number_format($invoiceDetail->qty,0,',','.') }}</td>
                   <td style="text-align: center;">{{ $invoiceDetail->uom }}</td>
               </tr>
