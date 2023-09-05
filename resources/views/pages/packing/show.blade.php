@@ -1,13 +1,13 @@
 @extends('layouts.default', ['appSidebarSearch' => true])
 
-@section('title', 'Show Picking')
+@section('title', 'Show Packing')
 
 @section('content')
 <form method="POST" action="{{ route('packing.store') }}"  enctype="multipart/form-data">
   @csrf
   <div class="panel text-white">
     <div class="panel-heading  bg-teal-600">
-      <div class="panel-title"><h4 class="">@lang('general.lbl_picking') </h4></div>
+      <div class="panel-title"><h4 class="">Pengemasan Barang #{{ $doc_data->doc_no }}</h4></div>
       <div class="">
         <a href="{{ route('packing.print', $doc_data->id) }}" target="_blank" class="btn btn-warning"><i class="fas fa-print"></i> @lang('general.lbl_print')</a>
         <a href="{{ route('packing.index') }}" class="btn btn-default">@lang('general.lbl_back')</a>
@@ -67,12 +67,13 @@
       
          <table class="table table-striped" id="order_product_table">
           <thead>
-          <tr>
+            <tr>
               <th scope="col" width="5%">#</th>
-              <th scope="col"  width="15%" >PO No</th>
+              <th scope="col" width="15%">PO No</th>
               <th scope="col">@lang('general.product')</th>
-              <th scope="col" width="8%">@lang('general.lbl_qty')</th>
-              <th scope="col" width="10%">@lang('general.lbl_uom')</th>
+              <th scope="col" width="5%">@lang('general.lbl_qty') Order</th>
+              <th scope="col" width="5%">@lang('general.lbl_qty') Packing</th>
+              <th scope="col" width="5%">@lang('general.lbl_uom')</th>
           </tr>
           </thead>
           <tbody>
@@ -150,6 +151,7 @@
             { data: 'po_no' },
             { data: 'abbr' },
             { data: 'qty' },
+            { data: 'qty_pack' },
             { data: 'uom' },
         ],
         });
@@ -423,10 +425,12 @@
 
                   for(var i=0;i<resp.data.length;i++){
                       var product = {
-                            "no"        : i+1,
+                        "no"        : i+1,
                             "po_no"        : resp.data[i]["po_no"],
+                            "ref_no"        : resp.data[i]["ref_no"],
                             "id"        : resp.data[i]["product_id"],
                             "uom"        : resp.data[i]["uom"],
+                            "qty_pack"        : resp.data[i]["qty_pack"],
                             "abbr"      : resp.data[i]["product_name"],
                             "qty"       : resp.data[i]["qty"],
                       }
@@ -445,13 +449,14 @@
                     var obj = orderList[i];
                     var value = obj["abbr"];
                     table_product.row.add( {
-                          "no"        : counterno,
+                      "no"        : counterno,
                           "po_no"        : obj["po_no"],
+                          "ref_no"        : obj["ref_no"],
                           "id"        : obj["id"],
                           "uom"        : obj["uom"],
+                          "qty_pack"       : obj["qty_pack"],
                           "abbr"      : obj["abbr"],
                           "qty"       : obj["qty"],
-                          "action"    : "",
                     }).draw(false);
 
                   

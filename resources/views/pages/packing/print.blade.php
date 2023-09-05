@@ -73,7 +73,7 @@
                   <td style="text-align: left;">{{ $counter++; }}</th>
                   <td style="text-align: left;">{{ $invoiceDetail->po_no }}</th>
                     <td style="text-align: left;">{{ $invoiceDetail->product_name }}</th>
-                  <td style="text-align: center;">{{ number_format($invoiceDetail->qty,0,',','.') }}</td>
+                  <td style="text-align: center;">{{ number_format($invoiceDetail->qty_pack,0,',','.') }}</td>
                   <td style="text-align: center;">{{ $invoiceDetail->uom }}</td>
               </tr>
           @endforeach

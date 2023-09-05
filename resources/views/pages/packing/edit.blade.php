@@ -176,7 +176,7 @@
           <thead>
           <tr>
               <th scope="col" width="5%">#</th>
-              <th scope="col">PO No</th>
+              <th scope="col" width="15%">PO No</th>
               <th scope="col">@lang('general.product')</th>
               <th scope="col" width="5%">@lang('general.lbl_qty') Order</th>
               <th scope="col" width="5%">@lang('general.lbl_qty') Packing</th>
@@ -431,6 +431,8 @@
                       "qty_pack"       : obj["qty_pack"],
                       "abbr"      : obj["abbr"],
                       "qty"       : obj["qty"],
+                      "ref_no"        : obj["ref_no"],
+
                       "action"    : "",
                 }).draw(false);
               
@@ -493,6 +495,8 @@
                      "uom"       : obj["uom"],
                       "abbr"      : obj["abbr"],
                       "qty"       : obj["qty"],
+                    "ref_no"        : obj["ref_no"],
+
                       "action"    : "",
                 }).draw(false);
 
@@ -654,6 +658,7 @@
                       var product = {
                             "no"        : i+1,
                             "po_no"        : resp.data[i]["po_no"],
+                            "ref_no"        : resp.data[i]["ref_no"],
                             "id"        : resp.data[i]["product_id"],
                             "uom"        : resp.data[i]["uom"],
                             "qty_pack"        : resp.data[i]["qty_pack"],
@@ -677,6 +682,7 @@
                     table_product.row.add( {
                           "no"        : counterno,
                           "po_no"        : obj["po_no"],
+                          "ref_no"        : obj["ref_no"],
                           "id"        : obj["id"],
                           "uom"        : obj["uom"],
                           "qty_pack"       : obj["qty_pack"],
@@ -733,6 +739,7 @@
                     "id"        : obj["id"],
                     "uom"        : obj["uom"],
                     "po_no"        : obj["po_no"],
+                    "ref_no"        : obj["ref_no"],
                     "abbr"      : obj["abbr"],
                     "qty"       : obj["qty"],
                     "qty_pack"       : obj["qty_pack"], 

@@ -331,7 +331,7 @@ class PackingController extends Controller
             'doc_data' => $packing,
             'users' => $users,
             'settings' => Settings::get(),
-            'data_details' => PackingDetail::join('packing_master as om','om.doc_no','=','packing_detail.doc_no')->join('product_sku as ps','ps.id','=','packing_detail.product_id')->join('product_uom as u','u.product_id','=','packing_detail.product_id')->join('uom as um','um.id','=','u.uom_id')->where('packing_detail.doc_no',$packing->doc_no)->get(['um.remark as uom','packing_detail.qty','ps.id','ps.remark as product_name','packing_detail.ref_no_po as po_no']),
+            'data_details' => PackingDetail::join('packing_master as om','om.doc_no','=','packing_detail.doc_no')->join('product_sku as ps','ps.id','=','packing_detail.product_id')->join('product_uom as u','u.product_id','=','packing_detail.product_id')->join('uom as um','um.id','=','u.uom_id')->where('packing_detail.doc_no',$packing->doc_no)->get(['um.remark as uom','packing_detail.qty_pack','packing_detail.qty','ps.id','ps.remark as product_name','packing_detail.ref_no_po as po_no']),
             'company' => Company::get()->first(),
         ])->setOptions(['defaultFont' => 'sans-serif'])->setPaper('a4', 'landscape');
         return $pdf->stream('picking.pdf');
@@ -376,7 +376,7 @@ class PackingController extends Controller
     {
         $data = $this->data;
         $user = Auth::user();
-        $product = DB::select(" select pd.qty_pack,o.remark as uom,pd.doc_no,pd.product_id,ps.abbr,ps.remark as product_name,pd.qty,pd.ref_no_po as po_no from packing_master pm 
+        $product = DB::select(" select pd.qty_pack,o.remark as uom,pd.doc_no,pd.product_id,ps.abbr,ps.remark as product_name,pd.qty,pd.ref_no_po as po_no,pd.ref_no from packing_master pm 
         join packing_detail pd on pd.doc_no = pm.doc_no 
         join product_sku ps on ps.id = pd.product_id 
         join product_uom uo on uo.product_id=ps.id
@@ -420,7 +420,7 @@ class PackingController extends Controller
             $result = array_merge(
                 ['status' => 'failed'],
                 ['data' => ''],
-                ['message' => 'Save picking failed'],
+                ['message' => 'Save packing failed'],
             );
     
             return $result;
