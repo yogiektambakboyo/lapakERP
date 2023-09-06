@@ -198,6 +198,26 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
             Route::get('/export', 'PackingController@export')->name('packing.export');
         });
 
+         /**
+         * Shipment Routes
+         */
+        Route::group(['prefix' => 'shipment'], function() {
+            Route::get('/', 'ShipmentController@index')->name('shipment.index');
+            Route::get('/create', 'ShipmentController@create')->name('shipment.create');
+            Route::post('/create', 'ShipmentController@store')->name('shipment.store');
+            Route::get('/search', 'ShipmentController@search')->name('shipment.search');
+            Route::get('/{shipment}/show', 'ShipmentController@show')->name('shipment.show');
+            Route::patch('/{shipment}/checkout', 'ShipmentController@checkout')->name('shipment.checkout');
+            Route::get('/{shipment}/edit', 'ShipmentController@edit')->name('shipment.edit');
+            Route::get('/{shipment}/print', 'ShipmentController@print')->name('shipment.print');
+            Route::get('/getproduct', 'ShipmentController@getproduct')->name('shipment.getproduct');
+            Route::get('/gettimetable', 'ShipmentController@gettimetable')->name('shipment.gettimetable');
+            Route::get('/{shipment}/getdoc_data', 'ShipmentController@getdoc_data')->name('shipment.getdoc_data');
+            Route::patch('/{shipment}/update', 'ShipmentController@update')->name('shipment.update');
+            Route::delete('/{shipment}/delete', 'ShipmentController@destroy')->name('shipment.destroy');
+            Route::get('/export', 'ShipmentController@export')->name('shipment.export');
+        });
+
 
         /**
          * Return Sell Routes
