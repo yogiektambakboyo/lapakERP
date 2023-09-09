@@ -10,7 +10,7 @@
       <div class="panel-title"><h4 class="">@lang('general.lbl_invoice') </h4></div>
       <div class="">
         <a href="{{ route('invoices.index') }}" class="btn btn-default">@lang('general.lbl_cancel')</a>
-        <button type="button" id="save-btn" class="btn btn-info">@lang('general.lbl_save')</button>
+        <button type="button" id="save-btn" class="btn btn-info d-none">@lang('general.lbl_save')</button>
       </div>
     </div>
     <div class="panel-body bg-white text-black">
@@ -1916,7 +1916,9 @@
 
                 $('#result-total').text(currency(order_total, { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
                 $('#vat-total').text(currency(_vat_total, { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
-                $('#sub-total').text(currency(sub_total, { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());              
+                $('#sub-total').text(currency(sub_total, { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());    
+                
+                $('#save-btn').removeClass("d-none");
             });
 
             $('#order_product_table tbody').on('click', 'a', function () {

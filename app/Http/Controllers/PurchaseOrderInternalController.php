@@ -454,8 +454,9 @@ class PurchaseOrderInternalController extends Controller
     {
         $data = $this->data;
         $user = Auth::user();
-        $list_purchase = DB::select(" select distinct om.purchase_no,dated
+        $list_purchase = DB::select(" select distinct om.purchase_no,dated,b.address
         from purchase_master om
+        join branch b on b.id = om.branch_id
         where om.branch_id='".$branch_id."' and om.supplier_id = 5 and om.purchase_no in (select distinct ref_no from picking_ref) ");
         
         return $list_purchase;

@@ -171,6 +171,7 @@ class InvoicesController extends Controller
             'customers' => Customer::join('users_branch as ub','ub.branch_id', '=', 'customers.branch_id')->join('branch as b','b.id','=','ub.branch_id')->where('ub.user_id',$user->id)->orderBy('customers.name')->get(['customers.id','customers.name','b.remark']),
             'data' => $data,
             'users' => $users,
+            'userx' => $user,
             'usersall' => $usersall,
             'type_customers' => $type_customer,
             'orders' => Order::where('is_checkout','0')->get(),

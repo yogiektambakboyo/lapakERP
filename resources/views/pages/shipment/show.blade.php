@@ -1,22 +1,21 @@
 @extends('layouts.default', ['appSidebarSearch' => true])
 
-@section('title', 'Show Packing')
+@section('title', 'Show Shipment')
 
 @section('content')
-<form method="POST" action="{{ route('packing.store') }}"  enctype="multipart/form-data">
   @csrf
   <div class="panel text-white">
     <div class="panel-heading  bg-teal-600">
-      <div class="panel-title"><h4 class="">Pengemasan Barang #{{ $doc_data->doc_no }}</h4></div>
+      <div class="panel-title"><h4 class="">Pengiriman Barang #{{ $doc_data->doc_no }}</h4></div>
       <div class="">
-        <a href="{{ route('packing.print', $doc_data->id) }}" target="_blank" class="btn btn-warning"><i class="fas fa-print"></i> @lang('general.lbl_print')</a>
-        <a href="{{ route('packing.index') }}" class="btn btn-default">@lang('general.lbl_back')</a>
+        <a href="{{ route('shipment.print', $doc_data->id) }}" target="_blank" class="btn btn-warning"><i class="fas fa-print"></i> @lang('general.lbl_print')</a>
+        <a href="{{ route('shipment.index') }}" class="btn btn-default">@lang('general.lbl_back')</a>
       </div>
     </div>
     <div class="panel-body bg-white text-black">
 
-        <div class="row mb-1">
-          <div class="col-md-2">
+      <div class="row mb-1">
+          <div class="col-md-3">
             <div class="row mb-3">
               <label class="form-label col-form-label col-md-4">@lang('general.lbl_dated')   </label>
               <div class="col-md-8">
@@ -25,20 +24,38 @@
                 id="doc_no"
                 class="form-control" 
                 value="{{ $doc_data->doc_no }}"/>
-                <input type="text" 
-                name="dated"
-                id="dated"
-                class="form-control" 
-                value="{{ substr(explode(" ",$doc_data->dated)[0],8,2) }}-{{ substr(explode(" ",$doc_data->dated)[0],5,2) }}-{{ substr(explode(" ",$doc_data->dated)[0],0,4) }}" required/>
-                @if ($errors->has('dated'))
-                          <span class="text-danger text-left">{{ $errors->first('dated') }}</span>
-                      @endif
+
+                <input type="text" readonly
+                  name="dated"
+                  id="dated"
+                  class="form-control" 
+                  value="{{ substr(explode(" ",$doc_data->dated)[0],8,2) }}-{{ substr(explode(" ",$doc_data->dated)[0],5,2) }}-{{ substr(explode(" ",$doc_data->dated)[0],0,4) }}" required/>
+                  @if ($errors->has('dated'))
+                            <span class="text-danger text-left">{{ $errors->first('dated') }}</span>
+                        @endif
               </div>
+
+              <label class="form-label col-form-label col-md-4 mt-1">Via</label>
+              <div class="col-md-8 mt-1">
+                <select class="form-control" name="shipping_method" id="shipping_method" disabled>
+                  <option value=""></option>
+                  <option value="Internal" {{ ("Internal" == $doc_data->shipping_method) ? 'selected': ''}}>Internal</option>
+                  <option value="Kurir"  {{ ("Kurir" == $doc_data->shipping_method) ? 'selected': ''}}>Kurir</option>
+                </select>
+              </div>
+              <label class="form-label col-form-label col-md-5 mt-1">Resi/ No Mobil</label>
+              <div class="col-md-7 mt-1">
+                <input type="text" class="form-control" id="awb" name="awb" value="{{ $doc_data->awb }}" readonly>
+              </div>
+              
             </div>
+
+          
+
 
           </div>
 
-          <div class="col-md-10">
+          <div class="col-md-9">
             <div class="row mb-1">
 
               <label class="form-label col-form-label col-md-2  d-none">@lang('general.lbl_spk')</label>
@@ -46,16 +63,72 @@
                 <input type="text" class="form-control" id="ref_no" name="ref_no" value="{{ $doc_data->ref_no }}" id="scheduled" disabled>
               </div>
 
-            
-              <label class="form-label col-form-label col-md-2">@lang('general.lbl_remark')</label>
+              <label class="form-label col-form-label col-md-1">@lang('general.lbl_customer')</label>
               <div class="col-md-4">
+                <select class="form-control" 
+                    name="customer_id" id="customer_id" disabled>
+                    <option value="">@lang('general.lbl_customerselect')</option>
+                    @foreach($customers as $customer)
+                        <option value="{{ $customer->id }}" {{ ($customer->id == $doc_data->customer_id) 
+                          ? 'selected'
+                          : ''}}>{{ $customer->id }} - {{ $customer->name }} ({{ $customer->remark }})</option>
+                    @endforeach
+                </select>
+              </div>
+
+              <label class="form-label col-form-label col-md-2">@lang('general.lbl_remark')</label>
+              <div class="col-md-5">
                 <input type="text" 
                 name="remark"
                 id="remark"
-                class="form-control" 
-                value="{{ $doc_data->remark }}" readonly/>
-                </div>
-             
+                class="form-control"  readonly
+                value="{{ $doc_data->remark }}"/>
+              </div>
+
+              <label class="form-label col-form-label col-md-2 mt-1">Nama Kurir</label>
+              <div class="col-md-3 mt-1">
+                  <input type="text" 
+                  name="shipper_name"
+                  id="shipper_name"  readonly
+                  class="form-control" 
+                  value="{{ $doc_data->shipper_name }}"/>
+              </div>
+
+              <label class="form-label col-form-label col-md-2 mt-1">Alamat Tujuan</label>
+              <div class="col-md-5 mt-1">
+                  <input type="text" 
+                  name="address"
+                  id="address"  readonly
+                  class="form-control" 
+                  value="{{ $doc_data->address }}"/>
+              </div>
+
+              <label class="form-label col-form-label col-md-2 mt-1">Tgl Kirim</label>
+              <div class="col-md-2 mt-1">
+                  <input type="date" 
+                  name="etd"
+                  id="etd" readonly
+                  class="form-control" 
+                  value="{{ $doc_data->etd }}"/>
+              </div>
+
+              <label class="form-label col-form-label col-md-2 mt-1">Est. Tgl Terima</label>
+              <div class="col-md-2 mt-1">
+                  <input type="date" 
+                  name="eta"
+                  id="eta" readonly
+                  class="form-control" 
+                  value="{{ $doc_data->eta }}"/>
+              </div>
+
+              <label class="form-label col-form-label col-md-2 mt-1">Status</label>
+              <div class="col-md-2 mt-1">
+                <select class="form-control" name="status" id="status" disabled>
+                  <option value="Pending" {{ $doc_data->eta=="Pending"?"selected":"" }}>Pending</option>
+                  <option value="Terkirim" {{ $doc_data->eta=="Terkirim"?"selected":"" }}>Terkirim</option>
+                </select>
+              </div>
+            
             </div>
           </div>
         </div>
@@ -109,7 +182,6 @@
 
     </div>
   </div>
-</form>
 @endsection
 
 @push('scripts')
@@ -410,7 +482,7 @@
           });
 
             //Get Invoice 
-            const resInvoice = axios.get("{{ route('packing.getdoc_data',$doc_data->doc_no) }}", {
+            const resInvoice = axios.get("{{ route('shipment.getdoc_data',$doc_data->doc_no) }}", {
               headers: {
                 // Overwrite Axios's automatically set Content-Type
                 'Content-Type': 'application/json'
@@ -425,7 +497,7 @@
 
                   for(var i=0;i<resp.data.length;i++){
                       var product = {
-                        "no"        : i+1,
+                            "no"        : i+1,
                             "po_no"        : resp.data[i]["po_no"],
                             "ref_no"        : resp.data[i]["ref_no"],
                             "id"        : resp.data[i]["product_id"],
@@ -449,7 +521,7 @@
                     var obj = orderList[i];
                     var value = obj["abbr"];
                     table_product.row.add( {
-                      "no"        : counterno,
+                          "no"        : counterno,
                           "po_no"        : obj["po_no"],
                           "ref_no"        : obj["ref_no"],
                           "id"        : obj["id"],
@@ -457,6 +529,7 @@
                           "qty_pack"       : obj["qty_pack"],
                           "abbr"      : obj["abbr"],
                           "qty"       : obj["qty"],
+                          "action"    : "",
                     }).draw(false);
 
                   

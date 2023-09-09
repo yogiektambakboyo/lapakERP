@@ -18,6 +18,8 @@ use App\Models\PickingDetail;
 use App\Models\PickingRef;
 use App\Models\Packing;
 use App\Models\PackingDetail;
+use App\Models\Shipment;
+use App\Models\ShipmentDetail;
 use App\Models\PackingRef;
 use App\Models\PeriodSellPrice;
 use App\Models\SettingsDocumentNumber;
@@ -82,8 +84,8 @@ class ShipmentController extends Controller
         $act_permission = $this->act_permission[0];
         
         $invoices = DB::select("select pm.remark,pm.id,pm.doc_no,pm.customer_id,b.remark as branch_name,pm.remark,pm.dated,count(pd.product_id)  as count_sku
-        from packing_master pm 
-        join packing_detail pd  on pd.doc_no = pm.doc_no
+        from shipment_master pm 
+        join shipment_detail pd  on pd.doc_no = pm.doc_no
         join branch b on b.id = pm.customer_id
         join users_branch ub on ub.branch_id = 15 and ub.user_id = ".$id."
         group by pm.id,pm.doc_no,pm.dated,pm.remark,b.remark order by 2");
@@ -224,23 +226,30 @@ class ShipmentController extends Controller
         $user = Auth::user();
         $branch = Branch::where('id','=',$request->get('customer_id'))->get(['id'])->first();
 
-        $count_no = SettingsDocumentNumber::where('doc_type','=','Packing')->where('branch_id','=',15)->where('period','=','Yearly')->get(['current_value','abbr']);
+        $count_no = SettingsDocumentNumber::where('doc_type','=','Shipment')->where('branch_id','=',15)->where('period','=','Yearly')->get(['current_value','abbr']);
         $doc_no = $count_no[0]->abbr.'-'.substr(('0015'),-3).'-'.date("Y").'-'.substr(('00000000'.((int)($count_no[0]->current_value) + 1)),-8);
 
-        SettingsDocumentNumber::where('doc_type','=','Packing')->where('branch_id','=',15)->where('period','=','Yearly')->update(
+        SettingsDocumentNumber::where('doc_type','=','Shipment')->where('branch_id','=',15)->where('period','=','Yearly')->update(
             array_merge(
                 ['current_value' => ((int)($count_no[0]->current_value) + 1)]
             )
         );
 
-        $res_ = Packing::create(
+        $res_ = Shipment::create(
             array_merge(
                 ['doc_no' => $doc_no ],
                 ['remark' => $request->get('remark') ],
                 ['customer_id' => $request->get('customer_id') ],
+                ['shipping_method' => $request->get('shipping_method') ],
+                ['status' => $request->get('status') ],
+                ['shipper_name' => $request->get('shipper_name') ],
+                ['awb' => $request->get('awb') ],
+                ['address' => $request->get('address') ],
+                ['etd' => $request->get('etd') ],
+                ['eta' => $request->get('eta') ],
                 ['created_by' => $user->id],
                 ['dated' => Carbon::createFromFormat('d-m-Y', $request->get('doc_date'))->format('Y-m-d') ],
-                ['ispacked' => "0" ],
+                ['isshipped' => "0" ],
             )
         );
 
@@ -257,12 +266,11 @@ class ShipmentController extends Controller
 
 
         for ($i=0; $i < count($request->get('product')); $i++) { 
-            $res_doc_detail = PackingDetail::create(
+            $res_doc_detail = ShipmentDetail::create(
                 array_merge(
                     ['doc_no' => $doc_no],
                     ['product_id' => $request->get('product')[$i]["id"]],
-                    ['qty' => $request->get('product')[$i]["qty"]],
-                    ['qty_pack' => $request->get('product')[$i]["qty_pack"]],
+                    ['qty' => $request->get('product')[$i]["qty_pack"]],
                     ['seq' => $i ],
                     ['uom' => $request->get('product')[$i]["uom"]],
                     ['ref_no_po' => $request->get('product')[$i]["po_no"]],
@@ -275,7 +283,7 @@ class ShipmentController extends Controller
                 $result = array_merge(
                     ['status' => 'failed'],
                     ['data' => ''],
-                    ['message' => 'Save packing detail failed'],
+                    ['message' => 'Save shipment detail failed'],
                 );
         
                 return $result;
@@ -285,7 +293,7 @@ class ShipmentController extends Controller
 
         $result = array_merge(
             ['status' => 'success'],
-            ['data' => Packing::where('doc_no','=',$doc_no)->get('id')->first()->id ],
+            ['data' => Shipment::where('doc_no','=',$doc_no)->get('id')->first()->id ],
             ['message' => $doc_no],
         );
 
@@ -299,7 +307,7 @@ class ShipmentController extends Controller
      * 
      * @return \Illuminate\Http\Response
      */
-    public function show(Packing $packing) 
+    public function show(Shipment $shipment) 
     {
         $user = Auth::user();
         $id = $user->roles->first()->id;
@@ -311,30 +319,30 @@ class ShipmentController extends Controller
         return view('pages.shipment.show',[
             'customers' => Branch::join('users_branch as ub','ub.branch_id', '=', 'branch.id')->where('branch.remark','not like','%PUSAT%')->where('branch.id','>',1)->where('ub.user_id',$user->id)->orderBy('branch.remark')->get(['branch.id','branch.remark']),
             'data' => $data,
-            'doc_data' => $packing,
-            'data_details' => PackingDetail::join('packing_master as om','om.doc_no','=','packing_detail.doc_no')->join('product_sku as ps','ps.id','=','packing_detail.product_id')->join('product_uom as u','u.product_id','=','packing_detail.product_id')->join('uom as um','um.id','=','u.uom_id')->where('packing_detail.doc_no',$packing->doc_no)->get(['packing_detail.qty','ps.id','ps.remark as product_name','packing_detail.ref_no_po as po_no']),
+            'doc_data' => $shipment,
+            'data_details' => ShipmentDetail::join('shipment_master as om','om.doc_no','=','shipment_detail.doc_no')->join('product_sku as ps','ps.id','=','shipment_detail.product_id')->join('product_uom as u','u.product_id','=','shipment_detail.product_id')->join('uom as um','um.id','=','u.uom_id')->where('shipment_detail.doc_no',$shipment->doc_no)->get(['shipment_detail.qty','ps.id','ps.remark as product_name','shipment_detail.ref_no_po as po_no']),
             'company' => Company::get()->first(),
         ]);
     }
 
 
-    public function print(Packing $packing) 
+    public function print(Shipment $shipment) 
     {
         $user = Auth::user();
         $id = $user->roles->first()->id;
         $this->getpermissions($id);
 
-        $users = User::where('id','=',$packing->created_by)->get(['users.id','users.name'])->first();
-
+        $users = User::where('id','=',$shipment->created_by)->get(['users.id','users.name'])->first();
+        $doc = Shipment::join('branch','branch.id','=','shipment_master.customer_id')->where('shipment_master.doc_no','=',$shipment->doc_no)->get(['shipment_master.*','branch.remark as branch_name']);
         $pdf = PDF::setOptions(['isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true])->loadView('pages.shipment.print', [
             'customers' => Branch::join('users_branch as ub','ub.branch_id', '=', 'branch.id')->where('branch.remark','not like','%PUSAT%')->where('branch.id','>',1)->where('ub.user_id',$user->id)->orderBy('branch.remark')->get(['branch.id','branch.remark']),
-            'doc_data' => $packing,
+            'doc_data' => $doc[0],
             'users' => $users,
             'settings' => Settings::get(),
-            'data_details' => PackingDetail::join('packing_master as om','om.doc_no','=','packing_detail.doc_no')->join('product_sku as ps','ps.id','=','packing_detail.product_id')->join('product_uom as u','u.product_id','=','packing_detail.product_id')->join('uom as um','um.id','=','u.uom_id')->where('packing_detail.doc_no',$packing->doc_no)->get(['um.remark as uom','packing_detail.qty_pack','packing_detail.qty','ps.id','ps.remark as product_name','packing_detail.ref_no_po as po_no']),
+            'data_details' => ShipmentDetail::join('shipment_master as om','om.doc_no','=','shipment_detail.doc_no')->join('product_sku as ps','ps.id','=','shipment_detail.product_id')->join('product_uom as u','u.product_id','=','shipment_detail.product_id')->join('uom as um','um.id','=','u.uom_id')->where('shipment_detail.doc_no',$shipment->doc_no)->get(['um.remark as uom','shipment_detail.qty','ps.id','ps.remark as product_name','shipment_detail.ref_no_po as po_no']),
             'company' => Company::get()->first(),
         ])->setOptions(['defaultFont' => 'sans-serif'])->setPaper('a4', 'landscape');
-        return $pdf->stream('picking.pdf');
+        return $pdf->stream('shipment.pdf');
     }
 
     
@@ -347,7 +355,7 @@ class ShipmentController extends Controller
      * 
      * @return \Illuminate\Http\Response
      */
-    public function edit(Packing $packing) 
+    public function edit(Shipment $shipment) 
     {
         $user = Auth::user();
         $id = $user->roles->first()->id;
@@ -359,8 +367,8 @@ class ShipmentController extends Controller
         return view('pages.shipment.edit',[
             'customers' => Branch::join('users_branch as ub','ub.branch_id', '=', 'branch.id')->where('branch.remark','not like','%PUSAT%')->where('branch.id','>',1)->where('ub.user_id',$user->id)->orderBy('branch.remark')->get(['branch.id','branch.remark']),
             'data' => $data,
-            'doc_data' => $packing,
-            'data_details' => PackingDetail::join('packing_master as om','om.doc_no','=','packing_detail.doc_no')->join('product_sku as ps','ps.id','=','packing_detail.product_id')->join('product_uom as u','u.product_id','=','packing_detail.product_id')->join('uom as um','um.id','=','u.uom_id')->where('packing_detail.doc_no',$packing->doc_no)->get(['packing_detail.qty','ps.id','ps.remark as product_name','packing_detail.ref_no_po as po_no']),
+            'doc_data' => $shipment,
+            'data_details' => ShipmentDetail::join('shipment_master as om','om.doc_no','=','shipment_detail.doc_no')->join('product_sku as ps','ps.id','=','shipment_detail.product_id')->join('product_uom as u','u.product_id','=','shipment_detail.product_id')->join('uom as um','um.id','=','u.uom_id')->where('shipment_detail.doc_no',$shipment->doc_no)->get(['shipment_detail.qty','ps.id','ps.remark as product_name','shipment_detail.ref_no_po as po_no']),
             'company' => Company::get()->first(),
         ]);
     }
@@ -376,8 +384,9 @@ class ShipmentController extends Controller
     {
         $data = $this->data;
         $user = Auth::user();
-        $product = DB::select(" select pd.qty_pack,o.remark as uom,pd.doc_no,pd.product_id,ps.abbr,ps.remark as product_name,pd.qty,pd.ref_no_po as po_no,pd.ref_no from packing_master pm 
-        join packing_detail pd on pd.doc_no = pm.doc_no 
+        $product = DB::select(" select pd.qty as qty_pack,o.remark as uom,pd.doc_no,pd.product_id,ps.abbr,ps.remark as product_name,dk.qty,pd.ref_no_po as po_no,pd.ref_no from shipment_master pm 
+        join shipment_detail pd on pd.doc_no = pm.doc_no
+        join purchase_detail dk on dk.purchase_no = pd.ref_no_po and dk.product_id = pd.product_id
         join product_sku ps on ps.id = pd.product_id 
         join product_uom uo on uo.product_id=ps.id
         join uom o on o.id= uo.uom_id
@@ -400,18 +409,25 @@ class ShipmentController extends Controller
      * 
      * @return \Illuminate\Http\Response
      */
-    public function update(Packing $packing, Request $request) 
+    public function update(Shipment $shipment, Request $request) 
     {
 
         $user = Auth::user();
         $doc_no = $request->get('doc_no');
         $branch_id = $request->get('customer_id');
-        PackingDetail::where('doc_no', $doc_no)->delete();
+        ShipmentDetail::where('doc_no', $doc_no)->delete();
 
-        $res_= $packing->update(
+        $res_= $shipment->update(
             array_merge(
                 ['updated_by'   => $user->id],
                 ['remark' => $request->get('remark') ],
+                ['shipping_method' => $request->get('shipping_method') ],
+                ['status' => $request->get('status') ],
+                ['shipper_name' => $request->get('shipper_name') ],
+                ['awb' => $request->get('awb') ],
+                ['address' => $request->get('address') ],
+                ['etd' => $request->get('etd') ],
+                ['eta' => $request->get('eta') ],
                 ['dated' => Carbon::createFromFormat('d-m-Y', $request->get('dated'))->format('Y-m-d') ],
             )
         );
@@ -420,19 +436,18 @@ class ShipmentController extends Controller
             $result = array_merge(
                 ['status' => 'failed'],
                 ['data' => ''],
-                ['message' => 'Save packing failed'],
+                ['message' => 'Save shipment failed'],
             );
     
             return $result;
         }
 
         for ($i=0; $i < count($request->get('product')); $i++) { 
-            $res_detail = PackingDetail::create(
+            $res_detail = ShipmentDetail::create(
                 array_merge(
                     ['doc_no' => $doc_no],
                     ['product_id' => $request->get('product')[$i]["id"]],
-                    ['qty' => $request->get('product')[$i]["qty"]],
-                    ['qty_pack' => $request->get('product')[$i]["qty_pack"]],
+                    ['qty' => $request->get('product')[$i]["qty_pack"]],
                     ['seq' => $i ],
                     ['uom' => $request->get('product')[$i]["uom"]],
                     ['ref_no_po' => $request->get('product')[$i]["po_no"]],
@@ -444,7 +459,7 @@ class ShipmentController extends Controller
                 $result = array_merge(
                     ['status' => 'failed'],
                     ['data' => ''],
-                    ['message' => 'Save packing detail failed'],
+                    ['message' => 'Save shipment detail failed'],
                 );
         
                 return $result;

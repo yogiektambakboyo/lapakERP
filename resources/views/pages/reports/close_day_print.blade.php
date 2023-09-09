@@ -54,25 +54,27 @@
         <tbody>
           <tr>
             <td style="width: 20%;vertical-align:top;">
-
+              @php
+                $total_qty = 0;
+                $total_service = 0; 
+                $counter = 0;   
+                $counter_spk = 0;
+                $counter_salon = 0;
+              @endphp
+              
               <table class="table table-striped" id="service_table">
                 <thead>
                 <tr style="background-color:#FFA726;color:white;">
-                    <th>Perawatan</th>
-                    <th scope="col" width="10%">@lang('general.lbl_price')</th>
-                    <th scope="col" width="5%">@lang('general.lbl_qty')</th>
-                    <th scope="col" width="10%">Total</th>
+                    <th scope="col" width="55%">Perawatan</th>
+                    <th scope="col" width="15%">@lang('general.lbl_price')</th>
+                    <th scope="col" width="15%">@lang('general.lbl_qty')</th>
+                    <th scope="col" width="15%">Total</th>
                 </tr>
                 </thead>
                 <tbody>
-                  @php
-                    $total_qty = 0;
-                    $total_service = 0; 
-                    $counter = 0;   
-                    $counter_spk = 0;
-                  @endphp
+                  
                   @foreach($report_datas as $report_data)
-                      @if($report_data->type_id==2)
+                      @if($report_data->type_id==2 && $report_data->category_id!=53 )
                         <tr>
                             <td style="text-align: left;">{{ $report_data->abbr }}</td>
                             <td style="text-align: center;">{{ number_format($report_data->price,0,',','.') }}</td>
@@ -85,25 +87,63 @@
                           $total_qty = $total_qty + $report_data->qty;
                         @endphp
                       @endif
-                  @endforeach
 
+                      @if($report_data->type_id==2 && $report_data->category_id==53 )
+                        @php
+                          $counter_salon++;   
+                        @endphp
+                      @endif
+                  @endforeach
+                </tbody>
+              </table>
+
+              @if($counter_salon>0 )
+                  <table class="table table-striped" id="service_table">
+                    <thead>
+                    <tr style="background-color:#FFA726;color:white;">
+                        <th scope="col" width="55%">Salon</th>
+                        <th scope="col" width="15%">@lang('general.lbl_price')</th>
+                        <th scope="col" width="15%">@lang('general.lbl_qty')</th>
+                        <th scope="col" width="15%">Total</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                      
+                      @foreach($report_datas as $report_data)
+                          @if($report_data->type_id==2 && $report_data->category_id==53 )
+                            <tr>
+                                <td style="text-align: left;">{{ $report_data->abbr }}</td>
+                                <td style="text-align: center;">{{ number_format($report_data->price,0,',','.') }}</td>
+                                <td style="text-align: center;">{{ number_format($report_data->qty,0,',','.') }}</td>
+                                <td style="text-align: right;">{{ $report_data->total=='Free'?'Free':number_format($report_data->total,0,',','.') }}</td>
+                            </tr>
+                            @php
+                              $total_service = $total_service + ($report_data->total=='Free'?0:$report_data->total); 
+                              $counter++;   
+                              $total_qty = $total_qty + $report_data->qty;
+                            @endphp
+                          @endif
+                      @endforeach
+                    </tbody>
+                  </table>
+              @endif
+
+              <table class="table table-striped" id="">
+                <thead>
+                <tr style="background-color:#FFA726;color:white;">
+                    <th scope="col" width="25%"></th>
+                    <th scope="col" width="15%"></th>
+                    <th scope="col" width="15%"></th>
+                    <th scope="col" width="15%"></th>
+                </tr>
+                </thead>
+                <tbody>
+                
                   @foreach($payment_datas as $payment_data)
                         @php
                           $counter_spk = $counter_spk + $payment_data->qty_payment;
                         @endphp
                   @endforeach
-        
-                  @if ($counter<15)
-                      @for($i=0;$i<(15-$counter);$i++)
-                        <tr>
-                            <td style="text-align: left;"><br></th>
-                            <td style="text-align: center;"> </td>
-                            <td style="text-align: center;"> </td>
-                            <td style="text-align: center;"> </td>
-                        </tr>
-                      @endfor
-                  @endif
-        
                   <tr>
                     <th colspan="2" style="text-align: left;width:20%;">Total</th>
                     <th>{{ $total_qty }}</th>
@@ -119,6 +159,8 @@
                   </tr>
                 </tbody>
               </table>
+
+              
               
 
             </td>
@@ -465,51 +507,6 @@
                   <tr>
                     <th colspan="2" style="text-align: left;width:20%;">Total</th>
                     <th colspan="4" style="text-align: right;">{{ number_format($total_payment,0,',','.') }} </th>
-                  </tr>
-                </tbody>
-              </table>           
-            </td>
-
-            <td style="width: 16%; vertical-align:top;">
-              <table class="table table-striped" id="service_table">
-                <thead>
-                <tr>
-                  <th colspan="2" style="text-align: center;width:20%;background-color:#FFA726;">Pengeluaran</th>
-                </tr>
-                <tr>
-                  <th colspan="1" style="text-align: center;width:20%;background-color:#FFA726;">Kas Masuk</th>
-                  <th colspan="1" style="text-align: center;width:20%;background-color:#FFA726;"></th>
-                </tr>
-                <tr>
-                  <th colspan="1" style="width:80px;text-align: center;background-color:#FFA726;">Jenis</th>
-                  <th colspan="1" style="width:80px;text-align: center;background-color:#FFA726;">Harga</th>
-                </tr>
-                </thead>
-                <tbody>    
-                   @php
-                      $total_petty = 0;
-                   @endphp    
-                       @foreach($petty_datas as $petty_data)
-                          @if($petty_data->type == 'Kas - Keluar')
-                          @php
-                            $total_petty = $total_petty + $petty_data->total;
-                          @endphp    
-                          <tr>
-                              <td style="text-align: left;">{{ $petty_data->abbr }}</th>
-                              <td style="text-align: center;">{{ number_format($petty_data->total,0,',','.') }}</td>
-                          </tr>
-                          @endif
-                         
-                        @endforeach
-               
-                  
-                  <tr>
-                    <th colspan="1" style="text-align: left;width:20%;">Total</th>
-                    <th colspan="1" style="text-align: right;">{{ number_format($total_petty,0,',','.') }}</th>
-                  </tr>
-                  <tr>
-                    <th colspan="1" style="text-align: left;width:20%;">Sisa Kas</th>
-                    <th colspan="1" style="text-align: right;"> </th>
                   </tr>
                 </tbody>
               </table>           

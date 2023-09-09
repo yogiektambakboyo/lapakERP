@@ -1,12 +1,12 @@
 @extends('layouts.default', ['appSidebarSearch' => true])
 
-@section('title', 'Create New Packing')
+@section('title', 'Create New Shipment')
 
 @section('content')
   @csrf
   <div class="panel text-white">
     <div class="panel-heading  bg-teal-600">
-      <div class="panel-title"><h4 class="">Pengemasan Pesanan</h4></div>
+      <div class="panel-title"><h4 class="">Pengiriman Pesanan</h4></div>
       <div class="">
         <a href="{{ route('packing.index') }}" class="btn btn-default">@lang('general.lbl_cancel')</a>
         <button type="button" id="save-btn" class="btn btn-info">@lang('general.lbl_save')</button>
@@ -17,8 +17,8 @@
         <div class="row mb-3">
           <div class="col-md-3">
             <div class="row mb-3">
-              <label class="form-label col-form-label col-md-6">@lang('general.lbl_dated_mmddYYYY')</label>
-              <div class="col-md-6">
+              <label class="form-label col-form-label col-md-4">@lang('general.lbl_dated_mmddYYYY')</label>
+              <div class="col-md-8">
                 <input type="text" 
                 name="doc_date"
                 id="doc_date"
@@ -28,13 +28,28 @@
                           <span class="text-danger text-left">{{ $errors->first('doc_date') }}</span>
                       @endif
               </div>
+
+              <label class="form-label col-form-label col-md-4 mt-1">Via</label>
+              <div class="col-md-8 mt-1">
+                <select class="form-control" name="shipping_method" id="shipping_method">
+                  <option value=""></option>
+                  <option value="Internal">Internal</option>
+                  <option value="Kurir">Kurir</option>
+                </select>
+              </div>
+
+              <label class="form-label col-form-label col-md-5 mt-1">Resi/ No Mobil</label>
+              <div class="col-md-7 mt-1">
+                <input type="text" class="form-control" id="awb" name="awb">
+              </div>
             </div>
           </div>
 
           <div class="col-md-9">
             <div class="row mb-3">
+
               <label class="form-label col-form-label col-md-1">@lang('general.lbl_branch')</label>
-              <div class="col-md-3">
+              <div class="col-md-4">
                 <select class="form-control" 
                     name="customer_id" id="customer_id" required>
                     <option value="">@lang('general.lbl_branchselect')</option>
@@ -45,7 +60,7 @@
               </div>
 
               <label class="form-label col-form-label col-md-2">@lang('general.lbl_remark')</label>
-              <div class="col-md-4">
+              <div class="col-md-5">
                   <input type="text" 
                   name="remark"
                   id="remark"
@@ -53,8 +68,54 @@
                   value="{{ old('remark') }}"/>
               </div>
 
-              
+
+              <label class="form-label col-form-label col-md-2 mt-1">Nama Kurir</label>
+              <div class="col-md-3 mt-1">
+                  <input type="text" 
+                  name="shipper_name"
+                  id="shipper_name"
+                  class="form-control" 
+                  value="{{ old('shipper_name') }}"/>
+              </div>
+
+              <label class="form-label col-form-label col-md-2 mt-1">Alamat Tujuan</label>
+              <div class="col-md-5 mt-1">
+                  <input type="text" 
+                  name="address"
+                  id="address"
+                  class="form-control" 
+                  value="{{ old('address') }}"/>
+              </div>
+
+              <label class="form-label col-form-label col-md-2 mt-1">Tgl Kirim</label>
+              <div class="col-md-2 mt-1">
+                  <input type="date" 
+                  name="etd"
+                  id="etd"
+                  class="form-control" 
+                  value="{{ old('etd') }}"/>
+              </div>
+
+              <label class="form-label col-form-label col-md-2 mt-1">Est. Tgl Terima</label>
+              <div class="col-md-2 mt-1">
+                  <input type="date" 
+                  name="eta"
+                  id="eta"
+                  class="form-control" 
+                  value="{{ old('etd') }}"/>
+              </div>
+
+              <label class="form-label col-form-label col-md-2 mt-1">Status</label>
+              <div class="col-md-2 mt-1">
+                <select class="form-control" name="status" id="status">
+                  <option value="Pending">Pending</option>
+                  <option value="Terkirim">Terkirim</option>
+                </select>
+              </div>
+
+
             </div>
+
             <div class="modal fade" id="modal-filter" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
               <div class="modal-dialog">
               <div class="modal-content">
@@ -84,16 +145,16 @@
               <div class="modal-dialog">
               <div class="modal-content">
                   <div class="modal-header">
-                  <h5 class="modal-title" id="staticBackdropLabel">Apply Picking</h5>
+                  <h5 class="modal-title" id="staticBackdropLabel">Apply Packing</h5>
                   <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                   </div>
                   <div class="modal-body">
-                    <label class="form-label col-form-label col-md-8" id="product_id_selected_lbl">Silahkan pilih Dokumen Picking </label>
+                    <label class="form-label col-form-label col-md-8" id="product_id_selected_lbl">Silahkan pilih Dokumen Packing </label>
                     <input type="hidden" id="product_id_selected" value="">
                     <div class="col-md-8">
                       <select class="form-control" 
                           name="picking_list" id="picking_list" required>
-                          <option value=""> Pilih No Picking </option>
+                          <option value=""> Pilih No Packing </option>
                       </select>
                     </div>
                   </div>
@@ -154,7 +215,7 @@
 
             <div class="col-md-2">
               <div class="col-md-12"><label class="form-label col-form-label">_</label></div>
-              <button class="btn btn-outline-warning btn-sm d-none" id="btn-picking" href="#modal-filter" data-bs-toggle="modal" data-bs-target="#modal-picking">Apply Picking</button>
+              <button class="btn btn-outline-warning btn-sm d-none" id="btn-picking" href="#modal-filter" data-bs-toggle="modal" data-bs-target="#modal-picking">Apply Packing</button>
             </div>
   
           </div>
@@ -228,6 +289,7 @@
           }).then(resp => {
               list_po = resp.data;
 
+
               $('#po_list').find('option').remove();
 
               for (let index = 0; index < list_po.length; index++) {
@@ -236,13 +298,14 @@
                     value: element.purchase_no,
                     text: element.purchase_no+' ('+element.dated+')'
                 }));
+                $('#address').val(list_po[0].address);
               }
               
           });
           // End Call API
         });
 
-        var xurlp = "{{ route('picking.getdocdatapickedlist','16') }}";
+        var xurlp = "{{ route('packing.getdocdatapackedlist','16') }}";
         var xlastvalurlp = "16";
         $('#customer_id').on('change',function(){
           // Begin Call API
@@ -463,7 +526,7 @@
       });
 
       $('#btn_add_picking').on('click',function(){
-          var url_ = "{{ route('picking.getdocdatapicked','16') }}";
+          var url_ = "{{ route('packing.getdocdatapacked','16') }}";
             url_ = url_.replace('16', $('#picking_list').find(':selected').val())
             lastvalurl_ = $(this).val();
             const res = axios.get(url_, {
@@ -570,9 +633,16 @@
                   product : orderList,
                   customer_id : $('#customer_id').val(),
                   remark : $('#remark').val(),
+                  shipping_method : $('#shipping_method').find(':selected').val(),
+                  status : $('#status').find(':selected').val(),
+                  shipper_name : $('#shipper_name').val(),
+                  awb : $('#awb').val(),
+                  address : $('#address').val(),
+                  etd : $('#etd').val(),
+                  eta : $('#eta').val(),
                 }
               );
-              const res = axios.post("{{ route('packing.store') }}", json, {
+              const res = axios.post("{{ route('shipment.store') }}", json, {
                 headers: {
                   // Overwrite Axios's automatically set Content-Type
                   'Content-Type': 'application/json'
@@ -598,9 +668,9 @@
                             burl,
                             '_blank' // <- This is what makes it open in a new window.
                           );
-                          window.location.href = "{{ route('packing.index') }}"; 
+                          window.location.href = "{{ route('shipment.index') }}"; 
                         } else{
-                          window.location.href = "{{ route('packing.index') }}"; 
+                          window.location.href = "{{ route('shipment.index') }}"; 
                         }
                       })
                     }else{
@@ -678,7 +748,7 @@
             var obj = orderList[i];
             if("-"==obj["po_no"] && id==obj["id"]){
               isExist = 1;
-              orderList[i]["qty"] = parseInt(orderList[i]["qty"])+1;
+              orderList[i]["qty"] = parseInt(orderList[i]["qty"])+qty;
             }
           }
 

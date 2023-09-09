@@ -3,8 +3,6 @@
 @section('title', 'Create New Invoice')
 
 @section('content')
-<form method="POST" action="{{ route('invoices.store') }}"  enctype="multipart/form-data">
-  @csrf
   <div class="panel text-white">
     <div class="panel-heading  bg-teal-600">
       <div class="panel-title"><h4 class="">@lang('general.lbl_invoice')</h4></div>
@@ -16,10 +14,10 @@
     <div class="panel-body bg-white text-black">
 
         <div class="row mb-3">
-          <div class="col-md-3">
+          <div class="col-md-2">
             <div class="row mb-3">
-              <label class="form-label col-form-label col-md-6">@lang('general.lbl_dated_mmddYYYY')</label>
-              <div class="col-md-6">
+              <label class="form-label col-form-label col-md-4">@lang('general.lbl_dated_mmddYYYY')</label>
+              <div class="col-md-8">
                 <input type="text" 
                 name="invoice_date"
                 id="invoice_date"
@@ -42,7 +40,7 @@
             </div>
           </div>
 
-          <div class="col-md-9">
+          <div class="col-md-10">
             <div class="row mb-3">
 
               <label class="form-label col-form-label col-md-2 d-none">@lang('general.lbl_spk')</label>
@@ -69,10 +67,10 @@
                 </select>
               </div>
               <div class="col-md-1">
-                <a type="button" id="add-customer-btn" class="btn btn-green"  href="#modal-add-customer" data-bs-toggle="modal" data-bs-target="#modal-add-customer"><span class="fas fa-user-plus"></span></a>
+                <a type="button" id="add-customer-btn" class="btn btn-sm btn-green"  href="#modal-add-customer" data-bs-toggle="modal" data-bs-target="#modal-add-customer"><span class="fas fa-user-plus"></span></a>
               </div>
 
-              <label class="form-label col-form-label col-md-1">@lang('general.lbl_customer_type')</label>
+              <label class="form-label col-form-label col-md-2">@lang('general.lbl_customer_type')</label>
               <div class="col-md-2">
                 <select class="form-control" 
                     name="customer_type" id="customer_type" required>
@@ -94,7 +92,7 @@
               </div>
             </div>
             <div class="row mb-3">
-              <label class="form-label col-form-label col-md-1">@lang('general.lbl_type_payment')</label>
+              <label class="form-label col-form-label col-md-2">@lang('general.lbl_type_payment')</label>
               <div class="col-md-2">
                 <select class="form-control" 
                       name="payment_type" id ="payment_type" required>
@@ -111,7 +109,7 @@
                   id="payment_nominal"
                   name="payment_nominal"
                   class="form-control" 
-                  value="{{ old('payment_nominal') }}" required/>
+                  value="0" required/>
                   </div>
 
                   <label class="form-label col-form-label col-md-1">@lang('general.lbl_charge')</label>
@@ -251,7 +249,7 @@
                     </div>
                    
                     <div class="panel-heading bg-teal-600 text-white"><strong>@lang('general.lbl_schedule_list')   </strong></div>
-                    </br>
+                    <br>
       
                     <div class="col-md-12">
                       <table class="table table-striped" id="order_time_table" style="width:100%">
@@ -355,7 +353,7 @@
 
           <div class="col-md-2">
             <div class="col-md-12"><label class="form-label col-form-label">_</label></div>
-            <a href="#" id="input_service_submit" class="btn btn-green"><div class="fa-1x"><i class="fas fa-plus fa-fw"></i>@lang('general.lbl_add_service')</div></a>
+            <button href="#" id="input_service_submit" class="btn btn-green"><div class="fa-1x"><i class="fas fa-plus fa-fw"></i>@lang('general.lbl_add_service')</div></button>
           </div>
 
         </div>
@@ -446,7 +444,7 @@
 
           <div class="col-md-2">
             <div class="col-md-12"><label class="form-label col-form-label">_</label></div>
-            <a href="#" id="input_product_submit" class="btn btn-green"><div class="fa-1x"><i class="fas fa-plus fa-fw"></i>@lang('general.lbl_add_product')</div></a>
+            <button id="input_product_submit" class="btn btn-green"><div class="fa-1x"><i class="fas fa-plus fa-fw"></i>@lang('general.lbl_add_product')</div></button>
           </div>
 
         </div>
@@ -550,10 +548,10 @@
         
                         <div class="mb-3">
                             <label for="cust_phone_no" class="form-label">@lang('general.lbl_phoneno')</label>
-                            <input value="{{ old('cust_phone_no') }}" 
+                            <input
                                 type="text" 
                                 class="form-control" 
-                                name="cust_phone_no" id="cust_phone_no" 
+                                name="cust_phone_no" id="cust_phone_no" value="08"
                                 placeholder="@lang('general.lbl_phoneno')" required>
         
                             @if ($errors->has('cust_phone_no'))
@@ -567,9 +565,12 @@
                               <select class="form-control" 
                                     name="cust_branch_id" id="cust_branch_id">
                                     <option value="">@lang('general.lbl_branchselect')</option>
-                                    @foreach($branchs as $branch)
-                                        <option value="{{ $branch->id }}">{{  $branch->remark }}</option>
-                                    @endforeach
+                                    <?php 
+                                      foreach($branchs as $branch){  
+                                        $selected = $branch->id==$userx->branch_id?"selected":"";                                
+                                        echo '<option value="'.$branch->id.'" '.$selected.'>'.$branch->remark.'</option>';
+                                      }  
+                                    ?>
                                 </select>
                             </div>
                           </div>
@@ -602,7 +603,6 @@
 
     </div>
   </div>
-</form>
 @endsection
 
 @push('scripts')
@@ -702,6 +702,7 @@
 
                         var newOption = new Option(data.text, data.id, false, false);
                         $('#customer_id').append(newOption).trigger('change');
+                        $('#customer_id').val(resp.data.data).trigger('change');
                     }else{
                       Swal.fire(
                         {
@@ -1419,11 +1420,11 @@
             targets: -1, 
             data: null, 
             defaultContent: 
-            '<a href="#"  data-toggle="tooltip" data-placement="top" title="Tambah"   id="add_row"  class="btn btn-sm btn-green"><div class="fa-1x"><i class="fas fa-circle-plus fa-fw"></i></div></a>'+
-            '<a href="#"  data-toggle="tooltip" data-placement="top" title="Kurangi"   id="minus_row"  class="btn btn-sm btn-yellow"><div class="fa-1x"><i class="fas fa-circle-minus fa-fw"></i></div></a>'+
-            '<a href="#" data-toggle="tooltip" data-placement="top" title="Hapus"  id="delete_row"  class="btn btn-sm btn-danger"><div class="fa-1x"><i class="fas fa-circle-xmark fa-fw"></i></div></a>'+
-            '<a href="#" href="#modal-filter" data-bs-toggle="modal" data-bs-target="#modal-filter"  data-toggle="tooltip" data-placement="top" title="Terapis"  data-toggle="tooltip" data-placement="top" title="Terapis" id="assign_row" class="btn btn-sm btn-gray"><div class="fa-1x"><i class="fas fa-user-tag fa-fw"></i></div></a>'+
-            '<a href="#" href="#modal-referral" data-bs-toggle="modal" data-bs-target="#modal-referral" data-toggle="tooltip" data-placement="top" title="Dijual Oleh"  id="referral_row" class="btn btn-sm btn-purple"><div class="fa-1x"><i class="fas fa-users fa-fw"></i></div></a>',
+            '<button href="#"  data-toggle="tooltip" data-placement="top" title="Tambah"   id="add_row"  class="btn btn-sm btn-green"><div class="fa-1x"><i class="fas fa-circle-plus fa-fw"></i></div></button>'+
+            '<button href="#"  data-toggle="tooltip" data-placement="top" title="Kurangi"   id="minus_row"  class="btn btn-sm btn-yellow"><div class="fa-1x"><i class="fas fa-circle-minus fa-fw"></i></div></button>'+
+            '<button href="#" data-toggle="tooltip" data-placement="top" title="Hapus"  id="delete_row"  class="btn btn-sm btn-danger"><div class="fa-1x"><i class="fas fa-circle-xmark fa-fw"></i></div></button>'+
+            '<button href="#" href="#modal-filter" data-bs-toggle="modal" data-bs-target="#modal-filter"  data-toggle="tooltip" data-placement="top" title="Terapis"  data-toggle="tooltip" data-placement="top" title="Terapis" id="assign_row" class="btn btn-sm btn-gray"><div class="fa-1x"><i class="fas fa-user-tag fa-fw"></i></div></button>'+
+            '<button href="#" href="#modal-referral" data-bs-toggle="modal" data-bs-target="#modal-referral" data-toggle="tooltip" data-placement="top" title="Dijual Oleh"  id="referral_row" class="btn btn-sm btn-purple"><div class="fa-1x"><i class="fas fa-users fa-fw"></i></div></button>',
           }],
           columns: [
             { data: 'seq' },
@@ -1444,11 +1445,11 @@
             targets: -1, 
             data: null, 
             defaultContent: 
-            '<a href="#"  data-toggle="tooltip" data-placement="top" title="Tambah"   id="add_row"  class="btn btn-sm btn-green"><div class="fa-1x"><i class="fas fa-circle-plus fa-fw"></i></div></a>'+
-            '<a href="#"  data-toggle="tooltip" data-placement="top" title="Kurangi"   id="minus_row"  class="btn btn-sm btn-yellow"><div class="fa-1x"><i class="fas fa-circle-minus fa-fw"></i></div></a>'+
-            '<a href="#" data-toggle="tooltip" data-placement="top" title="Hapus"  id="delete_row"  class="btn btn-sm btn-danger"><div class="fa-1x"><i class="fas fa-circle-xmark fa-fw"></i></div></a>'+
-            '<a href="#" href="#modal-filter" data-bs-toggle="modal" data-bs-target="#modal-filter"  data-toggle="tooltip" data-placement="top" title="Terapis"  data-toggle="tooltip" data-placement="top" title="Terapis" id="assign_row" class="btn btn-sm btn-gray"><div class="fa-1x"><i class="fas fa-user-tag fa-fw"></i></div></a>'+
-            '<a href="#" href="#modal-referral" data-bs-toggle="modal" data-bs-target="#modal-referral" data-toggle="tooltip" data-placement="top" title="Dijual Oleh"  id="referral_row" class="btn btn-sm btn-purple"><div class="fa-1x"><i class="fas fa-users fa-fw"></i></div></a>',
+            '<button href="#"  data-toggle="tooltip" data-placement="top" title="Tambah"   id="add_row"  class="btn btn-sm btn-green"><div class="fa-1x"><i class="fas fa-circle-plus fa-fw"></i></div></button>'+
+            '<button href="#"  data-toggle="tooltip" data-placement="top" title="Kurangi"   id="minus_row"  class="btn btn-sm btn-yellow"><div class="fa-1x"><i class="fas fa-circle-minus fa-fw"></i></div></button>'+
+            '<button href="#" data-toggle="tooltip" data-placement="top" title="Hapus"  id="delete_row"  class="btn btn-sm btn-danger"><div class="fa-1x"><i class="fas fa-circle-xmark fa-fw"></i></div></button>'+
+            '<button href="#" href="#modal-filter" data-bs-toggle="modal" data-bs-target="#modal-filter"  data-toggle="tooltip" data-placement="top" title="Terapis"  data-toggle="tooltip" data-placement="top" title="Terapis" id="assign_row" class="btn btn-sm btn-gray"><div class="fa-1x"><i class="fas fa-user-tag fa-fw"></i></div></button>'+
+            '<button href="#" href="#modal-referral" data-bs-toggle="modal" data-bs-target="#modal-referral" data-toggle="tooltip" data-placement="top" title="Dijual Oleh"  id="referral_row" class="btn btn-sm btn-purple"><div class="fa-1x"><i class="fas fa-users fa-fw"></i></div></button>',
           }],
           columns: [
             { data: 'seq' },
@@ -1572,7 +1573,7 @@
 
         }
 
-        $('#order_table tbody').on('click', 'a', function () {
+        $('#order_table tbody').on('click', 'button', function () {
             var data = table.row($(this).parents('tr')).data();
             order_total = 0;
             disc_total = 0;
@@ -1685,7 +1686,7 @@
 
         });
 
-        $('#order_product_table tbody').on('click', 'a', function () {
+        $('#order_product_table tbody').on('click', 'button', function () {
             var data = table_product.row($(this).parents('tr')).data();
             order_total = 0;
             disc_total = 0;

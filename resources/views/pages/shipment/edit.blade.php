@@ -1,21 +1,21 @@
 @extends('layouts.default', ['appSidebarSearch' => true])
 
-@section('title', 'Edit Picking')
+@section('title', 'Edit Shipment')
 
 @section('content')
   @csrf
   <div class="panel text-white">
     <div class="panel-heading  bg-teal-600">
-      <div class="panel-title"><h4 class="">@lang('general.lbl_picking') #{{ $doc_data->doc_no }} </h4></div>
+      <div class="panel-title"><h4 class="">Pengiriman Pesanan #{{ $doc_data->doc_no }} </h4></div>
       <div class="">
-        <a href="{{ route('packing.index') }}" class="btn btn-default">@lang('general.lbl_cancel')</a>
+        <a href="{{ route('shipment.index') }}" class="btn btn-default">@lang('general.lbl_cancel')</a>
         <button type="button" id="save-btn" class="btn btn-info">@lang('general.lbl_save')</button>
       </div>
     </div>
     <div class="panel-body bg-white text-black">
 
         <div class="row mb-1">
-          <div class="col-md-2">
+          <div class="col-md-3">
             <div class="row mb-3">
               <label class="form-label col-form-label col-md-4">@lang('general.lbl_dated')   </label>
               <div class="col-md-8">
@@ -24,20 +24,38 @@
                 id="doc_no"
                 class="form-control" 
                 value="{{ $doc_data->doc_no }}"/>
+
                 <input type="text" 
-                name="dated"
-                id="dated"
-                class="form-control" 
-                value="{{ substr(explode(" ",$doc_data->dated)[0],8,2) }}-{{ substr(explode(" ",$doc_data->dated)[0],5,2) }}-{{ substr(explode(" ",$doc_data->dated)[0],0,4) }}" required/>
-                @if ($errors->has('dated'))
-                          <span class="text-danger text-left">{{ $errors->first('dated') }}</span>
-                      @endif
+                  name="dated"
+                  id="dated"
+                  class="form-control" 
+                  value="{{ substr(explode(" ",$doc_data->dated)[0],8,2) }}-{{ substr(explode(" ",$doc_data->dated)[0],5,2) }}-{{ substr(explode(" ",$doc_data->dated)[0],0,4) }}" required/>
+                  @if ($errors->has('dated'))
+                            <span class="text-danger text-left">{{ $errors->first('dated') }}</span>
+                        @endif
               </div>
+
+              <label class="form-label col-form-label col-md-4 mt-1">Via</label>
+              <div class="col-md-8 mt-1">
+                <select class="form-control" name="shipping_method" id="shipping_method">
+                  <option value=""></option>
+                  <option value="Internal" {{ ("Internal" == $doc_data->shipping_method) ? 'selected': ''}}>Internal</option>
+                  <option value="Kurir"  {{ ("Kurir" == $doc_data->shipping_method) ? 'selected': ''}}>Kurir</option>
+                </select>
+              </div>
+              <label class="form-label col-form-label col-md-5 mt-1">Resi/ No Mobil</label>
+              <div class="col-md-7 mt-1">
+                <input type="text" class="form-control" id="awb" name="awb" value="{{ $doc_data->awb }}">
+              </div>
+              
             </div>
+
+           
+
 
           </div>
 
-          <div class="col-md-10">
+          <div class="col-md-9">
             <div class="row mb-1">
 
               <label class="form-label col-form-label col-md-2  d-none">@lang('general.lbl_spk')</label>
@@ -51,7 +69,7 @@
                     name="customer_id" id="customer_id" required>
                     <option value="">@lang('general.lbl_customerselect')</option>
                     @foreach($customers as $customer)
-                        <option value="{{ $customer->id }}" {{ ($customer->id == $doc_data->customers_id) 
+                        <option value="{{ $customer->id }}" {{ ($customer->id == $doc_data->customer_id) 
                           ? 'selected'
                           : ''}}>{{ $customer->id }} - {{ $customer->name }} ({{ $customer->remark }})</option>
                     @endforeach
@@ -59,13 +77,57 @@
               </div>
 
               <label class="form-label col-form-label col-md-2">@lang('general.lbl_remark')</label>
-              <div class="col-md-4">
+              <div class="col-md-5">
                 <input type="text" 
                 name="remark"
                 id="remark"
                 class="form-control" 
                 value="{{ $doc_data->remark }}"/>
-                </div>
+              </div>
+
+              <label class="form-label col-form-label col-md-2 mt-1">Nama Kurir</label>
+              <div class="col-md-3 mt-1">
+                  <input type="text" 
+                  name="shipper_name"
+                  id="shipper_name"
+                  class="form-control" 
+                  value="{{ $doc_data->shipper_name }}"/>
+              </div>
+
+              <label class="form-label col-form-label col-md-2 mt-1">Alamat Tujuan</label>
+              <div class="col-md-5 mt-1">
+                  <input type="text" 
+                  name="address"
+                  id="address"
+                  class="form-control" 
+                  value="{{ $doc_data->address }}"/>
+              </div>
+
+              <label class="form-label col-form-label col-md-2 mt-1">Tgl Kirim</label>
+              <div class="col-md-2 mt-1">
+                  <input type="date" 
+                  name="etd"
+                  id="etd"
+                  class="form-control" 
+                  value="{{ $doc_data->etd }}"/>
+              </div>
+
+              <label class="form-label col-form-label col-md-2 mt-1">Est. Tgl Terima</label>
+              <div class="col-md-2 mt-1">
+                  <input type="date" 
+                  name="eta"
+                  id="eta"
+                  class="form-control" 
+                  value="{{ $doc_data->eta }}"/>
+              </div>
+
+              <label class="form-label col-form-label col-md-2 mt-1">Status</label>
+              <div class="col-md-2 mt-1">
+                <select class="form-control" name="status" id="status">
+                  <option value="Pending" {{ $doc_data->eta=="Pending"?"selected":"" }}>Pending</option>
+                  <option value="Terkirim" {{ $doc_data->eta=="Terkirim"?"selected":"" }}>Terkirim</option>
+                </select>
+              </div>
              
             </div>
           </div>
@@ -117,7 +179,7 @@
 
           <div class="col-md-2">
             <div class="col-md-12"><label class="form-label col-form-label">_</label></div>
-            <button class="btn btn-outline-warning btn-sm " id="btn-picking" href="#modal-picking" data-bs-toggle="modal" data-bs-target="#modal-picking">Apply Picking</button>
+            <button class="btn btn-outline-warning btn-sm " id="btn-picking" href="#modal-picking" data-bs-toggle="modal" data-bs-target="#modal-picking">Apply Packing</button>
           </div>
 
         </div>
@@ -242,6 +304,28 @@
 
           var xurl = "{{ route('purchaseordersinternal.getdocdatapicked','16') }}";
           var xlastvalurl = "16";
+          xurl = xurl.replace(xlastvalurl, $('#customer_id').find(':selected').val())
+          xlastvalurl = $(this).val();
+          const res = axios.get(xurl, {
+            headers: {
+                'Content-Type': 'application/json'
+              }
+          }).then(resp => {
+              list_po = resp.data;
+
+
+              $('#po_list').find('option').remove();
+
+              for (let index = 0; index < list_po.length; index++) {
+                const element = list_po[index];
+                $('#po_list').append($('<option>', {
+                    value: element.purchase_no,
+                    text: element.purchase_no+' ('+element.dated+')'
+                }));
+              }
+              
+          });
+
           $('#customer_id').on('change',function(){
             // Begin Call API
             xurl = xurl.replace(xlastvalurl, $('#customer_id').find(':selected').val())
@@ -267,8 +351,29 @@
             // End Call API
           });
 
-          var xurlp = "{{ route('picking.getdocdatapickedlist','16') }}";
+          var xurlp = "{{ route('packing.getdocdatapackedlist','16') }}";
           var xlastvalurlp = "16";
+          xurlp = xurlp.replace(xlastvalurlp, $('#customer_id').find(':selected').val())
+            xlastvalurlp = $(this).val();
+            const resc = axios.get(xurlp, {
+              headers: {
+                  'Content-Type': 'application/json'
+                }
+            }).then(resp => {
+                list_picking = resp.data;
+
+                $('#picking_list').find('option').remove();
+
+                for (let index = 0; index < list_picking.length; index++) {
+                  const element = list_picking[index];
+                  $('#picking_list').append($('<option>', {
+                      value: element.doc_no,
+                      text: element.doc_no+' ('+element.dated+')'
+                  }));
+                }
+                
+            });
+
           $('#customer_id').on('change',function(){
             // Begin Call API
             xurlp = xurlp.replace(xlastvalurlp, $('#customer_id').find(':selected').val())
@@ -302,6 +407,82 @@
       var disc_total = 0;
       var _vat_total = 0;
       var sub_total = 0;
+
+      $('#btn_add_po').on('click',function(){
+          var url_ = "{{ route('purchaseordersinternal.getdocdata','16') }}";
+            url_ = url_.replace('16', $('#po_list').find(':selected').val())
+            lastvalurl_ = $(this).val();
+            const res = axios.get(url_, {
+              headers: {
+                  'Content-Type': 'application/json'
+                }
+            }).then(resp => {
+                console.log(resp.data);
+                for (let index = 0; index < resp.data.length; index++) {
+                  const element = resp.data[index];
+                  addProduct(element.product_id,element.remark, element.qty, element.uom,element.purchase_no);
+                }
+
+                if(resp.data.length>0){
+                  $('#btn-picking').removeClass("d-none");
+                }else{
+                  $('#btn-picking').addClass("d-none");
+                }
+                
+            });
+      });
+
+      $('#btn_add_picking').on('click',function(){
+          var url_ = "{{ route('packing.getdocdatapacked','16') }}";
+            url_ = url_.replace('16', $('#picking_list').find(':selected').val())
+            lastvalurl_ = $(this).val();
+            const res = axios.get(url_, {
+              headers: {
+                  'Content-Type': 'application/json'
+                }
+            }).then(resp => {
+                console.log(resp.data);
+                table_product.clear().draw(false);
+
+                for (var i = 0; i < orderList.length; i++){
+                    orderList[i]["qty_pack"] = 0;
+                    orderList[i]["ref_no"] = "-";
+                }
+
+                for (let index = 0; index < resp.data.length; index++) {
+                  const element = resp.data[index];
+                  console.log(element);
+
+                    for (var i = 0; i < orderList.length; i++){
+                      var obj = orderList[i];
+                      if(element.product_id==obj["id"]){
+                        orderList[i]["qty_pack"] = parseInt(element.qty);
+                        orderList[i]["ref_no"] = element.doc_no;
+                      }
+                    }
+
+
+                }  
+
+                counterno = 0;
+                for (var i = 0; i < orderList.length; i++){
+                  var obj = orderList[i];
+                  var value = obj["abbr"];
+
+                  counterno = counterno + 1;
+                  table_product.row.add( {
+                        "no" : counterno,
+                        "id"        : obj["id"],
+                        "abbr"      : obj["abbr"],
+                        "uom"       : obj["uom"],
+                        "qty_pack"       : obj["qty_pack"],
+                        "po_no"      : obj["po_no"],
+                        "qty"       : obj["qty"],
+                        "action"    : "",
+                  }).draw(false);
+                }  
+            });
+      });
         
         $('#save-btn').on('click',function(){
           if($('#dated').val()==''){
@@ -335,16 +516,25 @@
                   doc_no : $('#doc_no').val(),
                   remark : $('#remark').val(),
                   product : orderList,
+                  customer_id : $('#customer_id').val(),
+                  remark : $('#remark').val(),
+                  shipping_method : $('#shipping_method').find(':selected').val(),
+                  status : $('#status').find(':selected').val(),
+                  shipper_name : $('#shipper_name').val(),
+                  awb : $('#awb').val(),
+                  address : $('#address').val(),
+                  etd : $('#etd').val(),
+                  eta : $('#eta').val(),
                 }
               );
-              const res = axios.patch("{{ route('packing.update',$doc_data->id) }}", json, {
+              const res = axios.patch("{{ route('shipment.update',$doc_data->id) }}", json, {
                 headers: {
                   // Overwrite Axios's automatically set Content-Type
                   'Content-Type': 'application/json'
                 }
               }).then(resp => {
                     if(resp.data.status=="success"){
-                      window.location.href = "{{ route('packing.index') }}"; 
+                      window.location.href = "{{ route('shipment.index') }}"; 
                     }else{
                       Swal.fire(
                         {
@@ -403,7 +593,7 @@
             var value = obj["id"];
             if(id==obj["id"]){
               isExist = 1;
-              orderList[i]["qty_pack"] = parseInt(orderList[i]["qty_pack"])+1;
+              orderList[i]["qty_pack"] = parseInt(orderList[i]["qty_pack"])+qty;
             }
           }
 
@@ -641,7 +831,7 @@
           });
 
             //Get Invoice 
-            const resInvoice = axios.get("{{ route('packing.getdoc_data',$doc_data->doc_no) }}", {
+            const resInvoice = axios.get("{{ route('shipment.getdoc_data',$doc_data->doc_no) }}", {
               headers: {
                 // Overwrite Axios's automatically set Content-Type
                 'Content-Type': 'application/json'

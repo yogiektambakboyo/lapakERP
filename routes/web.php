@@ -196,6 +196,8 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
             Route::patch('/{packing}/update', 'PackingController@update')->name('packing.update');
             Route::delete('/{packing}/delete', 'PackingController@destroy')->name('packing.destroy');
             Route::get('/export', 'PackingController@export')->name('packing.export');
+            Route::get('/{doc_no}/getdocdatapacked', 'PackingController@getdocdatapacked')->name('packing.getdocdatapacked');
+            Route::get('/{branch_id}/getdocdatapackedlist', 'PackingController@getdocdatapackedlist')->name('packing.getdocdatapackedlist');
         });
 
          /**

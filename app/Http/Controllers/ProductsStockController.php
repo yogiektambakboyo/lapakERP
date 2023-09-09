@@ -71,6 +71,11 @@ class ProductsStockController extends Controller
                     ->join('product_stock as pr','pr.product_id','=','product_sku.id')
                     ->join('branch as bc','bc.id','=','pr.branch_id')
                     ->join('users_branch as ub2','ub2.branch_id', '=', 'pr.branch_id')
+                    ->join('product_distribution as d',function($join)
+                    {
+                        $join->on('d.branch_id', '=', 'pr.branch_id');
+                        $join->on('d.product_id','=','product_sku.id');
+                    })
                     ->where('ub2.user_id','=',$user->id)
                     ->where('pt.id','=','1')
                     ->get(['product_sku.id','product_sku.remark as product_name','pr.branch_id','bc.remark as branch_name','pr.qty as product_qty','pb.remark as product_brand']);

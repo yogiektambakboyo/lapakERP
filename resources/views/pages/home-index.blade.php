@@ -437,5 +437,28 @@
 			borderWidth : 1,
 		}
 	});
+
+	const resheaderx = axios.get("{{ route('other.notif') }}", {
+		headers: {
+			// Overwrite Axios's automatically set Content-Type
+			'Content-Type': 'application/json'
+		}
+	}).then(resp => {
+		var data_notifx = resp.data;
+		if(data_notifx.length>0){
+
+			/*Swal.fire(
+				{
+					position: 'top-end',
+					icon: 'warning',
+					text: 'Ada '+data_notifx.length+' notifikasi yang perlu anda lihat, silahkan klik ikon lonceng pada bagian kanan atas untuk melihat detailnya',
+					showConfirmButton: false,
+					imageHeight: 30, 
+					imageWidth: 30,   
+					timer: 5000
+				}
+			);**/
+		}
+	});
   </script>
 @endpush

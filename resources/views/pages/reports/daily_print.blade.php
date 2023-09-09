@@ -802,11 +802,11 @@
                             <td scope="col" width="3%">{{ number_format($dtt_raw[$counter]->total_498,0,',','.') }}</td>
                           @endif
                           @if((int)$header->total_316>0)
-                          @php if((int)$dtt_raw[$counter]->total_316>0){ $c_316++; } @endphp
+                          @php if((int)$dtt_raw[$counter]->total_316>0){ $c_316=$c_316+$dtt_raw_qty[$counter]->total_316; } @endphp
                             <td scope="col" width="3%">{{ number_format($dtt_raw[$counter]->total_316,0,',','.') }}</td>
                           @endif
                           @if((int)$header->total_309>0)
-                          @php if((int)$dtt_raw[$counter]->total_309>0){ $c_309++; } @endphp
+                          @php if((int)$dtt_raw[$counter]->total_309>0){ $c_309=$c_309+$dtt_raw_qty[$counter]->total_309; } @endphp
                             <td scope="col" width="3%">{{ number_format($dtt_raw[$counter]->total_309,0,',','.') }}</td>
                           @endif
                           @if((int)$header->total_318>0)

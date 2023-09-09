@@ -317,6 +317,29 @@ class PackingController extends Controller
         ]);
     }
 
+    public function getdocdatapackedlist(String $branch_id) 
+    {
+        $data = $this->data;
+        $user = Auth::user();
+        $list_packing = DB::select(" select distinct pm.doc_no,pm.dated  from packing_master pm 
+        join packing_detail pd on pd.doc_no = pm.doc_no 
+        where dated >= now()-interval'3 days' order by 2,1 desc");
+        
+        return $list_packing;
+    }
+
+    public function getdocdatapacked(String $doc_no) 
+    {
+        $data = $this->data;
+        $user = Auth::user();
+        $list_packing = DB::select(" select pm.doc_no,pd.product_id,sum(pd.qty) as qty  from packing_master pm 
+        join packing_detail pd on pd.doc_no = pm.doc_no 
+        where dated >= now()-interval'3 days' and pm.doc_no = '".$doc_no."' 
+        group by pm.doc_no,pd.product_id ");
+        
+        return $list_packing;
+    }
+
 
     public function print(Packing $packing) 
     {

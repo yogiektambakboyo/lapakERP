@@ -3,7 +3,7 @@
 <html>  
    <head> 
       <meta charset = "utf-8"> 
-      <title>Packing</title>
+      <title>Shipment</title>
       <style>
         body {background-color: whitesmoke;}
         h1   {color: blue;}
@@ -29,7 +29,7 @@
               <img src="data:image/png;base64,{{ base64_encode(file_get_contents(url("images/user-files/".$settings[0]->icon_file))) }}" width="150px"><br>
               <label>{{ 'KAKIKU PUSAT' }}</label><br>
               <label>{{ 'JL. KELAPA SAWIT IX BG 3 NO.1' }}</label></td>
-            <td style="width: 50%;font-size:30px;"><p style="color: #212121;">Packing Gudang</p></td>
+            <td style="width: 50%;font-size:30px;"><p style="color: #212121;">Pengiriman Pesanan</p></td>
           </tr>
           <tr style="background-color: chocolate;">
             <td colspan="2"><br></td>
@@ -39,10 +39,15 @@
       <table style="width: 100%">
         <tbody>
           <tr style="text-align: center;height: 50px">
-            <td style="text-align: left;padding-left:10px;width:20%;vertical-align: text-top;">        
+            <td style="text-align: left;padding-left:10px;width:7%;vertical-align: text-top;"> 
+              <label>Penerima</label><br>
+              <label>Alamat</label><br>       
+              <label>Nama Kurir</label><br>       
             </td>
             <td style="text-align: left;padding:10px;width:35%;vertical-align: text-top;">        
-              
+              <label>{{ $doc_data->branch_name }}</label><br>
+              <label>{{ $doc_data->address }}</label><br>   
+              <label>{{ $doc_data->shipper_name }}</label><br>   
             </td>
             <td style="text-align: right;width: 50%;font-size:15px;width:15%;vertical-align: text-top;">
               <label>@lang('general.lbl_dated')  :</label><br>
@@ -73,7 +78,7 @@
                   <td style="text-align: left;">{{ $counter++; }}</th>
                   <td style="text-align: left;">{{ $invoiceDetail->po_no }}</th>
                     <td style="text-align: left;">{{ $invoiceDetail->product_name }}</th>
-                  <td style="text-align: center;">{{ number_format($invoiceDetail->qty_pack,0,',','.') }}</td>
+                  <td style="text-align: center;">{{ number_format($invoiceDetail->qty,0,',','.') }}</td>
                   <td style="text-align: center;">{{ $invoiceDetail->uom }}</td>
               </tr>
           @endforeach

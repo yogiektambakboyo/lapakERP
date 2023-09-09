@@ -476,51 +476,7 @@
               </table>           
             </td>
 
-            <td style="vertical-align:top;">
-              <table class="table table-striped" id="service_table">
-                <thead>
-                <tr>
-                  <th colspan="2" style="text-align: center;width:20%;background-color:#FFA726;">Pengeluaran</th>
-                </tr>
-                <tr>
-                  <th colspan="1" style="text-align: center;width:20%;background-color:#FFA726;">Kas Masuk</th>
-                  <th colspan="1" style="text-align: center;width:20%;background-color:#FFA726;"></th>
-                </tr>
-                <tr>
-                  <th colspan="1" style="width:80px;text-align: center;background-color:#FFA726;">Jenis</th>
-                  <th colspan="1" style="width:80px;text-align: center;background-color:#FFA726;">Harga</th>
-                </tr>
-                </thead>
-                <tbody>        
-                  @php
-                  $total_petty = 0;
-               @endphp    
-                   @foreach($petty_datas as $petty_data)
-                      @if($petty_data->type == 'Kas - Keluar')
-                      @php
-                        $total_petty = $total_petty + $petty_data->total;
-                      @endphp    
-                      <tr>
-                          <td style="text-align: left;">{{ $petty_data->abbr }}</th>
-                          <td style="text-align: center;">{{ number_format($petty_data->total,0,',','.') }}</td>
-                      </tr>
-                      @endif
-                     
-                    @endforeach
-           
-              
-              <tr>
-                <th colspan="1" style="text-align: left;width:20%;">Total</th>
-                <th colspan="1" style="text-align: right;">{{ number_format($total_petty,0,',','.') }}</th>
-              </tr>
-                  <tr>
-                    <th colspan="1" style="text-align: left;width:20%;">Sisa Kas</th>
-                    <th colspan="1" style="text-align: right;"> </th>
-                  </tr>
-                </tbody>
-              </table>           
-            </td>
-
+          
             <td  style="width: 22%; vertical-align:top;">
               <table class="table table-striped" id="service_table">
                 <thead>
