@@ -854,7 +854,7 @@
                         }
                         $total_payment = $total_payment + $detail->payment_nominal;
                       @endphp
-                      {{ $payment }} <br> {{ number_format($detail->payment_nominal,0,',','.') }}
+                      {{ $payment }} <br> {{ number_format($detail->payment_nominal,1,',','.') }}
                     </td>
                     <td style="text-align: left;">
 
@@ -1624,7 +1624,7 @@
                     @endphp
                       <th scope="col" width="3%">{{ number_format($dtt_raw_oneline_discs[0]->total_635,0,',','.') }}  / {{ $c_635 }} </th>
                     @endif
-                    <th>{{ number_format($total_payment,0,',','.') }}</th>
+                    <th>{{ number_format($total_payment,1,',','.') }}</th>
                     <th>{{ number_format($c_p,0,',','.') }}</th>
                     <th>{{ number_format($t_p,0,',','.') }}</th>
                     <th>{{ number_format($t_drink,1,',','.') }} / {{ number_format($c_pn,0,',','.') }}</th>
@@ -1668,7 +1668,7 @@
                         echo '<th colspan="'.$count_column_extra.'">'.number_format($total_extra,0,',','.').' / '.number_format($qty_extra,0,',','.').'</th>';
                       }
                   ?>
-                  <th>{{ number_format($total_payment,0,',','.') }}</th>
+                  <th>{{ number_format($total_payment,1,',','.') }}</th>
                   <th colspan="2">{{ number_format($t_p,0,',','.') }} / {{ number_format($c_p,0,',','.') }}</th>
                   <th>{{ number_format($t_drink,1,',','.') }} / {{ number_format($c_pn,0,',','.') }}</th>
                   <th></th>
