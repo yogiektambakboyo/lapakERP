@@ -57,6 +57,8 @@
               @php
                 $total_qty = 0;
                 $total_service = 0; 
+                $total_qty_salon = 0; 
+                $total_salon = 0; 
                 $counter = 0;   
                 $counter_spk = 0;
                 $counter_salon = 0;
@@ -97,6 +99,18 @@
                 </tbody>
               </table>
 
+              <table class="table table-striped" id="" width="100%">
+                <thead>
+                </thead>
+                <tbody>
+                  <tr>
+                    <th colspan="2" style="text-align: left;width:50%;">Total</th>
+                    <th>{{ $total_qty }}</th>
+                    <th style="text-align: right;">{{ number_format($total_service,0,',','.') }} </th>
+                  </tr>
+                </tbody>
+              </table>
+
               @if($counter_salon>0 )
                   <table class="table table-striped" id="service_table">
                     <thead>
@@ -118,9 +132,9 @@
                                 <td style="text-align: right;">{{ $report_data->total=='Free'?'Free':number_format($report_data->total,0,',','.') }}</td>
                             </tr>
                             @php
-                              $total_service = $total_service + ($report_data->total=='Free'?0:$report_data->total); 
+                              $total_salon = $total_salon + ($report_data->total=='Free'?0:$report_data->total); 
                               $counter++;   
-                              $total_qty = $total_qty + $report_data->qty;
+                              $total_qty_salon = $total_qty_salon + $report_data->qty;
                             @endphp
                           @endif
                       @endforeach
@@ -128,14 +142,8 @@
                   </table>
               @endif
 
-              <table class="table table-striped" id="">
+              <table class="table table-striped" id=""  width="100%">
                 <thead>
-                <tr style="background-color:#FFA726;color:white;">
-                    <th scope="col" width="25%"></th>
-                    <th scope="col" width="15%"></th>
-                    <th scope="col" width="15%"></th>
-                    <th scope="col" width="15%"></th>
-                </tr>
                 </thead>
                 <tbody>
                 
@@ -144,17 +152,20 @@
                           $counter_spk = $counter_spk + $payment_data->qty_payment;
                         @endphp
                   @endforeach
+
+                  @if($counter_salon>0)
+                    <tr>
+                      <th style="text-align: left;width:50%;">Total</th>
+                      <th>{{ $total_qty_salon }}</th>
+                      <th style="text-align: right;">{{ number_format($total_salon,0,',','.') }} </th>
+                    </tr>
+                  @endif
                   <tr>
-                    <th colspan="2" style="text-align: left;width:20%;">Total</th>
-                    <th>{{ $total_qty }}</th>
-                    <th style="text-align: right;">{{ number_format($total_service,0,',','.') }} </th>
-                  </tr>
-                  <tr>
-                    <th colspan="3" style="text-align: left">Tamu</th>
+                    <th colspan="2" style="text-align: left;width:20%;">Tamu</th>
                     <th  style="text-align: right">{{ count($cust)>0?$cust[0]->c_cus:"" }}</th>
                   </tr>
                   <tr>
-                    <th colspan="3" style="text-align: left">SPK</th>
+                    <th colspan="2" style="text-align: left">SPK</th>
                     <th  style="text-align: right">{{ $counter_spk }}</th>
                   </tr>
                 </tbody>
@@ -306,6 +317,12 @@
                     <td colspan="2" style="text-align: left;">Perawatan</td>
                     <td colspan="2" style="text-align: right;">{{ number_format($total_service,0,',','.') }}</td>
                   </tr>
+                  @if($counter_salon>0)
+                    <tr>
+                      <td colspan="2" style="text-align: left;">Salon</td>
+                      <td colspan="2" style="text-align: right;">{{ number_format($total_salon,0,',','.') }}</td>
+                    </tr>
+                  @endif
                   <tr>
                     <td colspan="2" style="text-align: left;">Produk</td>
                     <td colspan="2" style="text-align: right;">{{ number_format($total_product,0,',','.') }}</td>
@@ -321,7 +338,7 @@
 
                   <tr>
                     <th colspan="2" style="text-align: left;width:20%;">Total</th>
-                    <th colspan="2" style="text-align: right;">{{ number_format($total_product+$total_misc+$total_service+$total_extra,0,',','.') }} </th>
+                    <th colspan="2" style="text-align: right;">{{ number_format($total_product+$total_salon+$total_misc+$total_service+$total_extra,0,',','.') }} </th>
                   </tr>
                 </tbody>
               </table>

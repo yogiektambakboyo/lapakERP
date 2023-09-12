@@ -37,6 +37,7 @@ class CloseDayExport implements FromCollection,WithColumnFormatting, WithHeading
             'Tanggal',
             'Total All',
             'Total Service',
+            'Total Salon',
             'Total Product',
             'Total Drink',
             'Total Extra',
@@ -57,7 +58,8 @@ class CloseDayExport implements FromCollection,WithColumnFormatting, WithHeading
     {
         return collect(DB::select("
             select b.remark as branch_name,im.dated,sum(id.total+id.vat_total) as total_all,
-            sum(case when ps.type_id = 2 then id.total+id.vat_total else 0 end) as total_service,
+            sum(case when ps.type_id = 2 and ps.category_id !=53 then id.total+id.vat_total else 0 end) as total_service,
+            sum(case when ps.type_id = 2 and ps.category_id = 53 then id.total+id.vat_total else 0 end) as total_salon,
             sum(case when ps.type_id = 1 and ps.category_id !=26 then id.total+id.vat_total else 0 end) as total_product,
             sum(case when ps.type_id = 1 and ps.category_id =26 then id.total+id.vat_total else 0 end) as total_drink,
             sum(case when ps.type_id = 8 and ps.remark not like '%CHARGE LEBARAN%'  then id.total+id.vat_total else 0 end) as total_extra,
