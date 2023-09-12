@@ -901,8 +901,9 @@ class InvoicesController extends Controller
             where u.job_id = 2 and ub.branch_id in (select branch_id from users_branch where user_id=".$user->id.") and u.id not in 
             (
                 select distinct id.assigned_to  from invoice_master im 
+                join customers c on c.id = im.customers_id
                 join invoice_detail id on id.invoice_no = im.invoice_no 
-                where im.is_checkout = '0' and im.invoice_no not in ('".$request->get('invoice_no')."') and im.dated = now()::date  and id.assigned_to is not null
+                where im.is_checkout = '0' and im.invoice_no not in ('".$request->get('invoice_no')."') and im.dated = now()::date  and id.assigned_to is not null and c.branch_id not in (23,24)
             )
             order by u.name
         ");
