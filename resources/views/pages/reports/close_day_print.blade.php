@@ -340,7 +340,7 @@
 
                   <tr>
                     <th colspan="2" style="text-align: left;width:20%;">Total</th>
-                    <th colspan="2" style="text-align: right;">{{ number_format($total_product+$total_misc+$total_service+$total_extra,0,',','.') }} </th>
+                    <th colspan="2" style="text-align: right;">{{ number_format($total_product+$total_salon+$total_misc+$total_service+$total_extra,0,',','.') }} </th>
                   </tr>
                 </tbody>
               </table>
