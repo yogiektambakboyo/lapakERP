@@ -67,7 +67,8 @@ class ReportCloseShiftController extends Controller
         $shifts = Shift::orderBy('shift.id')->get(['shift.id','shift.remark','shift.id','shift.time_start','shift.time_end']); 
         $report_data = DB::select("
                 select s.id as shift_id,b.id as branch_id,b.remark as branch_name,im.dated ,s.remark as shift_name,sum(id.total+id.vat_total) as total_all,
-                sum(case when ps.type_id = 2 then id.total+id.vat_total else 0 end) as total_service,
+                sum(case when ps.type_id = 2 and ps.category_id = 53 then id.total+id.vat_total else 0 end) as total_salon,
+                sum(case when ps.type_id = 2 and ps.category_id !=53 then id.total+id.vat_total else 0 end) as total_service,
                 sum(case when ps.type_id = 1 and ps.category_id !=26 then id.total+id.vat_total else 0 end) as total_product,
                 sum(case when ps.type_id = 1 and ps.category_id =26 then id.total+id.vat_total else 0 end) as total_drink,
                 sum(case when ps.type_id = 8 then id.total+id.vat_total else 0 end) as total_extra,
@@ -249,7 +250,8 @@ class ReportCloseShiftController extends Controller
         }else{
             $report_data = DB::select("
                     select s.id as shift_id,b.id as branch_id,b.remark as branch_name,im.dated ,s.remark as shift_name,sum(id.total+id.vat_total) as total_all,
-                    sum(case when ps.type_id = 2 then id.total+id.vat_total else 0 end) as total_service,
+                    sum(case when ps.type_id = 2 and ps.category_id = 53 then id.total+id.vat_total else 0 end) as total_salon,
+                    sum(case when ps.type_id = 2 and ps.category_id !=53 then id.total+id.vat_total else 0 end) as total_service,
                     sum(case when ps.type_id = 1 and ps.category_id !=26 then id.total+id.vat_total else 0 end) as total_product,
                     sum(case when ps.type_id = 1 and ps.category_id =26 then id.total+id.vat_total else 0 end) as total_drink,
                     sum(case when ps.type_id = 8 then id.total+id.vat_total else 0 end) as total_extra,
