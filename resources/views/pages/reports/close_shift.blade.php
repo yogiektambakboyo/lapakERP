@@ -29,6 +29,7 @@
                 <th scope="col" width="6%">@lang('general.lbl_dated')</th>
                 <th>Shift</th>
                 <th scope="col">@lang('general.service')</th>     
+                <th scope="col">Salon</th>     
                 <th scope="col">@lang('general.product')</th>    
                 <th scope="col">@lang('general.lbl_drink')</th>     
                 <th scope="col">Extra</th>    
@@ -53,6 +54,7 @@
                         <td>{{ Carbon\Carbon::parse($rdata->dated)->format('d-m-Y') }}</td>
                         <td>{{ $rdata->shift_name }}</td>
                         <td>{{ number_format($rdata->total_service,0,',','.') }}</td>
+                        <td>{{ number_format($rdata->total_salon,0,',','.') }}</td>
                         <td>{{ number_format($rdata->total_product,0,',','.') }}</td>
                         <td>{{ number_format($rdata->total_drink,0,',','.') }}</td>
                         <td>{{ number_format($rdata->total_extra,0,',','.') }}</td>
