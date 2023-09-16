@@ -257,7 +257,7 @@
                     </div>
                    
                     <div class="panel-heading bg-teal-600 text-white"><strong>@lang('general.lbl_schedule_list')   </strong></div>
-                    </br>
+                    <br>
       
                     <div class="col-md-12">
                       <table class="table table-striped" id="order_time_table" style="width:100%">
@@ -1853,9 +1853,10 @@
                       }
 
                       orderList.push(product);
+                      $('#timepicker1').val(resp.data[0]["scheduled_time"]);
+
                   }
 
-                  $('#timepicker1').val(resp.data[0]["scheduled_time"]);
                   //$('#timepicker2').val(resp.data[0]["executed_at"]);
 
 
