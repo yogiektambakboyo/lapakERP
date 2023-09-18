@@ -331,7 +331,7 @@
                 <th scope="col" width="3%">CLBRN</th>
               @endif
               @if((int)$header->total_635>0)
-                <th scope="col" width="3%">TTPS</th>
+                <th scope="col" width="3%">OTH-XTRA</th>
               @endif
               <th scope="col" width="4%">Bayar</th>
               <th scope="col" width="7%">Produk</th>
