@@ -689,6 +689,7 @@
                               <td scope="col" width="3%">{{ number_format($dtt_raw[$counter]->total_480,0,',','.') }}</td>
                           @endif
 
+                          @if((int)$header->total_481>0)
                           @php if((int)$dtt_raw[$counter]->total_481>0 || (int)$dtt_raw_disc[$counter]->total_481>0){ $c_481++; } @endphp 
                               <td scope="col" width="3%"> @php if((int)$dtt_raw[$counter]->total_481<=0 && (int)$dtt_raw_disc[$counter]->total_481>0){ echo 'Free'; }else{ echo number_format($dtt_raw[$counter]->total_481,0,',','.'); } @endphp </td>
                           @endif
