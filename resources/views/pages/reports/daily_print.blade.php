@@ -561,7 +561,7 @@
                           @endif
                       
                           @if((int)$header->total_295>0)
-                            @php if((int)$dtt_raw[$counter]->total_295>0 || (int)$dtt_raw_disc[$counter]->total_295>0){ $c_295++; } @endphp 
+                              @php if((int)$dtt_raw[$counter]->total_295>0 || (int)$dtt_raw_disc[$counter]->total_295>0){ $c_295++; } @endphp 
                               <td scope="col" width="3%"> @php if((int)$dtt_raw[$counter]->total_295<=0 && (int)$dtt_raw_disc[$counter]->total_295>0){ echo 'Free'; }else{ echo number_format($dtt_raw[$counter]->total_295,0,',','.'); } @endphp </td>
                           @endif
                       
@@ -793,8 +793,8 @@
                             <td scope="col" width="3%">{{ number_format($dtt_raw[$counter]->total_538,0,',','.') }}</td>
                           @endif
                           @if((int)$header->total_oth_sln>0)
-                          @php if((int)$dtt_raw[$counter]->total_oth_sln>0 || (int)$dtt_raw_disc[$counter]->total_oth_sln>0){ $c_oth_sln=$c_oth_sln+$dtt_raw_qty[$counter]->total_oth_sln; } @endphp
-                            <td scope="col" width="3%">{{ number_format($dtt_raw[$counter]->total_oth_sln,0,',','.') }}</td>
+                            @php if((int)$dtt_raw[$counter]->total_oth_sln>0 || (int)$dtt_raw_disc[$counter]->total_oth_sln>0){ $c_oth_sln=$c_oth_sln+$dtt_raw_qty[$counter]->total_oth_sln; } @endphp
+                            <td scope="col" width="3%"> @php if((int)$dtt_raw[$counter]->total_oth_sln<=0 && (int)$dtt_raw_disc[$counter]->total_oth_sln>0){ echo 'Free'; }else{ echo number_format($dtt_raw[$counter]->total_oth_sln,0,',','.'); } @endphp </td>
                           @endif
                          
 
