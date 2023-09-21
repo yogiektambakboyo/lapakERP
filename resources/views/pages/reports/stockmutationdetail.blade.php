@@ -33,17 +33,38 @@
             </tr>
             </thead>
             <tbody>
+                @php
+                    $qty_begin = 0;
+                    $l_product = "";
+                    $l_branch = "";
+                @endphp
+                
+                <?php
+                    foreach($report_data as $rdata){
+                        if($l_branch == ""){
+                            $qty_begin = 0;
+                        }  
 
-                @foreach($report_data as $rdata)
-                    <tr>
-                        <th scope="row">{{ $rdata->branch_name }}</th>
-                        <td>{{ $rdata->dated_display }}</td>
-                        <td>{{ $rdata->product_name }}</td>
-                        <td>{{ number_format($rdata->qty_in,0,',','.') }}</td>
-                        <td>{{ number_format($rdata->qty_out,0,',','.') }}</td>
-                        <td>{{ number_format($rdata->qty_stock,0,',','.') }}</td>
-                    </tr>
-                @endforeach
+                        if($l_branch <> $rdata->branch_name || $l_product <> $rdata->product_name){
+                            $qty_begin = $rdata->qty_begin;
+                            $l_product = $rdata->product_name;
+                            $l_branch = $rdata->branch_name;
+                        }else{
+                            $qty_begin = ($qty_begin+$rdata->qty_in)-$rdata->qty_out;
+                        }
+
+                        echo '
+                        <tr>
+                            <th scope="row">'.$rdata->branch_name.'</th>
+                            <td>'.$rdata->dated_display.'</td>
+                            <td>'.$rdata->product_name.'</td>
+                            <td>'.number_format($rdata->qty_in,0,',','.').'</td>
+                            <td>'.number_format($rdata->qty_out,0,',','.').'</td>
+                            <td>'.number_format($qty_begin,0,',','.').'</td>
+                        </tr>';
+                    }
+                ?>
+                    
             </tbody>
         </table>
 

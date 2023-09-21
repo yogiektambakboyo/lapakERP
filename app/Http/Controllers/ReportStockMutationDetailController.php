@@ -69,7 +69,7 @@ class ReportStockMutationDetailController extends Controller
         $period = DB::select("select period_no,remark from period where period_no<=to_char(now(),'YYYYMM')::int and period_no>=202301  order by period_no desc");
         $calc_1 = DB::select("call calc_stock_daily_today();");
         $report_data = DB::select("
-            select branch_name,a.dated,product_name,to_char(a.dated,'dd-mm-YYYY') as dated_display,sum(a.qty_in) as qty_in,sum(a.qty_out) as qty_out,coalesce(psd.qty_stock,0) as qty_stock from (
+            select branch_name,a.dated,product_name,to_char(a.dated,'dd-mm-YYYY') as dated_display,sum(a.qty_in) as qty_in,sum(a.qty_out) as qty_out,coalesce(psd.qty_stock,0) as qty_stock,coalesce(ds.qty_stock,0) as qty_begin from (
                 select b.id as branch_id,b.remark as branch_name,im.dated,id.product_id,ps.remark as product_name,sum(id.qty) as qty_out,0  as qty_in  from invoice_master im 
                 join invoice_detail id on id.invoice_no = im.invoice_no 
                 join customers c ON c.id = im.customers_id
@@ -110,8 +110,9 @@ class ReportStockMutationDetailController extends Controller
                 group by b.id,b.remark,im.dated,id.product_id,ps.remark
             ) a join users_branch ub on ub.branch_id = a.branch_id 
             left join period_stock_daily psd on psd.dated = a.dated and psd.product_id = a.product_id and psd.branch_id  = a.branch_id             
+            left join (select dated,branch_id,product_id,qty_stock,rank()  OVER (partition by branch_id,product_id ORDER BY branch_id,product_id,dated DESC) as ranking  from period_stock_daily where dated<(now()-interval'2 days')::date) ds on ds.ranking=1  and ds.product_id = a.product_id and ds.branch_id  = a.branch_id
             where ub.user_id = ".$user->id."
-            group by a.branch_id,a.branch_name,a.dated,product_name,coalesce(psd.qty_stock,0),to_char(a.dated,'dd-mm-YYYY') order by 1,2,3    
+            group by ds.qty_stock,a.branch_id,a.branch_name,a.dated,product_name,coalesce(psd.qty_stock,0),to_char(a.dated,'dd-mm-YYYY') order by 1,3,2    
         ");
         $data = $this->data;
         $keyword = "";
@@ -145,7 +146,7 @@ class ReportStockMutationDetailController extends Controller
             return Excel::download(new ReportStockMutationDetailExport($strencode), 'report_stockmutation_'.Carbon::now()->format('YmdHis').'.xlsx');
         }else{
             $report_data = DB::select("
-            select branch_name,a.dated,product_name,to_char(a.dated,'dd-mm-YYYY') as dated_display,sum(a.qty_in) as qty_in,sum(a.qty_out) as qty_out,coalesce(psd.qty_stock,0) as qty_stock from (
+            select branch_name,a.dated,product_name,to_char(a.dated,'dd-mm-YYYY') as dated_display,sum(a.qty_in) as qty_in,sum(a.qty_out) as qty_out,coalesce(psd.qty_stock,0) as qty_stock,coalesce(ds.qty_stock,0) as qty_begin from (
                 select b.id as branch_id,b.remark as branch_name,im.dated,id.product_id,ps.remark as product_name,sum(id.qty) as qty_out,0  as qty_in  from invoice_master im 
                 join invoice_detail id on id.invoice_no = im.invoice_no 
                 join customers c ON c.id = im.customers_id
@@ -186,8 +187,9 @@ class ReportStockMutationDetailController extends Controller
                 group by b.id,b.remark,im.dated,id.product_id,ps.remark
             ) a join users_branch ub on ub.branch_id = a.branch_id 
             left join period_stock_daily psd on psd.dated = a.dated and psd.product_id = a.product_id and psd.branch_id  = a.branch_id             
+            left join (select dated,branch_id,product_id,qty_stock,rank()  OVER (partition by branch_id,product_id ORDER BY branch_id,product_id,dated DESC) as ranking  from period_stock_daily where dated<'".$begindate."') ds on ds.ranking=1  and ds.product_id = a.product_id and ds.branch_id  = a.branch_id
             where ub.user_id = ".$user->id."
-            group by a.branch_id,a.branch_name,a.dated,product_name,coalesce(psd.qty_stock,0),to_char(a.dated,'dd-mm-YYYY') order by 1,2,3         
+            group by ds.qty_stock,a.branch_id,a.branch_name,a.dated,product_name,coalesce(psd.qty_stock,0),to_char(a.dated,'dd-mm-YYYY') order by 1,3,2        
             ");         
             return view('pages.reports.stockmutationdetail',['company' => Company::get()->first()], compact('period','shifts','branchs','data','keyword','act_permission','report_data'))->with('i', ($request->input('page', 1) - 1) * 5);
         }
