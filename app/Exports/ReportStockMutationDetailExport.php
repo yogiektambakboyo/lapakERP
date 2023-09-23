@@ -42,9 +42,10 @@ class ReportStockMutationDetailExport implements FromCollection,WithColumnFormat
     }
     public function collection()
     {
-        return collect(DB::select("
 
-        select branch_name,to_char(a.dated,'dd-mm-YYYY') as dated_display,product_name,sum(a.qty_in) as qty_in,sum(a.qty_out) as qty_out,coalesce(psd.qty_stock,0) as qty_stock from (
+        $data = DB::select("
+
+        select branch_name,to_char(a.dated,'dd-mm-YYYY') as dated_display,product_name,sum(a.qty_in) as qty_in,sum(a.qty_out) as qty_out,coalesce(psd.qty_stock,0) as qty_stock,coalesce(ds.qty_stock,0) as qty_begin from (
             select b.id as branch_id,b.remark as branch_name,im.dated,id.product_id,ps.remark as product_name,sum(id.qty) as qty_out,0  as qty_in  from invoice_master im 
             join invoice_detail id on id.invoice_no = im.invoice_no 
             join customers c ON c.id = im.customers_id
@@ -84,11 +85,37 @@ class ReportStockMutationDetailExport implements FromCollection,WithColumnFormat
             where im.dated between '".$this->begindate."' and '".$this->enddate."'
             group by b.id,b.remark,im.dated,id.product_id,ps.remark
         ) a join users_branch ub on ub.branch_id = a.branch_id 
-        left join period_stock_daily psd on psd.dated = a.dated and psd.product_id = a.product_id and psd.branch_id  = a.branch_id             
+        left join period_stock_daily psd on psd.dated = a.dated and psd.product_id = a.product_id and psd.branch_id  = a.branch_id       
+        left join (select dated,branch_id,product_id,qty_stock,rank()  OVER (partition by branch_id,product_id ORDER BY branch_id,product_id,dated DESC) as ranking  from period_stock_daily where dated<'".$this->begindate."') ds on ds.ranking=1  and ds.product_id = a.product_id and ds.branch_id  = a.branch_id      
         where ub.user_id = ".$this->userid."
-        group by a.branch_id,a.branch_name,a.dated,product_name,coalesce(psd.qty_stock,0),to_char(a.dated,'dd-mm-YYYY')
+        group by ds.qty_stock,a.branch_id,a.branch_name,a.dated,product_name,coalesce(psd.qty_stock,0),to_char(a.dated,'dd-mm-YYYY')
      
-        ")); 
+        ");
+
+        
+        $qty_begin = 0;
+        $l_product = "";
+        $l_branch = "";
+
+        for ($i=0; $i < count($data); $i++) { 
+            if($l_branch == ""){
+                $qty_begin = 0;
+            }  
+
+            if($l_branch <> $data[$i]->branch_name || $l_product <> $data[$i]->product_name){
+                $qty_begin = $data[$i]->qty_begin;
+                $l_product = $data[$i]->product_name;
+                $l_branch = $data[$i]->branch_name;
+            }else{
+                $qty_begin = ($qty_begin+$data[$i]->qty_in)-$data[$i]->qty_out;
+            }
+
+            unset($data[$i]->qty_begin);
+
+            $data[$i]->qty_stock = $qty_begin;
+        }
+
+        return collect($data); 
     }
 
     public function columnFormats(): array
