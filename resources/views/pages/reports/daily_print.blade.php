@@ -760,8 +760,8 @@
                             <td scope="col" width="3%">{{ number_format($dtt_raw[$counter]->total_448,0,',','.') }}</td>
                           @endif
                           @if((int)$header->total_510>0)
-                          @php if((int)$dtt_raw[$counter]->total_510>0){ $c_510++; } @endphp
-                            <td scope="col" width="3%">{{ number_format($dtt_raw[$counter]->total_510,0,',','.') }}</td>
+                            @php if((int)$dtt_raw[$counter]->total_510>0 || (int)$dtt_raw_disc[$counter]->total_510>0){ $c_510=$c_510+$dtt_raw_qty[$counter]->total_510; } @endphp
+                            <td scope="col" width="3%"> @php if((int)$dtt_raw[$counter]->total_510<=0 && (int)$dtt_raw_disc[$counter]->total_510>0){ echo 'Free'; }else{ echo number_format($dtt_raw[$counter]->total_510,0,',','.'); } @endphp </td>
                           @endif
                           
                           @if((int)$header->total_496>0)
