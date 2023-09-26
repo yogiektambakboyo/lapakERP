@@ -66,7 +66,7 @@ class LoginController extends Controller
 
         if(count($data)>0){
             $random_numb = mt_rand(1111,9999);
-            $data[0]->pass_wd = $random_numb;
+            $data[0]->pass_wd = strval($random_numb);
 
             DB::select("update customers set pass_wd=".$random_numb." where id=".$data[0]->id.";");
 
