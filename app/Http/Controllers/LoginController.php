@@ -107,6 +107,61 @@ class LoginController extends Controller
         
     }
 
+    public function api_profile(Request $request)
+    {
+        $whatsapp_no = $request->whatsapp_no;
+        $pass_wd = $request->pass_wd;
+        $data = DB::select("select c.id,c.name, 'Gold' as membership,coalesce(cp.point,0) as point, 0 as voucher,coalesce(c.external_code,'') as external_code 
+        from customers c 
+        left join customers_point cp on cp.customers_id = c.id
+        where pass_wd='".$pass_wd."' and c.whatsapp_no ='".$whatsapp_no."' ");
+
+        if(count($data)>0){
+            $result = array_merge(
+                ['status' => 'success'],
+                ['data' => $data],
+                ['message' => 'Success'],
+            );    
+        }else{
+            $data = array();
+            $result = array_merge(
+                ['status' => 'failed'],
+                ['data' => $data ],
+                ['message' => 'Login failed'],
+            );   
+        }
+        return $result;
+        
+    }
+
+    public function api_invoice(Request $request)
+    {
+        $whatsapp_no = $request->whatsapp_no;
+        $pass_wd = $request->pass_wd;
+        $data = DB::select("select im.invoice_no,im.dated,coalesce(ir.value_review,0) value_review,coalesce(ir.remarks,'') as remarks   
+        from customers c 
+        join invoice_master im on im.customers_id = c.id 
+        left join invoice_review ir on ir.invoice_no = im.invoice_no 
+        where pass_wd='".$pass_wd."' and c.whatsapp_no ='".$whatsapp_no."' order by im.dated desc ");
+
+        if(count($data)>0){
+            $result = array_merge(
+                ['status' => 'success'],
+                ['data' => $data],
+                ['message' => 'Success'],
+            );    
+        }else{
+            $data = array();
+            $result = array_merge(
+                ['status' => 'failed'],
+                ['data' => $data ],
+                ['message' => 'Login failed'],
+            );   
+        }
+        return $result;
+        
+    }
+
     /**
      * Handle response after user authenticated
      * 
