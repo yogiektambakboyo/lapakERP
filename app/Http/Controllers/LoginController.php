@@ -57,7 +57,7 @@ class LoginController extends Controller
     public function api_login(Request $request)
     {
         $whatsapp_no = $request->whatsapp_no;
-        $data = DB::select("select id,name,whatsapp_no,pass_wd from customers c 
+        $data = DB::select("select id,name,whatsapp_no,pass_wd,'cust' as user_type from customers c 
         where c.whatsapp_no is not null and whatsapp_no ='".$whatsapp_no."' limit 1");
 
         if(substr($whatsapp_no,0,2)=="08"){
@@ -111,7 +111,7 @@ class LoginController extends Controller
     {
         $whatsapp_no = $request->whatsapp_no;
         $pass_wd = $request->pass_wd;
-        $data = DB::select("select c.id,c.name, 'Gold' as membership,coalesce(cp.point,0) as point, 0 as voucher,coalesce(c.external_code,'') as external_code 
+        $data = DB::select("select c.id,c.name, 'Gold' as membership,'cust' as user_type,coalesce(cp.point,0) as point, 0 as voucher,coalesce(c.external_code,'') as external_code 
         from customers c 
         left join customers_point cp on cp.customers_id = c.id
         where pass_wd='".$pass_wd."' and c.whatsapp_no ='".$whatsapp_no."' ");
@@ -128,6 +128,32 @@ class LoginController extends Controller
                 ['status' => 'failed'],
                 ['data' => $data ],
                 ['message' => 'Login failed'],
+            );   
+        }
+        return $result;
+        
+    }
+
+    public function api_branch(Request $request)
+    {
+        $whatsapp_no = $request->whatsapp_no;
+        $pass_wd = $request->pass_wd;
+        $data = DB::select("select b.id,remark as branch_name,b.address as branch_address,b.longitude, b.latitude from branch b 
+        join customers c on c.pass_wd='".$pass_wd."' and c.whatsapp_no ='".$whatsapp_no."'
+        where b.id>1 and b.active = 1; ");
+
+        if(count($data)>0){
+            $result = array_merge(
+                ['status' => 'success'],
+                ['data' => $data],
+                ['message' => 'Success'],
+            );    
+        }else{
+            $data = array();
+            $result = array_merge(
+                ['status' => 'failed'],
+                ['data' => $data ],
+                ['message' => 'get Branch failed'],
             );   
         }
         return $result;
