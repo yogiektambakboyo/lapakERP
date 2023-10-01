@@ -39,6 +39,7 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
         Route::post('/api_login', 'LoginController@api_login')->name('login.api_login');
         Route::post('/api_profile', 'LoginController@api_profile')->name('login.api_profile');
         Route::post('/api_invoice', 'LoginController@api_invoice')->name('login.api_invoice');
+        Route::post('/api_branch', 'LoginController@api_branch')->name('login.api_branch');
 
     });
 
