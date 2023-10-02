@@ -199,7 +199,7 @@ class LoginController extends Controller
         $customers_id = $request->customers_id;
         $data = DB::select(" INSERT INTO public.invoice_review
         (invoice_no, customers_id, value_review, remarks, created_at, notes)
-        VALUES('".$invoice_no."', '".$customers_id."', '".$remarks."', '".$remarks."' now(), '".$notes."'); ");
+        VALUES('".$invoice_no."', '".$customers_id."', '".$remarks."', '".$remarks."',now(), '".$notes."'); ");
 
         if(count($data)>0){
             $result = array_merge(
