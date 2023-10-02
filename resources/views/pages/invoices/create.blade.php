@@ -547,9 +547,9 @@
                         </div>
         
                         <div class="mb-3">
-                            <label for="cust_phone_no" class="form-label">@lang('general.lbl_phoneno')</label>
+                            <label for="cust_phone_no" class="form-label">@lang('general.lbl_phoneno') (Minimal 9 digit angka)</label>
                             <input
-                                type="text" 
+                                type="number" 
                                 class="form-control" 
                                 name="cust_phone_no" id="cust_phone_no" value="08"
                                 placeholder="@lang('general.lbl_phoneno')" required>
@@ -647,6 +647,19 @@
                 position: 'top-end',
                 icon: 'warning',
                 text: 'Silahkan isi nomor handphone',
+                showConfirmButton: false,
+                imageHeight: 30, 
+                imageWidth: 30,   
+                timer: 1500
+              }
+            );
+          }else if($('#cust_phone_no').val().length <= 8){
+            $('#cust_phone_no').focus();
+            Swal.fire(
+              {
+                position: 'top-end',
+                icon: 'warning',
+                text: 'Silahkan isi nomor handphone lebih dari 8 digit angka',
                 showConfirmButton: false,
                 imageHeight: 30, 
                 imageWidth: 30,   
