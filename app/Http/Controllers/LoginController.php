@@ -192,7 +192,7 @@ class LoginController extends Controller
     {
         $whatsapp_no = $request->whatsapp_no;
         $pass_wd = $request->pass_wd;
-        $invoice_no = $request->invoice_id;
+        $invoice_no = $request->invoice_no;
         $value_review = $request->value_review;
         $remarks = $request->comment;
         $notes = $request->service_selected;
