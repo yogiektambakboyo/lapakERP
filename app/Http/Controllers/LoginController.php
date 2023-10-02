@@ -192,23 +192,26 @@ class LoginController extends Controller
     {
         $whatsapp_no = $request->whatsapp_no;
         $pass_wd = $request->pass_wd;
-        $data = DB::select("select im.invoice_no,im.dated,coalesce(ir.value_review,0) value_review,coalesce(ir.remarks,'') as remarks   
-        from customers c 
-        join invoice_master im on im.customers_id = c.id 
-        left join invoice_review ir on ir.invoice_no = im.invoice_no 
-        where pass_wd='".$pass_wd."' and c.whatsapp_no ='".$whatsapp_no."' order by im.dated desc ");
+        $invoice_no = $request->invoice_id;
+        $value_review = $request->value_review;
+        $remarks = $request->comment;
+        $notes = $request->service_selected;
+        $customers_id = $request->customers_id;
+        $data = DB::select(" INSERT INTO public.invoice_review
+        (invoice_no, customers_id, value_review, remarks, created_at, notes)
+        VALUES('".$invoice_no."', '".$customers_id."', '".$remarks."', '".$remarks."' now(), '".$notes."'); ");
 
         if(count($data)>0){
             $result = array_merge(
                 ['status' => 'success'],
-                ['data' => $data],
+                ['data' => $invoice_no],
                 ['message' => 'Success'],
             );    
         }else{
             $data = array();
             $result = array_merge(
                 ['status' => 'failed'],
-                ['data' => $data ],
+                ['data' => $invoice_no],
                 ['message' => 'Login failed'],
             );   
         }
