@@ -61,7 +61,7 @@ class LoginController extends Controller
         where c.whatsapp_no is not null and whatsapp_no ='".$whatsapp_no."'
         union all 
         select id,name,u.phone_no,pass_wd,'emp' as user_type from users u 
-        where u.phone_no is not null and u.phone_no = ''".$whatsapp_no."''
+        where u.phone_no is not null and u.phone_no = '".$whatsapp_no."'
         ) a limit 1");
 
         if(substr($whatsapp_no,0,2)=="08"){
