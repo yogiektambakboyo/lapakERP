@@ -116,8 +116,9 @@ class LoginController extends Controller
     {
         $whatsapp_no = $request->whatsapp_no;
         $pass_wd = $request->pass_wd;
-        $data = DB::select("select c.id,c.name, 'Gold' as membership,'cust' as user_type,coalesce(cp.point,0) as point, 0 as voucher,coalesce(c.external_code,'') as external_code 
+        $data = DB::select("select c.id,c.name, m.remark as membership,m.point,'cust' as user_type,coalesce(cp.point,0) as point, 0 as voucher,coalesce(c.external_code,'') as external_code 
         from customers c 
+        join membership m on m.id = c.membership_id 
         left join customers_point cp on cp.customers_id = c.id
         where pass_wd='".$pass_wd."' and c.whatsapp_no ='".$whatsapp_no."' ");
 
