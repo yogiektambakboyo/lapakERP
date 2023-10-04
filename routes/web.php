@@ -41,6 +41,7 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
         Route::post('/api_invoice', 'LoginController@api_invoice')->name('login.api_invoice');
         Route::post('/api_branch', 'LoginController@api_branch')->name('login.api_branch');
         Route::post('/api_post_review', 'LoginController@api_post_review')->name('login.api_post_review');
+        Route::post('/api_photo_slide', 'LoginController@api_photo_slide')->name('login.api_photo_slide');
 
     });
 

@@ -105,7 +105,7 @@ class LoginController extends Controller
             $result = array_merge(
                 ['status' => 'failed'],
                 ['data' => $data ],
-                ['message' => 'Login failed'],
+                ['message' => 'No handphone belum terdaftar'],
             );   
         }
         return $result;
@@ -121,6 +121,30 @@ class LoginController extends Controller
         join membership m on m.id = c.membership_id 
         left join customers_point cp on cp.customers_id = c.id
         where pass_wd='".$pass_wd."' and c.whatsapp_no ='".$whatsapp_no."' ");
+
+        if(count($data)>0){
+            $result = array_merge(
+                ['status' => 'success'],
+                ['data' => $data],
+                ['message' => 'Success'],
+            );    
+        }else{
+            $data = array();
+            $result = array_merge(
+                ['status' => 'failed'],
+                ['data' => $data ],
+                ['message' => 'Login failed'],
+            );   
+        }
+        return $result;
+        
+    }
+
+    public function api_photo_slide(Request $request)
+    {
+        $whatsapp_no = $request->whatsapp_no;
+        $pass_wd = $request->pass_wd;
+        $data = DB::select("select id,remark,image_path from content_promotion cp where now()::date between date_begin and date_end order by seq; ");
 
         if(count($data)>0){
             $result = array_merge(
