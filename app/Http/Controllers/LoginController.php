@@ -172,7 +172,7 @@ class LoginController extends Controller
         $whatsapp_no = $request->whatsapp_no;
         $pass_wd = $request->pass_wd;
         $id = $request->id;
-        $data = DB::select("select id,remark,image_path,promo_name,remark,to_char(date_begin,'dd-mm-yyyy') date_begin,to_char(date_end,'dd-mm-yyyy') date_end from content_promotion cp where now()::date between date_begin and date_end where id=".$id." order by seq; ");
+        $data = DB::select("select id,remark,image_path,promo_name,remark,to_char(date_begin,'dd-mm-yyyy') date_begin,to_char(date_end,'dd-mm-yyyy') date_end from content_promotion cp where now()::date between date_begin and date_end and id=".$id." order by seq; ");
 
         if(count($data)>0){
             $result = array_merge(
