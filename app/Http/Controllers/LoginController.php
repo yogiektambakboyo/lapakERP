@@ -252,7 +252,7 @@ class LoginController extends Controller
     public function api_post_invoice_terapist(Request $request)
     {
         $invoice_no = $request->invoice_no;
-        $data = DB::select(" select id.invoice_no,assigned_to,id.assigned_to_name,case when u.photo is null then 'https://kakikupos.com/images/user-files/user.png' else 'https://kakikupos.com/images/user-files/'||ps.photo end as photo  
+        $data = DB::select(" select distinct id.invoice_no,assigned_to,id.assigned_to_name,case when u.photo is null then 'https://kakikupos.com/images/user-files/user.png' else 'https://kakikupos.com/images/user-files/'||ps.photo end as photo  
             from invoice_detail id 
             join product_sku ps on ps.id = id.product_id and ps.type_id > 1
             join users u on u.id = id.assigned_to 
