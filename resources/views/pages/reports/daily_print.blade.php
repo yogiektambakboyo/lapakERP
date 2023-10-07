@@ -840,8 +840,8 @@
                             <td scope="col" width="3%"> @php if((int)$dtt_raw[$counter]->total_329<=0 && (int)$dtt_raw_disc[$counter]->total_329>0){ echo 'Free'; }else{ echo number_format($dtt_raw[$counter]->total_329,0,',','.'); } @endphp </td>
                           @endif
                           @if((int)$header->total_635>0)
-                          @php if((int)$dtt_raw[$counter]->total_635>0){ $c_635++; } @endphp
-                          <td scope="col" width="3%">{{ number_format($dtt_raw[$counter]->total_635,0,',','.') }}</td>
+                            @php if((int)$dtt_raw[$counter]->total_635>0 || (int)$dtt_raw_disc[$counter]->total_635>0){ $c_635=$c_635+$dtt_raw_qty[$counter]->total_635; } @endphp 
+                            <td scope="col" width="3%"> @php if((int)$dtt_raw[$counter]->total_635<=0 && (int)$dtt_raw_disc[$counter]->total_635>0){ echo 'Free'; }else{ echo number_format($dtt_raw[$counter]->total_635,0,',','.'); } @endphp </td>
                           @endif
                       @endforeach
                     <td>
