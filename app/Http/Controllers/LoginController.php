@@ -244,7 +244,7 @@ class LoginController extends Controller
                 VALUES('".$item_list[$i]["invoice_no"]."', '".$item_list[$i]["assigned_to"]."', '".$item_list[$i]["review"]."',now()); ");
             }
 
-            $data = DB::select(" update customers_point set point = point+(select distinct m.point  from customers c 
+            $data = DB::select(" update customers_point set updated_at=now(),point = point+(select distinct m.point  from customers c 
             join membership m on m.id = c.membership_id where c.id = ".$customers_id." ) where customers_id = ".$customers_id."; ");
 
             $result = array_merge(
