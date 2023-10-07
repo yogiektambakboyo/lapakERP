@@ -17,7 +17,8 @@ class VerifyCsrfToken extends Middleware
         '/api_branch',
         '/api_invoice',
         '/api_post_review',
-        '/api_photo_slide'
+        '/api_photo_slide',
+        '/api_post_invoice_terapist',
         //
     ];
 }
