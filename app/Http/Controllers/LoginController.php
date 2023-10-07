@@ -116,6 +116,9 @@ class LoginController extends Controller
     {
         $whatsapp_no = $request->whatsapp_no;
         $pass_wd = $request->pass_wd;
+
+        $data = DB::select(" insert into customers_point(customers_id,point) select id,0  from customers c  where c.id not in (select customers_id  from customers_point); ");
+
         $data = DB::select("select c.id,c.name, m.remark as membership,m.point as m_point,'cust' as user_type,coalesce(cp.point,0) as point, 0 as voucher,coalesce(c.external_code,'') as external_code 
         from customers c 
         join membership m on m.id = c.membership_id 
@@ -240,6 +243,10 @@ class LoginController extends Controller
                 (invoice_no, user_id, value_review, created_at)
                 VALUES('".$item_list[$i]["invoice_no"]."', '".$item_list[$i]["assigned_to"]."', '".$item_list[$i]["review"]."',now()); ");
             }
+
+            $data = DB::select(" update customers_point set point = point+(select distinct m.point  from customers c 
+            join membership m on m.id = c.membership_id where c.id = ".$customers_id." ) where customers_id = ".$customers_id."; ");
+
             $result = array_merge(
                 ['status' => 'success'],
                 ['data' => $invoice_no],
