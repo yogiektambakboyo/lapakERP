@@ -228,7 +228,7 @@ class LoginController extends Controller
         $notes = $request->service_selected;
         $customers_id = $request->customers_id;
         $item_list = $request->item_list;
-        return count($item_list);
+        return count(json_decode($item_list,true));
         $data = DB::select(" INSERT INTO public.invoice_review
         (invoice_no, customers_id, value_review, remarks, created_at, notes)
         VALUES('".$invoice_no."', '".$customers_id."', '".$value_review."', '".$remarks."',now(), '".$notes."'); ");
