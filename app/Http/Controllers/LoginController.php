@@ -57,6 +57,9 @@ class LoginController extends Controller
     public function api_login(Request $request)
     {
         $whatsapp_no = $request->whatsapp_no;
+
+        DB::select("delete  from notif_log nl where created_at <= now()-interval '2 minutes'; ");
+
         $data = DB::select("select * from (select id,name,whatsapp_no,pass_wd,'cust' as user_type from customers c 
         where c.whatsapp_no is not null and whatsapp_no ='".$whatsapp_no."'
         union all 
@@ -64,11 +67,13 @@ class LoginController extends Controller
         where u.phone_no is not null and u.phone_no = '".$whatsapp_no."'
         ) a limit 1");
 
+        $data_notif = DB::select("select whatsapp_no from notif_log where whatsapp_no ='".$whatsapp_no."'; ");
+
         if(substr($whatsapp_no,0,2)=="08"){
             $whatsapp_no = "628".substr($whatsapp_no,2,strlen($whatsapp_no));
         }
 
-        if(count($data)>0){
+        if(count($data)>0 && count($data_notif)<=0){
             $random_numb = mt_rand(1111,9999);
             $data[0]->pass_wd = strval($random_numb);
 
@@ -94,12 +99,22 @@ class LoginController extends Controller
             curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, 0);
             $result = curl_exec($curl);
             curl_close($curl);
+
+            DB::select("insert into notif_log(whatsapp_no) values('".$whatsapp_no."'); ");
+
             
             $result = array_merge(
                 ['status' => 'success'],
                 ['data' => $data],
                 ['message' => 'Kode 4 digit OTP terkirim ke nomor Handphone kamu via WhatsApp, silahkan cek dan masukkan disini.'],
             );    
+        }else if(count($data_notif)>0){
+            $data = array();
+            $result = array_merge(
+                ['status' => 'failed'],
+                ['data' => $data ],
+                ['message' => 'Anda sudah melakukan permintaan OTP, Mohon tunggu 2 menit untuk request OTP lagi'],
+            );   
         }else{
             $data = array();
             $result = array_merge(
@@ -137,6 +152,42 @@ class LoginController extends Controller
                 ['status' => 'failed'],
                 ['data' => $data ],
                 ['message' => 'Login failed'],
+            );   
+        }
+        return $result;
+        
+    }
+
+    public function api_profile_emp(Request $request)
+    {
+        $whatsapp_no = $request->whatsapp_no;
+        $pass_wd = $request->pass_wd;
+
+        $data = DB::select("
+            select sum(case when to_char(im.dated,'MM')=to_char(now(),'MM') then 1 else 0 end)  as count_mp,
+            count(distinct case when to_char(im.dated,'MM')=to_char(now(),'MM') then im.customers_id  else 0 end)   as count_mc,
+            count(id.product_id) as count_yp,count(distinct im.customers_id) as count_yc,(p.values*100/pp.price) as procent,u.job_id,u.name,u.phone_no,u.gender,u.work_year,jt.remark as job_name,case when u.photo is null then 'https://kakikupos.com/images/user-files/user.png' else 'https://kakikupos.com/images/user-files/'||u.photo end as photo  
+            from users u 
+            join job_title jt on jt.id = u.job_id 
+            join product_commision_by_year p on p.product_id = 289 and p.jobs_id = u.job_id  and p.years = u.work_year and p.branch_id = u.branch_id 
+            join product_price pp on pp.product_id = p.product_id and pp.branch_id = p.branch_id 
+            join invoice_detail id on id.assigned_to = u.id
+            join invoice_master im on im.invoice_no = id.invoice_no and to_char(im.dated,'YYYY')=to_char(now()::date,'YYYY') 
+            where u.phone_no is not null and u.pass_wd='".$pass_wd."' and u.whatsapp_no ='".$whatsapp_no."'
+            group by u.job_id,u.name,u.phone_no,u.gender,u.work_year,jt.remark,u.photo,p.values,pp.price; ");
+
+        if(count($data)>0){
+            $result = array_merge(
+                ['status' => 'success'],
+                ['data' => $data],
+                ['message' => 'Success'],
+            );    
+        }else{
+            $data = array();
+            $result = array_merge(
+                ['status' => 'failed'],
+                ['data' => $data ],
+                ['message' => 'Gagal mendapatkan data karyawan'],
             );   
         }
         return $result;

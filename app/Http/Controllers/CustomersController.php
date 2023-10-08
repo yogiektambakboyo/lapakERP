@@ -145,6 +145,7 @@ class CustomersController extends Controller
         Customer::create(
             array_merge( 
                 ['phone_no' => $request->get('phone_no') ],
+                ['whatsapp_no' => $request->get('phone_no') ],
                 ['name' => $request->get('name') ],
                 ['address' => $request->get('address') ],
                 ['membership_id' => '1' ],
@@ -163,6 +164,7 @@ class CustomersController extends Controller
         Customer::create(
             array_merge( 
                 ['phone_no' => $request->get('phone_no') ],
+                ['whatsapp_no' => $request->get('phone_no') ],
                 ['name' => $request->get('name') ],
                 ['address' => $request->get('address') ],
                 ['gender' => $request->get('gender') ],
@@ -213,6 +215,7 @@ class CustomersController extends Controller
         ->update(
             array_merge( 
                 ['phone_no' => $request->get('phone_no') ],
+                ['whatsapp_no' => $request->get('phone_no') ],
                 ['name' => $request->get('name') ],
                 ['address' => $request->get('address') ],
                 ['membership_id' => '1' ],
