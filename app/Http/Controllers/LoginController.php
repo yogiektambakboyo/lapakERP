@@ -173,7 +173,7 @@ class LoginController extends Controller
             join product_price pp on pp.product_id = p.product_id and pp.branch_id = p.branch_id 
             join invoice_detail id on id.assigned_to = u.id
             join invoice_master im on im.invoice_no = id.invoice_no and to_char(im.dated,'YYYY')=to_char(now()::date,'YYYY') 
-            where u.phone_no is not null and u.pass_wd='".$pass_wd."' and u.whatsapp_no ='".$whatsapp_no."'
+            where u.phone_no is not null and u.pass_wd='".$pass_wd."' and u.phone_no ='".$whatsapp_no."'
             group by u.job_id,u.name,u.phone_no,u.gender,u.work_year,jt.remark,u.photo,p.values,pp.price; ");
 
         if(count($data)>0){
