@@ -166,7 +166,7 @@ class LoginController extends Controller
         $data = DB::select("
             select sum(case when to_char(im.dated,'MM')=to_char(now(),'MM') then 1 else 0 end)  as count_mp,
             count(distinct case when to_char(im.dated,'MM')=to_char(now(),'MM') then im.customers_id  else 0 end)   as count_mc,
-            count(id.product_id) as count_yp,count(distinct im.customers_id) as count_yc,(p.values*100/pp.price) as procent,u.job_id,u.name,u.phone_no,u.gender,u.work_year,jt.remark as job_name,case when u.photo is null then 'https://kakikupos.com/images/user-files/user.png' else 'https://kakikupos.com/images/user-files/'||u.photo end as photo  
+            count(id.product_id) as count_yp,count(distinct im.customers_id) as count_yc,(p.values*100/pp.price)::int as procent,u.job_id,u.name,u.phone_no,u.gender,u.work_year,jt.remark as job_name,case when u.photo is null then 'https://kakikupos.com/images/user-files/user.png' else 'https://kakikupos.com/images/user-files/'||u.photo end as photo  
             from users u 
             join job_title jt on jt.id = u.job_id 
             join product_commision_by_year p on p.product_id = 289 and p.jobs_id = u.job_id  and p.years = u.work_year and p.branch_id = u.branch_id 
