@@ -77,8 +77,8 @@ class LoginController extends Controller
             $random_numb = mt_rand(1111,9999);
             $data[0]->pass_wd = strval($random_numb);
 
-            DB::select("update customers set pass_wd=".$random_numb." where id=".$data[0]->id.";");
-            DB::select("update users set pass_wd=".$random_numb." where id=".$data[0]->id.";");
+            DB::select("update customers set pass_wd=".$random_numb." where whatsapp_no=".$whatsapp_no.";");
+            DB::select("update users set pass_wd=".$random_numb." where phone_no=".$whatsapp_no.";");
 
             $curl = curl_init();
             $token = "Bz7ZeaBPLYvF21GeqUpZk6qA8rFz8zJJlcIgMU7su0rB8lMP00H0akRpKo04k1sH";
