@@ -70,7 +70,7 @@ class LoginController extends Controller
         $data_notif = DB::select("select whatsapp_no from notif_log where whatsapp_no ='".$whatsapp_no."'; ");
 
         if(substr($whatsapp_no,0,2)=="08"){
-            $whatsapp_no = "628".substr($whatsapp_no,2,strlen($whatsapp_no));
+            $whatsapp_no_ = "628".substr($whatsapp_no,2,strlen($whatsapp_no));
         }
 
         if(count($data)>0 && count($data_notif)<=0){
@@ -83,7 +83,7 @@ class LoginController extends Controller
             $curl = curl_init();
             $token = "Bz7ZeaBPLYvF21GeqUpZk6qA8rFz8zJJlcIgMU7su0rB8lMP00H0akRpKo04k1sH";
             $data_msg = [
-                'phone' => $whatsapp_no,
+                'phone' => $whatsapp_no_,
                 'message' => '*OTP Notifikasi* \r\n\r\nHai '.$data[0]->name.', silahkan masukkan kode OTP *'.$random_numb.'* untuk login aplikasi.\r\n\r\n_Abaikan pesan ini jika anda tidak merasa login ke aplikasi_',
             ];
             curl_setopt($curl, CURLOPT_HTTPHEADER,
