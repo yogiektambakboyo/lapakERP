@@ -260,7 +260,9 @@
 <script type="text/javascript">
     $(document).ready(function () {
         $('#example').DataTable(
-           
+            {
+                order: [[ 0, 'asc' ], [ 2, 'asc' ], [ 1, 'asc' ]]
+            }
         );
     });
 </script>
