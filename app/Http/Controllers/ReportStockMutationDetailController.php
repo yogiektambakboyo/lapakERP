@@ -118,7 +118,7 @@ class ReportStockMutationDetailController extends Controller
             from period_stock_daily psd 
             join branch b  on b.id = psd.branch_id 
             join product_sku ps on ps.id = psd.product_id and ps.type_id = 1
-            where psd.dated=(now()-interval'2 days')::date
+            where psd.dated=(now()-interval'2 days')::date  and psd.qty_stock>0
             ) a order by 1,3,2    
         ");
         $data = $this->data;
@@ -203,7 +203,7 @@ class ReportStockMutationDetailController extends Controller
             from period_stock_daily psd 
             join branch b  on b.id = psd.branch_id 
             join product_sku ps on ps.id = psd.product_id and ps.type_id = 1
-            where psd.dated=('".$begindate."'::date-interval'1 days')::date
+            where psd.dated=('".$begindate."'::date-interval'1 days')::date and psd.qty_stock>0
             ) a order by 1,3,2    
             ");         
             return view('pages.reports.stockmutationdetail',['company' => Company::get()->first()], compact('period','shifts','branchs','data','keyword','act_permission','report_data'))->with('i', ($request->input('page', 1) - 1) * 5);
