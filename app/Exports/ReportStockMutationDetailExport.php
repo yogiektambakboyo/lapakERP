@@ -44,7 +44,7 @@ class ReportStockMutationDetailExport implements FromCollection,WithColumnFormat
     {
 
         $data = DB::select("
-
+        select * from (
         select branch_name,to_char(a.dated,'dd-mm-YYYY') as dated_display,product_name,sum(a.qty_in) as qty_in,sum(a.qty_out) as qty_out,coalesce(psd.qty_stock,0) as qty_stock,coalesce(ds.qty_stock,0) as qty_begin from (
             select b.id as branch_id,b.remark as branch_name,im.dated,id.product_id,ps.remark as product_name,sum(id.qty) as qty_out,0  as qty_in  from invoice_master im 
             join invoice_detail id on id.invoice_no = im.invoice_no 
@@ -89,7 +89,14 @@ class ReportStockMutationDetailExport implements FromCollection,WithColumnFormat
         left join (select dated,branch_id,product_id,qty_stock,rank()  OVER (partition by branch_id,product_id ORDER BY branch_id,product_id,dated DESC) as ranking  from period_stock_daily where dated<'".$this->begindate."') ds on ds.ranking=1  and ds.product_id = a.product_id and ds.branch_id  = a.branch_id      
         where ub.user_id = ".$this->userid."
         group by ds.qty_stock,a.branch_id,a.branch_name,a.dated,product_name,coalesce(psd.qty_stock,0),to_char(a.dated,'dd-mm-YYYY')
-     
+        union all 
+            select b.remark as branch_name,'00-00-0000' as dated_display,ps.remark as product_name,0 as qty_in,0 as qty_out,qty_stock,qty_stock as qty_begin 
+            from period_stock_daily psd 
+            join branch b  on b.id = psd.branch_id 
+            join product_sku ps on ps.id = psd.product_id and ps.type_id = 1
+            where psd.dated=('".$this->begindate."'::date-interval'1 days')::date
+            ) a order by 1,3,2  
+
         ");
 
         
@@ -106,6 +113,12 @@ class ReportStockMutationDetailExport implements FromCollection,WithColumnFormat
                 $qty_begin = $data[$i]->qty_begin;
                 $l_product = $data[$i]->product_name;
                 $l_branch = $data[$i]->branch_name;
+
+                if($data[$i]->dated_display=="00-00-0000"){
+                    $data[$i]->dated_display = "00 - Saldo Awal - 00";
+                    $data[$i]->qty_in = 0;
+                    $data[$i]->qty_out = 0;
+                }
             }else{
                 $qty_begin = ($qty_begin+$data[$i]->qty_in)-$data[$i]->qty_out;
             }
