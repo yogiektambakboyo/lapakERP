@@ -49,19 +49,32 @@
                             $qty_begin = $rdata->qty_begin;
                             $l_product = $rdata->product_name;
                             $l_branch = $rdata->branch_name;
+
+                            echo '
+                            <tr>
+                                <th scope="row">'.$rdata->branch_name.'</th>
+                                <td>'.$rdata->dated_display=="00-00-0000"?"00 - Saldo Awal - 00":$rdata->dated_display.'</td>
+                                <td>'.$rdata->product_name.'</td>
+                                <td>'.number_format($rdata->qty_in,0,',','.').'</td>
+                                <td>'.number_format($rdata->qty_out,0,',','.').'</td>
+                                <td>'.number_format($qty_begin,0,',','.').'</td>
+                            </tr>';
+
                         }else{
                             $qty_begin = ($qty_begin+$rdata->qty_in)-$rdata->qty_out;
+
+                            echo '
+                            <tr>
+                                <th scope="row">'.$rdata->branch_name.'</th>
+                                <td>'.$rdata->dated_display.'</td>
+                                <td>'.$rdata->product_name.'</td>
+                                <td>'.number_format($rdata->qty_in,0,',','.').'</td>
+                                <td>'.number_format($rdata->qty_out,0,',','.').'</td>
+                                <td>'.number_format($qty_begin,0,',','.').'</td>
+                            </tr>';
                         }
 
-                        echo '
-                        <tr>
-                            <th scope="row">'.$rdata->branch_name.'</th>
-                            <td>'.$rdata->dated_display.'</td>
-                            <td>'.$rdata->product_name.'</td>
-                            <td>'.number_format($rdata->qty_in,0,',','.').'</td>
-                            <td>'.number_format($rdata->qty_out,0,',','.').'</td>
-                            <td>'.number_format($qty_begin,0,',','.').'</td>
-                        </tr>';
+                        
                     }
                 ?>
                     
