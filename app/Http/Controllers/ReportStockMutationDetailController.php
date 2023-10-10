@@ -117,7 +117,7 @@ class ReportStockMutationDetailController extends Controller
             select b.remark as branch_name,psd.dated,ps.remark as product_name,'00-00-0000' as dated_display,0 as qty_in,0 as qty_out,qty_stock,qty_stock as qty_begin 
             from period_stock_daily psd 
             join branch b  on b.id = psd.branch_id 
-            join product_sku ps on ps.id = psd.product_id and ps.type_id = 1 and ps.id = 99
+            join product_sku ps on ps.id = psd.product_id and ps.type_id = 1
             where psd.dated=(now()-interval'2 days')::date
             ) a order by 1,3,2    
         ");
@@ -197,12 +197,12 @@ class ReportStockMutationDetailController extends Controller
             left join period_stock_daily psd on psd.dated = a.dated and psd.product_id = a.product_id and psd.branch_id  = a.branch_id             
             left join (select dated,branch_id,product_id,qty_stock,rank()  OVER (partition by branch_id,product_id ORDER BY branch_id,product_id,dated DESC) as ranking  from period_stock_daily where dated<'".$begindate."') ds on ds.ranking=1  and ds.product_id = a.product_id and ds.branch_id  = a.branch_id
             where ub.user_id = ".$user->id."
-            group by ds.qty_stock,a.branch_id,a.branch_name,a.dated,product_name,coalesce(psd.qty_stock,0),to_char(a.dated,'dd-mm-YYYY') order by 1,3,2        
+            group by ds.qty_stock,a.branch_id,a.branch_name,a.dated,product_name,coalesce(psd.qty_stock,0),to_char(a.dated,'dd-mm-YYYY')       
             union all 
             select b.remark as branch_name,psd.dated,ps.remark as product_name,'00-00-0000' as dated_display,0 as qty_in,0 as qty_out,qty_stock,qty_stock as qty_begin 
             from period_stock_daily psd 
             join branch b  on b.id = psd.branch_id 
-            join product_sku ps on ps.id = psd.product_id and ps.type_id = 1 and ps.id = 99
+            join product_sku ps on ps.id = psd.product_id and ps.type_id = 1
             where psd.dated=('".$begindate."'::date-interval'1 days')::date
             ) a order by 1,3,2    
             ");         
