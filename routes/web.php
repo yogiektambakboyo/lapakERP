@@ -38,7 +38,13 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
         Route::post('/login', 'LoginController@login')->name('login.perform');
         Route::post('/api_login', 'LoginController@api_login')->name('login.api_login');
         Route::post('/api_profile', 'LoginController@api_profile')->name('login.api_profile');
+        Route::post('/api_profile_emp', 'LoginController@api_profile_emp')->name('login.api_profile_emp');
         Route::post('/api_invoice', 'LoginController@api_invoice')->name('login.api_invoice');
+        Route::post('/api_branch', 'LoginController@api_branch')->name('login.api_branch');
+        Route::post('/api_post_review', 'LoginController@api_post_review')->name('login.api_post_review');
+        Route::post('/api_photo_slide', 'LoginController@api_photo_slide')->name('login.api_photo_slide');
+        Route::post('/api_photo_slide_detail', 'LoginController@api_photo_slide_detail')->name('login.api_photo_slide_detail');
+        Route::post('/api_post_invoice_terapist', 'LoginController@api_post_invoice_terapist')->name('login.api_post_invoice_terapist');
 
     });
 

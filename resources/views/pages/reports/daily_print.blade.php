@@ -804,44 +804,44 @@
 
 
                           @if((int)$header->total_498>0)
-                          @php if((int)$dtt_raw[$counter]->total_498>0){ $c_498++; } @endphp
-                            <td scope="col" width="3%">{{ number_format($dtt_raw[$counter]->total_498,0,',','.') }}</td>
+                            @php if((int)$dtt_raw[$counter]->total_498>0 || (int)$dtt_raw_disc[$counter]->total_498>0){ $c_498=$c_498+$dtt_raw_qty[$counter]->total_498; } @endphp 
+                            <td scope="col" width="3%"> @php if((int)$dtt_raw[$counter]->total_498<=0 && (int)$dtt_raw_disc[$counter]->total_498>0){ echo 'Free'; }else{ echo number_format($dtt_raw[$counter]->total_498,0,',','.'); } @endphp </td>
                           @endif
                           @if((int)$header->total_316>0)
-                          @php if((int)$dtt_raw[$counter]->total_316>0){ $c_316=$c_316+$dtt_raw_qty[$counter]->total_316; } @endphp
-                            <td scope="col" width="3%">{{ number_format($dtt_raw[$counter]->total_316,0,',','.') }}</td>
+                             @php if((int)$dtt_raw[$counter]->total_316>0 || (int)$dtt_raw_disc[$counter]->total_316>0){ $c_316=$c_316+$dtt_raw_qty[$counter]->total_316; } @endphp 
+                            <td scope="col" width="3%"> @php if((int)$dtt_raw[$counter]->total_316<=0 && (int)$dtt_raw_disc[$counter]->total_316>0){ echo 'Free'; }else{ echo number_format($dtt_raw[$counter]->total_316,0,',','.'); } @endphp </td>
                           @endif
                           @if((int)$header->total_309>0)
-                          @php if((int)$dtt_raw[$counter]->total_309>0){ $c_309=$c_309+$dtt_raw_qty[$counter]->total_309; } @endphp
-                            <td scope="col" width="3%">{{ number_format($dtt_raw[$counter]->total_309,0,',','.') }}</td>
+                            @php if((int)$dtt_raw[$counter]->total_309>0 || (int)$dtt_raw_disc[$counter]->total_309>0){ $c_309=$c_309+$dtt_raw_qty[$counter]->total_309; } @endphp 
+                            <td scope="col" width="3%"> @php if((int)$dtt_raw[$counter]->total_309<=0 && (int)$dtt_raw_disc[$counter]->total_309>0){ echo 'Free'; }else{ echo number_format($dtt_raw[$counter]->total_309,0,',','.'); } @endphp </td>
                           @endif
                           @if((int)$header->total_318>0)
-                          @php if((int)$dtt_raw[$counter]->total_318>0){ $c_318=$c_318+$dtt_raw_qty[$counter]->total_318; } @endphp
-                            <td scope="col" width="3%">{{ number_format($dtt_raw[$counter]->total_318,0,',','.') }}</td>
+                            @php if((int)$dtt_raw[$counter]->total_318>0 || (int)$dtt_raw_disc[$counter]->total_318>0){ $c_318=$c_318+$dtt_raw_qty[$counter]->total_318; } @endphp 
+                            <td scope="col" width="3%"> @php if((int)$dtt_raw[$counter]->total_318<=0 && (int)$dtt_raw_disc[$counter]->total_318>0){ echo 'Free'; }else{ echo number_format($dtt_raw[$counter]->total_318,0,',','.'); } @endphp </td>
                           @endif
                           @if((int)$header->total_319>0)
-                          @php if((int)$dtt_raw[$counter]->total_319>0){ $c_319=$c_319+$dtt_raw_qty[$counter]->total_319; } @endphp
-                            <td scope="col" width="3%">{{ number_format($dtt_raw[$counter]->total_319,0,',','.') }}</td>
+                            @php if((int)$dtt_raw[$counter]->total_319>0 || (int)$dtt_raw_disc[$counter]->total_319>0){ $c_319=$c_319+$dtt_raw_qty[$counter]->total_319; } @endphp 
+                            <td scope="col" width="3%"> @php if((int)$dtt_raw[$counter]->total_319<=0 && (int)$dtt_raw_disc[$counter]->total_319>0){ echo 'Free'; }else{ echo number_format($dtt_raw[$counter]->total_319,0,',','.'); } @endphp </td>
                           @endif
                           @if((int)$header->total_467>0)
-                          @php if((int)$dtt_raw[$counter]->total_467>0){ $c_467++; } @endphp
-                            <td scope="col" width="3%">{{ number_format($dtt_raw[$counter]->total_467,0,',','.') }}</td>
+                            @php if((int)$dtt_raw[$counter]->total_467>0 || (int)$dtt_raw_disc[$counter]->total_467>0){ $c_467=$c_467+$dtt_raw_qty[$counter]->total_467; } @endphp 
+                            <td scope="col" width="3%"> @php if((int)$dtt_raw[$counter]->total_467<=0 && (int)$dtt_raw_disc[$counter]->total_467>0){ echo 'Free'; }else{ echo number_format($dtt_raw[$counter]->total_467,0,',','.'); } @endphp </td>
                           @endif
                           @if((int)$header->total_488>0)
-                          @php if((int)$dtt_raw[$counter]->total_488>0){ $c_488++; } @endphp
-                            <td scope="col" width="3%">{{ number_format($dtt_raw[$counter]->total_488,0,',','.') }}</td>
+                            @php if((int)$dtt_raw[$counter]->total_488>0 || (int)$dtt_raw_disc[$counter]->total_488>0){ $c_488=$c_488+$dtt_raw_qty[$counter]->total_488; } @endphp 
+                            <td scope="col" width="3%"> @php if((int)$dtt_raw[$counter]->total_488<=0 && (int)$dtt_raw_disc[$counter]->total_488>0){ echo 'Free'; }else{ echo number_format($dtt_raw[$counter]->total_488,0,',','.'); } @endphp </td>
                           @endif
                           @if((int)$header->total_494>0)
-                          @php if((int)$dtt_raw[$counter]->total_494>0){ $c_494++; } @endphp
-                            <td scope="col" width="3%">{{ number_format($dtt_raw[$counter]->total_494,0,',','.') }}</td>
+                            @php if((int)$dtt_raw[$counter]->total_494>0 || (int)$dtt_raw_disc[$counter]->total_494>0){ $c_494=$c_494+$dtt_raw_qty[$counter]->total_494; } @endphp 
+                            <td scope="col" width="3%"> @php if((int)$dtt_raw[$counter]->total_494<=0 && (int)$dtt_raw_disc[$counter]->total_494>0){ echo 'Free'; }else{ echo number_format($dtt_raw[$counter]->total_494,0,',','.'); } @endphp </td>
                           @endif
                           @if((int)$header->total_329>0)
-                          @php if((int)$dtt_raw[$counter]->total_329>0){ $c_329++; } @endphp
-                            <td scope="col" width="3%">{{ number_format($dtt_raw[$counter]->total_329,0,',','.') }}</td>
+                            @php if((int)$dtt_raw[$counter]->total_329>0 || (int)$dtt_raw_disc[$counter]->total_329>0){ $c_329=$c_329+$dtt_raw_qty[$counter]->total_329; } @endphp 
+                            <td scope="col" width="3%"> @php if((int)$dtt_raw[$counter]->total_329<=0 && (int)$dtt_raw_disc[$counter]->total_329>0){ echo 'Free'; }else{ echo number_format($dtt_raw[$counter]->total_329,0,',','.'); } @endphp </td>
                           @endif
                           @if((int)$header->total_635>0)
-                          @php if((int)$dtt_raw[$counter]->total_635>0){ $c_635++; } @endphp
-                            <td scope="col" width="3%">{{ number_format($dtt_raw[$counter]->total_635,0,',','.') }}</td>
+                            @php if((int)$dtt_raw[$counter]->total_635>0 || (int)$dtt_raw_disc[$counter]->total_635>0){ $c_635=$c_635+$dtt_raw_qty[$counter]->total_635; } @endphp 
+                            <td scope="col" width="3%"> @php if((int)$dtt_raw[$counter]->total_635<=0 && (int)$dtt_raw_disc[$counter]->total_635>0){ echo 'Free'; }else{ echo number_format($dtt_raw[$counter]->total_635,0,',','.'); } @endphp </td>
                           @endif
                       @endforeach
                     <td>
