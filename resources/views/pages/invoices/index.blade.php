@@ -16,6 +16,7 @@
                         <div class="col-2"><input type="hidden" class="form-control  form-control-sm" name="search" placeholder="@lang('general.lbl_search')" value="{{ $keyword }}"></div>
                         <div class="col-2"><a href="#modal-filter"  data-bs-toggle="modal" data-bs-target="#modal-filter" class="btn btn-sm btn-lime">@lang('general.btn_filter')</a></div>   
                         <div class="col-2"><input type="submit" class="btn btn-sm btn-success" value="@lang('general.btn_export')" name="export"></div>  
+                        <div class="col-2"><input type="button" class="btn btn-sm btn-warning d-none" value="Gabung Pembayaran" name="join" id="join_payment"></div>  
                     </form>
                 </div>
             </div>
@@ -141,8 +142,8 @@
 
 @push('scripts')
     <script type="text/javascript">
-     //$('#app').removeClass('app app-sidebar-fixed app-header-fixed-minified').addClass('app app-sidebar-fixed app-header-fixed-minified app-sidebar-minified');
-
+         //$('#app').removeClass('app app-sidebar-fixed app-header-fixed-minified').addClass('app app-sidebar-fixed app-header-fixed-minified app-sidebar-minified');
+         
           const today = new Date();
           const yyyy = today.getFullYear();
           const yyyy1 = today.getFullYear()+1;
@@ -288,9 +289,44 @@
 
 @push('scripts')
 <script type="text/javascript">
+    let table;
     $(document).ready(function () {
-        $('#example').DataTable(
-        );
+        table = $('#example').DataTable({
+                select: {
+                    style: 'multi'
+                },
+        });
+
+        $('#join_payment').on('click',function(){
+            if(table.rows({ selected: true }).count()>1){
+                $('#join_payment').removeClass("d-none");
+            }else{
+                $('#join_payment').addClass("d-none");
+            }
+            $('#join_payment').text("Gabung Pembayaran ("+table.rows({ selected: true }).count()+")");
+            rowdata = table.rows('.selected').data();
+              for (var i = 0; i < rowdata.length; i++) {
+                 console.log(rowdata[i][1]);
+            }
+         });
+
+         table
+        .on('select', function (e, dt, type, indexes) {
+            if(table.rows({ selected: true }).count()>1){
+                $('#join_payment').removeClass("d-none");
+            }else{
+                $('#join_payment').addClass("d-none");
+            }
+            $('#join_payment').val("Gabung Pembayaran ("+table.rows({ selected: true }).count()+")");
+        })
+        .on('deselect', function (e, dt, type, indexes) {
+            if(table.rows({ selected: true }).count()>1){
+                $('#join_payment').removeClass("d-none");
+            }else{
+                $('#join_payment').addClass("d-none");
+            }
+            $('#join_payment').val("Gabung Pembayaran ("+table.rows({ selected: true }).count()+")");
+        });
     });
 </script>
 @endpush
