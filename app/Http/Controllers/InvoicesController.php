@@ -910,6 +910,26 @@ class InvoicesController extends Controller
         return $timetable;
     }
 
+    public function getfreeinvoice(Request $request) 
+    {
+        $data = $this->data;
+        $user = Auth::user();
+        $explode_str = explode(";",$request->get('invoice_no'));
+        $str_inv = "";
+        for ($i=0; $i < count($explode_str); $i++) { 
+            if($i==0){
+                $str_inv = "'".$explode_str[$i]."'";
+            }else{
+                $str_inv = $str_inv.", '".$explode_str[$i]."'";
+            }
+        }
+
+        $invoices = DB::select(" 
+            select invoice_no,customers_name,total,total_payment,payment_type,p_cash,p_transfer,p_debet_b1,p_debet_b2,p_credit_b1,p_credit_b2  from invoice_master im where im.total_payment<total and im.invoice_no in (".$str_inv."); 
+        ");
+        return $invoices;
+    }
+
     public function checkout(Invoice $invoice) 
     {
         $upd = $invoice::where('invoice_no',$invoice->invoice_no)->update(

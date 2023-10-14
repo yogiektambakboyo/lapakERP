@@ -16,7 +16,7 @@
                         <div class="col-2"><input type="hidden" class="form-control  form-control-sm" name="search" placeholder="@lang('general.lbl_search')" value="{{ $keyword }}"></div>
                         <div class="col-2"><a href="#modal-filter"  data-bs-toggle="modal" data-bs-target="#modal-filter" class="btn btn-sm btn-lime">@lang('general.btn_filter')</a></div>   
                         <div class="col-2"><input type="submit" class="btn btn-sm btn-success" value="@lang('general.btn_export')" name="export"></div>  
-                        <div class="col-2"><input type="button" class="btn btn-sm btn-warning d-none" value="Gabung Pembayaran" name="join" id="join_payment"></div>  
+                        <div class="col-2"><input type="button" class="btn btn-sm btn-warning d-none" value="Gabung Pembayaran" name="join" id="join_payment"   href="#modal-add-payment" data-bs-toggle="modal" data-bs-target="#modal-add-payment"></div>  
                     </form>
                 </div>
             </div>
@@ -134,6 +134,42 @@
             </div>
             </div>
         </div>
+
+        <div class="modal fade" id="modal-add-payment" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+            <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">Gabung Pembayaran</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                  
+                  <div class="container mt-4">
+                          <div class="mb-3">
+                              <label for="cust_name" class="form-label">@lang('general.lbl_name')</label>
+                              <input value="{{ old('cust_name') }}" 
+                                  type="text" 
+                                  class="form-control" 
+                                  name="cust_name" 
+                                  id="cust_name" 
+                                  placeholder="@lang('general.lbl_name')" required>
+          
+                              @if ($errors->has('cust_name'))
+                                  <span class="text-danger text-left">{{ $errors->first('cust_name') }}</span>
+                              @endif
+                          </div>
+          
+                          
+                  </div>
+      
+                </div>
+                <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">@lang('general.lbl_close') </button>
+                <button type="button" class="btn btn-primary"  data-bs-dismiss="modal" id="btn_save_payment">@lang('general.lbl_save')</button>
+                </div>
+            </div>
+            </div>
+          </div>
 
 
     </div>
@@ -290,6 +326,7 @@
 @push('scripts')
 <script type="text/javascript">
     let table;
+    let str_inv = "";
     $(document).ready(function () {
         table = $('#example').DataTable({
                 select: {
@@ -298,22 +335,54 @@
         });
 
         $('#join_payment').on('click',function(){
-            if(table.rows({ selected: true }).count()>1){
-                //$('#join_payment').removeClass("d-none");
-            }else{
-                $('#join_payment').addClass("d-none");
-            }
+            str_inv = "";
             $('#join_payment').text("Gabung Pembayaran ("+table.rows({ selected: true }).count()+")");
             rowdata = table.rows('.selected').data();
               for (var i = 0; i < rowdata.length; i++) {
-                 console.log(rowdata[i][1]);
+                if(i==0){
+                    str_inv = rowdata[i][1]; 
+                }else{
+                    str_inv = str_inv + ";"+rowdata[i][1]; 
+                }
             }
+
+            if(table.rows({ selected: true }).count()>1){
+                $('#join_payment').removeClass("d-none");
+
+                const json = JSON.stringify({
+                        invoice_no : str_inv,
+                    }
+                );
+              
+                var url = "{{ route('invoices.getfreeinvoice') }}";
+                const res = axios.post(url, json,
+                {
+                    headers: {
+                      'Content-Type': 'application/json'
+                    }
+                  }
+                ).then(resp => {
+                    
+
+                    resp.data.forEach(element => {
+                        console.log(element.invoice_no);
+                    });
+
+                });
+                
+
+            }else{
+                $('#join_payment').addClass("d-none");
+            }
+           
+
+            console.log(str_inv);
          });
 
          table
         .on('select', function (e, dt, type, indexes) {
             if(table.rows({ selected: true }).count()>1){
-                $('#join_payment').removeClass("d-none");
+                //$('#join_payment').removeClass("d-none");
             }else{
                 $('#join_payment').addClass("d-none");
             }
