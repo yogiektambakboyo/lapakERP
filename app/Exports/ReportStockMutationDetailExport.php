@@ -91,7 +91,7 @@ class ReportStockMutationDetailExport implements FromCollection,WithColumnFormat
         union all 
             select b.remark as branch_name,'00-00-0000' as dated_display,ps.remark as product_name,0 as qty_in,0 as qty_out,qty_stock,qty_stock as qty_begin 
             from period_stock_daily psd 
-            join branch b  on b.id = psd.branch_id
+            join branch b  on b.id = psd.branch_id and b.id::character varying like '".$this->branch."'
             join users_branch uu on uu.branch_id = psd.branch_id  and uu.user_id = ".$this->userid."
             join product_sku ps on ps.id = psd.product_id and ps.type_id = 1
             where psd.dated=('".$this->begindate."'::date-interval'1 days')::date
