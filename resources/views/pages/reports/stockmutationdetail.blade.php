@@ -8,7 +8,7 @@
         <div class="lead row mb-3">
             <div class="col-md-10">
                 <div class="col-md-8">
-                    @lang('general.lbl_title') (Untuk penarikan yang akurat dimulai dari Tgl 26 bulan closing terakhir )
+                    @lang('general.lbl_title') (Untuk penarikan yang akurat dimulai dari Tgl 27 bulan closing terakhir )
                 </div>
                 <div class="col-md-10"> 	
                         <button onclick="openDialogFilterSearch('Filter');" class="btn btn-sm btn-lime">@lang('general.btn_filter')</button> 
@@ -261,7 +261,7 @@
     $(document).ready(function () {
         $('#example').DataTable(
             {
-                order: [[ 0, 'asc' ], [ 2, 'asc' ], [ 1, 'asc' ]]
+                order: [[ 0, 'asc' ], [ 2, 'asc' ]]
             }
         );
     });

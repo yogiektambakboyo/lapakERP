@@ -94,7 +94,7 @@ class ReportStockMutationDetailExport implements FromCollection,WithColumnFormat
             join branch b  on b.id = psd.branch_id
             join users_branch uu on uu.branch_id = psd.branch_id  and uu.user_id = ".$this->userid."
             join product_sku ps on ps.id = psd.product_id and ps.type_id = 1
-            where psd.dated=('".$this->begindate."'::date-interval'1 days')::date and qty_stock>0
+            where psd.dated=('".$this->begindate."'::date-interval'1 days')::date
             ) a order by 1,3,2  
 
         ");
