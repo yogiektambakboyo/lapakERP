@@ -78,6 +78,7 @@ class ReportStockMutationDetailController extends Controller
 
         $period = DB::select("select period_no,remark from period where period_no<=to_char(now(),'YYYYMM')::int and period_no>=202301  order by period_no desc");
         $calc_1 = DB::select("call calc_stock_daily_today();");
+        $insert_data_date26 = DB::select("select get_26();");
         $report_data = DB::select("
             select * from ( select branch_name,a.dated,product_name,to_char(a.dated,'dd-mm-YYYY') as dated_display,sum(a.qty_in) as qty_in,sum(a.qty_out) as qty_out,coalesce(psd.qty_stock,0) as qty_stock,coalesce(ds.qty_stock,0) as qty_begin from (
                 select b.id as branch_id,b.remark as branch_name,im.dated,id.product_id,ps.remark as product_name,sum(id.qty) as qty_out,0  as qty_in  from invoice_master im 
