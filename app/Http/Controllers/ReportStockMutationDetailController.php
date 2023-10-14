@@ -120,7 +120,7 @@ class ReportStockMutationDetailController extends Controller
                 group by b.id,b.remark,im.dated,id.product_id,ps.remark
             ) a join users_branch ub on ub.branch_id = a.branch_id 
             left join period_stock_daily psd on psd.dated = a.dated and psd.product_id = a.product_id and psd.branch_id  = a.branch_id             
-            left join (select dated,branch_id,product_id,qty_stock,rank()  OVER (partition by branch_id,product_id ORDER BY branch_id,product_id,dated DESC) as ranking  from period_stock_daily where dated<'".$begin_date_plus."' ds on ds.ranking=1  and ds.product_id = a.product_id and ds.branch_id  = a.branch_id
+            left join (select dated,branch_id,product_id,qty_stock,rank()  OVER (partition by branch_id,product_id ORDER BY branch_id,product_id,dated DESC) as ranking  from period_stock_daily where dated<'".$begin_date_plus."') ds on ds.ranking=1  and ds.product_id = a.product_id and ds.branch_id  = a.branch_id
             where ub.user_id = ".$user->id."
             group by ds.qty_stock,a.branch_id,a.branch_name,a.dated,product_name,coalesce(psd.qty_stock,0),to_char(a.dated,'dd-mm-YYYY') 
             union all 
