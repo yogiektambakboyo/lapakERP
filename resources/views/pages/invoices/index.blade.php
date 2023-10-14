@@ -299,7 +299,7 @@
 
         $('#join_payment').on('click',function(){
             if(table.rows({ selected: true }).count()>1){
-                $('#join_payment').removeClass("d-none");
+                //$('#join_payment').removeClass("d-none");
             }else{
                 $('#join_payment').addClass("d-none");
             }

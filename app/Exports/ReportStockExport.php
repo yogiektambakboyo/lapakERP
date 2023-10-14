@@ -47,7 +47,7 @@ class ReportStockExport implements FromCollection,WithColumnFormatting, WithHead
             join product_stock psd on psd.branch_id = ub.branch_id and psd.branch_id::character varying like '%".$this->branch."%'
             join product_sku ps on ps.id = psd.product_id and ps.type_id = 1
             join branch b on b.id = ub.branch_id 
-            join product_distribution pd on pd.product_id = ps.id and pd.branch_id = ub.branch_id 
+            join product_distribution pd on pd.product_id = ps.id and pd.branch_id = ub.branch_id and active=1
             left join product_stock_buffer sb on sb.branch_id = b.id and sb.product_id = ps.id
             where u.id = ".$this->userid." order by 1,2             
         ")); 

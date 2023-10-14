@@ -119,7 +119,7 @@
                             name="filter_begin_date_in"
                             id="filter_begin_date_in"
                             class="form-control" 
-                            value="{{ old('filter_begin_date_in') }}" required/>
+                            value="{{ $begin_date_format_plus }}" required/>
                             @if ($errors->has('filter_begin_date_in'))
                                     <span class="text-danger text-left">{{ $errors->first('filter_begin_date_in') }}</span>
                                 @endif
@@ -224,7 +224,7 @@
             dateFormat : 'dd-mm-yy',
               todayHighlight: true,
           });
-          $('#filter_begin_date_in').val(formattedToday);
+          //$('#filter_begin_date_in').val(formattedToday);
 
 
           $('#filter_end_date_in').datepicker({

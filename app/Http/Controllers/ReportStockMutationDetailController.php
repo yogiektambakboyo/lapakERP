@@ -66,6 +66,16 @@ class ReportStockMutationDetailController extends Controller
         $branchs = Branch::join('users_branch as ub','ub.branch_id', '=', 'branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']);        
 
         $shifts = Shift::orderBy('shift.id')->get(['shift.id','shift.remark','shift.id','shift.time_start','shift.time_end']); 
+        $begin_date_data = DB::select("select get_26() as begin_date,(get_26()+interval'1 day')::date as begin_date_plus");
+        $begin_date = $begin_date_data[0]->begin_date;
+        $begin_date_plus = $begin_date_data[0]->begin_date_plus;
+
+        $date = new \DateTime($begin_date);
+        $begin_date_format = $date->format('d-m-Y');
+
+        $date_plus = new \DateTime($begin_date_plus);
+        $begin_date_format_plus = $date_plus->format('d-m-Y');
+
         $period = DB::select("select period_no,remark from period where period_no<=to_char(now(),'YYYYMM')::int and period_no>=202301  order by period_no desc");
         $calc_1 = DB::select("call calc_stock_daily_today();");
         $report_data = DB::select("
@@ -75,7 +85,7 @@ class ReportStockMutationDetailController extends Controller
                 join customers c ON c.id = im.customers_id
                 join product_sku ps on ps.id = id.product_id and ps.type_id = 1 
                 join branch b on b.id = c.branch_id and b.id::character varying like '%'
-                where im.dated between (now()-interval'2 days')::date and now()::date
+                where im.dated between '".$begin_date_plus."' and now()::date
                 group by b.id,b.remark,im.dated,id.product_id,ps.remark
                 union all
                 select b.id as branch_id,b.remark as branch_name,im.dated,ps2.id as product_id,ps2.remark as product_name,sum(id.qty*pi2.qty) as qty_out,0  as qty_in  from invoice_master im 
@@ -85,28 +95,28 @@ class ReportStockMutationDetailController extends Controller
                 join product_ingredients pi2 on pi2.product_id = ps.id 
                 join product_sku ps2 on ps2.id = pi2.product_id_material
                 join branch b on b.id = c.branch_id and b.id::character varying like '%'
-                where im.dated between (now()-interval'2 days')::date and now()::date
+                where im.dated between '".$begin_date_plus."' and now()::date
                 group by b.id,b.remark,im.dated,ps2.id,ps2.remark
                 union all
                 select b.id as branch_id,b.remark as branch_name,im.dated,id.product_id,ps.remark as product_name,sum(id.qty) as qty_out,0  as qty_in  from petty_cash im 
                 join petty_cash_detail id on id.doc_no  = im.doc_no
                 join product_sku ps on ps.id = id.product_id and ps.type_id = 1
                 join branch b on b.id = im.branch_id and b.id::character varying like '%'
-                where im.dated between (now()-interval'2 days')::date and now()::date and im.type='Produk - Keluar'
+                where im.dated between '".$begin_date_plus."' and now()::date and im.type='Produk - Keluar'
                 group by b.id,b.remark,im.dated,id.product_id,ps.remark
                 union all
                 select b.id as branch_id,b.remark as branch_name,im.dated,id.product_id,ps.remark as product_name,0 as qty_out,sum(id.qty)  as qty_in  from petty_cash im 
                 join petty_cash_detail id on id.doc_no  = im.doc_no
                 join product_sku ps on ps.id = id.product_id and ps.type_id = 1 
                 join branch b on b.id = im.branch_id and b.id::character varying like '%'
-                where im.dated between (now()-interval'2 days')::date and now()::date and im.type='Produk - Masuk'
+                where im.dated between '".$begin_date_plus."' and now()::date and im.type='Produk - Masuk'
                 group by b.id,b.remark,im.dated,id.product_id,ps.remark
                 union all
                 select b.id as branch_id,b.remark as branch_name,im.dated,id.product_id,ps.remark as product_name,0 as qty_out,sum(id.qty) as qty_in  from receive_master im 
                 join receive_detail id on id.receive_no = im.receive_no 
                 join product_sku ps on ps.id = id.product_id and ps.type_id = 1 
                 join branch b on b.id = im.branch_id and b.id::character varying like '%'
-                where im.dated between (now()-interval'2 days')::date and now()::date
+                where im.dated between '".$begin_date_plus."' and now()::date
                 group by b.id,b.remark,im.dated,id.product_id,ps.remark
             ) a join users_branch ub on ub.branch_id = a.branch_id 
             left join period_stock_daily psd on psd.dated = a.dated and psd.product_id = a.product_id and psd.branch_id  = a.branch_id             
@@ -119,13 +129,13 @@ class ReportStockMutationDetailController extends Controller
             join branch b  on b.id = psd.branch_id 
             join users_branch uu on uu.branch_id = psd.branch_id and uu.user_id = ".$user->id."
             join product_sku ps on ps.id = psd.product_id and ps.type_id = 1
-            where psd.dated=(now()-interval'2 days')::date  and psd.qty_stock>0
+            where psd.dated='".$begin_date."'  and psd.qty_stock>0
             ) a order by 1,3,2    
         ");
         $data = $this->data;
         $keyword = "";
         $act_permission = $this->act_permission[0];
-        return view('pages.reports.stockmutationdetail',['company' => Company::get()->first()], compact('period','shifts','branchs','data','keyword','act_permission','report_data'))->with('i', ($request->input('page', 1) - 1) * 5);
+        return view('pages.reports.stockmutationdetail',['company' => Company::get()->first()], compact('period','shifts','branchs','data','keyword','act_permission','report_data','begin_date','begin_date_format','begin_date_plus','begin_date_format_plus'))->with('i', ($request->input('page', 1) - 1) * 5);
     }
 
    
@@ -147,6 +157,8 @@ class ReportStockMutationDetailController extends Controller
         $begindate = date(Carbon::parse($request->filter_begin_date_in)->format('Y-m-d'));
         $enddate = date(Carbon::parse($request->filter_end_date_in)->format('Y-m-d'));
         $branchx = $request->filter_branch_id_in;
+        $begin_date_format = date(Carbon::parse($request->filter_begin_date_in)->format('d-m-Y'));
+        $begin_date_format_plus = date(Carbon::parse($request->filter_end_date_in)->format('d-m-Y'));
 
     
         if($request->export=='Export Excel'){
@@ -208,7 +220,7 @@ class ReportStockMutationDetailController extends Controller
             where psd.dated=('".$begindate."'::date-interval'1 days')::date and psd.qty_stock>0
             ) a order by 1,3,2    
             ");         
-            return view('pages.reports.stockmutationdetail',['company' => Company::get()->first()], compact('period','shifts','branchs','data','keyword','act_permission','report_data'))->with('i', ($request->input('page', 1) - 1) * 5);
+            return view('pages.reports.stockmutationdetail',['company' => Company::get()->first()], compact('period','shifts','branchs','data','keyword','act_permission','report_data','begin_date_format','begin_date_format_plus'))->with('i', ($request->input('page', 1) - 1) * 5);
         }
     }
 
