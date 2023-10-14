@@ -126,6 +126,7 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
             Route::patch('/{invoice}/checkout', 'InvoicesController@checkout')->name('invoices.checkout');
             Route::get('/{invoice}/edit', 'InvoicesController@edit')->name('invoices.edit');
             Route::get('/{invoice}/print', 'InvoicesController@print')->name('invoices.print');
+            Route::get('/{str}/printbulk', 'InvoicesController@printbulk')->name('invoices.printbulk');
             Route::get('/{invoice}/printsj', 'InvoicesController@printsj')->name('invoices.printsj');
             Route::get('/{invoice}/printspk', 'InvoicesController@printspk')->name('invoices.printspk');
             Route::get('/{invoice}/printthermal', 'InvoicesController@printthermal')->name('invoices.printthermal');
@@ -133,6 +134,7 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
             Route::get('/gettimetable', 'InvoicesController@gettimetable')->name('invoices.gettimetable');
             Route::post('/getfreeterapist', 'InvoicesController@getfreeterapist')->name('invoices.getfreeterapist');
             Route::post('/getfreeinvoice', 'InvoicesController@getfreeinvoice')->name('invoices.getfreeinvoice');
+            Route::post('/updatebulk', 'InvoicesController@updatebulk')->name('invoices.updatebulk');
             Route::get('/gettimetable_room', 'InvoicesController@gettimetable_room')->name('invoices.gettimetable_room');
             Route::get('/getterapisttable', 'InvoicesController@getterapisttable')->name('invoices.getterapisttable');
             Route::get('/{invoice}/getinvoice', 'InvoicesController@getinvoice')->name('invoices.getinvoice');

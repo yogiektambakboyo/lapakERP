@@ -72,6 +72,8 @@ class InvoicesController extends Controller
         $this->getpermissions($id);
         $branchs = Branch::join('users_branch as ub','ub.branch_id', '=', 'branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']);        
 
+        $payment_type = ['Cash','BCA - Debit','BCA - Kredit','Mandiri - Debit','Mandiri - Kredit','Transfer','QRIS'];
+
         $has_period_stock = DB::select("
             select periode  from period_stock ps where ps.periode = to_char(now()::date,'YYYYMM')::int;
         ");
@@ -105,7 +107,7 @@ class InvoicesController extends Controller
                     ->whereColumn('ub.branch_id', 'jt.branch_id');
                 })->where('ub.user_id', $user->id)->where('invoice_master.dated','>=',Carbon::now()->subDay(7))->where('invoice_master.invoice_no','ilike','INV-%')
               ->get(['invoice_master.is_checkout','invoice_master.id','b.remark as branch_name','invoice_master.invoice_no','invoice_master.dated','jt.name as customer','invoice_master.total','invoice_master.total_discount','invoice_master.total_payment' ]);
-        return view('pages.invoices.index',['company' => Company::get()->first()], compact('invoices','data','keyword','act_permission','branchs'))->with('i', ($request->input('page', 1) - 1) * 5);
+        return view('pages.invoices.index',['company' => Company::get()->first()], compact('invoices','data','keyword','act_permission','branchs','payment_type'))->with('i', ($request->input('page', 1) - 1) * 5);
     }
 
     public function search(Request $request) 
@@ -477,6 +479,58 @@ class InvoicesController extends Controller
             'invoiceDetails' => InvoiceDetail::join('invoice_master as om','om.invoice_no','=','invoice_detail.invoice_no')->join('product_sku as ps','ps.id','=','invoice_detail.product_id')->join('product_uom as u','u.product_id','=','invoice_detail.product_id')->join('uom as um','um.id','=','u.uom_id')->leftjoin('users as us','us.id','=','invoice_detail.assigned_to')->join('customers as c','c.id','=','om.customers_id')->join('branch as bc','bc.id','=','c.branch_id')->leftjoin('users as usm','usm.id','=','invoice_detail.referral_by')->where('invoice_detail.invoice_no',$invoice->invoice_no)->orderByRaw('ps.type_id ASC,invoice_detail.seq  ASC')->get(['bc.remark as branch_name','bc.address as branch_address','usm.name as referral_by','us.name as assigned_to','um.remark as uom','invoice_detail.qty','invoice_detail.price','invoice_detail.total','ps.id','ps.remark as product_name','invoice_detail.discount','om.tax','om.voucher_code']),
         ])->setOptions(['defaultFont' => 'sans-serif'])->setPaper('a4', 'landscape');
         return $pdf->stream('invoice.pdf');
+    }
+
+    public function printbulk(String $str) 
+    {
+        $user = Auth::user();
+        $id = $user->roles->first()->id;
+        $this->getpermissions($id);
+
+        $explode_str = explode(";",$str);
+        $str_inv = "";
+        for ($i=0; $i < count($explode_str); $i++) { 
+            if($i==0){
+                $str_inv = "'".$explode_str[$i]."'";
+            }else{
+                $str_inv = $str_inv.", '".$explode_str[$i]."'";
+            }
+        }
+
+        $invoice_list = DB::select("select sum(im.payment_nominal) as payment_nominal,sum(tax) as tax,string_agg(im.invoice_no,', ') invoice_no,max(im.dated) dated,string_agg(distinct im.customers_name ,', ') customers_name,sum(total) as total,sum(total_payment) as total_payment
+        ,max(customers_id) as customers_id,string_agg(distinct im.payment_type  ,', ') payment_type,string_agg(im.remark,', ') remark,max(printed_count) printed_count,max(printed_at) printed_at,string_agg(distinct u.name ,', ') as name
+        from invoice_master im 
+        join users u on u.id = im.created_by
+        where im.invoice_no in (".$str_inv.") ");
+
+        $invoice = $invoice_list[0];
+
+        $data = $this->data;
+        $users = User::join('users_branch as ub','ub.branch_id', '=', 'users.branch_id')->where('ub.user_id','=',$user->id)->where('users.job_id','=',2)->get(['users.id','users.name']);
+
+        DB::select("update invoice_master set printed_count=printed_count+1,printed_at=now() where invoice_no in (".$str_inv.")");
+
+        $invoiceDetail = DB::select("
+            select bc.remark as branch_name,bc.address as branch_address,usm.name as referral_by,us.name as assigned_to,um.remark as uom,id.qty,id.price,id.total,ps.id,ps.remark as product_name,id.discount,im.tax,im.voucher_code
+            from 
+            invoice_detail id 
+            join invoice_master im on im.invoice_no = id.invoice_no
+            join product_sku ps on ps.id= id.product_id
+            join product_uom u on u.product_id= id.product_id
+            join uom um on um.id = u.uom_id
+            join customers c on c.id=im.customers_id 
+            join branch bc on bc.id = c.branch_id
+            left join users us on us.id = id.assigned_to
+            left join users usm on usm.id = id.referral_by
+            where id.invoice_no in (".$str_inv.") order by ps.type_id desc,ps.remark asc;
+            ");
+        return view('pages.invoices.printbulk', [
+            'data' => $data,
+            'settings' => Settings::get(),
+            'invoice' => $invoice_list[0],
+            'customers' => Customer::where('id',$invoice->customers_id)->get(['customers.*']),
+            'invoiceDetails' => $invoiceDetail,
+        ]);
     }
 
     public function printsj(Invoice $invoice) 
@@ -925,9 +979,63 @@ class InvoicesController extends Controller
         }
 
         $invoices = DB::select(" 
-            select invoice_no,customers_name,total,total_payment,payment_type,p_cash,p_transfer,p_debet_b1,p_debet_b2,p_credit_b1,p_credit_b2  from invoice_master im where im.total_payment<total and im.invoice_no in (".$str_inv."); 
+            select invoice_no,customers_name,total,total_payment,payment_type,p_cash,p_transfer,p_debet_b1,p_debet_b2,p_credit_b1,p_credit_b2,qris as p_qris,'' as payment_type_disp   from invoice_master im where im.total_payment<total and im.invoice_no in (".$str_inv."); 
         ");
         return $invoices;
+    }
+
+    public function updatebulk(Request $request) 
+    {
+        $upd = false;
+        $user = Auth::user();
+        $id = $user->roles->first()->id;
+
+        $data = $request->invoices;
+        $str_inv = $request->invoice_no;
+
+        if(count($data)>0){
+            for ($i=0; $i < count($data); $i++) { 
+                 DB::update("insert into invoice_log select id, invoice_no, dated, customers_id, total, tax, total_payment, total_discount, remark, payment_type, payment_nominal, voucher_code, scheduled_at, branch_room_id, ref_no, updated_by, printed_at, updated_at, created_by, created_at, is_checkout, is_canceled, customers_name, printed_count, customer_type,now() from invoice_master where invoice_no = '".$data[$i]["invoice_no"]."'");
+
+                DB::update(" 
+                    update invoice_master set 
+                    payment_type='".$data[$i]["payment_type"]."', 
+                    p_cash='".$data[$i]["p_cash"]."', 
+                    p_transfer='".$data[$i]["p_transfer"]."', 
+                    p_debet_b1='".$data[$i]["p_debet_b1"]."', 
+                    p_debet_b2='".$data[$i]["p_debet_b2"]."', 
+                    p_credit_b1='".$data[$i]["p_credit_b1"]."', 
+                    p_credit_b2='".$data[$i]["p_credit_b2"]."', 
+                    qris='".$data[$i]["p_qris"]."', 
+                    total_payment='".$data[$i]["total_payment"]."', 
+                    updated_at=now(), 
+                    payment_nominal='".$request["payment_nom"]."', 
+                    updated_by='".$id."'
+                    where invoice_no = '".$data[$i]["invoice_no"]."'; 
+                ");
+
+                $upd = true;
+
+
+            }
+
+
+        }
+
+        if($upd){
+            $result = array_merge(
+                ['status' => 'success'],
+                ['data' => $str_inv],
+                ['message' => 'Set Checkout Successfully'],
+            );    
+        }else{
+            $result = array_merge(
+                ['status' => 'failed'],
+                ['data' => $str_inv],
+                ['message' => 'Update failed'],
+            );   
+        }
+        return $result;
     }
 
     public function checkout(Invoice $invoice) 

@@ -136,7 +136,7 @@
         </div>
 
         <div class="modal fade" id="modal-add-payment" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-            <div class="modal-dialog">
+            <div class="modal-dialog modal-lg ">
             <div class="modal-content">
                 <div class="modal-header">
                 <h5 class="modal-title" id="staticBackdropLabel">Gabung Pembayaran</h5>
@@ -144,28 +144,71 @@
                 </div>
                 <div class="modal-body">
                   
-                  <div class="container mt-4">
+                  <div class="container">
+                        <div class="row">
+                                <label for="input_payment_type" class="col-sm-2 col-form-label">Tipe Bayar</label>
+                                <div class="col-sm-2">
+                                    <select class="form-control form-control-sm" name="input_payment_type" id="input_payment_type">
+                                        <?php 
+                                            for ($i=0; $i < count($payment_type); $i++) { 
+                                                echo '<option value="'.$payment_type[$i].'">'.$payment_type[$i].'</option>';
+                                            }
+                                        ?>
+                                    </select>
+                                </div>
+
+                                <label for="input_payment_nominal" class="col-sm-1 col-form-label">Nominal</label>
+                                <div class="col-sm-2">
+                                   <input type="number" class="form-control form-control-sm" id="input_payment_nominal" name="input_payment_nominal" value="0">
+                                </div>
+
+
+                                <div class="col-sm-2">
+                                    <button class="btn btn-success col-sm-12" id="input_btn_submit">Terapkan</button>
+                                 </div>
+                                 <div class="col-sm-2">
+                                     <button class="btn btn-danger col-sm-12"  id="input_btn_reset">Reset</button>
+                                 </div>
+                        </div>
+
                           <div class="mb-3">
-                              <label for="cust_name" class="form-label">@lang('general.lbl_name')</label>
-                              <input value="{{ old('cust_name') }}" 
-                                  type="text" 
-                                  class="form-control" 
-                                  name="cust_name" 
-                                  id="cust_name" 
-                                  placeholder="@lang('general.lbl_name')" required>
-          
-                              @if ($errors->has('cust_name'))
-                                  <span class="text-danger text-left">{{ $errors->first('cust_name') }}</span>
-                              @endif
+                            <table class="table table-striped" id="payment">
+                                <thead>
+                                <tr>
+                                    <th>@lang('general.invoice_no')</th>
+                                    <th scope="col" width="15%">@lang('general.lbl_total_customer')</th>
+                                    <th scope="col" width="10%">Tipe Bayar</th>
+                                    <th scope="col" width="10%">Total</th>
+                                    <th scope="col" width="10%">Pembayaran</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
                           </div>
-          
-                          
+
+                          <div class="row">
+                            <label for="input_total" class="col-sm-2 col-form-label">Total Tagihan</label>
+                            <div class="col-sm-2">
+                                <input type="text" class="form-control form-control-sm" id="input_total" name="input_total" value="0" readonly>
+                            </div>
+
+                            <label for="input_total_payment" class="col-sm-2 col-form-label">Total Pembayaran</label>
+                            <div class="col-sm-2">
+                               <input type="text" class="form-control form-control-sm" id="input_total_payment" name="input_total_payment" value="0" readonly>
+                            </div>
+
+                            <label for="input_charge" class="col-sm-2 col-form-label">Kembalian</label>
+                            <div class="col-sm-2">
+                               <input type="text" class="form-control form-control-sm" id="input_charge" name="input_charge" value="0" readonly>
+                            </div>
+                    </div>
                   </div>
       
                 </div>
                 <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">@lang('general.lbl_close') </button>
-                <button type="button" class="btn btn-primary"  data-bs-dismiss="modal" id="btn_save_payment">@lang('general.lbl_save')</button>
+                <button type="button" class="btn btn-primary" id="btn_save_payment">@lang('general.lbl_save')</button>
                 </div>
             </div>
             </div>
@@ -325,13 +368,29 @@
 
 @push('scripts')
 <script type="text/javascript">
-    let table;
+    let table, table_payment;
     let str_inv = "";
+    let list_invoice;
+    let list_invoice_init;
+    let total_invoice = 0;
+    let total_payment = 0;
+    let total_charge = 0;
     $(document).ready(function () {
         table = $('#example').DataTable({
                 select: {
                     style: 'multi'
                 },
+        });
+
+        table_payment = $('#payment').DataTable({
+            dom: 'lrt',
+            columns: [
+                { data: 'invoice_no' },
+                { data: 'customers_name' },
+                { data: 'payment_type' },
+                { data: 'total' },
+                { data: 'total_payment' }
+            ]
         });
 
         $('#join_payment').on('click',function(){
@@ -362,12 +421,26 @@
                     }
                   }
                 ).then(resp => {
-                    
-
+                    table_payment.clear().draw();
+                    list_invoice = resp.data;
+                    list_invoice_init = resp.data;
+                    total_invoice = 0;
+                    total_payment = 0;
                     resp.data.forEach(element => {
-                        console.log(element.invoice_no);
+                        table_payment.row.add( {
+                            "invoice_no":  element.invoice_no.slice(-6),
+                            "customers_name": element.customers_name,
+                            "payment_type": element.payment_type,
+                            "total": element.total.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "."),
+                            "total_payment": element.total_payment.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")
+                        } ).draw();
+                        total_invoice = total_invoice + parseFloat(element.total);
+                        total_payment = total_payment + parseFloat(element.total_payment);
                     });
 
+                    $('#input_total').val(total_invoice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "."));
+                    $('#input_total_payment').val(total_payment.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "."));
+                    
                 });
                 
 
@@ -382,7 +455,7 @@
          table
         .on('select', function (e, dt, type, indexes) {
             if(table.rows({ selected: true }).count()>1){
-                //$('#join_payment').removeClass("d-none");
+                $('#join_payment').removeClass("d-none");
             }else{
                 $('#join_payment').addClass("d-none");
             }
@@ -396,6 +469,251 @@
             }
             $('#join_payment').val("Gabung Pembayaran ("+table.rows({ selected: true }).count()+")");
         });
+
+        $('#input_btn_submit').on('click', function(){
+            payment_type = $('#input_payment_type').find(':selected').val();
+            payment_nominal = $('#input_payment_nominal').val();
+
+            if(payment_nominal == "0"  || payment_nominal == "" || payment_type == ""){
+                Swal.fire(
+                {
+                    position: 'top-end',
+                    icon: 'warning',
+                    text: "Silahkan lengkapi dahulu tipe pembayaran dan nominal",
+                    showConfirmButton: false,
+                    imageHeight: 30, 
+                    imageWidth: 30,   
+                    timer: 1500
+                });
+            }else{
+                payment_nominal_num = parseFloat(payment_nominal);
+                total_payment = 0;
+                for (let index = 0; index < list_invoice.length; index++) {
+                    const element = list_invoice[index];
+                    var total_num = parseFloat(element.total);
+                    var total_payment_num = parseFloat(element.total_payment);
+                    if(payment_nominal_num >= total_num && total_payment_num < total_num){
+                        list_invoice[index].total_payment = total_num - total_payment_num;
+                        list_invoice[index].payment_type = payment_type;
+                        if(list_invoice[index].payment_type_disp == ""){
+                            list_invoice[index].payment_type_disp = payment_type;
+                        }else {
+                            list_invoice[index].payment_type_disp = list_invoice[index].payment_type_disp + ", " + payment_type
+                        }
+
+                        if(payment_type == "Cash"){
+                            list_invoice[index].p_cash = total_num - total_payment_num;
+                        }else if(payment_type == "Kredit Bank 1"){
+                            list_invoice[index].p_credit_b1 = total_num - total_payment_num;
+                        }else if(payment_type == "Kredit Bank 2"){
+                            list_invoice[index].p_credit_b2 = total_num - total_payment_num;
+                        }else if(payment_type == "Debet Bank 1"){
+                            list_invoice[index].p_debet_b1 = total_num - total_payment_num;
+                        }else if(payment_type == "Debet Bank 2"){
+                            list_invoice[index].p_debet_b2 = total_num - total_payment_num;
+                        }else if(payment_type == "Transfer"){
+                            list_invoice[index].p_transfer = total_num - total_payment_num;
+                        }else if(payment_type == "QRIS"){
+                            list_invoice[index].p_qris = total_num - total_payment_num;
+                        }else if(payment_type == "BCA - Debit"){
+                            list_invoice[index].p_debet_b1 = total_num - total_payment_num;
+                        }else if(payment_type == "BCA - Kredit"){
+                            list_invoice[index].p_credit_b1 = total_num - total_payment_num;
+                        }else if(payment_type == "Mandiri - Debit"){
+                            list_invoice[index].p_debet_b1 = total_num - total_payment_num;
+                        }else if(payment_type == "BCA - Kredit"){
+                            list_invoice[index].p_credit_b2 = total_num - total_payment_num;
+                        }
+                        
+                        payment_nominal_num = payment_nominal_num - (total_num - total_payment_num);
+                        total_payment = total_payment + (total_num - total_payment_num);
+                        console.log(total_payment+ " - "+payment_nominal_num+" - "+element.invoice_no);
+                        
+
+                    }else if(payment_nominal_num > 0 && total_payment_num < total_num && total_payment_num < total_num ){
+                        list_invoice[index].payment_type = payment_type;
+                        if(list_invoice[index].payment_type_disp == ""){
+                            list_invoice[index].payment_type_disp = payment_type;
+                        }else {
+                            list_invoice[index].payment_type_disp = list_invoice[index].payment_type_disp + ", " + payment_type
+                        }
+
+                        var pay_nom = payment_nominal_num+total_payment_num>total_num?total_num:payment_nominal_num+total_payment_num;
+                        var p_nom = payment_nominal_num+total_payment_num>total_num?payment_nominal_num-(total_num-total_payment_num):payment_nominal_num+total_payment_num;
+                        var sisa = payment_nominal_num - p_nom;
+
+                        if(payment_type == "Cash"){
+                            list_invoice[index].p_cash = p_nom;
+                        }else if(payment_type == "Kredit Bank 1"){
+                            list_invoice[index].p_credit_b1 = p_nom;
+                        }else if(payment_type == "Kredit Bank 2"){
+                            list_invoice[index].p_credit_b2 = p_nom;
+                        }else if(payment_type == "Debet Bank 1"){
+                            list_invoice[index].p_debet_b1 = p_nom;
+                        }else if(payment_type == "Debet Bank 2"){
+                            list_invoice[index].p_debet_b2 = p_nom;
+                        }else if(payment_type == "Transfer"){
+                            list_invoice[index].p_transfer = p_nom;
+                        }else if(payment_type == "QRIS"){
+                            list_invoice[index].p_qris = p_nom;
+                        }else if(payment_type == "BCA - Debit"){
+                            list_invoice[index].p_debet_b1 = p_nom;
+                        }else if(payment_type == "BCA - Kredit"){
+                            list_invoice[index].p_credit_b1 = p_nom;
+                        }else if(payment_type == "Mandiri - Debit"){
+                            list_invoice[index].p_debet_b1 = p_nom;
+                        }else if(payment_type == "BCA - Kredit"){
+                            list_invoice[index].p_credit_b2 = p_nom;
+                        }
+
+                        list_invoice[index].total_payment = pay_nom;
+                        payment_nominal_num = payment_nominal_num+total_payment_num>total_num?p_nom:0;
+                        total_payment = total_payment + (total_payment_num>total_num?p_nom:pay_nom);
+
+                        console.log(total_payment+ " x- "+payment_nominal_num+" - "+element.invoice_no);
+
+
+
+                    }
+
+                }
+
+                table_payment.clear().draw();
+                list_invoice.forEach(element => {
+                    table_payment.row.add( {
+                        "invoice_no":  element.invoice_no.slice(-6),
+                        "customers_name": element.customers_name,
+                        "payment_type": element.payment_type_disp,
+                        "total": element.total.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "."),
+                        "total_payment": element.total_payment.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")
+                    } ).draw();
+                });
+            }
+
+            $('#input_total_payment').val(total_payment.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "."));
+            $('#input_charge').val((parseFloat(payment_nominal)-total_payment).toString().replace(/\B(?=(\d{3})+(?!\d))/g, "."));
+
+            if($('#input_total_payment').val()!=$('#input_total').val()){
+                $('#input_total_payment').addClass('text-danger');
+            }else{
+                $('#input_total_payment').removeClass('text-danger');
+            }
+        });
+
+        $('#input_btn_reset').on('click', function(){
+            for (let index = 0; index < list_invoice.length; index++) {
+                list_invoice[index].total_payment = "0";
+                list_invoice[index].payment_type = "";
+                list_invoice[index].payment_type_disp = "";
+                list_invoice[index].p_cash = "0";
+                list_invoice[index].p_credit_b1 = "0";
+                list_invoice[index].p_credit_b2 = "0";
+                list_invoice[index].p_debet_b1 = "0";
+                list_invoice[index].p_debet_b2 = "0";
+                list_invoice[index].p_transfer = "0";
+                list_invoice[index].p_qris = "0";
+            }
+
+            $('#input_total_payment').val("0");
+            $('#input_charge').val("0");
+
+
+            table_payment.clear().draw();
+            list_invoice.forEach(element => {
+                table_payment.row.add( {
+                    "invoice_no":  element.invoice_no.slice(-6),
+                    "customers_name": element.customers_name,
+                    "payment_type": element.payment_type,
+                    "total": element.total.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "."),
+                    "total_payment": element.total_payment.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")
+                } ).draw();
+            });
+        });
+
+        $('#btn_save_payment').on('click', function(){
+            if($('#input_total_payment').val()== "" || $('#input_total_payment').val()== "0"){
+                Swal.fire(
+                {
+                    position: 'top-end',
+                    icon: 'warning',
+                    text: "Silahkan masukkan dulu nominal pembayaran",
+                    showConfirmButton: false,
+                    imageHeight: 30, 
+                    imageWidth: 30,   
+                    timer: 1500
+                });
+            }else{
+
+            Swal.fire({
+                    title: "Konfirmasi",
+                    text: "Apakah yakin akan memproses pembayaran faktur ini?",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33', cancelButtonText: "@lang('general.lbl_cancel')",
+                    confirmButtonText: "Ya, Proses"
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            var url = "{{ route('invoices.updatebulk') }}";
+                            console.log(url);
+
+                            const json = JSON.stringify({
+                                    invoices : list_invoice,
+                                    invoice_no : str_inv,
+                                    payment_nom : $('#input_payment_nominal').val(),
+                                }
+                            );
+                            const res = axios.post(url, json, {
+                                headers: {
+                                    // Overwrite Axios's automatically set Content-Type
+                                    'Content-Type': 'application/json'
+                                }
+                                }).then(
+                                    resp => {
+                                        if(resp.data.status=="success"){
+                                            Swal.fire({
+                                                title: 'Success!',
+                                                text: "Pembayaran gabungan berhasil",
+                                                icon: 'success',
+                                                showCancelButton: true,
+                                                confirmButtonColor: '#3085d6',
+                                                cancelButtonColor: '#d33', cancelButtonText: "Cetak Faktur Gabungan",
+                                                confirmButtonText: "@lang('general.lbl_close') "
+                                                }).then((result) => {
+
+                                                    if (result.isConfirmed) {
+                                                        window.location.href = "{{ route('invoices.index') }}"; 
+                                                    }else{
+                                                        burl ="{{ route('invoices.printbulk', 'WWWW') }}";
+                                                        burl = burl.replace('WWWW', resp.data.data)
+                                                        //window.location.href = burl; 
+                                                        window.open(
+                                                            burl,
+                                                            '_blank' // <- This is what makes it open in a new window.
+                                                        );
+                                                        window.location.href = "{{ route('invoices.index') }}"; 
+                                                    }
+                                                })
+                                        }else{
+                                            Swal.fire(
+                                            {
+                                                position: 'top-end',
+                                                icon: 'warning',
+                                                text: "@lang('general.lbl_msg_failed')"+resp.data.message,
+                                                showConfirmButton: false,
+                                                imageHeight: 30, 
+                                                imageWidth: 30,   
+                                                timer: 1500
+                                            });
+                                    }
+                                });
+                            }
+                        });
+
+
+                }
+        });
+
     });
 </script>
 @endpush
