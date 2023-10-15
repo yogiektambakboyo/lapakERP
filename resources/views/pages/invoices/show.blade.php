@@ -10,6 +10,7 @@
       <div class="panel-title"><h4 class="">@lang('general.lbl_invoice')  {{ $invoice->invoice_no }}</h4></div>
       <div class="">
         <a target="_blank" href="{{ route('invoices.print', $invoice->id) }}" class="btn btn-warning"><i class="fas fa-print"></i> @lang('general.lbl_print') </a>
+        <a target="_blank" href="{{ route('invoices.printbulk', $invoice->invoice_no_bulk==null?'-':$invoice->invoice_no_bulk) }}" class="btn btn-danger <?php echo $invoice->invoice_no_bulk==null?'d-none':''; ?> "><i class="fas fa-print"></i> Cetak Faktur Gabungan </a>
         <a target="_blank" href="{{ route('invoices.printsj', $invoice->id) }}" class="btn btn-success"><i class="fas fa-truck-fast"></i> @lang('general.lbl_printsj') </a>
         <a target="_blank" href="{{ route('invoices.printspk', $invoice->id) }}" class="btn btn-primary"><i class="fas fa-file-invoice"> </i>  @lang('general.lbl_printspk') </a>
         <a href="{{ route('invoices.index') }}" class="btn btn-default">@lang('general.lbl_back') </a>

@@ -203,6 +203,11 @@
                                <input type="text" class="form-control form-control-sm" id="input_charge" name="input_charge" value="0" readonly>
                             </div>
                     </div>
+
+                    <div class="row">
+                        <div>Catatan : Faktur akan otomatis ter-checkout setelah proses pembayaran berhasil</div>
+                    </div>
+
                   </div>
       
                 </div>
@@ -261,7 +266,7 @@
                 if (result.isConfirmed) {
                     var url = "{{ route('invoices.destroy','XX') }}";
                     var lastvalurl = "XX";
-                    console.log(url);
+
                     url = url.replace(lastvalurl, id)
                     const res = axios.delete(url, {}, {
                         headers: {
@@ -326,7 +331,7 @@
                 if (result.isConfirmed) {
                     var url = "{{ route('invoices.checkout','XX') }}";
                     var lastvalurl = "XX";
-                    console.log(url);
+    
                     url = url.replace(lastvalurl, id)
                     const res = axios.patch(url, {}, {
                         headers: {
@@ -375,6 +380,7 @@
     let total_invoice = 0;
     let total_payment = 0;
     let total_charge = 0;
+    let total_payment_nominal = 0;
     $(document).ready(function () {
         table = $('#example').DataTable({
                 select: {
@@ -449,7 +455,6 @@
             }
            
 
-            console.log(str_inv);
          });
 
          table
@@ -487,7 +492,39 @@
                 });
             }else{
                 payment_nominal_num = parseFloat(payment_nominal);
+                total_payment_nominal =payment_nominal_num;
+
                 total_payment = 0;
+
+                for (let index = 0; index < list_invoice.length; index++) {
+                    list_invoice[index].total_payment = "0";
+                    list_invoice[index].payment_type = "";
+                    list_invoice[index].payment_type_disp = "";
+                    list_invoice[index].p_cash = "0";
+                    list_invoice[index].p_credit_b1 = "0";
+                    list_invoice[index].p_credit_b2 = "0";
+                    list_invoice[index].p_debet_b1 = "0";
+                    list_invoice[index].p_debet_b2 = "0";
+                    list_invoice[index].p_transfer = "0";
+                    list_invoice[index].p_qris = "0";
+                }
+
+                $('#input_total_payment').val("0");
+                $('#input_charge').val("0");
+
+
+                table_payment.clear().draw();
+                list_invoice.forEach(element => {
+                    table_payment.row.add( {
+                        "invoice_no":  element.invoice_no.slice(-6),
+                        "customers_name": element.customers_name,
+                        "payment_type": element.payment_type,
+                        "total": element.total.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "."),
+                        "total_payment": element.total_payment.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")
+                    } ).draw();
+                });
+
+
                 for (let index = 0; index < list_invoice.length; index++) {
                     const element = list_invoice[index];
                     var total_num = parseFloat(element.total);
@@ -495,12 +532,8 @@
                     if(payment_nominal_num >= total_num && total_payment_num < total_num){
                         list_invoice[index].total_payment = total_num - total_payment_num;
                         list_invoice[index].payment_type = payment_type;
-                        if(list_invoice[index].payment_type_disp == ""){
-                            list_invoice[index].payment_type_disp = payment_type;
-                        }else {
-                            list_invoice[index].payment_type_disp = list_invoice[index].payment_type_disp + ", " + payment_type
-                        }
-
+                        list_invoice[index].payment_type_disp = payment_type;
+                       
                         if(payment_type == "Cash"){
                             list_invoice[index].p_cash = total_num - total_payment_num;
                         }else if(payment_type == "Kredit Bank 1"){
@@ -527,53 +560,48 @@
                         
                         payment_nominal_num = payment_nominal_num - (total_num - total_payment_num);
                         total_payment = total_payment + (total_num - total_payment_num);
-                        console.log(total_payment+ " - "+payment_nominal_num+" - "+element.invoice_no);
+
+                        console.log(total_payment);
                         
 
                     }else if(payment_nominal_num > 0 && total_payment_num < total_num && total_payment_num < total_num ){
                         list_invoice[index].payment_type = payment_type;
-                        if(list_invoice[index].payment_type_disp == ""){
-                            list_invoice[index].payment_type_disp = payment_type;
-                        }else {
-                            list_invoice[index].payment_type_disp = list_invoice[index].payment_type_disp + ", " + payment_type
-                        }
+                        list_invoice[index].payment_type_disp = payment_type;
 
-                        var pay_nom = payment_nominal_num+total_payment_num>total_num?total_num:payment_nominal_num+total_payment_num;
-                        var p_nom = payment_nominal_num+total_payment_num>total_num?payment_nominal_num-(total_num-total_payment_num):payment_nominal_num+total_payment_num;
+                        var pay_nom = payment_nominal_num+total_payment_num>=total_num?total_num:payment_nominal_num+total_payment_num;                                
+                        var p_nom = payment_nominal_num+total_payment_num>=total_num?payment_nominal_num-(total_num-total_payment_num):payment_nominal_num+total_payment_num;
                         var sisa = payment_nominal_num - p_nom;
 
+
                         if(payment_type == "Cash"){
-                            list_invoice[index].p_cash = p_nom;
+                            list_invoice[index].p_cash = sisa;
                         }else if(payment_type == "Kredit Bank 1"){
-                            list_invoice[index].p_credit_b1 = p_nom;
+                            list_invoice[index].p_credit_b1 = sisa;
                         }else if(payment_type == "Kredit Bank 2"){
-                            list_invoice[index].p_credit_b2 = p_nom;
+                            list_invoice[index].p_credit_b2 = sisa;
                         }else if(payment_type == "Debet Bank 1"){
-                            list_invoice[index].p_debet_b1 = p_nom;
+                            list_invoice[index].p_debet_b1 = sisa;
                         }else if(payment_type == "Debet Bank 2"){
-                            list_invoice[index].p_debet_b2 = p_nom;
+                            list_invoice[index].p_debet_b2 = sisa;
                         }else if(payment_type == "Transfer"){
-                            list_invoice[index].p_transfer = p_nom;
+                            list_invoice[index].p_transfer = sisa;
                         }else if(payment_type == "QRIS"){
-                            list_invoice[index].p_qris = p_nom;
+                            list_invoice[index].p_qris = sisa;
                         }else if(payment_type == "BCA - Debit"){
-                            list_invoice[index].p_debet_b1 = p_nom;
+                            list_invoice[index].p_debet_b1 = sisa;
                         }else if(payment_type == "BCA - Kredit"){
-                            list_invoice[index].p_credit_b1 = p_nom;
+                            list_invoice[index].p_credit_b1 = sisa;
                         }else if(payment_type == "Mandiri - Debit"){
-                            list_invoice[index].p_debet_b1 = p_nom;
+                            list_invoice[index].p_debet_b1 = sisa;
                         }else if(payment_type == "BCA - Kredit"){
-                            list_invoice[index].p_credit_b2 = p_nom;
+                            list_invoice[index].p_credit_b2 = sisa;
                         }
 
                         list_invoice[index].total_payment = pay_nom;
-                        payment_nominal_num = payment_nominal_num+total_payment_num>total_num?p_nom:0;
-                        total_payment = total_payment + (total_payment_num>total_num?p_nom:pay_nom);
+                        payment_nominal_num = payment_nominal_num+total_payment_num>=total_num?p_nom:0;
+                        total_payment = total_payment + (total_payment_num>=total_num?p_nom:pay_nom);
 
-                        console.log(total_payment+ " x- "+payment_nominal_num+" - "+element.invoice_no);
-
-
-
+                        console.log("c "+total_payment);
                     }
 
                 }
@@ -591,7 +619,7 @@
             }
 
             $('#input_total_payment').val(total_payment.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "."));
-            $('#input_charge').val((parseFloat(payment_nominal)-total_payment).toString().replace(/\B(?=(\d{3})+(?!\d))/g, "."));
+            $('#input_charge').val((total_payment_nominal-total_payment).toString().replace(/\B(?=(\d{3})+(?!\d))/g, "."));
 
             if($('#input_total_payment').val()!=$('#input_total').val()){
                 $('#input_total_payment').addClass('text-danger');
@@ -601,6 +629,8 @@
         });
 
         $('#input_btn_reset').on('click', function(){
+            total_payment = 0;
+            total_payment_nominal = 0;
             for (let index = 0; index < list_invoice.length; index++) {
                 list_invoice[index].total_payment = "0";
                 list_invoice[index].payment_type = "";
@@ -655,7 +685,6 @@
                     }).then((result) => {
                         if (result.isConfirmed) {
                             var url = "{{ route('invoices.updatebulk') }}";
-                            console.log(url);
 
                             const json = JSON.stringify({
                                     invoices : list_invoice,
