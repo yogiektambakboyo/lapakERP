@@ -91,11 +91,7 @@
                 <select class="form-control" 
                       name="payment_type" id ="payment_type" readonly>
                       <option value="">@lang('general.lbl_type_paymentselect')</option>
-                      @foreach($payment_type as $value)
-                          <option value="{{ $value }}" {{ ($invoice->payment_type == $value) 
-                            ? 'selected'
-                            : ''}}>{{ $value }}</option>
-                      @endforeach
+                          <option value="{{ $invoice->payment_type }}" selected>{{ $invoice->payment_type }}</option>
                   </select>
               </div>
 

@@ -41,6 +41,16 @@
                 <th scope="col">Mandiri K</th> 
                 <th scope="col">QRIS</th> 
                 <th scope="col">Transfer</th> 
+
+                <th scope="col">B1-D</th> 
+                <th scope="col">B1-K</th>
+                <th scope="col">B2-D</th> 
+                <th scope="col">B2-K</th>
+                <th scope="col">B1-TRF</th> 
+                <th scope="col">B2-TRF</th> 
+                <th scope="col">B1-QRIS</th> 
+                <th scope="col">B2-QRIS</th>
+                
                 <th scope="col">#SPK</th> 
                 <th scope="col">#Tamu</th>  
             </tr>
@@ -66,6 +76,15 @@
                         <td>{{ number_format($rdata->total_m_k,0,',','.') }}</td>
                         <td>{{ number_format($rdata->total_qr,0,',','.') }}</td>
                         <td>{{ number_format($rdata->total_tr,0,',','.') }}</td>
+
+                        <td>{{ number_format($rdata->total_b1d,0,',','.') }}</td>
+                        <td>{{ number_format($rdata->total_b1c,0,',','.') }}</td>
+                        <td>{{ number_format($rdata->total_b2d,0,',','.') }}</td>
+                        <td>{{ number_format($rdata->total_b2c,0,',','.') }}</td>
+                        <td>{{ number_format($rdata->total_b1t,0,',','.') }}</td>
+                        <td>{{ number_format($rdata->total_b2t,0,',','.') }}</td>
+                        <td>{{ number_format($rdata->total_b1q,0,',','.') }}</td>
+                        <td>{{ number_format($rdata->total_b2q,0,',','.') }}</td>
                         <td>{{ number_format($rdata->qty_transaction,0,',','.') }}</td>
                         <td>{{ number_format($rdata->qty_customers,0,',','.') }}</td>
                     </tr>

@@ -79,6 +79,14 @@ class ReportCloseShiftController extends Controller
                 sum(case when im.payment_type = 'Mandiri - Kredit' then id.total+id.vat_total else 0 end) as total_m_k,
                 sum(case when im.payment_type = 'QRIS' then id.total+id.vat_total else 0 end) as total_qr,
                 sum(case when im.payment_type = 'Transfer' then id.total+id.vat_total else 0 end) as total_tr,
+                sum(case when im.payment_type = 'BANK 1 - Debit' then id.total+id.vat_total else 0 end) as total_b1d,
+                sum(case when im.payment_type = 'BANK 1 - Kredit' then id.total+id.vat_total else 0 end) as total_b1c,
+                sum(case when im.payment_type = 'BANK 2 - Debit' then id.total+id.vat_total else 0 end) as total_b2d,
+                sum(case when im.payment_type = 'BANK 2 - Kredit' then id.total+id.vat_total else 0 end) as total_b2c,
+                sum(case when im.payment_type = 'BANK 1 - Transfer' then id.total+id.vat_total else 0 end) as total_b1t,
+                sum(case when im.payment_type = 'BANK 2 - Transfer' then id.total+id.vat_total else 0 end) as total_b2t,
+                sum(case when im.payment_type = 'BANK 1 - QRIS' then id.total+id.vat_total else 0 end) as total_b1q,
+                sum(case when im.payment_type = 'BANK 2 - QRIS' then id.total+id.vat_total else 0 end) as total_b2q,
                 count(distinct im.invoice_no) qty_transaction,count(distinct im.invoice_no) qty_customers
                 from invoice_master im 
                 join invoice_detail id on id.invoice_no  = im.invoice_no 
@@ -262,6 +270,14 @@ class ReportCloseShiftController extends Controller
                     sum(case when im.payment_type = 'Mandiri - Kredit' then id.total+id.vat_total else 0 end) as total_m_k,
                     sum(case when im.payment_type = 'QRIS' then id.total+id.vat_total else 0 end) as total_qr,
                     sum(case when im.payment_type = 'Transfer' then id.total+id.vat_total else 0 end) as total_tr,
+                    sum(case when im.payment_type = 'BANK 1 - Debit' then id.total+id.vat_total else 0 end) as total_b1d,
+                    sum(case when im.payment_type = 'BANK 1 - Kredit' then id.total+id.vat_total else 0 end) as total_b1c,
+                    sum(case when im.payment_type = 'BANK 2 - Debit' then id.total+id.vat_total else 0 end) as total_b2d,
+                    sum(case when im.payment_type = 'BANK 2 - Kredit' then id.total+id.vat_total else 0 end) as total_b2c,
+                    sum(case when im.payment_type = 'BANK 1 - Transfer' then id.total+id.vat_total else 0 end) as total_b1t,
+                    sum(case when im.payment_type = 'BANK 2 - Transfer' then id.total+id.vat_total else 0 end) as total_b2t,
+                    sum(case when im.payment_type = 'BANK 1 - QRIS' then id.total+id.vat_total else 0 end) as total_b1q,
+                    sum(case when im.payment_type = 'BANK 2 - QRIS' then id.total+id.vat_total else 0 end) as total_b2q,
                     count(distinct im.invoice_no) qty_transaction,count(distinct im.invoice_no) qty_customers
                     from invoice_master im 
                     join invoice_detail id on id.invoice_no  = im.invoice_no 
