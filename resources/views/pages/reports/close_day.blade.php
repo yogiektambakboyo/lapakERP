@@ -38,12 +38,14 @@
                 <th scope="col">Charge Lebaran</th>    
                 <th scope="col">Total</th>    
                 <th scope="col">@lang('general.lbl_cash')</th>     
-                <th scope="col">BCA D</th>    
-                <th scope="col">BCA K</th>    
-                <th scope="col">Mandiri D</th>    
-                <th scope="col">Mandiri K</th> 
-                <th scope="col">QRIS</th> 
-                <th scope="col">Tfr</th> 
+                <th scope="col">B1 D</th>    
+                <th scope="col">B1 K</th>    
+                <th scope="col">B2 D</th>    
+                <th scope="col">B2 K</th> 
+                <th scope="col">B1 QRIS</th> 
+                <th scope="col">B2 QRIS</th> 
+                <th scope="col">B1 Tfr</th> 
+                <th scope="col">B2 Tfr</th> 
                 <th scope="col">#SPK</th> 
                 <th scope="col">#Tamu</th>  
                 <th scope="col">Cases</th>  
@@ -65,12 +67,14 @@
                         <td>{{ number_format($rdata->total_lebaran,0,',','.') }}</td>
                         <td>{{ number_format($rdata->total_all,0,',','.') }}</td>
                         <td>{{ number_format($rdata->total_cash,0,',','.') }}</td>
-                        <td>{{ number_format($rdata->total_b_d,0,',','.') }}</td>
-                        <td>{{ number_format($rdata->total_b_k,0,',','.') }}</td>
-                        <td>{{ number_format($rdata->total_m_d,0,',','.') }}</td>
-                        <td>{{ number_format($rdata->total_m_k,0,',','.') }}</td>
-                        <td>{{ number_format($rdata->total_qr,0,',','.') }}</td>
-                        <td>{{ number_format($rdata->total_tr,0,',','.') }}</td>
+                        <td>{{ number_format($rdata->total_b1d,0,',','.') }}</td>
+                        <td>{{ number_format($rdata->total_b1c,0,',','.') }}</td>
+                        <td>{{ number_format($rdata->total_b2c,0,',','.') }}</td>
+                        <td>{{ number_format($rdata->total_b2d,0,',','.') }}</td>
+                        <td>{{ number_format($rdata->total_b1q,0,',','.') }}</td>
+                        <td>{{ number_format($rdata->total_b2q,0,',','.') }}</td>
+                        <td>{{ number_format($rdata->total_b1t,0,',','.') }}</td>
+                        <td>{{ number_format($rdata->total_b2t,0,',','.') }}</td>
                         <td>{{ number_format($rdata->qty_transaction,0,',','.') }}</td>
                         <td>{{ number_format($rdata->qty_customers,0,',','.') }}</td>                        
                         <td>{{ number_format($rdata->qty_service,0,',','.') }}</td>                        

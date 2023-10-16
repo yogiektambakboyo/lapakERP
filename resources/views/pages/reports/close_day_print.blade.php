@@ -348,22 +348,292 @@
             </td>
 
             <td style="width: 25%; vertical-align:top;">
-              <table class="table table-striped" id="service_table">
+              <table class="table table-striped" id="p_t" width="100%">
+                @php
+                  $total_payment = 0;
+                  $counter = 0;
+                  
+                  $payment_cash = 0;
+                  $payment_bca_debit = 0;
+                  $payment_bca_kredit = 0;
+                  $payment_mandiri_debit = 0;
+                  $payment_mandiri_kredit = 0;
+                  $payment_qr_b1 = 0;
+                  $payment_qr_b2 = 0;
+                  $payment_tr_b1 = 0;
+                  $payment_tr_b2 = 0;
+
+                @endphp
+
+                @foreach($payment_datas as $payment_data)
+                      @php
+                        $total_payment = $total_payment+$payment_data->total_payment; 
+                        if($payment_data->payment_type=='Cash'){
+                          $payment_cash = $payment_cash + $payment_data->total_payment;
+                        }else if($payment_data->payment_type=='BCA - Debit'||$payment_data->payment_type=='BANK 1 - Debit'){
+                          $payment_bca_debit = $payment_bca_debit + $payment_data->total_payment;
+                        }else if($payment_data->payment_type=='BCA - Kredit'||$payment_data->payment_type=='BANK 1 - Kredit'){
+                          $payment_bca_kredit = $payment_bca_kredit + $payment_data->total_payment;
+                        }else if($payment_data->payment_type=='Mandiri - Debit'||$payment_data->payment_type=='BANK 2 - Debit'){
+                          $payment_mandiri_debit = $payment_mandiri_debit + $payment_data->total_payment;
+                        }else if($payment_data->payment_type=='Mandiri - Kredit'||$payment_data->payment_type=='BANK 2 - Kredit'){
+                          $payment_mandiri_kredit = $payment_mandiri_kredit + $payment_data->total_payment;
+                        }else if($payment_data->payment_type=='QRIS'||$payment_data->payment_type=='BANK 1 - QRIS'){
+                          $payment_qr_b1 = $payment_qr_b1 + $payment_data->total_payment;
+                        }else if($payment_data->payment_type=='BANK 2 - QRIS'){
+                          $payment_qr_b2 = $payment_qr_b2 + $payment_data->total_payment;
+                        }else if($payment_data->payment_type=='Transfer'||$payment_data->payment_type=='Bank 1 - Transfer'){
+                          $payment_tr_b1 = $payment_tr_b1 + $payment_data->total_payment;
+                        }else if($payment_data->payment_type=='BANK 2 - Transfer'){
+                          $payment_tr_b2 = $payment_tr_b2 + $payment_data->total_payment;
+                        }
+                        $counter++;
+                      @endphp
+                @endforeach
+
+                <?php
+                  $colspan_header = 0;
+                  $colspan_bank_1 = 0;
+                  $colspan_bank_2 = 0;
+                  $colspan_transfer = 0;
+                  $colspan_qr = 0;
+                  if($payment_bca_debit>0){
+                    $colspan_header = $colspan_header + 1;
+                    $colspan_bank_1 = $colspan_bank_1 + 1;
+                  }
+                  if($payment_bca_kredit>0){
+                    $colspan_header = $colspan_header + 1;
+                    $colspan_bank_1 = $colspan_bank_1 + 1;
+                  }
+                  if($payment_mandiri_debit>0){
+                    $colspan_header = $colspan_header + 1;
+                    $colspan_bank_2 = $colspan_bank_2 + 1;
+                  }
+                  if($payment_mandiri_kredit>0){
+                    $colspan_header = $colspan_header + 1;
+                    $colspan_bank_2 = $colspan_bank_2 + 1;
+                  }
+                  if($payment_qr_b1>0){
+                    $colspan_header = $colspan_header + 1;
+                    $colspan_qr = $colspan_qr + 1;
+                  }
+                  if($payment_qr_b2>0){
+                    $colspan_header = $colspan_header + 1;
+                    $colspan_qr = $colspan_qr + 1;
+                  }
+                  if($payment_tr_b1>0){
+                    $colspan_header = $colspan_header + 1;
+                    $colspan_transfer = $colspan_transfer + 1;
+                  }
+                  if($payment_tr_b2>0){
+                    $colspan_header = $colspan_header + 1;
+                    $colspan_transfer = $colspan_transfer + 1;
+                  }
+                ?>
+                
                 <thead>
                 <tr>
-                  <th colspan="6" style="text-align: center;width:20%;background-color:#FFA726;">Transaksi</th>
+                  <th colspan="<?= $colspan_header; ?>" style="text-align: center;width:20%;background-color:#FFA726;">Transaksi</th>
                 </tr>
                 <tr>
-                  <th colspan="2" style="text-align: center;width:20%;background-color:#FFA726;">BCA</th>
-                  <th colspan="2" style="text-align: center;width:20%;background-color:#FFA726;">MANDIRI</th>
-                  <th rowspan="2" style="text-align: center;width:20%;background-color:#FFA726;">QRIS</th>
-                  <th rowspan="2" style="text-align: center;width:20%;background-color:#FFA726;">TRF</th>
+                  @if($colspan_bank_1>0)
+                      <th colspan="<?= $colspan_bank_1; ?>" style="text-align: center;width:20%;background-color:#FFA726;">BANK 1</th>
+                  @endif
+                  @if($colspan_bank_2>0)
+                      <th colspan="<?= $colspan_bank_2; ?>" style="text-align: center;width:20%;background-color:#FFA726;">BANK 2</th>
+                  @endif
+                  @if($colspan_qr>0)
+                    <th colspan="<?= $colspan_qr; ?>" style="text-align: center;width:20%;background-color:#FFA726;">QRIS</th>
+                  @endif
+                  @if($colspan_transfer>0)
+                    <th colspan="<?= $colspan_transfer; ?>" style="text-align: center;width:20%;background-color:#FFA726;">TRF</th>
+                  @endif
                 </tr>
                 <tr style="background-color:#FFA726;color:white;">
-                    <th scope="col" width="20%">Debit</th>
-                    <th scope="col" width="20%">Kredit</th>
-                    <th scope="col" width="20%">Debit</th>
-                    <th scope="col" width="20%">Kredit</th>
+                    @if($payment_bca_debit>0)
+                      <th scope="col" width="13%">Debit</th>
+                    @endif
+                    @if($payment_bca_kredit>0)
+                      <th scope="col" width="13%">Kredit</th>
+                    @endif
+                    @if($payment_mandiri_debit>0)
+                      <th scope="col" width="13%">Debit</th>
+                    @endif
+                    @if($payment_mandiri_kredit>0)
+                      <th scope="col" width="13%">Kredit</th>
+                    @endif
+                    @if($payment_qr_b1>0)
+                      <th scope="col" width="13%">Bank 1</th>
+                    @endif
+                    @if($payment_qr_b2>0)
+                      <th scope="col" width="13%">Bank 2</th>
+                    @endif
+                    @if($payment_tr_b1>0)
+                      <th scope="col" width="13%">Bank 1</th>
+                    @endif
+                    @if($payment_tr_b2>0)
+                      <th scope="col" width="13%">Bank 2</th>
+                    @endif
+                    
+                </tr>
+                </thead>
+                <tbody>
+
+                 
+        
+                  @if ($counter<5)
+                      @for($i=0;$i<(5-$counter);$i++)
+                        <tr>
+                          
+                          @if($payment_bca_debit>0)
+                            <td style="text-align: center;"> </td>
+                          @endif
+                          @if($payment_bca_kredit>0)
+                            <td style="text-align: center;"> </td>
+                          @endif
+                          @if($payment_mandiri_debit>0)
+                            <td style="text-align: center;"> </td>
+                          @endif
+                          @if($payment_mandiri_kredit>0)
+                            <td style="text-align: center;"> </td>
+                          @endif
+                          @if($payment_qr_b1>0)
+                            <td style="text-align: center;"> </td>
+                          @endif
+                          @if($payment_qr_b2>0)
+                            <td style="text-align: center;"> </td>
+                          @endif
+                          @if($payment_tr_b1>0)
+                            <td style="text-align: center;"> </td>
+
+                          @endif
+                          @if($payment_tr_b2>0)
+                            <td style="text-align: center;"> </td>
+                          @endif
+                        </tr>
+                      @endfor
+                  @endif
+
+
+                  @php
+                    $arr_bca_d = array();
+                    $arr_bca_k = array();
+                    $arr_man_d = array();
+                    $arr_man_k = array();
+                    $arr_qr_b1 = array();
+                    $arr_qr_b2 = array();
+                    $arr_tr_b1 = array();
+                    $arr_tr_b2 = array();
+
+                  @endphp
+
+                  @foreach($payment_datas as $payment_d)
+                  @if($payment_d->payment_type!='Cash')
+                    @php
+                    if($payment_d->payment_type=='BCA - Debit'||$payment_d->payment_type=='BANK 1 - Debit'){
+                        array_push($arr_bca_d,$payment_d->total_payment);
+                    }else{
+                        array_push($arr_bca_d,"0");
+                    }
+                    if($payment_d->payment_type=='BCA - Kredit'||$payment_d->payment_type=='BANK 1 - Kredit'){
+                        array_push($arr_bca_k,$payment_d->total_payment);
+                    }else{
+                        array_push($arr_bca_k,"0");
+                    }
+                    if($payment_d->payment_type=='Mandiri - Debit'||$payment_d->payment_type=='BANK 2 - Debit'){
+                        array_push($arr_man_d,$payment_d->total_payment);
+                    } else{
+                        array_push($arr_man_d,"0");
+                    }  
+
+                    if($payment_d->payment_type=='Mandiri - Kredit'||$payment_d->payment_type=='BANK 2 - Kredit'){
+                        array_push($arr_man_k,$payment_d->total_payment);
+                    }else{
+                        array_push($arr_man_k,"0");
+                    }
+
+                    if($payment_d->payment_type=='QRIS'||$payment_d->payment_type=='BANK 1 - QRIS'){
+                      array_push($arr_qr_b1,$payment_d->total_payment);
+                    }else{
+                      array_push($arr_qr_b1,"0");
+                    }
+
+                    if($payment_d->payment_type=='BANK 2 - QRIS'){
+                      array_push($arr_qr_b2,$payment_d->total_payment);
+                    }else{
+                      array_push($arr_qr_b2,"0");
+                    }
+
+                    
+                    if($payment_d->payment_type=='Transfer'||$payment_d->payment_type=='BANK 1 - Transfer'){
+                      array_push($arr_tr_b1,$payment_d->total_payment);
+                    }else{
+                      array_push($arr_tr_b1,"0");
+                    }
+
+                    if($payment_d->payment_type=='BANK 2 - Transfer'){
+                      array_push($arr_tr_b2,$payment_d->total_payment);
+                    }else{
+                      array_push($arr_tr_b2,"0");
+                    }
+
+                    rsort($arr_bca_d,1);
+                    rsort($arr_bca_k,1);
+                    rsort($arr_man_d,1);
+                    rsort($arr_man_k,1);
+                    rsort($arr_qr_b1,1);
+                    rsort($arr_qr_b2,1);
+                    rsort($arr_tr_b1,1);
+                    rsort($arr_tr_b2,1);
+
+                    @endphp   
+                  @endif
+                  @endforeach
+
+
+                  @php
+                     $cp = 0; 
+                  @endphp
+                  @foreach($arr_bca_d as $dat)
+                        @if(($arr_bca_d[$cp]+$arr_bca_k[$cp]+$arr_man_d[$cp]+$arr_man_k[$cp]+$arr_qr_b1[$cp]+$arr_qr_b2[$cp]+$arr_tr_b1[$cp]+$arr_tr_b2[$cp])>0)
+                            <tr>
+                              @if($payment_bca_debit>0)
+                                <td style="text-align: center;">{{ number_format($arr_bca_d[$cp],0,',','.') }}</td>
+                              @endif
+                              @if($payment_bca_kredit>0)
+                                <td style="text-align: center;">{{ number_format($arr_bca_k[$cp],0,',','.') }}</td>
+                              @endif
+                              @if($payment_mandiri_debit>0)
+                                <td style="text-align: center;">{{ number_format($arr_man_d[$cp],0,',','.') }}</td>
+                              @endif
+                              @if($payment_mandiri_kredit>0)
+                                <td style="text-align: center;">{{ number_format($arr_man_k[$cp],0,',','.') }}</td>
+                              @endif
+                              @if($payment_qr_b1>0)
+                                <td style="text-align: center;">{{ number_format($arr_qr_b1[$cp],0,',','.') }}</td>
+                              @endif
+                              @if($payment_qr_b2>0)
+                                <td style="text-align: center;">{{ number_format($arr_qr_b2[$cp],0,',','.') }}</td>
+                              @endif
+                              @if($payment_tr_b1>0)
+                                <td style="text-align: center;">{{ number_format($arr_tr_b1[$cp],0,',','.') }}</td>
+                              @endif
+                              @if($payment_tr_b2>0)
+                                <td style="text-align: center;">{{ number_format($arr_tr_b2[$cp],0,',','.') }}</td>
+                              @endif
+                          </tr> 
+                        @endif
+                        @php
+                          $cp++; 
+                      @endphp  
+                  @endforeach
+                </tbody>
+              </table>  
+              
+              <table class="table table-striped" id="p_sum"  width="100%">
+                <thead>
+                <tr>
+                  <th colspan="2" style="text-align: center;width:30%;background-color:#FFA726;">Ringkasan Transaksi</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -376,161 +646,117 @@
                     $payment_bca_kredit = 0;
                     $payment_mandiri_debit = 0;
                     $payment_mandiri_kredit = 0;
-                    $payment_qr = 0;
-                    $payment_tr = 0;
+                    $payment_qr_b1 = 0;
+                    $payment_qr_b2 = 0;
+                    $payment_tr_b1 = 0;
+                    $payment_tr_b2 = 0;
 
                   @endphp
-                  @php
-                    $arr_bca_d = array();
-                    $arr_bca_k = array();
-                    $arr_man_d = array();
-                    $arr_man_k = array();
-                    $arr_qr = array();
-                    $arr_tr = array();
-                  @endphp
-                  @foreach($payment_datas as $payment_d)
-                        @if($payment_d->payment_type!='Cash')
-                          @php
-                           if($payment_d->payment_type=='BCA - Debit'){
-                              array_push($arr_bca_d,$payment_d->total_payment);
-                           }else{
-                              array_push($arr_bca_d,"0");
-                           }
-                           if($payment_d->payment_type=='BCA - Kredit'){
-                              array_push($arr_bca_k,$payment_d->total_payment);
-                           }else{
-                              array_push($arr_bca_k,"0");
-                           }
-                           if($payment_d->payment_type=='Mandiri - Debit'){
-                              array_push($arr_man_d,$payment_d->total_payment);
-                           } else{
-                              array_push($arr_man_d,"0");
-                           }  
-                    
-                           if($payment_d->payment_type=='Mandiri - Kredit'){
-                              array_push($arr_man_k,$payment_d->total_payment);
-                           }else{
-                              array_push($arr_man_k,"0");
-                           }
 
-                           if($payment_d->payment_type=='QRIS'){
-                              array_push($arr_qr,$payment_d->total_payment);
-                           }else{
-                              array_push($arr_qr,"0");
-                           }
-
-                           if($payment_d->payment_type=='Transfer'){
-                              array_push($arr_tr,$payment_d->total_payment);
-                           }else{
-                              array_push($arr_tr,"0");
-                           }
-
-                           rsort($arr_bca_d,1);
-                           rsort($arr_bca_k,1);
-                           rsort($arr_man_d,1);
-                           rsort($arr_man_k,1);
-                           rsort($arr_qr,1);
-                           rsort($arr_tr,1);
-                          @endphp   
-                        @endif
-                  @endforeach
-                  
-                  @php
-                    $cp = 0; 
-                  @endphp
-                  @foreach($arr_bca_d as $dat)
-                           @if(($arr_bca_d[$cp]+$arr_bca_k[$cp]+$arr_man_d[$cp]+$arr_man_k[$cp]+$arr_qr[$cp]+$arr_tr[$cp])>0)
-                           <tr>
-                              <td style="text-align: left;">{{ number_format($arr_bca_d[$cp],0,',','.') }}</td>
-                              <td style="text-align: center;">{{ number_format($arr_bca_k[$cp],0,',','.') }}</td>
-                              <td style="text-align: center;">{{number_format($arr_man_d[$cp],0,',','.') }}</td>
-                              <td style="text-align: center;">{{ number_format($arr_man_k[$cp],0,',','.') }}</td>
-                              <td style="text-align: center;">{{ number_format($arr_qr[$cp],0,',','.') }}</td>
-                              <td style="text-align: center;">{{ number_format($arr_tr[$cp],0,',','.') }}</td>
-                          </tr> 
-                           @endif
-                        @php
-                          $cp++; 
-                       @endphp  
-                  @endforeach
-                  
                   @foreach($payment_datas as $payment_data)
                         @php
                           $total_payment = $total_payment+$payment_data->total_payment; 
                           if($payment_data->payment_type=='Cash'){
                             $payment_cash = $payment_cash + $payment_data->total_payment;
-                          }else if($payment_data->payment_type=='BCA - Debit'){
+                          }else if($payment_data->payment_type=='BCA - Debit'||$payment_data->payment_type=='BANK 1 - Debit'){
                             $payment_bca_debit = $payment_bca_debit + $payment_data->total_payment;
-                          }else if($payment_data->payment_type=='BCA - Kredit'){
+                          }else if($payment_data->payment_type=='BCA - Kredit'||$payment_data->payment_type=='BANK 1 - Kredit'){
                             $payment_bca_kredit = $payment_bca_kredit + $payment_data->total_payment;
-                          }else if($payment_data->payment_type=='Mandiri - Debit'){
+                          }else if($payment_data->payment_type=='Mandiri - Debit'||$payment_data->payment_type=='BANK 2 - Debit'){
                             $payment_mandiri_debit = $payment_mandiri_debit + $payment_data->total_payment;
-                          }else if($payment_data->payment_type=='Mandiri - Kredit'){
+                          }else if($payment_data->payment_type=='Mandiri - Kredit'||$payment_data->payment_type=='BANK 2 - Kredit'){
                             $payment_mandiri_kredit = $payment_mandiri_kredit + $payment_data->total_payment;
-                          }else if($payment_data->payment_type=='QRIS'){
-                            $payment_qr = $payment_qr + $payment_data->total_payment;
-                          }else if($payment_data->payment_type=='Transfer'){
-                            $payment_tr = $payment_tr + $payment_data->total_payment;
+                          }else if($payment_data->payment_type=='QRIS'||$payment_data->payment_type=='BANK 1 - QRIS'){
+                            $payment_qr_b1 = $payment_qr_b1 + $payment_data->total_payment;
+                          }else if($payment_data->payment_type=='BANK 2 - QRIS'){
+                            $payment_qr_b2 = $payment_qr_b2 + $payment_data->total_payment;
+                          }else if($payment_data->payment_type=='Transfer'||$payment_data->payment_type=='Bank 1 - Transfer'){
+                            $payment_tr_b1 = $payment_tr_b1 + $payment_data->total_payment;
+                          }else if($payment_data->payment_type=='BANK 2 - Transfer'){
+                            $payment_tr_b2 = $payment_tr_b2 + $payment_data->total_payment;
                           }
                           $counter++;
                         @endphp
                   @endforeach
-        
-                  @if ($counter<5)
-                      @for($i=0;$i<(5-$counter);$i++)
-                        <tr>
-                            <td style="text-align: left;"><br></th>
-                            <td style="text-align: center;"> </td>
-                            <td style="text-align: center;"> </td>
-                            <td style="text-align: center;"> </td>
-                            <td style="text-align: center;"> </td>
-                            <td style="text-align: center;"> </td>
-                        </tr>
-                      @endfor
+      
+                  @if($payment_cash>0)
                   @endif
-               
+                  <tr>
+                    <td style="text-align: left;">Cash</td>
+                    <td style="text-align: right;">{{ number_format($payment_cash,0,',','.') }}</td>
+                  </tr>
+                  @if($payment_bca_debit>0)
+                  <tr>
+                    <td style="text-align: left;">Bank 1 - Debit</td>
+                    <td style="text-align: right;">{{ number_format($payment_bca_debit,0,',','.') }}</td>
+                  </tr>
+                  @endif
+                 
+                  @if($payment_bca_kredit>0)
+                  <tr>
+                    <td style="text-align: left;">Bank 1 - Kredit</td>
+                    <td style="text-align: right;">{{ number_format($payment_bca_kredit,0,',','.') }}</td>
+                  </tr>
+                  @endif
                   
+                  @if($payment_mandiri_debit>0)
                   <tr>
-                    <td colspan="2" style="text-align: left;">Cash</td>
-                    <td colspan="4" style="text-align: right;">{{ number_format($payment_cash,0,',','.') }}</td>
+                    <td style="text-align: left;">Bank 2 - Debit</td>
+                    <td style="text-align: right;">{{ number_format($payment_mandiri_debit,0,',','.') }}</td>
                   </tr>
+                  @endif
+                 
+                  @if($payment_mandiri_kredit>0)
                   <tr>
-                    <td colspan="2" style="text-align: left;">BCA - Debit</td>
-                    <td colspan="4" style="text-align: right;">{{ number_format($payment_bca_debit,0,',','.') }}</td>
+                    <td style="text-align: left;">Bank 2 - Kredit</td>
+                    <td style="text-align: right;">{{ number_format($payment_mandiri_kredit,0,',','.') }}</td>
                   </tr>
+                  @endif
+                  
+
+                  
+                  @if($payment_qr_b1>0)
                   <tr>
-                    <td colspan="2" style="text-align: left;">BCA - Kredit</td>
-                    <td colspan="4" style="text-align: right;">{{ number_format($payment_bca_kredit,0,',','.') }}</td>
+                    <td style="text-align: left;">Bank 1 - QRIS</td>
+                    <td style="text-align: right;">{{ number_format($payment_qr_b1,0,',','.') }}</td>
                   </tr>
+                  @endif
+                  
+
+                  @if($payment_qr_b2>0)
                   <tr>
-                    <td colspan="2" style="text-align: left;">Mandiri - Debit</td>
-                    <td colspan="4" style="text-align: right;">{{ number_format($payment_mandiri_debit,0,',','.') }}</td>
+                    <td style="text-align: left;">Bank 2 - QRIS</td>
+                    <td style="text-align: right;">{{ number_format($payment_qr_b2,0,',','.') }}</td>
                   </tr>
-                  <tr>
-                    <td colspan="2" style="text-align: left;">Mandiri - Kredit</td>
-                    <td colspan="4" style="text-align: right;">{{ number_format($payment_mandiri_kredit,0,',','.') }}</td>
-                  </tr>
+                  @endif
+                  
+
+                  @if($payment_tr_b1>0)
+                    <tr>
+                      <td style="text-align: left;">Bank 1 - Transfer</td>
+                      <td style="text-align: right;">{{ number_format($payment_tr_b1,0,',','.') }}</td>
+                    </tr>
+                  @endif
+                  
+
+                  @if($payment_tr_b2>0)
+                    <tr>
+                      <td style="text-align: left;">Bank 2 - Transfer</td>
+                      <td style="text-align: right;">{{ number_format($payment_tr_b2,0,',','.') }}</td>
+                    </tr>
+                  @endif
+                  
 
                   <tr>
-                    <td colspan="2" style="text-align: left;">QRIS</td>
-                    <td colspan="4" style="text-align: right;">{{ number_format($payment_qr,0,',','.') }}</td>
-                  </tr>
-
-                  <tr>
-                    <td colspan="2" style="text-align: left;">Transfer</td>
-                    <td colspan="4" style="text-align: right;">{{ number_format($payment_tr,0,',','.') }}</td>
-                  </tr>
-
-                  <tr>
-                    <th colspan="2" style="text-align: left;width:20%;">Total</th>
-                    <th colspan="4" style="text-align: right;">{{ number_format($total_payment,0,',','.') }} </th>
+                    <th style="text-align: left;width:20%;">Total</th>
+                    <th style="text-align: right;">{{ number_format($total_payment,0,',','.') }} </th>
                   </tr>
                 </tbody>
-              </table>           
+              </table> 
             </td>
 
             <td style="vertical-align:top;">
-              <table class="table table-striped" id="service_table">
+              <table class="table table-striped" id="sr"  width="100%">
                 <thead>
                 <tr>
                   <th colspan="1" style="text-align: center;background-color:#FFA726;">Ket. Produk Terpakai</th>

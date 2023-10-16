@@ -59,12 +59,14 @@
             <th style="text-align: center;background-color:#FFA726;"  scope="col">Extra</th>    
             <th style="text-align: center;background-color:#FFA726;"  scope="col">Charge Lebaran</th>    
             <th style="text-align: center;background-color:#FFA726;"  scope="col">@lang('general.lbl_cash')</th>     
-            <th style="text-align: center;background-color:#FFA726;"  scope="col">BCA D</th>    
-            <th style="text-align: center;background-color:#FFA726;"  scope="col">BCA K</th>    
-            <th style="text-align: center;background-color:#FFA726;"  scope="col">Mndr D</th>    
-            <th style="text-align: center;background-color:#FFA726;"  scope="col">Mndr K</th> 
-            <th style="text-align: center;background-color:#FFA726;"  scope="col">QRIS</th> 
-            <th style="text-align: center;background-color:#FFA726;"  scope="col">Tnsfr</th> 
+            <th style="text-align: center;background-color:#FFA726;"  scope="col">B1 - D</th>    
+            <th style="text-align: center;background-color:#FFA726;"  scope="col">B1 - K</th>    
+            <th style="text-align: center;background-color:#FFA726;"  scope="col">B2 - D</th>    
+            <th style="text-align: center;background-color:#FFA726;"  scope="col">B2 - K</th> 
+            <th style="text-align: center;background-color:#FFA726;"  scope="col">B1 - QRIS</th> 
+            <th style="text-align: center;background-color:#FFA726;"  scope="col">B2 - QRIS</th> 
+            <th style="text-align: center;background-color:#FFA726;"  scope="col">B1 - Tnsfr</th> 
+            <th style="text-align: center;background-color:#FFA726;"  scope="col">B2 - Tnsfr</th> 
             <th style="text-align: center;background-color:#FFA726;"  scope="col">Cases</th> 
             <th  style="text-align: center;background-color:#FFA726;"  scope="col">Total Pendapatan</th>    
         </tr>
@@ -76,12 +78,14 @@
               $total_extra = 0;
               $total_lebaran = 0;
               $total_cash = 0;
-              $total_b_d = 0;
-              $total_b_k = 0;
-              $total_m_d = 0;
-              $total_m_k = 0;
-              $total_qr = 0;
-              $total_tr = 0;
+              $total_b1d = 0;
+              $total_b1c = 0;
+              $total_b2d = 0;
+              $total_b2c = 0;
+              $total_b1q = 0;
+              $total_b2q = 0;
+              $total_b1t = 0;
+              $total_b2t = 0;
               $qty_service = 0;
               $total_all = 0;
           ?>
@@ -95,12 +99,14 @@
                     <td style="text-align: right;">{{ number_format($rdata->total_extra,0,',','.') }}</td>
                     <td style="text-align: right;">{{ number_format($rdata->total_lebaran,0,',','.') }}</td>
                     <td style="text-align: right;">{{ number_format($rdata->total_cash,0,',','.') }}</td>
-                    <td style="text-align: right;">{{ number_format($rdata->total_b_d,0,',','.') }}</td>
-                    <td style="text-align: right;">{{ number_format($rdata->total_b_k,0,',','.') }}</td>
-                    <td style="text-align: right;">{{ number_format($rdata->total_m_d,0,',','.') }}</td>
-                    <td style="text-align: right;">{{ number_format($rdata->total_m_k,0,',','.') }}</td>
-                    <td style="text-align: right;">{{ number_format($rdata->total_qr,0,',','.') }}</td>
-                    <td style="text-align: right;">{{ number_format($rdata->total_tr,0,',','.') }}</td>
+                    <td style="text-align: right;">{{ number_format($rdata->total_b1d,0,',','.') }}</td>
+                    <td style="text-align: right;">{{ number_format($rdata->total_b1c,0,',','.') }}</td>
+                    <td style="text-align: right;">{{ number_format($rdata->total_b2d,0,',','.') }}</td>
+                    <td style="text-align: right;">{{ number_format($rdata->total_b2c,0,',','.') }}</td>
+                    <td style="text-align: right;">{{ number_format($rdata->total_b1q,0,',','.') }}</td>
+                    <td style="text-align: right;">{{ number_format($rdata->total_b2q,0,',','.') }}</td>
+                    <td style="text-align: right;">{{ number_format($rdata->total_b1t,0,',','.') }}</td>
+                    <td style="text-align: right;">{{ number_format($rdata->total_b2t,0,',','.') }}</td>
                     <td style="text-align: right;">{{ number_format($rdata->qty_service,0,',','.') }}</td>
                     <td style="text-align: right;">{{ number_format($rdata->total_all,0,',','.') }}</td>                      
                 </tr>
@@ -111,12 +117,14 @@
                     $total_extra = $total_extra + $rdata->total_extra;
                     $total_lebaran = $total_lebaran + $rdata->total_lebaran;
                     $total_cash = $total_cash + $rdata->total_cash;
-                    $total_b_d = $total_b_d + $rdata->total_b_d;
-                    $total_b_k = $total_b_k + $rdata->total_b_k;
-                    $total_m_d = $total_m_d + $rdata->total_m_d;
-                    $total_m_k = $total_m_k + $rdata->total_m_k;
-                    $total_qr = $total_qr + $rdata->total_qr;
-                    $total_tr = $total_tr + $rdata->total_tr;
+                    $total_b1d = $total_b1d + $rdata->total_b1d;
+                    $total_b1c = $total_b1c + $rdata->total_b1c;
+                    $total_b2d = $total_b2d + $rdata->total_b2d;
+                    $total_b2c = $total_b2c + $rdata->total_b2c;
+                    $total_b1q = $total_b1q + $rdata->total_b1q;
+                    $total_b2q = $total_b2q + $rdata->total_b2q;
+                    $total_b1t = $total_b1t + $rdata->total_b1t;
+                    $total_b2t = $total_b2t + $rdata->total_b2t;
                     $qty_service = $qty_service + $rdata->qty_service;
                     $total_all = $total_all + $rdata->total_all;
                 ?>
@@ -129,12 +137,14 @@
                 <th style="text-align: right;">{{ number_format($total_extra,0,',','.') }}</th>                
                 <th style="text-align: right;">{{ number_format($total_lebaran,0,',','.') }}</th>                
                 <th style="text-align: right;">{{ number_format($total_cash,0,',','.') }}</th>                
-                <th style="text-align: right;">{{ number_format($total_b_d,0,',','.') }}</th>                
-                <th style="text-align: right;">{{ number_format($total_b_k,0,',','.') }}</th>                
-                <th style="text-align: right;">{{ number_format($total_m_d,0,',','.') }}</th>                
-                <th style="text-align: right;">{{ number_format($total_m_k,0,',','.') }}</th>                
-                <th style="text-align: right;">{{ number_format($total_qr,0,',','.') }}</th>                
-                <th style="text-align: right;">{{ number_format($total_tr,0,',','.') }}</th>                
+                <th style="text-align: right;">{{ number_format($total_b1d,0,',','.') }}</th>                
+                <th style="text-align: right;">{{ number_format($total_b1c,0,',','.') }}</th>                
+                <th style="text-align: right;">{{ number_format($total_b2d,0,',','.') }}</th>                
+                <th style="text-align: right;">{{ number_format($total_b2c,0,',','.') }}</th>                
+                <th style="text-align: right;">{{ number_format($total_b1q,0,',','.') }}</th>                
+                <th style="text-align: right;">{{ number_format($total_b2q,0,',','.') }}</th>                
+                <th style="text-align: right;">{{ number_format($total_b1t,0,',','.') }}</th>                
+                <th style="text-align: right;">{{ number_format($total_b2t,0,',','.') }}</th>                
                 <th style="text-align: right;">{{ number_format($qty_service,0,',','.') }}</th>                
                 <th style="text-align: right;">{{ number_format($total_all,0,',','.') }}</th>                
             </tr>
