@@ -117,6 +117,10 @@ class InvoicesController extends Controller
         $id = $user->roles->first()->id;
         $this->getpermissions($id);
 
+        $payment_type = ['Cash','BCA - Debit','BCA - Kredit','Mandiri - Debit','Mandiri - Kredit','Transfer','QRIS'];
+        $payment_type_new = ['Cash','BANK 1 - Debit','BANK 1 - Kredit','BANK 2 - Debit','BANK 2 - Kredit','BANK 1 - Transfer','BANK 2 - Transfer','BANK 1 - QRIS','BANK 2 - QRIS'];
+
+
         $keyword = $request->search;
         $data = $this->data;
         $act_permission = $this->act_permission[0];
@@ -143,7 +147,7 @@ class InvoicesController extends Controller
                 ->where('invoice_master.invoice_no','ilike','INV-%')
                 ->whereBetween('invoice_master.dated',$fil) 
               ->get(['invoice_master.is_checkout','invoice_master.id','b.remark as branch_name','invoice_master.invoice_no','invoice_master.dated','jt.name as customer','invoice_master.total','invoice_master.total_discount','invoice_master.total_payment' ]);
-        return view('pages.invoices.index',['company' => Company::get()->first()], compact('invoices','data','keyword','act_permission','branchs'))->with('i', ($request->input('page', 1) - 1) * 5);
+        return view('pages.invoices.index',['company' => Company::get()->first()], compact('invoices','data','keyword','act_permission','branchs','payment_type'))->with('i', ($request->input('page', 1) - 1) * 5);
         }
     }
 
