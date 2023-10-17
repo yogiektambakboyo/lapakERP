@@ -847,16 +847,22 @@
                     <td>
                       @php
                         $payment = $detail->payment_type;
-                        if($payment == 'BCA - Debit'){
-                          $payment = 'BCAD';
-                        }else if($payment == 'BCA - Kredit'){
-                          $payment = 'BCAK';
-                        }else if($payment == 'Mandiri - Kredit'){
-                          $payment = 'MDRK';
-                        }else if($payment == 'Mandiri - Debit'){
-                          $payment = 'MDRD';
-                        }else if($payment == 'Transfer'){
-                          $payment = 'TRF';
+                        if($payment == 'BANK 1 - Debit' || $payment == 'BCA - Debit'){
+                          $payment = 'B1 D';
+                        }else if($payment == 'BANK 1 - Kredit' || $payment == 'BCA - Kredit'){
+                          $payment = 'B1 C';
+                        }else if($payment == 'BANK 2 - Debit' || $payment == 'Mandiri - Debit'){
+                          $payment = 'B2 D';
+                        }else if($payment == 'BANK 2 - Kredit' || $payment == 'Mandiri - Kredit'){
+                          $payment = 'B2 C';
+                        }else if($payment == 'BANK 1 - Transfer' || $payment == 'Transfer'){
+                          $payment = 'B1 TRF';
+                        }else if($payment == 'BANK 2 - Transfer'){
+                          $payment = 'B2 TRF';
+                        }else if($payment == 'BANK 1 - QRIS' || $payment == 'QRIS'){
+                          $payment = 'B1 QRIS';
+                        }else if($payment == 'BANK 2 - QRIS'){
+                          $payment = 'B2 QRIS';
                         }
                         $total_payment = $total_payment + $detail->payment_nominal;
                       @endphp
