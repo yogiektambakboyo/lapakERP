@@ -24,6 +24,7 @@
 <script src="https://cdn.jsdelivr.net/npm/gridstack@7.1.0/dist/gridstack-all.js" ></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.3.0/chart.umd.js"></script>
 <script src="https://cdn.datatables.net/select/1.6.2/js/dataTables.select.min.js"></script>
+<script src="/js/html5-qrcode.min.js"></script>
 
 
 <script type="text/javascript">

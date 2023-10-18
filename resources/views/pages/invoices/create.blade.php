@@ -7,6 +7,7 @@
     <div class="panel-heading  bg-teal-600">
       <div class="panel-title"><h4 class="">@lang('general.lbl_invoice')</h4></div>
       <div class="">
+        <button type="button" id="member-btn" class="btn btn-warning mx-2" href="#modal-scan-customer" data-bs-toggle="modal" data-bs-target="#modal-scan-customer"><span class='fas fa-address-card'> </span> Scan Member</button>
         <a href="{{ route('invoices.index') }}" class="btn btn-default">@lang('general.lbl_cancel')</a>
         <button type="button" id="save-btn" class="btn btn-info">@lang('general.lbl_save')</button>
       </div>
@@ -18,6 +19,7 @@
             <div class="row mb-3">
               <label class="form-label col-form-label col-md-4">@lang('general.lbl_dated_mmddYYYY')</label>
               <div class="col-md-8">
+                <input type="hidden" name="branch_id_x" id="branch_id_x" value="{{ $userx->branch_id }}">
                 <input type="text" 
                 name="invoice_date"
                 id="invoice_date"
@@ -471,12 +473,12 @@
         <div class="row mb-3">
           <div class="col-md-6">
             <div class="row mb-3">
-                <label class="form-label col-form-label col-md-3" id="label-voucher">Voucher</label>
+                <label class="form-label col-form-label col-md-2" id="label-voucher">Voucher</label>
                 <br>
-                <div class="col-md-5">
+                <div class="col-md-3">
                   <input type="text" class="form-control" id="input-apply-voucher">
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-4">
                   <button type="button" id="apply-voucher-btn" class="btn btn-warning">@lang('general.lbl_apply_voucher')</button>
                 </div>
             </div>
@@ -599,6 +601,75 @@
         </div>
 
 
+        <div class="modal fade" id="modal-scan-customer" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+          <div class="modal-dialog">
+          <div class="modal-content">
+              <div class="modal-header">
+              <h5 class="modal-title" id="staticBackdropLabel">Scan Membership</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                
+                <div class="container mt-1">
+                        <div class="row">
+                          <div class="col-12">
+                            <label for="scan_phone_no" class="form-label">Masukkan No HP Tamu (08xx) / No ID Membership</label>
+                          </div>
+                          <div class="col-7">
+                            <input
+                                type="text" 
+                                class="form-control" 
+                                name="scan_phone_no" id="scan_phone_no" value=""
+                                required>
+                          </div>
+                          <div class="col-1">
+                            <button id="btn_scan_cam" class="btn btn-warning"><span class="fas fa-camera-retro fa-lg"></span></button>
+                          </div>
+
+                          <div class="col-3 mx-2">
+                            <button id="btn_check" class="btn btn-primary"><span class="fas fa-search fa-lg"> </span> Cek Data</button>
+                          </div>
+
+                          <div class="my-2" style="width: 500px" id="reader"></div>
+
+
+                          <div id="div_id" class="d-none">
+                            <div class="col-3">
+                              <label for="res_name" class="form-label">Nama</label>
+                            </div>
+                            <div class="col-9">
+                              <input
+                                  type="text" 
+                                  class="form-control" 
+                                  name="res_name" id="res_name" value="" readonly
+                                  required>
+                            </div>
+  
+                            <div class="col-3 mt-1">
+                              <label for="res_name" class="form-label">Alamat</label>
+                            </div>
+                            <div class="col-9 mt-1">
+                              <input
+                                  type="text" 
+                                  class="form-control" readonly
+                                  name="res_address" id="res_address" value=""
+                                  required>
+                            </div>
+
+                          </div>
+                            
+                        </div>
+                </div>
+    
+              </div>
+              <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">@lang('general.lbl_close') </button>
+              <button type="button" class="btn btn-primary"  data-bs-dismiss="modal" id="btn_scan_customer">Proses</button>
+              </div>
+          </div>
+          </div>
+        </div>
+
 
 
     </div>
@@ -609,6 +680,70 @@
     <script type="text/javascript">
           var room_selected = "";
           var assign_selected = "";
+
+          $('#btn_scan_cam').on('click',function(){
+            html5QrcodeScanner = new Html5QrcodeScanner("reader", { fps: 10, qrbox: 250 });
+            html5QrcodeScanner.render(onScanSuccess);
+          });
+
+          var html5QrcodeScanner;
+                  
+          function onScanSuccess(decodedText, decodedResult) {
+              // Handle on success condition with the decoded text or result.
+              console.log(`Scan result: ${decodedText}`, decodedResult);
+              $('#scan_phone_no').val(decodedText);
+              html5QrcodeScanner.clear();
+              // ^ this will stop the scanner (video feed) and clear the scan area.
+          }
+
+          $('#btn_check').on('click', function(){
+            var phone_no = $('#scan_phone_no').val();
+            if(phone_no == "" ){
+              Swal.fire(
+                  {
+                    position: 'top-end',
+                    icon: 'warning',
+                    text: 'Silahkan masukkan ID tamu atau Nomor handphone',
+                    showConfirmButton: false,
+                    imageHeight: 30, 
+                    imageWidth: 30,   
+                    timer: 1500
+                  }
+                );
+            }else{
+              const res = axios.get("{{ route('login.get_checkmembership') }}", {
+                  headers: {
+                      'Content-Type': 'application/json'
+                    },
+                    params: {
+                      phone_no: phone_no
+                    }
+                }).then(resp => {
+                  $('#div_id').addClass('d-none');
+                  if(resp.data.length<=0){
+                    Swal.fire(
+                    {
+                        position: 'top-end',
+                        icon: 'warning',
+                        text: 'Data tidak ditemukan',
+                        showConfirmButton: false,
+                        imageHeight: 30, 
+                        imageWidth: 30,   
+                        timer: 1500
+                      }
+                    );
+                  }else{
+                    $('#div_id').removeClass('d-none');
+                    $('#res_name').val(resp.data[0].name);
+                    $('#res_address').val(resp.data[0].address);
+                  }
+                 
+                });
+            }
+            
+          });
+
+
 
       $(function () {
         $('#customer_id').select2();

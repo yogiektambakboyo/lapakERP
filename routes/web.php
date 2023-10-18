@@ -23,6 +23,8 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
      * Home Routes
      */
     Route::get('/', 'HomeController@index')->name('home.index');
+    Route::get('/get_checkmembership', 'LoginController@get_checkmembership')->name('login.get_checkmembership');
+
 
     Route::group(['middleware' => ['guest']], function() {
         /**
@@ -44,7 +46,13 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
         Route::post('/api_post_review', 'LoginController@api_post_review')->name('login.api_post_review');
         Route::post('/api_photo_slide', 'LoginController@api_photo_slide')->name('login.api_photo_slide');
         Route::post('/api_photo_slide_detail', 'LoginController@api_photo_slide_detail')->name('login.api_photo_slide_detail');
-        Route::post('/api_post_invoice_terapist', 'LoginController@api_post_invoice_terapist')->name('login.api_post_invoice_terapist');
+
+         /**
+         * Other Routes
+         */
+
+        Route::post('/api_post_invoice_terapist', 'InvoicesController@api_post_invoice_terapist')->name('login.api_post_invoice_terapist');
+
 
     });
 

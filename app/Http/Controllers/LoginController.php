@@ -54,6 +54,12 @@ class LoginController extends Controller
         return $this->authenticated($request, $user);
     }
 
+    public function get_checkmembership(Request $request) 
+    {
+        $user_data = DB::select("select id,name,address,branch_id from customers u where u.phone_no = '".$request->get('phone_no')."' or u.id = ".$request->get('phone_no'));
+        return $user_data;
+    }
+
     public function api_login(Request $request)
     {
         $whatsapp_no = $request->whatsapp_no;
