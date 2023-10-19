@@ -380,7 +380,7 @@
                           $payment_qr_b1 = $payment_qr_b1 + $payment_data->total_payment;
                         }else if($payment_data->payment_type=='BANK 2 - QRIS'){
                           $payment_qr_b2 = $payment_qr_b2 + $payment_data->total_payment;
-                        }else if($payment_data->payment_type=='Transfer'||$payment_data->payment_type=='Bank 1 - Transfer'){
+                        }else if($payment_data->payment_type=='Transfer'||$payment_data->payment_type=='BANK 1 - Transfer'){
                           $payment_tr_b1 = $payment_tr_b1 + $payment_data->total_payment;
                         }else if($payment_data->payment_type=='BANK 2 - Transfer'){
                           $payment_tr_b2 = $payment_tr_b2 + $payment_data->total_payment;
@@ -669,7 +669,7 @@
                             $payment_qr_b1 = $payment_qr_b1 + $payment_data->total_payment;
                           }else if($payment_data->payment_type=='BANK 2 - QRIS'){
                             $payment_qr_b2 = $payment_qr_b2 + $payment_data->total_payment;
-                          }else if($payment_data->payment_type=='Transfer'||$payment_data->payment_type=='Bank 1 - Transfer'){
+                          }else if($payment_data->payment_type=='Transfer'||$payment_data->payment_type=='BANK 1 - Transfer'){
                             $payment_tr_b1 = $payment_tr_b1 + $payment_data->total_payment;
                           }else if($payment_data->payment_type=='BANK 2 - Transfer'){
                             $payment_tr_b2 = $payment_tr_b2 + $payment_data->total_payment;
