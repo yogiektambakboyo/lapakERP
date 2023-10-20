@@ -199,7 +199,7 @@ class InvoicesController extends Controller
         $user = Auth::user();
         $product = DB::select("select m.remark as uom,product_sku.id,product_sku.remark,product_sku.abbr,pt.remark as type,pc.remark as category_name,pb.remark as brand_name,pp.price,'0' as discount,'0' as qty,'0' as total
         from product_sku
-        join product_distribution pd  on pd.product_id = product_sku.id  and pd.active = '1'
+        join product_distribution as pd  on pd.product_id = product_sku.id  and pd.active = '1'
         join product_category pc on pc.id = product_sku.category_id 
         join product_type pt on pt.id = product_sku.type_id 
         join product_brand pb on pb.id = product_sku.brand_id 
@@ -388,7 +388,7 @@ class InvoicesController extends Controller
                 DB::update("UPDATE invoice_detail set price_purchase=".$price_purchase->value." WHERE invoice_no='". $invoice_no."' and product_id = ".$request->get('product')[$i]['id']);
             }
 
-            $productigredients = ProductIngredients::where('product_id','=',$request->get('product')[$i]["id"])->get(['product_id_material','qty']);
+            $productigredients = ProductIngredients::join('product_distribution as pd','pd.product_id','=','product_ingredients.product_id_material')->where('pd.active','=','1')->where('pd.branch_id','=',$branch_id['branch_id'])->where('product_ingredients.product_id','=',$request->get('product')[$i]["id"])->get(['product_ingredients.product_id_material','product_ingredients.qty']);
             foreach($productigredients as $productigredient){
                 DB::update(" INSERT INTO public.stock_log (product_id, qty, branch_id, doc_no,remarks, created_at) select product_id,qty,branch_id,'Stock_Pos','I1 ".$invoice_no."',now()  from product_stock where product_id = ".$productigredient->product_id_material."  and branch_id = ".$branch_id['branch_id']." ");
 
@@ -793,9 +793,12 @@ class InvoicesController extends Controller
         $user = Auth::user();
         $invoice_no = $request->get('invoice_no');
 
+
         $last_data = InvoiceDetail::where('invoice_detail.invoice_no','=',$invoice_no)->get('invoice_detail.*');
         $branch_id = Customer::where('id',$request->get('customer_id'))->get(['branch_id'])->first();
         $qty_before =  0;
+
+
 
         for ($i=0; $i < count($last_data); $i++) { 
             DB::update(" INSERT INTO public.stock_log (product_id, qty, branch_id, doc_no,remarks, created_at) select product_id,qty,branch_id,'Stock_Pos','R1 ".$invoice_no."',now()  from product_stock where product_id = ".$last_data[$i]["product_id"]."  and branch_id = ".$branch_id['branch_id']." ");
@@ -806,7 +809,7 @@ class InvoicesController extends Controller
             DB::update(" INSERT INTO public.stock_log (product_id, qty, branch_id, doc_no,remarks, created_at) select product_id,qty,branch_id,'Stock_Pos','R2 ".$invoice_no."',now()  from product_stock where product_id = ".$last_data[$i]["product_id"]."  and branch_id = ".$branch_id['branch_id']." ");
 
 
-            $productigredients = ProductIngredients::where('product_id','=',$last_data[$i]["product_id"])->get(['product_id_material','qty']);
+            $productigredients = ProductIngredients::join('product_distribution as pd','pd.product_id','=','product_ingredients.product_id_material')->where('pd.branch_id','=',$branch_id['branch_id'])::where('pd.active','=','1')->where('product_ingredients.product_id','=',$last_data[$i]["product_id"])->get(['product_ingredients.product_id_material','product_ingredients.qty']);
             foreach($productigredients as $productigredient){
                 DB::update(" INSERT INTO public.stock_log (product_id, qty, branch_id, doc_no,remarks, created_at) select product_id,qty,branch_id,'Stock_Pos','Q1 ".$invoice_no."',now()  from product_stock where product_id = ".$productigredient->product_id_material."  and branch_id = ".$branch_id['branch_id']." ");
 
@@ -902,7 +905,8 @@ class InvoicesController extends Controller
             }   
             
             
-            $productigredients = ProductIngredients::where('product_id','=',$request->get('product')[$i]["id"])->get(['product_id_material','qty']);
+            $productigredients = ProductIngredients::join('product_distribution as pd','pd.product_id','=','product_ingredients.product_id_material')->where('pd.branch_id','=',$branch_id['branch_id'])->where('pd.active','=','1')->where('product_ingredients.product_id','=',$request->get('product')[$i]["id"])->get(['product_ingredients.product_id_material','product_ingredients.qty']);
+
             foreach($productigredients as $productigredient){
                 DB::update(" INSERT INTO public.stock_log (product_id, qty, branch_id, doc_no,remarks, created_at) select product_id,qty,branch_id,'Stock_Pos','I1 ".$invoice_no."',now()  from product_stock where product_id = ".$productigredient->product_id_material."  and branch_id = ".$branch_id['branch_id']." ");
 

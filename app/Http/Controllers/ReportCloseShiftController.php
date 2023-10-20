@@ -199,6 +199,7 @@ class ReportCloseShiftController extends Controller
                 join users_branch as ub on ub.branch_id = b.id and ub.user_id = '".$user->id."'
                 join product_sku ps on ps.id = id.product_id 
                 join product_ingredients pi2 on pi2.product_id = ps.id 
+                join product_distribution pdd on pdd.product_id = pi2.product_id_material and pdd.active=1 and pdd.branch_id = b.id
                 join product_sku ps2 on ps2.id = pi2.product_id_material 
                 join shift s on s.id = ".$filter_shift." 
                 where im.dated = '".$filter_begin_date."'  and im.created_at::time between s.time_start and s.time_end and c.branch_id = ".$filter_branch_id."

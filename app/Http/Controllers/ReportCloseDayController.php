@@ -159,6 +159,7 @@ class ReportCloseDayController extends Controller
                 join branch b on b.id=c.branch_id
                 join product_sku ps on ps.id = id.product_id 
                 join product_ingredients pi2 on pi2.product_id = ps.id 
+                join product_distribution pdd on pdd.product_id = pi2.product_id_material and pdd.active=1 and pdd.branch_id = b.id
                 join product_sku ps2 on ps2.id = pi2.product_id_material  
                 where im.dated = '".$filter_begin_date."'  and c.branch_id = ".$filter_branch_id."
                 group by ps2.abbr                    
@@ -257,6 +258,7 @@ class ReportCloseDayController extends Controller
                 join branch b on b.id=c.branch_id
                 join product_sku ps on ps.id = id.product_id 
                 join product_ingredients pi2 on pi2.product_id = ps.id 
+                join product_distribution pdd on pdd.product_id = pi2.product_id_material and pdd.active=1 and pdd.branch_id = b.id
                 join product_sku ps2 on ps2.id = pi2.product_id_material  
                 where im.dated = '".$filter_begin_date."'  and c.branch_id = ".$filter_branch_id."
                 group by ps2.abbr,c.id order by 1                  
@@ -270,6 +272,7 @@ class ReportCloseDayController extends Controller
                 join branch b on b.id=c.branch_id
                 join product_sku ps on ps.id = id.product_id 
                 join product_ingredients pi2 on pi2.product_id = ps.id 
+                join product_distribution pdd on pdd.product_id = pi2.product_id_material and pdd.active=1 and pdd.branch_id = b.id
                 join product_sku ps2 on ps2.id = pi2.product_id_material  
                 where im.dated = '".$filter_begin_date."'  and c.branch_id = ".$filter_branch_id."
                 group by ps2.abbr order by 1                  
