@@ -308,6 +308,7 @@ class InvoicesController extends Controller
                 ['branch_room_id' => $request->get('branch_room_id')],
                 ['ref_no' => $request->get('ref_no')],
                 ['tax' => $request->get('tax')],
+                ['membership' => $request->get('membership')],
                 ['customer_type' => $request->get('customer_type')],
             )
         );
@@ -735,6 +736,7 @@ class InvoicesController extends Controller
             'data' => $data,
             'invoice' => $invoice,
             'room' => $room,
+            'userx' => $user,
             'usersall' => $usersall,
             'type_customers' => $type_customer,
             'orders' => Order::where('is_checkout','0')->get(),
@@ -809,7 +811,7 @@ class InvoicesController extends Controller
             DB::update(" INSERT INTO public.stock_log (product_id, qty, branch_id, doc_no,remarks, created_at) select product_id,qty,branch_id,'Stock_Pos','R2 ".$invoice_no."',now()  from product_stock where product_id = ".$last_data[$i]["product_id"]."  and branch_id = ".$branch_id['branch_id']." ");
 
 
-            $productigredients = ProductIngredients::join('product_distribution as pd','pd.product_id','=','product_ingredients.product_id_material')->where('pd.branch_id','=',$branch_id['branch_id'])::where('pd.active','=','1')->where('product_ingredients.product_id','=',$last_data[$i]["product_id"])->get(['product_ingredients.product_id_material','product_ingredients.qty']);
+            $productigredients = ProductIngredients::join('product_distribution as pd','pd.product_id','=','product_ingredients.product_id_material')->where('pd.branch_id','=',$branch_id['branch_id'])->where('pd.active','=','1')->where('product_ingredients.product_id','=',$last_data[$i]["product_id"])->get(['product_ingredients.product_id_material','product_ingredients.qty']);
             foreach($productigredients as $productigredient){
                 DB::update(" INSERT INTO public.stock_log (product_id, qty, branch_id, doc_no,remarks, created_at) select product_id,qty,branch_id,'Stock_Pos','Q1 ".$invoice_no."',now()  from product_stock where product_id = ".$productigredient->product_id_material."  and branch_id = ".$branch_id['branch_id']." ");
 
@@ -840,6 +842,7 @@ class InvoicesController extends Controller
                 ['branch_room_id' => $request->get('branch_room_id')],
                 ['ref_no' => $request->get('ref_no')],
                 ['tax' => $request->get('tax')],
+                ['membership' => $request->get('membership')],
                 ['customer_type' => $request->get('customer_type')],
             )
         );

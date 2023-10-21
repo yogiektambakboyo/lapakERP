@@ -58,6 +58,7 @@ class ReportStockMutationDetailExport implements FromCollection,WithColumnFormat
             join customers c ON c.id = im.customers_id
             join product_sku ps on ps.id = id.product_id
             join product_ingredients pi2 on pi2.product_id = ps.id 
+            join product_distribution pdd on pdd.product_id = pi2.product_id_material and pdd.branch_id = c.branch_id and pdd.active='1'
             join product_sku ps2 on ps2.id = pi2.product_id_material
             join branch b on b.id = c.branch_id and b.id::character varying like '".$this->branch."'
             where im.dated between '".$this->begindate."' and '".$this->enddate."'

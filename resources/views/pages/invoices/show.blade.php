@@ -9,6 +9,8 @@
     <div class="panel-heading  bg-teal-600">
       <div class="panel-title"><h4 class="">@lang('general.lbl_invoice')  {{ $invoice->invoice_no }}</h4></div>
       <div class="">
+        <span class="fas fa-user"></span> 
+        <label id="label_membership" class="mx-1"><?= $invoice->membership==null?'':$invoice->customers_name; ?></label>
         <a target="_blank" href="{{ route('invoices.print', $invoice->id) }}" class="btn btn-warning"><i class="fas fa-print"></i> @lang('general.lbl_print') </a>
         <a target="_blank" href="{{ route('invoices.printbulk', $invoice->invoice_no_bulk==null?'-':$invoice->invoice_no_bulk) }}" class="btn btn-danger <?php echo $invoice->invoice_no_bulk==null?'d-none':''; ?> "><i class="fas fa-print"></i> Cetak Faktur Gabungan </a>
         <a target="_blank" href="{{ route('invoices.printsj', $invoice->id) }}" class="btn btn-success"><i class="fas fa-truck-fast"></i> @lang('general.lbl_printsj') </a>
@@ -19,7 +21,7 @@
     <div class="panel-body bg-white text-black">
 
         <div class="row mb-3">
-          <div class="col-md-4">
+          <div class="col-md-3">
             <div class="row mb-3">
               <label class="form-label col-form-label col-md-4">@lang('general.lbl_dated_mmddYYYY')</label>
               <div class="col-md-8">
@@ -45,7 +47,7 @@
             </div>
           </div>
 
-          <div class="col-md-8">
+          <div class="col-md-9">
             <div class="row mb-3">
               <label class="form-label col-form-label col-md-1 d-none">Ref No.</label>
               <div class="col-md-3 d-none">

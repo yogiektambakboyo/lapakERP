@@ -813,6 +813,7 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
             Route::get('/', 'CustomersController@index')->name('customers.index');
             Route::get('/create', 'CustomersController@create')->name('customers.create');
             Route::post('/create', 'CustomersController@store')->name('customers.store');
+            Route::post('/createcloneapi', 'CustomersController@clonestoreapi')->name('customers.clonestoreapi');
             Route::post('/createapi', 'CustomersController@storeapi')->name('customers.storeapi');
             Route::get('/{customer}/show', 'CustomersController@show')->name('customers.show');
             Route::get('/{customer}/edit', 'CustomersController@edit')->name('customers.edit');

@@ -5,8 +5,10 @@
 @section('content')
   <div class="panel text-white">
     <div class="panel-heading  bg-teal-600">
-      <div class="panel-title"><h4 class="">@lang('general.lbl_invoice')</h4></div>
-      <div class="">
+      <div class="panel-title"><h4>@lang('general.lbl_invoice')</h4></div>
+      <div>
+        <span class="fas fa-user"></span> 
+        <label id="label_membership"></label>
         <button type="button" id="member-btn" class="btn btn-warning mx-2" href="#modal-scan-customer" data-bs-toggle="modal" data-bs-target="#modal-scan-customer"><span class='fas fa-address-card'> </span> Scan Member</button>
         <a href="{{ route('invoices.index') }}" class="btn btn-default">@lang('general.lbl_cancel')</a>
         <button type="button" id="save-btn" class="btn btn-info">@lang('general.lbl_save')</button>
@@ -643,10 +645,15 @@
                                   class="form-control" 
                                   name="res_name" id="res_name" value="" readonly
                                   required>
+                                  <input
+                                  type="hidden" 
+                                  class="form-control" 
+                                  name="res_id" id="res_id" value="" readonly
+                                  required>
                             </div>
   
                             <div class="col-3 mt-1">
-                              <label for="res_name" class="form-label">Alamat</label>
+                              <label for="res_address" class="form-label">Alamat</label>
                             </div>
                             <div class="col-9 mt-1">
                               <input
@@ -679,7 +686,11 @@
 @push('scripts')
     <script type="text/javascript">
           var room_selected = "";
+          var list_customer = [];
           var assign_selected = "";
+          var membership_selected = "";
+          var membership_branch_selected = "";
+          var membership_name_selected = "";
 
           $('#btn_scan_cam').on('click',function(){
             html5QrcodeScanner = new Html5QrcodeScanner("reader", { fps: 10, qrbox: 250 });
@@ -734,13 +745,104 @@
                     );
                   }else{
                     $('#div_id').removeClass('d-none');
-                    $('#res_name').val(resp.data[0].name);
-                    $('#res_address').val(resp.data[0].address);
+                    
+                    for (let index = 0; index < resp.data.length; index++) {
+                        const element = resp.data[index];
+                        $('#res_name').val(element.name);
+                        $('#res_id').val(element.id);
+                        membership_branch_selected = element.branch_id;
+                        $('#res_address').val(element.address);
+                    }
+
+                    for (let index = 0; index < resp.data.length; index++) {
+                      const element = resp.data[index];
+                      if(element.branch_id == $('#branch_id_x').val()){
+                        $('#res_name').val(element.name);
+                        $('#res_id').val(element.id);
+                        membership_branch_selected = element.branch_id;
+                        $('#res_address').val(element.address);
+                      }
+                    }
+
+                    
                   }
                  
                 });
             }
             
+          });
+
+          $('#btn_scan_customer').on('click', function(){
+            if($('#res_name').val()==""){
+              Swal.fire(
+                    {
+                        position: 'top-end',
+                        icon: 'warning',
+                        text: 'Data tidak ditemukan',
+                        showConfirmButton: false,
+                        imageHeight: 30, 
+                        imageWidth: 30,   
+                        timer: 1500
+                      }
+                    );
+            }else{
+              $('#label_membership').text($('#res_name').val());
+              membership_name_selected = $('#res_name').val();
+              membership_selected = $('#res_id').val();
+              var ctr = 0;
+
+              if(membership_branch_selected == $('#branch_id_x').val()){
+                $("#customer_id > option").each(function() {
+                    if(this.value==membership_selected){
+                      ctr++;
+                      console.log(membership_selected);
+                      $("#customer_id").val(membership_selected).trigger('change');
+                    }
+                });
+              }else{
+
+                    const json = JSON.stringify({
+                        customer_id : membership_selected,
+                        branch_id : $('#branch_id_x').val()
+                        }
+                      );
+                      const res = axios.post("{{ route('customers.clonestoreapi') }}", json, {
+                        headers: {
+                          // Overwrite Axios's automatically set Content-Type
+                          'Content-Type': 'application/json'
+                        }
+                      }).then(resp => {
+                            if(resp.data.status=="success"){
+                                var data = {
+                                    id: resp.data.data,
+                                    text: membership_name_selected
+                                };
+
+                                var newOption = new Option(data.text, data.id, false, false);
+                                $('#customer_id').append(newOption).trigger('change');
+                                $('#customer_id').val(resp.data.data).trigger('change');
+                            }else{
+                              Swal.fire(
+                                {
+                                  position: 'top-end',
+                                  icon: 'warning',
+                                  text: "@lang('general.lbl_msg_failed')"+resp.data.message,
+                                  showConfirmButton: false,
+                                  imageHeight: 30, 
+                                  imageWidth: 30,   
+                                  timer: 1500
+                                }
+                              );
+                            }
+                      });
+
+
+              }
+
+              
+
+
+            }
           });
 
 
@@ -847,6 +949,7 @@
                             id: resp.data.data,
                             text: $('#cust_name').val() +" ("+ $('#cust_branch_id option:selected').text() +")"
                         };
+
 
                         var newOption = new Option(data.text, data.id, false, false);
                         $('#customer_id').append(newOption).trigger('change');
@@ -1371,7 +1474,8 @@
                   ref_no : $('#ref_no').val(),
                   tax : _vat_total,
                   voucher_code :  $("#input-apply-voucher").val(),
-                  is_use_voucher : _is_use_voucher
+                  is_use_voucher : _is_use_voucher,
+                  membership : membership_selected,
                 }
               );
               const res = axios.post("{{ route('invoices.store') }}", json, {

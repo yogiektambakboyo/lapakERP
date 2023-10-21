@@ -9,17 +9,25 @@
     <div class="panel-heading  bg-teal-600">
       <div class="panel-title"><h4 class="">@lang('general.lbl_invoice') </h4></div>
       <div class="">
+        <span class="fas fa-user"></span> 
+        <label id="label_membership"><?= $invoice->membership==null?'':$invoice->customers_name; ?></label>
+        <button type="button" id="member-btn" class="btn btn-warning mx-2" href="#modal-scan-customer" data-bs-toggle="modal" data-bs-target="#modal-scan-customer"><span class='fas fa-address-card'> </span> Scan Member</button>
         <a href="{{ route('invoices.index') }}" class="btn btn-default">@lang('general.lbl_cancel')</a>
         <button type="button" id="save-btn" class="btn btn-info d-none">@lang('general.lbl_save')</button>
       </div>
     </div>
+
+    
     <div class="panel-body bg-white text-black">
+
+      
 
         <div class="row mb-3">
           <div class="col-md-2">
             <div class="row mb-3">
               <label class="form-label col-form-label col-md-4">@lang('general.lbl_dated')   </label>
               <div class="col-md-8">
+                <input type="hidden" name="branch_id_x" id="branch_id_x" value="{{ $userx->branch_id }}">
                 <input type="hidden" 
                 name="invoice_no"
                 id="invoice_no"
@@ -519,13 +527,246 @@
     </div>
   </div>
 </form>
+
+<div class="modal fade" id="modal-scan-customer" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog">
+  <div class="modal-content">
+      <div class="modal-header">
+      <h5 class="modal-title" id="staticBackdropLabel">Scan Membership</h5>
+      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        
+        <div class="container mt-1">
+                <div class="row">
+                  <div class="col-12">
+                    <label for="scan_phone_no" class="form-label">Masukkan No HP Tamu (08xx) / No ID Membership</label>
+                  </div>
+                  <div class="col-7">
+                    <input
+                        type="text" 
+                        class="form-control" 
+                        name="scan_phone_no" id="scan_phone_no" value=""
+                        required>
+                  </div>
+                  <div class="col-1">
+                    <button id="btn_scan_cam" class="btn btn-warning"><span class="fas fa-camera-retro fa-lg"></span></button>
+                  </div>
+
+                  <div class="col-3 mx-2">
+                    <button id="btn_check" class="btn btn-primary"><span class="fas fa-search fa-lg"> </span> Cek Data</button>
+                  </div>
+
+                  <div class="my-2" style="width: 500px" id="reader"></div>
+
+
+                  <div id="div_id" class="d-none">
+                    <div class="col-3">
+                      <label for="res_name" class="form-label">Nama</label>
+                    </div>
+                    <div class="col-9">
+                      <input
+                          type="text" 
+                          class="form-control" 
+                          name="res_name" id="res_name" value="" readonly
+                          required>
+                          <input
+                          type="hidden" 
+                          class="form-control" 
+                          name="res_id" id="res_id" value="" readonly
+                          required>
+                    </div>
+
+                    <div class="col-3 mt-1">
+                      <label for="res_address" class="form-label">Alamat</label>
+                    </div>
+                    <div class="col-9 mt-1">
+                      <input
+                          type="text" 
+                          class="form-control" readonly
+                          name="res_address" id="res_address" value=""
+                          required>
+                    </div>
+
+                  </div>
+                    
+                </div>
+        </div>
+
+      </div>
+      <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">@lang('general.lbl_close') </button>
+      <button type="button" class="btn btn-primary"  data-bs-dismiss="modal" id="btn_scan_customer">Proses</button>
+      </div>
+  </div>
+  </div>
+</div>
 @endsection
 
 @push('scripts')
     <script type="text/javascript">
+          var membership_selected = "";
+          var membership_branch_selected = "";
+          var membership_name_selected = "";
       $(function () {
           //$('#app').removeClass('app app-sidebar-fixed app-header-fixed-minified').addClass('app app-sidebar-fixed app-header-fixed-minified app-sidebar-minified');
           
+
+
+          $('#btn_scan_cam').on('click',function(){
+            html5QrcodeScanner = new Html5QrcodeScanner("reader", { fps: 10, qrbox: 250 });
+            html5QrcodeScanner.render(onScanSuccess);
+          });
+
+          var html5QrcodeScanner;
+                  
+          function onScanSuccess(decodedText, decodedResult) {
+              // Handle on success condition with the decoded text or result.
+              console.log(`Scan result: ${decodedText}`, decodedResult);
+              $('#scan_phone_no').val(decodedText);
+              html5QrcodeScanner.clear();
+              // ^ this will stop the scanner (video feed) and clear the scan area.
+          }
+
+          $('#btn_check').on('click', function(){
+            var phone_no = $('#scan_phone_no').val();
+            if(phone_no == "" ){
+              Swal.fire(
+                  {
+                    position: 'top-end',
+                    icon: 'warning',
+                    text: 'Silahkan masukkan ID tamu atau Nomor handphone',
+                    showConfirmButton: false,
+                    imageHeight: 30, 
+                    imageWidth: 30,   
+                    timer: 1500
+                  }
+                );
+            }else{
+              const res = axios.get("{{ route('login.get_checkmembership') }}", {
+                  headers: {
+                      'Content-Type': 'application/json'
+                    },
+                    params: {
+                      phone_no: phone_no
+                    }
+                }).then(resp => {
+                  $('#div_id').addClass('d-none');
+                  if(resp.data.length<=0){
+                    Swal.fire(
+                    {
+                        position: 'top-end',
+                        icon: 'warning',
+                        text: 'Data tidak ditemukan',
+                        showConfirmButton: false,
+                        imageHeight: 30, 
+                        imageWidth: 30,   
+                        timer: 1500
+                      }
+                    );
+                  }else{
+                    $('#div_id').removeClass('d-none');
+                    
+                    for (let index = 0; index < resp.data.length; index++) {
+                        const element = resp.data[index];
+                        $('#res_name').val(element.name);
+                        $('#res_id').val(element.id);
+                        membership_branch_selected = element.branch_id;
+                        $('#res_address').val(element.address);
+                    }
+
+                    for (let index = 0; index < resp.data.length; index++) {
+                      const element = resp.data[index];
+                      if(element.branch_id == $('#branch_id_x').val()){
+                        $('#res_name').val(element.name);
+                        $('#res_id').val(element.id);
+                        membership_branch_selected = element.branch_id;
+                        $('#res_address').val(element.address);
+                      }
+                    }
+
+                    
+                  }
+                 
+                });
+            }
+            
+          });
+
+          $('#btn_scan_customer').on('click', function(){
+            if($('#res_name').val()==""){
+              Swal.fire(
+                    {
+                        position: 'top-end',
+                        icon: 'warning',
+                        text: 'Data tidak ditemukan',
+                        showConfirmButton: false,
+                        imageHeight: 30, 
+                        imageWidth: 30,   
+                        timer: 1500
+                      }
+                    );
+            }else{
+              $('#label_membership').text($('#res_name').val());
+              membership_name_selected = $('#res_name').val();
+              membership_selected = $('#res_id').val();
+              var ctr = 0;
+
+              if(membership_branch_selected == $('#branch_id_x').val()){
+                $("#customer_id > option").each(function() {
+                    if(this.value==membership_selected){
+                      ctr++;
+                      console.log(membership_selected);
+                      $("#customer_id").val(membership_selected).trigger('change');
+                    }
+                });
+              }else{
+
+                    const json = JSON.stringify({
+                        customer_id : membership_selected,
+                        branch_id : $('#branch_id_x').val()
+                        }
+                      );
+                      const res = axios.post("{{ route('customers.clonestoreapi') }}", json, {
+                        headers: {
+                          // Overwrite Axios's automatically set Content-Type
+                          'Content-Type': 'application/json'
+                        }
+                      }).then(resp => {
+                            if(resp.data.status=="success"){
+                                var data = {
+                                    id: resp.data.data,
+                                    text: membership_name_selected
+                                };
+
+                                var newOption = new Option(data.text, data.id, false, false);
+                                $('#customer_id').append(newOption).trigger('change');
+                                $('#customer_id').val(resp.data.data).trigger('change');
+                            }else{
+                              Swal.fire(
+                                {
+                                  position: 'top-end',
+                                  icon: 'warning',
+                                  text: "@lang('general.lbl_msg_failed')"+resp.data.message,
+                                  showConfirmButton: false,
+                                  imageHeight: 30, 
+                                  imageWidth: 30,   
+                                  timer: 1500
+                                }
+                              );
+                            }
+                      });
+
+
+              }
+
+              
+
+
+            }
+          });
+
+
           const today = new Date();
           const yyyy = today.getFullYear();
           let mm = today.getMonth() + 1; // Months start at 0!
@@ -1008,7 +1249,8 @@
                   customer_type : $('#customer_type').val(),
                   voucher_code :  $("#input-apply-voucher").val(),
                   tax : _vat_total,
-                  is_use_voucher : _is_use_voucher
+                  is_use_voucher : _is_use_voucher,
+                  membership : membership_selected,
                 }
               );
               const res = axios.patch("{{ route('invoices.update',$invoice->id) }}", json, {

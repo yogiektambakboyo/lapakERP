@@ -184,6 +184,25 @@ class CustomersController extends Controller
         return $result;
     }
 
+    public function clonestoreapi(Request $request)
+    {   
+        DB::select("
+            insert into customers(name,address,phone_no,branch_id,segment_id,gender,membership_id )
+            select name,address,phone_no,".$request->branch_id.",segment_id,gender,membership_id 
+            from customers where id=".$request->customer_id." ;
+        ");
+
+        $id = Customer::where('branch_id','=',$request->branch_id)->max('id');
+        $result = array_merge(
+            ['status' => 'success'],
+            ['data' => $id],
+            ['message' => 'Save Successfully'],
+        );
+
+        return $result;
+    }
+
+
     /**
      * Show the form for editing the specified resource.
      *

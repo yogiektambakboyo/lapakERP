@@ -37,6 +37,6 @@ class Invoice extends Model
         'voucher_code',
         'customers_name',
         'printed_count',
-        'customer_type','invoice_no_bulk','is_bulk_payment'
+        'customer_type','invoice_no_bulk','is_bulk_payment','membership'
     ];
 }

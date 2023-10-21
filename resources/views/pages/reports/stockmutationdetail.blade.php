@@ -7,7 +7,7 @@
         <h1>Laporan - Mutasi Stok Detail</h1>
         <div class="lead row mb-3">
             <div class="col-md-10">
-                <div class="col-md-8">
+                <div class="col-md-10">
                     @lang('general.lbl_title') (Untuk penarikan yang akurat dimulai dari Tgl 27 bulan closing terakhir )
                 </div>
                 <div class="col-md-10"> 	
