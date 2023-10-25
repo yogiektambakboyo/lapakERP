@@ -85,6 +85,7 @@ class ReportStockMutationDetailController extends Controller
                 join invoice_detail id on id.invoice_no = im.invoice_no 
                 join customers c ON c.id = im.customers_id
                 join product_sku ps on ps.id = id.product_id and ps.type_id = 1 
+                join product_distribution pdd on pdd.product_id = id.product_id and pdd.branch_id = c.branch_id and pdd.active='1'
                 join branch b on b.id = c.branch_id and b.id::character varying like '%'
                 where im.dated between '".$begin_date_plus."' and now()::date
                 group by b.id,b.remark,im.dated,id.product_id,ps.remark
@@ -104,6 +105,7 @@ class ReportStockMutationDetailController extends Controller
                 join petty_cash_detail id on id.doc_no  = im.doc_no
                 join product_sku ps on ps.id = id.product_id and ps.type_id = 1
                 join branch b on b.id = im.branch_id and b.id::character varying like '%'
+                join product_distribution pdd on pdd.product_id = id.product_id and pdd.branch_id = b.id and pdd.active='1'
                 where im.dated between '".$begin_date_plus."' and now()::date and im.type='Produk - Keluar'
                 group by b.id,b.remark,im.dated,id.product_id,ps.remark
                 union all
@@ -111,6 +113,7 @@ class ReportStockMutationDetailController extends Controller
                 join petty_cash_detail id on id.doc_no  = im.doc_no
                 join product_sku ps on ps.id = id.product_id and ps.type_id = 1 
                 join branch b on b.id = im.branch_id and b.id::character varying like '%'
+                join product_distribution pdd on pdd.product_id = id.product_id and pdd.branch_id = b.id and pdd.active='1'
                 where im.dated between '".$begin_date_plus."' and now()::date and im.type='Produk - Masuk'
                 group by b.id,b.remark,im.dated,id.product_id,ps.remark
                 union all
@@ -118,6 +121,7 @@ class ReportStockMutationDetailController extends Controller
                 join receive_detail id on id.receive_no = im.receive_no 
                 join product_sku ps on ps.id = id.product_id and ps.type_id = 1 
                 join branch b on b.id = im.branch_id and b.id::character varying like '%'
+                join product_distribution pdd on pdd.product_id = id.product_id and pdd.branch_id = b.id and pdd.active='1'
                 where im.dated between '".$begin_date_plus."' and now()::date
                 group by b.id,b.remark,im.dated,id.product_id,ps.remark
             ) a join users_branch ub on ub.branch_id = a.branch_id 
@@ -131,6 +135,7 @@ class ReportStockMutationDetailController extends Controller
             join branch b  on b.id = psd.branch_id 
             join users_branch uu on uu.branch_id = psd.branch_id and uu.user_id = ".$user->id."
             join product_sku ps on ps.id = psd.product_id and ps.type_id = 1
+            join product_distribution pdd on pdd.product_id = psd.product_id and pdd.branch_id = b.id and pdd.active='1'
             where psd.dated='".$begin_date."'
             ) a order by 1,3,2    
         ");
@@ -174,6 +179,7 @@ class ReportStockMutationDetailController extends Controller
                 join invoice_detail id on id.invoice_no = im.invoice_no 
                 join customers c ON c.id = im.customers_id
                 join product_sku ps on ps.id = id.product_id and ps.type_id = 1 
+                join product_distribution pdd on pdd.product_id = id.product_id and pdd.branch_id = c.branch_id and pdd.active='1'
                 join branch b on b.id = c.branch_id and b.id::character varying like '".$branchx."'
                 where im.dated between '".$begindate."' and '".$enddate."'
                 group by b.id,b.remark,im.dated,id.product_id,ps.remark
@@ -193,6 +199,7 @@ class ReportStockMutationDetailController extends Controller
                 join petty_cash_detail id on id.doc_no  = im.doc_no
                 join product_sku ps on ps.id = id.product_id and ps.type_id = 1
                 join branch b on b.id = im.branch_id and b.id::character varying like '".$branchx."'
+                join product_distribution pdd on pdd.product_id = id.product_id and pdd.branch_id = b.id and pdd.active='1'
                 where im.dated between '".$begindate."' and '".$enddate."' and im.type='Produk - Keluar'
                 group by b.id,b.remark,im.dated,id.product_id,ps.remark
                 union all
@@ -200,6 +207,7 @@ class ReportStockMutationDetailController extends Controller
                 join petty_cash_detail id on id.doc_no  = im.doc_no
                 join product_sku ps on ps.id = id.product_id and ps.type_id = 1 
                 join branch b on b.id = im.branch_id and b.id::character varying like '".$branchx."'
+                join product_distribution pdd on pdd.product_id = id.product_id and pdd.branch_id = b.id and pdd.active='1'
                 where im.dated between '".$begindate."' and '".$enddate."' and im.type='Produk - Masuk'
                 group by b.id,b.remark,im.dated,id.product_id,ps.remark
                 union all
@@ -207,6 +215,7 @@ class ReportStockMutationDetailController extends Controller
                 join receive_detail id on id.receive_no = im.receive_no 
                 join product_sku ps on ps.id = id.product_id and ps.type_id = 1 
                 join branch b on b.id = im.branch_id and b.id::character varying like '".$branchx."'
+                join product_distribution pdd on pdd.product_id = id.product_id and pdd.branch_id = b.id and pdd.active='1'
                 where im.dated between '".$begindate."' and '".$enddate."'
                 group by b.id,b.remark,im.dated,id.product_id,ps.remark
             ) a join users_branch ub on ub.branch_id = a.branch_id 
@@ -220,6 +229,7 @@ class ReportStockMutationDetailController extends Controller
             join branch b  on b.id = psd.branch_id  and b.id::character varying like '".$branchx."'
             join users_branch uu on uu.branch_id = psd.branch_id  and uu.user_id = ".$user->id."
             join product_sku ps on ps.id = psd.product_id and ps.type_id = 1
+            join product_distribution pdd on pdd.product_id = psd.product_id and pdd.branch_id = b.id and pdd.active='1'
             where psd.dated=('".$begindate."'::date-interval'1 days')::date
             ) a order by 1,3,2    
             ");         

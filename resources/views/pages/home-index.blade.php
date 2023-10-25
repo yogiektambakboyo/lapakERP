@@ -447,7 +447,7 @@
 		var data_notifx = resp.data;
 		if(data_notifx.length>0){
 
-			/*Swal.fire(
+			Swal.fire(
 				{
 					position: 'top-end',
 					icon: 'warning',
@@ -457,7 +457,7 @@
 					imageWidth: 30,   
 					timer: 5000
 				}
-			);**/
+			);
 		}
 	});
   </script>

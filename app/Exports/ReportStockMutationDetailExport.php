@@ -49,6 +49,7 @@ class ReportStockMutationDetailExport implements FromCollection,WithColumnFormat
             join invoice_detail id on id.invoice_no = im.invoice_no 
             join customers c ON c.id = im.customers_id
             join product_sku ps on ps.id = id.product_id and ps.type_id = 1 
+            join product_distribution pdd on pdd.product_id = id.product_id and pdd.branch_id = c.branch_id and pdd.active='1'
             join branch b on b.id = c.branch_id and b.id::character varying like '".$this->branch."'
             where im.dated between '".$this->begindate."' and '".$this->enddate."'
             group by b.id,b.remark,im.dated,id.product_id,ps.remark
@@ -68,6 +69,7 @@ class ReportStockMutationDetailExport implements FromCollection,WithColumnFormat
             join petty_cash_detail id on id.doc_no  = im.doc_no
             join product_sku ps on ps.id = id.product_id and ps.type_id = 1
             join branch b on b.id = im.branch_id and b.id::character varying like '".$this->branch."'
+            join product_distribution pdd on pdd.product_id = id.product_id and pdd.branch_id = b.id and pdd.active='1'
             where im.dated between '".$this->begindate."' and '".$this->enddate."' and im.type='Produk - Keluar'
             group by b.id,b.remark,im.dated,id.product_id,ps.remark
             union
@@ -75,6 +77,7 @@ class ReportStockMutationDetailExport implements FromCollection,WithColumnFormat
             join petty_cash_detail id on id.doc_no  = im.doc_no
             join product_sku ps on ps.id = id.product_id and ps.type_id = 1 
             join branch b on b.id = im.branch_id and b.id::character varying like '".$this->branch."'
+            join product_distribution pdd on pdd.product_id = id.product_id and pdd.branch_id = b.id and pdd.active='1'
             where im.dated between '".$this->begindate."' and '".$this->enddate."' and im.type='Produk - Masuk'
             group by b.id,b.remark,im.dated,id.product_id,ps.remark
             union
@@ -82,6 +85,7 @@ class ReportStockMutationDetailExport implements FromCollection,WithColumnFormat
             join receive_detail id on id.receive_no = im.receive_no 
             join product_sku ps on ps.id = id.product_id and ps.type_id = 1 
             join branch b on b.id = im.branch_id and b.id::character varying like '".$this->branch."'
+            join product_distribution pdd on pdd.product_id = id.product_id and pdd.branch_id = b.id and pdd.active='1'
             where im.dated between '".$this->begindate."' and '".$this->enddate."'
             group by b.id,b.remark,im.dated,id.product_id,ps.remark
         ) a join users_branch ub on ub.branch_id = a.branch_id 
@@ -93,6 +97,7 @@ class ReportStockMutationDetailExport implements FromCollection,WithColumnFormat
             select b.remark as branch_name,'00-00-0000' as dated_display,ps.remark as product_name,0 as qty_in,0 as qty_out,qty_stock,qty_stock as qty_begin 
             from period_stock_daily psd 
             join branch b  on b.id = psd.branch_id and b.id::character varying like '".$this->branch."'
+            join product_distribution pdd on pdd.product_id = psd.product_id and pdd.branch_id = b.id and pdd.active='1'
             join users_branch uu on uu.branch_id = psd.branch_id  and uu.user_id = ".$this->userid."
             join product_sku ps on ps.id = psd.product_id and ps.type_id = 1
             where psd.dated=('".$this->begindate."'::date-interval'1 days')::date
