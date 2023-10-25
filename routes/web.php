@@ -964,6 +964,8 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
             Route::get('/returnsell_search', 'ReportReturnSellController@search')->name('reports.returnsell.search');
             Route::get('/returnselldetail', 'ReportReturnSellDetailController@index')->name('reports.returnselldetail.index');
             Route::get('/returnselldetail_search', 'ReportReturnSellDetailController@search')->name('reports.returnselldetail.search');
+            Route::get('/review', 'ReportRatingController@index')->name('reports.review.index');
+            Route::get('/review_search', 'ReportRatingController@search')->name('reports.review.search');
         });
 
 
