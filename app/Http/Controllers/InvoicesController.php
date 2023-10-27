@@ -72,7 +72,7 @@ class InvoicesController extends Controller
         $this->getpermissions($id);
         $branchs = Branch::join('users_branch as ub','ub.branch_id', '=', 'branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']);        
 
-        $payment_type = ['Cash','BCA - Debit','BCA - Kredit','Mandiri - Debit','Mandiri - Kredit','Transfer','QRIS'];
+        $payment_type = ['Cash','BANK 1 - Debit','BANK 1 - Kredit','BANK 2 - Debit','BANK 2 - Kredit','BANK 1 - Transfer','BANK 2 - Transfer','BANK 1 - QRIS','BANK 2 - QRIS'];
         $payment_type_new = ['Cash','BANK 1 - Debit','BANK 1 - Kredit','BANK 2 - Debit','BANK 2 - Kredit','BANK 1 - Transfer','BANK 2 - Transfer','BANK 1 - QRIS','BANK 2 - QRIS'];
 
         $has_period_stock = DB::select("
@@ -117,7 +117,7 @@ class InvoicesController extends Controller
         $id = $user->roles->first()->id;
         $this->getpermissions($id);
 
-        $payment_type = ['Cash','BCA - Debit','BCA - Kredit','Mandiri - Debit','Mandiri - Kredit','Transfer','QRIS'];
+        $payment_type = ['Cash','BANK 1 - Debit','BANK 1 - Kredit','BANK 2 - Debit','BANK 2 - Kredit','BANK 1 - Transfer','BANK 2 - Transfer','BANK 1 - QRIS','BANK 2 - QRIS'];
         $payment_type_new = ['Cash','BANK 1 - Debit','BANK 1 - Kredit','BANK 2 - Debit','BANK 2 - Kredit','BANK 1 - Transfer','BANK 2 - Transfer','BANK 1 - QRIS','BANK 2 - QRIS'];
 
 
@@ -170,7 +170,7 @@ class InvoicesController extends Controller
 
         $data = $this->data;
         $user = Auth::user();
-        $payment_type = ['Cash','BCA - Debit','BCA - Kredit','Mandiri - Debit','Mandiri - Kredit','Transfer','QRIS','----------------','BANK 1 - Debit','BANK 1 - Kredit','BANK 2 - Debit','BANK 2 - Kredit','BANK 1 - Transfer','BANK 2 - Transfer','BANK 1 - QRIS','BANK 2 - QRIS'];
+        $payment_type = ['Cash','BANK 1 - Debit','BANK 1 - Kredit','BANK 2 - Debit','BANK 2 - Kredit','BANK 1 - Transfer','BANK 2 - Transfer','BANK 1 - QRIS','BANK 2 - QRIS'];
         $payment_type_new = ['Cash','BANK 1 - Debit','BANK 1 - Kredit','BANK 2 - Debit','BANK 2 - Kredit','BANK 1 - Transfer','BANK 2 - Transfer','BANK 1 - QRIS','BANK 2 - QRIS'];
         $type_customer = ['Sendiri','Berdua','Keluarga','Rombongan'];
         $users = User::join('users_branch as ub','ub.branch_id', '=', 'users.branch_id')->where('ub.user_id','=',$user->id)->where('users.job_id','=',2)->orderBy('users.name','ASC')->get(['users.id','users.name']);
@@ -439,7 +439,7 @@ class InvoicesController extends Controller
             $room_id = $invoice->branch_room_id;
         }
         $room = Room::where('branch_room.id','=', $room_id)->get(['branch_room.remark'])->first();
-        $payment_type = ['Cash','BCA - Debit','BCA - Kredit','Mandiri - Debit','Mandiri - Kredit','Transfer','QRIS'];
+        $payment_type = ['Cash','BANK 1 - Debit','BANK 1 - Kredit','BANK 2 - Debit','BANK 2 - Kredit','BANK 1 - Transfer','BANK 2 - Transfer','BANK 1 - QRIS','BANK 2 - QRIS'];
         $payment_type_new = ['Cash','BANK 1 - Debit','BANK 1 - Kredit','BANK 2 - Debit','BANK 2 - Kredit','BANK 1 - Transfer','BANK 2 - Transfer','BANK 1 - QRIS','BANK 2 - QRIS'];
         $usersReferral = User::get(['users.id','users.name']);
         return view('pages.invoices.show',[
@@ -575,7 +575,7 @@ class InvoicesController extends Controller
 
        
         $data = $this->data;
-        $payment_type = ['Cash','BCA - Debit','BCA - Kredit','Mandiri - Debit','Mandiri - Kredit','Transfer','QRIS'];
+        $payment_type = ['Cash','BANK 1 - Debit','BANK 1 - Kredit','BANK 2 - Debit','BANK 2 - Kredit','BANK 1 - Transfer','BANK 2 - Transfer','BANK 1 - QRIS','BANK 2 - QRIS'];
         $payment_type_new = ['Cash','BANK 1 - Debit','BANK 1 - Kredit','BANK 2 - Debit','BANK 2 - Kredit','BANK 1 - Transfer','BANK 2 - Transfer','BANK 1 - QRIS','BANK 2 - QRIS'];
         $users = User::join('users_branch as ub','ub.branch_id', '=', 'users.branch_id')->where('ub.user_id','=',$user->id)->where('users.job_id','=',2)->get(['users.id','users.name']);
 
@@ -609,7 +609,7 @@ class InvoicesController extends Controller
         );
 
         $data = $this->data;
-        $payment_type = ['Cash','BCA - Debit','BCA - Kredit','Mandiri - Debit','Mandiri - Kredit','Transfer','QRIS'];
+        $payment_type = ['Cash','BANK 1 - Debit','BANK 1 - Kredit','BANK 2 - Debit','BANK 2 - Kredit','BANK 1 - Transfer','BANK 2 - Transfer','BANK 1 - QRIS','BANK 2 - QRIS'];
         $payment_type_new = ['Cash','BANK 1 - Debit','BANK 1 - Kredit','BANK 2 - Debit','BANK 2 - Kredit','BANK 1 - Transfer','BANK 2 - Transfer','BANK 1 - QRIS','BANK 2 - QRIS'];
         $users = User::join('users_branch as ub','ub.branch_id', '=', 'users.branch_id')->where('ub.user_id','=',$user->id)->where('users.job_id','=',2)->get(['users.id','users.name']);
 
@@ -686,7 +686,7 @@ class InvoicesController extends Controller
         $printer->printReceiptInvoice();
 
         $room = Room::where('branch_room.id','=',$invoice->branch_room_id)->get(['branch_room.remark'])->first();
-        $payment_type = ['Cash','BCA - Debit','BCA - Kredit','Mandiri - Debit','Mandiri - Kredit','Transfer','QRIS'];
+        $payment_type = ['Cash','BANK 1 - Debit','BANK 1 - Kredit','BANK 2 - Debit','BANK 2 - Kredit','BANK 1 - Transfer','BANK 2 - Transfer','BANK 1 - QRIS','BANK 2 - QRIS'];
         $payment_type_new = ['Cash','BANK 1 - Debit','BANK 1 - Kredit','BANK 2 - Debit','BANK 2 - Kredit','BANK 1 - Transfer','BANK 2 - Transfer','BANK 1 - QRIS','BANK 2 - QRIS'];
         $usersReferral = User::get(['users.id','users.name']);
         return view('pages.invoices.show',[
@@ -724,7 +724,7 @@ class InvoicesController extends Controller
         }
 
         $room = Room::where('branch_room.id','=',$room_id)->get(['branch_room.remark'])->first();
-        $payment_type = ['Cash','BCA - Debit','BCA - Kredit','Mandiri - Debit','Mandiri - Kredit','Transfer','QRIS','----------------','BANK 1 - Debit','BANK 1 - Kredit','BANK 2 - Debit','BANK 2 - Kredit','BANK 1 - Transfer','BANK 2 - Transfer','BANK 1 - QRIS','BANK 2 - QRIS'];
+        $payment_type = ['Cash','BANK 1 - Debit','BANK 1 - Kredit','BANK 2 - Debit','BANK 2 - Kredit','BANK 1 - Transfer','BANK 2 - Transfer','BANK 1 - QRIS','BANK 2 - QRIS'];
         $payment_type_new = ['Cash','BANK 1 - Debit','BANK 1 - Kredit','BANK 2 - Debit','BANK 2 - Kredit','BANK 1 - Transfer','BANK 2 - Transfer','BANK 1 - QRIS','BANK 2 - QRIS'];
         $usersall = User::join('users_branch as ub','ub.branch_id', '=', 'users.branch_id')->where('ub.user_id','=',$user->id)->whereIn('users.job_id',[1,2])->orderBy('users.name','ASC')->get(['users.id','users.name']);
         $users = User::join('users_branch as ub','ub.branch_id', '=', 'users.branch_id')->where('ub.user_id','=',$user->id)->where('users.job_id','=',2)->orderBy('users.name','ASC')->get(['users.id','users.name']);
