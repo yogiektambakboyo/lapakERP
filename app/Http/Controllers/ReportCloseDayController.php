@@ -1478,6 +1478,52 @@ class ReportCloseDayController extends Controller
         return $pdf->stream('report_daily.pdf');
     }
 
+    public function getdata_daily_2(Request $request) 
+    {
+        $user = Auth::user();
+        $id = $user->roles->first()->id;
+        $this->getpermissions($id);
+
+        $data = $this->data;
+        $keyword = "";
+        $act_permission = $this->act_permission[0];
+        $branchs = Branch::join('users_branch as ub','ub.branch_id', '=', 'branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']);        
+
+        $shifts = Shift::orderBy('shift.id')->get(
+            ['shift.id','shift.remark','shift.id','shift.time_start','shift.time_end']); 
+        $filter_begin_date = date(Carbon::parse($request->filter_begin_date)->format('Y-m-d'));
+        $filter_branch_id =  $request->get('filter_branch_id')==null?'%':$request->get('filter_branch_id');
+        DB::select("call call_reportcloseday('".$filter_begin_date."'::date,".$filter_branch_id.");");
+        
+        $counter_service = DB::select("
+                select product_id,product_abbr,type_id from temp_invoice ti where ti.type_id in (2,8) group by product_id,product_abbr,type_id order by 3,2;                       
+        ");
+
+        $report_data = DB::select("
+                select branch_room,right(invoice_no,6) as invoice_no,invoice_no as invoice_no_full,dated,ti.customers_id,ti.customers_name,ti.shift_name,string_agg(distinct ti.assigned_to_name,',') as assigned_to_name   from temp_invoice ti
+                where ti.dated = '".$filter_begin_date."'  and ti.branch_id = ".$filter_branch_id."
+                group by branch_room,invoice_no,dated,ti.customers_id,ti.customers_name,ti.shift_name
+                order by 2                        
+        ");
+
+        $report_data_detail = DB::select("
+                select * from temp_invoice ti
+                where ti.dated = '".$filter_begin_date."'  and ti.branch_id = ".$filter_branch_id."
+                order by invoice_no
+
+        ");
+
+        return view('pages.reports.daily_print_2', [
+            'data' => $data,
+            'report_data' => $report_data,
+            'report_data_detail' => $report_data_detail,
+            'counter_service' => $counter_service,
+            'settings' => Settings::get(),
+        ]);
+
+        
+    }
+
     public function search(Request $request) 
     {
         $user = Auth::user();

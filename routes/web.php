@@ -937,6 +937,7 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
             Route::get('/closeday', 'ReportCloseDayController@index')->name('reports.closeday.index');
             Route::get('/closeday_getdata', 'ReportCloseDayController@getdata')->name('reports.closeday.getdata');
             Route::get('/closeday_getdata_daily', 'ReportCloseDayController@getdata_daily')->name('reports.closeday.getdata_daily');
+            Route::get('/closeday_getdata_daily_2', 'ReportCloseDayController@getdata_daily_2')->name('reports.closeday.getdata_daily_2');
             Route::get('/closeday_search', 'ReportCloseDayController@search')->name('reports.closeday.search');
             Route::get('/invoice', 'ReportInvoiceController@index')->name('reports.invoice.index');
             Route::get('/invoice_search', 'ReportInvoiceController@search')->name('reports.invoice.search');
