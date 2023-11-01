@@ -1496,11 +1496,19 @@ class ReportCloseDayController extends Controller
         DB::select("call call_reportcloseday('".$filter_begin_date."'::date,".$filter_branch_id.");");
         
         $counter_service = DB::select("
-                select product_id,product_abbr,type_id from temp_invoice ti where ti.type_id in (2,8) group by product_id,product_abbr,type_id order by 3,2;                       
+                select product_id,product_abbr,type_id,sum(sub_total) as sum_val,sum(product_qty) as sum_qty from temp_invoice ti where ti.type_id=2 group by product_id,product_abbr,type_id order by 3,2;                       
+        ");
+
+        $counter_extra = DB::select("
+                select product_id,product_abbr,type_id,sum(sub_total) as sum_val,sum(product_qty) as sum_qty from temp_invoice ti where ti.type_id=8 group by product_id,product_abbr,type_id order by 3,2;                       
+        ");
+
+        $report_data_service = DB::select("
+                select * from temp_invoice ti where ti.type_id in (2,8) order by invoice_no,product_id;                       
         ");
 
         $report_data = DB::select("
-                select branch_room,right(invoice_no,6) as invoice_no,invoice_no as invoice_no_full,dated,ti.customers_id,ti.customers_name,ti.shift_name,string_agg(distinct ti.assigned_to_name,', ') as assigned_to_name,(coalesce(total_payment,0)/1000)::float total_payment,payment_type 
+                select branch_room,right(invoice_no,6) as invoice_no,invoice_no as invoice_no_full,dated,ti.customers_id,ti.customers_name,ti.shift_name,string_agg(distinct ti.assigned_to_name,', ') as assigned_to_name,string_agg(distinct ti.voucher_code,', ') as voucher_code,(coalesce(total_payment,0)/1000)::float total_payment,payment_type 
                 from temp_invoice ti
                 where ti.dated = '".$filter_begin_date."'  and ti.branch_id = ".$filter_branch_id."
                 group by branch_room,invoice_no,dated,ti.customers_id,ti.customers_name,ti.shift_name,total_payment,payment_type
@@ -1511,14 +1519,82 @@ class ReportCloseDayController extends Controller
                 select * from temp_invoice ti
                 where ti.dated = '".$filter_begin_date."'  and ti.branch_id = ".$filter_branch_id."
                 order by invoice_no,executed_at
+        ");
 
+        $report_data_product = DB::select("
+                select * from temp_invoice ti
+                where ti.type_id = 1 and ti.dated = '".$filter_begin_date."'  and ti.branch_id = ".$filter_branch_id."
+                order by invoice_no,executed_at
+        ");
+
+        $out_datas_total = DB::select("
+                select ps2.abbr,sum(pi2.qty) as qty 
+                from invoice_master im 
+                join invoice_detail id on id.invoice_no = im.invoice_no 
+                join customers c on c.id = im.customers_id 
+                join branch b on b.id=c.branch_id
+                join product_sku ps on ps.id = id.product_id 
+                join product_ingredients pi2 on pi2.product_id = ps.id 
+                join product_distribution pdd on pdd.product_id = pi2.product_id_material and pdd.active=1 and pdd.branch_id = b.id
+                join product_sku ps2 on ps2.id = pi2.product_id_material  
+                where im.dated = '".$filter_begin_date."'  and c.branch_id = ".$filter_branch_id."
+                group by ps2.abbr order by 1                  
+        ");
+        $out_datas_total_drink = DB::select("
+                select ps.abbr,sum(id.qty) as qty,(sum(coalesce(id.total,0))/1000)::numeric(10,1) as total
+                        from invoice_master im 
+                        join invoice_detail id on id.invoice_no = im.invoice_no
+                        join customers c on c.id = im.customers_id 
+                        join branch b on b.id=c.branch_id
+                        join product_sku ps on ps.id = id.product_id  and ps.category_id=26
+                        where im.dated = '".$filter_begin_date."'  and c.branch_id = ".$filter_branch_id." and im.invoice_no in (
+                            select im.invoice_no
+                            from invoice_master im 
+                            join invoice_detail id on id.invoice_no = im.invoice_no
+                            join customers c on c.id = im.customers_id 
+                            where im.dated = '".$filter_begin_date."'  and c.branch_id = ".$filter_branch_id."
+                            group by im.invoice_no having count(id.product_id)=1
+                        )
+                group by ps.remark,ps.abbr having count(im.invoice_no)=1 and sum(ps.type_id)<=1 order by 1      
+        ");
+        $out_datas_total_other = DB::select("
+                select ps.abbr,sum(id.qty) as qty,(sum(coalesce(id.total,0))/1000)::int as total
+                from invoice_master im 
+                join invoice_detail id on id.invoice_no = im.invoice_no
+                join customers c on c.id = im.customers_id 
+                join branch b on b.id=c.branch_id
+                join product_sku ps on ps.id = id.product_id  and ps.category_id<>26
+                where im.dated = '".$filter_begin_date."'  and c.branch_id = ".$filter_branch_id." and im.invoice_no in (
+                    select im.invoice_no
+                    from invoice_master im 
+                    join invoice_detail id on id.invoice_no = im.invoice_no
+                    join customers c on c.id = im.customers_id 
+                    where im.dated = '".$filter_begin_date."'  and c.branch_id = ".$filter_branch_id."
+                    group by im.invoice_no having count(id.product_id)=1
+                )
+                group by ps.remark,ps.abbr having count(im.invoice_no)=1 and sum(ps.type_id)<=1 order by 1                            
+        ");
+
+        $petty_datas = DB::select("
+            select ps.abbr,pc.type,sum(pcd.qty) as qty,sum(pcd.line_total) as total  from petty_cash pc 
+            join petty_cash_detail pcd on pcd.doc_no = pc.doc_no
+            join product_sku ps on ps.id = pcd.product_id 
+            where pc.dated  = '".$filter_begin_date."'  and pc.branch_id = ".$filter_branch_id."  
+            group by ps.abbr,pc.type order by 1                   
         ");
 
         return view('pages.reports.daily_print_2', [
             'data' => $data,
             'report_data' => $report_data,
             'report_data_detail' => $report_data_detail,
+            'report_data_product' => $report_data_product,
+            'report_data_service' => $report_data_service,
             'counter_service' => $counter_service,
+            'counter_extra' => $counter_extra,
+            'out_datas_total' => $out_datas_total,
+            'out_datas_total_drink' => $out_datas_total_drink,
+            'out_datas_total_other' => $out_datas_total_other,
+            'petty_datas' => $petty_datas,
             'settings' => Settings::get(),
         ]);
 
