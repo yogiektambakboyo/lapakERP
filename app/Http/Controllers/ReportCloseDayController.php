@@ -1500,16 +1500,17 @@ class ReportCloseDayController extends Controller
         ");
 
         $report_data = DB::select("
-                select branch_room,right(invoice_no,6) as invoice_no,invoice_no as invoice_no_full,dated,ti.customers_id,ti.customers_name,ti.shift_name,string_agg(distinct ti.assigned_to_name,',') as assigned_to_name   from temp_invoice ti
+                select branch_room,right(invoice_no,6) as invoice_no,invoice_no as invoice_no_full,dated,ti.customers_id,ti.customers_name,ti.shift_name,string_agg(distinct ti.assigned_to_name,', ') as assigned_to_name,(coalesce(total_payment,0)/1000)::float total_payment,payment_type 
+                from temp_invoice ti
                 where ti.dated = '".$filter_begin_date."'  and ti.branch_id = ".$filter_branch_id."
-                group by branch_room,invoice_no,dated,ti.customers_id,ti.customers_name,ti.shift_name
+                group by branch_room,invoice_no,dated,ti.customers_id,ti.customers_name,ti.shift_name,total_payment,payment_type
                 order by 2                        
         ");
 
         $report_data_detail = DB::select("
                 select * from temp_invoice ti
                 where ti.dated = '".$filter_begin_date."'  and ti.branch_id = ".$filter_branch_id."
-                order by invoice_no
+                order by invoice_no,executed_at
 
         ");
 

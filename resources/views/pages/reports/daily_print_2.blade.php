@@ -38,9 +38,9 @@
       <thead>
       <tr style="background-color:#FFA726;color:white;">
         <th scope="col" width="2%">No</th>
-        <th scope="col" width="6%" >Ruangan</th>
-        <th width="7%" >Nama Tamu</th>
-        <th scope="col" width="6%">Jam Kerja</th>
+        <th scope="col" width="4%" >Ruangan</th>
+        <th width="4%" >Nama Tamu</th>
+        <th scope="col" width="4%">Jam Kerja</th>
         <th width="5%" >MU</th>
         <th scope="col" width="4%">Bayar</th>
         <th scope="col" width="7%">Produk</th>
@@ -75,6 +75,7 @@
               @endforeach
             </td>
             <td style="text-align: left;">{{ $detail->assigned_to_name }}</td>
+            <td>{{ $detail->payment_type }} <br> {{ number_format($detail->total_payment,1,',','.') }}</td>
           </tr>
           <?php 
           $counter++;
