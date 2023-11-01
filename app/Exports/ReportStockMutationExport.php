@@ -40,7 +40,7 @@ class ReportStockMutationExport implements FromCollection,WithColumnFormatting, 
             'Stok Awal',
             'Stok Akhir',
             'Jumlah Masuk',
-            'Jumlah Akhir',
+            'Jumlah Keluar',
             'Diedit pada',
         ];
     }
