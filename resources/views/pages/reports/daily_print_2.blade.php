@@ -11,8 +11,19 @@
         p    {color: red;}
         #header_inv { column-count: 2}
         table, th, td {
-          padding: 2px;
+          padding: 5px;
           font-size: 12px;
+          border: 1px solid #ddd;
+          border-collapse: collapse;
+        }
+        th>.truncate, td>.truncate{
+          width: auto;
+          min-width: 0;
+          max-width: 200px;
+          display: inline-block;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
         }
         td, th {
             border: .01px solid black;
@@ -39,8 +50,8 @@
     <?php
      //43% - 57%
       $width_table = 100;
-      if(count($counter_service)>10){
-        $width_table = 100 + ((count($counter_service)-10)*11);
+      if(count($counter_service)>14){
+        $width_table = 100 + ((count($counter_service)-14)*5);
       }
     ?>
 
@@ -58,29 +69,31 @@
       </tbody>
     </table>
 
+    <br>
+
     <table class="table table-striped" id="service_table" width="<?= $width_table; ?>%">
       <thead>
       <tr style="background-color:#FFA726;color:white;">
-        <th scope="col" width="2%">No</th>
-        <th scope="col" width="4%" >Ruangan</th>
-        <th width="4%" >Nama Tamu</th>
-        <th scope="col" width="4%">Jam Kerja</th>
-        <th width="4%" >MU</th>
+        <th scope="col"><div class="truncate">No</div></th>
+        <th scope="col"><div class="truncate">Ruangan</div></th>
+        <th><div class="truncate">Nama</div></th>
+        <th scope="col"><div class="truncate">Jam Kerja</div></th>
+        <th><div class="truncate">MU</div></th>
         @foreach($counter_service as $serv)
-              <th  scope="col"  width="3%">
-              {{  $serv->product_abbr }}
+              <th  scope="col">
+                <div class="">{{  $serv->product_abbr }}</div>
               </th>
         @endforeach
         @foreach($counter_extra as $serv)
-              <th  scope="col"  width="3%">
-              {{  $serv->product_abbr }}
+              <th  scope="col">
+                <div class="truncate">{{  $serv->product_abbr }}</div>
               </th>
         @endforeach
-        <th scope="col" width="3%">Bayar</th>
-        <th scope="col" width="5%">Produk</th>
-        <th scope="col" width="3%">Rp.</th>
-        <th scope="col" width="5%">Minuman</th>
-        <th width="15%">Keterangan</th>
+        <th scope="col"><div class="truncate">Bayar </div></th>
+        <th scope="col"><div class="truncate">Produk</div></th>
+        <th scope="col"><div class="truncate">Rp.</div></th>
+        <th scope="col"><div class="truncate">Minuman</div></th>
+        <th><div class="truncate">Keterangan</div></th>
       </tr>
       </thead>
       <tbody>
@@ -99,10 +112,10 @@
           ?>
         @foreach($report_data as $detail)
         <tr>
-            <td style="text-align: left;">{{ $counter+1 }}</td>
-            <td style="text-align: left;@php if($detail->shift_name =='SHIFT 1 PAGI') {  echo 'background-color:#fea8ff;'; } @endphp">{{ $detail->branch_room }}<br>{{ $detail->invoice_no }}</td>
+            <td style="text-align: left;"  width="50px">{{ $counter+1 }}</td>
+            <td style="text-align: left;@php if($detail->shift_name =='SHIFT 1 PAGI') {  echo 'background-color:#fea8ff;'; } @endphp"><div class="truncate">{{ $detail->branch_room }}<br>{{ $detail->invoice_no }}</div></td>
             <td style="text-align: left;">{{ $detail->customers_name }}</td>
-            <td style="text-align: left;">
+            <td style="text-align: left;"  width="30px">
               @php
                   $c = 1;
                   $sumconversion = 0;
@@ -111,28 +124,42 @@
               <?php
 
               ?>
+              <div class="truncate">
               @foreach($report_data_detail as $dio)
                   @if($dio->type_id==2 && $dio->executed_at!='' && $dio->invoice_no==$detail->invoice_no_full)
-                      {{ \Carbon\Carbon::parse($dio->executed_at)->format('H:i') }} - {{ \Carbon\Carbon::parse($dio->executed_at)->add($dio->product_conversion.' minutes')->format('H:i') }} <br>
+                  {{ \Carbon\Carbon::parse($dio->executed_at)->format('H:i') }} - {{ \Carbon\Carbon::parse($dio->executed_at)->add($dio->product_conversion.' minutes')->format('H:i') }}<br>
                   @endif
               @endforeach
+            </div>
             </td>
-            <td style="text-align: left;">{{ $detail->assigned_to_name }}</td>
+            <td style="text-align: left;"><div class="truncate">{{ $detail->assigned_to_name }}</div></td>
 
-            <?php $nominal_service = 0; ?>
+            <?php 
+              $nominal_service = 0; 
+              $nominal_discount = 0; 
+            ?>
             @foreach($counter_service as $serv)
             <?php $nominal_service = 0; ?>
+            <?php $nominal_discount = 0; ?>
               @foreach($report_data_service as $dio)
                   @if($dio->invoice_no==$detail->invoice_no_full && $dio->type_id==2 && $dio->product_id==$serv->product_id)
                       <?php
                         $nominal_service = $nominal_service + $dio->sub_total;
+                        $nominal_discount = $nominal_discount + $dio->discount;
                         $total_service_rp = $total_service_rp + $dio->sub_total;
                         $total_service_qty = $total_service_qty + $dio->product_qty;
                       ?>
                   @endif
               @endforeach
                 <td style="text-align: left;">
-                  {{  number_format(($nominal_service/1000),0,',','.') }}
+                  <?php
+                    if($nominal_service==0 && $nominal_discount>100){
+                       echo "Free";
+                    }else{
+                      echo number_format(($nominal_service/1000),0,',','.');
+                    }
+                  ?>
+                  
                 </td>
             @endforeach
 
@@ -179,6 +206,7 @@
               <?php $total_payment = $total_payment + $detail->total_payment;  ?>
             </td>
             <td style="text-align: left;">
+              <div class="truncate">
               @foreach($report_data_product as $dio)
                   @if($dio->type_id==1 && $dio->category_id<>26 && $dio->invoice_no==$detail->invoice_no_full)
                       {{ $dio->product_abbr }} / {{ $dio->product_qty }}
@@ -188,10 +216,12 @@
                       ?>
                   @endif
               @endforeach
+              </div>
             </td>
             <td style="text-align: left;">
+              <div class="truncate">
               @foreach($report_data_product as $dio)
-                  @if($dio->type_id==1 && $dio->category_id==26 && $dio->invoice_no==$detail->invoice_no_full)
+                  @if($dio->type_id==1 && $dio->category_id<>26 && $dio->invoice_no==$detail->invoice_no_full)
                       {{ number_format(($dio->sub_total/1000),1,',','.') }}
                       <?php
                           $total_drink_rp = $total_drink_rp + $dio->sub_total;
@@ -199,15 +229,18 @@
                       ?>
                   @endif
               @endforeach
+              </div>
             </td>
             <td style="text-align: left;">
+              <div class="truncate">
               @foreach($report_data_product as $dio)
                   @if($dio->type_id==1 && $dio->category_id==26 && $dio->invoice_no==$detail->invoice_no_full)
                   {{ $dio->product_abbr }} / {{ $dio->product_qty }} / {{ number_format(($dio->sub_total/1000),1,',','.') }} <br>
                   @endif
               @endforeach
+              </div>
             </td>
-            <td style="text-align: left;">{{ $detail->voucher_code }}</td>
+            <td style="text-align: left;"><div class="truncate">{{ $detail->voucher_code }}</div></td>
           </tr>
           <?php 
           $counter++;
@@ -217,21 +250,21 @@
           <tr>
             <th scope="col" width="2%" colspan="5">SUB TOTAL</th>
             @foreach($counter_service as $serv)
-                  <th  scope="col"  width="3%">
+                  <th  scope="col">
                   {{   number_format(($serv->sum_val/1000),0,',','.') }} / {{   number_format(($serv->sum_qty),0,',','.') }}
                   </th>
             @endforeach
             @foreach($counter_extra as $serv)
-                  <th  scope="col"  width="3%">
+                  <th  scope="col" >
                     {{   number_format(($serv->sum_val/1000),0,',','.') }} / {{   number_format(($serv->sum_qty),0,',','.') }}
                   </th>
             @endforeach
-            <th scope="col" width="3%">{{  number_format(($total_payment),1,',','.') }}</th>
-            <th scope="col" width="5%">{{  number_format(($total_product_qty),0,',','.') }}</th>
-            <th scope="col" width="3%">{{  number_format(($total_product_rp/1000),0,',','.') }}</th>
-            <th scope="col" width="5%">{{  number_format(($total_drink_rp/1000),1,',','.') }} / {{  number_format(($total_drink_qty),0,',','.') }}</th>
-            <th width="15%"  style="text-align: left;">
-
+            <th scope="col">{{  number_format(($total_payment),1,',','.') }}</th>
+            <th scope="col">{{  number_format(($total_product_qty),0,',','.') }}</th>
+            <th scope="col">{{  number_format(($total_product_rp/1000),0,',','.') }}</th>
+            <th scope="col">{{  number_format(($total_drink_rp/1000),1,',','.') }} / {{  number_format(($total_drink_qty),0,',','.') }}</th>
+            <th  style="text-align: left;">
+              <div class="truncate">
               @foreach($out_datas_total_drink as $out_datas_total_drink) 
                   @php
                       echo $out_datas_total_drink->abbr."/".$out_datas_total_drink->qty."/".number_format($out_datas_total_drink->total,1,',','.')."<br>";
@@ -262,29 +295,29 @@
                     {{ $petty_data->abbr }} / ({{ $petty_data->qty }})  @php echo "<br>"; @endphp                      
                   @endif    
               @endforeach
-              
+              </div>
             </th>
           </tr>
 
           <tr style="background-color:#FFA726;color:white;">
-            <th scope="col" width="2%" colspan="5">JUMLAH</th>
-            <th  scope="col"  width="3%" colspan="<?= count($counter_service) ?>">
+            <th scope="col" colspan="5">JUMLAH</th>
+            <th  scope="col" colspan="<?= count($counter_service) ?>">
               {{  number_format(($total_service_rp/1000),0,',','.') }} / {{  number_format(($total_service_qty),0,',','.') }}
             </th>
-            <th  scope="col"  width="3%" colspan="<?= count($counter_extra) ?>">
+            <th  scope="col" colspan="<?= count($counter_extra) ?>">
               {{  number_format(($total_extra_rp/1000),0,',','.') }} / {{  number_format(($total_extra_qty),0,',','.') }}
             </th>
-            <th scope="col" width="3%">{{  number_format(($total_payment),1,',','.') }}</th>
-            <th scope="col" width="5%" colspan="2">{{  number_format(($total_product_rp/1000),0,',','.') }} / {{  number_format(($total_product_qty),0,',','.') }}</th>
-            <th scope="col" width="5%">{{  number_format(($total_drink_rp/1000),1,',','.') }} / {{  number_format(($total_drink_qty),0,',','.') }}</th>
-            <th width="15%">
+            <th scope="col">{{  number_format(($total_payment),1,',','.') }}</th>
+            <th scope="col" colspan="2">{{  number_format(($total_product_rp/1000),0,',','.') }} / {{  number_format(($total_product_qty),0,',','.') }}</th>
+            <th scope="col">{{  number_format(($total_drink_rp/1000),1,',','.') }} / {{  number_format(($total_drink_qty),0,',','.') }}</th>
+            <th>
               
 
             </th>
           </tr>
 
       </tbody>
-    </table>
+    </table><br>
 
     <table width="<?= $width_table; ?>%">
       <tbody>
