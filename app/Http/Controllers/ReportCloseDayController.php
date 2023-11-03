@@ -1496,15 +1496,15 @@ class ReportCloseDayController extends Controller
         DB::select("call call_reportcloseday('".$filter_begin_date."'::date,".$filter_branch_id.");");
         
         $counter_service = DB::select("
-                select product_id,product_abbr,type_id,sum(sub_total) as sum_val,sum(product_qty) as sum_qty from temp_invoice ti where ti.type_id=2 group by product_id,product_abbr,type_id order by 3,2;                       
+                select product_id,product_abbr,type_id,sum(sub_total) as sum_val,sum(product_qty) as sum_qty from temp_invoice ti where branch_id=".$filter_branch_id." and ti.type_id=2 group by product_id,product_abbr,type_id order by 3,2;                       
         ");
 
         $counter_extra = DB::select("
-                select product_id,product_abbr,type_id,sum(sub_total) as sum_val,sum(product_qty) as sum_qty from temp_invoice ti where ti.type_id=8 group by product_id,product_abbr,type_id order by 3,2;                       
+                select product_id,product_abbr,type_id,sum(sub_total) as sum_val,sum(product_qty) as sum_qty from temp_invoice ti where branch_id=".$filter_branch_id." and  ti.type_id=8 group by product_id,product_abbr,type_id order by 3,2;                       
         ");
 
         $report_data_service = DB::select("
-                select * from temp_invoice ti where ti.type_id in (2,8) order by invoice_no,product_id;                       
+                select * from temp_invoice ti where ti.type_id in (2,8) and  branch_id=".$filter_branch_id." order by invoice_no,product_id;                       
         ");
 
         $report_data = DB::select("

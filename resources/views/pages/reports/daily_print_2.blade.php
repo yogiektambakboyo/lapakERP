@@ -176,7 +176,7 @@
                   @endif
               @endforeach
                 <td style="text-align: left;">
-                  {{  number_format(($nominal_service/1000),0,',','.') }}
+                  {{  number_format(($nominal_extra/1000),0,',','.') }}
                 </td>
             @endforeach
 
