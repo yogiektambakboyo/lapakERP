@@ -211,7 +211,7 @@
               <div class="truncate">
               @foreach($report_data_product as $dio)
                   @if($dio->type_id==1 && $dio->category_id<>26 && $dio->invoice_no==$detail->invoice_no_full)
-                      {{ $dio->product_abbr }} / {{ $dio->product_qty }}
+                      {{ $dio->product_abbr }} / {{ $dio->product_qty }} <br>
                       <?php
                           $total_product_rp = $total_product_rp + $dio->sub_total;
                           $total_product_qty = $total_product_qty + $dio->product_qty;
@@ -223,8 +223,8 @@
             <td style="text-align: left;">
               <div class="truncate">
               @foreach($report_data_product as $dio)
-                  @if($dio->type_id==1 && $dio->category_id==26 && $dio->invoice_no==$detail->invoice_no_full)
-                      {{ number_format(($dio->sub_total/1000),1,',','.') }}
+                  @if($dio->type_id==1 && $dio->category_id<>26 && $dio->invoice_no==$detail->invoice_no_full)
+                      {{ number_format(($dio->sub_total/1000),1,',','.') }}  <br>
                       <?php
                           $total_drink_rp = $total_drink_rp + $dio->sub_total;
                           $total_drink_qty = $total_drink_qty + $dio->product_qty;
@@ -263,7 +263,7 @@
             @endforeach
             <th scope="col">{{  number_format(($total_payment),1,',','.') }}</th>
             <th scope="col">{{  number_format(($total_product_qty),0,',','.') }}</th>
-            <th scope="col">{{  number_format(($total_product_rp/1000),0,',','.') }}</th>
+            <th scope="col">{{  number_format(($total_product_rp/1000),1,',','.') }}</th>
             <th scope="col">{{  number_format(($total_drink_rp/1000),1,',','.') }} / {{  number_format(($total_drink_qty),0,',','.') }}</th>
             <th  style="text-align: left;">
               <div class="truncate">
@@ -310,7 +310,7 @@
               {{  number_format(($total_extra_rp/1000),0,',','.') }} / {{  number_format(($total_extra_qty),0,',','.') }}
             </th>
             <th scope="col">{{  number_format(($total_payment),1,',','.') }}</th>
-            <th scope="col" colspan="2">{{  number_format(($total_product_rp/1000),0,',','.') }} / {{  number_format(($total_product_qty),0,',','.') }}</th>
+            <th scope="col" colspan="2">{{  number_format(($total_product_rp/1000),1,',','.') }} / {{  number_format(($total_product_qty),0,',','.') }}</th>
             <th scope="col">{{  number_format(($total_drink_rp/1000),1,',','.') }} / {{  number_format(($total_drink_qty),0,',','.') }}</th>
             <th>
               
@@ -339,7 +339,7 @@
  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>   
  <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.3.0/exceljs.min.js"></script>
  <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/1.3.8/FileSaver.min.js"></script>
- <script src="https://cdn.jsdelivr.net/npm/accounting-js@1.1.1/dist/accounting.umd.min.js"></script>
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/accounting.js/0.4.1/accounting.min.js" integrity="sha512-LW+1GKW2tt4kK180qby6ADJE0txk5/92P70Oh5YbtD7heFlC0qFFtacvSnHG4bNXmLnZq5hNb2V70r5DzS/U+g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
    
 <script type="text/javascript">
    //window.print();
@@ -622,7 +622,7 @@
                               payment = 'B2 QRIS';
                             }
 
-                            worksheet.getCell(str_prefix+charCounters+counter).value = payment + ' \n '+ rowElement.total_payment;
+                            worksheet.getCell(str_prefix+charCounters+counter).value = payment + ' \n '+ accounting.formatNumber(parseFloat(rowElement.total_payment/1000), 1, ".", ",");
                             worksheet.getCell(str_prefix+charCounters+counter).alignment = { wrapText: true, vertical: 'top', horizontal: 'left' };
 
                             var nominal_product = 0;
@@ -651,7 +651,7 @@
                                 nominal_drink = nominal_drink + parseFloat(element.sub_total);
                                 total_drink_rp = total_drink_rp + parseFloat(element.sub_total);
                                 total_drink_qty = total_drink_qty + parseFloat(element.product_qty);
-                                str_drink = str_drink + element.product_abbr + '/' + element.product_qty+ '/' + element.sub_total + ' \n ';
+                                str_drink = str_drink + element.product_abbr + '/' + element.product_qty+ '/' + accounting.formatNumber(parseFloat(element.sub_total/1000), 1, ".", ",") + ' \n ';
                               }
                             }
 
@@ -660,7 +660,7 @@
                             worksheet.getCell(str_prefix+charCounters+counter).alignment = { wrapText: true, vertical: 'top', horizontal: 'left' };
 
                             charCounters = String.fromCharCode(charCounters.charCodeAt(0) + 1);
-                            worksheet.getCell(str_prefix+charCounters+counter).value = str_product_rp;
+                            worksheet.getCell(str_prefix+charCounters+counter).value = accounting.formatNumber(parseFloat(str_product_rp/1000), 1, ".", ",");
                             worksheet.getCell(str_prefix+charCounters+counter).alignment = { wrapText: true, vertical: 'top', horizontal: 'left' };
 
                             charCounters = String.fromCharCode(charCounters.charCodeAt(0) + 1);
@@ -700,15 +700,28 @@
                               right: { style: "thin" }
                             };
 
-                            worksheet.eachRow({ includeEmpty: true }, function(row, rowNumber) {
-                              row.eachCell({ includeEmpty: true }, function(cell, colNumber) {
-                                cell.border = borderStyles;
-                              });
-                            });
-
+                           
                             counterx++;
                          
                         }
+
+                        worksheet.getRow((report_data.length+4)).font = { bold: true };
+                        worksheet.mergeCells('A'+(report_data.length+4), 'E'+(report_data.length+4));
+                        worksheet.getCell('A'+(report_data.length+4)).value = 'SUB TOTAL ';
+                        worksheet.getCell('A'+(report_data.length+4)).alignment = { vertical: 'middle', horizontal: 'center' };
+
+                        worksheet.getRow((report_data.length+5)).font = { bold: true };
+                        worksheet.mergeCells('A'+(report_data.length+5), 'E'+(report_data.length+5));
+                        worksheet.getCell('A'+(report_data.length+5)).value = 'JUMLAH ';
+                        worksheet.getCell('A'+(report_data.length+5)).alignment = { vertical: 'middle', horizontal: 'center' };
+                        worksheet.getCell('A'+(report_data.length+5)).fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+
+                        worksheet.eachRow({ includeEmpty: true }, function(row, rowNumber) {
+                          row.eachCell({ includeEmpty: true }, function(cell, colNumber) {
+                            cell.border = borderStyles;
+                          });
+                        });
+
 
                     // Loop Terapist
 
