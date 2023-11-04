@@ -45,7 +45,9 @@
    </head> 
    <body> 
 
-    
+    <button id="btn_export_xls" class="btn print printPageButton">Cetak XLS</button>
+    <br>
+    <br>
 
     <?php
      //43% - 57%
@@ -221,7 +223,7 @@
             <td style="text-align: left;">
               <div class="truncate">
               @foreach($report_data_product as $dio)
-                  @if($dio->type_id==1 && $dio->category_id<>26 && $dio->invoice_no==$detail->invoice_no_full)
+                  @if($dio->type_id==1 && $dio->category_id==26 && $dio->invoice_no==$detail->invoice_no_full)
                       {{ number_format(($dio->sub_total/1000),1,',','.') }}
                       <?php
                           $total_drink_rp = $total_drink_rp + $dio->sub_total;
@@ -330,4 +332,405 @@
     </table>
 
    </body> 
+
+  <!-- use version 0.19.3 -->
+ <script src="https://code.jquery.com/jquery-3.6.4.min.js" integrity="sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8=" crossorigin="anonymous"></script>
+ <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>   
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>   
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.3.0/exceljs.min.js"></script>
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/1.3.8/FileSaver.min.js"></script>
+ <script src="https://cdn.jsdelivr.net/npm/accounting-js@1.1.1/dist/accounting.umd.min.js"></script>
+   
+<script type="text/javascript">
+   //window.print();
+   const workbook = new ExcelJS.Workbook();
+    workbook.creator = 'Kakiku System Apps';
+    workbook.created = new Date();
+
+    let report_data_detail_t = [];
+    let report_data_com_from1 = [];
+    let report_data_terapist = [];
+
+    $(document).ready(function() {
+      var url = "{{ route('reports.closeday.search') }}";
+      const params = {
+        filter_begin_date_in : "{{ $filter_begin_date }}",
+        filter_end_date_in : "{{ $filter_begin_date }}",
+        filter_branch_id_in: "{{ $filter_branch_id }}",
+        export : 'Export API',
+      };
+
+      $('#btn_export_xls').on('click',function(){
+        const res = axios.get(url,{ params }, {
+                    headers: {}
+                  }).then(resp => {
+                    filter_begin_date = resp.data.filter_begin_date;
+                    filter_branch_id = resp.data.filter_branch_id;
+
+                    report_data = resp.data.report_data;
+                    report_data_detail = resp.data.report_data_detail;
+                    report_data_product = resp.data.report_data_product;
+                    report_data_service = resp.data.report_data_service;
+                    counter_service = resp.data.counter_service;
+                    counter_extra = resp.data.counter_extra;
+                    out_datas_total = resp.data.out_datas_total;
+                    out_datas_total_drink = resp.data.out_datas_total_drink;
+                    out_datas_total_other = resp.data.out_datas_total_other;
+                    petty_datas = resp.data.petty_datas;
+                    settings = resp.data.settings;
+
+                    var beginnewformat = resp.data.beginnewformat;
+                    var endnewformat = resp.data.endnewformat;
+
+                    let data_filtered = [];
+
+                    data_filtered = [];
+
+                        let worksheet = workbook.addWorksheet("Laporan Harian");
+
+                        /*Column headers*/
+                        worksheet.getRow(3).values = [
+                          'No', 
+                          'Ruangan', 
+                          'Nama',
+                          'Jam Kerja',
+                          'MU',
+                        ];
+                        var charCounter = "F";
+
+                        for (let index = 0; index < counter_service.length; index++) {
+                          const element = counter_service[index];
+                          if(element.type_id==2){
+                            if(index>20){
+                              charCounter = "A";
+                              worksheet.getCell("A"+charCounter+"3").value = element.product_abbr;
+                              worksheet.getCell("A"+charCounter+"3").fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                            }else{
+                              worksheet.getCell(charCounter+"3").value = element.product_abbr;
+                              worksheet.getCell(charCounter+"3").fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                            }
+                        
+                            charCounter = String.fromCharCode(charCounter.charCodeAt(0) + 1);
+                          }
+                        }
+
+                        for (let index = 0; index < counter_extra.length; index++) {
+                          const element = counter_extra[index];
+                          if(element.type_id==8){
+                            if(index+(counter_service.length)>46){
+                              worksheet.getCell("B"+charCounter+"3").value = element.product_abbr;
+                              worksheet.getCell("B"+charCounter+"3").fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                            }else if(index+(counter_service.length)>20){
+                              worksheet.getCell("A"+charCounter+"3").value = element.product_abbr;
+                              worksheet.getCell("A"+charCounter+"3").fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                            }else{
+                              worksheet.getCell(charCounter+"3").value = element.product_abbr;
+                              worksheet.getCell(charCounter+"3").fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                            }
+                        
+                            charCounter = String.fromCharCode(charCounter.charCodeAt(0) + 1);
+                          }
+                        }
+
+                        var len_after = (counter_service.length)+(counter_extra.length)+5;
+                        var str_prefix = "";
+
+                        if(len_after>52){
+                          str_prefix = "B";
+                        }else if(len_after>26){
+                          str_prefix = "A";
+                        }
+                        worksheet.getCell(str_prefix+charCounter+"3").value = "Bayar";
+                        worksheet.getCell(str_prefix+charCounter+"3").fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+
+                        charCounter = String.fromCharCode(charCounter.charCodeAt(0) + 1);
+                        worksheet.getCell(str_prefix+charCounter+"3").value = "Produk";
+                        worksheet.getCell(str_prefix+charCounter+"3").fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+
+                        charCounter = String.fromCharCode(charCounter.charCodeAt(0) + 1);
+                        worksheet.getCell(str_prefix+charCounter+"3").value = "Rp.";
+                        worksheet.getCell(str_prefix+charCounter+"3").fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+
+                        charCounter = String.fromCharCode(charCounter.charCodeAt(0) + 1);
+                        worksheet.getCell(str_prefix+charCounter+"3").value = "Minuman";
+                        worksheet.getCell(str_prefix+charCounter+"3").fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+
+                        charCounter = String.fromCharCode(charCounter.charCodeAt(0) + 1);
+                        worksheet.getCell(str_prefix+charCounter+"3").value = "Keterangan";
+                        worksheet.getCell(str_prefix+charCounter+"3").fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+
+
+                        worksheet.mergeCells('A1', 'E1');
+                        worksheet.getCell('A1').value = 'Cabang : '+report_data_detail[0].branch_name;
+                        worksheet.getCell('A1').alignment = { vertical: 'middle', horizontal: 'center' };
+
+                        worksheet.mergeCells('F1', 'J1');
+                        worksheet.getCell('F1').value = 'Tgl : '+beginnewformat;
+                        worksheet.getCell('F1').alignment = { vertical: 'middle', horizontal: 'center' };
+
+
+                        worksheet.columns = [
+                          { key: 'no', width: 12 },
+                          { key: 'branch_room', width: 15 },
+                          { key: 'customers_name', width: 18 },
+                          { key: 'work_time', width: 15 },
+                          { key: 'assigned_to_name', width: 10 },
+                        ];
+
+
+
+                        worksheet.getRow(1).font = { bold: true };
+                        worksheet.getRow(2).font = { bold: true };
+                        worksheet.getRow(3).font = { bold: true };
+                        worksheet.getCell('A1').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                        worksheet.getCell('B1').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                        worksheet.getCell('C1').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                        worksheet.getCell('D1').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                        worksheet.getCell('E1').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                        worksheet.getCell('F1').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                        worksheet.getCell('G1').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                        worksheet.getCell('H1').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                        worksheet.getCell('I1').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                        worksheet.getCell('J1').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+
+
+                        worksheet.getCell('A3').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                        worksheet.getCell('B3').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                        worksheet.getCell('C3').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                        worksheet.getCell('D3').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                        worksheet.getCell('E3').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                        worksheet.getCell('F3').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                        worksheet.getCell('G3').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                        worksheet.getCell('H3').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                        worksheet.getCell('I3').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                        worksheet.getCell('J3').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+
+
+                        let counter = 4;
+                        let counterx = 1;
+                        let charCounters = "F";
+                        let total_product_rp = 0;
+                        let total_product_qty = 0;
+                        let total_service_rp = 0;
+                        let total_service_qty = 0;
+                        let total_extra_rp = 0;
+                        let total_extra_qty = 0;
+                        let total_drink_rp = 0;
+                        let total_drink_qty = 0;
+                        for (let index = 0; index < report_data.length; index++) {
+                          const rowElement = report_data[index];
+                            let value_sd = 0;
+                            let executed_at = "";
+                            charCounters = "F";
+
+                            for (let index = 0; index < report_data_detail.length; index++) {
+                              const element = report_data_detail[index];
+                              if(element.type_id==2 && element.executed_at != '' && element.invoice_no==rowElement.invoice_no_full){
+                                executed_at = executed_at + ' \n ' + moment(element.executed_at, "HH:mm").format("HH:mm") + ' - ' + moment(element.executed_at, "HH:mm").add(element.product_conversion, 'minutes').format("HH:mm");
+                              }
+                            }
+
+                            if(rowElement.shift_name=='SHIFT 1 PAGI' && counter>3){
+                              worksheet.getCell('B'+counter).fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'fea8ff'}};
+                            }
+
+                            worksheet.getCell('A'+counter).value = counterx;
+                            worksheet.getCell('B'+counter).value = rowElement.branch_room + '\n' + rowElement.invoice_no;
+                            worksheet.getCell('C'+counter).value = rowElement.customers_name;
+                            worksheet.getCell('D'+counter).value = executed_at;
+                            worksheet.getCell('E'+counter).value = rowElement.assigned_to_name;
+
+
+                            for (let index = 0; index < counter_service.length; index++) {
+                              const element = counter_service[index];
+                              var nominal_service = 0;
+                              var nominal_discount = 0;
+                              //charCounters = "F";
+
+                              for (let index_x = 0; index_x < report_data_service.length; index_x++) {
+                                const d_element = report_data_service[index_x];
+
+                                if(d_element.type_id==2 && element.product_id==d_element.product_id && d_element.invoice_no==rowElement.invoice_no_full){
+                                  nominal_service = nominal_service + parseFloat(d_element.sub_total);
+                                }
+                              }
+
+                              if(index>20){
+                                charCounters = "A";
+                                worksheet.getCell("A"+charCounters+counter).value = accounting.toFixed(parseFloat(nominal_service/1000), 0);
+                              }else{
+                                worksheet.getCell(charCounters+counter).value = accounting.toFixed(parseFloat(nominal_service/1000), 0);
+                              }
+                          
+                              charCounters = String.fromCharCode(charCounters.charCodeAt(0) + 1);
+                            }
+
+
+
+                            for (let index = 0; index < counter_extra.length; index++) {
+                              const element = counter_extra[index];
+                              var nominal_extra = 0;
+                              var nominal_discount = 0;
+                              //charCounters = "F";
+
+                              for (let index_x = 0; index_x < report_data_service.length; index_x++) {
+                                const d_element = report_data_service[index_x];
+
+                                if(d_element.type_id==8 && element.product_id==d_element.product_id && d_element.invoice_no==rowElement.invoice_no_full){
+                                  nominal_extra = nominal_extra + parseFloat(d_element.sub_total);
+                                }
+                              }
+
+
+                              if((index+parseInt(counter_service.length))>46){
+                                charCounters = "A";
+                                worksheet.getCell("B"+charCounters+counter).value = accounting.toFixed(parseFloat(nominal_extra/1000), 0);
+                              }else if((index+parseInt(counter_service.length))>20){
+                                worksheet.getCell("A"+charCounters+counter).value = accounting.toFixed(parseFloat(nominal_extra/1000), 0);
+                              }else{
+                                worksheet.getCell(charCounters+counter).value = accounting.toFixed(parseFloat(nominal_extra/1000), 0);
+                              }
+                          
+                              charCounters = String.fromCharCode(charCounters.charCodeAt(0) + 1);
+                            }
+
+                            var len_after = (counter_service.length)+(counter_extra.length)+5;
+                            var str_prefix = "";
+
+                            if(len_after>52){
+                              str_prefix = "B";
+                            }else if(len_after>26){
+                              str_prefix = "A";
+                            }
+
+                            var payment = rowElement.payment_type;
+                            if(payment == 'BANK 1 - Debit' || payment == 'BCA - Debit'){
+                              payment = 'B1 D';
+                            }else if(payment == 'BANK 1 - Kredit' || payment == 'BCA - Kredit'){
+                              payment = 'B1 C';
+                            }else if(payment == 'BANK 2 - Debit' || payment == 'Mandiri - Debit'){
+                              payment = 'B2 D';
+                            }else if(payment == 'BANK 2 - Kredit' || payment == 'Mandiri - Kredit'){
+                              payment = 'B2 C';
+                            }else if(payment == 'BANK 1 - Transfer' || payment == 'Transfer'){
+                              payment = 'B1 TRF';
+                            }else if(payment == 'BANK 2 - Transfer'){
+                              payment = 'B2 TRF';
+                            }else if(payment == 'BANK 1 - QRIS' || payment == 'QRIS'){
+                              payment = 'B1 QRIS';
+                            }else if(payment == 'BANK 2 - QRIS'){
+                              payment = 'B2 QRIS';
+                            }
+
+                            worksheet.getCell(str_prefix+charCounters+counter).value = payment + ' \n '+ rowElement.total_payment;
+                            worksheet.getCell(str_prefix+charCounters+counter).alignment = { wrapText: true, vertical: 'top', horizontal: 'left' };
+
+                            var nominal_product = 0;
+                            var str_product = "";
+                            var str_product_rp = "";
+
+                            for (let index = 0; index < report_data_product.length; index++) {
+                              const element = report_data_product[index];
+
+                              if(element.type_id==1 && element.category_id!=26 && element.invoice_no==rowElement.invoice_no_full){
+                                nominal_product = nominal_product + parseFloat(element.sub_total);
+                                total_product_rp = total_product_rp + parseFloat(element.sub_total);
+                                total_product_qty = total_product_qty + parseFloat(element.product_qty);
+                                str_product = str_product + element.product_abbr + '/' + element.product_qty + ' \n ';
+                                str_product_rp = str_product_rp + total_product_rp + ' \n ';
+                              }
+                            }
+
+                            var nominal_drink = 0;
+                            var str_drink = "";
+
+                            for (let index = 0; index < report_data_product.length; index++) {
+                              const element = report_data_product[index];
+
+                              if(element.type_id==1 && element.category_id==26 && element.invoice_no==rowElement.invoice_no_full){
+                                nominal_drink = nominal_drink + parseFloat(element.sub_total);
+                                total_drink_rp = total_drink_rp + parseFloat(element.sub_total);
+                                total_drink_qty = total_drink_qty + parseFloat(element.product_qty);
+                                str_drink = str_drink + element.product_abbr + '/' + element.product_qty+ '/' + element.sub_total + ' \n ';
+                              }
+                            }
+
+                            charCounters = String.fromCharCode(charCounters.charCodeAt(0) + 1);
+                            worksheet.getCell(str_prefix+charCounters+counter).value = str_product;
+                            worksheet.getCell(str_prefix+charCounters+counter).alignment = { wrapText: true, vertical: 'top', horizontal: 'left' };
+
+                            charCounters = String.fromCharCode(charCounters.charCodeAt(0) + 1);
+                            worksheet.getCell(str_prefix+charCounters+counter).value = str_product_rp;
+                            worksheet.getCell(str_prefix+charCounters+counter).alignment = { wrapText: true, vertical: 'top', horizontal: 'left' };
+
+                            charCounters = String.fromCharCode(charCounters.charCodeAt(0) + 1);
+                            worksheet.getCell(str_prefix+charCounters+counter).value = str_drink;
+                            worksheet.getCell(str_prefix+charCounters+counter).alignment = { wrapText: true, vertical: 'top', horizontal: 'left' };
+
+
+                            charCounters = String.fromCharCode(charCounters.charCodeAt(0) + 1);
+                            worksheet.getCell(str_prefix+charCounters+counter).value = rowElement.voucher_code;
+                            worksheet.getCell(str_prefix+charCounters+counter).alignment = { wrapText: true, vertical: 'top', horizontal: 'left' };
+
+                            
+                            worksheet.getCell('B'+counter).alignment = { wrapText: true, vertical: 'top', horizontal: 'left' };
+                            worksheet.getCell('C'+counter).alignment = { wrapText: true, vertical: 'top', horizontal: 'left' };
+                            worksheet.getCell('D'+counter).alignment = { wrapText: true, vertical: 'top', horizontal: 'left' };
+                            worksheet.getCell('E'+counter).alignment = { wrapText: true, vertical: 'top', horizontal: 'left' };
+                            worksheet.getCell('F'+counter).alignment = { wrapText: true, vertical: 'top', horizontal: 'left' };
+                            worksheet.getCell('G'+counter).alignment = { wrapText: true, vertical: 'top', horizontal: 'left' };
+                            worksheet.getCell('H'+counter).alignment = { wrapText: true, vertical: 'top', horizontal: 'left' };
+                            worksheet.getCell('I'+counter).alignment = { wrapText: true, vertical: 'top', horizontal: 'left' };
+                            worksheet.getCell('J'+counter).alignment = { wrapText: true, vertical: 'top', horizontal: 'left' };
+                            counter++;
+                            worksheet.getCell('B'+counter).alignment = { wrapText: true, vertical: 'top', horizontal: 'left' };
+                            worksheet.getCell('C'+counter).alignment = { wrapText: true, vertical: 'top', horizontal: 'left' };
+                            worksheet.getCell('D'+counter).alignment = { wrapText: true, vertical: 'top', horizontal: 'left' };
+                            worksheet.getCell('E'+counter).alignment = { wrapText: true, vertical: 'top', horizontal: 'left' };
+                            worksheet.getCell('F'+counter).alignment = { wrapText: true, vertical: 'top', horizontal: 'left' };
+                            worksheet.getCell('G'+counter).alignment = { wrapText: true, vertical: 'top', horizontal: 'left' };
+                            worksheet.getCell('H'+counter).alignment = { wrapText: true, vertical: 'top', horizontal: 'left' };
+                            worksheet.getCell('I'+counter).alignment = { wrapText: true, vertical: 'top', horizontal: 'left' };
+                            worksheet.getCell('J'+counter).alignment = { wrapText: true, vertical: 'top', horizontal: 'left' };
+
+                            var borderStyles = {
+                              top: { style: "thin" },
+                              left: { style: "thin" },
+                              bottom: { style: "thin" },
+                              right: { style: "thin" }
+                            };
+
+                            worksheet.eachRow({ includeEmpty: true }, function(row, rowNumber) {
+                              row.eachCell({ includeEmpty: true }, function(cell, colNumber) {
+                                cell.border = borderStyles;
+                              });
+                            });
+
+                            counterx++;
+                         
+                        }
+
+                    // Loop Terapist
+
+                    //XLSX.writeFile(workbook, "Presidents.xlsx", { compression: true });
+
+
+                  
+                    let filename = "Report_CloseDay_"+(Math.floor(Date.now() / 1000)+".xlsx");
+                    workbook.xlsx.writeBuffer()
+                    .then(function(buffer) {
+                      saveAs(
+                        new Blob([buffer], { type: "application/octet-stream" }),
+                        filename
+                      );
+                  });
+
+                  });
+      });
+ 
+    });
+
+   
+</script>
+
 </html> 

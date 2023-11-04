@@ -1487,10 +1487,6 @@ class ReportCloseDayController extends Controller
         $data = $this->data;
         $keyword = "";
         $act_permission = $this->act_permission[0];
-        $branchs = Branch::join('users_branch as ub','ub.branch_id', '=', 'branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']);        
-
-        $shifts = Shift::orderBy('shift.id')->get(
-            ['shift.id','shift.remark','shift.id','shift.time_start','shift.time_end']); 
         $filter_begin_date = date(Carbon::parse($request->filter_begin_date)->format('Y-m-d'));
         $filter_branch_id =  $request->get('filter_branch_id')==null?'%':$request->get('filter_branch_id');
         DB::select("call call_reportcloseday('".$filter_begin_date."'::date,".$filter_branch_id.");");
@@ -1529,50 +1525,45 @@ class ReportCloseDayController extends Controller
 
         $out_datas_total = DB::select("
                 select ps2.abbr,sum(pi2.qty) as qty 
-                from invoice_master im 
-                join invoice_detail id on id.invoice_no = im.invoice_no 
-                join customers c on c.id = im.customers_id 
+                from temp_invoice ti 
+                join customers c on c.id = ti.customers_id::bigint 
                 join branch b on b.id=c.branch_id
-                join product_sku ps on ps.id = id.product_id 
+                join product_sku ps on ps.id = ti.product_id 
                 join product_ingredients pi2 on pi2.product_id = ps.id 
                 join product_distribution pdd on pdd.product_id = pi2.product_id_material and pdd.active=1 and pdd.branch_id = b.id
                 join product_sku ps2 on ps2.id = pi2.product_id_material  
-                where im.dated = '".$filter_begin_date."'  and c.branch_id = ".$filter_branch_id."
-                group by ps2.abbr order by 1                  
+                where ti.dated = '".$filter_begin_date."'  and c.branch_id = ".$filter_branch_id."
+                group by ps2.abbr order by 1
         ");
         $out_datas_total_drink = DB::select("
-                select ps.abbr,sum(id.qty) as qty,(sum(coalesce(id.total,0))/1000)::numeric(10,1) as total
-                        from invoice_master im 
-                        join invoice_detail id on id.invoice_no = im.invoice_no
-                        join customers c on c.id = im.customers_id 
+                select ps.abbr,sum(ti.product_qty) as qty,(sum(coalesce(ti.sub_total,0))/1000)::numeric(10,1) as total
+                        from temp_invoice ti 
+                        join customers c on c.id = ti.customers_id::bigint  
                         join branch b on b.id=c.branch_id
-                        join product_sku ps on ps.id = id.product_id  and ps.category_id=26
-                        where im.dated = '".$filter_begin_date."'  and c.branch_id = ".$filter_branch_id." and im.invoice_no in (
-                            select im.invoice_no
-                            from invoice_master im 
-                            join invoice_detail id on id.invoice_no = im.invoice_no
-                            join customers c on c.id = im.customers_id 
-                            where im.dated = '".$filter_begin_date."'  and c.branch_id = ".$filter_branch_id."
-                            group by im.invoice_no having count(id.product_id)=1
+                        join product_sku ps on ps.id = ti.product_id  and ps.category_id=26
+                        where ti.dated = '".$filter_begin_date."'  and c.branch_id = ".$filter_branch_id." and ti.invoice_no in (
+                            select ti.invoice_no
+                            from temp_invoice ti 
+                            join customers c on c.id = ti.customers_id::bigint  
+                            where ti.dated = '".$filter_begin_date."'  and c.branch_id = ".$filter_branch_id."
+                            group by ti.invoice_no having count(ti.product_id)=1
                         )
-                group by ps.remark,ps.abbr having count(im.invoice_no)=1 and sum(ps.type_id)<=1 order by 1      
+                group by ps.remark,ps.abbr having count(ti.invoice_no)=1 and sum(ps.type_id)<=1 order by 1      
         ");
         $out_datas_total_other = DB::select("
-                select ps.abbr,sum(id.qty) as qty,(sum(coalesce(id.total,0))/1000)::int as total
-                from invoice_master im 
-                join invoice_detail id on id.invoice_no = im.invoice_no
-                join customers c on c.id = im.customers_id 
+                select ps.abbr,sum(ti.product_qty) as qty,(sum(coalesce(ti.sub_total,0))/1000)::int as total
+                from temp_invoice ti 
+                join customers c on c.id = ti.customers_id::bigint  
                 join branch b on b.id=c.branch_id
-                join product_sku ps on ps.id = id.product_id  and ps.category_id<>26
-                where im.dated = '".$filter_begin_date."'  and c.branch_id = ".$filter_branch_id." and im.invoice_no in (
-                    select im.invoice_no
-                    from invoice_master im 
-                    join invoice_detail id on id.invoice_no = im.invoice_no
-                    join customers c on c.id = im.customers_id 
-                    where im.dated = '".$filter_begin_date."'  and c.branch_id = ".$filter_branch_id."
-                    group by im.invoice_no having count(id.product_id)=1
+                join product_sku ps on ps.id = ti.product_id  and ps.category_id<>26
+                where ti.dated = '".$filter_begin_date."'  and c.branch_id = ".$filter_branch_id." and ti.invoice_no in (
+                    select ti.invoice_no
+                    from temp_invoice ti 
+                    join customers c on c.id = ti.customers_id::bigint  
+                    where ti.dated = '".$filter_begin_date."'  and c.branch_id = ".$filter_branch_id."
+                    group by ti.invoice_no having count(ti.product_id)=1
                 )
-                group by ps.remark,ps.abbr having count(im.invoice_no)=1 and sum(ps.type_id)<=1 order by 1                            
+                group by ps.remark,ps.abbr having count(ti.invoice_no)=1 and sum(ps.type_id)<=1 order by 1                            
         ");
 
         $petty_datas = DB::select("
@@ -1585,6 +1576,8 @@ class ReportCloseDayController extends Controller
 
         return view('pages.reports.daily_print_2', [
             'data' => $data,
+            'filter_begin_date' => $filter_begin_date,
+            'filter_branch_id' => $filter_branch_id,
             'report_data' => $report_data,
             'report_data_detail' => $report_data_detail,
             'report_data_product' => $report_data_product,
@@ -1617,13 +1610,120 @@ class ReportCloseDayController extends Controller
         $shifts = Shift::orderBy('shift.id')->get(['shift.id','shift.remark','shift.id','shift.time_start','shift.time_end']); 
         
         $begindate = date(Carbon::parse($request->filter_begin_date_in)->format('Y-m-d'));
+        $beginnewformat = date(Carbon::parse($request->filter_begin_date_in)->format('d-m-Y'));
         $enddate = date(Carbon::parse($request->filter_end_date_in)->format('Y-m-d'));
+        $endnewformat = date(Carbon::parse($request->filter_end_date_in)->format('d-m-Y'));
         $branchx = $request->filter_branch_id_in;
         $shift_id = $request->filter_shift_id_in;
 
         if($request->export=='Export Excel'){
              $strencode = base64_encode($shift_id.'#'.$begindate.'#'.$enddate.'#'.$branchx);
             return Excel::download(new CloseDayExport($strencode), 'closeday_'.Carbon::now()->format('YmdHis').'.xlsx');
+        }else if($request->export=='Export API'){
+            $filter_begin_date = $begindate;
+            $filter_branch_id =  $branchx;
+            DB::select("call call_reportcloseday('".$filter_begin_date."'::date,".$filter_branch_id.");");
+            
+            $counter_service = DB::select("
+                    select product_id,product_abbr,type_id,sum(sub_total) as sum_val,sum(product_qty) as sum_qty from temp_invoice ti where branch_id=".$filter_branch_id." and ti.type_id=2 group by product_id,product_abbr,type_id order by 3,2;                       
+            ");
+
+            $counter_extra = DB::select("
+                    select product_id,product_abbr,type_id,sum(sub_total) as sum_val,sum(product_qty) as sum_qty from temp_invoice ti where branch_id=".$filter_branch_id." and  ti.type_id=8 group by product_id,product_abbr,type_id order by 3,2;                       
+            ");
+
+            $report_data_service = DB::select("
+                    select * from temp_invoice ti where ti.type_id in (2,8) and  branch_id=".$filter_branch_id." order by invoice_no,product_id;                       
+            ");
+
+            $report_data = DB::select("
+                    select branch_room,right(invoice_no,6) as invoice_no,invoice_no as invoice_no_full,dated,ti.customers_id,ti.customers_name,ti.shift_name,string_agg(distinct ti.assigned_to_name,', ') as assigned_to_name,string_agg(distinct ti.voucher_code,', ') as voucher_code,(coalesce(total_payment,0)/1000)::float total_payment,payment_type 
+                    from temp_invoice ti
+                    where ti.dated = '".$filter_begin_date."'  and ti.branch_id = ".$filter_branch_id."
+                    group by branch_room,invoice_no,dated,ti.customers_id,ti.customers_name,ti.shift_name,total_payment,payment_type
+                    order by 2                        
+            ");
+
+            $report_data_detail = DB::select("
+                    select * from temp_invoice ti
+                    where ti.dated = '".$filter_begin_date."'  and ti.branch_id = ".$filter_branch_id."
+                    order by invoice_no,executed_at
+            ");
+
+            $report_data_product = DB::select("
+                    select * from temp_invoice ti
+                    where ti.type_id = 1 and ti.dated = '".$filter_begin_date."'  and ti.branch_id = ".$filter_branch_id."
+                    order by invoice_no,executed_at
+            ");
+
+            $out_datas_total = DB::select("
+                    select ps2.abbr,sum(pi2.qty) as qty 
+                    from temp_invoice ti 
+                    join customers c on c.id = ti.customers_id::bigint 
+                    join branch b on b.id=c.branch_id
+                    join product_sku ps on ps.id = ti.product_id 
+                    join product_ingredients pi2 on pi2.product_id = ps.id 
+                    join product_distribution pdd on pdd.product_id = pi2.product_id_material and pdd.active=1 and pdd.branch_id = b.id
+                    join product_sku ps2 on ps2.id = pi2.product_id_material  
+                    where ti.dated = '".$filter_begin_date."'  and c.branch_id = ".$filter_branch_id."
+                    group by ps2.abbr order by 1
+            ");
+            $out_datas_total_drink = DB::select("
+                    select ps.abbr,sum(ti.product_qty) as qty,(sum(coalesce(ti.sub_total,0))/1000)::numeric(10,1) as total
+                            from temp_invoice ti 
+                            join customers c on c.id = ti.customers_id::bigint  
+                            join branch b on b.id=c.branch_id
+                            join product_sku ps on ps.id = ti.product_id  and ps.category_id=26
+                            where ti.dated = '".$filter_begin_date."'  and c.branch_id = ".$filter_branch_id." and ti.invoice_no in (
+                                select ti.invoice_no
+                                from temp_invoice ti 
+                                join customers c on c.id = ti.customers_id::bigint  
+                                where ti.dated = '".$filter_begin_date."'  and c.branch_id = ".$filter_branch_id."
+                                group by ti.invoice_no having count(ti.product_id)=1
+                            )
+                    group by ps.remark,ps.abbr having count(ti.invoice_no)=1 and sum(ps.type_id)<=1 order by 1      
+            ");
+            $out_datas_total_other = DB::select("
+                    select ps.abbr,sum(ti.product_qty) as qty,(sum(coalesce(ti.sub_total,0))/1000)::int as total
+                    from temp_invoice ti 
+                    join customers c on c.id = ti.customers_id::bigint  
+                    join branch b on b.id=c.branch_id
+                    join product_sku ps on ps.id = ti.product_id  and ps.category_id<>26
+                    where ti.dated = '".$filter_begin_date."'  and c.branch_id = ".$filter_branch_id." and ti.invoice_no in (
+                        select ti.invoice_no
+                        from temp_invoice ti 
+                        join customers c on c.id = ti.customers_id::bigint  
+                        where ti.dated = '".$filter_begin_date."'  and c.branch_id = ".$filter_branch_id."
+                        group by ti.invoice_no having count(ti.product_id)=1
+                    )
+                    group by ps.remark,ps.abbr having count(ti.invoice_no)=1 and sum(ps.type_id)<=1 order by 1                            
+            ");
+
+            $petty_datas = DB::select("
+                select ps.abbr,pc.type,sum(pcd.qty) as qty,sum(pcd.line_total) as total  from petty_cash pc 
+                join petty_cash_detail pcd on pcd.doc_no = pc.doc_no
+                join product_sku ps on ps.id = pcd.product_id 
+                where pc.dated  = '".$filter_begin_date."'  and pc.branch_id = ".$filter_branch_id."  
+                group by ps.abbr,pc.type order by 1                   
+            ");
+
+            return array_merge([
+                'filter_begin_date' => $filter_begin_date,
+                'filter_branch_id' => $filter_branch_id,
+                'report_data' => $report_data,
+                'report_data_detail' => $report_data_detail,
+                'report_data_product' => $report_data_product,
+                'report_data_service' => $report_data_service,
+                'counter_service' => $counter_service,
+                'counter_extra' => $counter_extra,
+                'out_datas_total' => $out_datas_total,
+                'out_datas_total_drink' => $out_datas_total_drink,
+                'out_datas_total_other' => $out_datas_total_other,
+                'petty_datas' => $petty_datas,
+                'beginnewformat' => $beginnewformat,
+                'endnewformat' => $endnewformat,
+                'settings' => Settings::get(),
+            ]);
         }else if($request->export=='Export Sum'){
             $report_data = DB::select("
                     select b.id as branch_id,b.remark as branch_name,im.dated,sum(id.total+id.vat_total) as total_all,
