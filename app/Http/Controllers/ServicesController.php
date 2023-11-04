@@ -68,12 +68,18 @@ class ServicesController extends Controller
 
         $data = $this->data;
         $keyword = "";
-        $products = Product::orderBy('product_sku.remark', 'ASC')
-                    ->join('product_type as pt','pt.id','=','product_sku.type_id')
-                    ->join('product_category as pc','pc.id','=','product_sku.category_id')
-                    ->join('product_brand as pb','pb.id','=','product_sku.brand_id')
-                    ->where('pt.id','!=','1')
-                    ->get(['product_sku.photo','product_sku.id','product_sku.remark as product_name','pt.abbr as product_type','pc.remark as product_category','pb.remark as product_brand']);
+
+        $products = DB::select("
+            select ps.id,ps.remark as product_name,ps.abbr,pc.remark as product_category, pt.abbr as product_type,string_agg(coalesce(ps2.remark,''),', ') as product_igd  from product_sku ps 
+            join product_category pc on pc.id = ps.category_id 
+            join product_brand pb on pb.id = ps.brand_id
+            join product_type pt on pt.id = ps.type_id 
+            left join product_ingredients pg on pg.product_id  = ps.id 
+            left join product_sku ps2 on ps2.id = pg.product_id_material 
+            where ps.type_id !=1
+            group by ps.id,ps.remark,ps.abbr,pc.remark, pt.abbr
+            order by 2
+        ");
         return view('pages.services.index', ['act_permission' => $act_permission,'company' => Company::get()->first()],compact('products','data','keyword'))->with('i', ($request->input('page', 1) - 1) * 5);
     }
 
