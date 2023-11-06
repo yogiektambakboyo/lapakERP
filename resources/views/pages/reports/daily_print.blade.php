@@ -688,8 +688,8 @@
                               <td scope="col" width="3%">{{ number_format($dtt_raw[$counter]->total_479,0,',','.') }}</td>
                           @endif
                           @if((int)$header->total_480>0)
-                            @php if((int)$dtt_raw[$counter]->total_480>0){ $c_480++; } @endphp
-                              <td scope="col" width="3%">{{ number_format($dtt_raw[$counter]->total_480,0,',','.') }}</td>
+                               @php if((int)$dtt_raw[$counter]->total_480>0 || (int)$dtt_raw_disc[$counter]->total_480>0){ $c_480++; } @endphp 
+                              <td scope="col" width="3%"> @php if((int)$dtt_raw[$counter]->total_480<=0 && (int)$dtt_raw_disc[$counter]->total_480>0){ echo 'Free'; }else{ echo number_format($dtt_raw[$counter]->total_480,0,',','.'); } @endphp </td>
                           @endif
 
                           @if((int)$header->total_481>0)
