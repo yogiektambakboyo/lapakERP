@@ -552,6 +552,8 @@
 
                                 if(d_element.type_id==2 && element.product_id==d_element.product_id && d_element.invoice_no==rowElement.invoice_no_full){
                                   nominal_service = nominal_service + parseFloat(d_element.sub_total);
+                                  total_service_rp = total_service_rp + parseFloat(d_element.sub_total);
+                                  total_service_qty = total_service_qty + parseFloat(d_element.product_qty);
                                 }
                               }
 
@@ -578,6 +580,8 @@
 
                                 if(d_element.type_id==8 && element.product_id==d_element.product_id && d_element.invoice_no==rowElement.invoice_no_full){
                                   nominal_extra = nominal_extra + parseFloat(d_element.sub_total);
+                                  total_extra_rp = total_extra_rp + parseFloat(d_element.sub_total);
+                                  total_extra_qty = total_extra_qty + parseFloat(d_element.product_qty);
                                 }
                               }
 
@@ -710,11 +714,48 @@
                         worksheet.getCell('A'+(report_data.length+4)).value = 'SUB TOTAL ';
                         worksheet.getCell('A'+(report_data.length+4)).alignment = { vertical: 'middle', horizontal: 'center' };
 
+
+
                         worksheet.getRow((report_data.length+5)).font = { bold: true };
+                        
                         worksheet.mergeCells('A'+(report_data.length+5), 'E'+(report_data.length+5));
                         worksheet.getCell('A'+(report_data.length+5)).value = 'JUMLAH ';
                         worksheet.getCell('A'+(report_data.length+5)).alignment = { vertical: 'middle', horizontal: 'center' };
                         worksheet.getCell('A'+(report_data.length+5)).fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+
+                        var letter_until = 'F';
+                        var str_pref = '';
+                        for (let index = 0; index < (counter_service.length-1); index++) {
+                          if(index==19){
+                            letter_until = 'A';
+                            str_pref = 'A';
+                          }else{
+                            letter_until = String.fromCharCode(letter_until.charCodeAt(0) + 1);
+                          }
+                        }
+
+                        worksheet.mergeCells('F'+(report_data.length+5), str_pref+letter_until+(report_data.length+5));
+                        worksheet.getCell('F'+(report_data.length+5)).value = ''+accounting.formatNumber(parseFloat(total_service_rp/1000), 0, ".", ",")+'/'+accounting.formatNumber(parseFloat(total_service_qty), 0, ".", ",");
+                        worksheet.getCell('F'+(report_data.length+5)).alignment = { vertical: 'middle', horizontal: 'center' };
+                        worksheet.getCell('F'+(report_data.length+5)).fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+
+                        letter_until = String.fromCharCode(letter_until.charCodeAt(0) + 1);
+                        var letter_until_start = letter_until;
+                        for (let index = 0; index < (counter_extra.length-1); index++) {
+                          if((counter_service.length+index)==19){
+                            letter_until = 'A';
+                            str_pref = 'A';
+                          }else{
+                            letter_until = String.fromCharCode(letter_until.charCodeAt(0) + 1);
+                          }
+                        }
+
+                        
+                        worksheet.mergeCells(letter_until_start+(report_data.length+5), str_pref+letter_until+(report_data.length+5));
+                        worksheet.getCell(letter_until_start+(report_data.length+5)).value = ''+accounting.formatNumber(parseFloat(total_extra_rp/1000), 0, ".", ",")+'/'+accounting.formatNumber(parseFloat(total_extra_qty), 0, ".", ",");
+                        worksheet.getCell(letter_until_start+(report_data.length+5)).alignment = { vertical: 'middle', horizontal: 'center' };
+                        worksheet.getCell(letter_until_start+(report_data.length+5)).fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+
 
                         worksheet.eachRow({ includeEmpty: true }, function(row, rowNumber) {
                           row.eachCell({ includeEmpty: true }, function(cell, colNumber) {
