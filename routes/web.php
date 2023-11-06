@@ -363,6 +363,10 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
 
         });
 
+        Route::group(['prefix' => 'servicesextend'], function() {
+            Route::get('/', 'ServicesExtendedController@index')->name('servicesextend.index');
+        });
+
         /**
          * Product Brand
          */
