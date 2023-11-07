@@ -318,6 +318,51 @@ class ReportInvoiceDetailController extends Controller
                         'filter_branch_id' => $branchx,
                     ]);
 
+        }else if ($request->export == 'Export Totals' ){
+
+            DB::select("call call_reportclosedaybetween('".$begindate."'::date,'".$enddate."'::date,".$branchx.")");
+
+            $report_data = DB::select("
+                    select sum(case when c.gender='Wanita' then 1 else 0 end) as qty_w,sum(case when c.gender='Pria' then 1 else 0 end) as qty_m,ti.dated,sum(ti.sum_qty)  
+                    from 
+                    (select dated,invoice_no,customers_id,sum(product_qty) as sum_qty from temp_invoice where type_id = 2 group by dated,invoice_no,customers_id) ti 
+                    join customers c on c.id = ti.customers_id::bigint and c.branch_id::character varying like '".branchx."'
+                    group by ti.dated
+            ");
+
+            $counter_service = DB::select("
+                    select product_id,product_abbr,type_id,sum(sub_total) as sum_val,sum(product_qty) as sum_qty from temp_invoice ti where branch_id::character varying like '".branchx."' and ti.type_id=2 group by product_id,product_abbr,type_id order by 3,2;                       
+            ");
+
+            $counter_extra = DB::select("
+                    select product_id,product_abbr,type_id,sum(sub_total) as sum_val,sum(product_qty) as sum_qty from temp_invoice ti where branch_id::character varying like '".branchx."' and  ti.type_id=8 group by product_id,product_abbr,type_id order by 3,2;                       
+            ");
+
+            $report_data_service = DB::select("
+                    select * from temp_invoice ti where ti.type_id in (2,8) and  branch_id::character varying like '".branchx."' order by invoice_no,product_id;                       
+            ");
+
+            $report_data_detail = DB::select("
+                    select * from temp_invoice ti
+                    where ti.dated between '".$begindate."' and '".$enddate."'  and ti.branch_id::character varying like '".branchx."'
+                    order by invoice_no,executed_at
+            ");
+
+        
+
+            return view('pages.reports.invoice_detail_print_2',
+                    [
+                        'company' => Company::get()->first(),
+                        'counter_service'=> $counter_service,
+                        'counter_extra'=> $counter_extra,
+                        'report_data_service'=> $report_data_service,
+                        'report_data'=> $report_data,
+                        'report_data_detail' => $report_data_detail,
+                        'filter_begin_date' => $begindate,
+                        'filter_begin_end' => $enddate,
+                        'filter_branch_id' => $branchx,
+                    ]);
+
         }else if ($request->export == 'Export Total API' ){
             $report_data = DB::select("
 

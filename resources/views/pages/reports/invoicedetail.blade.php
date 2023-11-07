@@ -1,6 +1,6 @@
 @extends('layouts.default', ['appSidebarSearch' => true])
 
-@section('title', 'Laporan - Serah Terima')
+@section('title', 'Laporan - Faktur Detail')
 
 @section('content')
     <div class="bg-light p-4 rounded">
@@ -14,6 +14,7 @@
                         <button onclick="openDialogFilterSearch('Filter');" class="btn btn-sm btn-lime">@lang('general.btn_filter')</button> 
                         <button onclick="openDialogFilterSearch('Export Excel');" class="btn btn-sm btn-success">Export</button>  
                         <button onclick="openDialogFilterSearch('Export Total');" class="btn btn-sm btn-success">Export Summary</button>  
+                        <button onclick="openDialogFilterSearch('Export Totals');" class="btn btn-sm btn-success">Export Summary v2</button>  
                 </div>
             </div>
         </div>
