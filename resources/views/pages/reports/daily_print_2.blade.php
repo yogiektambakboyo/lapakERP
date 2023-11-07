@@ -225,10 +225,7 @@
               @foreach($report_data_product as $dio)
                   @if($dio->type_id==1 && $dio->category_id<>26 && $dio->invoice_no==$detail->invoice_no_full)
                       {{ number_format(($dio->sub_total/1000),1,',','.') }}  <br>
-                      <?php
-                          $total_drink_rp = $total_drink_rp + $dio->sub_total;
-                          $total_drink_qty = $total_drink_qty + $dio->product_qty;
-                      ?>
+                      
                   @endif
               @endforeach
               </div>
@@ -238,6 +235,10 @@
               @foreach($report_data_product as $dio)
                   @if($dio->type_id==1 && $dio->category_id==26 && $dio->invoice_no==$detail->invoice_no_full)
                   {{ $dio->product_abbr }} / {{ $dio->product_qty }} / {{ number_format(($dio->sub_total/1000),1,',','.') }} <br>
+                  <?php
+                          $total_drink_rp = $total_drink_rp + $dio->sub_total;
+                          $total_drink_qty = $total_drink_qty + $dio->product_qty;
+                      ?>
                   @endif
               @endforeach
               </div>
@@ -517,6 +518,7 @@
                         let total_extra_qty = 0;
                         let total_drink_rp = 0;
                         let total_drink_qty = 0;
+                        let total_payment = 0;
                         for (let index = 0; index < report_data.length; index++) {
                           const rowElement = report_data[index];
                             let value_sd = 0;
@@ -626,7 +628,8 @@
                               payment = 'B2 QRIS';
                             }
 
-                            worksheet.getCell(str_prefix+charCounters+counter).value = payment + ' \n '+ accounting.formatNumber(parseFloat(rowElement.total_payment/1000), 1, ".", ",");
+                            worksheet.getCell(str_prefix+charCounters+counter).value = payment + ' \n '+ accounting.formatNumber(parseFloat(rowElement.total_payment), 1, ".", ",");
+                            total_payment = total_payment + parseFloat(rowElement.total_payment);
                             worksheet.getCell(str_prefix+charCounters+counter).alignment = { wrapText: true, vertical: 'top', horizontal: 'left' };
 
                             var nominal_product = 0;
@@ -725,15 +728,22 @@
 
                         var letter_until = 'F';
                         var str_pref = '';
-                        for (let index = 0; index < (counter_service.length-1); index++) {
+                        for (let index = 0; index < (counter_service.length); index++) {
+                          worksheet.getCell(letter_until+(report_data.length+4)).value = ''+accounting.formatNumber(parseFloat(counter_service[index].sum_val/1000), 0, ".", ",")+'/'+accounting.formatNumber(parseFloat(counter_service[index].sum_qty), 0, ".", ",");
+                          worksheet.getCell(letter_until+(report_data.length+4)).alignment = { vertical: 'middle', horizontal: 'center' };
+                        
                           if(index==19){
                             letter_until = 'A';
                             str_pref = 'A';
                           }else{
                             letter_until = String.fromCharCode(letter_until.charCodeAt(0) + 1);
                           }
+                          
                         }
 
+                        if(counter_service.length>0){
+                          letter_until = String.fromCharCode(letter_until.charCodeAt(0) - 1);
+                        }
                         worksheet.mergeCells('F'+(report_data.length+5), str_pref+letter_until+(report_data.length+5));
                         worksheet.getCell('F'+(report_data.length+5)).value = ''+accounting.formatNumber(parseFloat(total_service_rp/1000), 0, ".", ",")+'/'+accounting.formatNumber(parseFloat(total_service_qty), 0, ".", ",");
                         worksheet.getCell('F'+(report_data.length+5)).alignment = { vertical: 'middle', horizontal: 'center' };
@@ -741,7 +751,11 @@
 
                         letter_until = String.fromCharCode(letter_until.charCodeAt(0) + 1);
                         var letter_until_start = letter_until;
-                        for (let index = 0; index < (counter_extra.length-1); index++) {
+                        for (let index = 0; index < (counter_extra.length); index++) {
+                          console.log(letter_until+(report_data.length+4));
+                          worksheet.getCell(letter_until+(report_data.length+4)).value = ''+accounting.formatNumber(parseFloat(counter_extra[index].sum_val/1000), 0, ".", ",")+'/'+accounting.formatNumber(parseFloat(counter_extra[index].sum_qty), 0, ".", ",");
+                          worksheet.getCell(letter_until+(report_data.length+4)).alignment = { vertical: 'middle', horizontal: 'center' };
+                        
                           if((counter_service.length+index)==19){
                             letter_until = 'A';
                             str_pref = 'A';
@@ -750,11 +764,91 @@
                           }
                         }
 
-                        
+                        if(counter_extra.length>0){
+                          letter_until = String.fromCharCode(letter_until.charCodeAt(0) - 1);
+                        }
                         worksheet.mergeCells(letter_until_start+(report_data.length+5), str_pref+letter_until+(report_data.length+5));
                         worksheet.getCell(letter_until_start+(report_data.length+5)).value = ''+accounting.formatNumber(parseFloat(total_extra_rp/1000), 0, ".", ",")+'/'+accounting.formatNumber(parseFloat(total_extra_qty), 0, ".", ",");
                         worksheet.getCell(letter_until_start+(report_data.length+5)).alignment = { vertical: 'middle', horizontal: 'center' };
                         worksheet.getCell(letter_until_start+(report_data.length+5)).fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+
+                        letter_until = String.fromCharCode(letter_until.charCodeAt(0) + 1);
+                        var letter_until_start = letter_until;    
+
+                        worksheet.getCell(letter_until_start+(report_data.length+4)).value = ''+accounting.formatNumber(parseFloat(total_payment), 1, ".", ",");
+                        worksheet.getCell(letter_until_start+(report_data.length+4)).alignment = { vertical: 'middle', horizontal: 'center' };
+
+                        worksheet.getCell(letter_until_start+(report_data.length+5)).value = ''+accounting.formatNumber(parseFloat(total_payment), 1, ".", ",");
+                        worksheet.getCell(letter_until_start+(report_data.length+5)).alignment = { vertical: 'middle', horizontal: 'center' };
+                        worksheet.getCell(letter_until_start+(report_data.length+5)).fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+
+                        letter_until = String.fromCharCode(letter_until.charCodeAt(0) + 1);
+                        var letter_until_start = letter_until;  
+                        letter_until = String.fromCharCode(letter_until.charCodeAt(0) + 1);
+
+                        worksheet.mergeCells(letter_until_start+(report_data.length+4), str_pref+letter_until+(report_data.length+4));
+                        worksheet.getCell(letter_until_start+(report_data.length+4)).value = ''+accounting.formatNumber(parseFloat(total_product_rp/1000), 1, ".", ",")+'/'+accounting.formatNumber(parseFloat(total_product_qty), 1, ".", ",");
+                        worksheet.getCell(letter_until_start+(report_data.length+4)).alignment = { vertical: 'middle', horizontal: 'center' };
+
+                      
+                        worksheet.mergeCells(letter_until_start+(report_data.length+5), str_pref+letter_until+(report_data.length+5));
+                        worksheet.getCell(letter_until_start+(report_data.length+5)).value = ''+accounting.formatNumber(parseFloat(total_product_rp/1000), 1, ".", ",")+'/'+accounting.formatNumber(parseFloat(total_product_qty), 1, ".", ",");
+                        worksheet.getCell(letter_until_start+(report_data.length+5)).alignment = { vertical: 'middle', horizontal: 'center' };
+                        worksheet.getCell(letter_until_start+(report_data.length+5)).fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+
+                        letter_until = String.fromCharCode(letter_until.charCodeAt(0) + 1);
+
+                        worksheet.getCell(letter_until+(report_data.length+4)).value = ''+accounting.formatNumber(parseFloat(total_drink_rp/1000), 1, ".", ",")+'/'+accounting.formatNumber(parseFloat(total_drink_qty), 1, ".", ",");
+                        worksheet.getCell(letter_until+(report_data.length+4)).alignment = { vertical: 'middle', horizontal: 'center' };
+
+                        worksheet.getCell(letter_until+(report_data.length+5)).value = ''+accounting.formatNumber(parseFloat(total_drink_rp/1000), 1, ".", ",")+'/'+accounting.formatNumber(parseFloat(total_drink_qty), 1, ".", ",");
+                        worksheet.getCell(letter_until+(report_data.length+5)).alignment = { vertical: 'middle', horizontal: 'center' };
+                        worksheet.getCell(letter_until+(report_data.length+5)).fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+
+                        letter_until = String.fromCharCode(letter_until.charCodeAt(0) + 1);
+
+                        var str_out = "";
+                        for (let idx = 0; idx < out_datas_total_drink.length; idx++) {
+                          const element = out_datas_total_drink[idx];
+                          str_out = str_out + element.abbr + "/" + element.qty + "/" + accounting.formatNumber(parseFloat(element.total/1000), 1, ".", ",") + '\n';
+                        }
+
+                        for (let idx = 0; idx < out_datas_total_other.length; idx++) {
+                          const element = out_datas_total_other[idx];
+                          str_out = str_out + element.abbr + "/" + element.qty + "/" + accounting.formatNumber(parseFloat(element.total/1000), 1, ".", ",") + '\n';
+                        }
+
+                        for (let idx = 0; idx < out_datas_total.length; idx++) {
+                          const element = out_datas_total[idx];
+                          str_out = str_out + element.abbr + "/" + element.qty + "/" + accounting.formatNumber(parseFloat(element.total/1000), 1, ".", ",") + '\n';
+                        }
+
+                        str_out = str_out + '\n';
+                        str_out = str_out + 'Keluar : \n';
+                        for (let idx = 0; idx < petty_datas.length; idx++) {
+                          const element = petty_datas[idx];
+                          if(element.type="Produk - Keluar"){
+                            str_out = str_out + element.abbr + "/" + element.qty + '\n';
+                          }
+                        }
+
+                        str_out = str_out + '\n';
+                        str_out = str_out + 'Masuk : \n';
+                        for (let idx = 0; idx < petty_datas.length; idx++) {
+                          const element = petty_datas[idx];
+                          if(element.type="Produk - Masuk"){
+                            str_out = str_out + element.abbr + "/" + element.qty + '\n';
+                          }
+                        }
+
+                        worksheet.getCell(letter_until+(report_data.length+4)).value = str_out;
+                        worksheet.getCell(letter_until+(report_data.length+4)).alignment = { vertical: 'middle', horizontal: 'left' };
+                        worksheet.getCell(letter_until+(report_data.length+4)).alignment = { wrapText: true, vertical: 'top', horizontal: 'left' };
+
+
+                        worksheet.getCell(letter_until+(report_data.length+5)).value = '';
+                        worksheet.getCell(letter_until+(report_data.length+5)).alignment = { vertical: 'middle', horizontal: 'center' };
+                        worksheet.getCell(letter_until+(report_data.length+5)).fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
 
 
                         worksheet.eachRow({ includeEmpty: true }, function(row, rowNumber) {
