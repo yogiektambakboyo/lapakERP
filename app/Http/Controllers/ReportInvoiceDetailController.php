@@ -323,29 +323,48 @@ class ReportInvoiceDetailController extends Controller
             DB::select("call call_reportclosedaybetween('".$begindate."'::date,'".$enddate."'::date,".$branchx.")");
 
             $report_data = DB::select("
-                    select sum(case when c.gender='Wanita' then 1 else 0 end) as qty_w,sum(case when c.gender='Pria' then 1 else 0 end) as qty_m,ti.dated,sum(ti.sum_qty)  
+                    select sum(case when c.gender='Wanita' then 1 else 0 end) as qty_w,sum(case when c.gender='Pria' then 1 else 0 end) as qty_p,ti.dated,sum(ti.sum_qty) qty_total 
                     from 
                     (select dated,invoice_no,customers_id,sum(product_qty) as sum_qty from temp_invoice where type_id = 2 group by dated,invoice_no,customers_id) ti 
-                    join customers c on c.id = ti.customers_id::bigint and c.branch_id::character varying like '".branchx."'
+                    join customers c on c.id = ti.customers_id::bigint and c.branch_id::character varying like '".$branchx."' where ti.dated between '".$begindate."'::date and '".$enddate."'::date
                     group by ti.dated
             ");
 
+            $report_data_total = DB::select("
+                    select sum(case when c.gender='Wanita' then 1 else 0 end) as qty_w,sum(case when c.gender='Pria' then 1 else 0 end) as qty_p,sum(ti.sum_qty) qty_total 
+                    from 
+                    (select dated,invoice_no,customers_id,sum(product_qty) as sum_qty from temp_invoice where type_id = 2 group by dated,invoice_no,customers_id) ti 
+                    join customers c on c.id = ti.customers_id::bigint and c.branch_id::character varying like '".$branchx."' where ti.dated between '".$begindate."'::date and '".$enddate."'::date
+            ");
+
             $counter_service = DB::select("
-                    select product_id,product_abbr,type_id,sum(sub_total) as sum_val,sum(product_qty) as sum_qty from temp_invoice ti where branch_id::character varying like '".branchx."' and ti.type_id=2 group by product_id,product_abbr,type_id order by 3,2;                       
+                    select product_id,product_abbr,type_id,sum(sub_total) as sum_val,sum(product_qty) as sum_qty from temp_invoice ti where branch_id::character varying like '".$branchx."' and ti.type_id=2 and ti.dated between '".$begindate."'::date and '".$enddate."'::date group by product_id,product_abbr,type_id order by 3,2;                       
             ");
 
             $counter_extra = DB::select("
-                    select product_id,product_abbr,type_id,sum(sub_total) as sum_val,sum(product_qty) as sum_qty from temp_invoice ti where branch_id::character varying like '".branchx."' and  ti.type_id=8 group by product_id,product_abbr,type_id order by 3,2;                       
+                    select product_id,product_abbr,type_id,sum(sub_total) as sum_val,sum(product_qty) as sum_qty from temp_invoice ti where branch_id::character varying like '".$branchx."' and  ti.type_id=8 group by product_id,product_abbr,type_id order by 3,2;                       
             ");
 
             $report_data_service = DB::select("
-                    select * from temp_invoice ti where ti.type_id in (2,8) and  branch_id::character varying like '".branchx."' order by invoice_no,product_id;                       
+                select ti.dated,product_id,product_abbr,sum(ti.sum_qty) qty_total 
+                from 
+                (select dated,product_id,product_abbr,sum(product_qty) as sum_qty,branch_id from temp_invoice where type_id = 2 group by dated,product_id,product_abbr,branch_id) ti 
+                where  ti.branch_id::character varying like '".$branchx."' and ti.dated between '".$begindate."'::date and '".$enddate."'::date
+                group by ti.dated,product_id,product_abbr                    
             ");
 
             $report_data_detail = DB::select("
                     select * from temp_invoice ti
-                    where ti.dated between '".$begindate."' and '".$enddate."'  and ti.branch_id::character varying like '".branchx."'
+                    where ti.dated between '".$begindate."' and '".$enddate."'  and ti.branch_id::character varying like '".$branchx."'
                     order by invoice_no,executed_at
+            ");
+
+            $report_data_detail_total = DB::select("
+                    select product_id,product_abbr,sum(ti.sum_qty) qty_total 
+                    from 
+                    (select dated,product_id,product_abbr,sum(product_qty) as sum_qty,branch_id from temp_invoice where type_id = 2 group by dated,product_id,product_abbr,branch_id) ti 
+                    where  ti.branch_id::character varying like '".$branchx."' and ti.dated between '".$begindate."'::date and '".$enddate."'::date
+                    group by product_id,product_abbr   
             ");
 
         
@@ -357,7 +376,9 @@ class ReportInvoiceDetailController extends Controller
                         'counter_extra'=> $counter_extra,
                         'report_data_service'=> $report_data_service,
                         'report_data'=> $report_data,
+                        'report_data_total'=> $report_data_total,
                         'report_data_detail' => $report_data_detail,
+                        'report_data_detail_total' => $report_data_detail_total,
                         'filter_begin_date' => $begindate,
                         'filter_begin_end' => $enddate,
                         'filter_branch_id' => $branchx,
