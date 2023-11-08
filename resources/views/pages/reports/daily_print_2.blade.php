@@ -307,9 +307,11 @@
             <th  scope="col" colspan="<?= count($counter_service) ?>">
               {{  number_format(($total_service_rp/1000),0,',','.') }} / {{  number_format(($total_service_qty),0,',','.') }}
             </th>
-            <th  scope="col" colspan="<?= count($counter_extra) ?>">
-              {{  number_format(($total_extra_rp/1000),0,',','.') }} / {{  number_format(($total_extra_qty),0,',','.') }}
-            </th>
+            @if(count($counter_extra)>0)
+              <th  scope="col" colspan="<?= count($counter_extra) ?>">
+                {{  number_format(($total_extra_rp/1000),0,',','.') }} / {{  number_format(($total_extra_qty),0,',','.') }}
+              </th>
+            @endif
             <th scope="col">{{  number_format(($total_payment),1,',','.') }}</th>
             <th scope="col" colspan="2">{{  number_format(($total_product_rp/1000),1,',','.') }} / {{  number_format(($total_product_qty),0,',','.') }}</th>
             <th scope="col">{{  number_format(($total_drink_rp/1000),1,',','.') }} / {{  number_format(($total_drink_qty),0,',','.') }}</th>
