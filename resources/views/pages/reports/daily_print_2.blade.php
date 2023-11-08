@@ -768,12 +768,12 @@
 
                         if(counter_extra.length>0){
                           letter_until = String.fromCharCode(letter_until.charCodeAt(0) - 1);
+                          worksheet.mergeCells(letter_until_start+(report_data.length+5), str_pref+letter_until+(report_data.length+5));
+                          worksheet.getCell(letter_until_start+(report_data.length+5)).value = ''+accounting.formatNumber(parseFloat(total_extra_rp/1000), 0, ".", ",")+'/'+accounting.formatNumber(parseFloat(total_extra_qty), 0, ".", ",");
+                          worksheet.getCell(letter_until_start+(report_data.length+5)).alignment = { vertical: 'middle', horizontal: 'center' };
+                          worksheet.getCell(letter_until_start+(report_data.length+5)).fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
                         }
-                        worksheet.mergeCells(letter_until_start+(report_data.length+5), str_pref+letter_until+(report_data.length+5));
-                        worksheet.getCell(letter_until_start+(report_data.length+5)).value = ''+accounting.formatNumber(parseFloat(total_extra_rp/1000), 0, ".", ",")+'/'+accounting.formatNumber(parseFloat(total_extra_qty), 0, ".", ",");
-                        worksheet.getCell(letter_until_start+(report_data.length+5)).alignment = { vertical: 'middle', horizontal: 'center' };
-                        worksheet.getCell(letter_until_start+(report_data.length+5)).fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
-
+                        
                         letter_until = String.fromCharCode(letter_until.charCodeAt(0) + 1);
                         var letter_until_start = letter_until;    
 
