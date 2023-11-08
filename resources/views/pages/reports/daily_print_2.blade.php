@@ -307,9 +307,11 @@
             <th  scope="col" colspan="<?= count($counter_service) ?>">
               {{  number_format(($total_service_rp/1000),0,',','.') }} / {{  number_format(($total_service_qty),0,',','.') }}
             </th>
-            <th  scope="col" colspan="<?= count($counter_extra) ?>">
-              {{  number_format(($total_extra_rp/1000),0,',','.') }} / {{  number_format(($total_extra_qty),0,',','.') }}
-            </th>
+            @if(count($counter_extra)>0)
+              <th  scope="col" colspan="<?= count($counter_extra) ?>">
+                {{  number_format(($total_extra_rp/1000),0,',','.') }} / {{  number_format(($total_extra_qty),0,',','.') }}
+              </th>
+            @endif
             <th scope="col">{{  number_format(($total_payment),1,',','.') }}</th>
             <th scope="col" colspan="2">{{  number_format(($total_product_rp/1000),1,',','.') }} / {{  number_format(($total_product_qty),0,',','.') }}</th>
             <th scope="col">{{  number_format(($total_drink_rp/1000),1,',','.') }} / {{  number_format(($total_drink_qty),0,',','.') }}</th>
@@ -766,13 +768,14 @@
 
                         if(counter_extra.length>0){
                           letter_until = String.fromCharCode(letter_until.charCodeAt(0) - 1);
+                          worksheet.mergeCells(letter_until_start+(report_data.length+5), str_pref+letter_until+(report_data.length+5));
+                          worksheet.getCell(letter_until_start+(report_data.length+5)).value = ''+accounting.formatNumber(parseFloat(total_extra_rp/1000), 0, ".", ",")+'/'+accounting.formatNumber(parseFloat(total_extra_qty), 0, ".", ",");
+                          worksheet.getCell(letter_until_start+(report_data.length+5)).alignment = { vertical: 'middle', horizontal: 'center' };
+                          worksheet.getCell(letter_until_start+(report_data.length+5)).fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                          letter_until = String.fromCharCode(letter_until.charCodeAt(0) + 1);
                         }
-                        worksheet.mergeCells(letter_until_start+(report_data.length+5), str_pref+letter_until+(report_data.length+5));
-                        worksheet.getCell(letter_until_start+(report_data.length+5)).value = ''+accounting.formatNumber(parseFloat(total_extra_rp/1000), 0, ".", ",")+'/'+accounting.formatNumber(parseFloat(total_extra_qty), 0, ".", ",");
-                        worksheet.getCell(letter_until_start+(report_data.length+5)).alignment = { vertical: 'middle', horizontal: 'center' };
-                        worksheet.getCell(letter_until_start+(report_data.length+5)).fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
-
-                        letter_until = String.fromCharCode(letter_until.charCodeAt(0) + 1);
+                        
+                        
                         var letter_until_start = letter_until;    
 
                         worksheet.getCell(letter_until_start+(report_data.length+4)).value = ''+accounting.formatNumber(parseFloat(total_payment), 1, ".", ",");
