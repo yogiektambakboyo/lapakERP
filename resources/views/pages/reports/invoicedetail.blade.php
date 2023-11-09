@@ -75,7 +75,6 @@
                         <div class="col-md-12">
                             <select class="form-control" 
                                 name="filter_branch_id_in" id="filter_branch_id_in">
-                                <option value="%">-- All -- </option>
                                 @foreach($branchs as $branchx)
                                     <option value="{{ $branchx->id }}">{{ $branchx->remark }} </option>
                                 @endforeach
