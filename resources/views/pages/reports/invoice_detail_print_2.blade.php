@@ -250,14 +250,19 @@
                         for (let index = 0; index < counter_service.length; index++) {
                           const element = counter_service[index];
                           if(element.type_id==2){
-                            if(index>21){
+                            if(index==48){
+                              str_prefix = "B";
+                              charCounter = "A";
+                              worksheet.getCell(str_prefix+charCounter+"3").value = element.product_abbr;
+                              worksheet.getCell(str_prefix+charCounter+"3").fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                            }else if(index==22){
                               str_prefix = "A";
                               charCounter = "A";
-                              worksheet.getCell("A"+charCounter+"3").value = element.product_abbr;
-                              worksheet.getCell("A"+charCounter+"3").fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                              worksheet.getCell(str_prefix+charCounter+"3").value = element.product_abbr;
+                              worksheet.getCell(str_prefix+charCounter+"3").fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
                             }else{
-                              worksheet.getCell(charCounter+"3").value = element.product_abbr;
-                              worksheet.getCell(charCounter+"3").fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                              worksheet.getCell(str_prefix+charCounter+"3").value = element.product_abbr;
+                              worksheet.getCell(str_prefix+charCounter+"3").fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
                             }
                         
                             charCounter = String.fromCharCode(charCounter.charCodeAt(0) + 1);
@@ -330,17 +335,20 @@
                             const d_element = report_data_service[index_x];
 
                             if(d_element.dated==element.dated && elementd.product_id==d_element.product_id ){
-                              console.log(d_element);
                               total_service_qty = total_service_qty + parseFloat(d_element.qty_total);
                             }
                           }
 
-                          if(index>21){
+                          if(index==48){
+                            charCounters = "A";
+                            str_prefix = "B";
+                            worksheet.getCell(str_prefix+charCounters+countery).value = accounting.toFixed(parseFloat(total_service_qty), 0);
+                          }else if(index==22){
                             charCounters = "A";
                             str_prefix = "A";
-                            worksheet.getCell("A"+charCounters+countery).value = accounting.toFixed(parseFloat(total_service_qty), 0);
+                            worksheet.getCell(str_prefix+charCounters+countery).value = accounting.toFixed(parseFloat(total_service_qty), 0);
                           }else{
-                            worksheet.getCell(charCounters+countery).value = accounting.toFixed(parseFloat(total_service_qty), 0);
+                            worksheet.getCell(str_prefix+charCounters+countery).value = accounting.toFixed(parseFloat(total_service_qty), 0);
                           }
                       
                           charCounters = String.fromCharCode(charCounters.charCodeAt(0) + 1);
@@ -377,14 +385,19 @@
                           //charCounters = "F";
                           total_service_qty = 0;
 
-                          if(index>21){
+                          if(index==48){
+                            charCounters = "A";
+                            str_prefix = "B";
+                            worksheet.getCell(str_prefix+charCounters+countery).value = accounting.toFixed(parseFloat(elementd.sum_qty), 0);
+                            worksheet.getCell(str_prefix+charCounters+countery).alignment = { vertical: 'middle', horizontal: 'center' };
+                          }else if(index==22){
                             charCounters = "A";
                             str_prefix = "A";
-                            worksheet.getCell("A"+charCounters+countery).value = accounting.toFixed(parseFloat(elementd.sum_qty), 0);
-                            worksheet.getCell("A"+charCounters+countery).alignment = { vertical: 'middle', horizontal: 'center' };
+                            worksheet.getCell(str_prefix+charCounters+countery).value = accounting.toFixed(parseFloat(elementd.sum_qty), 0);
+                            worksheet.getCell(str_prefix+charCounters+countery).alignment = { vertical: 'middle', horizontal: 'center' };
                           }else{
-                            worksheet.getCell(charCounters+countery).value = accounting.toFixed(parseFloat(elementd.sum_qty), 0);
-                            worksheet.getCell(charCounters+countery).alignment = { vertical: 'middle', horizontal: 'center' };
+                            worksheet.getCell(str_prefix+charCounters+countery).value = accounting.toFixed(parseFloat(elementd.sum_qty), 0);
+                            worksheet.getCell(str_prefix+charCounters+countery).alignment = { vertical: 'middle', horizontal: 'center' };
 
                           }
                       

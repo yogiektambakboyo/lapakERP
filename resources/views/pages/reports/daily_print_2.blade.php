@@ -400,17 +400,24 @@
                           'MU',
                         ];
                         var charCounter = "F";
+                        var str_prefix = "";
 
                         for (let index = 0; index < counter_service.length; index++) {
                           const element = counter_service[index];
                           if(element.type_id==2){
-                            if(index>20){
+                            if(index==46){
                               charCounter = "A";
-                              worksheet.getCell("A"+charCounter+"3").value = element.product_abbr;
-                              worksheet.getCell("A"+charCounter+"3").fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                              str_prefix = "B";
+                              worksheet.getCell(str_prefix+charCounter+"3").value = element.product_abbr;
+                              worksheet.getCell(str_prefix+charCounter+"3").fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                            }if(index==21){
+                              charCounter = "A";
+                              str_prefix = "A";
+                              worksheet.getCell(str_prefix+charCounter+"3").value = element.product_abbr;
+                              worksheet.getCell(str_prefix+charCounter+"3").fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
                             }else{
-                              worksheet.getCell(charCounter+"3").value = element.product_abbr;
-                              worksheet.getCell(charCounter+"3").fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                              worksheet.getCell(str_prefix+charCounter+"3").value = element.product_abbr;
+                              worksheet.getCell(str_prefix+charCounter+"3").fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
                             }
                         
                             charCounter = String.fromCharCode(charCounter.charCodeAt(0) + 1);
@@ -420,15 +427,19 @@
                         for (let index = 0; index < counter_extra.length; index++) {
                           const element = counter_extra[index];
                           if(element.type_id==8){
-                            if(index+(counter_service.length)>46){
-                              worksheet.getCell("B"+charCounter+"3").value = element.product_abbr;
-                              worksheet.getCell("B"+charCounter+"3").fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
-                            }else if(index+(counter_service.length)>20){
-                              worksheet.getCell("A"+charCounter+"3").value = element.product_abbr;
-                              worksheet.getCell("A"+charCounter+"3").fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                            if(index+(counter_service.length)==46){
+                              charCounter = "A";
+                              str_prefix = "B";
+                              worksheet.getCell(str_prefix+charCounter+"3").value = element.product_abbr;
+                              worksheet.getCell(str_prefix+charCounter+"3").fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                            }else if(index+(counter_service.length)==21){
+                              charCounter = "A";
+                              str_prefix = "A";
+                              worksheet.getCell(str_prefix+charCounter+"3").value = element.product_abbr;
+                              worksheet.getCell(str_prefix+charCounter+"3").fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
                             }else{
-                              worksheet.getCell(charCounter+"3").value = element.product_abbr;
-                              worksheet.getCell(charCounter+"3").fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                              worksheet.getCell(str_prefix+charCounter+"3").value = element.product_abbr;
+                              worksheet.getCell(str_prefix+charCounter+"3").fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
                             }
                         
                             charCounter = String.fromCharCode(charCounter.charCodeAt(0) + 1);
@@ -529,7 +540,8 @@
 
                             for (let index = 0; index < report_data_detail.length; index++) {
                               const element = report_data_detail[index];
-                              if(element.type_id==2 && element.executed_at != '' && element.invoice_no==rowElement.invoice_no_full){
+                              if(element.type_id==2 && element.executed_at != '' && element.executed_at != null && element.invoice_no==rowElement.invoice_no_full){
+                                console.log(element.executed_at);
                                 executed_at = executed_at + ' \n ' + moment(element.executed_at, "HH:mm").format("HH:mm") + ' - ' + moment(element.executed_at, "HH:mm").add(element.product_conversion, 'minutes').format("HH:mm");
                               }
                             }
@@ -545,6 +557,7 @@
                             worksheet.getCell('E'+counter).value = rowElement.assigned_to_name;
 
 
+                            var str_prefix = "";
                             for (let index = 0; index < counter_service.length; index++) {
                               const element = counter_service[index];
                               var nominal_service = 0;
@@ -561,11 +574,16 @@
                                 }
                               }
 
-                              if(index>20){
+                              if(index==46){
                                 charCounters = "A";
-                                worksheet.getCell("A"+charCounters+counter).value = accounting.toFixed(parseFloat(nominal_service/1000), 0);
+                                str_prefix = "B";
+                                worksheet.getCell(str_prefix+charCounters+counter).value = accounting.toFixed(parseFloat(nominal_service/1000), 0);
+                              }else if(index==21){
+                                charCounters = "A";
+                                str_prefix = "A";
+                                worksheet.getCell(str_prefix+charCounters+counter).value = accounting.toFixed(parseFloat(nominal_service/1000), 0);
                               }else{
-                                worksheet.getCell(charCounters+counter).value = accounting.toFixed(parseFloat(nominal_service/1000), 0);
+                                worksheet.getCell(str_prefix+charCounters+counter).value = accounting.toFixed(parseFloat(nominal_service/1000), 0);
                               }
                           
                               charCounters = String.fromCharCode(charCounters.charCodeAt(0) + 1);
@@ -573,6 +591,12 @@
 
 
 
+                            var str_prefix = "";
+                            if(counter_service.length>52){
+                              str_prefix = "B";
+                            }else if(counter_service.length>=21){
+                              str_prefix = "A";
+                            }
                             for (let index = 0; index < counter_extra.length; index++) {
                               const element = counter_extra[index];
                               var nominal_extra = 0;
@@ -590,13 +614,16 @@
                               }
 
 
-                              if((index+parseInt(counter_service.length))>46){
+                              if((index+parseInt(counter_service.length))==46){
                                 charCounters = "A";
-                                worksheet.getCell("B"+charCounters+counter).value = accounting.toFixed(parseFloat(nominal_extra/1000), 0);
-                              }else if((index+parseInt(counter_service.length))>20){
-                                worksheet.getCell("A"+charCounters+counter).value = accounting.toFixed(parseFloat(nominal_extra/1000), 0);
+                                str_prefix = "B";
+                                worksheet.getCell(str_prefix+charCounters+counter).value = accounting.toFixed(parseFloat(nominal_extra/1000), 0);
+                              }else if((index+parseInt(counter_service.length))==21){
+                                str_prefix = "A";
+                                charCounters = "A";
+                                worksheet.getCell(str_prefix+charCounters+counter).value = accounting.toFixed(parseFloat(nominal_extra/1000), 0);
                               }else{
-                                worksheet.getCell(charCounters+counter).value = accounting.toFixed(parseFloat(nominal_extra/1000), 0);
+                                worksheet.getCell(str_prefix+charCounters+counter).value = accounting.toFixed(parseFloat(nominal_extra/1000), 0);
                               }
                           
                               charCounters = String.fromCharCode(charCounters.charCodeAt(0) + 1);
@@ -758,7 +785,10 @@
                           worksheet.getCell(letter_until+(report_data.length+4)).value = ''+accounting.formatNumber(parseFloat(counter_extra[index].sum_val/1000), 0, ".", ",")+'/'+accounting.formatNumber(parseFloat(counter_extra[index].sum_qty), 0, ".", ",");
                           worksheet.getCell(letter_until+(report_data.length+4)).alignment = { vertical: 'middle', horizontal: 'center' };
                         
-                          if((counter_service.length+index)==19){
+                          if((counter_service.length+index)==35){
+                            letter_until = 'A';
+                            str_pref = 'B';
+                          }else if((counter_service.length+index)==19){
                             letter_until = 'A';
                             str_pref = 'A';
                           }else{
@@ -768,45 +798,45 @@
 
                         if(counter_extra.length>0){
                           letter_until = String.fromCharCode(letter_until.charCodeAt(0) - 1);
-                          worksheet.mergeCells(letter_until_start+(report_data.length+5), str_pref+letter_until+(report_data.length+5));
-                          worksheet.getCell(letter_until_start+(report_data.length+5)).value = ''+accounting.formatNumber(parseFloat(total_extra_rp/1000), 0, ".", ",")+'/'+accounting.formatNumber(parseFloat(total_extra_qty), 0, ".", ",");
-                          worksheet.getCell(letter_until_start+(report_data.length+5)).alignment = { vertical: 'middle', horizontal: 'center' };
-                          worksheet.getCell(letter_until_start+(report_data.length+5)).fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                          worksheet.mergeCells(str_pref+letter_until_start+(report_data.length+5), str_pref+letter_until+(report_data.length+5));
+                          worksheet.getCell(str_pref+letter_until_start+(report_data.length+5)).value = ''+accounting.formatNumber(parseFloat(total_extra_rp/1000), 0, ".", ",")+'/'+accounting.formatNumber(parseFloat(total_extra_qty), 0, ".", ",");
+                          worksheet.getCell(str_pref+letter_until_start+(report_data.length+5)).alignment = { vertical: 'middle', horizontal: 'center' };
+                          worksheet.getCell(str_pref+letter_until_start+(report_data.length+5)).fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
                           letter_until = String.fromCharCode(letter_until.charCodeAt(0) + 1);
                         }
                         
                         
                         var letter_until_start = letter_until;    
 
-                        worksheet.getCell(letter_until_start+(report_data.length+4)).value = ''+accounting.formatNumber(parseFloat(total_payment), 1, ".", ",");
-                        worksheet.getCell(letter_until_start+(report_data.length+4)).alignment = { vertical: 'middle', horizontal: 'center' };
+                        worksheet.getCell(str_pref+letter_until_start+(report_data.length+4)).value = ''+accounting.formatNumber(parseFloat(total_payment), 1, ".", ",");
+                        worksheet.getCell(str_pref+letter_until_start+(report_data.length+4)).alignment = { vertical: 'middle', horizontal: 'center' };
 
-                        worksheet.getCell(letter_until_start+(report_data.length+5)).value = ''+accounting.formatNumber(parseFloat(total_payment), 1, ".", ",");
-                        worksheet.getCell(letter_until_start+(report_data.length+5)).alignment = { vertical: 'middle', horizontal: 'center' };
-                        worksheet.getCell(letter_until_start+(report_data.length+5)).fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                        worksheet.getCell(str_pref+letter_until_start+(report_data.length+5)).value = ''+accounting.formatNumber(parseFloat(total_payment), 1, ".", ",");
+                        worksheet.getCell(str_pref+letter_until_start+(report_data.length+5)).alignment = { vertical: 'middle', horizontal: 'center' };
+                        worksheet.getCell(str_pref+letter_until_start+(report_data.length+5)).fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
 
                         letter_until = String.fromCharCode(letter_until.charCodeAt(0) + 1);
                         var letter_until_start = letter_until;  
                         letter_until = String.fromCharCode(letter_until.charCodeAt(0) + 1);
 
-                        worksheet.mergeCells(letter_until_start+(report_data.length+4), str_pref+letter_until+(report_data.length+4));
-                        worksheet.getCell(letter_until_start+(report_data.length+4)).value = ''+accounting.formatNumber(parseFloat(total_product_rp/1000), 1, ".", ",")+'/'+accounting.formatNumber(parseFloat(total_product_qty), 1, ".", ",");
-                        worksheet.getCell(letter_until_start+(report_data.length+4)).alignment = { vertical: 'middle', horizontal: 'center' };
+                        worksheet.mergeCells(str_pref+letter_until_start+(report_data.length+4), str_pref+letter_until+(report_data.length+4));
+                        worksheet.getCell(str_pref+letter_until_start+(report_data.length+4)).value = ''+accounting.formatNumber(parseFloat(total_product_rp/1000), 1, ".", ",")+'/'+accounting.formatNumber(parseFloat(total_product_qty), 1, ".", ",");
+                        worksheet.getCell(str_pref+letter_until_start+(report_data.length+4)).alignment = { vertical: 'middle', horizontal: 'center' };
 
                       
-                        worksheet.mergeCells(letter_until_start+(report_data.length+5), str_pref+letter_until+(report_data.length+5));
-                        worksheet.getCell(letter_until_start+(report_data.length+5)).value = ''+accounting.formatNumber(parseFloat(total_product_rp/1000), 1, ".", ",")+'/'+accounting.formatNumber(parseFloat(total_product_qty), 1, ".", ",");
-                        worksheet.getCell(letter_until_start+(report_data.length+5)).alignment = { vertical: 'middle', horizontal: 'center' };
-                        worksheet.getCell(letter_until_start+(report_data.length+5)).fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                        worksheet.mergeCells(str_pref+letter_until_start+(report_data.length+5), str_pref+letter_until+(report_data.length+5));
+                        worksheet.getCell(str_pref+letter_until_start+(report_data.length+5)).value = ''+accounting.formatNumber(parseFloat(total_product_rp/1000), 1, ".", ",")+'/'+accounting.formatNumber(parseFloat(total_product_qty), 1, ".", ",");
+                        worksheet.getCell(str_pref+letter_until_start+(report_data.length+5)).alignment = { vertical: 'middle', horizontal: 'center' };
+                        worksheet.getCell(str_pref+letter_until_start+(report_data.length+5)).fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
 
                         letter_until = String.fromCharCode(letter_until.charCodeAt(0) + 1);
 
-                        worksheet.getCell(letter_until+(report_data.length+4)).value = ''+accounting.formatNumber(parseFloat(total_drink_rp/1000), 1, ".", ",")+'/'+accounting.formatNumber(parseFloat(total_drink_qty), 1, ".", ",");
-                        worksheet.getCell(letter_until+(report_data.length+4)).alignment = { vertical: 'middle', horizontal: 'center' };
+                        worksheet.getCell(str_pref+letter_until+(report_data.length+4)).value = ''+accounting.formatNumber(parseFloat(total_drink_rp/1000), 1, ".", ",")+'/'+accounting.formatNumber(parseFloat(total_drink_qty), 1, ".", ",");
+                        worksheet.getCell(str_pref+letter_until+(report_data.length+4)).alignment = { vertical: 'middle', horizontal: 'center' };
 
-                        worksheet.getCell(letter_until+(report_data.length+5)).value = ''+accounting.formatNumber(parseFloat(total_drink_rp/1000), 1, ".", ",")+'/'+accounting.formatNumber(parseFloat(total_drink_qty), 1, ".", ",");
-                        worksheet.getCell(letter_until+(report_data.length+5)).alignment = { vertical: 'middle', horizontal: 'center' };
-                        worksheet.getCell(letter_until+(report_data.length+5)).fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                        worksheet.getCell(str_pref+letter_until+(report_data.length+5)).value = ''+accounting.formatNumber(parseFloat(total_drink_rp/1000), 1, ".", ",")+'/'+accounting.formatNumber(parseFloat(total_drink_qty), 1, ".", ",");
+                        worksheet.getCell(str_pref+letter_until+(report_data.length+5)).alignment = { vertical: 'middle', horizontal: 'center' };
+                        worksheet.getCell(str_pref+letter_until+(report_data.length+5)).fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
 
                         letter_until = String.fromCharCode(letter_until.charCodeAt(0) + 1);
 
@@ -844,14 +874,14 @@
                           }
                         }
 
-                        worksheet.getCell(letter_until+(report_data.length+4)).value = str_out;
-                        worksheet.getCell(letter_until+(report_data.length+4)).alignment = { vertical: 'middle', horizontal: 'left' };
-                        worksheet.getCell(letter_until+(report_data.length+4)).alignment = { wrapText: true, vertical: 'top', horizontal: 'left' };
+                        worksheet.getCell(str_pref+letter_until+(report_data.length+4)).value = str_out;
+                        worksheet.getCell(str_pref+letter_until+(report_data.length+4)).alignment = { vertical: 'middle', horizontal: 'left' };
+                        worksheet.getCell(str_pref+letter_until+(report_data.length+4)).alignment = { wrapText: true, vertical: 'top', horizontal: 'left' };
 
 
-                        worksheet.getCell(letter_until+(report_data.length+5)).value = '';
-                        worksheet.getCell(letter_until+(report_data.length+5)).alignment = { vertical: 'middle', horizontal: 'center' };
-                        worksheet.getCell(letter_until+(report_data.length+5)).fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                        worksheet.getCell(str_pref+letter_until+(report_data.length+5)).value = '';
+                        worksheet.getCell(str_pref+letter_until+(report_data.length+5)).alignment = { vertical: 'middle', horizontal: 'center' };
+                        worksheet.getCell(str_pref+letter_until+(report_data.length+5)).fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
 
 
                         worksheet.eachRow({ includeEmpty: true }, function(row, rowNumber) {
