@@ -28,9 +28,9 @@
                 <th scope="col" width="6%">Periode</th>
                 <th scope="col">@lang('general.lbl_product_name')</th>     
                 <th scope="col">@lang('general.lbl_balance_begin')</th>     
-                <th scope="col">@lang('general.lbl_balance_end')</th>     
                 <th scope="col">@lang('general.lbl_qty_in')</th>     
-                <th scope="col">@lang('general.lbl_qty_out')</th>     
+                <th scope="col">@lang('general.lbl_qty_out')</th>   
+                <th scope="col">@lang('general.lbl_balance_end')</th>     
             </tr>
             </thead>
             <tbody>
@@ -41,9 +41,9 @@
                         <td>{{ $rdata->periode }}</td>
                         <td>{{ $rdata->product_name }}</td>
                         <td>{{ number_format($rdata->balance_begin,0,',','.') }}</td>
-                        <td>{{ number_format($rdata->balance_end,0,',','.') }}</td>
                         <td>{{ number_format($rdata->qty_in,0,',','.') }}</td>
                         <td>{{ number_format($rdata->qty_out,0,',','.') }}</td>
+                        <td>{{ number_format($rdata->balance_end,0,',','.') }}</td>
                     </tr>
                 @endforeach
             </tbody>
