@@ -51,7 +51,7 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
          * Other Routes
          */
 
-        Route::post('/api_post_invoice_terapist', 'InvoicesController@api_post_invoice_terapist')->name('login.api_post_invoice_terapist');
+        Route::post('/api_post_invoice_terapist', 'LoginController@api_post_invoice_terapist')->name('login.api_post_invoice_terapist');
 
 
     });
