@@ -191,7 +191,7 @@ class ReportCloseShiftController extends Controller
             group by ps.abbr,pc.type order by 1                   
         ");
         $out_data = DB::select("
-                select ps2.abbr,sum(pi2.qty) as qty 
+                select ps2.abbr,sum(pi2.qty*id.qty) as qty 
                 from invoice_master im 
                 join invoice_detail id on id.invoice_no = im.invoice_no 
                 join customers c on c.id = im.customers_id 

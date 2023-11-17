@@ -152,7 +152,7 @@ class ReportCloseDayController extends Controller
                 where im.dated = '".$filter_begin_date."'  and c.branch_id = ".$filter_branch_id." order by im.invoice_no ) a                      
         ");
         $out_data = DB::select("
-                select ps2.abbr,sum(pi2.qty) as qty 
+                select ps2.abbr,sum(pi2.qty*id.qty) as qty 
                 from invoice_master im 
                 join invoice_detail id on id.invoice_no = im.invoice_no 
                 join customers c on c.id = im.customers_id 
@@ -251,7 +251,7 @@ class ReportCloseDayController extends Controller
         
 
         $out_datas = DB::select("
-                select c.id,ps2.abbr,sum(pi2.qty) as qty 
+                select c.id,ps2.abbr,sum(pi2.qty*id.qty) as qty 
                 from invoice_master im 
                 join invoice_detail id on id.invoice_no = im.invoice_no 
                 join customers c on c.id = im.customers_id 
@@ -265,7 +265,7 @@ class ReportCloseDayController extends Controller
         ");
 
         $out_datas_total = DB::select("
-                select ps2.abbr,sum(pi2.qty) as qty 
+                select ps2.abbr,sum(pi2.qty*id.qty) as qty 
                 from invoice_master im 
                 join invoice_detail id on id.invoice_no = im.invoice_no 
                 join customers c on c.id = im.customers_id 
@@ -1524,7 +1524,7 @@ class ReportCloseDayController extends Controller
         ");
 
         $out_datas_total = DB::select("
-                select ps2.abbr,sum(pi2.qty) as qty 
+                select ps2.abbr,sum(pi2.qty*id.qty) as qty 
                 from temp_invoice ti 
                 join customers c on c.id = ti.customers_id::bigint 
                 join branch b on b.id=c.branch_id
@@ -1657,7 +1657,7 @@ class ReportCloseDayController extends Controller
             ");
 
             $out_datas_total = DB::select("
-                    select ps2.abbr,sum(pi2.qty) as qty 
+                    select ps2.abbr,sum(pi2.qty*id.qty) as qty 
                     from temp_invoice ti 
                     join customers c on c.id = ti.customers_id::bigint 
                     join branch b on b.id=c.branch_id
