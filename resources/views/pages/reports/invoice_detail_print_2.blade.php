@@ -49,7 +49,7 @@
      //43% - 57%
       $width_table = 100;
       if(count($counter_service)>14){
-        $width_table = 100 + ((count($counter_service)-14)*5);
+        $width_table = 100 + ((count($counter_service)-14)*6);
       }
     ?>
 
@@ -85,7 +85,16 @@
                   <div class="">{{  $serv->product_abbr }}</div>
                 </th>
           @endforeach
-          <th scope="col" width="4%">Cases</th>
+          @foreach($counter_extra as $ext)
+                <th  scope="col">
+                  <div class="">{{  $ext->product_abbr }}</div>
+                </th>
+          @endforeach
+          <th scope="col" width="6%">Cases Perawatan</th>
+          <th scope="col" width="6%">Cases Salon</th>
+          <th scope="col" width="6%">Cases Extra</th>
+          <th scope="col" width="6%">Cases Produk</th>
+          <th scope="col" width="6%">Cases Minuman</th>
 
 
         </tr>
@@ -127,8 +136,29 @@
                               
                             </td>
                       @endforeach
+
+                      @foreach($counter_extra as $ext)
+                        <?php $total_extra_qty=0; ?>
+                          @foreach($report_data_service as $dio)
+                              @if($dio->dated==$detail->dated && $dio->product_id==$ext->product_id)
+                                  <?php
+                                    $total_extra_qty = $total_extra_qty + $dio->qty_total;
+                                  ?>
+                              @endif
+                          @endforeach
+                            <td style="text-align: left;">
+                              <?php
+                                  echo number_format(($total_extra_qty),0,',','.');
+                              ?>
+                              
+                            </td>
+                      @endforeach
                      
                       <td style="text-align: left;">{{ $detail->qty_total }}</td>
+                      <td style="text-align: left;">{{ $detail->qty_total_salon }}</td>
+                      <td style="text-align: left;">{{ $detail->qty_total_extra }}</td>
+                      <td style="text-align: left;">{{ $detail->qty_total_product }}</td>
+                      <td style="text-align: left;">{{ $detail->qty_total_drink }}</td>
 
                 </tr>
                 @php
@@ -150,7 +180,19 @@
                   </th>
                   @endforeach
 
+                  @foreach($counter_extra as $ext)
+                  <th  scope="col">
+                    <?php
+                        echo number_format(($ext->sum_qty),0,',','.');
+                    ?>
+                  </th>
+                  @endforeach
+
                   <th scope="col" width="5%">{{ number_format($report_data_total[0]->qty_total,0,',','.') }}</th>
+                  <th scope="col" width="5%">{{ number_format($report_data_total[0]->qty_total_salon,0,',','.') }}</th>
+                  <th scope="col" width="5%">{{ number_format($report_data_total[0]->qty_total_extra,0,',','.') }}</th>
+                  <th scope="col" width="5%">{{ number_format($report_data_total[0]->qty_total_product,0,',','.') }}</th>
+                  <th scope="col" width="5%">{{ number_format($report_data_total[0]->qty_total_drink,0,',','.') }}</th>
                 </tr>
         </tbody>
       </table>
@@ -299,11 +341,52 @@
                     
                     // End loop header
 
-                    worksheet.getCell(str_prefix+charCounter+'3').value = 'Case';
+                    if(charCounter=='['){
+                      str_prefix = "A";
+                      charCounter = "A";
+                    }
+                    worksheet.getCell(str_prefix+charCounter+'3').value = 'Case Perawatan';
                     worksheet.getCell(str_prefix+charCounter+'3').alignment = { vertical: 'middle', horizontal: 'center' };
                     worksheet.getCell(str_prefix+charCounter+'3').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
 
-                
+                    charCounter = String.fromCharCode(charCounter.charCodeAt(0) + 1);
+                    if(charCounter=='['){
+                      str_prefix = "A";
+                      charCounter = "A";
+                    }
+                    worksheet.getCell(str_prefix+charCounter+'3').value = 'Case Salon';
+                    worksheet.getCell(str_prefix+charCounter+'3').alignment = { vertical: 'middle', horizontal: 'center' };
+                    worksheet.getCell(str_prefix+charCounter+'3').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+
+                    charCounter = String.fromCharCode(charCounter.charCodeAt(0) + 1);
+                    console.log(charCounter);
+                    if(charCounter=='['){
+                      str_prefix = "A";
+                      charCounter = "A";
+                    }
+                    worksheet.getCell(str_prefix+charCounter+'3').value = 'Case Extra';
+                    worksheet.getCell(str_prefix+charCounter+'3').alignment = { vertical: 'middle', horizontal: 'center' };
+                    worksheet.getCell(str_prefix+charCounter+'3').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+
+                    charCounter = String.fromCharCode(charCounter.charCodeAt(0) + 1);
+                    if(charCounter=='['){
+                      str_prefix = "A";
+                      charCounter = "A";
+                    }
+                    worksheet.getCell(str_prefix+charCounter+'3').value = 'Case Produk';
+                    worksheet.getCell(str_prefix+charCounter+'3').alignment = { vertical: 'middle', horizontal: 'center' };
+                    worksheet.getCell(str_prefix+charCounter+'3').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+
+                    charCounter = String.fromCharCode(charCounter.charCodeAt(0) + 1);
+                    console.log(charCounter);
+                    if(charCounter=='['){
+                      str_prefix = "A";
+                      charCounter = "A";
+                    }
+                    worksheet.getCell(str_prefix+charCounter+'3').value = 'Case Minuman';
+                    worksheet.getCell(str_prefix+charCounter+'3').alignment = { vertical: 'middle', horizontal: 'center' };
+                    worksheet.getCell(str_prefix+charCounter+'3').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+
                     var countery = 4;
                     report_datas.forEach(element => {
                          worksheet.getCell('A'+countery).value = element.dated;
@@ -358,6 +441,38 @@
                         worksheet.getCell(str_prefix+charCounters+countery).value = (element.qty_total);
                         worksheet.getCell(str_prefix+charCounters+countery).alignment = { vertical: 'middle', horizontal: 'center' };
 
+                        charCounters = String.fromCharCode(charCounters.charCodeAt(0) + 1);
+                        if(charCounters=='['){
+                          str_prefix = "A";
+                          charCounters = "A";
+                        }
+                        worksheet.getCell(str_prefix+charCounters+countery).value = (element.qty_total_salon);
+                        worksheet.getCell(str_prefix+charCounters+countery).alignment = { vertical: 'middle', horizontal: 'center' };
+
+                        charCounters = String.fromCharCode(charCounters.charCodeAt(0) + 1);
+                        if(charCounters=='['){
+                          str_prefix = "A";
+                          charCounters = "A";
+                        }
+                        worksheet.getCell(str_prefix+charCounters+countery).value = (element.qty_total_extra);
+                        worksheet.getCell(str_prefix+charCounters+countery).alignment = { vertical: 'middle', horizontal: 'center' };
+                        
+                        charCounters = String.fromCharCode(charCounters.charCodeAt(0) + 1);
+                        if(charCounters=='['){
+                          str_prefix = "A";
+                          charCounters = "A";
+                        }
+                        worksheet.getCell(str_prefix+charCounters+countery).value = (element.qty_total_product);
+                        worksheet.getCell(str_prefix+charCounters+countery).alignment = { vertical: 'middle', horizontal: 'center' };
+
+                        charCounters = String.fromCharCode(charCounters.charCodeAt(0) + 1);
+                        if(charCounters=='['){
+                          str_prefix = "A";
+                          charCounters = "A";
+                        }
+                        worksheet.getCell(str_prefix+charCounters+countery).value = (element.qty_total_drink);
+                        worksheet.getCell(str_prefix+charCounters+countery).alignment = { vertical: 'middle', horizontal: 'center' };
+
                         countery++;
 
                     });
@@ -405,6 +520,39 @@
                         }
                         
                     worksheet.getCell(str_prefix+charCounters+countery).value = report_data_total[0].qty_total;
+                    worksheet.getCell(str_prefix+charCounters+countery).alignment = { vertical: 'middle', horizontal: 'center' };
+
+
+                    charCounters = String.fromCharCode(charCounters.charCodeAt(0) + 1);
+                    if(charCounters=='['){
+                      str_prefix = "A";
+                      charCounters = "A";
+                    }
+                    worksheet.getCell(str_prefix+charCounters+countery).value = report_data_total[0].qty_total_salon;
+                    worksheet.getCell(str_prefix+charCounters+countery).alignment = { vertical: 'middle', horizontal: 'center' };
+
+                    charCounters = String.fromCharCode(charCounters.charCodeAt(0) + 1);
+                    if(charCounters=='['){
+                      str_prefix = "A";
+                      charCounters = "A";
+                    }
+                    worksheet.getCell(str_prefix+charCounters+countery).value = report_data_total[0].qty_total_extra;
+                    worksheet.getCell(str_prefix+charCounters+countery).alignment = { vertical: 'middle', horizontal: 'center' };
+                    
+                    charCounters = String.fromCharCode(charCounters.charCodeAt(0) + 1);
+                    if(charCounters=='['){
+                      str_prefix = "A";
+                      charCounters = "A";
+                    }
+                    worksheet.getCell(str_prefix+charCounters+countery).value = report_data_total[0].qty_total_product;
+                    worksheet.getCell(str_prefix+charCounters+countery).alignment = { vertical: 'middle', horizontal: 'center' };
+
+                    charCounters = String.fromCharCode(charCounters.charCodeAt(0) + 1);
+                    if(charCounters=='['){
+                      str_prefix = "A";
+                      charCounters = "A";
+                    }
+                    worksheet.getCell(str_prefix+charCounters+countery).value = report_data_total[0].qty_total_drink;
                     worksheet.getCell(str_prefix+charCounters+countery).alignment = { vertical: 'middle', horizontal: 'center' };
 
                     let filename = "Report_Summary_Faktur_"+(Math.floor(Date.now() / 1000)+".xlsx");
