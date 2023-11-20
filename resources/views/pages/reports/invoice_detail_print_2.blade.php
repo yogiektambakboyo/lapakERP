@@ -49,7 +49,7 @@
      //43% - 57%
       $width_table = 100;
       if(count($counter_service)>14){
-        $width_table = 100 + ((count($counter_service)-14)*6);
+        $width_table = 100 + (((count($counter_service)+count($counter_salon)+count($counter_extra)+count($counter_drink)+count($counter_product))-14)*6);
       }
     ?>
 
@@ -75,29 +75,63 @@
 
       <table class="table table-striped" id="service_table"  width="<?= $width_table; ?>%">
         <thead>
-        <tr style="background-color:#FFA726;color:white;">
-          <th scope="col" width="10%">Tgl</th>
-          <th scope="col" width="4%">Qty W</th>
-          <th scope="col" width="4%">Qty P</th>
-          <th scope="col" width="4%">Qty</th>
-          @foreach($counter_service as $serv)
-                <th  scope="col">
-                  <div class="">{{  $serv->product_abbr }}</div>
-                </th>
-          @endforeach
-          @foreach($counter_extra as $ext)
-                <th  scope="col">
-                  <div class="">{{  $ext->product_abbr }}</div>
-                </th>
-          @endforeach
-          <th scope="col" width="6%">Cases Perawatan</th>
-          <th scope="col" width="6%">Cases Salon</th>
-          <th scope="col" width="6%">Cases Extra</th>
-          <th scope="col" width="6%">Cases Produk</th>
-          <th scope="col" width="6%">Cases Minuman</th>
+          <tr style="background-color:#FFA726;color:white;">
+            <th scope="col" width="100px" rowspan="2">Tgl</th>
+            <th scope="col" width="100px" rowspan="2">Qty W</th>
+            <th scope="col" width="100px" rowspan="2">Qty P</th>
+            <th scope="col" width="100px" rowspan="2">Qty</th>
+            <th scope="col" colspan="<?= count($counter_service); ?>">
+              <div class="">Perawatan</div>
+            </th>
+            <th scope="col" width="100px" rowspan="2" >Cases Perawatan</th>
+            <th scope="col" colspan="<?= count($counter_salon); ?>">
+              <div class="">Salon</div>
+            </th>
+            <th scope="col" width="100px" rowspan="2">Cases Salon</th>
+            <th scope="col" colspan="<?= count($counter_extra); ?>">
+              <div class="">Extra</div>
+            </th>
+            <th scope="col" width="100px" rowspan="2">Cases Extra</th>
+            <th scope="col" colspan="<?= count($counter_product); ?>">
+              <div class="">Produk</div>
+            </th>
+            <th scope="col" width="100px" rowspan="2">Cases Produk</th>
+            <th scope="col" colspan="<?= count($counter_drink); ?>">
+              <div class="">Minuman</div>
+            </th>
+            <th scope="col" width="100px" rowspan="2">Cases Minuman</th>
 
 
-        </tr>
+          </tr>
+          <tr style="background-color:#FFA726;color:white;">
+            @foreach($counter_service as $serv)
+                  <th  scope="col">
+                    <div class="">{{  $serv->product_abbr }}</div>
+                  </th>
+            @endforeach
+            @foreach($counter_salon as $ext)
+                  <th  scope="col">
+                    <div class="">{{  $ext->product_abbr }}</div>
+                  </th>
+            @endforeach
+            @foreach($counter_extra as $ext)
+                  <th  scope="col">
+                    <div class="">{{  $ext->product_abbr }}</div>
+                  </th>
+            @endforeach
+            @foreach($counter_product as $ext)
+                  <th  scope="col">
+                    <div class="">{{  $ext->product_abbr }}</div>
+                  </th>
+            @endforeach
+            @foreach($counter_drink as $ext)
+                  <th  scope="col">
+                    <div class="">{{  $ext->product_abbr }}</div>
+                  </th>
+            @endforeach
+
+
+          </tr>
         </thead>
         <tbody>
           @php
@@ -137,6 +171,27 @@
                             </td>
                       @endforeach
 
+                      <td style="text-align: center;">{{ $detail->qty_total }}</td>
+
+                      @foreach($counter_salon as $ext)
+                        <?php $total_salon_qty=0; ?>
+                          @foreach($report_data_service as $dio)
+                              @if($dio->dated==$detail->dated && $dio->product_id==$ext->product_id)
+                                  <?php
+                                    $total_salon_qty = $total_salon_qty + $dio->qty_total;
+                                  ?>
+                              @endif
+                          @endforeach
+                            <td style="text-align: left;">
+                              <?php
+                                  echo number_format(($total_salon_qty),0,',','.');
+                              ?>
+                              
+                            </td>
+                      @endforeach
+                  
+                      <td style="text-align: center;">{{ $detail->qty_total_salon }}</td>
+
                       @foreach($counter_extra as $ext)
                         <?php $total_extra_qty=0; ?>
                           @foreach($report_data_service as $dio)
@@ -153,12 +208,43 @@
                               
                             </td>
                       @endforeach
-                     
-                      <td style="text-align: left;">{{ $detail->qty_total }}</td>
-                      <td style="text-align: left;">{{ $detail->qty_total_salon }}</td>
-                      <td style="text-align: left;">{{ $detail->qty_total_extra }}</td>
-                      <td style="text-align: left;">{{ $detail->qty_total_product }}</td>
-                      <td style="text-align: left;">{{ $detail->qty_total_drink }}</td>
+                      <td style="text-align: center;">{{ $detail->qty_total_extra }}</td>
+
+                      @foreach($counter_product as $ext)
+                        <?php $total_product_qty=0; ?>
+                          @foreach($report_data_service as $dio)
+                              @if($dio->dated==$detail->dated && $dio->product_id==$ext->product_id)
+                                  <?php
+                                    $total_product_qty = $total_product_qty + $dio->qty_total;
+                                  ?>
+                              @endif
+                          @endforeach
+                            <td style="text-align: left;">
+                              <?php
+                                  echo number_format(($total_product_qty),0,',','.');
+                              ?>
+                              
+                            </td>
+                      @endforeach
+                      <td style="text-align: center;">{{ $detail->qty_total_product }}</td>
+
+                      @foreach($counter_drink as $ext)
+                        <?php $total_drink_qty=0; ?>
+                          @foreach($report_data_service as $dio)
+                              @if($dio->dated==$detail->dated && $dio->product_id==$ext->product_id)
+                                  <?php
+                                    $total_drink_qty = $total_drink_qty + $dio->qty_total;
+                                  ?>
+                              @endif
+                          @endforeach
+                            <td style="text-align: left;">
+                              <?php
+                                  echo number_format(($total_drink_qty),0,',','.');
+                              ?>
+                              
+                            </td>
+                      @endforeach
+                      <td style="text-align: center;">{{ $detail->qty_total_drink }}</td>
 
                 </tr>
                 @php
@@ -168,9 +254,9 @@
            @endforeach
                 <tr>
                   <th>JUMLAH</th>
-                  <th scope="col" width="5%">{{ number_format($report_data_total[0]->qty_w,0,',','.') }}</th>
-                  <th scope="col" width="5%">{{ number_format($report_data_total[0]->qty_p,0,',','.') }}</th>
-                  <th scope="col" width="5%">{{ number_format(($report_data_total[0]->qty_p+$report_data_total[0]->qty_w),0,',','.') }}</th>
+                  <th scope="col" width="100px">{{ number_format($report_data_total[0]->qty_w,0,',','.') }}</th>
+                  <th scope="col" width="100px">{{ number_format($report_data_total[0]->qty_p,0,',','.') }}</th>
+                  <th scope="col" width="100px">{{ number_format(($report_data_total[0]->qty_p+$report_data_total[0]->qty_w),0,',','.') }}</th>
                   
                   @foreach($counter_service as $serv)
                   <th  scope="col">
@@ -180,6 +266,18 @@
                   </th>
                   @endforeach
 
+                  <th scope="col" width="100px">{{ number_format($report_data_total[0]->qty_total,0,',','.') }}</th>
+
+                  @foreach($counter_salon as $serv)
+                  <th  scope="col">
+                    <?php
+                        echo number_format(($serv->sum_qty),0,',','.');
+                    ?>
+                  </th>
+                  @endforeach
+
+                  <th scope="col" width="100px">{{ number_format($report_data_total[0]->qty_total_salon,0,',','.') }}</th>
+
                   @foreach($counter_extra as $ext)
                   <th  scope="col">
                     <?php
@@ -188,11 +286,27 @@
                   </th>
                   @endforeach
 
-                  <th scope="col" width="5%">{{ number_format($report_data_total[0]->qty_total,0,',','.') }}</th>
-                  <th scope="col" width="5%">{{ number_format($report_data_total[0]->qty_total_salon,0,',','.') }}</th>
-                  <th scope="col" width="5%">{{ number_format($report_data_total[0]->qty_total_extra,0,',','.') }}</th>
-                  <th scope="col" width="5%">{{ number_format($report_data_total[0]->qty_total_product,0,',','.') }}</th>
-                  <th scope="col" width="5%">{{ number_format($report_data_total[0]->qty_total_drink,0,',','.') }}</th>
+                  
+                  
+                  <th scope="col" width="100px">{{ number_format($report_data_total[0]->qty_total_extra,0,',','.') }}</th>
+
+                  @foreach($counter_product as $ext)
+                  <th  scope="col">
+                    <?php
+                        echo number_format(($ext->sum_qty),0,',','.');
+                    ?>
+                  </th>
+                  @endforeach
+                  <th scope="col" width="100px">{{ number_format($report_data_total[0]->qty_total_product,0,',','.') }}</th>
+
+                  @foreach($counter_drink as $ext)
+                  <th  scope="col">
+                    <?php
+                        echo number_format(($ext->sum_qty),0,',','.');
+                    ?>
+                  </th>
+                  @endforeach
+                  <th scope="col" width="100px">{{ number_format($report_data_total[0]->qty_total_drink,0,',','.') }}</th>
                 </tr>
         </tbody>
       </table>
