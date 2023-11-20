@@ -1524,7 +1524,7 @@ class ReportCloseDayController extends Controller
         ");
 
         $out_datas_total = DB::select("
-                select ps2.abbr,sum(pi2.qty*id.qty) as qty 
+                select ps2.abbr,sum(pi2.qty*ti.product_qty) as qty 
                 from temp_invoice ti 
                 join customers c on c.id = ti.customers_id::bigint 
                 join branch b on b.id=c.branch_id
@@ -1657,7 +1657,7 @@ class ReportCloseDayController extends Controller
             ");
 
             $out_datas_total = DB::select("
-                    select ps2.abbr,sum(pi2.qty*id.qty) as qty 
+                    select ps2.abbr,sum(pi2.qty*ti.product_qty) as qty 
                     from temp_invoice ti 
                     join customers c on c.id = ti.customers_id::bigint 
                     join branch b on b.id=c.branch_id
