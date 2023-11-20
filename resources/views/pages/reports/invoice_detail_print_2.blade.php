@@ -364,10 +364,12 @@
                   }).then(resp => {
                     report_datas = resp.data.report_data;
                     report_data_total = resp.data.report_data_total;
-                    report_data_total = resp.data.report_data_total;
                     
                     counter_service = resp.data.counter_service;
+                    counter_salon = resp.data.counter_salon;
                     counter_extra = resp.data.counter_extra;
+                    counter_drink = resp.data.counter_drink;
+                    counter_product = resp.data.counter_product;
                     report_data_service = resp.data.report_data_service;
                     report_data_detail = resp.data.report_data_detail;
                     report_data_detail_total = resp.data.report_data_detail_total;
@@ -406,7 +408,12 @@
                         for (let index = 0; index < counter_service.length; index++) {
                           const element = counter_service[index];
                           if(element.type_id==2){
-                            if(index==48){
+                            if(index==74){
+                              str_prefix = "C";
+                              charCounter = "A";
+                              worksheet.getCell(str_prefix+charCounter+"3").value = element.product_abbr;
+                              worksheet.getCell(str_prefix+charCounter+"3").fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                            }else if(index==47){
                               str_prefix = "B";
                               charCounter = "A";
                               worksheet.getCell(str_prefix+charCounter+"3").value = element.product_abbr;
@@ -456,50 +463,234 @@
                     // End loop header
 
                     if(charCounter=='['){
-                      str_prefix = "A";
-                      charCounter = "A";
+                      if(counter_service.length>=74){
+                          str_prefix = "C";
+                          charCounter = "A";
+                        }else if(counter_service.length>=48){
+                          str_prefix = "B";
+                          charCounter = "A";
+                        }else if(counter_service.length>=22){
+                          str_prefix = "A";
+                          charCounter = "A";
+                        }                      
                     }
+
                     worksheet.getCell(str_prefix+charCounter+'3').value = 'Case Perawatan';
                     worksheet.getCell(str_prefix+charCounter+'3').alignment = { vertical: 'middle', horizontal: 'center' };
                     worksheet.getCell(str_prefix+charCounter+'3').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
 
-                    charCounter = String.fromCharCode(charCounter.charCodeAt(0) + 1);
                     if(charCounter=='['){
-                      str_prefix = "A";
-                      charCounter = "A";
+                      if(counter_service.length>=74){
+                          str_prefix = "C";
+                          charCounter = "A";
+                        }else if(counter_service.length>=48){
+                          str_prefix = "B";
+                          charCounter = "A";
+                        }else if(counter_service.length>=22){
+                          str_prefix = "A";
+                          charCounter = "A";
+                        }                      
+                    }else{
+                      charCounter = String.fromCharCode(charCounter.charCodeAt(0) + 1);
+                    }
+
+                    for (let index = 0; index < counter_salon.length; index++) {
+                      const element = counter_salon[index];
+                      
+                      if(element.type_id==2){
+                        if(index+counter_service.length==74){
+                          str_prefix = "C";
+                          charCounter = "A";
+                          worksheet.getCell(str_prefix+charCounter+"3").value = element.product_abbr;
+                          worksheet.getCell(str_prefix+charCounter+"3").fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                        }else if(index+counter_service.length==47){
+                          str_prefix = "B";
+                          charCounter = "A";
+                          worksheet.getCell(str_prefix+charCounter+"3").value = element.product_abbr;
+                          worksheet.getCell(str_prefix+charCounter+"3").fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                        }else if(index+counter_service.length==22){
+                          str_prefix = "A";
+                          charCounter = "A";
+                          worksheet.getCell(str_prefix+charCounter+"3").value = element.product_abbr;
+                          worksheet.getCell(str_prefix+charCounter+"3").fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                        }else{
+                          worksheet.getCell(str_prefix+charCounter+"3").value = element.product_abbr;
+                          worksheet.getCell(str_prefix+charCounter+"3").fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                        }
+                    
+                        charCounter = String.fromCharCode(charCounter.charCodeAt(0) + 1);
+                      }
+                    }
+
+
+                    //charCounter = String.fromCharCode(charCounter.charCodeAt(0) + 1);
+                    if(charCounter=='['){
+                      if(counter_service.length>=78){
+                          str_prefix = "C";
+                          charCounter = "A";
+                        }else if(counter_service.length>=48){
+                          str_prefix = "B";
+                          charCounter = "A";
+                        }else if(counter_service.length>=22){
+                          str_prefix = "A";
+                          charCounter = "A";
+                        }                      
                     }
                     worksheet.getCell(str_prefix+charCounter+'3').value = 'Case Salon';
                     worksheet.getCell(str_prefix+charCounter+'3').alignment = { vertical: 'middle', horizontal: 'center' };
                     worksheet.getCell(str_prefix+charCounter+'3').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
 
                     charCounter = String.fromCharCode(charCounter.charCodeAt(0) + 1);
-                    console.log(charCounter);
                     if(charCounter=='['){
-                      str_prefix = "A";
-                      charCounter = "A";
+                      if(counter_service.length>=74){
+                          str_prefix = "C";
+                          charCounter = "A";
+                        }else if(counter_service.length>=48){
+                          str_prefix = "B";
+                          charCounter = "A";
+                        }else if(counter_service.length>=22){
+                          str_prefix = "A";
+                          charCounter = "A";
+                        }                      
                     }
+
+                    for (let index = 0; index < counter_extra.length; index++) {
+                      const element = counter_extra[index];
+                        if(index+counter_service.length+counter_salon.length==74){
+                          str_prefix = "C";
+                          charCounter = "A";
+                          worksheet.getCell(str_prefix+charCounter+"3").value = element.product_abbr;
+                          worksheet.getCell(str_prefix+charCounter+"3").fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                        }else if(index+counter_service.length+counter_salon.length==48){
+                          str_prefix = "B";
+                          charCounter = "A";
+                          worksheet.getCell(str_prefix+charCounter+"3").value = element.product_abbr;
+                          worksheet.getCell(str_prefix+charCounter+"3").fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                        }else if(index+counter_service.length+counter_salon.length==22){
+                          str_prefix = "A";
+                          charCounter = "A";
+                          worksheet.getCell(str_prefix+charCounter+"3").value = element.product_abbr;
+                          worksheet.getCell(str_prefix+charCounter+"3").fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                        }else{
+                          worksheet.getCell(str_prefix+charCounter+"3").value = element.product_abbr;
+                          worksheet.getCell(str_prefix+charCounter+"3").fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                        }
+                    
+                        charCounter = String.fromCharCode(charCounter.charCodeAt(0) + 1);
+
+                    }
+
+                    if(charCounter=='['){
+                      if(counter_service.length+counter_salon.length+counter_extra.length+4>=74){
+                          str_prefix = "C";
+                          charCounter = "A";
+                        }else if(counter_service.length+counter_salon.length+counter_extra.length+4>=48){
+                          str_prefix = "B";
+                          charCounter = "A";
+                        }else if(counter_service.length+counter_salon.length+counter_extra.length>=22){
+                          str_prefix = "A";
+                          charCounter = "A";
+                        }                      
+                    }
+
+                    
+
                     worksheet.getCell(str_prefix+charCounter+'3').value = 'Case Extra';
                     worksheet.getCell(str_prefix+charCounter+'3').alignment = { vertical: 'middle', horizontal: 'center' };
                     worksheet.getCell(str_prefix+charCounter+'3').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
 
                     charCounter = String.fromCharCode(charCounter.charCodeAt(0) + 1);
                     if(charCounter=='['){
-                      str_prefix = "A";
-                      charCounter = "A";
+                      if(counter_service.length>=74){
+                          str_prefix = "C";
+                          charCounter = "A";
+                        }else if(counter_service.length>=48){
+                          str_prefix = "B";
+                          charCounter = "A";
+                        }else if(counter_service.length>=22){
+                          str_prefix = "A";
+                          charCounter = "A";
+                        }                      
                     }
+
+                  
+                    for (let index = 0; index < counter_product.length; index++) {
+                      const element = counter_product[index];
+                        if(index+counter_extra.length+counter_service.length+counter_salon.length+3==74){
+                          str_prefix = "C";
+                          charCounter = "A";
+                          worksheet.getCell(str_prefix+charCounter+"3").value = element.product_abbr;
+                          worksheet.getCell(str_prefix+charCounter+"3").fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                        }else if(index+counter_extra.length+counter_service.length+counter_salon.length==48){
+                          str_prefix = "B";
+                          charCounter = "A";
+                          worksheet.getCell(str_prefix+charCounter+"3").value = element.product_abbr;
+                          worksheet.getCell(str_prefix+charCounter+"3").fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                        }else if(index+counter_extra.length+counter_service.length+counter_salon.length==22){
+                          str_prefix = "A";
+                          charCounter = "A";
+                          worksheet.getCell(str_prefix+charCounter+"3").value = element.product_abbr;
+                          worksheet.getCell(str_prefix+charCounter+"3").fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                        }else{
+                          worksheet.getCell(str_prefix+charCounter+"3").value = element.product_abbr;
+                          worksheet.getCell(str_prefix+charCounter+"3").fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                        }
+                    
+                        charCounter = String.fromCharCode(charCounter.charCodeAt(0) + 1);
+
+                    }
+
+
+
                     worksheet.getCell(str_prefix+charCounter+'3').value = 'Case Produk';
                     worksheet.getCell(str_prefix+charCounter+'3').alignment = { vertical: 'middle', horizontal: 'center' };
                     worksheet.getCell(str_prefix+charCounter+'3').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
 
                     charCounter = String.fromCharCode(charCounter.charCodeAt(0) + 1);
-                    console.log(charCounter);
                     if(charCounter=='['){
-                      str_prefix = "A";
-                      charCounter = "A";
+                      if(counter_service.length>=74){
+                          str_prefix = "C";
+                          charCounter = "A";
+                        }else if(counter_service.length>=48){
+                          str_prefix = "B";
+                          charCounter = "A";
+                        }else if(counter_service.length>=22){
+                          str_prefix = "A";
+                          charCounter = "A";
+                        }                      
                     }
+
+                    for (let index = 0; index < counter_drink.length; index++) {
+                      const element = counter_drink[index];
+                        if(index+counter_extra.length+counter_service.length+counter_salon.length+counter_product.length+4==74){
+                          str_prefix = "C";
+                          charCounter = "A";
+                          worksheet.getCell(str_prefix+charCounter+"3").value = element.product_abbr;
+                          worksheet.getCell(str_prefix+charCounter+"3").fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                        }else if(index+counter_extra.length+counter_service.length+counter_salon.length+counter_product.length+4==48){
+                          str_prefix = "B";
+                          charCounter = "A";
+                          worksheet.getCell(str_prefix+charCounter+"3").value = element.product_abbr;
+                          worksheet.getCell(str_prefix+charCounter+"3").fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                        }else if(index+counter_extra.length+counter_service.length+counter_salon.length+counter_product.length+4==22){
+                          str_prefix = "A";
+                          charCounter = "A";
+                          worksheet.getCell(str_prefix+charCounter+"3").value = element.product_abbr;
+                          worksheet.getCell(str_prefix+charCounter+"3").fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                        }else{
+                          worksheet.getCell(str_prefix+charCounter+"3").value = element.product_abbr;
+                          worksheet.getCell(str_prefix+charCounter+"3").fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                        }
+                    
+                        charCounter = String.fromCharCode(charCounter.charCodeAt(0) + 1);
+
+                    }
+
                     worksheet.getCell(str_prefix+charCounter+'3').value = 'Case Minuman';
                     worksheet.getCell(str_prefix+charCounter+'3').alignment = { vertical: 'middle', horizontal: 'center' };
                     worksheet.getCell(str_prefix+charCounter+'3').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+
+
 
                     var countery = 4;
                     report_datas.forEach(element => {

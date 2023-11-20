@@ -422,17 +422,29 @@ class ReportInvoiceDetailController extends Controller
             ");
 
             $counter_service = DB::select("
-                    select product_id,product_abbr,type_id,sum(sub_total) as sum_val,sum(product_qty) as sum_qty from temp_invoice ti where branch_id::character varying like '".$branchx."' and ti.type_id=2 and ti.dated between '".$begindate."'::date and '".$enddate."'::date group by product_id,product_abbr,type_id order by 3,2;                       
+                    select product_id,product_abbr,type_id,sum(sub_total) as sum_val,sum(product_qty) as sum_qty from temp_invoice ti where branch_id::character varying like '".$branchx."' and ti.type_id=2 and ti.category_id!=53 and ti.dated between '".$begindate."'::date and '".$enddate."'::date group by product_id,product_abbr,type_id order by 3,2;                       
+            ");
+
+            $counter_salon = DB::select("
+                    select product_id,product_abbr,type_id,sum(sub_total) as sum_val,sum(product_qty) as sum_qty from temp_invoice ti where branch_id::character varying like '".$branchx."' and ti.type_id=2 and ti.category_id=53 and ti.dated between '".$begindate."'::date and '".$enddate."'::date group by product_id,product_abbr,type_id order by 3,2;                       
             ");
 
             $counter_extra = DB::select("
                     select product_id,product_abbr,type_id,sum(sub_total) as sum_val,sum(product_qty) as sum_qty from temp_invoice ti where branch_id::character varying like '".$branchx."' and  ti.type_id=8 and ti.dated between '".$begindate."'::date and '".$enddate."'::date group by product_id,product_abbr,type_id order by 3,2;                       
             ");
 
+            $counter_product = DB::select("
+                    select product_id,product_abbr,type_id,sum(sub_total) as sum_val,sum(product_qty) as sum_qty from temp_invoice ti where branch_id::character varying like '".$branchx."' and  ti.type_id=1 and ti.category_id!=26 and ti.dated between '".$begindate."'::date and '".$enddate."'::date group by product_id,product_abbr,type_id order by 3,2;                       
+            ");
+
+            $counter_drink = DB::select("
+                    select product_id,product_abbr,type_id,sum(sub_total) as sum_val,sum(product_qty) as sum_qty from temp_invoice ti where branch_id::character varying like '".$branchx."' and  ti.type_id=1 and ti.category_id=26 and ti.dated between '".$begindate."'::date and '".$enddate."'::date group by product_id,product_abbr,type_id order by 3,2;                       
+            ");
+
             $report_data_service = DB::select("
                 select ti.dated,product_id,product_abbr,sum(ti.sum_qty) qty_total 
                 from 
-                (select dated,product_id,product_abbr,sum(product_qty) as sum_qty,branch_id from temp_invoice where type_id in (2,8) group by dated,product_id,product_abbr,branch_id) ti 
+                (select dated,product_id,product_abbr,sum(product_qty) as sum_qty,branch_id from temp_invoice where type_id in (1,2,8) group by dated,product_id,product_abbr,branch_id) ti 
                 where  ti.branch_id::character varying like '".$branchx."' and ti.dated between '".$begindate."'::date and '".$enddate."'::date
                 group by ti.dated,product_id,product_abbr                    
             ");
@@ -450,7 +462,6 @@ class ReportInvoiceDetailController extends Controller
                     where  ti.branch_id::character varying like '".$branchx."' and ti.dated between '".$begindate."'::date and '".$enddate."'::date
                     group by product_id,product_abbr   
             ");
-
         
 
             return array_merge(
@@ -458,6 +469,9 @@ class ReportInvoiceDetailController extends Controller
                         'company' => Company::get()->first(),
                         'counter_service'=> $counter_service,
                         'counter_extra'=> $counter_extra,
+                        'counter_salon'=> $counter_salon,
+                        'counter_drink'=> $counter_drink,
+                        'counter_product'=> $counter_product,
                         'report_data_service'=> $report_data_service,
                         'report_data'=> $report_data,
                         'report_data_total'=> $report_data_total,
