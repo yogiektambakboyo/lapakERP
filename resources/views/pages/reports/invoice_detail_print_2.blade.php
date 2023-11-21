@@ -5,6 +5,10 @@
       <meta charset = "utf-8"> 
       <title>Laporan Summary Perawatan</title>
       <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet"/>
+      <link href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css" rel="stylesheet"/>
+      <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+      <link href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap.min.css" rel="stylesheet"/>
+      <link href="https://cdn.datatables.net/buttons/2.4.2/css/buttons.dataTables.min.css" rel="stylesheet"/>
       <style>
         body {background-color: whitesmoke;}
         h1   {color: blue;}
@@ -53,7 +57,7 @@
       }
     ?>
 
-    <button id="btn_export_xls"  class="btn print printPageButton">Cetak XLS</button>
+    <!-- <button id="btn_export_xls"  class="btn print printPageButton d-none">Cetak XLS</button> -->
     <br>
     <br>
     <table style="width: 100%">
@@ -331,7 +335,15 @@
 
    <!-- use version 0.19.3 -->
    <script src="https://code.jquery.com/jquery-3.6.4.min.js" integrity="sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8=" crossorigin="anonymous"></script>
-   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>   
+   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>  
+   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script> 
+   <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>   
+   <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap.min.js"></script>   
+   <script src="https://cdn.datatables.net/buttons/2.4.2/js/dataTables.buttons.min.js"></script>   
+   <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>   
+   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>   
+   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>   
+   <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.html5.min.js"></script>   
    <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.3.0/exceljs.min.js"></script>
    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/1.3.8/FileSaver.min.js"></script>
    <script src="https://cdnjs.cloudflare.com/ajax/libs/accounting.js/0.4.1/accounting.min.js" integrity="sha512-LW+1GKW2tt4kK180qby6ADJE0txk5/92P70Oh5YbtD7heFlC0qFFtacvSnHG4bNXmLnZq5hNb2V70r5DzS/U+g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
@@ -339,6 +351,18 @@
    <script type="text/javascript">
     //window.print();
     //const workbook = XLSX.utils.book_new();
+
+    new DataTable('#service_table',{
+      "ordering": false,
+      "paging" : false,
+      info: false,
+      searching: false,
+        dom: 'Bfrtip',
+        buttons: [
+              'copyHtml5',
+              'excelHtml5',
+          ]
+    });
 
     const workbook = new ExcelJS.Workbook();
     workbook.creator = 'Kakiku System Apps';
