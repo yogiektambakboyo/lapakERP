@@ -84,26 +84,57 @@
             <th scope="col" width="100px" rowspan="2">Qty W</th>
             <th scope="col" width="100px" rowspan="2">Qty P</th>
             <th scope="col" width="100px" rowspan="2">Qty</th>
-            <th scope="col" colspan="<?= count($counter_service); ?>">
-              <div class="">Perawatan</div>
-            </th>
+
+            @if(count($counter_service)>0)
+              <th scope="col" colspan="<?= count($counter_service); ?>">
+                <div class="">Perawatan</div>
+              </th>
+            @endif
+           
             <th scope="col" width="100px" rowspan="2" >Cases Perawatan</th>
-            <th scope="col" colspan="<?= count($counter_salon); ?>">
-              <div class="">Salon</div>
-            </th>
+
+
+            @if(count($counter_salon)>0)
+              <th scope="col" colspan="{{ count($counter_salon) }}">
+                <div class="">Salon</div>
+              </th>
+            @endif
+
             <th scope="col" width="100px" rowspan="2">Cases Salon</th>
-            <th scope="col" colspan="<?= count($counter_extra); ?>">
-              <div class="">Extra</div>
-            </th>
+
+
+            @if(count($counter_extra)>0)
+              <th scope="col" colspan="{{ count($counter_extra) }}">
+                <div class="">Extra</div>
+              </th>
+            @endif
+
             <th scope="col" width="100px" rowspan="2">Cases Extra</th>
-            <th scope="col" colspan="<?= count($counter_product); ?>">
-              <div class="">Produk</div>
-            </th>
+
+
+            @if(count($counter_product)>0)
+              <th scope="col" colspan="{{ count($counter_product) }}">
+                <div class="">Produk</div>
+              </th>
+            @endif
             <th scope="col" width="100px" rowspan="2">Cases Produk</th>
-            <th scope="col" colspan="<?= count($counter_drink); ?>">
+
+
+            @if(count($counter_drink)>0)
+            <th scope="col" colspan="{{ count($counter_drink) }}">
               <div class="">Minuman</div>
             </th>
+            @endif
+
             <th scope="col" width="100px" rowspan="2">Cases Minuman</th>
+
+
+           
+           
+
+            
+
+           
 
 
           </tr>
