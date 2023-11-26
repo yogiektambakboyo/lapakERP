@@ -205,6 +205,40 @@
 
       });
 
+      $('#doc_date').on("change", function () {
+          var invoice_date = $('#doc_date').val(); 
+          var url = "{{ route('period.get_period_status') }}";
+          $('#save-btn').removeClass("d-none");
+        const res = axios.get(url,
+        {
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            params : {
+                invoice_date : moment(invoice_date, 'DD-MM-YYYY').format('YYYY-MM-DD')
+            }
+          }
+        ).then(resp => {
+          var respon = resp.data;
+          if(respon[0].close_trans == "1"){
+            $('#save-btn').addClass("d-none");
+            Swal.fire(
+              {
+                position: 'top-end',
+                icon: 'warning',
+                text: 'Status periode '+respon[0].remark+' tertutup, anda tidak diperbolehkan membuat transaksi di periode tsb',
+                showConfirmButton: false,
+                imageHeight: 30, 
+                imageWidth: 30,   
+                timer: 1500
+              }
+            );
+          }else{
+            $('#save-btn').removeClass("d-none");
+          }
+        });
+      });
+
 
 
       var productList = [];

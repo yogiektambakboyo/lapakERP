@@ -20,6 +20,7 @@
             <div class="row mb-3">
               <label class="form-label col-form-label col-md-4">@lang('general.lbl_dated')   </label>
               <div class="col-md-8">
+                <input type="hidden" value="{{ $close_trans[0]->close_trans; }}" id="close_trans">
                 <input type="hidden" 
                 name="doc_no"
                 id="doc_no"
@@ -227,6 +228,56 @@
       
 
       });
+
+
+      $('#dated').on("change", function () {
+          var invoice_date = $('#dated').val(); 
+          var url = "{{ route('period.get_period_status') }}";
+          $('#save-btn').removeClass("d-none");
+        const res = axios.get(url,
+        {
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            params : {
+                invoice_date : moment(invoice_date, 'DD-MM-YYYY').format('YYYY-MM-DD')
+            }
+          }
+        ).then(resp => {
+          var respon = resp.data;
+          if(respon[0].close_trans == "1"){
+            $('#save-btn').addClass("d-none");
+            Swal.fire(
+              {
+                position: 'top-end',
+                icon: 'warning',
+                text: 'Status periode '+respon[0].remark+' tertutup, anda tidak diperbolehkan membuat transaksi di periode tsb',
+                showConfirmButton: false,
+                imageHeight: 30, 
+                imageWidth: 30,   
+                timer: 1500
+              }
+            );
+          }else{
+            $('#save-btn').removeClass("d-none");
+          }
+        });
+      });
+
+      if($('#close_trans').val()=="1"){
+        $('#save-btn').addClass("d-none");
+        Swal.fire(
+          {
+            position: 'top-end',
+            icon: 'warning',
+            text: 'Status periode {{ $close_trans[0]->remark;  }} tertutup, anda tidak diperbolehkan mengubah data',
+            showConfirmButton: false,
+            imageHeight: 30, 
+            imageWidth: 30,   
+            timer: 5000
+          }
+        );
+      }
 
   
 

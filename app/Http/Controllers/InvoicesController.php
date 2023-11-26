@@ -717,6 +717,8 @@ class InvoicesController extends Controller
 
         DB::update(" insert into invoice_detail_log SELECT invoice_no, product_id, qty, price, total, discount, seq, assigned_to, referral_by, updated_at, created_at, uom, product_name, vat, vat_total, assigned_to_name, referral_by_name, price_purchase, executed_at, now(), ref_no FROM invoice_detail where invoice_no = '".$invoice->invoice_no."'; ");
 
+        $isvalid_edit = DB::select(" select close_trans,remark from period where period_no=to_char('".$invoice->dated."'::date,'YYYYMM')::int; ");
+
         if($invoice->branch_room_id == ""){
             $room_id = 14;
         }else{
@@ -737,6 +739,7 @@ class InvoicesController extends Controller
             'invoice' => $invoice,
             'room' => $room,
             'userx' => $user,
+            'close_trans'=>$isvalid_edit,
             'usersall' => $usersall,
             'type_customers' => $type_customer,
             'orders' => Order::where('is_checkout','0')->get(),

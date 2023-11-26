@@ -346,6 +346,23 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
         });
 
         /**
+         * Period Routes
+         */
+        Route::group(['prefix' => 'period'], function() {
+            Route::get('/', 'PeriodController@index')->name('period.index');
+            Route::get('/create', 'PeriodController@create')->name('period.create');
+            Route::post('/create', 'PeriodController@store')->name('period.store');
+            Route::get('/search', 'PeriodController@search')->name('period.search');
+            Route::get('/get_period_status', 'PeriodController@get_period_status')->name('period.get_period_status');
+            Route::get('/{period}/show', 'PeriodController@show')->name('period.show');
+            Route::get('/{period}/edit', 'PeriodController@edit')->name('period.edit');
+            Route::patch('/{period}/update', 'PeriodController@update')->name('period.update');
+            Route::delete('/{period}/delete', 'PeriodController@destroy')->name('period.destroy');
+            Route::get('/export', 'PeriodController@export')->name('period.export');
+
+        });
+
+        /**
          * Service Routes
          */
         Route::group(['prefix' => 'services'], function() {

@@ -13,6 +13,7 @@
         <label id="label_membership"><?= $invoice->membership==null?'':$invoice->customers_name; ?></label>
         <button type="button" id="member-btn" class="btn btn-warning mx-2" href="#modal-scan-customer" data-bs-toggle="modal" data-bs-target="#modal-scan-customer"><span class='fas fa-address-card'> </span> Scan Member</button>
         <a href="{{ route('invoices.index') }}" class="btn btn-default">@lang('general.lbl_cancel')</a>
+        <input type="hidden" value="{{ $close_trans[0]->close_trans; }}" id="close_trans">
         <button type="button" id="save-btn" class="btn btn-info d-none">@lang('general.lbl_save')</button>
       </div>
     </div>
@@ -490,10 +491,10 @@
             <div class="row mb-3">
                 <label class="form-label col-form-label col-md-3" id="label-voucher">Voucher</label>
                 <br>
-                <div class="col-md-5">
+                <div class="col-md-4">
                   <input type="text" class="form-control" id="input-apply-voucher" value="{{ $invoice->voucher_code==null?"":$invoice->voucher_code }}">
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-4">
                   <button type="button" id="apply-voucher-btn" class="btn btn-warning">@lang('general.lbl_apply_voucher')</button>
                 </div>
             </div>
@@ -612,6 +613,39 @@
           //$('#app').removeClass('app app-sidebar-fixed app-header-fixed-minified').addClass('app app-sidebar-fixed app-header-fixed-minified app-sidebar-minified');
           
 
+          $('#invoice_date').on("change", function () {
+                 var invoice_date = $('#invoice_date').val(); 
+                 var url = "{{ route('period.get_period_status') }}";
+                 $('#save-btn').removeClass("d-none");
+                const res = axios.get(url,
+                {
+                    headers: {
+                      'Content-Type': 'application/json'
+                    },
+                    params : {
+                        invoice_date : moment(invoice_date, 'DD-MM-YYYY').format('YYYY-MM-DD')
+                    }
+                  }
+                ).then(resp => {
+                  var respon = resp.data;
+                  if(respon[0].close_trans == "1"){
+                    $('#save-btn').addClass("d-none");
+                    Swal.fire(
+                      {
+                        position: 'top-end',
+                        icon: 'warning',
+                        text: 'Status periode '+respon[0].remark+' tertutup, anda tidak diperbolehkan membuat transaksi di periode tsb',
+                        showConfirmButton: false,
+                        imageHeight: 30, 
+                        imageWidth: 30,   
+                        timer: 1500
+                      }
+                    );
+                  }else{
+                    $('#save-btn').removeClass("d-none");
+                  }
+                });
+              });
 
           $('#btn_scan_cam').on('click',function(){
             html5QrcodeScanner = new Html5QrcodeScanner("reader", { fps: 10, qrbox: 250 });
@@ -2162,6 +2196,21 @@
                 $('#sub-total').text(currency(sub_total, { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());    
                 
                 $('#save-btn').removeClass("d-none");
+
+                if($('#close_trans').val()=="1"){
+                  $('#save-btn').addClass("d-none");
+                  Swal.fire(
+                    {
+                      position: 'top-end',
+                      icon: 'warning',
+                      text: 'Status periode {{ $close_trans[0]->remark;  }} tertutup, anda tidak diperbolehkan mengubah data',
+                      showConfirmButton: false,
+                      imageHeight: 30, 
+                      imageWidth: 30,   
+                      timer: 5000
+                    }
+                  );
+                }
             });
 
             $('#order_product_table tbody').on('click', 'a', function () {

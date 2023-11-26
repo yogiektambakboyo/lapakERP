@@ -594,6 +594,8 @@ class PettyProductController extends Controller
         $this->getpermissions($id);
         $data = $this->data;
 
+        $isvalid_edit = DB::select(" select close_trans,remark from period where period_no=to_char('".$petty->dated."'::date,'YYYYMM')::int; ");
+
         $payment_type = ['Cash','BCA - Debit','BCA - Kredit','Mandiri - Debit','Mandiri - Kredit','Transfer','QRIS'];
         $doc_type = ['Kas - Keluar','Produk - Keluar','Produk - Masuk'];
         $usersall = User::join('users_branch as ub','ub.branch_id', '=', 'users.branch_id')->where('ub.user_id','=',$user->id)->whereIn('users.job_id',[1,2])->orderBy('users.name','ASC')->get(['users.id','users.name']);
@@ -608,6 +610,7 @@ class PettyProductController extends Controller
             'data' => $data,
             'invoice' => $petty,
             'usersall' => $usersall,
+            'close_trans'=>$isvalid_edit,
             'type_customers' => $type_customer,
             'doc_type' => $doc_type,
             'rooms' => Room::join('users_branch as ub','ub.branch_id', '=', 'branch_room.branch_id')->where('ub.user_id','=',$user->id)->get(['branch_room.id','branch_room.remark']),
