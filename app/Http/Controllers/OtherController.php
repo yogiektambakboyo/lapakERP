@@ -91,7 +91,7 @@ class OtherController extends Controller
         $this->getpermissions($id);
 
         $notify = DB::select("
-            select id,user_id,message,isread,to_char(created_at,'dd-mm-yyyy') as created_at,notif_type  from inbox_user iu where iu.user_id = ".$id." order by iu.created_at desc; 
+            select id,user_id,message,isread,to_char(created_at,'dd-mm-yyyy') as created_at,notif_type  from inbox_user iu where iu.user_id = ".Auth::id()." order by iu.created_at desc; 
         ");
 
         $data = $this->data;
