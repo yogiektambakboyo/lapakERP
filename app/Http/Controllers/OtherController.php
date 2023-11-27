@@ -65,7 +65,7 @@ class OtherController extends Controller
         $id = $user->roles->first()->id;
 
         $notify = DB::select("
-                select id,user_id,message,isread,created_at,notif_type  from inbox_user iu where iu.isread = 0 and iu.user_id = ".$user->id." order by iu.created_at desc; 
+                select id,user_id,message,isread,created_at,notif_type  from inbox_user iu where iu.isread = 0 and iu.user_id = ".Auth::id()." order by iu.created_at desc; 
         ");
         return $notify;
     }
