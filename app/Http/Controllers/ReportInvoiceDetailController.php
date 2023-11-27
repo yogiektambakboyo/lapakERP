@@ -342,7 +342,7 @@ class ReportInvoiceDetailController extends Controller
             $report_gender = DB::select("
                     select ti.dated,sum(case when c.gender='Wanita' then 1 else 0 end) as qty_w,sum(case when c.gender='Pria' then 1 else 0 end) as qty_p
                     from 
-                    (select distinct dated,customers_id from temp_invoice ) ti 
+                    (select distinct invoice_no,dated,customers_id from temp_invoice ) ti 
                     join customers c on c.id = ti.customers_id::bigint and c.branch_id::character varying like '".$branchx."' where ti.dated between '".$begindate."'::date and '".$enddate."'::date
                     group by ti.dated
             ");
@@ -350,7 +350,7 @@ class ReportInvoiceDetailController extends Controller
             $report_gender_total = DB::select("
                     select sum(case when c.gender='Wanita' then 1 else 0 end) as qty_w,sum(case when c.gender='Pria' then 1 else 0 end) as qty_p
                     from 
-                    (select distinct dated,customers_id from temp_invoice ) ti 
+                    (select distinct invoice_no,dated,customers_id from temp_invoice ) ti 
                     join customers c on c.id = ti.customers_id::bigint and c.branch_id::character varying like '".$branchx."' where ti.dated between '".$begindate."'::date and '".$enddate."'::date
             ");
 
