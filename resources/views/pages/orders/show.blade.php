@@ -146,7 +146,7 @@
             <div class="col-md-6">
               <div class="col-md-12">
                 <div class="col-auto text-end">
-                  <label class="col-md-2"><h2>Sub Total </h2></label>
+                  <label class="col-md-3"><h2>Sub Total </h2></label>
                   <label class="col-md-8" id="sub-total"> <h3>Rp. {{ number_format(($order->total-$order->tax), 0, ',', '.') }}</h3></label>
                 </div>
               </div>

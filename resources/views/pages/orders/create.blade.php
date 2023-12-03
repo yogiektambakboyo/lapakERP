@@ -18,8 +18,8 @@
         <div class="row mb-3">
           <div class="col-md-12">
             <div class="row mb-3">
-              <label class="form-label col-form-label col-md-2">@lang('general.lbl_dated_mmddYYYY')</label>
-              <div class="col-md-1">
+              <label class="form-label col-form-label col-md-1">@lang('general.lbl_dated_mmddYYYY')</label>
+              <div class="col-md-2">
                 <input type="hidden" 
                 name="voucher_code"
                 id="voucher_code"
@@ -31,7 +31,7 @@
                 class="form-control" 
                 value="{{ old('order_date') }}" required/>
                 @if ($errors->has('order_date'))
-                          <span class="text-danger text-left">{{ $errors->first('join_date') }}</span>
+                          <span class="text-danger text-left">{{ $errors->first('order_date') }}</span>
                       @endif
               </div>
               <label class="form-label col-form-label col-md-1">@lang('general.lbl_customer')</label>
@@ -106,7 +106,7 @@
               </div>
 
 
-              <div class="col-md-1">
+              <div class="col-md-2">
                 <label class="form-label col-form-label">@lang('general.lbl_uom')</label>
                 <input type="text" 
                 name="input_product_uom"
@@ -115,7 +115,7 @@
                 value="{{ old('input_product_uom') }}" required disabled/>
               </div>
 
-              <div class="col-md-2">
+              <div class="col-md-1">
                 <label class="form-label col-form-label">@lang('general.lbl_price')</label>
                 <input type="text" 
                 name="input_product_price"
@@ -160,7 +160,7 @@
 
               <div class="col-md-2">
                 <div class="col-md-12"><label class="form-label col-form-label">_</label></div>
-                <a href="#" id="input_product_submit" class="btn btn-green"><div class="fa-1x"><i class="fas fa-plus fa-fw"></i>@lang('general.lbl_add_product')</div></a>
+                <a id="input_product_submit" class="btn btn-green"><div class="fa-1x"><i class="fas fa-plus fa-fw"></i>@lang('general.lbl_add_product')</div></a>
               </div>
 
             </div>
@@ -173,9 +173,9 @@
                   <th scope="col" width="10%">@lang('general.lbl_price')</th>
                   <th scope="col" width="5%">@lang('general.lbl_discount')</th>
                   <th scope="col" width="5%">@lang('general.lbl_qty')</th>
-                  <th scope="col" width="15%">Total</th>  
+                  <th scope="col" width="12%">Total</th>  
                   <th scope="col" width="15%">@lang('general.lbl_terapist')</th>  
-                  <th scope="col" width="15%" class="nex">@lang('general.lbl_action')</th> 
+                  <th scope="col" width="18%" class="nex">@lang('general.lbl_action')</th> 
               </tr>
               </thead>
               <tbody>
@@ -188,10 +188,10 @@
                 <div class="row mb-3">
                     <label class="form-label col-form-label col-md-3" id="label-voucher">Voucher</label>
                     <br>
-                    <div class="col-md-5">
+                    <div class="col-md-4">
                       <input type="text" class="form-control" id="input-apply-voucher">
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-4">
                       <button type="button" id="apply-voucher-btn" class="btn btn-warning">@lang('general.lbl_apply_voucher')</button>
                     </div>
                     <div class="col-md-1">
@@ -204,7 +204,7 @@
               <div class="col-md-6">
                 <div class="col-md-12">
                   <div class="col-auto text-end">
-                    <label class="col-md-2"><h2>Sub Total </h2></label>
+                    <label class="col-md-3"><h2>Sub Total </h2></label>
                     <label class="col-md-8" id="sub-total"> <h3>0</h3></label>
                   </div>
                 </div>
@@ -425,14 +425,14 @@
           if (dd < 10) dd = '0' + dd;
           if (mm < 10) mm = '0' + mm;
 
-          const formattedToday = mm + '/' + dd + '/' + yyyy;
+          const formattedToday = dd + '-' + mm + '-' + yyyy;
           $('#order_date').datepicker({
-              format : 'yyyy-mm-dd',
+              dateFormat : 'dd-mm-yy',
               todayHighlight: true,
           });
           $('#order_date').val(formattedToday);
           $('#schedule_date').datepicker({
-              format : 'yyyy-mm-dd',
+              dateFormat : 'dd-mm-yy',
               todayHighlight: true,
           });
           $('#schedule_date').val(formattedToday);
@@ -777,10 +777,10 @@
             targets: -1, 
             data: null, 
             defaultContent: 
-            '<a href="#"  data-toggle="tooltip" data-placement="top" title="Tambah"   id="add_row"  class="btn btn-green"><div class="fa-1x"><i class="fas fa-circle-plus fa-fw"></i></div></a>'+
-            '<a href="#"  data-toggle="tooltip" data-placement="top" title="Kurangi"   id="minus_row"  class="btn btn-yellow"><div class="fa-1x"><i class="fas fa-circle-minus fa-fw"></i></div></a>'+
-            '<a href="#" data-toggle="tooltip" data-placement="top" title="Hapus"  id="delete_row"  class="btn btn-danger"><div class="fa-1x"><i class="fas fa-circle-xmark fa-fw"></i></div></a>'+
-            '<a href="#" href="#modal-filter" data-bs-toggle="modal" data-bs-target="#modal-filter"  data-toggle="tooltip" data-placement="top" title="Terapis" id="assign_row" class="btn btn-gray"><div class="fa-1x"><i class="fas fa-user-tag fa-fw"></i></div></a>',}],
+            '<a  data-toggle="tooltip" data-placement="top" title="Tambah"   id="add_row"  class="btn btn-green btn-sm"><div class="fa-1x"><i class="fas fa-circle-plus fa-fw"></i></div></a>'+
+            '<a data-toggle="tooltip" data-placement="top" title="Kurangi"   id="minus_row"  class="btn btn-yellow btn-sm"><div class="fa-1x"><i class="fas fa-circle-minus fa-fw"></i></div></a>'+
+            '<a data-toggle="tooltip" data-placement="top" title="Hapus"  id="delete_row"  class="btn btn-danger btn-sm"><div class="fa-1x"><i class="fas fa-circle-xmark fa-fw"></i></div></a>'+
+            '<a href="#modal-filter" data-bs-toggle="modal" data-bs-target="#modal-filter"  data-toggle="tooltip" data-placement="top" title="Terapis" id="assign_row" class="btn btn-gray btn-sm"><div class="fa-1x"><i class="fas fa-user-tag fa-fw"></i></div></a>',}],
           columns: [
             { data: 'abbr' },
             { data: 'uom' },

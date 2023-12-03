@@ -970,6 +970,12 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
             Route::get('/receive_search', 'ReportReceiveController@search')->name('reports.receive.search');
             Route::get('/stock', 'ReportStockController@index')->name('reports.stock.index');
             Route::get('/stock_search', 'ReportStockController@search')->name('reports.stock.search');
+            Route::get('/stock_begin', 'ReportStockBeginController@index')->name('reports.stock_begin.index');
+            Route::get('/stock_begin_search', 'ReportStockBeginController@search')->name('reports.stock_begin.search');
+           
+            Route::get('/{dated}/{branch_id}/{product_id}/stock_begin_edit', 'ReportStockBeginController@edit')->name('reports.stock_begin.edit');
+            Route::patch('/{dated}/{branch_id}/{product_id}/stock_begin_update', 'ReportStockBeginController@update')->name('reports.stock_begin.update');
+            
             Route::get('/stockmutation', 'ReportStockMutationController@index')->name('reports.stockmutation.index');
             Route::get('/stockmutation_search', 'ReportStockMutationController@search')->name('reports.stockmutation.search');
             Route::get('/stockmutationdetail', 'ReportStockMutationDetailController@index')->name('reports.stockmutationdetail.index');
