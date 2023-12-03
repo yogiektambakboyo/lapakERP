@@ -259,7 +259,7 @@ class OrdersController extends Controller
         $settings = Settings::get()->first();
         $branch = Branch::join('customers','customers.branch_id','=','branch.id')
                     ->join('order_master','order_master.customers_id','=','customers.id')->where('order_master.order_no','=',$order->order_no)->get('branch.*')->first();
-        $orderdetail = OrderDetail::join('uom','uom.remark','=','order_detail.uom')->join('product_sku','product_sku.id','=','order_detail.product_id')->where('order_no','=',$order->order_no)->get(['uom.conversion','product_name','qty','price','order_detail.vat','type_id']);
+        $orderdetail = OrderDetail::join('uom','uom.remark','=','order_detail.uom')->join('product_sku','product_sku.id','=','order_detail.product_id')->where('order_no','=',$order->order_no)->get(['uom.conversion','product_name','qty','price','order_detail.vat','product_sku.type_id']);
         $terapists = OrderDetail::where('order_no','=',$order->order_no)->distinct()->get(['assigned_to_name']);
 
         // Init printer
