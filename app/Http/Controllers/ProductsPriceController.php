@@ -74,7 +74,7 @@ class ProductsPriceController extends Controller
                     ->join('users_branch as ub2','ub2.branch_id', '=', 'pr.branch_id')
                     ->where('ub2.user_id','=',$user->id)
                     ->where('pt.id','=','1')
-                    ->get(['product_sku.id','product_sku.remark as product_name','pr.branch_id','bc.remark as branch_name','pr.price as product_price','pb.remark as product_brand']);
+                    ->get(['product_sku.id','pr.price_buy as product_price_buy','product_sku.remark as product_name','pr.branch_id','bc.remark as branch_name','pr.price as product_price','pb.remark as product_brand']);
         return view('pages.productsprice.index',['company' => Company::get()->first()] ,compact('request','branchs','products','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
     }
 
@@ -107,7 +107,7 @@ class ProductsPriceController extends Controller
                         ->whereRaw($whereclause)
                         ->where('pt.id','=','1')
                         ->where('bc.id','like','%'.$branchx.'%')  
-                        ->get(['product_sku.id','product_sku.remark as product_name','pr.branch_id','bc.remark as branch_name','pr.price as product_price','pb.remark as product_brand']);           
+                        ->get(['product_sku.id','pr.price_buy as product_price_buy','product_sku.remark as product_name','pr.branch_id','bc.remark as branch_name','pr.price as product_price','pb.remark as product_brand']);           
             return view('pages.productsprice.index',['company' => Company::get()->first()], compact('request','branchs','products','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
         }else{
             $whereclause = " upper(product_sku.remark) like '%".strtoupper($keyword)."%'";
@@ -122,7 +122,7 @@ class ProductsPriceController extends Controller
                         ->where('pt.id','=','1')
                         ->whereRaw($whereclause)
                         ->where('bc.id','like','%'.$branchx.'%')  
-                        ->get(['product_sku.id','product_sku.remark as product_name','pr.branch_id','bc.remark as branch_name','pr.price as product_price','pb.remark as product_brand']);           
+                        ->get(['product_sku.id','pr.price_buy as product_price_buy','product_sku.remark as product_name','pr.branch_id','bc.remark as branch_name','pr.price as product_price','pb.remark as product_brand']);           
             return view('pages.productsprice.index',['company' => Company::get()->first()], compact('request','branchs','products','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
         }
     }
@@ -146,10 +146,12 @@ class ProductsPriceController extends Controller
 
         $user  = Auth::user();
         $data = $this->data;
+        $is_hq_user = Branch::join('users_branch as ub','ub.branch_id','=','branch.id')->where('ub.branch_id','=','15')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']);
         return view('pages.productsprice.create',[
             'products' => DB::select('select ps.id,ps.remark from product_sku as ps where ps.type_id=1 order by ps.remark;'),
             'data' => $data, 'company' => Company::get()->first(),
             'branchs' => Branch::join('users_branch as ub','ub.branch_id','=','branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']),
+            'branchs_hq' => count($is_hq_user),
         ]);
     }
 
@@ -184,6 +186,7 @@ class ProductsPriceController extends Controller
         $productprice->create(
             array_merge(
                 ['price' => $request->get('price') ],
+                ['price_buy' => $request->get('price_buy') ],
                 ['product_id' => $request->get('product_id') ],
                 ['branch_id' => $request->get('branch_id') ],
                 ['created_by' => $user->id ],
@@ -235,6 +238,7 @@ class ProductsPriceController extends Controller
 
         $user  = Auth::user();
         $data = $this->data;
+        $is_hq_user = Branch::join('users_branch as ub','ub.branch_id','=','branch.id')->where('ub.branch_id','=','15')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']);
         $product = Product::join('product_type as pt','pt.id','=','product_sku.type_id')
         ->join('product_category as pc','pc.id','=','product_sku.category_id')
         ->join('product_brand as pb','pb.id','=','product_sku.brand_id')
@@ -242,7 +246,7 @@ class ProductsPriceController extends Controller
         ->join('branch as bc','bc.id','=','pr.branch_id')
         ->where('product_sku.id',$product_id)
         ->where('bc.id','=',$branch_id)
-        ->get(['product_sku.id as id','product_sku.abbr','product_sku.brand_id','product_sku.category_id','product_sku.type_id','product_sku.remark as product_name','pt.remark as product_type','pc.remark as product_category','pb.remark as product_brand','pr.branch_id','bc.remark as branch_name','pr.price as product_price'])->first();
+        ->get(['product_sku.id as id','product_sku.abbr','product_sku.brand_id','product_sku.category_id','product_sku.type_id','product_sku.remark as product_name','pt.remark as product_type','pc.remark as product_category','pb.remark as product_brand','pr.branch_id','bc.remark as branch_name','pr.price as product_price','pr.price_buy as product_price_buy'])->first();
         return view('pages.productsprice.edit', [
             'productCategorys' => Category::where('type_id','=','1')->latest()->get(),
             'productCategorysRemark' => Category::where('type_id','=','1')->latest()->get()->pluck('remark')->toArray(),
@@ -254,6 +258,7 @@ class ProductsPriceController extends Controller
             'data' => $data,
             'product' => $product, 'company' => Company::get()->first(),
             'products' => Product::get(),
+            'branchs_hq' => count($is_hq_user),
         ]);
     }
 
@@ -271,6 +276,7 @@ class ProductsPriceController extends Controller
         ProductPrice::where('product_id','=',$product)->where('branch_id','=',$branch)->update(
             array_merge(
                 ['price' => $request->get('price') ],
+                ['price_buy' => $request->get('price_buy') ],
             )
         );
         

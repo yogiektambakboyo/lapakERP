@@ -55,6 +55,13 @@
                 <input type="text" class="form-control" name="price" value="{{ old('product_price') }}"/>
               </div>
             </div>
+            <div class="row mb-3">
+              <label class="form-label col-form-label col-md-2">@lang('general.lbl_price') Beli</label>
+              <div class="col-md-8">
+                <input type="text" class="form-control" name="price_buy" value="{{ old('product_price_buy') }}" {{ $branchs_hq>=1?'':'readonly' }}/>
+              </div>
+            </div>
+
             </div>
           </div>
         </div>

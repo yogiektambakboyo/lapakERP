@@ -152,7 +152,7 @@
                       @endif
               </div>
 
-              <div class="col-md-2">
+              <div class="col-md-4">
                 <div class="col-md-12"><label class="form-label col-form-label">_</label></div>
                 <a href="#" id="input_submit" class="btn btn-green"><div class="fa-1x"><i class="fas fa-plus fa-fw"></i>@lang('general.lbl_ingredient_add')</div></a>
               </div>

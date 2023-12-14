@@ -16,6 +16,7 @@ class ProductPrice extends Model
         'product_id',
         'branch_id',
         'price',
+        'price_buy',
         'created_by'
     ];
 }

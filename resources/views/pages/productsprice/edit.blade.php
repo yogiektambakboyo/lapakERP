@@ -58,6 +58,13 @@
               <input type="text" class="form-control" name="price" value="{{ $product->product_price }}"/>
             </div>
           </div>
+          <div class="row mb-3">
+            <label class="form-label col-form-label col-md-2">Harga Beli</label>
+            <div class="col-md-8">
+              <input type="text" class="form-control" name="price_buy" value="{{ $product->product_price_buy }}" {{ $branchs_hq>=1?'':'readonly' }}/>
+            </div>
+          </div>
+
           </div>
         </div>
     </div>
