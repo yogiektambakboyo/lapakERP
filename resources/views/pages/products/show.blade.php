@@ -98,6 +98,35 @@
         </div>
 
 
+        <div class="panel text-white">
+          <div class="panel-heading bg-teal-600"><h4>Harga Beli</h4></div>
+          <div class="panel-body bg-white text-black">
+            
+            <div class="row mb-3">     
+              <div class="col-md-12">
+                <table class="table table-striped" id="example_price">
+                    <thead>
+                    <tr>
+                      <th scope="col">@lang('general.lbl_branch')</th>
+                      <th scope="col" width="10%">@lang('general.lbl_price') Beli</th>
+                    </tr>
+                    </thead>
+                    <tbody>            
+                      @foreach($prices as $price)
+                        <tr>
+                            <th scope="row">{{ $price->branch_name }}</th>
+                            <td>{{ $price->price_buy }}</td>
+                        </tr>
+                    @endforeach
+                    </tbody>
+                </table>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+
     </div>
 @endsection
 

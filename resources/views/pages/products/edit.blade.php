@@ -185,6 +185,62 @@
 
           </div>
         </div>
+
+        <div class="modal fade" id="modal-filter" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+          <div class="modal-dialog">
+          <div class="modal-content">
+              <div class="modal-header">
+              <h5 class="modal-title" id="staticBackdropLabel">Edit Harga Beli</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                <label class="form-label col-form-label col-md-8" id="product_id_selected_lbl">Masukkan Harga Beli </label>
+                <input type="hidden" id="product_id_selected" value="">
+                <input type="hidden" id="branch_id_selected" value="">
+                <div class="col-md-8">
+                  <input type="number" class="form-control" id="price_selected" value="">
+                </div>
+              </div>
+              <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">@lang('general.lbl_close') </button>
+              <button type="button" class="btn btn-primary"  data-bs-dismiss="modal" id="btn_add_po">@lang('general.lbl_apply')</button>
+              </div>
+          </div>
+          </div>
+        </div>
+
+      </form>
+
+        <div class="panel text-white">
+          <div class="panel-heading bg-teal-600"><h4>Harga Beli</h4></div>
+          <div class="panel-body bg-white text-black">
+            
+            <div class="row mb-3">
+              <div class="col-md-12">
+                <table class="table table-striped" id="example_price">
+                    <thead>
+                    <tr>
+                      <th scope="col">@lang('general.lbl_branch')</th>
+                      <th scope="col" width="10%">@lang('general.lbl_price') Beli</th>
+                      <th scope="col" width="10%">@lang('general.lbl_action')</th>
+                    </tr>
+                    </thead>
+                    <tbody>            
+                      @foreach($prices as $price)
+                        <tr>
+                          <th scope="row">{{ $price->branch_name }}</th>
+                          <td>{{ $price->price_buy }}</td>
+                            <td><button type="button" onclick="editPrice('{{ $price->branch_id }}','{{ $price->branch_name }}','{{ $price->id }}','{{ $product->product_name }}','{{ $price->price_buy }}')" class="btn btn-danger btn-sm">Edit</button></td>
+                        </tr>
+                    @endforeach
+                    </tbody>
+                </table>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
     </div>
 @endsection
 
@@ -310,6 +366,17 @@
               });
           }
         });
+
+        function editPrice(branch_id,branch_name,product_id,product_name,price_buy){
+          var myModal = new bootstrap.Modal(document.getElementById('modal-filter'), {
+            keyboard: false
+          })
+          myModal.show();
+          $('#staticBackdropLabel').html(''+product_name+' : '+branch_name);
+          $('#product_id_selected').val(product_id);
+          $('#branch_id_selected').val(branch_id);
+          $('#price_selected').val(price_buy);
+        }
 
 
         function deleteIngredients(product_id,product_id_material){

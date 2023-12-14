@@ -283,6 +283,10 @@ class ProductsController extends Controller
             'products' => $productsw ,
             'uoms' => Uom::get(),
             'data' => $data, 'company' => Company::get()->first(), 
+            'prices' => Product::join('product_price as pt','pt.product_id','=','product_sku.id')
+                        ->join('branch as bc','bc.id','=','pt.branch_id')
+                        ->join('users_branch as ub2','ub2.branch_id', '=', 'bc.id')
+                        ->where('ub2.user_id','=',$user->id)->where('product_sku.id','=',$product->id)->orderBy('bc.remark','asc')->get(['pt.price_buy','product_sku.id','pt.branch_id','bc.remark as branch_name','product_sku.remark']),
             'ingredients' => ProductIngredients::join('product_sku as ps','ps.id','product_ingredients.product_id_material')->join('uom as u','u.id','product_ingredients.uom_id')->where('product_ingredients.product_id',$product->id)->get(['product_ingredients.product_id','product_ingredients.product_id_material','u.remark as uom_name','ps.remark as product_name','product_ingredients.qty']),
         ]);
     }
@@ -325,6 +329,10 @@ class ProductsController extends Controller
             'data' => $data,
             'products' => $productsw ,
             'uoms' => Uom::get(),
+            'prices' => Product::join('product_price as pt','pt.product_id','=','product_sku.id')
+                        ->join('branch as bc','bc.id','=','pt.branch_id')
+                        ->join('users_branch as ub2','ub2.branch_id', '=', 'bc.id')
+                        ->where('ub2.user_id','=',$user->id)->where('product_sku.id','=',$product->id)->orderBy('bc.remark','asc')->get(['pt.price_buy','product_sku.id','pt.branch_id','bc.remark as branch_name','product_sku.remark']),
             'product' => $products, 'company' => Company::get()->first(),
             'ingredients' => ProductIngredients::join('product_sku as ps','ps.id','product_ingredients.product_id_material')->join('uom as u','u.id','product_ingredients.uom_id')->where('product_ingredients.product_id',$product->id)->get(['product_ingredients.product_id','product_ingredients.product_id_material','u.remark as uom_name','ps.remark as product_name','product_ingredients.qty']),
         ]);
