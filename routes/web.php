@@ -292,7 +292,7 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
             Route::get('/{purchase}/show', 'PurchaseOrderInternalController@show')->name('purchaseordersinternal.show');
             Route::get('/{purchase}/print', 'PurchaseOrderInternalController@print')->name('purchaseordersinternal.print');
             Route::get('/{purchase}/edit', 'PurchaseOrderInternalController@edit')->name('purchaseordersinternal.edit');
-            Route::get('/getproduct', 'PurchaseOrderInternalController@getproduct')->name('purchaseordersinternal.getproduct');
+            Route::get('/{branch_id}/getproduct', 'PurchaseOrderInternalController@getproduct')->name('purchaseordersinternal.getproduct');
             Route::get('/gettimetable', 'PurchaseOrderInternalController@gettimetable')->name('purchaseordersinternal.gettimetable');
             Route::get('/{purchase}/getorder', 'PurchaseOrderInternalController@getorder')->name('purchaseordersinternal.getorder');
             Route::patch('/{purchase}/update', 'PurchaseOrderInternalController@update')->name('purchaseordersinternal.update');
@@ -426,6 +426,7 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
             Route::get('/{branch}/{product}/show', 'ProductsPriceController@show')->name('productsprice.show');
             Route::get('/{branch}/{product}/edit', 'ProductsPriceController@edit')->name('productsprice.edit');
             Route::patch('/{branch}/{product}/update', 'ProductsPriceController@update')->name('productsprice.update');
+            Route::post('/update_sell', 'ProductsPriceController@update_sell')->name('productsprice.update_sell');
             Route::delete('/{branch}/{product}/delete', 'ProductsPriceController@destroy')->name('productsprice.destroy');
             Route::get('/export', 'ProductsPriceController@export')->name('productsprice.export');
         });

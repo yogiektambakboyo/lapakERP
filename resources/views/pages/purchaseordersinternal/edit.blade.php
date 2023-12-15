@@ -150,8 +150,8 @@
             
             
             <div class="row mb-3">
-              <label class="form-label col-form-label col-md-8 text-end"><h2>Sub Total </h2></label>
-              <div class="col-md-4">
+              <label class="form-label col-form-label col-md-8 text-end d-none"><h2>Sub Total </h2></label>
+              <div class="col-md-4 d-none">
                 <h3 class="text-end"><label id="sub-total">{{ number_format(($purchase->total-$purchase->total_vat),0,',','.') }}</label></h3>
               </div>
 
@@ -195,122 +195,137 @@
               todayHighlight: true,
           });
 
-          var url = "{{ route('purchaseordersinternal.getproduct') }}";
-          var lastvalurl = "XX";
-          url = url.replace(lastvalurl, $(this).val())
-          lastvalurl = $(this).val();
-          const res = axios.get(url, {
-            headers: {
-                'Content-Type': 'application/json'
-              }
-          }).then(resp => {
-                $('#input_product_id').select2();
-              
-                for(var i=0;i<resp.data.length;i++){
-                  var product = {
-                          "id"        : resp.data[i]["id"],
-                          "abbr"      : resp.data[i]["abbr"],
-                          "remark"      : resp.data[i]["remark"],
-                          "uom"      : resp.data[i]["uom"],
-                          "price"     : resp.data[i]["price"],
-                          "vat_total"     : resp.data[i]["vat_total"]
-                    }
-
-
-                    productList.push(product);
+          $('#branch_id').on('change', function(){
+            
+            var url = "{{ route('purchaseordersinternal.getproduct',['XX']) }}";
+            var lastvalurl = "XX";
+            console.log(url);
+            url = url.replace(lastvalurl, $(this).val())
+            lastvalurl = $(this).val();
+            const res = axios.get(url, {
+              headers: {
+                  'Content-Type': 'application/json'
                 }
+            }).then(resp => {
+                  $('#input_product_id').select2();
+                  $('#input_product_id')
+                      .find('option')
+                      .remove()
+                      .end();
 
-                for (var i = 0; i < productList.length; i++){
-                  var obj = productList[i];
-                  var newOption = new Option(obj["remark"], obj["id"], false, false);
-                  $('#input_product_id').append(newOption).trigger('change');  
-                }
+                  $('#input_product_id').select2();
+                  productList = [];
+                
+                  for(var i=0;i<resp.data.length;i++){
+                      var product = {
+                            "id"        : resp.data[i]["id"],
+                            "abbr"      : resp.data[i]["abbr"],
+                            "remark"      : resp.data[i]["remark"],
+                            "uom"      : resp.data[i]["uom"],
+                            "price"     : resp.data[i]["price"],
+                            "vat_total"     : resp.data[i]["vat_total"]
+                      }
 
-              $('#input_product_id').on('change.select2', function(e){
-                $.each(productList, function(i, v) {
-                  if (v.id == $('#input_product_id').find(':selected').val()) {
-                        $('#input_product_uom').val(v.uom);
-                        $('#input_product_price').val(v.price);
-                        $('#input_product_qty').val(1);
-                        $('#input_product_disc').val(0);
-                        $('#input_product_total').val(v.price);
-                        $('#input_product_vat_total').val(v.vat_total);
-                        console.log($('#input_product_vat_total').val());
-                        return;
-                    }
+                      productList.push(product);
+                  }
+
+                  var newOptionBlank = new Option("Silahkan Pilih", "", false, false);
+                  $('#input_product_id').append(newOptionBlank).trigger('change'); 
+
+                  for (var i = 0; i < productList.length; i++){
+                    var obj = productList[i];
+                    var newOption = new Option(obj["remark"], obj["id"], false, false);
+                    $('#input_product_id').append(newOption).trigger('change');  
+                  }
+
+                $('#input_product_id').on('change.select2', function(e){
+                  $.each(productList, function(i, v) {
+                      if (v.id == $('#input_product_id').find(':selected').val()) {
+                          $('#input_product_uom').val(v.uom);
+                          $('#input_product_price').val(v.price);
+                          $('#input_product_qty').val(1);
+                          $('#input_product_disc').val(0);
+                          $('#input_product_total').val(v.price);
+                          $('#input_product_vat_total').val(v.vat_total);
+                          return;
+                      }
+                  });
                 });
-              });
 
-              $('#input_product_price').on('input', function(){
-                $('#input_product_total').val(($('#input_product_price').val()*$('#input_product_qty').val()))
-              });
+                $('#input_product_price').on('input', function(){
+                  $('#input_product_total').val(($('#input_product_price').val()*$('#input_product_qty').val())-$('#input_product_disc').val());
+                });
 
-              $('#input_product_qty').on('input', function(){
-                $('#input_product_total').val(($('#input_product_price').val()*$('#input_product_qty').val()))
-              });
+                $('#input_product_qty').on('input', function(){
+                  $('#input_product_total').val(($('#input_product_price').val()*$('#input_product_qty').val())-$('#input_product_disc').val());
+                });
 
-              $('#input_product_disc').on('input', function(){
-                $('#input_product_total').val(($('#input_product_price').val()*$('#input_product_qty').val())-$('#input_product_disc').val());
-              });
+                $('#input_product_disc').on('input', function(){
+                  $('#input_product_total').val(($('#input_product_price').val()*$('#input_product_qty').val())-$('#input_product_disc').val());
+                });
 
+                $('#input_product_submit').on('click', function(){
+                  if($('#input_product_id').val()==''){
+                    Swal.fire(
+                      {
+                        position: 'top-end',
+                        icon: 'warning',
+                        text: 'Please choose product',
+                        showConfirmButton: false,
+                        imageHeight: 30, 
+                        imageWidth: 30,   
+                        timer: 1500
+                      }
+                    );
+                  }else if($('#input_product_qty').val()==''){
+                    Swal.fire(
+                      {
+                        position: 'top-end',
+                        icon: 'warning',
+                        text: 'Please input qty',
+                        showConfirmButton: false,
+                        imageHeight: 30, 
+                        imageWidth: 30,   
+                        timer: 1500
+                      }
+                    );
+                  }else if($('#input_product_price').val()==''){
+                    Swal.fire(
+                      {
+                        position: 'top-end',
+                        icon: 'warning',
+                        text: 'Please input price',
+                        showConfirmButton: false,
+                        imageHeight: 30, 
+                        imageWidth: 30,   
+                        timer: 1500
+                      }
+                    );
+                  }else if($('#input_product_disc').val()==''){
+                    Swal.fire(
+                      {
+                        position: 'top-end',
+                        icon: 'warning',
+                        text: 'Please input disc',
+                        showConfirmButton: false,
+                        imageHeight: 30, 
+                        imageWidth: 30,   
+                        timer: 1500
+                      }
+                    );
+                  }else{
+                    addProduct($('#input_product_id').val(),$('#input_product_id option:selected').text(), $('#input_product_price').val(), $('#input_product_total').val(), $('#input_product_qty').val(), $('#input_product_uom').val(), $('#input_product_vat_total').val(),$('#input_product_disc').val());
+                  }
+                });
+                
 
-              $('#input_product_submit').on('click', function(){
-                if($('#input_product_id').val()==''){
-                  Swal.fire(
-                    {
-                      position: 'top-end',
-                      icon: 'warning',
-                      text: 'Please choose product',
-                      showConfirmButton: false,
-                      imageHeight: 30, 
-                      imageWidth: 30,   
-                      timer: 1500
-                    }
-                  );
-                }else if($('#input_product_qty').val()==''){
-                  Swal.fire(
-                    {
-                      position: 'top-end',
-                      icon: 'warning',
-                      text: 'Please input qty',
-                      showConfirmButton: false,
-                      imageHeight: 30, 
-                      imageWidth: 30,   
-                      timer: 1500
-                    }
-                  );
-                }else if($('#input_product_price').val()==''){
-                  Swal.fire(
-                    {
-                      position: 'top-end',
-                      icon: 'warning',
-                      text: 'Please input price',
-                      showConfirmButton: false,
-                      imageHeight: 30, 
-                      imageWidth: 30,   
-                      timer: 1500
-                    }
-                  );
-                }else if($('#input_product_disc').val()==''){
-                  Swal.fire(
-                    {
-                      position: 'top-end',
-                      icon: 'warning',
-                      text: 'Please input disc',
-                      showConfirmButton: false,
-                      imageHeight: 30, 
-                      imageWidth: 30,   
-                      timer: 1500
-                    }
-                  );
-                }else{
-                  addProduct($('#input_product_id').val(),$('#input_product_id option:selected').text(), $('#input_product_price').val(), $('#input_product_total').val(), $('#input_product_qty').val(), $('#input_product_uom').val(), $('#input_product_vat_total').val(),$('#input_product_disc').val());
-                  //addProduct($('#input_product_id').val(),$('#input_product_id option:selected').text(), $('#input_product_price').val(), $('#input_product_total').val(), $('#input_product_qty').val(), $('#input_product_uom').val(),$('#input_product_id option:selected').text());
-                }
-              });
-              
+            });
+
 
           });
+
+          
+
 
 
           var url = "{{ route('purchaseordersinternal.getdocdata',$purchase->purchase_no) }}";

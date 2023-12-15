@@ -203,7 +203,7 @@
               </div>
               <div class="modal-footer">
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">@lang('general.lbl_close') </button>
-              <button type="button" class="btn btn-primary"  data-bs-dismiss="modal" id="btn_add_po">@lang('general.lbl_apply')</button>
+              <button type="button" class="btn btn-primary"  data-bs-dismiss="modal" id="btn_price_sell">@lang('general.lbl_apply')</button>
               </div>
           </div>
           </div>
@@ -265,6 +265,67 @@
           });
           $('#input_date').val(formattedToday);
           $('#input_product_id_material').select2();
+
+          $('#btn_price_sell').on('click',function(){
+
+            const json = JSON.stringify({
+                product_id_selected : $('#product_id_selected').val(),
+                branch_id_selected : $('#branch_id_selected').val(),
+                price_buy : parseFloat($('#price_selected').val()),
+              }
+            );
+            const res = axios.post("{{ route('productsprice.update_sell') }}", json, {
+              headers: {
+                // Overwrite Axios's automatically set Content-Type
+                'Content-Type': 'application/json'
+              }
+            }).then(resp => {
+                  if(resp.data.status=="success"){ 
+                    Swal.fire({
+                        text: "Berhasil mengubah data harga beli",
+                        title : "@lang('general.lbl_success')",
+                        icon: 'success',
+                        showCancelButton: false,
+                      }).then((result) => {
+                        /* Read more about isConfirmed, isDenied below */
+                        if (result.isConfirmed) {
+                            window.location.reload(); 
+                        } else if (result.isDenied) {
+                          window.location.reload();
+                        }else{
+                          window.location.reload();
+                        }
+                      })
+                  }else{
+                    Swal.fire(
+                      {
+                        position: 'top-end',
+                        icon: 'warning',
+                        text: "@lang('general.lbl_msg_failed')"+resp.data.message,
+                        showConfirmButton: false,
+                        imageHeight: 30, 
+                        imageWidth: 30,   
+                        timer: 1500
+                      }
+                    );
+                  }
+            }).catch(function (error) {
+                Swal.fire(
+                        {
+                          position: 'top-end',
+                          icon: 'warning',
+                          text: "@lang('general.lbl_msg_failed')"+error.message,
+                          showConfirmButton: false,
+                          imageHeight: 30, 
+                          imageWidth: 30,   
+                          timer: 2500
+                        }
+                      );
+                console.log(error.toJSON());
+              });
+
+
+          });
 
 
           $('#input_submit').on('click',function(){

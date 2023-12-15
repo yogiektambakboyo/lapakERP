@@ -285,6 +285,31 @@ class ProductsPriceController extends Controller
     }
 
     /**
+     * Update user data
+     * 
+     * @param ProductPrice $product
+     * @param Request $request
+     * 
+     * @return \Illuminate\Http\Response
+     */
+    public function update_sell(Request $request) 
+    {
+        $user = Auth::user();
+        ProductPrice::where('product_id','=',$request->get('product_id_selected'))->where('branch_id','=',$request->get('branch_id_selected'))->update(
+            array_merge(
+                ['price_buy' => $request->get('price_buy') ],
+            )
+        );
+        
+        $result = array_merge(
+            ['status' => 'success'],
+            ['data' => ''],
+            ['message' => 'Save Successfully'],
+        );    
+        return $result;
+    }
+
+    /**
      * Delete user data
      * 
      * @param ProductPrice $user
