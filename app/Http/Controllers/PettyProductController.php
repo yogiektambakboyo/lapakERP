@@ -594,7 +594,7 @@ class PettyProductController extends Controller
         $this->getpermissions($id);
         $data = $this->data;
 
-        $isvalid_edit = DB::select(" select close_trans,remark from period where period_no=to_char('".$petty->dated."'::date,'YYYYMM')::int; ");
+        $isvalid_edit = DB::select(" select close_trans,remark from period where '".$petty->dated."'::date between start_cal and end_cal and period_no=to_char('".$petty->dated."'::date,'YYYYMM')::int; ");
 
         $payment_type = ['Cash','BCA - Debit','BCA - Kredit','Mandiri - Debit','Mandiri - Kredit','Transfer','QRIS'];
         $doc_type = ['Kas - Keluar','Produk - Keluar','Produk - Masuk'];
