@@ -20,7 +20,7 @@
             <div class="row mb-3">
               <label class="form-label col-form-label col-md-4">@lang('general.lbl_dated')   </label>
               <div class="col-md-8">
-                <input type="hidden" value="{{ $close_trans[0]->close_trans; }}" id="close_trans">
+                <input type="hidden" value="{{ count($close_trans)>=1?$close_trans[0]->close_trans:0; }}" id="close_trans">
                 <input type="hidden" 
                 name="doc_no"
                 id="doc_no"
@@ -270,7 +270,7 @@
           {
             position: 'top-end',
             icon: 'warning',
-            text: 'Status periode {{ $close_trans[0]->remark;  }} tertutup, anda tidak diperbolehkan mengubah data',
+            text: 'Status periode {{ count($close_trans)>=1?$close_trans[0]->remark:0;  }} tertutup, anda tidak diperbolehkan mengubah data',
             showConfirmButton: false,
             imageHeight: 30, 
             imageWidth: 30,   

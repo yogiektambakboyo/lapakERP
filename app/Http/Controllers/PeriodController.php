@@ -119,7 +119,7 @@ class PeriodController extends Controller
      */
     public function get_period_status(Request $request) 
     {
-        $isvalid_edit = DB::select(" select close_trans,remark from period where period_no=to_char('".$request->invoice_date."'::date,'YYYYMM')::int; ");
+        $isvalid_edit = DB::select(" select close_trans,remark from period where '".$request->invoice_date."'::date between start_cal and end_cal and period_no=to_char('".$request->invoice_date."'::date,'YYYYMM')::int; ");
         return $isvalid_edit;
     }
 
