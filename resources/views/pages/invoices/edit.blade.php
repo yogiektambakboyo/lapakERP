@@ -13,7 +13,7 @@
         <label id="label_membership"><?= $invoice->membership==null?'':$invoice->customers_name; ?></label>
         <button type="button" id="member-btn" class="btn btn-warning mx-2" href="#modal-scan-customer" data-bs-toggle="modal" data-bs-target="#modal-scan-customer"><span class='fas fa-address-card'> </span> Scan Member</button>
         <a href="{{ route('invoices.index') }}" class="btn btn-default">@lang('general.lbl_cancel')</a>
-        <input type="hidden" value="{{ $close_trans[0]->close_trans; }}" id="close_trans">
+        <input type="hidden" value="{{ count($close_trans)>=1?$close_trans[0]->close_trans:0; }}" id="close_trans">
         <button type="button" id="save-btn" class="btn btn-info d-none">@lang('general.lbl_save')</button>
       </div>
     </div>
