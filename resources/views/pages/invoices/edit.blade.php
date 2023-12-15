@@ -2203,7 +2203,7 @@
                     {
                       position: 'top-end',
                       icon: 'warning',
-                      text: 'Status periode {{ $close_trans[0]->remark;  }} tertutup, anda tidak diperbolehkan mengubah data',
+                      text: 'Status periode {{ count($close_trans)>=1?$close_trans[0]->remark:0;  }} tertutup, anda tidak diperbolehkan mengubah data',
                       showConfirmButton: false,
                       imageHeight: 30, 
                       imageWidth: 30,   
