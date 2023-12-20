@@ -13,6 +13,7 @@ use App\Http\Controllers\Lang;
 class HomeController extends Controller
 {
     private $data;
+
     public function index() 
     {
         $user = Auth::user();
@@ -300,6 +301,117 @@ class HomeController extends Controller
             $data = [];
             return view('pages.auth.login')->with('data',$data)->with('settings',Settings::get()->first())->with('company',Company::get()->first());
         }
+    }
+
+    public function getpermissions($role_id){
+        $id = $role_id;
+        $permissions = Permission::join('role_has_permissions',function ($join)  use ($id) {
+            $join->on(function($query) use ($id) {
+                $query->on('role_has_permissions.permission_id', '=', 'permissions.id')
+                ->where('role_has_permissions.role_id','=',$id)->where('permissions.name','like','%.index%')->where('permissions.url','!=','null');
+            });
+           })->orderby('permissions.seq')->get(['permissions.name','permissions.url','permissions.remark','permissions.parent']);
+
+           $this->data = [
+            'menu' => 
+                [
+                    [
+                        'icon' => 'fa fa-user-gear',
+                        'title' => \Lang::get('home.user_management'),
+                        'url' => 'javascript:;',
+                        'caret' => true,
+                        'sub_menu' => []
+                    ],
+                    [
+                        'icon' => 'fa fa-box',
+                        'title' => \Lang::get('home.product_management'),
+                        'url' => 'javascript:;',
+                        'caret' => true,
+                        'sub_menu' => []
+                    ],
+		                                    [
+                            'icon' => 'fa fa-spa',
+                            'title' => \Lang::get('home.service_management'),
+                        'url' => 'javascript:;',
+                        'caret' => true,
+                        'sub_menu' => []
+                    ],
+                    [
+                        'icon' => 'fa fa-table',
+                        'title' => \Lang::get('home.transaction'),
+                        'url' => 'javascript:;',
+                        'caret' => true,
+                        'sub_menu' => []
+                    ],
+                    [
+                        'icon' => 'fa fa-chart-column',
+                        'title' => \Lang::get('home.reports'),
+                        'url' => 'javascript:;',
+                        'caret' => true,
+                        'sub_menu' => []
+                    ],
+                    [
+                        'icon' => 'fa fa-screwdriver-wrench',
+                        'title' => \Lang::get('home.settings'),
+                        'url' => 'javascript:;',
+                        'caret' => true,
+                        'sub_menu' => []
+                    ]  
+                ]      
+        ];
+
+        foreach ($permissions as $key => $menu) {
+            if($menu['parent']=='Users'){
+                array_push($this->data['menu'][0]['sub_menu'], array(
+                    'url' => $menu['url'],
+                    'title' => $menu['remark'],
+                    'route-name' => $menu['name']
+                ));
+            }
+            if($menu['parent']=='Products'){
+                array_push($this->data['menu'][1]['sub_menu'], array(
+                    'url' => $menu['url'],
+                    'title' => $menu['remark'],
+                    'route-name' => $menu['name']
+                ));
+            }
+            if($menu['parent']=='Services'){
+                array_push($this->data['menu'][2]['sub_menu'], array(
+                    'url' => $menu['url'],
+                    'title' => $menu['remark'],
+                    'route-name' => $menu['name']
+                ));
+            }
+            if($menu['parent']=='Transactions'){
+                array_push($this->data['menu'][3]['sub_menu'], array(
+                    'url' => $menu['url'],
+                    'title' => $menu['remark'],
+                    'route-name' => $menu['name']
+                ));
+            }	
+            if($menu['parent']=='Reports'){
+                array_push($this->data['menu'][4]['sub_menu'], array(
+                    'url' => $menu['url'],
+                    'title' => $menu['remark'],
+                    'route-name' => $menu['name']
+                ));
+            }
+            if($menu['parent']=='Settings'){
+                array_push($this->data['menu'][5]['sub_menu'], array(
+                    'url' => $menu['url'],
+                    'title' => $menu['remark'],
+                    'route-name' => $menu['name']
+                ));
+            }
+        }
+
+
+    }
+
+    public function policy() 
+    {
+            $data = [];
+            return view('pages.auth.login')->with('data',$data)->with('settings',Settings::get()->first())->with('company',Company::get()->first());
     }
 
     public function getpermissions($role_id){

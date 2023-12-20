@@ -23,6 +23,7 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
      * Home Routes
      */
     Route::get('/', 'HomeController@index')->name('home.index');
+    Route::get('/policy', 'HomeController@policy')->name('home.policy');
     Route::get('/get_checkmembership', 'LoginController@get_checkmembership')->name('login.get_checkmembership');
 
 
