@@ -175,6 +175,19 @@ class InvoicesController extends Controller
         $type_customer = ['Sendiri','Berdua','Keluarga','Rombongan'];
         $users = User::join('users_branch as ub','ub.branch_id', '=', 'users.branch_id')->where('ub.user_id','=',$user->id)->where('users.job_id','=',2)->orderBy('users.name','ASC')->get(['users.id','users.name']);
         $usersall = User::join('users_branch as ub','ub.branch_id', '=', 'users.branch_id')->where('ub.user_id','=',$user->id)->whereIn('users.job_id',[1,2])->orderBy('users.name','ASC')->get(['users.id','users.name']);
+        
+        /*
+        $usersall = DB::select("select distinct id,name from users where id in (
+            select ubb.user_id 
+            from users_branch ub 
+            join users_branch ubb on ubb.branch_id = ub.branch_id
+            where ub.user_id = ".$user->id."
+            ) and job_id in (1,2)
+            order by name;"
+        );
+        */
+
+            
         return view('pages.invoices.create',[
             'customers' => Customer::join('users_branch as ub','ub.branch_id', '=', 'customers.branch_id')->join('branch as b','b.id','=','ub.branch_id')->where('ub.user_id',$user->id)->orderBy('customers.name')->get(['customers.id','customers.name','b.remark']),
             'data' => $data,
@@ -732,6 +745,17 @@ class InvoicesController extends Controller
         $users = User::join('users_branch as ub','ub.branch_id', '=', 'users.branch_id')->where('ub.user_id','=',$user->id)->where('users.job_id','=',2)->orderBy('users.name','ASC')->get(['users.id','users.name']);
         $usersReferral = User::get(['users.id','users.name']);
         $type_customer = ['Sendiri','Berdua','Keluarga','Rombongan'];
+
+        /*
+        $usersall = DB::select("select distinct id,name from users where id in (
+            select ubb.user_id 
+            from users_branch ub 
+            join users_branch ubb on ubb.branch_id = ub.branch_id
+            where ub.user_id = ".$user->id."
+            ) and job_id in (1,2)
+            order by name;"
+        );
+        */
 
         return view('pages.invoices.edit',[
             'customers' => Customer::join('users_branch as ub','ub.branch_id', '=', 'customers.branch_id')->join('branch as b','b.id','=','ub.branch_id')->where('ub.user_id',$user->id)->get(['customers.id','customers.name','b.remark']),
