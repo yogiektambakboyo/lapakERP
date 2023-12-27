@@ -44,7 +44,7 @@ class ReportStockMutationDetailExport implements FromCollection,WithColumnFormat
     {
         $data = DB::select("
         select * from (
-        select branch_name,to_char(a.dated,'dd-mm-YYYY') as dated_display,product_name,sum(a.qty_in) as qty_in,sum(a.qty_out) as qty_out,coalesce(psd.qty_stock,0) as qty_stock,coalesce(ds.qty_stock,0) as qty_begin from (
+        select branch_name,to_char(a.dated,'YYYY-mm-dd') as dated_display,product_name,sum(a.qty_in) as qty_in,sum(a.qty_out) as qty_out,coalesce(psd.qty_stock,0) as qty_stock,coalesce(ds.qty_stock,0) as qty_begin from (
             select b.id as branch_id,b.remark as branch_name,im.dated,id.product_id,ps.remark as product_name,sum(id.qty) as qty_out,0  as qty_in  from invoice_master im 
             join invoice_detail id on id.invoice_no = im.invoice_no 
             join customers c ON c.id = im.customers_id
@@ -94,7 +94,7 @@ class ReportStockMutationDetailExport implements FromCollection,WithColumnFormat
         where ub.user_id = ".$this->userid."
         group by ds.qty_stock,a.branch_id,a.branch_name,a.dated,product_name,coalesce(psd.qty_stock,0),to_char(a.dated,'dd-mm-YYYY')
         union all 
-            select b.remark as branch_name,'00-00-0000' as dated_display,ps.remark as product_name,0 as qty_in,0 as qty_out,qty_stock,qty_stock as qty_begin 
+            select b.remark as branch_name,'0000-00-00' as dated_display,ps.remark as product_name,0 as qty_in,0 as qty_out,qty_stock,qty_stock as qty_begin 
             from period_stock_daily psd 
             join branch b  on b.id = psd.branch_id and b.id::character varying like '".$this->branch."'
             join product_distribution pdd on pdd.product_id = psd.product_id and pdd.branch_id = b.id and pdd.active='1'
