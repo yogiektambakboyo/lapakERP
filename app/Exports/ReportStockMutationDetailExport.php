@@ -120,7 +120,7 @@ class ReportStockMutationDetailExport implements FromCollection,WithColumnFormat
                 $l_product = $data[$i]->product_name;
                 $l_branch = $data[$i]->branch_name;
 
-                if($data[$i]->dated_display=="00-00-0000"){
+                if($data[$i]->dated_display=="0000-00-00"){
                     $data[$i]->dated_display = "00 - Saldo Awal - 00";
                     $data[$i]->qty_in = 0;
                     $data[$i]->qty_out = 0;
