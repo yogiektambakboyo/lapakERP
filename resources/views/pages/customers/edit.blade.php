@@ -73,6 +73,18 @@
                         </select>
                     </div>
                   </div>
+
+                  <div class="mb-3">
+                    <label class="form-label">Status *</label>
+                    <div class="col-md-12">
+                      <select class="form-control" 
+                            name="status" id="status" required>
+                            <option value="">Pilih Status</option>
+                            <option value="1" @if("1" == $customer->status) selected @endif>Aktif</option>
+                            <option value="0" @if("0" == $customer->status) selected @endif>Tidak Aktif</option>
+                        </select>
+                    </div>
+                  </div>
            
                 <button type="submit" class="btn btn-primary">@lang('general.lbl_save')</button>
                 <a href="{{ route('customers.index') }}" class="btn btn-default">@lang('general.lbl_back') </a>

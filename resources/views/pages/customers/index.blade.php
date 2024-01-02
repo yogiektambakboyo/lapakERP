@@ -37,6 +37,7 @@
                 <th scope="col">@lang('general.lbl_name')</th>
                 <th scope="col" width="15%">@lang('general.lbl_address')</th>
                 <th scope="col" width="12%">@lang('general.lbl_phoneno')</th>
+                <th scope="col" width="12%">@lang('general.lbl_status')</th>
                 <th scope="col" width="1%" class="nex"></th> 
                 <th scope="col" width="1%" class="nex"></th> 
             </tr>
@@ -49,6 +50,7 @@
                         <td>{{ $customer->name }}</td>
                         <td>{{ $customer->address }}</td>
                         <td>{{ $customer->phone_no }}</td>
+                        <td>{{ $customer->status=="1"?'Aktif':'Tidak Aktif' }}</td>
                         <td><a href="{{ route('customers.edit', $customer->id) }}" class="btn btn-info btn-sm  {{ $act_permission->allow_edit==1?'':'d-none' }} ">@lang('general.lbl_edit')</a></td>
                         <td>
                             <a onclick="showConfirm({{ $customer->id }}, '{{ $customer->name }}')" class="btn btn-danger btn-sm  {{ $act_permission->allow_delete==1?'':'d-none' }} ">@lang('general.lbl_delete')</a>

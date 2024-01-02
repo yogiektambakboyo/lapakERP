@@ -239,6 +239,7 @@ class CustomersController extends Controller
                 ['address' => $request->get('address') ],
                 ['membership_id' => '1' ],
                 ['gender' => $request->get('gender') ],
+                ['status' => $request->get('status') ],
                 ['abbr' => '1' ],
                 ['branch_id' => $request->get('branch_id') ],
             )

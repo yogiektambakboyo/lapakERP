@@ -15,6 +15,7 @@ class Customer extends Model
         'name',
         'address',
         'phone_no',
+        'status',
         'membership_id',
         'abbr',
         'branch_id',
