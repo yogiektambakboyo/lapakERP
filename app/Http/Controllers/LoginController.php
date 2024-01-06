@@ -26,6 +26,11 @@ class LoginController extends Controller
         ]);
     }
 
+    public function profile()
+    {
+        return view('pages.auth.profile',['settings' => Settings::get()->first(),'company' => Company::get()->first()]);
+    }
+
     /**
      * Handle account login request
      * 

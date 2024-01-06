@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="{{ app()->getLocale() }}">
+<head>
+	<meta charset="utf-8" />
+	<title>Lapak Kreatif</title>
+	<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport" />
+	<meta content="" name="description" />
+	<meta content="" name="author" />
+	
+	<!-- ================== BEGIN core-css ================== -->
+	<link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet" />
+	<link href="assets/css/one-page-parallax/vendor.min.css" rel="stylesheet" />
+	<link href="assets/css/one-page-parallax/app.min.css" rel="stylesheet" />
+</head>
+@php
+	$bodyClass = (!empty($appBoxedLayout)) ? 'boxed-layout ' : '';
+	$bodyClass .= (!empty($paceTop)) ? 'pace-top ' : $bodyClass;
+	$bodyClass .= (!empty($bodyClass)) ? $bodyClass . ' ' : $bodyClass;
+	$appSidebarHide = (!empty($appSidebarHide)) ? $appSidebarHide : '';
+	$appHeaderHide = (!empty($appHeaderHide)) ? $appHeaderHide : '';
+	$appSidebarTwo = (!empty($appSidebarTwo)) ? $appSidebarTwo : '';
+	$appSidebarSearch = (!empty($appSidebarSearch)) ? $appSidebarSearch : '';
+	$appTopMenu = (!empty($appTopMenu)) ? $appTopMenu : '';
+	
+	$appClass = (!empty($appTopMenu)) ? 'app-with-top-menu ' : '';
+	$appClass .= (!empty($appHeaderHide)) ? 'app-without-header ' : ' app-header-fixed ';
+	$appClass .= (!empty($appSidebarEnd)) ? 'app-with-end-sidebar ' : '';
+	$appClass .= (!empty($appSidebarLight)) ? 'app-with-light-sidebar ' : '';
+	$appClass .= (!empty($appSidebarWide)) ? 'app-with-wide-sidebar ' : '';
+	$appClass .= (!empty($appSidebarHide)) ? 'app-without-sidebar ' : '';
+	$appClass .= (!empty($appSidebarMinified)) ? 'app-sidebar-minified ' : '';
+	$appClass .= (!empty($appSidebarTwo)) ? 'app-with-two-sidebar app-sidebar-end-toggled ' : '';
+	$appClass .= (!empty($appContentFullHeight)) ? 'app-content-full-height ' : '';
+	
+	$appContentClass = (!empty($appContentClass)) ? $appContentClass : '';
+@endphp
+<body class="{{ $bodyClass }}">
+	@include('includes.component.page-loader')
+	
+	<div id="app" class="app app-sidebar-fixed {{ $appClass }}">
+		
+		@includeWhen(!$appHeaderHide, 'includes.header')
+		
+		@includeWhen($appTopMenu, 'includes.top-menu')
+		
+		@includeWhen(!$appSidebarHide, 'includes.sidebar')
+		
+		@includeWhen($appSidebarTwo, 'includes.sidebar-right')
+		
+		<div id="content" class="app-content {{ $appContentClass }}">
+			@yield('content')
+		</div>
+		
+		@include('includes.component.scroll-top-btn')
+		
+		
+	</div>
+	
+	@yield('outside-content')
+
+	<script src="assets/js/one-page-parallax/vendor.min.js"></script>
+	<script src="assets/js/one-page-parallax/app.min.js"></script>
+	<script src="https://unpkg.com/typeit@8.7.1/dist/index.umd.js"></script>
+
+	<script type="text/javascript">
+		const instance = new TypeIt("#typeIt", {
+			speed: 350,
+			loop: true,
+		  })
+		  .type("<strong>Creative </strong>")
+		  .pause(200)
+		  .type("<span class='text-teal'>Team</span>")
+		  .pause(300)
+		  .delete(4)
+		  .type("<span class='text-teal'>Agency</span>")
+		  .pause(300)
+		  .delete(6)
+		  .type("<span class='text-teal'>Solution</span>")
+		  .pause(300)
+		  .go();
+	</script>
+</body>
+</html>
