@@ -363,11 +363,17 @@
         buttons: [
             {
                 extend: 'copyHtml5',
-                exportOptions: { orthogonal: 'export' }
+                exportOptions: { 
+                  orthogonal: 'export',
+                  columns: ':visible'
+                }
             },
             {
                 extend: 'excelHtml5',
-                exportOptions: { orthogonal: 'export' }
+                exportOptions: { 
+                  orthogonal: 'export',
+                  columns: ':visible'
+                }
             },
         ]
     });
