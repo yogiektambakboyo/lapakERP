@@ -59,12 +59,14 @@
         <thead>
             <tr>
                 <th style="text-align: center;background-color:#FFA726;" rowspan="2" scope="col" width="8%">@lang('general.lbl_dated')</th>
-                <th style="text-align: center;background-color:#FFA726;" rowspan="2"  scope="col">@lang('general.service')</th>     
-                <th style="text-align: center;background-color:#FFA726;" colspan="4" scope="col">@lang('general.product')</th>    
+                <th style="text-align: center;background-color:#FFA726;" rowspan="2"  scope="col">@lang('general.service')</th>  
+                <th class="<?= $report_total[0]->total_salon==0?'d-none':''; ?>" style="text-align: center;background-color:#FFA726;" rowspan="2"  scope="col">Salon</th>     
+                <th style="text-align: center;background-color:#FFA726;" colspan="<?= $report_total[0]->total_ojek==0?'4':'5'; ?>" scope="col">@lang('general.product')</th>    
+                <th class="<?= $report_total[0]->total_tambahan==0?'d-none':''; ?>"  style="text-align: center;background-color:#FFA726;" rowspan="2"  scope="col">Tambahan Terapis</th> 
                 <th style="text-align: center;background-color:#FFA726;" rowspan="2"  scope="col">@lang('general.lbl_drink')</th>     
                 <th style="text-align: center;background-color:#FFA726;" rowspan="2"  scope="col">Extra</th>    
                 <th class="<?= $report_total[0]->total_lebaran==0?'d-none':''; ?>" style="text-align: center;background-color:#FFA726;" rowspan="2"  scope="col">Charge Lebaran</th>       
-                <th  class="<?= $report_total[0]->total_b1d==0?'d-none':''; ?>" style="text-align: center;background-color:#FFA726;" rowspan="2" scope="col">B1 - D</th>    
+                <th class="<?= $report_total[0]->total_b1d==0?'d-none':''; ?>" style="text-align: center;background-color:#FFA726;" rowspan="2" scope="col">B1 - D</th>    
                 <th  class="<?= $report_total[0]->total_b1c==0?'d-none':''; ?>" style="text-align: center;background-color:#FFA726;" rowspan="2"  scope="col">B1 - K</th>    
                 <th  class="<?= $report_total[0]->total_b2d==0?'d-none':''; ?>" style="text-align: center;background-color:#FFA726;" rowspan="2"  scope="col">B2 - D</th>    
                 <th  class="<?= $report_total[0]->total_b2c==0?'d-none':''; ?>" style="text-align: center;background-color:#FFA726;" rowspan="2"  scope="col">B2 - K</th> 
@@ -80,11 +82,15 @@
               <th style="text-align: center;background-color:#FFA726;"  scope="col">Jenis</th>    
               <th style="text-align: center;background-color:#FFA726;"  scope="col">Qty</th>    
               <th style="text-align: center;background-color:#FFA726;"  scope="col">Harga</th>    
-              <th style="text-align: center;background-color:#FFA726;"  scope="col">Total</th>    
+              <th style="text-align: center;background-color:#FFA726;"  scope="col">Total</th>   
+              <th class="<?= $report_total[0]->total_ojek==0?'d-none':''; ?>"  style="text-align: center;background-color:#FFA726;" rowspan="2"  scope="col">Ojek</th> 
           </tr>
         </thead>
           <?php 
               $total_service = 0;
+              $total_salon = 0;
+              $total_ojek = 0;
+              $total_tambahan = 0;
               $total_product = 0;
               $total_drink = 0;
               $total_extra = 0;
@@ -113,10 +119,13 @@
                   <tr>
                     <td>{{ Carbon\Carbon::parse($rdata->dated)->format('d-m-Y')  }}</td>
                     <td style="text-align: right;">{{ number_format($rdata->total_service,0,',','.') }}</td>
+                    <td class="<?= $report_total[0]->total_salon==0?'d-none':''; ?>"  style="text-align: right;">{{ number_format($rdata->total_salon,0,',','.') }}</td>
                     <td style="text-align: right;"></td>
                     <td style="text-align: right;"></td>
                     <td style="text-align: right;"></td>
                     <td style="text-align: right;"></td>
+                    <td class="<?= $report_total[0]->total_ojek==0?'d-none':''; ?>"  style="text-align: right;">{{ number_format($rdata->total_ojek,0,',','.') }}</td>
+                    <td class="<?= $report_total[0]->total_tambahan==0?'d-none':''; ?>"  style="text-align: right;">{{ number_format($rdata->total_tambahan,0,',','.') }}</td>
                     <td style="text-align: right;">{{ number_format($rdata->total_drink,0,',','.') }}</td>
                     <td style="text-align: right;">{{ number_format($rdata->total_extra,0,',','.') }}</td>
                     <td class="<?= $report_total[0]->total_lebaran==0?'d-none':''; ?>" style="text-align: right;">{{ number_format($rdata->total_lebaran,0,',','.') }}</td>
@@ -142,6 +151,7 @@
                                 <tr>
                                   <td>{{ Carbon\Carbon::parse($rdata->dated)->format('d-m-Y')  }}</td>
                                   <td style="text-align: right;">{{ number_format($rdata->total_service,0,',','.') }}</td>
+                                  <td class="<?= $report_total[0]->total_salon==0?'d-none':''; ?>"  style="text-align: right;">{{ number_format($rdata->total_salon,0,',','.') }}</td>
             
                                   <td style="text-align: left;">
                                     {{ $rdet->abbr."" }}
@@ -155,6 +165,8 @@
                                   <td style="text-align: right;">
                                     {{ number_format($rdet->total,0,',','.')."" }}
                                   </td>
+                                  <td  class="<?= $report_total[0]->total_ojek==0?'d-none':''; ?>" style="text-align: right;">{{ number_format($rdata->total_ojek,0,',','.') }}</td>
+                                  <td  class="<?= $report_total[0]->total_tambahan==0?'d-none':''; ?>" style="text-align: right;">{{ number_format($rdata->total_tambahan,0,',','.') }}</td>
                                   <td style="text-align: right;">{{ number_format($rdata->total_drink,0,',','.') }}</td>
                                   <td style="text-align: right;">{{ number_format($rdata->total_extra,0,',','.') }}</td>
                                   <td  class="<?= $report_total[0]->total_lebaran==0?'d-none':''; ?>" style="text-align: right;">{{ number_format($rdata->total_lebaran,0,',','.') }}</td>
@@ -174,6 +186,8 @@
                                 <tr>
                                   <td></td>
                                   <td style="text-align: right;"></td>
+                                  <td style="text-align: right;"></td>
+                                  
             
                                   <td style="text-align: left;">
                                     {{ $rdet->abbr."" }}
@@ -187,6 +201,8 @@
                                   <td style="text-align: right;">
                                     {{ number_format($rdet->total,0,',','.')."" }}
                                   </td>
+                                  <td  class="<?= $report_total[0]->total_ojek==0?'d-none':''; ?>" style="text-align: right;"></td>
+                                  <td  class="<?= $report_total[0]->total_tambahan==0?'d-none':''; ?>" style="text-align: right;"></td>
                                   <td style="text-align: right;"></td>
                                   <td style="text-align: right;"></td>
                                   <td  class="<?= $report_total[0]->total_lebaran==0?'d-none':''; ?>" style="text-align: right;"></td>
@@ -210,8 +226,17 @@
                         @endforeach  
 
                         <?php
-                          $colspan_c = 12;
+                          $colspan_c = 14;
                           if($report_total[0]->total_lebaran==0){
+                            $colspan_c--;
+                          }
+                          if($report_total[0]->total_ojek==0){
+                            $colspan_c--;
+                          }
+                          if($report_total[0]->total_tambahan==0){
+                            $colspan_c--;
+                          }
+                          if($report_total[0]->total_salon==0){
                             $colspan_c--;
                           }
                           if($report_total[0]->total_b1d==0){
@@ -245,9 +270,12 @@
                           <td style="display: none;"></td>
                           <td style="display: none;"></td>
                           <td style="display: none;"></td>
-                          <td style="text-align: right;" colspan="5"></td>
+                          <td style="display: none;"></td>
+                          <td style="display: none;"></td>
+                          <td style="text-align: right;" colspan="{{ $rdata->total_salon==0?'5':'6'  }}"></td>
                           <td style="text-align: right;"><strong>{{ number_format($rdata->total_product,0,',','.') }}</strong></td>
                           <td style="text-align: right;" colspan="<?= $colspan_c ?>"></td>
+                          <td style="display: none;"></td>
                           <td style="display: none;"></td>
                           <td style="display: none;"></td>
                           <td style="display: none;"></td>
@@ -268,6 +296,9 @@
                 
                 <?php 
                     $total_service = $total_service + $rdata->total_service;
+                    $total_salon = $total_salon + $rdata->total_salon;
+                    $total_ojek = $total_ojek + $rdata->total_ojek;
+                    $total_tambahan = $total_tambahan+ $rdata->total_tambahan;
                     $total_product = $total_product + $rdata->total_product;
                     $total_drink = $total_drink + $rdata->total_drink;
                     $total_extra = $total_extra + $rdata->total_extra;
@@ -288,11 +319,14 @@
 
             <tr>
               <th>Grand Total</th>
-              <th style="text-align: right;">{{ number_format($total_service,0,',','.') }}</th>  
+              <th style="text-align: right;">{{ number_format($total_service,0,',','.') }}</th> 
+              <th  class="<?= $report_total[0]->total_salon==0?'d-none':''; ?>"  style="text-align: right;">{{ number_format($total_salon,0,',','.') }}</th>  
               <th style="text-align: right;"></th>               
               <th style="text-align: right;"></th>               
               <th style="text-align: right;"></th>               
-              <th style="text-align: right;">{{ number_format($total_product,0,',','.') }}</th>                
+              <th style="text-align: right;">{{ number_format($total_product,0,',','.') }}</th>   
+              <th class="<?= $report_total[0]->total_ojek==0?'d-none':''; ?>"  style="text-align: right;">{{ number_format($total_ojek,0,',','.') }}</th>              
+              <th class="<?= $report_total[0]->total_tambahan==0?'d-none':''; ?>"  style="text-align: right;">{{ number_format($total_tambahan,0,',','.') }}</th>              
               <th style="text-align: right;">{{ number_format($total_drink,0,',','.') }}</th>                
               <th style="text-align: right;">{{ number_format($total_extra,0,',','.') }}</th>                
               <th class="<?= $report_total[0]->total_lebaran==0?'d-none':''; ?>"  style="text-align: right;">{{ number_format($total_lebaran,0,',','.') }}</th>                

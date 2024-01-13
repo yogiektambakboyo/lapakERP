@@ -1766,9 +1766,12 @@ class ReportCloseDayController extends Controller
         }else if($request->export=='Export Sum New'){
             $report_data = DB::select("
                     select b.id as branch_id,b.remark as branch_name,im.dated,sum(id.total+id.vat_total) as total_all,
-                    sum(case when ps.type_id = 2 then id.total+id.vat_total else 0 end) as total_service,
-                    sum(case when ps.type_id = 1 and ps.category_id != 26 then id.total+id.vat_total else 0 end) as total_product,
+                    sum(case when ps.type_id = 2 and ps.category_id!=53 and ps.category_id!=60 then id.total+id.vat_total else 0 end) as total_service,
+                    sum(case when ps.type_id = 2 and ps.category_id=53 then id.total+id.vat_total else 0 end) as total_salon,
+                    sum(case when ps.type_id = 2 and ps.category_id=60 then id.total+id.vat_total else 0 end) as total_tambahan,
+                    sum(case when ps.type_id = 1 and ps.category_id != 26 and ps.category_id != 58 then id.total+id.vat_total else 0 end) as total_product,
                     sum(case when ps.type_id = 1 and ps.category_id = 26 then id.total+id.vat_total else 0 end) as total_drink,
+                    sum(case when ps.type_id = 1 and ps.category_id = 58 then id.total+id.vat_total else 0 end) as total_ojek,
                     sum(case when ps.type_id = 8 and ps.remark not like '%CHARGE LEBARAN%'  then id.total+id.vat_total else 0 end) as total_extra,
                     sum(case when ps.type_id = 8 and ps.remark like '%CHARGE LEBARAN%'  then id.total+id.vat_total else 0 end) as total_lebaran,
                     sum(case when im.payment_type = 'Cash' then id.total+id.vat_total else 0 end) as total_cash,
@@ -1800,9 +1803,12 @@ class ReportCloseDayController extends Controller
 
             $report_total = DB::select("
                     select 
-                    sum(case when ps.type_id = 2 then id.total+id.vat_total else 0 end) as total_service,
-                    sum(case when ps.type_id = 1 and ps.category_id != 26 then id.total+id.vat_total else 0 end) as total_product,
+                    sum(case when ps.type_id = 2 and ps.category_id!=53 and ps.category_id!=60 then id.total+id.vat_total else 0 end) as total_service,
+                    sum(case when ps.type_id = 2 and ps.category_id=53 then id.total+id.vat_total else 0 end) as total_salon,
+                    sum(case when ps.type_id = 2 and ps.category_id=60 then id.total+id.vat_total else 0 end) as total_tambahan,
+                    sum(case when ps.type_id = 1 and ps.category_id != 26 and ps.category_id != 58 then id.total+id.vat_total else 0 end) as total_product,
                     sum(case when ps.type_id = 1 and ps.category_id = 26 then id.total+id.vat_total else 0 end) as total_drink,
+                    sum(case when ps.type_id = 1 and ps.category_id = 58 then id.total+id.vat_total else 0 end) as total_ojek,
                     sum(case when ps.type_id = 8 and ps.remark not like '%CHARGE LEBARAN%'  then id.total+id.vat_total else 0 end) as total_extra,
                     sum(case when ps.type_id = 8 and ps.remark like '%CHARGE LEBARAN%'  then id.total+id.vat_total else 0 end) as total_lebaran,
                     sum(case when im.payment_type = 'Cash' then id.total+id.vat_total else 0 end) as total_cash,
@@ -1834,11 +1840,11 @@ class ReportCloseDayController extends Controller
             $report_detail = DB::select("select b.id as branch_id,b.remark as branch_name,im.dated,id.product_id,ps.abbr,sum(id.qty) as qty,id.price,sum(id.total) as total
             from invoice_master im 
             join invoice_detail id on id.invoice_no  = im.invoice_no 
-            join product_sku ps on ps.id = id.product_id and ps.type_id = 1 and ps.category_id !=26
+            join product_sku ps on ps.id = id.product_id and ps.type_id = 1 and ps.category_id !=26  and ps.category_id!=58
             join customers c on c.id = im.customers_id and c.branch_id::character varying like '%".$branchx."%'
             join branch b on b.id = c.branch_id
             join users_branch as ub on ub.branch_id = b.id and ub.user_id = '".$user->id."'
-            where im.dated between '".$begindate."' and '".$enddate."'
+            where im.dated between '".$begindate."' and '".$enddate."' 
             group by b.remark,im.dated,b.id,id.product_id,id.price,ps.abbr
             order by 1,3,5");
             
