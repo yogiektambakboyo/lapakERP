@@ -189,7 +189,7 @@ class InvoicesController extends Controller
 
             
         return view('pages.invoices.create',[
-            'customers' => Customer::join('users_branch as ub','ub.branch_id', '=', 'customers.branch_id')->join('branch as b','b.id','=','ub.branch_id')->where('customers.status','=','1')->where('ub.user_id',$user->id)->orderBy('customers.name')->get(['customers.id','customers.name','b.remark']),
+            'customers' => Customer::join('users_branch as ub','ub.branch_id', '=', 'customers.branch_id')->join('branch as b','b.id','=','ub.branch_id')->where('customers.status','=','1')->where('ub.user_id',$user->id)->orderBy('customers.name')->limit(30)->get(['customers.id','customers.name','b.remark']),
             'data' => $data,
             'users' => $users,
             'userx' => $user,
@@ -758,7 +758,7 @@ class InvoicesController extends Controller
         
 
         return view('pages.invoices.edit',[
-            'customers' => Customer::join('users_branch as ub','ub.branch_id', '=', 'customers.branch_id')->join('branch as b','b.id','=','ub.branch_id')->where('customers.status','=','1')->where('ub.user_id',$user->id)->get(['customers.id','customers.name','b.remark']),
+            'customers' => Customer::join('users_branch as ub','ub.branch_id', '=', 'customers.branch_id')->join('branch as b','b.id','=','ub.branch_id')->where('customers.status','=','1')->where('ub.user_id',$user->id)->where('customers.id','=',$invoice->customers_id)->get(['customers.id','customers.name','b.remark']),
             'data' => $data,
             'invoice' => $invoice,
             'room' => $room,

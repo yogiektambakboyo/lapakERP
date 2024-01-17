@@ -402,6 +402,102 @@ class ReportCashierComController extends Controller
                 'report_data_dated' => $report_data_dated,
                 'settings' => Settings::get(),
             ]);
+        }else if($request->export=='Export Sum Lite Produk'){
+
+            $filter_begin_date = $begindate;
+            $filter_begin_end = $enddate;
+            $filter_branch_id =  $branchx;
+
+            $call_proc = DB::select("CALL calc_commision_cashier();");
+
+            $report_data = DB::select("select b.id as branch_id,b.remark as branch_name,im.dated,sum(id.qty) as qty,sum(id.total) as total
+            from invoice_master im 
+            join invoice_detail id on id.invoice_no  = im.invoice_no 
+            join product_sku ps on ps.id = id.product_id and ps.type_id = 1 and ps.category_id!=58
+            join customers c on c.id = im.customers_id and c.branch_id::character varying like '%".$branchx."%'
+            join branch b on b.id = c.branch_id
+            join users_branch as ub on ub.branch_id = b.id and ub.user_id = '".$user->id."'
+            where im.dated between '".$begindate."' and '".$enddate."' 
+            group by b.remark,im.dated,b.id
+            order by 1,3");
+
+            $report_detail = DB::select("select 0 as modal,b.id as branch_id,b.remark as branch_name,im.dated,id.product_id,ps.abbr,sum(id.qty) as qty,id.price,sum(id.total) as total,cm.base_commision,cm.commisions,cmt.base_commision as base_commision_tp,cmt.commisions as commisions_tp 
+            from invoice_master im 
+            join invoice_detail id on id.invoice_no  = im.invoice_no 
+            join product_sku ps on ps.id = id.product_id and ps.type_id = 1 and ps.category_id!=58
+            join customers c on c.id = im.customers_id and c.branch_id::character varying like '%".$branchx."%'
+            join branch b on b.id = c.branch_id
+            join users_branch as ub on ub.branch_id = b.id and ub.user_id = '".$user->id."'
+            left join ( 
+                select branch_id,branch_name,dated,product_id,base_commision,sum(commisions) as commisions 
+                from cashier_commision where type_id = 1 group by branch_id,branch_name,dated,product_id,base_commision
+            ) cm on cm.branch_id = c.branch_id and cm.product_id=id.product_id and cm.dated = im.dated
+            left join ( 
+                select branch_id,branch_name,dated,product_id,base_commision,sum(commisions) as commisions 
+                from cashier_commision where type_id = 1 group by branch_id,branch_name,dated,product_id,base_commision
+            ) cmt on cmt.branch_id = c.branch_id and cmt.product_id=id.product_id and cmt.dated = im.dated
+            where im.dated between '".$begindate."' and '".$enddate."' 
+            group by b.remark,im.dated,b.id,id.product_id,id.price,ps.abbr,cm.base_commision,cm.commisions,cmt.base_commision,cmt.commisions
+            order by 1,3,5");
+
+            $report_data_dated = DB::select("
+                select to_char(dated,'YYYY-MM-dd') as datedorder
+                from cashier_commision a 
+                join users_branch as ub on ub.branch_id = a.branch_id and ub.user_id = '".$user->id."'
+                where a.dated between '".$begindate."' and '".$enddate."'  and a.branch_id::character varying like '%".$branchx."%'
+                group by branch_name,to_char(dated,'dd-MM-YYYY'),to_char(dated,'YYYY-MM-dd')
+                order by 1
+            ");
+
+            $report_data_detail_t = DB::select("
+                select branch_name,to_char(dated,'YYYY-MM-dd') as datedorder,to_char(dated,'dd-MM-YYYY') as dated,'0' as name,'0' as id,
+                string_agg(distinct right(invoice_no,6),'##' order by right(invoice_no,6)) as invoice_no,
+                string_agg(case when type_id=1 then abbr else '' end,'##' order by right(invoice_no,6)) as product_abbr,
+                string_agg(case when type_id=1 then price::character varying else '' end,'##' order by right(invoice_no,6)) as product_price,
+                string_agg(case when type_id=1 then base_commision::character varying else '' end,'##' order by right(invoice_no,6)) as product_base_commision,
+                string_agg(case when type_id=1 then qty::character varying else '' end,'##' order by right(invoice_no,6)) as product_qty,      
+                string_agg(case when type_id=1 then commisions::character varying else '' end,'##' order by right(invoice_no,6)) as product_commisions,   
+                string_agg(case when type_id=8 then commisions::character varying else '' end,'##' order by right(invoice_no,6)) as commisions_extra,
+                sum(a.commisions) as total   
+                from cashier_commision a 
+                join users_branch as ub on ub.branch_id = a.branch_id and ub.user_id = '".$user->id."'
+                where a.dated between '".$begindate."' and '".$enddate."'  and a.branch_id::character varying like '%".$branchx."%'
+                group by branch_name,to_char(dated,'dd-MM-YYYY'),to_char(dated,'YYYY-MM-dd')
+                order by 1,2
+            ");
+
+            $time = strtotime($begindate);
+            $newformat = date('Y-m-d',$time);
+            $newformatd = date('Y-m',$time);
+            $newformatlastm = date('Y-m', strtotime('-1 months', strtotime($newformat)));
+
+            $date26 = substr($begindate, 8, 2);
+
+            $today_date = (int)$date26;
+            if ($today_date>=26){
+                $date26 = $newformatd.'-26';
+            }else{
+
+                $date26 = $newformatlastm.'-26';
+            }
+
+            $report_data_com_from1 = DB::select("
+                        select to_char(dated,'dd-MM-YYYY') as dated,'0' as id,sum(a.commisions) as total from cashier_commision a
+                        join users_branch as ub on ub.branch_id = a.branch_id and ub.user_id = '".$user->id."'
+                        where dated between '".$date26."'  and '".$enddate."'  and a.branch_id::character varying like  '".$filter_branch_id."' group by dated     
+            ");
+    
+            return view('pages.reports.cashier_comm_day_print_produk', [
+                'report_data_com_from1' => $report_data_com_from1,
+                'report_data_detail_t' => $report_data_detail_t,
+                'filter_begin_date' => $filter_begin_date,
+                'filter_begin_end' => $filter_begin_end,
+                'filter_branch_id' => $filter_branch_id,
+                'report_data_dated' => $report_data_dated,
+                'report_data' => $report_data,
+                'report_detail' => $report_detail,
+                'settings' => Settings::get(),
+            ]);
         }else if($request->export=='Export Sum Lite API'){
 
             $filter_begin_date = $begindate;

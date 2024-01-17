@@ -97,6 +97,16 @@ class CustomersController extends Controller
                 'branchs' => $branchs,
                 'act_permission' => $act_permission
             ]);
+        }else if($request->src == "api"){
+            $Customers = Customer::join('branch as b','b.id','customers.branch_id')
+                            ->join('users_branch as ub', function($join){
+                                $join->on('ub.branch_id', '=', 'b.id');
+                            })->where('ub.user_id', $user->id)->where('customers.name','ILIKE','%'.$keyword.'%')->limit(30)->get(['customers.id','customers.name as text']);
+            $datajson = array_merge([
+                'results' => $Customers
+            ]);
+
+            return response()->json($datajson, 200);
         }else{
             $Customers = Customer::join('branch as b','b.id','customers.branch_id')
                             ->join('users_branch as ub', function($join){

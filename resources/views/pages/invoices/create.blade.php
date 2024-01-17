@@ -848,7 +848,19 @@
 
 
       $(function () {
-        $('#customer_id').select2();
+        $('#customer_id').select2({
+          ajax: {
+            dataType: 'json',
+            url: function (params) {
+              $urld = "{{ route('customers.search') }}";
+              if(params.term == ""){
+                return 'http://localhost/customers/search?filter_branch_id=19&src=api&search=%';
+              }else{
+                return 'http://localhost/customers/search?filter_branch_id=19&src=api&search=' + params.term;
+              }
+            }
+          },
+        });
 
         $('#btn_save_customer').on('click', function(){
         if($('#cust_name').val()==''){
