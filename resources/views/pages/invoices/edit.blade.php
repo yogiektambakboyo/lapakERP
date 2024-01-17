@@ -607,15 +607,15 @@
 @push('scripts')
     <script type="text/javascript">
 
-      $('#customer_id').select2({
+$('#customer_id').select2({
           ajax: {
             dataType: 'json',
             url: function (params) {
               $urld = "{{ route('customers.search') }}";
               if(params.term == ""){
-                return 'http://localhost/customers/search?filter_branch_id=19&src=api&search=%';
+                return $urld+'?src=api&search=%';
               }else{
-                return 'http://localhost/customers/search?filter_branch_id=19&src=api&search=' + params.term;
+                return $urld+'?src=api&search='+params.term;
               }
             }
           },
