@@ -15,6 +15,7 @@
                         <button onclick="openDialogFilterSearch('Export Excel');" class="btn btn-sm btn-success">Export</button>  
                         <button onclick="openDialogFilterSearch('Export Sum Lite');" class="btn btn-sm btn-success">Export Summary</button>  
                         <button onclick="openDialogFilterSearch('Export Sum Lite Produk');" class="btn btn-sm btn-success">Export Summary Produk</button>  
+                        <button onclick="openDialogFilterSearch('Export Com');" class="btn btn-sm btn-success">Export Komisi Khusus</button>  
                 </div>
             </div>
         </div>

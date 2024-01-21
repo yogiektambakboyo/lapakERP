@@ -598,6 +598,21 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
         });
 
         /**
+         * Product Exclusive Commisions
+         */
+        Route::group(['prefix' => 'productscommision_ex'], function() {
+            Route::get('/', 'ProductsCommisionExController@index')->name('productscommision_ex.index');
+            Route::get('/create', 'ProductsCommisionExController@create')->name('productscommision_ex.create');
+            Route::post('/create', 'ProductsCommisionExController@store')->name('productscommision_ex.store');
+            Route::get('/search', 'ProductsCommisionExController@search')->name('productscommision_ex.search');
+            Route::get('/{branch}/{product}/show', 'ProductsCommisionExController@show')->name('productscommision_ex.show');
+            Route::get('/{branch}/{product}/edit', 'ProductsCommisionExController@edit')->name('productscommision_ex.edit');
+            Route::patch('/{branch}/{product}/update', 'ProductsCommisionExController@update')->name('productscommision_ex.update');
+            Route::delete('/{branch}/{product}/delete', 'ProductsCommisionExController@destroy')->name('productscommision_ex.destroy');
+            Route::get('/export', 'ProductsCommisionExController@export')->name('productscommision_ex.export');
+        });
+
+        /**
          * Service Commisions
          */
         Route::group(['prefix' => 'servicescommision'], function() {
