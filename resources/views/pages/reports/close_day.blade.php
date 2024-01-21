@@ -16,6 +16,7 @@
                         <button onclick="openDialogFilterSum('Export Sum');" class="btn btn-sm btn-success">Export Summary</button>  
                         <button onclick="openDialogFilterSum('Export Sum New');" class="btn btn-sm btn-success">Export Summary v2</button>  
                         <button onclick="openDialogFilterSum('Export Sum Counter');" class="btn btn-sm btn-success">Export Omset</button>  
+                        <button onclick="openDialogFilterSum('Export Sum Pendapatan');" class="btn btn-sm btn-success">Export Lap. Pendapatan</button>  
                         <button onclick="openDialogFilterSumon('Export Sumon');" class="btn btn-sm btn-success">Export Monthly</button>  
                 </div>
             </div>
