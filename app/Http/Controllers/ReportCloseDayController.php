@@ -1793,7 +1793,7 @@ class ReportCloseDayController extends Controller
                     sum(case when ps.type_id = 2 then id.qty else 0 end) as qty_service
                     from invoice_master im 
                     join invoice_detail id on id.invoice_no  = im.invoice_no 
-                    join product_sku ps on ps.id = id.product_id 
+                    join product_sku ps on ps.id = id.product_id
                     join customers c on c.id = im.customers_id and c.branch_id::character varying like '%".$branchx."%'
                     join branch b on b.id = c.branch_id
                     join users_branch as ub on ub.branch_id = b.id and ub.user_id = '".$user->id."'

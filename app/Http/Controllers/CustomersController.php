@@ -194,6 +194,31 @@ class CustomersController extends Controller
         return $result;
     }
 
+    public function nonactive(Request $request)
+    {
+        
+        $data = $this->data;
+        $user = Auth::user();
+        $explode_str = explode(";",$request->get('customers_id'));
+        $str_inv = "";
+        for ($i=0; $i < count($explode_str); $i++) { 
+            if($i==0){
+                $str_inv = "'".$explode_str[$i]."'";
+            }else{
+                $str_inv = $str_inv.", '".$explode_str[$i]."'";
+            }
+        }
+    
+        $product = DB::select("update customers set status = 0 where id in (".$str_inv.")");
+        $result = array_merge(
+            ['status' => 'success'],
+            ['data' => ""],
+            ['message' => 'Save Successfully'],
+        );
+
+        return $result;
+    }
+
     public function clonestoreapi(Request $request)
     {   
         DB::select("

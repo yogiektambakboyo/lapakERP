@@ -7,7 +7,7 @@
         <h2>@lang('general.lbl_customer')</h2>
 
         <div class="lead row mb-3">
-            <div class="col-md-10">
+            <div class="col-md-8">
                 <div class="col-md-4">
                     @lang('general.lbl_title')
                 </div>
@@ -20,6 +20,9 @@
                         <div class="col-2"><input type="submit" class="btn btn-sm btn-success" value="@lang('general.btn_export')" name="export"></div>  
                     </form> --}}
                 </div>
+            </div>
+            <div class="col-md-2">
+                <button id="customer_nonactive" class="btn btn-warning btn-sm float-right d-none">  Non Aktif Pelanggan</button>
             </div>
             <div class="col-md-2">
                 <a href="{{ route('customers.create') }}" class="btn btn-primary btn-sm float-right"><span class="fa fa-plus-circle"></span>  @lang('general.btn_create')</a>
@@ -122,6 +125,8 @@
           });
           $('#filter_end_date').val(formattedToday);
 
+          //customer_nonactive
+
           function showConfirm(id,data){
             Swal.fire({
             title: "@lang('general.lbl_sure')",
@@ -174,10 +179,14 @@
 @endpush
 @push('scripts')
 <script type="text/javascript">
+    let table;
     $(document).ready(function () {
-        $('#example').DataTable(
+        table = $('#example').DataTable(
             {
                 dom: 'Bfrtip',
+                select: {
+                    style: 'multi'
+                },
                 buttons: [
                     {
                         extend: 'copyHtml5',
@@ -194,6 +203,127 @@
                 ]
             }
         );
+
+        table
+        .on('select', function (e, dt, type, indexes) {
+            if(table.rows({ selected: true }).count()>0){
+                $('#customer_nonactive').removeClass("d-none");
+            }else{
+                $('#customer_nonactive').addClass("d-none");
+            }
+            $('#customer_nonactive').text("Non Aktif Tamu ("+table.rows({ selected: true }).count()+")");
+        })
+        .on('deselect', function (e, dt, type, indexes) {
+            if(table.rows({ selected: true }).count()>0){
+                $('#customer_nonactive').removeClass("d-none");
+            }else{
+                $('#customer_nonactive').addClass("d-none");
+            }
+            $('#customer_nonactive').text("Non Aktif Tamu ("+table.rows({ selected: true }).count()+")");
+        });
+
+        function showConfirmDeactivated(id,data){
+            Swal.fire({
+            title: "@lang('general.lbl_sure')",
+            text: "Apakah anda yakin akan menonaktifkan data  "+data+" tamu!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33', cancelButtonText: "@lang('general.lbl_cancel')",
+            confirmButtonText: "Ya, Nonaktifkan"
+            }).then((result) => {
+                if (result.isConfirmed) {
+
+                    const json = JSON.stringify({
+                            customers_id : str_inv,
+                        }
+                    );
+
+                    var url = "{{ route('customers.nonactive') }}";
+                    
+                    const res = axios.post(url, json, {
+                        headers: {
+                            // Overwrite Axios's automatically set Content-Type
+                            'Content-Type': 'application/json'
+                        }
+                        }).then(
+                            resp => {
+                                if(resp.data.status=="success"){
+                                    Swal.fire({
+                                        title: 'Success!',
+                                        text: "Data anda berhasil di nonaktifkan",
+                                        icon: 'success',
+                                        showCancelButton: false,
+                                        confirmButtonColor: '#3085d6',
+                                        cancelButtonColor: '#d33', cancelButtonText: "@lang('general.lbl_cancel')",
+                                        confirmButtonText: "@lang('general.lbl_close') "
+                                        }).then((result) => {
+                                            window.location.href = "{{ route('customers.index') }}"; 
+                                        })
+                                }else{
+                                    Swal.fire(
+                                    {
+                                        position: 'top-end',
+                                        icon: 'warning',
+                                        text: "@lang('general.lbl_msg_failed')"+resp.data.message,
+                                        showConfirmButton: false,
+                                        imageHeight: 30, 
+                                        imageWidth: 30,   
+                                        timer: 1500
+                                    });
+                            }
+                        });
+                    }
+                })
+        }
+
+
+        $('#customer_nonactive').on('click',function(){
+            str_inv = "";
+            var counter = 0;
+            $('#customer_nonactive').text("Non Aktif Tamu ("+table.rows({ selected: true }).count()+")");
+            rowdata = table.rows('.selected').data();
+            counter = rowdata.length;
+              for (var i = 0; i < rowdata.length; i++) {
+                if(i==0){
+                    str_inv = rowdata[i][0]; 
+                }else{
+                    str_inv = str_inv + ";"+rowdata[i][0]; 
+                }
+            }
+
+            if(table.rows({ selected: true }).count()>0){
+                $('#customer_nonactive').removeClass("d-none");
+
+                const json = JSON.stringify({
+                        customer_id : str_inv,
+                    }
+                );
+
+                console.log(str_inv);
+
+                showConfirmDeactivated(str_inv,counter)
+              
+                //var url = "{{ route('invoices.getfreeinvoice') }}";
+                /**const res = axios.post(url, json,
+                {
+                    headers: {
+                      'Content-Type': 'application/json'
+                    }
+                  }
+                ).then(resp => {
+                    //table_payment.clear().draw();
+                    
+                });**/
+                
+
+            }else{
+                $('#customer_nonactive').addClass("d-none");
+            }
+           
+
+         });
+
     });
 </script>
 @endpush

@@ -80,12 +80,14 @@
                   $total_qty_t = 0;    
                   $total_price_t = 0;    
                   $total_modal_t = 0;    
+                  $total_modal_qty_t = 0;    
                   $total_total_t = 0;    
                   $total_commisions_c_t = 0;    
                   $total_commisions_tp_t = 0;    
                   $total_base_commision_c_t = 0;  
                   $total_base_commision_tp_t =  0;
                   $total_qty_t = 0;    
+                  $total_final_t = 0;    
                 @endphp
 
               @foreach ($report_data as $data)
@@ -95,7 +97,9 @@
                   $total_qty = 0;    
                   $total_price = 0; 
                   $total_modal = 0;    
+                  $total_modal_qty = 0;    
                   $total_total = 0;    
+                  $total_final = 0;    
                   $total_commisions_c = 0;    
                   $total_commisions_tp = 0;    
                   $total_base_commision_c = 0;    
@@ -110,31 +114,31 @@
                       <tr>
                         <td>{{ $data->dated }}</td>
                         <td>{{ $rdata->abbr }}</td>
-                        <td>{{ $rdata->qty }}</td>
-                        <td>{{ $rdata->price }}</td>
-                        <td>{{ $rdata->modal }}</td>
-                        <td>{{ $rdata->total }}</td>
-                        <td>{{ $rdata->modal*$rdata->qty }}</td>
-                        <td>{{ $rdata->base_commision_tp }}</td>
-                        <td>{{ $rdata->commisions_tp }}</td>
-                        <td>{{ $rdata->base_commision }}</td>
-                        <td>{{ $rdata->commisions }}</td>
-                        <td>{{ $rdata->total-($rdata->commisions_tp+$rdata->commisions+($rdata->modal*$rdata->qty)) }}</td>
+                        <td>{{ number_format($rdata->qty,0,',','.') }}</td>
+                        <td>{{ number_format($rdata->price,0,',','.') }}</td>
+                        <td>{{ number_format($rdata->modal ,0,',','.')}}</td>
+                        <td>{{ number_format($rdata->total,0,',','.') }}</td>
+                        <td>{{ number_format($rdata->modal*$rdata->qty,0,',','.') }}</td>
+                        <td>{{ number_format($rdata->base_commision_tp,0,',','.') }}</td>
+                        <td>{{ number_format($rdata->commisions_tp,0,',','.') }}</td>
+                        <td>{{ number_format($rdata->base_commision,0,',','.') }}</td>
+                        <td>{{ number_format($rdata->commisions,0,',','.') }}</td>
+                        <td>{{ number_format($rdata->total-($rdata->commisions_tp+$rdata->commisions+($rdata->modal*$rdata->qty)),0,',','.') }}</td>
                       </tr>
                     @else
                       <tr>
                         <td></td>
                         <td>{{ $rdata->abbr }}</td>
-                        <td>{{ $rdata->qty }}</td>
-                        <td>{{ $rdata->price }}</td>
-                        <td>{{ $rdata->modal }}</td>
-                        <td>{{ $rdata->total }}</td>
-                        <td>{{ $total_modal*$rdata->qty }}</td>
-                        <td>{{ $rdata->base_commision_tp }}</td>
-                        <td>{{ $rdata->commisions_tp }}</td>
-                        <td>{{ $rdata->base_commision }}</td>
-                        <td>{{ $rdata->commisions }}</td>
-                        <td>{{ $rdata->total-($rdata->commisions_tp+$rdata->commisions+($rdata->modal*$rdata->qty)) }}</td>
+                        <td>{{ number_format($rdata->qty,0,',','.') }}</td>
+                        <td>{{ number_format($rdata->price,0,',','.') }}</td>
+                        <td>{{ number_format($rdata->modal,0,',','.') }}</td>
+                        <td>{{ number_format($rdata->total,0,',','.') }}</td>
+                        <td>{{ number_format($rdata->modal*$rdata->qty,0,',','.') }}</td>
+                        <td>{{ number_format($rdata->base_commision_tp,0,',','.') }}</td>
+                        <td>{{ number_format($rdata->commisions_tp ,0,',','.')}}</td>
+                        <td>{{ number_format($rdata->base_commision,0,',','.') }}</td>
+                        <td>{{ number_format($rdata->commisions,0,',','.') }}</td>
+                        <td>{{ number_format($rdata->total-($rdata->commisions_tp+$rdata->commisions+($rdata->modal*$rdata->qty)),0,',','.') }}</td>
                       </tr>
                     @endif
                       
@@ -143,23 +147,28 @@
                       $total_qty = $rdata->qty + $total_qty;    
                       $total_price = $rdata->price + $total_price;    
                       $total_total = $rdata->total + $total_total;  
-                      $total_modal = $total_modal + ($rdata->qty * $rdata->modal);  
+                      $total_modal = $total_modal + ($rdata->modal);  
+                      $total_modal_qty = $total_modal_qty + ($rdata->modal*$rdata->qty);  
                       $total_base_commision_c = $rdata->base_commision + $total_base_commision_c;    
                       $total_commisions_c = $rdata->commisions + $total_commisions_c;  
-                      
                       $total_base_commision_tp = $rdata->base_commision_tp + $total_base_commision_tp;    
-                      $total_commisions_tp = $rdata->commisions_tp + $total_commisions_tp;  
+                      $total_commisions_tp = $rdata->commisions_tp + $total_commisions_tp; 
+                      $total_final = $total_final + ($rdata->total-($rdata->commisions_tp+$rdata->commisions+($rdata->modal*$rdata->qty))); 
                       
+
+
                       $total_qty_t = $rdata->qty + $total_qty_t;    
                       $total_price_t = $rdata->price + $total_price_t;    
                       $total_total_t = $rdata->total + $total_total_t; 
-                      $total_modal_t = $total_modal_t + ($rdata->qty * $rdata->modal);
+                      $total_modal_t = $total_modal_t + ($rdata->modal);
+                      $total_modal_qty_t = $total_modal_qty_t + ($rdata->qty * $rdata->modal);
 
                       $total_base_commision_c_t = $rdata->base_commision + $total_base_commision_c_t;    
                       $total_commisions_c_t = $rdata->commisions + $total_commisions_c_t;   
 
                       $total_base_commision_tp_t = $rdata->base_commision_tp + $total_base_commision_tp_t;    
-                      $total_commisions_tp_t = $rdata->commisions_tp + $total_commisions_tp_t;   
+                      $total_commisions_tp_t = $rdata->commisions_tp + $total_commisions_tp_t;  
+                      $total_final_t = $total_final_t + ($rdata->total-($rdata->commisions_tp+$rdata->commisions+($rdata->modal*$rdata->qty)));
                     @endphp
                   @endif
                 @endforeach
@@ -167,16 +176,16 @@
                 <tr>
                   <th colspan="2" style="background-color: #abadac">SUB TOTAL</th>
                   <th class="d-none"></th>
-                  <th style="background-color: #abadac">{{ $total_qty }}</th>
-                  <th style="background-color: #abadac">{{ $total_price }}</th>
-                  <th style="background-color: #abadac">{{ $total_modal }}</th>
-                  <th style="background-color: #abadac">{{ $total_total }}</th>
-                  <th style="background-color: #abadac">{{ $total_modal*$total_qty }}</th>
-                  <th style="background-color: #abadac">{{ $total_base_commision_tp_t }}</th>
-                  <th style="background-color: #abadac">{{ $total_commisions_tp_t }}</th>
-                  <th style="background-color: #abadac">{{ $total_base_commision_c }}</th>
-                  <th style="background-color: #abadac">{{ $total_commisions_c }}</th>
-                  <th style="background-color: #abadac">{{ $total_total-($total_commisions_tp_t+$total_commisions_c+$total_modal) }}</th>
+                  <th style="background-color: #abadac">{{ number_format($total_qty,0,',','.') }}</th>
+                  <th style="background-color: #abadac">{{ number_format($total_price,0,',','.') }}</th>
+                  <th style="background-color: #abadac">{{ number_format($total_modal,0,',','.') }}</th>
+                  <th style="background-color: #abadac">{{ number_format($total_total,0,',','.') }}</th>
+                  <th style="background-color: #abadac">{{ number_format($total_modal_qty,0,',','.') }}</th>
+                  <th style="background-color: #abadac">{{ number_format($total_base_commision_tp,0,',','.') }}</th>
+                  <th style="background-color: #abadac">{{ number_format($total_commisions_tp,0,',','.') }}</th>
+                  <th style="background-color: #abadac">{{ number_format($total_base_commision_c,0,',','.') }}</th>
+                  <th style="background-color: #abadac">{{ number_format($total_commisions_c,0,',','.') }}</th>
+                  <th style="background-color: #abadac">{{ number_format($total_final,0,',','.') }}</th>
                 </tr>
                   
               @endforeach
@@ -184,16 +193,16 @@
               <tr>
                 <th colspan="2" style="background-color: #FFA726">TOTAL</th>
                 <th class="d-none"></th>
-                <th style="background-color: #FFA726">{{ $total_qty_t }}</th>
-                <th style="background-color: #FFA726">{{ $total_price_t }}</th>
-                <th style="background-color: #abadac">{{ $total_modal }}</th>
-                <th style="background-color: #FFA726">{{ $total_total_t }}</th>
-                <th style="background-color: #abadac">{{ $total_modal_t }}</th>
-                <th style="background-color: #FFA726">{{ $total_base_commision_tp_t }}</th>
-                <th style="background-color: #FFA726">{{ $total_commisions_tp_t }}</th>
-                <th style="background-color: #FFA726">{{ $total_base_commision_c_t }}</th>
-                <th style="background-color: #FFA726">{{ $total_commisions_c_t }}</th>
-                <th style="background-color: #FFA726">{{ $total_total_t-($total_commisions_tp_t+$total_commisions_c_t+$total_modal) }}</th>
+                <th style="background-color: #FFA726">{{ number_format($total_qty_t,0,',','.') }}</th>
+                <th style="background-color: #FFA726">{{ number_format($total_price_t,0,',','.') }}</th>
+                <th style="background-color: #FFA726">{{ number_format($total_modal_t,0,',','.') }}</th>
+                <th style="background-color: #FFA726">{{ number_format($total_total_t,0,',','.') }}</th>
+                <th style="background-color: #FFA726">{{ number_format($total_modal_qty_t,0,',','.') }}</th>
+                <th style="background-color: #FFA726">{{ number_format($total_base_commision_tp_t,0,',','.') }}</th>
+                <th style="background-color: #FFA726">{{ number_format($total_commisions_tp_t,0,',','.') }}</th>
+                <th style="background-color: #FFA726">{{ number_format($total_base_commision_c_t,0,',','.') }}</th>
+                <th style="background-color: #FFA726">{{ number_format($total_commisions_c_t,0,',','.') }}</th>
+                <th style="background-color: #FFA726">{{ number_format($total_final_t,0,',','.') }}</th>
               </tr>
               
             </tbody>
@@ -234,7 +243,7 @@
         info: false,
         columnDefs: [
         { 
-          targets: [1], 
+          targets: [1,3,4,5,6,7,8,9,10,11], 
           render: function ( data, type, row, meta ) {
             return type === 'export' ?
                       data.replaceAll('.','') :

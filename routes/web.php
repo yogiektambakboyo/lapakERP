@@ -838,6 +838,7 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
             Route::post('/create', 'CustomersController@store')->name('customers.store');
             Route::post('/createcloneapi', 'CustomersController@clonestoreapi')->name('customers.clonestoreapi');
             Route::post('/createapi', 'CustomersController@storeapi')->name('customers.storeapi');
+            Route::post('/nonactive', 'CustomersController@nonactive')->name('customers.nonactive');
             Route::get('/{customer}/show', 'CustomersController@show')->name('customers.show');
             Route::get('/{customer}/edit', 'CustomersController@edit')->name('customers.edit');
             Route::patch('/{customer}/update', 'CustomersController@update')->name('customers.update');

@@ -421,23 +421,25 @@ class ReportCashierComController extends Controller
             group by b.remark,im.dated,b.id
             order by 1,3");
 
-            $report_detail = DB::select("select 0 as modal,b.id as branch_id,b.remark as branch_name,im.dated,id.product_id,ps.abbr,sum(id.qty) as qty,id.price,sum(id.total) as total,cm.base_commision,cm.commisions,cmt.base_commision as base_commision_tp,cmt.commisions as commisions_tp 
+            $report_detail = DB::select("select coalesce(pp.price_buy,0) as modal,b.id as branch_id,b.remark as branch_name,im.dated,id.product_id,ps.abbr,sum(id.qty) as qty,id.price,sum(id.total) as total,
+            cm.base_commision,cm.commisions,cmt.base_commision as base_commision_tp,cmt.commisions as commisions_tp 
             from invoice_master im 
             join invoice_detail id on id.invoice_no  = im.invoice_no 
             join product_sku ps on ps.id = id.product_id and ps.type_id = 1 and ps.category_id!=58
             join customers c on c.id = im.customers_id and c.branch_id::character varying like '%".$branchx."%'
             join branch b on b.id = c.branch_id
             join users_branch as ub on ub.branch_id = b.id and ub.user_id = '".$user->id."'
+            left join product_price pp on pp.product_id = id.product_id  and pp.branch_id = b.id
             left join ( 
                 select branch_id,branch_name,dated,product_id,base_commision,sum(commisions) as commisions 
                 from cashier_commision where type_id = 1 group by branch_id,branch_name,dated,product_id,base_commision
             ) cm on cm.branch_id = c.branch_id and cm.product_id=id.product_id and cm.dated = im.dated
             left join ( 
                 select branch_id,branch_name,dated,product_id,base_commision,sum(commisions) as commisions 
-                from cashier_commision where type_id = 1 group by branch_id,branch_name,dated,product_id,base_commision
+                from terapist_commision where type_id = 1 group by branch_id,branch_name,dated,product_id,base_commision
             ) cmt on cmt.branch_id = c.branch_id and cmt.product_id=id.product_id and cmt.dated = im.dated
             where im.dated between '".$begindate."' and '".$enddate."' 
-            group by b.remark,im.dated,b.id,id.product_id,id.price,ps.abbr,cm.base_commision,cm.commisions,cmt.base_commision,cmt.commisions
+            group by b.remark,im.dated,b.id,id.product_id,id.price,ps.abbr,cm.base_commision,cm.commisions,cmt.base_commision,cmt.commisions,pp.price_buy
             order by 1,3,5");
 
             $report_data_dated = DB::select("
