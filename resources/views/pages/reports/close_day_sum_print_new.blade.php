@@ -268,23 +268,43 @@
                         ?>
 
                         <tr>
-                          <td style="display: non;"></td>
-                          <td style="display: non;"></td>
-                          <td style="display: non;"></td>
-                          <td style="display: non;"></td>
-                          <td style="display: non;"></td>
-                          <td style="display: non;"></td>
-                          <td style="text-align: right;" colspan="{{ $report_total[0]->total_salon==0?'0':'0'  }}"></td>
-                          <td style="text-align: right;"><strong>{{ number_format($rdata->total_product,0,',','.') }}</strong></td>
-                          <td style="text-align: right;" colspan=""></td>
-                          <td style="display: non;"></td>
-                          <td style="display: non;"></td>
-                          <td style="display: non;"></td>
-                          <td style="display: non;"></td>
-                          <td style="display: non;"></td>
-                          <td style="display: non;"></td>
+                          <td></td>
+                          <td style="text-align: right;"></td>
+                          
+                          <td class="<?= $report_total[0]->total_salon==0?'d-none':''; ?>"  style="text-align: right;"></td>
+                          <td class="<?= $report_total[0]->total_salon==0?'d-none':''; ?>"  style="text-align: right;"></td>
+                          
+    
+                          <td style="text-align: left;">
+                            
+                          </td>
+                          <td style="text-align: right;">
+                            
+                          </td>
+                          <td style="text-align: right;">
+                            
+                          </td>
+                          <td style="text-align: right;">
+                            <strong>{{ number_format($rdata->total_product,0,',','.') }}</strong>
+                          </td>
+                          <td  class="<?= $report_total[0]->total_ojek==0?'d-none':''; ?>" style="text-align: right;"></td>
+                          <td  class="<?= $report_total[0]->total_tambahan==0?'d-none':''; ?>" style="text-align: right;"></td>
+                          <td style="text-align: right;"></td>
+                          <td style="text-align: right;"></td>
+                          <td  class="<?= $report_total[0]->total_lebaran==0?'d-none':''; ?>" style="text-align: right;"></td>
+                          <td class="<?= $report_total[0]->total_b1d==0?'d-none':''; ?>" style="text-align: right;"></td>
+                          <td  class="<?= $report_total[0]->total_b1c==0?'d-none':''; ?>" style="text-align: right;"></td>
+                          <td  class="<?= $report_total[0]->total_b2d==0?'d-none':''; ?>"style="text-align: right;"></td>
+                          <td  class="<?= $report_total[0]->total_b2c==0?'d-none':''; ?>"style="text-align: right;"></td>
+                          <td  class="<?= $report_total[0]->total_b1q==0?'d-none':''; ?>"style="text-align: right;"></td>
+                          <td  class="<?= $report_total[0]->total_b2q==0?'d-none':''; ?>"style="text-align: right;"></td>
+                          <td  class="<?= $report_total[0]->total_b1t==0?'d-none':''; ?>"style="text-align: right;"></td>
+                          <td  class="<?= $report_total[0]->total_b2t==0?'d-none':''; ?>"style="text-align: right;"></td>
+                          <td style="text-align: right;"></td>
                           <td style="text-align: right;"><strong>{{ number_format($rdata->total_cash,0,',','.') }}</strong></td>     
-                          <td style="text-align: right;" rowspan=""><strong>{{ number_format($rdata->total_all,0,',','.') }}</strong></td>   
+                          <td style="text-align: right;"><strong>{{ number_format($rdata->total_all,0,',','.') }}</strong></td>
+
+                       
                         </tr>
       
                 @endif
@@ -381,7 +401,7 @@
       info: false,
       columnDefs: [
       { 
-        targets: [1,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21], 
+        targets: [1,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23], 
         render: function ( data, type, row, meta ) {
           return type === 'export' ?
                     data.replaceAll('.','') :
