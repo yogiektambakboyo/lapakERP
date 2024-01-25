@@ -34,6 +34,7 @@
                 <th scope="col" width="15%">@lang('general.category')</th>
                 <th scope="col" width="10%">@lang('general.brand')</th>
                 <th scope="col" width="5%">@lang('general.tipe')</th>
+                <th scope="col" width="5%">Barcode</th>
                 <th scope="col" width="2%" class="nex">@lang('general.lbl_action')</th>   
                 <th scope="col" width="2%" class="nex"></th>
                 <th scope="col" width="2%" class="nex"></th>    
@@ -48,6 +49,7 @@
                         <td>{{ $product->product_category }}</td>
                         <td>{{ $product->product_brand }}</td>
                         <td>{{ $product->product_type }}</td>
+                        <td>{{ $product->barcode }}</td>
                         <td><a href="{{ route('products.show', $product->id) }}" class="btn btn-warning btn-sm">@lang('general.lbl_show')</a></td>
                         <td><a href="{{ route('products.edit', $product->id) }}" class="btn btn-info btn-sm {{ $act_permission->allow_edit==1?'':'d-none' }} ">@lang('general.lbl_edit')</a></td>
                         <td>
