@@ -61,6 +61,7 @@
                 <th style="text-align: center;background-color:#FFA726;" rowspan="2" scope="col" width="8%">@lang('general.lbl_dated')</th>
                 <th style="text-align: center;background-color:#FFA726;" rowspan="2"  scope="col">@lang('general.service')</th>  
                 <th class="<?= $report_total[0]->total_salon==0?'d-none':''; ?>" style="text-align: center;background-color:#FFA726;" rowspan="2"  scope="col">Salon</th>     
+                <th class="<?= $report_total[0]->total_salon==0?'d-none':''; ?>" style="text-align: center;background-color:#FFA726;" rowspan="2"  scope="col">Total Perawatan & Salon</th>     
                 <th style="text-align: center;background-color:#FFA726;" colspan="<?= $report_total[0]->total_ojek==0?'4':'5'; ?>" scope="col">@lang('general.product')</th>    
                 <th class="<?= $report_total[0]->total_tambahan==0?'d-none':''; ?>"  style="text-align: center;background-color:#FFA726;" rowspan="2"  scope="col">Tambahan Terapis</th> 
                 <th style="text-align: center;background-color:#FFA726;" rowspan="2"  scope="col">Extra</th>    
@@ -120,6 +121,7 @@
                     <td>{{ Carbon\Carbon::parse($rdata->dated)->format('d-m-Y')  }}</td>
                     <td style="text-align: right;">{{ number_format($rdata->total_service,0,',','.') }}</td>
                     <td class="<?= $report_total[0]->total_salon==0?'d-none':''; ?>"  style="text-align: right;">{{ number_format($rdata->total_salon,0,',','.') }}</td>
+                    <td class="<?= $report_total[0]->total_salon==0?'d-none':''; ?>"  style="text-align: right;">{{ number_format($rdata->total_salon+$rdata->total_service,0,',','.') }}</td>
                     <td style="text-align: right;"></td>
                     <td style="text-align: right;"></td>
                     <td style="text-align: right;"></td>
@@ -152,7 +154,8 @@
                                   <td>{{ Carbon\Carbon::parse($rdata->dated)->format('d-m-Y')  }}</td>
                                   <td style="text-align: right;">{{ number_format($rdata->total_service,0,',','.') }}</td>
                                   <td class="<?= $report_total[0]->total_salon==0?'d-none':''; ?>"  style="text-align: right;">{{ number_format($rdata->total_salon,0,',','.') }}</td>
-            
+                                  <td class="<?= $report_total[0]->total_salon==0?'d-none':''; ?>"  style="text-align: right;">{{ number_format($rdata->total_salon+$rdata->total_service,0,',','.') }}</td>
+
                                   <td style="text-align: left;">
                                     {{ $rdet->abbr."" }}
                                   </td>
@@ -187,6 +190,7 @@
                                   <td></td>
                                   <td style="text-align: right;"></td>
                                   
+                                  <td class="<?= $report_total[0]->total_salon==0?'d-none':''; ?>"  style="text-align: right;"></td>
                                   <td class="<?= $report_total[0]->total_salon==0?'d-none':''; ?>"  style="text-align: right;"></td>
                                   
             
@@ -264,27 +268,21 @@
                         ?>
 
                         <tr>
-                          <td style="display: none;"></td>
-                          <td style="display: none;"></td>
-                          <td style="display: none;"></td>
-                          <td style="display: none;"></td>
-                          <td style="display: none;"></td>
-                          <td style="display: none;"></td>
-                          <td style="text-align: right;" colspan="{{ $report_total[0]->total_salon==0?'5':'6'  }}"></td>
+                          <td style="display: non;"></td>
+                          <td style="display: non;"></td>
+                          <td style="display: non;"></td>
+                          <td style="display: non;"></td>
+                          <td style="display: non;"></td>
+                          <td style="display: non;"></td>
+                          <td style="text-align: right;" colspan="{{ $report_total[0]->total_salon==0?'0':'0'  }}"></td>
                           <td style="text-align: right;"><strong>{{ number_format($rdata->total_product,0,',','.') }}</strong></td>
-                          <td style="text-align: right;" colspan="<?= $colspan_c ?>"></td>
-                          <td style="display: none;"></td>
-                          <td style="display: none;"></td>
-                          <td style="display: none;"></td>
-                          <td style="display: none;"></td>
-                          <td style="display: none;"></td>
-                          <td style="display: none;"></td>
-                          <td style="display: none;"></td>
-                          <td style="display: none;"></td>
-                          <td style="display: none;"></td>
-                          <td style="display: none;"></td>
-                          <td style="display: none;"></td>
-                          <td style="display: none;"></td>
+                          <td style="text-align: right;" colspan=""></td>
+                          <td style="display: non;"></td>
+                          <td style="display: non;"></td>
+                          <td style="display: non;"></td>
+                          <td style="display: non;"></td>
+                          <td style="display: non;"></td>
+                          <td style="display: non;"></td>
                           <td style="text-align: right;"><strong>{{ number_format($rdata->total_cash,0,',','.') }}</strong></td>     
                           <td style="text-align: right;" rowspan=""><strong>{{ number_format($rdata->total_all,0,',','.') }}</strong></td>   
                         </tr>
@@ -319,6 +317,7 @@
               <th>Grand Total</th>
               <th style="text-align: right;">{{ number_format($total_service,0,',','.') }}</th> 
               <th  class="<?= $report_total[0]->total_salon==0?'d-none':''; ?>"  style="text-align: right;">{{ number_format($total_salon,0,',','.') }}</th>  
+              <th  class="<?= $report_total[0]->total_salon==0?'d-none':''; ?>"  style="text-align: right;">{{ number_format($total_salon+$total_service,0,',','.') }}</th>  
               <th style="text-align: right;"></th>               
               <th style="text-align: right;"></th>               
               <th style="text-align: right;"></th>               
@@ -382,7 +381,7 @@
       info: false,
       columnDefs: [
       { 
-        targets: [1,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19], 
+        targets: [1,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21], 
         render: function ( data, type, row, meta ) {
           return type === 'export' ?
                     data.replaceAll('.','') :
