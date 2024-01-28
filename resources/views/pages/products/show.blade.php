@@ -6,7 +6,7 @@
     <div class="bg-light p-4 rounded">
         <div class="row">
           <div class="col-md-10">
-            <h1>@lang('general.product') #{{ $product->product_id }}</h1>
+            <h1>@lang('general.product') #{{ $product->id }}</h1>
           </div>
           <div class="col-md-2">
             <div class="mt-4">
