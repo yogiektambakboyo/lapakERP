@@ -440,7 +440,7 @@ class ReportCashierComController extends Controller
             ) cmt on cmt.branch_id = c.branch_id and cmt.product_id=id.product_id and cmt.dated = im.dated
             where im.dated between '".$begindate."' and '".$enddate."' 
             group by b.remark,im.dated,b.id,id.product_id,id.price,ps.abbr,cm.base_commision,cm.commisions,cmt.base_commision,cmt.commisions,pp.price_buy
-            order by 1,3,5");
+            order by 3,4,6");
 
             $report_data_dated = DB::select("
                 select to_char(dated,'YYYY-MM-dd') as datedorder
