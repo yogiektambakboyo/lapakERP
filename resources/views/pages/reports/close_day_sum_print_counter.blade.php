@@ -142,24 +142,26 @@
                   <td style="text-align: right;">{{ number_format($total_all,0,',','.') }}</td>                    
                 </tr>  
 
-                <tr>
-                  <td>TOTAL</td>
-                  <td style="text-align: right;">{{ number_format($total_service,0,',','.') }}</td>
-                  <td style="text-align: right;">{{ number_format($total_service,0,',','.') }}</td> 
-                  <td style="text-align: right;">{{ number_format($total_product,0,',','.') }}</td>
-                  <td style="text-align: right;">{{ number_format($total_product,0,',','.') }}</td>   
-                  @if(($report_total[0]->total_ojek+$report_total[0]->total_tambahan)>0)
-                    <td style="text-align: right;">{{ number_format(($total_ojek+$total_tambahan),0,',','.') }}</td>
-                    <td style="text-align: right;">{{ number_format(($total_ojek+$total_tambahan),0,',','.') }}</td>
-                  @endif
-                  <td style="text-align: right;">{{ number_format($total_extra,0,',','.') }}</td>
-                  <td style="text-align: right;">{{ number_format($total_extra,0,',','.') }}</td>      
-                  <td style="text-align: right;">{{ number_format($total_all,0,',','.') }}</td>
-                  <td style="text-align: right;">{{ number_format($total_all,0,',','.') }}</td>                    
-                </tr>  
+                
 
                 
             @endforeach
+
+            <tr>
+              <td>TOTAL</td>
+              <td style="text-align: right;">{{ number_format($total_service,0,',','.') }}</td>
+              <td style="text-align: right;">{{ number_format($total_service,0,',','.') }}</td> 
+              <td style="text-align: right;">{{ number_format($total_product,0,',','.') }}</td>
+              <td style="text-align: right;">{{ number_format($total_product,0,',','.') }}</td>   
+              @if(($report_total[0]->total_ojek+$report_total[0]->total_tambahan)>0)
+                <td style="text-align: right;">{{ number_format(($total_ojek+$total_tambahan),0,',','.') }}</td>
+                <td style="text-align: right;">{{ number_format(($total_ojek+$total_tambahan),0,',','.') }}</td>
+              @endif
+              <td style="text-align: right;">{{ number_format($total_extra,0,',','.') }}</td>
+              <td style="text-align: right;">{{ number_format($total_extra,0,',','.') }}</td>      
+              <td style="text-align: right;">{{ number_format($total_all,0,',','.') }}</td>
+              <td style="text-align: right;">{{ number_format($total_all,0,',','.') }}</td>                    
+            </tr>  
 
            
               
