@@ -417,7 +417,7 @@ class ReportCashierComController extends Controller
             join customers c on c.id = im.customers_id and c.branch_id::character varying like '%".$branchx."%'
             join branch b on b.id = c.branch_id
             join users_branch as ub on ub.branch_id = b.id and ub.user_id = '".$user->id."'
-            where im.dated between '".$begindate."' and '".$enddate."' 
+            where im.dated between '".$begindate."' and '".$enddate."'  and ps.category_id != 60
             group by b.remark,im.dated,b.id
             order by 1,3");
 
@@ -438,7 +438,7 @@ class ReportCashierComController extends Controller
                 select branch_id,branch_name,dated,product_id,base_commision,sum(commisions) as commisions 
                 from terapist_commision where type_id = 1 group by branch_id,branch_name,dated,product_id,base_commision
             ) cmt on cmt.branch_id = c.branch_id and cmt.product_id=id.product_id and cmt.dated = im.dated
-            where im.dated between '".$begindate."' and '".$enddate."' 
+            where im.dated between '".$begindate."' and '".$enddate."' and ps.category_id != 60
             group by b.remark,im.dated,b.id,id.product_id,id.price,ps.abbr,cm.base_commision,cm.commisions,cmt.base_commision,cmt.commisions,pp.price_buy
             order by 3,4,6");
 
