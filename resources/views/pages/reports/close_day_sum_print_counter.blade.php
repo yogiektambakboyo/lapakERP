@@ -124,7 +124,7 @@
                     $total_b1t = $total_b1t + $rdata->total_b1t;
                     $total_b2t = $total_b2t + $rdata->total_b2t;
                     $qty_service = $qty_service + $rdata->qty_service;
-                    $total_all = $total_all + $rdata->total_all;
+                    $total_all = $total_all + $rdata->total_all + $rdata->total_tambahan;
                 ?>
                 <tr>
                   <td>{{ Carbon\Carbon::parse($rdata->dated)->format('d-m-Y')  }}</td>
@@ -138,7 +138,7 @@
                   @endif
                   <td style="text-align: right;">{{ number_format($rdata->total_extra,0,',','.') }}</td>
                   <td style="text-align: right;">{{ number_format($total_extra,0,',','.') }}</td>      
-                  <td style="text-align: right;">{{ number_format($rdata->total_all,0,',','.') }}</td>
+                  <td style="text-align: right;">{{ number_format($rdata->total_all + $rdata->total_tambahan,0,',','.') }}</td>
                   <td style="text-align: right;">{{ number_format($total_all,0,',','.') }}</td>                    
                 </tr>  
 
