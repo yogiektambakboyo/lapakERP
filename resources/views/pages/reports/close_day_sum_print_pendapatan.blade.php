@@ -124,7 +124,7 @@
                     $total_all = $total_all + $rdata->total_all;
                 ?>
                 <tr>
-                  <td>{{ Carbon\Carbon::parse($rdata->dated)->format('d-m-Y')  }}</td>
+                  <td rowspan="4">{{ Carbon\Carbon::parse($rdata->dated)->format('d-m-Y')  }}</td>
                   <td style="text-align: right;">{{ number_format($rdata->total_service,0,',','.') }}</td>
                   <td style="text-align: right;">{{ number_format($rdata->total_product,0,',','.') }}</td>
                   <td style="text-align: right;">{{ number_format($rdata->total_cash_1,0,',','.') }}</td>
@@ -139,10 +139,11 @@
                   <td style="text-align: right;">{{ number_format($rdata->total_b2q,0,',','.') }}</td>                    
                 </tr>  
 
-                <tr>
-                  <td></td>
-                  <td class="d-none"></td>
-                  <td style="text-align: right;" rowspan="2" colspan="2">{{ number_format($rdata->total_service+$rdata->total_product,0,',','.') }}</td>
+               
+                 <tr>
+                  <td style="text-align: right;"  class="d-none"></td>
+                  <td style="text-align: right;"  class="d-none"></td>
+                  <td style="text-align: right;"  rowspan="2" colspan="2">{{ number_format($rdata->total_service+$rdata->total_product,0,',','.') }}</td>
                   <td style="text-align: right;"  class="d-none"></td>
                   <td style="text-align: right;"  colspan="2">{{ number_format($rdata->total_cash_1+$rdata->total_cash_2,0,',','.') }}</td>
                   <td style="text-align: right;"  class="d-none"></td>
@@ -155,25 +156,25 @@
                   <td style="text-align: right;" colspan="4">{{ number_format($rdata->total_b2d+$rdata->total_b2c+$rdata->total_b2t+$rdata->total_b2q,0,',','.') }}</td>         
                 </tr>
 
-                <tr>
-                  <td></td>
-                  <td class="d-none"></td>
-                  <td style="text-align: right;"  class="d-none"></td>
-                  <td style="text-align: right;"  class="d-none"></td>
-                  <td style="text-align: right;"  class="d-none"></td>
-                  <td style="text-align: right;"  class="d-none"></td>
-                  <td style="text-align: right;"  class="d-none"></td>
-                  <td style="text-align: right;"  class="d-none"></td>
-                  <td style="text-align: right;"  class="d-none"></td>
-                  <td style="text-align: right;"  class="d-none"></td>
-                  <td style="text-align: right;"  class="d-none"></td>
-                  <td style="text-align: right;"  class="d-none"></td>
-                  <td style="text-align: right;" colspan="10">{{ number_format($rdata->total_cash_1+$rdata->total_cash_2+$rdata->total_b1d+$rdata->total_b1c+$rdata->total_b1t+$rdata->total_b1q+$rdata->total_b2d+$rdata->total_b2c+$rdata->total_b2t+$rdata->total_b2q,0,',','.') }}</td>         
-                </tr>
+               <tr>
+                <td style="text-align: right;"  class="d-none"></td>
+                <td style="text-align: right;"  class="d-none"></td>
+                <td style="text-align: right;"  class="d-none"></td>
+                <td style="text-align: right;"  class="d-none"></td>
+                <td style="text-align: right;"  class="d-none"></td>
+                <td style="text-align: right;"  class="d-none"></td>
+                <td style="text-align: right;"  class="d-none"></td>
+                <td style="text-align: right;"  class="d-none"></td>
+                <td style="text-align: right;"  class="d-none"></td>
+                <td style="text-align: right;"  class="d-none"></td>
+                <td style="text-align: right;"  class="d-none"></td>
+                <td style="text-align: right;"  class="d-none"></td>
+                <td style="text-align: right;" colspan="11">{{ number_format($rdata->total_cash_1+$rdata->total_cash_2+$rdata->total_b1d+$rdata->total_b1c+$rdata->total_b1t+$rdata->total_b1q+$rdata->total_b2d+$rdata->total_b2c+$rdata->total_b2t+$rdata->total_b2q,0,',','.') }}</td>         
+              </tr>
 
                 <tr>
-                  <td style="text-align: right;background-color:#a0a0a0;"></td>
-                  <td style="text-align: right;background-color:#a0a0a0;" class="d-none"></td>
+                  <td style="text-align: right;background-color:#a0a0a0;"  class="d-none"></td>
+                  <td style="text-align: right;background-color:#a0a0a0;"  class="d-none"></td>
                   <td style="text-align: right;background-color:#a0a0a0;" colspan="2">{{ number_format($rdata->total_service+$rdata->total_product,0,',','.') }}</td>
                   <td style="text-align: right;background-color:#a0a0a0;"  class="d-none"></td>
                   <td style="text-align: right;background-color:#a0a0a0;" colspan="2">{{ number_format($rdata->total_cash_1+$rdata->total_cash_2,0,',','.') }}</td>
@@ -186,6 +187,7 @@
                   <td style="text-align: right;background-color:#a0a0a0;"  class="d-none"></td>
                   <td style="text-align: right;background-color:#a0a0a0;" colspan="4">{{ number_format($rdata->total_b2d+$rdata->total_b2c+$rdata->total_b2t+$rdata->total_b2q,0,',','.') }}</td>         
                 </tr>
+                
 
                 
             @endforeach
