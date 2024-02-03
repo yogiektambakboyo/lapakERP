@@ -151,9 +151,7 @@ class ProductsCommisionExController extends Controller
         $user = Auth::user();
         $productcommision->create(
             array_merge(
-                ['created_by_fee' => $request->get('created_by_fee') ],
                 ['referral_fee' => $request->get('referral_fee') ],
-                ['users_id' => $request->get('users_id') ],
                 ['product_id' => $request->get('product_id') ],
                 ['branch_id' => $request->get('branch_id') ],
                 ['created_by' => $user->id ],
@@ -233,8 +231,7 @@ class ProductsCommisionExController extends Controller
         $user = Auth::user();
         ProductCommisionsEx::where('product_id','=',$product)->where('branch_id','=',$branch)->update(
             array_merge(
-                ['created_by_fee' => $request->get('created_by_fee') ],
-                ['users_id' => $request->get('users_id') ],
+                ['created_by_fee' => 0 ],
                 ['referral_fee' => $request->get('referral_fee') ],
             )
         );

@@ -3,7 +3,7 @@
 <html>  
    <head> 
       <meta charset = "utf-8"> 
-      <title>Laporan Komisi Khusus</title>
+      <title>Laporan Komisi Khusus - CABANG  : {{ count((array)$report_data)>0?$report_data[0]->branch_name:"" }} {{ $filter_begin_date." s/d ".$filter_begin_end }}</title>
       <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet"/>
       <link href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css" rel="stylesheet"/>
       <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
@@ -58,6 +58,7 @@
             <thead>
               <tr style="background-color:#FFA726;color:rgb(3, 3, 3);">
                 <th  style="background-color: #FFA726">TGL</th>
+                <th rowspan="0" style="background-color: #FFA726">NAMA</th>
                 <th rowspan="0" style="background-color: #FFA726">NO FAKTUR</th>
                 <th rowspan="0" style="background-color: #FFA726">JENIS</th>
                 <th rowspan="0" style="background-color: #FFA726">QTY</th>
@@ -112,6 +113,7 @@
                     @if ($counter == 0)
                       <tr>
                         <td>{{ $data->dated }}</td>
+                        <td>{{ $rdata->name }}</td>
                         <td>{{ $rdata->invoice_no }}</td>
                         <td>{{ $rdata->abbr }}</td>
                         <td>{{ number_format($rdata->qty,0,',','.') }}</td>
@@ -122,6 +124,7 @@
                     @else
                       <tr>
                         <td></td>
+                        <td>{{ $rdata->name }}</td>
                         <td>{{ $rdata->invoice_no }}</td>
                         <td>{{ $rdata->abbr }}</td>
                         <td>{{ number_format($rdata->qty,0,',','.') }}</td>
@@ -150,7 +153,8 @@
                 @endforeach
 
                 <tr>
-                  <th colspan="3" style="background-color: #abadac">SUB TOTAL</th>
+                  <th colspan="4" style="background-color: #abadac">SUB TOTAL</th>
+                  <th class="d-none"></th>
                   <th class="d-none"></th>
                   <th class="d-none"></th>
                   <th style="background-color: #abadac">{{ number_format($total_qty,0,',','.') }}</th>
@@ -162,7 +166,8 @@
               @endforeach
 
               <tr>
-                <th colspan="3" style="background-color: #FFA726">TOTAL</th>
+                <th colspan="4" style="background-color: #FFA726">TOTAL</th>
+                <th class="d-none"></th>
                 <th class="d-none"></th>
                 <th class="d-none"></th>
                 <th style="background-color: #FFA726">{{ number_format($total_qty_t,0,',','.') }}</th>
@@ -209,7 +214,7 @@
         info: false,
         columnDefs: [
         { 
-          targets: [1,3,4,5,6], 
+          targets: [1,3,4,5,6,7], 
           render: function ( data, type, row, meta ) {
             return type === 'export' ?
                       data.replaceAll('.','') :

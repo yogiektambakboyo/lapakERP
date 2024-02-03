@@ -31,9 +31,7 @@
             <tr>
                 <th>@lang('general.lbl_name') Barang</th>
                 <th scope="col" width="15%">@lang('general.lbl_branch')</th>
-                <th scope="col" width="10%">Komisi Input Faktur</th>
                 <th scope="col" width="10%">@lang('general.lbl_referral_fee')</th>
-                <th scope="col" width="10%">Nama</th>
                 <th scope="col" width="2%" class="nex">@lang('general.lbl_action')</th>   
                 <th scope="col" width="2%" class="nex"></th>  
             </tr>
@@ -44,9 +42,7 @@
                     <tr>
                         <td>{{ $product->product_name }}</td>
                         <td>{{ $product->branch_name }}</td>
-                        <td>{{ $product->created_by_fee }}</td>
                         <td>{{ $product->referral_fee }}</td>
-                        <td>{{ $product->pic_name }} (ID : {{ $product->users_id }})</td>
                         <td><a href="{{ route('productscommision_ex.edit', [$product->branch_id,$product->id]) }}" class="btn btn-info btn-sm  {{ $act_permission->allow_edit==1?'':'d-none' }}">@lang('general.lbl_edit')</a></td>
                         <td class="{{ $act_permission->allow_delete==1?'':'d-none' }}">
                             {!! Form::open(['method' => 'DELETE','route' => ['productscommision_ex.destroy', [$product->branch_id,$product->id]],'style'=>'display:inline']) !!}

@@ -47,27 +47,9 @@
               </div>
             </div>
             <div class="row mb-3">
-              <label class="form-label col-form-label col-md-2">@lang('general.lbl_creator_fee')</label>
-              <div class="col-md-8">
-                <input type="text" class="form-control" name="created_by_fee" value="0"/>
-              </div>
-            </div>
-            <div class="row mb-3">
               <label class="form-label col-form-label col-md-2">@lang('general.lbl_referral_fee')</label>
               <div class="col-md-8">
                 <input type="text" class="form-control" name="referral_fee" value="0"/>
-              </div>
-            </div>
-            <div class="row mb-3">
-              <label class="form-label col-form-label col-md-2">Nama Penerima</label>
-              <div class="col-md-8">
-                <select class="form-control" 
-                    name="users_id">
-                    <option value="">Pilih Penerima</option>
-                    @foreach($users as $userx)
-                        <option value="{{ $userx->id }}">{{  $userx->name }} - (ID : {{  $userx->id }})</option>
-                    @endforeach
-                </select>
               </div>
             </div>
             </div>
