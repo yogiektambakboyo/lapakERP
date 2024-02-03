@@ -108,7 +108,7 @@
         <tbody>
             @foreach($report_data as $rdata)
             <?php 
-                    $total_service = $total_service + $rdata->total_service;
+                    $total_service = $total_service + ($rdata->total_service-$rdata->total_tambahan);
                     $total_product = $total_product + $rdata->total_product;
                     $total_ojek = $total_ojek + $rdata->total_ojek;
                     $total_tambahan = $total_tambahan + $rdata->total_tambahan;
@@ -128,7 +128,7 @@
                 ?>
                 <tr>
                   <td>{{ Carbon\Carbon::parse($rdata->dated)->format('d-m-Y')  }}</td>
-                  <td style="text-align: right;">{{ number_format($rdata->total_service,0,',','.') }}</td>
+                  <td style="text-align: right;">{{ number_format(($rdata->total_service-$rdata->total_tambahan),0,',','.') }}</td>
                   <td style="text-align: right;">{{ number_format($total_service,0,',','.') }}</td> 
                   <td style="text-align: right;">{{ number_format($rdata->total_product,0,',','.') }}</td>
                   <td style="text-align: right;">{{ number_format($total_product,0,',','.') }}</td>   
