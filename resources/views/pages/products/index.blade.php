@@ -18,7 +18,7 @@
                 </div>
             </div>
             <div class="col-md-3">
-                <a href="{{ route('products.print_qr') }}" class="btn btn-warning float-right"><span class="fa fa-qrcode"></span> Print QR</a>
+                <a href="{{ route('products.print_qr') }}" target="_blank" class="btn btn-warning float-right"><span class="fa fa-qrcode"></span> Print QR</a>
                 <a href="{{ route('products.create') }}" class="btn btn-primary float-right"><span class="fa fa-plus-circle"></span> @lang('general.btn_create')</a>
             </div>
         </div>
