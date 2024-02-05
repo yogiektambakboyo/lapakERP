@@ -420,4 +420,10 @@ class HomeController extends Controller
 
 
     }
+
+    public function policy() 
+    {
+            $data = [];
+            return view('pages.auth.policy')->with('data',$data)->with('settings',Settings::get()->first())->with('company',Company::get()->first());
+    }
 }
