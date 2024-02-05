@@ -26,6 +26,9 @@ class Product extends Model
         'updated_at',
         'photo',
         'barcode',
-        'photo_2'
+        'photo_2',
+        'photo_3',
+        'photo_4',
+        'photo_5'
     ];
 }

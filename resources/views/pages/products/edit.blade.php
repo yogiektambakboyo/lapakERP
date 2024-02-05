@@ -104,21 +104,45 @@
 
           <div class="row mb-3">
               <label class="form-label col-form-label col-md-2">@lang('general.lbl_photo')</label>
-              <div class="col-md-5">
+              <div class="col-md-2">
                 <a href="/images/user-files/{{ $product->photo }}" target="_blank" class="mt-2"><img  id="photo_preview"  src="/images/user-files/{{ $product->photo }}" width="100" height="100" class="rounded float-start"></a>
               </div>
-              <div class="col-md-5">
+              <div class="col-md-2">
                 <a href="/images/user-files/{{ $product->photo_2 }}" target="_blank" class="mt-2"><img  id="photo_preview_2"  src="/images/user-files/{{ $product->photo_2 }}" width="100" height="100" class="rounded float-start"></a>
               </div>
+              <div class="col-md-2">
+                <a href="/images/user-files/{{ $product->photo_3 }}" target="_blank" class="mt-2"><img  id="photo_preview_3"  src="/images/user-files/{{ $product->photo_3 }}" width="100" height="100" class="rounded float-start"></a>
+              </div>
+              <div class="col-md-2">
+                <a href="/images/user-files/{{ $product->photo_4 }}" target="_blank" class="mt-2"><img  id="photo_preview_4"  src="/images/user-files/{{ $product->photo_4 }}" width="100" height="100" class="rounded float-start"></a>
+              </div>
+              <div class="col-md-2">
+                <a href="/images/user-files/{{ $product->photo_5 }}" target="_blank" class="mt-2"><img  id="photo_preview_5"  src="/images/user-files/{{ $product->photo_5 }}" width="100" height="100" class="rounded float-start"></a>
+              </div>
               <div class="col-md-2"></div>
-              <div class="col-md-5">
+              <div class="col-md-2">
                 <input type="file" 
                       name="photo"  id="photo" onchange="previewFile(this);"
                       class="form-control mt-2"  />
               </div>
-              <div class="col-md-5">
+              <div class="col-md-2">
                 <input type="file" 
                       name="photo_2"  id="photo_2" onchange="previewFile_2(this);"
+                      class="form-control mt-2"  />
+              </div>
+              <div class="col-md-2">
+                <input type="file" 
+                      name="photo_3"  id="photo_3" onchange="previewFile_3(this);"
+                      class="form-control mt-2"  />
+              </div>
+              <div class="col-md-2">
+                <input type="file" 
+                      name="photo_4"  id="photo_4" onchange="previewFile_4(this);"
+                      class="form-control mt-2"  />
+              </div>
+              <div class="col-md-2">
+                <input type="file" 
+                      name="photo_5"  id="photo_5" onchange="previewFile_5(this);"
                       class="form-control mt-2"  />
               </div>
           </div> 
@@ -234,6 +258,48 @@
  
             reader.onload = function(){
                 $("#photo_preview_2").attr("src", reader.result);
+            }
+ 
+            reader.readAsDataURL(file);
+        }
+    }
+
+    function previewFile_3(input){
+        var file = $("#photo_3").get(0).files[0];
+ 
+        if(file){
+            var reader = new FileReader();
+ 
+            reader.onload = function(){
+                $("#photo_preview_3").attr("src", reader.result);
+            }
+ 
+            reader.readAsDataURL(file);
+        }
+    }
+
+    function previewFile_4(input){
+        var file = $("#photo_4").get(0).files[0];
+ 
+        if(file){
+            var reader = new FileReader();
+ 
+            reader.onload = function(){
+                $("#photo_preview_4").attr("src", reader.result);
+            }
+ 
+            reader.readAsDataURL(file);
+        }
+    }
+
+    function previewFile_5(input){
+        var file = $("#photo_5").get(0).files[0];
+ 
+        if(file){
+            var reader = new FileReader();
+ 
+            reader.onload = function(){
+                $("#photo_preview_5").attr("src", reader.result);
             }
  
             reader.readAsDataURL(file);

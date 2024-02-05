@@ -72,6 +72,15 @@
               <div class="col-md-2">
                 <a href="/images/user-files/{{ $product->photo_2 }}" target="_blank"><img src="/images/user-files/{{ $product->photo_2 }}" width="100" height="100" class="rounded float-start"></a>
               </div>
+              <div class="col-md-2">
+                <a href="/images/user-files/{{ $product->photo_3 }}" target="_blank"><img src="/images/user-files/{{ $product->photo_3 }}" width="100" height="100" class="rounded float-start"></a>
+              </div>
+              <div class="col-md-2">
+                <a href="/images/user-files/{{ $product->photo_4 }}" target="_blank"><img src="/images/user-files/{{ $product->photo_4 }}" width="100" height="100" class="rounded float-start"></a>
+              </div>
+              <div class="col-md-2">
+                <a href="/images/user-files/{{ $product->photo_5 }}" target="_blank"><img src="/images/user-files/{{ $product->photo_5 }}" width="100" height="100" class="rounded float-start"></a>
+              </div>
           </div> 
 
           </div>
