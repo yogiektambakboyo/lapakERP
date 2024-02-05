@@ -6,18 +6,19 @@
     <div class="bg-light p-4 rounded">
         <h1>@lang('general.product')</h1>
         <div class="lead row mb-3">
-            <div class="col-md-10">
+            <div class="col-md-9">
                 <div class="col-md-4">
                     @lang('general.label')
                 </div>
-                <div class="col-md-10"> 	
+                <div class="col-md-8"> 	
                     {{-- <form action="{{ route('products.search') }}" method="GET" class="row row-cols-lg-auto g-3 align-items-center">
                         <div class="col-2"><input type="hidden" class="form-control  form-control-sm" name="search" placeholder="@lang('general.label_search')" value="{{ $keyword }}"></div>
                         <div class="col-2"><input type="submit" class="btn btn-sm btn-success" value="@lang('general.btn_export')" name="export"></div>  
                     </form> --}}
                 </div>
             </div>
-            <div class="col-md-2">
+            <div class="col-md-3">
+                <a href="{{ route('products.print_qr') }}" class="btn btn-warning float-right"><span class="fa fa-qrcode"></span> Print QR</a>
                 <a href="{{ route('products.create') }}" class="btn btn-primary float-right"><span class="fa fa-plus-circle"></span> @lang('general.btn_create')</a>
             </div>
         </div>

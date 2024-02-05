@@ -29,6 +29,7 @@ use Illuminate\Support\Facades\Storage;
 use File;
 use App\Models\Company;
 use App\Http\Controllers\Lang;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 
 
@@ -335,6 +336,23 @@ class ProductsController extends Controller
         ]);
     }
 
+    public function print_qr(Request $request) 
+    {
+        $user = Auth::user();
+        $id = $user->roles->first()->id;
+        $this->getpermissions($id);
+        $act_permission = $this->act_permission[0];
+
+        $data = $this->data;
+        $keyword = "";
+        $products = Product::orderBy('product_sku.remark', 'ASC')
+                    ->join('product_type as pt','pt.id','=','product_sku.type_id')
+                    ->join('product_category as pc','pc.id','=','product_sku.category_id')
+                    ->join('product_brand as pb','pb.id','=','product_sku.brand_id')
+                    ->where('pt.id','=','1')->orderBy('product_sku.barcode','asc')
+                    ->get(['product_sku.photo','product_sku.id','product_sku.barcode','product_sku.remark as product_name','pt.abbr as product_type','pc.remark as product_category','pb.remark as product_brand']);
+        return view('pages.products.print_qr', ['act_permission' => $act_permission,'company' => Company::get()->first()],compact('products','data','keyword'))->with('i', ($request->input('page', 1) - 1) * 5);
+    }
     /**
      * Edit user data
      * 

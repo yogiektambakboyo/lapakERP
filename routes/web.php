@@ -243,6 +243,7 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
          */
         Route::group(['prefix' => 'products'], function() {
             Route::get('/', 'ProductsController@index')->name('products.index');
+            Route::get('/print_qr', 'ProductsController@print_qr')->name('products.print_qr');
             Route::get('/create', 'ProductsController@create')->name('products.create');
             Route::post('/create', 'ProductsController@store')->name('products.store');
             Route::post('/createingredient', 'ProductsController@storeIngredients')->name('products.addingredients');
