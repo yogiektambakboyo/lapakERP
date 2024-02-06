@@ -107,6 +107,7 @@
               $total_b2t = 0;
               $qty_service = 0;
               $total_all = 0;
+              $total_qty_produk = 0;
           ?>
         <tbody>
             @foreach($report_data as $rdata)
@@ -146,9 +147,10 @@
                 
                 @else
 
-                        @php $counter_itg = 0; @endphp
+                        @php $counter_itg = 0;$qty_produk=0; @endphp
                         @foreach($report_detail as $rdet)
                           @if($rdet->branch_id==$rdata->branch_id && $rdet->dated==$rdata->dated )
+                              @php $total_qty_produk = $total_qty_produk + $rdet->qty;$qty_produk = $qty_produk + $rdet->qty; @endphp
                               @if($counter_itg==0)
                                 <tr>
                                   <td>{{ Carbon\Carbon::parse($rdata->dated)->format('d-m-Y')  }}</td>
@@ -265,6 +267,8 @@
                           if($report_total[0]->total_b2q==0){
                             $colspan_c--;
                           }
+
+                          
                         ?>
 
                         <tr>
@@ -279,7 +283,7 @@
                             
                           </td>
                           <td style="text-align: right;">
-                            
+                            <strong>{{ number_format($qty_produk,0,',','.') }}</strong>
                           </td>
                           <td style="text-align: right;">
                             
@@ -313,6 +317,8 @@
                 <?php 
                     $total_service = $total_service + ($rdata->total_service-$rdata->total_tambahan);
                     $total_salon = $total_salon + $rdata->total_salon;
+                    
+                    
                     $total_ojek = $total_ojek + $rdata->total_ojek;
                     $total_tambahan = $total_tambahan+ $rdata->total_tambahan;
                     $total_product = $total_product + $rdata->total_product;
@@ -339,7 +345,7 @@
               <th  class="<?= $report_total[0]->total_salon==0?'d-none':''; ?>"  style="text-align: right;">{{ number_format($total_salon,0,',','.') }}</th>  
               <th  class="<?= $report_total[0]->total_salon==0?'d-none':''; ?>"  style="text-align: right;">{{ number_format($total_salon+$total_service,0,',','.') }}</th>  
               <th style="text-align: right;"></th>               
-              <th style="text-align: right;"></th>               
+              <th style="text-align: right;">{{ number_format($total_qty_produk,0,',','.') }}</th>               
               <th style="text-align: right;"></th>               
               <th style="text-align: right;">{{ number_format($total_product,0,',','.') }}</th>   
               <th class="<?= $report_total[0]->total_ojek==0?'d-none':''; ?>"  style="text-align: right;">{{ number_format($total_ojek,0,',','.') }}</th>              
