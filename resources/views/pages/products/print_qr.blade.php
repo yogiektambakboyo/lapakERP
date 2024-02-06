@@ -54,7 +54,7 @@
                 <tr>
                     @for ($i = 0; $i < 13; $i++)
                         @if(count($products)>$counter)
-                            <td style="text-align:center;">{{ $products[$counter]["barcode"] }}<br>{!! QrCode::size(35)->generate($products[$counter]["barcode"]); !!} </td>
+                            <td style="text-align:center;">{{ $products[$counter]->barcode }}<br>{!! QrCode::size(35)->generate($products[$counter]->barcode); !!} </td>
                             @php
                                 $counter++;    
                             @endphp

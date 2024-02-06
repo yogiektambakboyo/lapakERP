@@ -411,12 +411,11 @@ class ProductsController extends Controller
 
         $data = $this->data;
         $keyword = "";
-        $products = Product::join('product_type as pt','pt.id','=','product_sku.type_id')
-                    ->join('product_category as pc','pc.id','=','product_sku.category_id')
-                    ->join('product_brand as pb','pb.id','=','product_sku.brand_id')
-                    ->where('pt.id','=','1')->orderBy('product_sku.barcode','asc')
-                    ->get(['product_sku.photo','product_sku.id','product_sku.barcode','product_sku.remark as product_name','pt.abbr as product_type','pc.remark as product_category','pb.remark as product_brand']);
-        return view('pages.products.print_qr', ['act_permission' => $act_permission,'company' => Company::get()->first()],compact('products','data','keyword'))->with('i', ($request->input('page', 1) - 1) * 5);
+        $products = DB::select("select product_sku.barcode
+        from product_sku
+        where product_sku.active = '1' and product_sku.barcode like '".$_GET["filter_vendor"]."%' and product_sku.barcode like '%".$_GET["filter_bulan"]."%'  and product_sku.type_id='1'; ");
+
+        return view('pages.products.print_qr', ['products' => $products])->with('i', ($request->input('page', 1) - 1) * 5);
     }
     /**
      * Edit user data

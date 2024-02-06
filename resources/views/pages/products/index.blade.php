@@ -18,7 +18,7 @@
                 </div>
             </div>
             <div class="col-md-3">
-                <a href="{{ route('products.print_qr') }}" target="_blank" class="btn btn-warning float-right"><span class="fa fa-qrcode"></span> Print QR</a>
+                <button onclick="openDialogFilterSearch('Filter');" class="btn btn-lime"><span class="fa fa-qrcode"></span> Print QR</button> 
                 <a href="{{ route('products.create') }}" class="btn btn-primary float-right"><span class="fa fa-plus-circle"></span> @lang('general.btn_create')</a>
             </div>
         </div>
@@ -60,6 +60,48 @@
                 @endforeach
             </tbody>
         </table>
+
+        <!-- Vertically centered modal -->
+        <!-- Modal -->
+        <div class="modal fade" id="modal-filter2" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+            <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                <h5 class="modal-title"  id="input_expired_list_at_lbl">@lang('general.lbl_filterdata')</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form action="{{ route('products.print_qr') }}" method="GET" target="_blank">   
+                        @csrf 
+                        <div class="col-md-10">
+                            <label class="form-label col-form-label col-md-4">Filter Vendor</label>
+                        </div>
+                        <div class="col-md-12">
+                            <input class="form-control" type="text"
+                                name="filter_vendor" id="filter_vendor" value="%">
+                        </div>
+
+                        <div class="col-md-10">
+                            <label class="form-label col-form-label col-md-4">Filter Bulan</label>
+                        </div>
+                        <div class="col-md-12">
+                            <input class="form-control" type="text"
+                                name="filter_bulan" id="filter_bulan" value="%">
+                        </div>
+
+                        
+                        <br>
+                        <div class="col-md-12">
+                            <button type="submit" class="btn btn-primary form-control">@lang('general.lbl_apply')</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            </div>
+        </div>
+
+        <!-- Vertically centered modal -->
+
     </div>
 @endsection
 
@@ -71,6 +113,13 @@
           const yyyy1 = today.getFullYear()+1;
           let mm = today.getMonth() + 1;
           let dd = today.getDate();
+
+          var myModal2 = new bootstrap.Modal(document.getElementById('modal-filter2'));
+
+          function openDialogFilterSearch(command){
+            $('#export').val(command);
+            myModal2.show();
+          }
 
 $(document).ready(function () {
         $('#example').DataTable(
