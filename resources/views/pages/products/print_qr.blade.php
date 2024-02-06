@@ -14,6 +14,8 @@
           border: 0.5px inset black;
           padding: 3px;
           font-size: 10px;
+          page-break-inside:auto;
+          page-break-inside:avoid; page-break-after:auto;
         }
         div{
           padding:5px;
@@ -27,6 +29,10 @@
           #printPageButton {
             display: none;
           }
+          table { page-break-inside:auto }
+          tr    { page-break-inside:avoid; page-break-after:auto }
+          thead { display:table-header-group }
+          tfoot { display:table-footer-group }
         }
       </style>
    </head> 
