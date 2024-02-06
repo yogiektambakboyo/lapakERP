@@ -65,9 +65,6 @@
       <table style="width: 100%">
         <tbody>
           <tr style="text-align: center;height: 70px">
-            <td style="text-align: left;font-size:15px;width:20%;vertical-align: text-top;">
-              <label style="">Nama Terapis </label><br>
-            </td>
             <td style="text-align: left;width: 80%;font-size:15px;padding-left:10px;vertical-align: text-top;">
               @php
                 $lastassg = "";
@@ -103,9 +100,7 @@
       <table style="width: 100%">
         <tbody>
           <tr style="text-align: center;height: 70px">
-            <td style="text-align: left;font-size:15px;width:20%;vertical-align: text-top;">
-              <label style="">Perawatan </label><br>
-            </td>
+            
             <td style="text-align: left;width: 80%;font-size:15px;padding-left:10px;vertical-align: text-top;">
               @php
               $c = 1;
@@ -148,38 +143,7 @@
         </tbody>
       </table>
 
-      <table style="width: 100%">
-        <tbody>
-          <tr style="text-align: center;height: 70px">
-            <td style="text-align: left;font-size:15px;width:20%;vertical-align: text-top;">
-              <label style="">Waktu Perawatan </label><br>
-            </td>
-            <td style="text-align: left;width: 80%;font-size:15px;padding-left:10px;vertical-align: text-top;">
-              @php
-              $c = 1;
-              $sumconversion = 0;
-              $lastsch = "";
-              @endphp
-              @for ($i = 0; $i < count($orderDetails); $i++)
-                  @if ($orderDetails[$i]->type_id==2)
-                    @php
-                      $sumconversion = $sumconversion+$orderDetails[$i]->conversion;
-                      if ($lastsch=="") {
-                        $lastsch = $orderDetails[$i]->scheduled_at;
-                      }
-                    @endphp
-                    <label>{{ $c }}. {{ \Carbon\Carbon::parse($lastsch)->isoFormat('h:mm') }} - {{ \Carbon\Carbon::parse($orderDetails[$i]->scheduled_at)->add($sumconversion.' minutes')->isoFormat('h:mm') }} ( {{ $orderDetails[$i]->uom  }} )</label><br>
-                    @php
-                    $c++;
-                    $lastsch = \Carbon\Carbon::parse($orderDetails[$i]->scheduled_at)->add($sumconversion.' minutes')->isoFormat('h:mm');
-                    @endphp
-                  @endif
-                  
-              @endfor
-            </td>
-          </tr>
-        </tbody>
-      </table>
+      
 
       <table style="width: 100%">
         <tbody>
@@ -199,7 +163,7 @@
         <tbody>
           <tr style="text-align: left;background-color:#white;">
             <td style="width: 45%;font-size:10px;">
-              <label>TTD Terapis</label>
+              <label>TTD Operator</label>
             </td>
             <td style="width: 5%;font-size:10px;">
             </td>
