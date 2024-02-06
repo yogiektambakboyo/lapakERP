@@ -31,13 +31,11 @@
               <table style="width: 100%">
                 <tbody>
                   <tr style="text-align: center">
-                    <td style="text-align: left;padding:10px;width:5%">
-                      <label style="font-weight: bold;">Cabang</label><label></label><br>
+                    <td style="text-align: left;padding:10px;width:20%">
                       <label style="font-weight: bold;">Tanggal</label><br>
                       <label style="font-weight: bold;">Order No</label><br>
                     </td>
-                    <td style="text-align: left;width: 80%;font-size:10px;">
-                      <label> {{ $customers[0]->branch_name }}</label><br>
+                    <td style="text-align: left;width: 70%;font-size:10px;">
                       <label> {{ substr(explode(" ",$order->dated)[0],8,2) }}-{{substr(explode(" ",$order->dated)[0],5,2) }}-{{ substr(explode(" ",$order->dated)[0],0,4) }}</label><br>
                       <label> {{ $order->order_no }}</label><br>
                     </td>
@@ -79,42 +77,6 @@
                     @endphp
                   @endif
               @endfor
-            </td>
-          </tr>
-        </tbody>
-      </table>
-
-      <table style="width: 100%">
-        <tbody>
-          <tr style="text-align: center;height: 70px">
-            <td style="text-align: left;font-size:15px;width:20%;vertical-align: text-top;">
-              <label style="">Ruangan </label><br>
-            </td>
-            <td style="text-align: left;width: 80%;font-size:15px;padding-left:10px;vertical-align: text-top;">
-              <label>{{ $customers[0]->room_name }}</label><br>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-
-      <table style="width: 100%">
-        <tbody>
-          <tr style="text-align: center;height: 70px">
-            
-            <td style="text-align: left;width: 80%;font-size:15px;padding-left:10px;vertical-align: text-top;">
-              @php
-              $c = 1;
-              @endphp
-              @for ($i = 0; $i < count($orderDetails); $i++)
-                  @if ($orderDetails[$i]->type_id==2)
-                    <label>{{ $c }}. {{ $orderDetails[$i]->product_name }}</label><br>
-                    @php
-                    $c++;
-                    @endphp
-                  @endif
-                  
-              @endfor
-
             </td>
           </tr>
         </tbody>
