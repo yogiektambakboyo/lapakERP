@@ -30,6 +30,7 @@ use File;
 use App\Models\Company;
 use App\Http\Controllers\Lang;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
+use Intervention\Image\Facades\Image;
 
 
 
@@ -174,14 +175,20 @@ class ProductsController extends Controller
             ));
         }else{
             $file_photo = $request->file('photo');
-            $img_file_photo = $file_photo->getClientOriginalName().'.'.$file_photo->getClientOriginalExtension();
-            $final_fileimg_photo = md5($my_id.'_'.$img_file_photo).'.'.$file_photo->getClientOriginalExtension();
-            
+            $img_file_photo = $file_photo->getClientOriginalName();
+            //$final_fileimg_photo = md5($my_id.'_'.$img_file_photo).'.'.$file_photo->getClientOriginalExtension();
+            $final_fileimg_photo = $request->get('barcode').'_.'.$file_photo->getClientOriginalExtension();
+
             // upload file
             $folder_upload = 'images/user-files';
             $file_photo->move($folder_upload,$img_file_photo);
 
-            $destinationx = '/images/user-files/'.$img_file_photo;//or any extension such as jpeg,png
+            $destinationx = 'images/user-files/'.$img_file_photo;//or any extension such as jpeg,png
+            $img = Image::make($destinationx);
+            $img->resize(1024, null, function ($constraint) {
+                $constraint->aspectRatio();
+            });
+
             $newdestinationx =  '/images/user-files/'.$final_fileimg_photo;
             File::move(public_path($destinationx), public_path($newdestinationx));
 
@@ -196,14 +203,20 @@ class ProductsController extends Controller
             ));
         }else{
             $file_photo = $request->file('photo_2');
-            $img_file_photo = $file_photo->getClientOriginalName().'.'.$file_photo->getClientOriginalExtension();
-            $final_fileimg_photo = md5($my_id.'_'.$img_file_photo).'.'.$file_photo->getClientOriginalExtension();
-            
+            $img_file_photo = $file_photo->getClientOriginalName();
+            //$final_fileimg_photo = md5($my_id.'_'.$img_file_photo).'.'.$file_photo->getClientOriginalExtension();
+            $final_fileimg_photo = $request->get('barcode').'__.'.$file_photo->getClientOriginalExtension();
+
             // upload file
             $folder_upload = 'images/user-files';
             $file_photo->move($folder_upload,$img_file_photo);
 
-            $destinationx = '/images/user-files/'.$img_file_photo;//or any extension such as jpeg,png
+            $destinationx = 'images/user-files/'.$img_file_photo;//or any extension such as jpeg,png
+            $img = Image::make($destinationx);
+            $img->resize(1024, null, function ($constraint) {
+                $constraint->aspectRatio();
+            });
+
             $newdestinationx =  '/images/user-files/'.$final_fileimg_photo;
             File::move(public_path($destinationx), public_path($newdestinationx));
 
@@ -218,14 +231,20 @@ class ProductsController extends Controller
             ));
         }else{
             $file_photo = $request->file('photo_3');
-            $img_file_photo = $file_photo->getClientOriginalName().'.'.$file_photo->getClientOriginalExtension();
-            $final_fileimg_photo = md5($my_id.'_'.$img_file_photo).'.'.$file_photo->getClientOriginalExtension();
-            
+            $img_file_photo = $file_photo->getClientOriginalName();
+            //$final_fileimg_photo = md5($my_id.'_'.$img_file_photo).'.'.$file_photo->getClientOriginalExtension();
+            $final_fileimg_photo = $request->get('barcode').'___.'.$file_photo->getClientOriginalExtension();
+
             // upload file
             $folder_upload = 'images/user-files';
             $file_photo->move($folder_upload,$img_file_photo);
 
-            $destinationx = '/images/user-files/'.$img_file_photo;//or any extension such as jpeg,png
+            $destinationx = 'images/user-files/'.$img_file_photo;//or any extension such as jpeg,png
+            $img = Image::make($destinationx);
+            $img->resize(1024, null, function ($constraint) {
+                $constraint->aspectRatio();
+            });
+
             $newdestinationx =  '/images/user-files/'.$final_fileimg_photo;
             File::move(public_path($destinationx), public_path($newdestinationx));
 
@@ -240,14 +259,19 @@ class ProductsController extends Controller
             ));
         }else{
             $file_photo = $request->file('photo_4');
-            $img_file_photo = $file_photo->getClientOriginalName().'.'.$file_photo->getClientOriginalExtension();
-            $final_fileimg_photo = md5($my_id.'_'.$img_file_photo).'.'.$file_photo->getClientOriginalExtension();
-            
+            $img_file_photo = $file_photo->getClientOriginalName();
+            //$final_fileimg_photo = md5($my_id.'_'.$img_file_photo).'.'.$file_photo->getClientOriginalExtension();
+            $final_fileimg_photo = $request->get('barcode').'____.'.$file_photo->getClientOriginalExtension();
+
             // upload file
             $folder_upload = 'images/user-files';
             $file_photo->move($folder_upload,$img_file_photo);
 
-            $destinationx = '/images/user-files/'.$img_file_photo;//or any extension such as jpeg,png
+            $destinationx = 'images/user-files/'.$img_file_photo;//or any extension such as jpeg,png
+            $img = Image::make($destinationx);
+            $img->resize(1024, null, function ($constraint) {
+                $constraint->aspectRatio();
+            });
             $newdestinationx =  '/images/user-files/'.$final_fileimg_photo;
             File::move(public_path($destinationx), public_path($newdestinationx));
 
@@ -262,14 +286,19 @@ class ProductsController extends Controller
             ));
         }else{
             $file_photo = $request->file('photo_5');
-            $img_file_photo = $file_photo->getClientOriginalName().'.'.$file_photo->getClientOriginalExtension();
-            $final_fileimg_photo = md5($my_id.'_'.$img_file_photo).'.'.$file_photo->getClientOriginalExtension();
-            
+            $img_file_photo = $file_photo->getClientOriginalName();
+            //$final_fileimg_photo = md5($my_id.'_'.$img_file_photo).'.'.$file_photo->getClientOriginalExtension();
+            $final_fileimg_photo = $request->get('barcode').'_____.'.$file_photo->getClientOriginalExtension();
+
             // upload file
             $folder_upload = 'images/user-files';
             $file_photo->move($folder_upload,$img_file_photo);
 
-            $destinationx = '/images/user-files/'.$img_file_photo;//or any extension such as jpeg,png
+            $destinationx = 'images/user-files/'.$img_file_photo;//or any extension such as jpeg,png
+            $img = Image::make($destinationx);
+            $img->resize(1024, null, function ($constraint) {
+                $constraint->aspectRatio();
+            });
             $newdestinationx =  '/images/user-files/'.$final_fileimg_photo;
             File::move(public_path($destinationx), public_path($newdestinationx));
 
@@ -495,14 +524,20 @@ class ProductsController extends Controller
             
         }else{
             $file_photo = $request->file('photo');
-            $img_file_photo = $file_photo->getClientOriginalName().'.'.$file_photo->getClientOriginalExtension();
-            $final_fileimg_photo = md5($my_id.'_'.$img_file_photo).'.'.$file_photo->getClientOriginalExtension();
-            
+            $img_file_photo = $file_photo->getClientOriginalName();
+            //$final_fileimg_photo = md5($my_id.'_'.$img_file_photo).'.'.$file_photo->getClientOriginalExtension();
+            $final_fileimg_photo = $request->get('barcode').'_.'.$file_photo->getClientOriginalExtension();
+
             // upload file
             $folder_upload = 'images/user-files';
             $file_photo->move($folder_upload,$img_file_photo);
 
-            $destinationx = '/images/user-files/'.$img_file_photo;//or any extension such as jpeg,png
+            $destinationx = 'images/user-files/'.$img_file_photo;//or any extension such as jpeg,png
+            $img = Image::make($destinationx);
+            $img->resize(1024, null, function ($constraint) {
+                $constraint->aspectRatio();
+            });
+
             $newdestinationx =  '/images/user-files/'.$final_fileimg_photo;
             File::move(public_path($destinationx), public_path($newdestinationx));
 
@@ -515,14 +550,20 @@ class ProductsController extends Controller
             
         }else{
             $file_photo_2 = $request->file('photo_2');
-            $img_file_photo_2 = $file_photo_2->getClientOriginalName().'.'.$file_photo_2->getClientOriginalExtension();
-            $final_fileimg_photo_2 = md5($my_id.'_'.$img_file_photo_2).'.'.$file_photo_2->getClientOriginalExtension();
-            
+            $img_file_photo = $file_photo->getClientOriginalName();
+            //$final_fileimg_photo = md5($my_id.'_'.$img_file_photo).'.'.$file_photo->getClientOriginalExtension();
+            $final_fileimg_photo = $request->get('barcode').'__.'.$file_photo->getClientOriginalExtension();
+
             // upload file
             $folder_upload = 'images/user-files';
-            $file_photo_2->move($folder_upload,$img_file_photo_2);
+            $file_photo->move($folder_upload,$img_file_photo);
 
-            $destinationx = '/images/user-files/'.$img_file_photo_2;//or any extension such as jpeg,png
+            $destinationx = 'images/user-files/'.$img_file_photo;//or any extension such as jpeg,png
+            $img = Image::make($destinationx);
+            $img->resize(1024, null, function ($constraint) {
+                $constraint->aspectRatio();
+            });
+
             $newdestinationx =  '/images/user-files/'.$final_fileimg_photo_2;
             File::move(public_path($destinationx), public_path($newdestinationx));
 
@@ -535,14 +576,20 @@ class ProductsController extends Controller
             
         }else{
             $file_photo = $request->file('photo_3');
-            $img_file_photo = $file_photo->getClientOriginalName().'.'.$file_photo->getClientOriginalExtension();
-            $final_fileimg_photo = md5($my_id.'_'.$img_file_photo).'.'.$file_photo->getClientOriginalExtension();
-            
+            $img_file_photo = $file_photo->getClientOriginalName();
+            //$final_fileimg_photo = md5($my_id.'_'.$img_file_photo).'.'.$file_photo->getClientOriginalExtension();
+            $final_fileimg_photo = $request->get('barcode').'___.'.$file_photo->getClientOriginalExtension();
+
             // upload file
             $folder_upload = 'images/user-files';
             $file_photo->move($folder_upload,$img_file_photo);
 
-            $destinationx = '/images/user-files/'.$img_file_photo;//or any extension such as jpeg,png
+            $destinationx = 'images/user-files/'.$img_file_photo;//or any extension such as jpeg,png
+            $img = Image::make($destinationx);
+            $img->resize(1024, null, function ($constraint) {
+                $constraint->aspectRatio();
+            });
+
             $newdestinationx =  '/images/user-files/'.$final_fileimg_photo;
             File::move(public_path($destinationx), public_path($newdestinationx));
 
@@ -555,14 +602,20 @@ class ProductsController extends Controller
             
         }else{
             $file_photo = $request->file('photo_4');
-            $img_file_photo = $file_photo->getClientOriginalName().'.'.$file_photo->getClientOriginalExtension();
-            $final_fileimg_photo = md5($my_id.'_'.$img_file_photo).'.'.$file_photo->getClientOriginalExtension();
-            
+            $img_file_photo = $file_photo->getClientOriginalName();
+            //$final_fileimg_photo = md5($my_id.'_'.$img_file_photo).'.'.$file_photo->getClientOriginalExtension();
+            $final_fileimg_photo = $request->get('barcode').'____.'.$file_photo->getClientOriginalExtension();
+
             // upload file
             $folder_upload = 'images/user-files';
             $file_photo->move($folder_upload,$img_file_photo);
 
-            $destinationx = '/images/user-files/'.$img_file_photo;//or any extension such as jpeg,png
+            $destinationx = 'images/user-files/'.$img_file_photo;//or any extension such as jpeg,png
+            $img = Image::make($destinationx);
+            $img->resize(1024, null, function ($constraint) {
+                $constraint->aspectRatio();
+            });
+
             $newdestinationx =  '/images/user-files/'.$final_fileimg_photo;
             File::move(public_path($destinationx), public_path($newdestinationx));
 
@@ -575,14 +628,20 @@ class ProductsController extends Controller
             
         }else{
             $file_photo = $request->file('photo_5');
-            $img_file_photo = $file_photo->getClientOriginalName().'.'.$file_photo->getClientOriginalExtension();
-            $final_fileimg_photo = md5($my_id.'_'.$img_file_photo).'.'.$file_photo->getClientOriginalExtension();
-            
+            $img_file_photo = $file_photo->getClientOriginalName();
+            //$final_fileimg_photo = md5($my_id.'_'.$img_file_photo).'.'.$file_photo->getClientOriginalExtension();
+            $final_fileimg_photo = $request->get('barcode').'_____.'.$file_photo->getClientOriginalExtension();
+
             // upload file
             $folder_upload = 'images/user-files';
             $file_photo->move($folder_upload,$img_file_photo);
 
-            $destinationx = '/images/user-files/'.$img_file_photo;//or any extension such as jpeg,png
+            $destinationx = 'images/user-files/'.$img_file_photo;//or any extension such as jpeg,png
+            $img = Image::make($destinationx);
+            $img->resize(1024, null, function ($constraint) {
+                $constraint->aspectRatio();
+            });
+
             $newdestinationx =  '/images/user-files/'.$final_fileimg_photo;
             File::move(public_path($destinationx), public_path($newdestinationx));
 

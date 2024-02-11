@@ -89,7 +89,7 @@
           <div class="row mb-3">
             <label class="form-label col-form-label col-md-2">@lang('general.lbl_barcode')</label>
             <div class="col-md-8">
-              <input type="text" class="form-control" value="{{ old('barcode') }}" name="barcode" id="barcode"  />
+              <input type="text" class="form-control" value="{{ old('barcode') }}" name="barcode" id="barcode" required />
             </div>
           </div>
 
