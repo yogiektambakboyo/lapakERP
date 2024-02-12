@@ -443,7 +443,7 @@ class ProductsController extends Controller
         $products = DB::select("select p.barcode
         from product_sku p
         join product_stock s on s.product_id=p.id and s.qty>0
-        where p.active = '1' and p.barcode like '".$_GET["filter_vendor"]."%' and p.barcode like '%".$_GET["filter_bulan"]."%'  and product_sku.type_id='1'; ");
+        where p.active = '1' and p.barcode like '".$_GET["filter_vendor"]."%' and p.barcode like '%".$_GET["filter_bulan"]."%'  and p.type_id='1'; ");
 
         return view('pages.products.print_qr', ['products' => $products])->with('i', ($request->input('page', 1) - 1) * 5);
     }
