@@ -231,10 +231,17 @@ class OrdersController extends Controller
         $voucher = Voucher::whereRaw($where)
                     ->join('users_branch as ub','ub.branch_id', '=', 'voucher.branch_id')
                     ->join('branch as b','b.id','=','ub.branch_id')
+                    ->join('voucher_detail as vd','vd.voucher_code','=','voucher.voucher_code')
                     ->where('ub.user_id',$user->id)
                     ->where('voucher.is_used',0)
                     ->where('voucher.voucher_code','=',$request->get('voucher_code'))
-                    ->get(['voucher.product_id','voucher.remark','voucher.value']);
+                    ->get(['vd.product_id','voucher.remark','voucher.value','voucher.value_idx']);
+        $voucher = DB::select("select vd.product_id,v.remark,v.value,v.value_idx from voucher v
+                                join users_branch ub on  ub.branch_id=v.branch_id 
+                                join branch b on b.id=ub.branch_id 
+                                join voucher_detail vd on vd.voucher_code=v.voucher_code
+                                where v.is_used=0 and ub.user_id='".$user->id."' and v.voucher_code = '".$request->get('voucher_code')."' ;
+                                ");
         return $voucher; 
     }
 

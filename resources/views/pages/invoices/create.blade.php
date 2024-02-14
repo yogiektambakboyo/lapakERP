@@ -2432,12 +2432,13 @@
                     for (var i = 0; i < orderList.length; i++){
                       for (var j = 0; j < resp.data.length;j++){
                         if(resp.data[j].product_id == orderList[i]["id"]){
-                          orderList[i]["discount"] = ( ((parseFloat(resp.data[j].value)) * (parseFloat(orderList[i]["price"])) * (parseFloat(orderList[i]["qty"])) )/100 );
+                          orderList[i]["discount"] = ( ((parseFloat(resp.data[j].value_idx)) * (parseFloat(orderList[i]["price"])) * (parseFloat(orderList[i]["qty"])) )/100 ) + (parseFloat(resp.data[j].value));
                           orderList[i]["total"] = ((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"])+((((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"]))-(parseFloat(orderList[i]["discount"])))*(parseFloat(orderList[i]["vat_total"])/100)))-(parseFloat(orderList[i]["discount"]));
                           $("#remark").val($("#remark").val()+"["+resp.data[j].remark+"]");
                           counterVoucherHit++;
                           voucherNo = $("#input-apply-voucher").val();
                           voucherNoPID = resp.data[j].product_id;
+                          break;
                         }
                       }
 
@@ -2491,6 +2492,9 @@
                           $('#order_charge').text(currency((($('#payment_nominal').val())-order_total), { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
                         }
 
+                        if(counterVoucherHit>0){
+                          break;
+                        }
 
                     }
 
