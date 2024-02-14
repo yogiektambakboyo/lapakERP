@@ -3,7 +3,7 @@
 @section('title', 'Edit Voucher')
 
 @section('content')
-<form method="POST" action="{{ route('voucher.update', [$product->branch_id,$product->id,$product->dated_start,$product->dated_end,$product->voucher_code]) }}"  enctype="multipart/form-data">
+<form method="POST" action="{{ route('voucher.update', [$product->branch_id,'0',$product->dated_start,$product->dated_end,$product->voucher_code]) }}"  enctype="multipart/form-data">
   @method('patch')
   @csrf
     <div class="bg-light p-4 rounded">
@@ -41,15 +41,7 @@
             <div class="row mb-3">
               <label class="form-label col-form-label col-md-2">@lang('general.lbl_service_name')</label>
               <div class="col-md-8">
-                <select class="form-control" 
-                name="product_id" disabled>
-                <option value="">@lang('general.serviceselect')</option>
-                @foreach($products as $productx)
-                    <option value="{{ $productx->id }}"  {{ ($productx->id == $product->id) 
-                      ? 'selected'
-                      : '' }}>{{  $productx->remark }}</option>
-                @endforeach
-              </select>
+                <input class="form-control" value="{{ $product->product_name }}" disabled>
               </div>
           </div>
           <div class="row mb-3">
@@ -98,12 +90,29 @@
           </div>
 
 
+
           <div class="row mb-3">
-            <label class="form-label col-form-label col-md-2">Value (%)</label>
+            <label class="form-label col-form-label col-md-2">Persentase Potongan Harga (%)</label>
             <div class="col-md-8">
-              <input type="text" class="form-control" name="value" value="{{ $product->value }}"/>
+              <input type="text" class="form-control" name="value_idx" value="{{ $product->value_idx }}" required/>
             </div>
           </div>
+
+          <div class="row mb-3">
+            <label class="form-label col-form-label col-md-2">Nilai Potongan Harga (Rp)</label>
+            <div class="col-md-8">
+              <input type="text" class="form-control" name="value" value="{{ $product->value }}" required/>
+            </div>
+          </div>
+
+          <div class="row mb-3">
+            <label class="form-label col-form-label col-md-2">Harga Jual Voucher (Rp)</label>
+            <div class="col-md-8">
+              <input type="text" class="form-control" name="price" value="{{ $product->price }}" required/>
+            </div>
+          </div>
+
+
           </div>
         </div>
     </div>

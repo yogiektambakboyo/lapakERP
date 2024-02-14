@@ -38,7 +38,7 @@
             <div class="row mb-3">
               <label class="form-label col-form-label col-md-2">Prefix</label>
               <div class="col-md-8">
-                <input type="text" class="form-control gen-ex" id="prefix" name="prefix" value="" placeholder="Masukkan huruf awal kode voucher" required/>
+                <input type="text" class="form-control gen-ex" id="prefix" name="prefix" value="" placeholder="Masukkan huruf awal kode voucher"/>
               </div>
             </div>
 
@@ -179,7 +179,7 @@
           $(".gen-ex").on('change', function(){
             var s1 = "Contoh Hasil : ";
             var s2 = $('#prefix').val()+("0000000"+$('#begin_digit').val()).substr((-1*$('#digit').val()),$('#digit').val());
-            var s3 = $('#prefix').val()+("0000000"+(parseInt($('#begin_digit').val())+parseInt($('#qty_voucher_code').val()))).substr((-1*$('#digit').val()),$('#digit').val());
+            var s3 = $('#prefix').val()+("0000000"+((parseInt($('#begin_digit').val())-1)+parseInt($('#qty_voucher_code').val()))).substr((-1*$('#digit').val()),$('#digit').val());
             $('#lbl_example').text(s1+" "+s2+" s/d "+s3);
           });
 

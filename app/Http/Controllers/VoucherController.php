@@ -303,19 +303,19 @@ class VoucherController extends Controller
 
         $user  = Auth::user();
         $data = $this->data;
-        $product = Product::join('product_type as pt','pt.id','=','product_sku.type_id')
-        ->join('product_category as pc','pc.id','=','product_sku.category_id')
-        ->join('product_brand as pb','pb.id','=','product_sku.brand_id')
-        ->join('voucher as pr','pr.product_id','=','product_sku.id')
-        ->join('branch as bc','bc.id','=','pr.branch_id')
-        ->where('product_sku.id',$product_id)
-        ->where('bc.id','=',$branch_id)
-        ->where('pr.voucher_code','=',$voucher_code)
-        ->get(['pr.remark as voucher_remark','pr.voucher_code','product_sku.id','product_sku.remark as product_name','pr.branch_id','bc.remark as branch_name','pr.value as value','pr.dated_start','pr.dated_end'])->first(); 
+        $product = DB::select("select bc.id as branch_id,left(string_agg(ps.abbr,', '),150) as product_name,v.invoice_no,v.is_used,v.price,v.remark as voucher_remark,v.voucher_code,v.branch_id,bc.remark as branch_name,v.value as value,v.value_idx,v.dated_start,v.dated_end 
+                from voucher v 
+                join voucher_detail vd on vd.voucher_code=v.voucher_code and vd.voucher_code='".$voucher_code."'
+                join branch as bc on bc.id= v.branch_id and bc.id = ".$branch_id."
+                join users_branch as ub2 on ub2.branch_id=v .branch_id
+                join product_sku ps on ps.id = vd.product_id::bigint
+                where ub2.user_id = '".$user->id."' group by bc.id,v.invoice_no,v.is_used,v.price,v.remark,v.voucher_code,v.branch_id,bc.remark,v.value,v.value_idx,v.dated_start,v.dated_end limit 1
+        ;");
+
         return view('pages.voucher.edit', [
             'branchs' => Branch::join('users_branch as ub','ub.branch_id','=','branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']),
             'data' => $data,
-            'product' => $product, 'company' => Company::get()->first(),
+            'product' => $product[0], 'company' => Company::get()->first(),
             'products' => Product::get(),
         ]);
     }
@@ -331,12 +331,13 @@ class VoucherController extends Controller
     public function update(String $branch,String $product,String $dated_start,String $dated_end,String $voucher_code, Request $request) 
     {
         $user = Auth::user();
-        Voucher::where('product_id','=',$product)
-                        ->where('branch_id','=',$branch)
+        Voucher::where('branch_id','=',$branch)
                         ->where('voucher_code','=',$voucher_code)
                         ->update(
                             array_merge(
                                 ['value' => $request->get('value') ],
+                                ['value_idx' => $request->get('value_idx') ],
+                                ['price' => $request->get('price') ],
                                 ['dated_end' => Carbon::createFromFormat('d-m-Y', $request->get('dated_end'))->format('Y-m-d')],
                                 ['dated_start' => Carbon::createFromFormat('d-m-Y', $request->get('dated_start'))->format('Y-m-d') ],
                             )
