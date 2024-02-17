@@ -540,6 +540,19 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
             Route::get('/export', 'VoucherController@export')->name('voucher.export');
         });
 
+        Route::group(['prefix' => 'promo'], function() {
+            Route::get('/', 'PromoController@index')->name('promo.index');
+            Route::get('/create', 'PromoController@create')->name('promo.create');
+            Route::post('/create', 'PromoController@store')->name('promo.store');
+            Route::get('/search', 'PromoController@search')->name('promo.search');
+            Route::get('/check', 'PromoController@check')->name('promo.check');
+            Route::get('/{branch}/{product}/show', 'PromoController@show')->name('promo.show');
+            Route::get('/{branch}/{product}/{dated_start}/{dated_end}/{promo_id}/edit', 'PromoController@edit')->name('promo.edit');
+            Route::patch('/{branch}/{product}/{dated_start}/{dated_end}/{promo_id}/update', 'PromoController@update')->name('promo.update');
+            Route::delete('/{branch}/{product}/{dated_start}/{dated_end}/{promo_id}/delete', 'PromoController@destroy')->name('promo.destroy');
+            Route::get('/export', 'PromoController@export')->name('promo.export');
+        });
+
         Route::group(['prefix' => 'bufferstock'], function() {
             Route::get('/', 'BufferStockController@index')->name('bufferstock.index');
             Route::get('/create', 'BufferStockController@create')->name('bufferstock.create');
