@@ -440,9 +440,10 @@ class ProductsController extends Controller
 
         $data = $this->data;
         $keyword = "";
-        $products = DB::select("select product_sku.barcode
-        from product_sku
-        where product_sku.active = '1' and product_sku.barcode like '".$_GET["filter_vendor"]."%' and product_sku.barcode like '%".$_GET["filter_bulan"]."%'  and product_sku.type_id='1'; ");
+        $products = DB::select("select p.barcode
+        from product_sku p
+        join product_stock s on s.product_id=p.id and s.qty>0
+        where p.active = '1' and p.barcode like '".$_GET["filter_vendor"]."%' and p.barcode like '%".$_GET["filter_bulan"]."%'  and p.type_id='1'; ");
 
         return view('pages.products.print_qr', ['products' => $products])->with('i', ($request->input('page', 1) - 1) * 5);
     }
