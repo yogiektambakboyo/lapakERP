@@ -549,7 +549,7 @@ class ProductsController extends Controller
         if($request->file('photo_2') == null){
             
         }else{
-            $file_photo_2 = $request->file('photo_2');
+            $file_photo = $request->file('photo_2');
             $img_file_photo = $file_photo->getClientOriginalName();
             //$final_fileimg_photo = md5($my_id.'_'.$img_file_photo).'.'.$file_photo->getClientOriginalExtension();
             $final_fileimg_photo = $request->get('barcode').'__.'.$file_photo->getClientOriginalExtension();
@@ -564,11 +564,11 @@ class ProductsController extends Controller
                 $constraint->aspectRatio();
             });
 
-            $newdestinationx =  '/images/user-files/'.$final_fileimg_photo_2;
+            $newdestinationx =  '/images/user-files/'.$final_fileimg_photo;
             File::move(public_path($destinationx), public_path($newdestinationx));
 
             Product::where(['id' => $my_id])->update( array_merge(
-                    ['photo_2' => $final_fileimg_photo_2],
+                    ['photo_2' => $final_fileimg_photo],
             ));
         }
 
