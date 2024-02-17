@@ -25,6 +25,8 @@ class Voucher extends Model
         'dated_end',
         'created_by',
         'created_at',
+        'moq',
+        'unlimeted',
         'updated_at'
     ];
 }

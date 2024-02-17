@@ -106,6 +106,23 @@
           </div>
 
           <div class="row mb-3">
+            <label class="form-label col-form-label col-md-2">Minimum Pembelian</label>
+            <div class="col-md-8">
+              <input type="text" class="form-control" name="moq" value="{{ $product->moq }}" required/>
+            </div>
+          </div>
+
+          <div class="row mb-3">
+            <label class="form-label col-form-label col-md-2">Pakai Berulang</label>
+            <div class="col-md-8">
+              <select name="unlimeted" class="form-control" id="unlimeted">
+                <option value="0" <?= $product->unlimeted=="0"?"selected":""; ?> >Tidak</option>
+                <option value="1" <?= $product->unlimeted=="1"?"selected":""; ?>>Ya</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="row mb-3">
             <label class="form-label col-form-label col-md-2">Harga Jual Voucher (Rp)</label>
             <div class="col-md-8">
               <input type="text" class="form-control" name="price" value="{{ $product->price }}" required/>
