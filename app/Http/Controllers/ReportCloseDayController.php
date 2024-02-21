@@ -1851,7 +1851,93 @@ class ReportCloseDayController extends Controller
             return view('pages.reports.close_day_sum_print_new',[
                 'company' => Company::get()->first(),
                 'settings' => Settings::get(),
-            ], compact('period','shifts','report_total','report_detail','branchs','data','keyword','act_permission','report_data','begindate','enddate'));
+            ], compact('period','shifts','report_total','report_detail','branchx','branchs','data','keyword','act_permission','report_data','begindate','enddate'));
+        }else if($request->export=='Export Sum New API'){
+            $report_data = DB::select("
+                    select b.id as branch_id,b.remark as branch_name,im.dated,sum(id.total+id.vat_total) as total_all,
+                    sum(case when ps.type_id = 2 and ps.category_id!=53 and ps.category_id!=60 then id.total+id.vat_total else 0 end) as total_service,
+                    sum(case when ps.type_id = 2 and ps.category_id=53 then id.total+id.vat_total else 0 end) as total_salon,
+                    sum(case when ps.type_id = 2 and ps.category_id=56 then id.qty*20000 else 0 end) as total_tambahan,
+                    sum(case when ps.type_id = 1 and ps.category_id != 26 and ps.category_id != 60 then id.total+id.vat_total else 0 end) as total_product,
+                    sum(case when ps.type_id = 1 and ps.category_id = 26 then id.total+id.vat_total else 0 end) as total_drink,
+                    sum(case when ps.type_id = 1 and ps.category_id = 60 then id.total+id.vat_total else 0 end) as total_ojek,
+                    sum(case when ps.type_id = 8 and ps.remark not like '%CHARGE LEBARAN%'  then id.total+id.vat_total else 0 end) as total_extra,
+                    sum(case when ps.type_id = 8 and ps.remark like '%CHARGE LEBARAN%'  then id.total+id.vat_total else 0 end) as total_lebaran,
+                    sum(case when im.payment_type = 'Cash' then id.total+id.vat_total else 0 end) as total_cash,
+                    sum(case when im.payment_type = 'BCA - Debit' then id.total+id.vat_total else 0 end) as total_b_d,
+                    sum(case when im.payment_type = 'BCA - Kredit' then id.total+id.vat_total else 0 end) as total_b_k,
+                    sum(case when im.payment_type = 'Mandiri - Debit' then id.total+id.vat_total else 0 end) as total_m_d,
+                    sum(case when im.payment_type = 'Mandiri - Kredit' then id.total+id.vat_total else 0 end) as total_m_k,
+                    sum(case when im.payment_type = 'QRIS' then id.total+id.vat_total else 0 end) as total_qr,
+                    sum(case when im.payment_type = 'Transfer' then id.total+id.vat_total else 0 end) as total_tr,
+                    sum(case when im.payment_type = 'BCA - Debit' or im.payment_type = 'BANK 1 - Debit' then id.total+id.vat_total else 0 end) as total_b1d,
+                    sum(case when im.payment_type = 'BCA - Kredit' or im.payment_type = 'BANK 1 - Kredit' then id.total+id.vat_total else 0 end) as total_b1c,
+                    sum(case when im.payment_type = 'Mandiri - Debit' or im.payment_type = 'BANK 2 - Debit' then id.total+id.vat_total else 0 end) as total_b2d,
+                    sum(case when im.payment_type = 'Mandiri - Kredit' or im.payment_type = 'BANK 2 - Kredit' then id.total+id.vat_total else 0 end) as total_b2c,
+                    sum(case when im.payment_type = 'Transfer' or im.payment_type = 'BANK 1 - Transfer' then id.total+id.vat_total else 0 end) as total_b1t,
+                    sum(case when im.payment_type = 'BANK 2 - Transfer' then id.total+id.vat_total else 0 end) as total_b2t,
+                    sum(case when im.payment_type = 'QRIS' or im.payment_type = 'BANK 1 - QRIS' then id.total+id.vat_total else 0 end) as total_b1q,
+                    sum(case when im.payment_type = 'BANK 2 - QRIS' then id.total+id.vat_total else 0 end) as total_b2q,
+                    count(distinct im.invoice_no) qty_transaction,count(distinct im.invoice_no) qty_customers,
+                    sum(case when ps.type_id = 2 then id.qty else 0 end) as qty_service
+                    from invoice_master im 
+                    join invoice_detail id on id.invoice_no  = im.invoice_no 
+                    join product_sku ps on ps.id = id.product_id
+                    join customers c on c.id = im.customers_id and c.branch_id::character varying like '%".$branchx."%'
+                    join branch b on b.id = c.branch_id
+                    join users_branch as ub on ub.branch_id = b.id and ub.user_id = '".$user->id."'
+                    where im.dated between '".$begindate."' and '".$enddate."'
+                    group by b.remark,im.dated,b.id         
+            "); 
+
+            $report_total = DB::select("
+                    select 
+                    sum(case when ps.type_id = 2 and ps.category_id!=53 and ps.category_id!=60 then id.total+id.vat_total else 0 end) as total_service,
+                    sum(case when ps.type_id = 2 and ps.category_id=53 then id.total+id.vat_total else 0 end) as total_salon,
+                    sum(case when ps.type_id = 2 and ps.category_id=56 then id.qty*20000 else 0 end) as total_tambahan,
+                    sum(case when ps.type_id = 1 and ps.category_id != 26 and ps.category_id != 60 then id.total+id.vat_total else 0 end) as total_product,
+                    sum(case when ps.type_id = 1 and ps.category_id = 26 then id.total+id.vat_total else 0 end) as total_drink,
+                    sum(case when ps.type_id = 1 and ps.category_id = 60 then id.total+id.vat_total else 0 end) as total_ojek,
+                    sum(case when ps.type_id = 8 and ps.remark not like '%CHARGE LEBARAN%'  then id.total+id.vat_total else 0 end) as total_extra,
+                    sum(case when ps.type_id = 8 and ps.remark like '%CHARGE LEBARAN%'  then id.total+id.vat_total else 0 end) as total_lebaran,
+                    sum(case when im.payment_type = 'Cash' then id.total+id.vat_total else 0 end) as total_cash,
+                    sum(case when im.payment_type = 'BCA - Debit' then id.total+id.vat_total else 0 end) as total_b_d,
+                    sum(case when im.payment_type = 'BCA - Kredit' then id.total+id.vat_total else 0 end) as total_b_k,
+                    sum(case when im.payment_type = 'Mandiri - Debit' then id.total+id.vat_total else 0 end) as total_m_d,
+                    sum(case when im.payment_type = 'Mandiri - Kredit' then id.total+id.vat_total else 0 end) as total_m_k,
+                    sum(case when im.payment_type = 'QRIS' then id.total+id.vat_total else 0 end) as total_qr,
+                    sum(case when im.payment_type = 'Transfer' then id.total+id.vat_total else 0 end) as total_tr,
+                    sum(case when im.payment_type = 'BCA - Debit' or im.payment_type = 'BANK 1 - Debit' then id.total+id.vat_total else 0 end) as total_b1d,
+                    sum(case when im.payment_type = 'BCA - Kredit' or im.payment_type = 'BANK 1 - Kredit' then id.total+id.vat_total else 0 end) as total_b1c,
+                    sum(case when im.payment_type = 'Mandiri - Debit' or im.payment_type = 'BANK 2 - Debit' then id.total+id.vat_total else 0 end) as total_b2d,
+                    sum(case when im.payment_type = 'Mandiri - Kredit' or im.payment_type = 'BANK 2 - Kredit' then id.total+id.vat_total else 0 end) as total_b2c,
+                    sum(case when im.payment_type = 'Transfer' or im.payment_type = 'BANK 1 - Transfer' then id.total+id.vat_total else 0 end) as total_b1t,
+                    sum(case when im.payment_type = 'BANK 2 - Transfer' then id.total+id.vat_total else 0 end) as total_b2t,
+                    sum(case when im.payment_type = 'QRIS' or im.payment_type = 'BANK 1 - QRIS' then id.total+id.vat_total else 0 end) as total_b1q,
+                    sum(case when im.payment_type = 'BANK 2 - QRIS' then id.total+id.vat_total else 0 end) as total_b2q,
+                    count(distinct im.invoice_no) qty_transaction,count(distinct im.invoice_no) qty_customers,
+                    sum(case when ps.type_id = 2 then id.qty else 0 end) as qty_service
+                    from invoice_master im 
+                    join invoice_detail id on id.invoice_no  = im.invoice_no 
+                    join product_sku ps on ps.id = id.product_id 
+                    join customers c on c.id = im.customers_id and c.branch_id::character varying like '%".$branchx."%'
+                    join branch b on b.id = c.branch_id
+                    join users_branch as ub on ub.branch_id = b.id and ub.user_id = '".$user->id."'
+                    where im.dated between '".$begindate."' and '".$enddate."'        
+            "); 
+            
+            $report_detail = DB::select("select b.id as branch_id,b.remark as branch_name,im.dated,id.product_id,ps.abbr,sum(id.qty) as qty,id.price,sum(id.total) as total
+            from invoice_master im 
+            join invoice_detail id on id.invoice_no  = im.invoice_no 
+            join product_sku ps on ps.id = id.product_id and ps.type_id = 1 and ps.category_id !=26  and ps.category_id!=60
+            join customers c on c.id = im.customers_id and c.branch_id::character varying like '%".$branchx."%'
+            join branch b on b.id = c.branch_id
+            join users_branch as ub on ub.branch_id = b.id and ub.user_id = '".$user->id."'
+            where im.dated between '".$begindate."' and '".$enddate."' 
+            group by b.remark,im.dated,b.id,id.product_id,id.price,ps.abbr
+            order by 1,3,5");
+            
+            return compact('report_detail','branchx','keyword','report_data','begindate','enddate');
         }else if($request->export=='Export Sum Counter'){
             $report_data = DB::select("
                     select b.id as branch_id,b.remark as branch_name,im.dated,sum(id.total+id.vat_total) as total_all,

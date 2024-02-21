@@ -20,6 +20,7 @@ class Promo extends Model
         'value_idx',
         'date_start',
         'date_end',
+        'linked_invoice',
         'created_by',
         'created_at',
         'moq',

@@ -61,6 +61,7 @@
                 name="active_time" required>
                 <option value="all">24 Jam</option>
                 <option value="officetime">08.00 - 17.00</option>
+                <option value="happyhour">09.00 - 15.00</option>
                 <option value="night">17.01 - 23.59</option>
             </select>
               </div>
@@ -142,6 +143,18 @@
                 <input type="text" class="form-control" name="moq" value="1" required/>
               </div>
             </div>
+
+            <div class="row mb-3">
+              <label class="form-label col-form-label col-md-2">Validasi Faktur</label>
+              <div class="col-md-8">
+                <select class="form-control" 
+                name="linked_invoice" required>
+                <option value="1">Ya</option>
+                <option value="0">Tidak</option>
+            </select>
+              </div>
+          </div>
+
             </div>
           </div>
         </div>

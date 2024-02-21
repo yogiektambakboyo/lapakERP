@@ -204,6 +204,7 @@ class PromoController extends Controller
                     ['date_end' => Carbon::createFromFormat('d-m-Y', $request->get('dated_end'))->format('Y-m-d') ],
                     ['branch_id' => $request->get('branch_id') ],
                     ['moq' => $request->get('moq') ],
+                    ['linked_invoice' => $request->get('linked_invoice') ],
                     ['type_customer' => $request->get('type_customer') ],
                     ['active_time' => $request->get('active_time') ],
                     ['active_day' => $request->get('active_day') ],
@@ -290,13 +291,13 @@ class PromoController extends Controller
 
         $user  = Auth::user();
         $data = $this->data;
-        $product = DB::select("select v.type_customer,v.active_day,v.active_time,v.moq,bc.id as branch_id,left(string_agg(ps.abbr,', '),150) as product_name,v.remarks,v.promo_id,v.branch_id,bc.remark as branch_name,v.value as value,v.value_idx,v.date_start,v.date_end 
+        $product = DB::select("select v.linked_invoice,v.type_customer,v.active_day,v.active_time,v.moq,bc.id as branch_id,left(string_agg(ps.abbr,', '),150) as product_name,v.remarks,v.promo_id,v.branch_id,bc.remark as branch_name,v.value as value,v.value_idx,v.date_start,v.date_end 
                 from promo v 
                 join promo_detail vd on vd.promo_id=v.promo_id and vd.promo_id='".$voucher_code."'
                 join branch as bc on bc.id= v.branch_id and bc.id = ".$branch_id."
                 join users_branch as ub2 on ub2.branch_id=v .branch_id
                 join product_sku ps on ps.id = vd.product_id::bigint
-                where ub2.user_id = '".$user->id."' group by v.type_customer,v.active_day,v.active_time,v.moq,bc.id,v.remarks,v.promo_id,v.branch_id,bc.remark,v.value,v.value_idx,v.date_start,v.date_end  limit 1
+                where ub2.user_id = '".$user->id."' group by v.linked_invoice,v.type_customer,v.active_day,v.active_time,v.moq,bc.id,v.remarks,v.promo_id,v.branch_id,bc.remark,v.value,v.value_idx,v.date_start,v.date_end  limit 1
         ;");
 
         return view('pages.promo.edit', [
@@ -327,6 +328,7 @@ class PromoController extends Controller
                                 ['active_day' => $request->get('active_day') ],
                                 ['active_time' => $request->get('active_time') ],
                                 ['moq' => $request->get('moq') ],
+                                ['linked_invoice' => $request->get('linked_invoice') ],
                                 ['type_customer' => $request->get('type_customer') ],
                                 ['date_end' => Carbon::createFromFormat('d-m-Y', $request->get('dated_end'))->format('Y-m-d')],
                                 ['date_start' => Carbon::createFromFormat('d-m-Y', $request->get('dated_start'))->format('Y-m-d') ],

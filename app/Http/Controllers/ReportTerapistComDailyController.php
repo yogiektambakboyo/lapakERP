@@ -389,6 +389,100 @@ class ReportTerapistComDailyController extends Controller
                 'endnewformat' => $endnewformat,
                 'settings' => Settings::get(),
             ]);
+        }else if($request->export=='Export Sum Template'){
+            $filter_begin_date = $begindate;
+            $filter_begin_end = $enddate;
+            $filter_branch_id =  $branchx;
+
+            $report_data= DB::select("
+
+
+            select branch_name,b.name as nama,'TERAPIS' as posisi,u.work_year as tahun,sum(total) total,sum(total_commisions) as perawatan, sum(product_commisions) as komisi_produk,sum(total_point) nilai_point,sum(commisions_extra) as extra_charge,'' as komisi_menurut_cat_terapis,'' as selisih,sum(service) as cases,
+                '' as simpanan,'' as iuran_perbaikan,'' as denda, '' as potongan_kasbon,'' as komisi_yang_diterima,'' as no_rekening, '' as bank
+                from (
+                    select dated,a.branch_name,a.id,a.point_qty,a.name,a.invoice,service,coalesce(pc2.point_value,0) as total_point,(a.commisions+coalesce(pc2.point_value,0)) as total,commisions_extra,total_abbr,total_commisions,
+                                    product_qty,product_commisions
+                                    from (
+                                        select a.branch_name,a.dated,a.user_id as id,a.terapist_name as name,
+                                        count(distinct right(invoice_no,6)) as invoice,
+                                        sum(case when type_id=2 then 1 else 0 end) as service,
+                                        sum(point_qty) as point_qty,sum(a.commisions) as commisions,
+                                        sum(case when type_id=8 then commisions else 0 end) as commisions_extra,
+                                        sum(case when type_id=2 then total else 0 end) as total_abbr,
+                                        sum(case when type_id=2 then commisions else 0 end) as total_commisions,
+                                        sum(case when type_id=1 then qty else 0 end) as product_qty,      
+                                        sum(case when type_id=1 then commisions else 0 end) as product_commisions     
+                                        from terapist_commision a
+                                        join users_branch as ub on ub.branch_id = a.branch_id and ub.user_id = '".$user->id."'  and ub.branch_id::character varying like '".$filter_branch_id."'
+                                        where a.dated  between '".$filter_begin_date."' and  '".$filter_begin_end."' and a.user_id::character varying like  '".$terapist."' 
+                                        group by a.branch_name,a.user_id,a.terapist_name,a.dated
+                                    ) a left join point_conversion pc2 on pc2.point_qty = a.point_qty  
+                ) b join users u on u.id=b.id  group by u.work_year,branch_name,b.id,b.name order by 2,3
+
+
+            ");
+            $beginnewformat = date('d-m-Y',strtotime($filter_begin_date));    
+            $endnewformat = date('d-m-Y',strtotime($filter_begin_end));    
+        
+
+            return view('pages.reports.terapist_comm_day_template', [
+                'filter_begin_date' => $filter_begin_date,
+                'filter_begin_end' => $filter_begin_end,
+                'filter_branch_id' => $filter_branch_id,
+                'report_data' => $report_data,
+                'filter_terapist_in' => $terapist,
+                'beginnewformat' => $beginnewformat,
+                'endnewformat' => $endnewformat,
+                'settings' => Settings::get(),
+            ]);
+        }else if($request->export=='Export Sum Template API'){
+            $filter_begin_date = $begindate;
+            $filter_begin_end = $enddate;
+            $filter_branch_id =  $branchx;
+
+            $report_data= DB::select("
+
+
+            select count(1) as no,b.name as nama,'TERAPIS' as posisi,u.work_year as tahun,sum(total) total,sum(total_commisions) as perawatan, sum(product_commisions) as komisi_produk,sum(total_point) nilai_point,sum(commisions_extra) as extra_charge,'' as komisi_menurut_cat_terapis,'' as selisih,sum(service) as cases,
+                '' as simpanan,'' as iuran_perbaikan,'' as denda, '' as potongan_kasbon,'' as komisi_yang_diterima,'' as no_rekening, '' as bank
+                from (
+                    select dated,a.branch_name,a.id,a.point_qty,a.name,a.invoice,service,coalesce(pc2.point_value,0) as total_point,(a.commisions+coalesce(pc2.point_value,0)) as total,commisions_extra,total_abbr,total_commisions,
+                                    product_qty,product_commisions
+                                    from (
+                                        select a.branch_name,a.dated,a.user_id as id,a.terapist_name as name,
+                                        count(distinct right(invoice_no,6)) as invoice,
+                                        sum(case when type_id=2 then 1 else 0 end) as service,
+                                        sum(point_qty) as point_qty,sum(a.commisions) as commisions,
+                                        sum(case when type_id=8 then commisions else 0 end) as commisions_extra,
+                                        sum(case when type_id=2 then total else 0 end) as total_abbr,
+                                        sum(case when type_id=2 then commisions else 0 end) as total_commisions,
+                                        sum(case when type_id=1 then qty else 0 end) as product_qty,      
+                                        sum(case when type_id=1 then commisions else 0 end) as product_commisions     
+                                        from terapist_commision a
+                                        join users_branch as ub on ub.branch_id = a.branch_id and ub.user_id = '".$user->id."'  and ub.branch_id::character varying like '".$filter_branch_id."'
+                                        where a.dated  between '".$filter_begin_date."' and  '".$filter_begin_end."' and a.user_id::character varying like  '".$terapist."' 
+                                        group by a.branch_name,a.user_id,a.terapist_name,a.dated
+                                    ) a left join point_conversion pc2 on pc2.point_qty = a.point_qty  
+                ) b join users u on u.id=b.id  group by u.work_year,branch_name,b.id,b.name order by 2,3
+
+
+            ");
+
+            
+
+            $beginnewformat = date('d-m-Y',strtotime($filter_begin_date));    
+            $endnewformat = date('d-m-Y',strtotime($filter_begin_end));    
+        
+            return array_merge([
+                'filter_begin_date' => $filter_begin_date,
+                'filter_begin_end' => $filter_begin_end,
+                'filter_branch_id' => $filter_branch_id,
+                'report_data' => $report_data,
+                'filter_terapist_in' => $terapist,
+                'beginnewformat' => $beginnewformat,
+                'endnewformat' => $endnewformat,
+                'settings' => Settings::get(),
+            ]);
         }else{
             $report_data = DB::select("
             select a.branch_name,a.com_type,to_char(a.dated,'dd-mm-YYYY') as dated,a.qtyinv,a.work_year,a.name,a.commisions,a.point_qty,coalesce(pc2.point_value,0)  as point_value,a.commisions+coalesce(pc2.point_value,0) as total from (

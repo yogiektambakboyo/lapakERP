@@ -2610,6 +2610,10 @@
                           if(parseInt(time)>800 && parseInt(time)<=1700){
                             isvalidtime = 1;
                           }
+                        }else if(resp.data[j].active_time == "happyhour"){
+                          if(parseInt(time)>900 && parseInt(time)<=1500){
+                            isvalidtime = 1;
+                          }
                         }else if(resp.data[j].active_time == "night"){
                           if(parseInt(time)>1700 && parseInt(time)<=2359){
                             isvalidtime = 1;
