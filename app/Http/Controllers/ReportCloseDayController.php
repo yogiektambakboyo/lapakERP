@@ -1848,10 +1848,17 @@ class ReportCloseDayController extends Controller
             group by b.remark,im.dated,b.id,id.product_id,id.price,ps.abbr
             order by 1,3,5");
             
-            return view('pages.reports.close_day_sum_print_new',[
-                'company' => Company::get()->first(),
-                'settings' => Settings::get(),
-            ], compact('period','shifts','report_total','report_detail','branchx','branchs','data','keyword','act_permission','report_data','begindate','enddate'));
+            if($branchx==21||$branchx==23||$branchx==24){
+                return view('pages.reports.close_day_sum_print_new_tnl',[
+                    'company' => Company::get()->first(),
+                    'settings' => Settings::get(),
+                ], compact('period','shifts','report_total','report_detail','branchx','branchs','data','keyword','act_permission','report_data','begindate','enddate'));
+            }else{
+                return view('pages.reports.close_day_sum_print_new',[
+                    'company' => Company::get()->first(),
+                    'settings' => Settings::get(),
+                ], compact('period','shifts','report_total','report_detail','branchx','branchs','data','keyword','act_permission','report_data','begindate','enddate'));
+            }
         }else if($request->export=='Export Sum New API'){
             $report_data = DB::select("
                     select b.id as branch_id,b.remark as branch_name,im.dated,sum(id.total+id.vat_total) as total_all,
