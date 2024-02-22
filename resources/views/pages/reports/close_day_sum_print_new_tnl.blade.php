@@ -486,86 +486,104 @@
                        worksheet.getCell('B2').alignment = { vertical: 'middle', horizontal: 'center' };
                        worksheet.getCell('B3').alignment = { vertical: 'middle', horizontal: 'center' };
 
-                       worksheet.getCell('C3').value = 'Jenis';
+                       worksheet.mergeCells('C2', 'C3');
+                       worksheet.getCell('C2').value = 'Salon';
+                       worksheet.getCell('C2').alignment = { vertical: 'middle', horizontal: 'center' };
                        worksheet.getCell('C3').alignment = { vertical: 'middle', horizontal: 'center' };
 
-                       worksheet.getCell('D3').value = 'Qty';
+                       worksheet.mergeCells('C2', 'C3');
+                       worksheet.getCell('C2').value = 'Salon';
+                       worksheet.getCell('C2').alignment = { vertical: 'middle', horizontal: 'center' };
+                       worksheet.getCell('C3').alignment = { vertical: 'middle', horizontal: 'center' };
+
+                       worksheet.getCell('D3').value = 'Jenis';
                        worksheet.getCell('D3').alignment = { vertical: 'middle', horizontal: 'center' };
 
-                       worksheet.getCell('E3').value = 'Harga';
+                       worksheet.getCell('E3').value = 'Qty';
                        worksheet.getCell('E3').alignment = { vertical: 'middle', horizontal: 'center' };
 
-                       worksheet.getCell('F3').value = 'Total';
+                       worksheet.getCell('F3').value = 'Harga';
                        worksheet.getCell('F3').alignment = { vertical: 'middle', horizontal: 'center' };
 
-                       worksheet.mergeCells('C2', 'F2');
-                       worksheet.getCell('C2').value = 'Produk';
-                       worksheet.getCell('C2').alignment = { vertical: 'middle', horizontal: 'center' };  
-                       
-                       worksheet.mergeCells('G2', 'G3');
-                       worksheet.getCell('G2').value = 'Extra';
-                       worksheet.getCell('G2').alignment = { vertical: 'middle', horizontal: 'center' };
+                       worksheet.getCell('G3').value = 'Total';
                        worksheet.getCell('G3').alignment = { vertical: 'middle', horizontal: 'center' };
 
-                       worksheet.mergeCells('H2', 'H3');
-                       worksheet.getCell('H2').value = 'Minuman';
-                       worksheet.getCell('H2').alignment = { vertical: 'middle', horizontal: 'center' };
+                       worksheet.getCell('H3').value = 'Ojek';
                        worksheet.getCell('H3').alignment = { vertical: 'middle', horizontal: 'center' };
 
+                       worksheet.mergeCells('D2', 'H2');
+                       worksheet.getCell('D2').value = 'Produk';
+                       worksheet.getCell('D2').alignment = { vertical: 'middle', horizontal: 'center' }; 
+                       
                        worksheet.mergeCells('I2', 'I3');
-                       worksheet.getCell('I2').value = 'B1 - D';
+                       worksheet.getCell('I2').value = 'Tambahan Terapis';
                        worksheet.getCell('I2').alignment = { vertical: 'middle', horizontal: 'center' };
                        worksheet.getCell('I3').alignment = { vertical: 'middle', horizontal: 'center' };
-
+                       
                        worksheet.mergeCells('J2', 'J3');
-                       worksheet.getCell('J2').value = 'B1 - K';
+                       worksheet.getCell('J2').value = 'Extra';
                        worksheet.getCell('J2').alignment = { vertical: 'middle', horizontal: 'center' };
                        worksheet.getCell('J3').alignment = { vertical: 'middle', horizontal: 'center' };
 
                        worksheet.mergeCells('K2', 'K3');
-                       worksheet.getCell('K2').value = 'B1 - QRIS';
+                       worksheet.getCell('K2').value = 'Minuman';
                        worksheet.getCell('K2').alignment = { vertical: 'middle', horizontal: 'center' };
                        worksheet.getCell('K3').alignment = { vertical: 'middle', horizontal: 'center' };
 
                        worksheet.mergeCells('L2', 'L3');
-                       worksheet.getCell('L2').value = 'B1 - TRANSFER';
+                       worksheet.getCell('L2').value = 'B1 - D';
                        worksheet.getCell('L2').alignment = { vertical: 'middle', horizontal: 'center' };
                        worksheet.getCell('L3').alignment = { vertical: 'middle', horizontal: 'center' };
 
                        worksheet.mergeCells('M2', 'M3');
-                       worksheet.getCell('M2').value = 'B2 - D';
+                       worksheet.getCell('M2').value = 'B1 - K';
                        worksheet.getCell('M2').alignment = { vertical: 'middle', horizontal: 'center' };
                        worksheet.getCell('M3').alignment = { vertical: 'middle', horizontal: 'center' };
 
                        worksheet.mergeCells('N2', 'N3');
-                       worksheet.getCell('N2').value = 'B2 - K';
+                       worksheet.getCell('N2').value = 'B1 - QRIS';
                        worksheet.getCell('N2').alignment = { vertical: 'middle', horizontal: 'center' };
                        worksheet.getCell('N3').alignment = { vertical: 'middle', horizontal: 'center' };
 
                        worksheet.mergeCells('O2', 'O3');
-                       worksheet.getCell('O2').value = 'B2 - QRIS';
+                       worksheet.getCell('O2').value = 'B1 - TRANSFER';
                        worksheet.getCell('O2').alignment = { vertical: 'middle', horizontal: 'center' };
                        worksheet.getCell('O3').alignment = { vertical: 'middle', horizontal: 'center' };
 
                        worksheet.mergeCells('P2', 'P3');
-                       worksheet.getCell('P2').value = 'B2 - TRANSFER';
+                       worksheet.getCell('P2').value = 'B2 - D';
                        worksheet.getCell('P2').alignment = { vertical: 'middle', horizontal: 'center' };
                        worksheet.getCell('P3').alignment = { vertical: 'middle', horizontal: 'center' };
 
                        worksheet.mergeCells('Q2', 'Q3');
-                       worksheet.getCell('Q2').value = 'CASES';
+                       worksheet.getCell('Q2').value = 'B2 - K';
                        worksheet.getCell('Q2').alignment = { vertical: 'middle', horizontal: 'center' };
                        worksheet.getCell('Q3').alignment = { vertical: 'middle', horizontal: 'center' };
 
                        worksheet.mergeCells('R2', 'R3');
-                       worksheet.getCell('R2').value = 'Total Yang Disetor';
+                       worksheet.getCell('R2').value = 'B2 - QRIS';
                        worksheet.getCell('R2').alignment = { vertical: 'middle', horizontal: 'center' };
                        worksheet.getCell('R3').alignment = { vertical: 'middle', horizontal: 'center' };
 
                        worksheet.mergeCells('S2', 'S3');
-                       worksheet.getCell('S2').value = 'Total Pendapatan';
+                       worksheet.getCell('S2').value = 'B2 - TRANSFER';
                        worksheet.getCell('S2').alignment = { vertical: 'middle', horizontal: 'center' };
                        worksheet.getCell('S3').alignment = { vertical: 'middle', horizontal: 'center' };
+
+                       worksheet.mergeCells('T2', 'T3');
+                       worksheet.getCell('T2').value = 'CASES';
+                       worksheet.getCell('T2').alignment = { vertical: 'middle', horizontal: 'center' };
+                       worksheet.getCell('T3').alignment = { vertical: 'middle', horizontal: 'center' };
+
+                       worksheet.mergeCells('U2', 'U3');
+                       worksheet.getCell('U2').value = 'Total Yang Disetor';
+                       worksheet.getCell('U2').alignment = { vertical: 'middle', horizontal: 'center' };
+                       worksheet.getCell('U3').alignment = { vertical: 'middle', horizontal: 'center' };
+
+                       worksheet.mergeCells('V2', 'V3');
+                       worksheet.getCell('V2').value = 'Total Pendapatan';
+                       worksheet.getCell('V2').alignment = { vertical: 'middle', horizontal: 'center' };
+                       worksheet.getCell('V3').alignment = { vertical: 'middle', horizontal: 'center' };
 
 
                        worksheet.columns = [
@@ -595,6 +613,10 @@
                        worksheet.getCell('Q1').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
                        worksheet.getCell('R1').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
                        worksheet.getCell('S1').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                       worksheet.getCell('T1').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                       worksheet.getCell('U1').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                       worksheet.getCell('V1').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+
 
                        worksheet.getCell('A2').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
                        worksheet.getCell('B2').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
@@ -614,8 +636,9 @@
                        worksheet.getCell('Q2').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
                        worksheet.getCell('R2').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
                        worksheet.getCell('S2').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
-                       
-                       
+                       worksheet.getCell('T2').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                       worksheet.getCell('U2').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                       worksheet.getCell('V2').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
 
 
                        worksheet.getCell('A3').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
@@ -637,6 +660,9 @@
                        worksheet.getCell('Q3').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
                        worksheet.getCell('R3').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
                        worksheet.getCell('S3').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                       worksheet.getCell('T3').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                       worksheet.getCell('U3').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                       worksheet.getCell('V3').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
 
 
                        let counter = 4;
@@ -670,10 +696,10 @@
                                       worksheet.getCell('A'+counter).value = "";
                                       worksheet.getCell('B'+counter).value = "";
                                       worksheet.getCell('C'+counter).value = "";
-                                      worksheet.getCell('D'+counter).value = t_qty;
-                                      worksheet.getCell('E'+counter).value = "";
-                                      worksheet.getCell('F'+counter).value = t_total;
-                                      worksheet.getCell('G'+counter).value = "";
+                                      worksheet.getCell('D'+counter).value = "";
+                                      worksheet.getCell('E'+counter).value = t_qty;
+                                      worksheet.getCell('F'+counter).value = "";
+                                      worksheet.getCell('G'+counter).value = t_total;
                                       worksheet.getCell('H'+counter).value = "";
                                       worksheet.getCell('I'+counter).value = "";
                                       worksheet.getCell('J'+counter).value = "";
@@ -684,8 +710,11 @@
                                       worksheet.getCell('O'+counter).value = "";
                                       worksheet.getCell('P'+counter).value = "";
                                       worksheet.getCell('Q'+counter).value = "";
-                                      worksheet.getCell('R'+counter).value = report_data[idx-1].total_cash;
-                                      worksheet.getCell('S'+counter).value = report_data[idx-1].total_all;
+                                      worksheet.getCell('R'+counter).value = "";
+                                      worksheet.getCell('S'+counter).value = "";
+                                      worksheet.getCell('T'+counter).value = "";
+                                      worksheet.getCell('U'+counter).value = report_data[idx-1].total_cash;
+                                      worksheet.getCell('V'+counter).value = report_data[idx-1].total_all;
                                       worksheet.getRow(counter).font = { bold: true };
 
                                       counter++;
@@ -709,13 +738,9 @@
                                   worksheet.getCell('J'+counter).value = rowElementData.total_b1c;
                                   worksheet.getCell('K'+counter).value = rowElementData.total_b1q;
                                   worksheet.getCell('L'+counter).value = rowElementData.total_b1t;
-                                  worksheet.getCell('M'+counter).value = rowElementData.total_b2d;
-                                  worksheet.getCell('N'+counter).value = rowElementData.total_b2c;
-                                  worksheet.getCell('O'+counter).value = rowElementData.total_b2q;
-                                  worksheet.getCell('P'+counter).value = rowElementData.total_b2t;
-                                  worksheet.getCell('Q'+counter).value = rowElementData.qty_service;
-                                  worksheet.getCell('R'+counter).value = "";
-                                  worksheet.getCell('S'+counter).value = "";
+                                  worksheet.getCell('M'+counter).value = rowElementData.qty_service;
+                                  worksheet.getCell('N'+counter).value = "";
+                                  worksheet.getCell('O'+counter).value = "";
                                 }
                               }
 
@@ -738,10 +763,6 @@
                             worksheet.getCell('M'+counter).value = "";
                             worksheet.getCell('N'+counter).value = "";
                             worksheet.getCell('O'+counter).value = "";
-                            worksheet.getCell('P'+counter).value = "";
-                            worksheet.getCell('Q'+counter).value = "";
-                            worksheet.getCell('R'+counter).value = "";
-                            worksheet.getCell('S'+counter).value = "";
                           }
 
                           t_qty = t_qty + parseFloat(rowElement.qty);
@@ -767,10 +788,6 @@
                            worksheet.getCell('M'+counter).alignment = { wrapText: true, vertical: 'top', horizontal: 'left' };
                            worksheet.getCell('N'+counter).alignment = { wrapText: true, vertical: 'top', horizontal: 'left' };
                            worksheet.getCell('O'+counter).alignment = { wrapText: true, vertical: 'top', horizontal: 'left' };
-                           worksheet.getCell('P'+counter).alignment = { wrapText: true, vertical: 'top', horizontal: 'left' };
-                           worksheet.getCell('Q'+counter).alignment = { wrapText: true, vertical: 'top', horizontal: 'left' };
-                           worksheet.getCell('R'+counter).alignment = { wrapText: true, vertical: 'top', horizontal: 'left' };
-                           worksheet.getCell('S'+counter).alignment = { wrapText: true, vertical: 'top', horizontal: 'left' };
                            counter++;
                            worksheet.getCell('B'+counter).alignment = { wrapText: true, vertical: 'top', horizontal: 'left' };
                            worksheet.getCell('C'+counter).alignment = { wrapText: true, vertical: 'top', horizontal: 'left' };
@@ -785,10 +802,6 @@
                            worksheet.getCell('M'+counter).alignment = { wrapText: true, vertical: 'top', horizontal: 'left' };
                            worksheet.getCell('N'+counter).alignment = { wrapText: true, vertical: 'top', horizontal: 'left' };
                            worksheet.getCell('O'+counter).alignment = { wrapText: true, vertical: 'top', horizontal: 'left' };
-                           worksheet.getCell('P'+counter).alignment = { wrapText: true, vertical: 'top', horizontal: 'left' };
-                           worksheet.getCell('Q'+counter).alignment = { wrapText: true, vertical: 'top', horizontal: 'left' };
-                           worksheet.getCell('R'+counter).alignment = { wrapText: true, vertical: 'top', horizontal: 'left' };
-                           worksheet.getCell('S'+counter).alignment = { wrapText: true, vertical: 'top', horizontal: 'left' };
 
                            var borderStyles = {
                              top: { style: "thin" },
@@ -814,12 +827,8 @@
                                 worksheet.getCell('K'+counter).value = "";
                                 worksheet.getCell('L'+counter).value = "";
                                 worksheet.getCell('M'+counter).value = "";
-                                worksheet.getCell('N'+counter).value = "";
-                                worksheet.getCell('O'+counter).value = "";
-                                worksheet.getCell('P'+counter).value = "";
-                                worksheet.getCell('Q'+counter).value = "";
-                                worksheet.getCell('R'+counter).value = last_total_cash;
-                                worksheet.getCell('S'+counter).value = last_total_all;
+                                worksheet.getCell('N'+counter).value = last_total_cash;
+                                worksheet.getCell('O'+counter).value = last_total_all;
                                 worksheet.getRow(counter).font = { bold: true };
 
                                 counter++;
@@ -836,13 +845,9 @@
                                 worksheet.getCell('J'+counter).value = report_total[0].total_b1c;
                                 worksheet.getCell('K'+counter).value = report_total[0].total_b1q;
                                 worksheet.getCell('L'+counter).value = report_total[0].total_b1t;
-                                worksheet.getCell('M'+counter).value = report_total[0].total_b2d;
-                                worksheet.getCell('N'+counter).value = report_total[0].total_b2c;
-                                worksheet.getCell('O'+counter).value = report_total[0].total_b2q;
-                                worksheet.getCell('P'+counter).value = report_total[0].total_b2t;
-                                worksheet.getCell('Q'+counter).value = report_total[0].qty_service;
-                                worksheet.getCell('R'+counter).value = report_total[0].total_cash;
-                                worksheet.getCell('S'+counter).value = t_total_all_t;
+                                worksheet.getCell('M'+counter).value = report_total[0].qty_service;
+                                worksheet.getCell('N'+counter).value = report_total[0].total_cash;
+                                worksheet.getCell('O'+counter).value = t_total_all_t;
                                 worksheet.getRow(counter).font = { bold: true };
                             }
 

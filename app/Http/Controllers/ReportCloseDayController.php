@@ -1937,7 +1937,7 @@ class ReportCloseDayController extends Controller
             group by b.remark,im.dated,b.id,id.product_id,id.price,ps.abbr
             order by 1,3,5");
             
-            return compact('report_detail','branchx','keyword','report_data','begindate','enddate');
+            return compact('report_detail','branchx','keyword','report_data','begindate','enddate','report_total');
         }else if($request->export=='Export Sum Counter'){
             $report_data = DB::select("
                     select b.id as branch_id,b.remark as branch_name,im.dated,sum(id.total+id.vat_total) as total_all,
