@@ -457,9 +457,7 @@
                           worksheet.getCell('H'+counter).alignment = { wrapText: true };
                           worksheet.getCell('I'+counter).alignment = { wrapText: true };
                           worksheet.getCell('J'+counter).alignment = { wrapText: true };
-                          worksheet.getCell('K'+counter).alignment = { wrapText: true };
-                          worksheet.getCell('L'+counter).alignment = { wrapText: true };
-                          worksheet.getCell('M'+counter).alignment = { wrapText: true };                            
+                          worksheet.getCell('K'+counter).alignment = { wrapText: true };                        
                           counter++;
                           worksheet.getCell('B'+counter).alignment = { wrapText: true };
                           worksheet.getCell('C'+counter).alignment = { wrapText: true };
@@ -470,8 +468,6 @@
                           worksheet.getCell('I'+counter).alignment = { wrapText: true };
                           worksheet.getCell('J'+counter).alignment = { wrapText: true };
                           worksheet.getCell('K'+counter).alignment = { wrapText: true };
-                          worksheet.getCell('L'+counter).alignment = { wrapText: true };
-                          worksheet.getCell('M'+counter).alignment = { wrapText: true }; 
 
                           var borderStyles = {
                             top: { style: "thin" },
@@ -490,7 +486,37 @@
 
 
                       counter++;
-                      worksheet.getRow(counter).font = { bold: true };
+
+                      worksheet.addRow({
+                        tanggal : "TOTAL", 
+                        perawatan : total_service, 
+                        perawatan_sd : total_service, 
+                        produk : total_product, 
+                        produk_sd : total_product, 
+                        ojek : total_ojek, 
+                        ojek_sd : total_ojek, 
+                        extra : total_extra, 
+                        extra_sd : total_extra, 
+                        total_all : total_all, 
+                        total_all_sd : total_all, 
+                      });
+                      worksheet.getRow(counter+1).font = { bold: true };
+                      worksheet.getCell('B'+counter+1).alignment = { wrapText: true };
+                      worksheet.getCell('C'+counter+1).alignment = { wrapText: true };
+                      worksheet.getCell('D'+counter+1).alignment = { wrapText: true };
+                      worksheet.getCell('E'+counter+1).alignment = { wrapText: true };
+                      worksheet.getCell('F'+counter+1).alignment = { wrapText: true };
+                      worksheet.getCell('H'+counter+1).alignment = { wrapText: true };
+                      worksheet.getCell('I'+counter+1).alignment = { wrapText: true };
+                      worksheet.getCell('J'+counter+1).alignment = { wrapText: true };
+                      worksheet.getCell('K'+counter+1).alignment = { wrapText: true };
+
+                      worksheet.eachRow({ includeEmpty: true }, function(row, rowNumber) {
+                            row.eachCell({ includeEmpty: true }, function(cell, colNumber) {
+                              cell.border = borderStyles;
+                            });
+                          });
+
                   
 
                   //XLSX.writeFile(workbook, "Presidents.xlsx", { compression: true });

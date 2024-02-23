@@ -300,7 +300,7 @@
 
 
 
-        <div class="panel-heading bg-teal-600 text-white mb-2 row"> <div class="col-6"><strong>@lang('general.lbl_order_list')</strong></div><div class="col-6 d-flex justify-content-end"><button class="mx-2 btn btn-sm btn-danger " id="apply-promo-btn">Hitung Promo</button></div></div>
+        <div class="panel-heading bg-teal-600 text-white mb-2 row"> <div class="col-6"><strong>@lang('general.lbl_order_list')</strong></div><div class="col-6 d-flex justify-content-end"><button class="mx-2 btn btn-sm btn-danger d-none" id="apply-promo-btn">Hitung Promo</button></div></div>
         <div class="card text-center font-weight-bold my-3 p-1"><h3><i class="fas fa-fw fa-hands-praying"></i> @lang('general.service')</h3></div>
 
         <div class="row mb-3">
