@@ -54,18 +54,57 @@
               <thead>
                 <tr style="background-color:#FFA726;color:black;">
                   <th colspan="7">Cabang : {{ $report_data[0]->branch_name  }}</th>
-                  <th colspan="8">Tgl : {{ $filter_begin_date  }} ~ {{ $filter_begin_end  }}</th>
+                  <th colspan="14">Tgl : {{ $filter_begin_date  }} ~ {{ $filter_begin_end  }}</th>
                 </tr>
-                <tr>
+                <tr style="text-align: center;background-color:#FFA726;">
                   <th>No</th>
                   <th>Nama</th>
+                  <th>Posisi</th>
+                  <th>Tahun</th>
+                  <th>Poin</th>
+                  <th>Total</th>
+                  <th>Perawatan</th>
+                  <th>Komisi Produk</th>
+                  <th>Nilai Point</th>
+                  <th>Extra Charge</th>
+                  <th>Komisi Menurut Cat Terapis</th>
+                  <th>Selisih</th>
+                  <th>Cases</th>
+                  <th>Simpanan</th>
+                  <th>Iuran Perbaikan</th>
+                  <th>Denda</th>
+                  <th>Potongan Kasbon</th>
+                  <th>Komisi Yang Diterima</th>
+                  <th>No. Rekening</th>
+                  <th>A/N</th>
+                  <th>Bank</th>
                 </tr>
               </thead>
               <tbody>
+                <?php $counter = 1; ?>
                     @foreach ($report_data as $item)
                     <tr>
-                      <td>1</td>
+                      <td><?= $counter++; ?></td>
                       <td>{{ $item->nama }}</td>
+                      <td>{{ $item->posisi }}</td>
+                      <td>{{ $item->tahun }}</td>
+                      <td>{{ $item->point_qty }}</td>
+                      <td>{{ number_format($item->total,0,',','.')  }}</td>
+                      <td>{{ number_format($item->perawatan,0,',','.')  }}</td>
+                      <td>{{ number_format($item->komisi_produk,0,',','.')  }}</td>
+                      <td>{{ number_format($item->nilai_point,0,',','.')  }}</td>
+                      <td>{{ number_format($item->extra_charge,0,',','.')  }}</td>
+                      <td></td>
+                      <td></td>
+                      <td>{{ $item->cases }}</td>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                      <td></td>
                     </tr>
                     @endforeach
               </tbody>
@@ -99,16 +138,14 @@
         filter_end_date_in : "{{ $filter_begin_end }}",
         filter_branch_id_in: "{{ $filter_branch_id }}",
         filter_terapist_in: "{{ $filter_terapist_in }}",
-        export : 'Export Sum Template',
+        export : 'Export Sum Template API',
       };
 
       $('#btn_export_xls').on('click',function(){
         const res = axios.get(url,{ params }, {
                     headers: {}
                   }).then(resp => {
-                    report_data_detail_t = resp.data.report_data_detail_t;
-                    report_data_com_from1 = resp.data.report_data_com_from1;
-                    report_data_terapist = resp.data.report_data_terapist;
+                    report_data = resp.data.report_data;
 
                     var beginnewformat = resp.data.beginnewformat;
                     var endnewformat = resp.data.endnewformat;
@@ -116,89 +153,70 @@
                     let data_filtered = [];
 
                     // Loop Terapist
-                    report_data_terapist.forEach(element => {
                         data_filtered = [];
 
-                        let worksheet = workbook.addWorksheet(element.name);
+                        let worksheet = workbook.addWorksheet("DATA");
 
                         /*Column headers*/
                         worksheet.getRow(3).values = [
-                          'Tgl', 
-                          'No Faktur', 
-                          'Jenis', 
-                          'Total',
-                          'Komisi',
-                          'Poin',
-                          'Nilai',
-                          'Jenis',
-                          'Harga',
-                          'Komisi',
-                          'Jml',
-                          'T Komisi',
-                          'Extra Charge',
-                          'Pendapatan',
-                          'Pendapatan (s/d)',
+                          'NO', 
+                          'NAMA', 
+                          'POSISI', 
+                          'TAHUN',
+                          'POIN',
+                          'TOTAL',
+                          'PERAWATAN',
+                          'KOMISI PRODUK',
+                          'NILAI POINT',
+                          'EXTRA CHARGE',
+                          'KOMISI MENURUT CAT TERAPIS',
+                          'SELISIH',
+                          'CASES',
+                          'SIMPANAN',
+                          'IURAN PERBAIKAN',
+                          'DENDA',
+                          'POTONGAN KASBON',
+                          'KOMISI YANG DITERIMA',
+                          'NO. REKENING',
+                          'A/N',
+                          'BANK'
                         ];
 
-
                         worksheet.mergeCells('A1', 'E1');
-                        worksheet.getCell('A1').value = 'Cabang : '+element.branch_name;
+                        worksheet.getCell('A1').value = 'Cabang : '+report_data[0].branch_name;
                         worksheet.getCell('A1').alignment = { vertical: 'middle', horizontal: 'center' };
 
-                        worksheet.mergeCells('F1', 'J1');
-                        worksheet.getCell('F1').value = 'Mitra Usaha : '+element.name+' ('+element.work_year+')';
-                        worksheet.getCell('F1').alignment = { vertical: 'middle', horizontal: 'center' };
 
                         worksheet.mergeCells('K1', 'O1');
                         worksheet.getCell('K1').value = 'Tgl : '+beginnewformat+' sd '+endnewformat;
-                        worksheet.getCell('K1').alignment = { vertical: 'middle', horizontal: 'center' };
+                        worksheet.getCell('K1').alignment = { vertical: 'middle', horizontal: 'center' };                 
 
-                        worksheet.mergeCells('A2', 'A3');
-                        worksheet.getCell('A2').value = 'Tgl';
-                        worksheet.getCell('A2').alignment = { vertical: 'middle', horizontal: 'center' };
-
-                        worksheet.mergeCells('B2', 'B3');
-                        worksheet.getCell('B2').value = 'No Faktur';
-                        worksheet.getCell('B2').alignment = { vertical: 'middle', horizontal: 'center' };
-                        worksheet.getCell('B3').alignment = { vertical: 'middle', horizontal: 'center' };
-                        worksheet.getCell('B3').alignment = { vertical: 'middle', horizontal: 'center' };
-
-                        worksheet.mergeCells('C2', 'E2');
-                        worksheet.getCell('C2').value = 'Perawatan';
-                        worksheet.getCell('C2').alignment = { vertical: 'middle', horizontal: 'center' };
-
-                        worksheet.mergeCells('F2', 'G2');
-                        worksheet.getCell('F2').value = 'Poin';
-                        worksheet.getCell('F2').alignment = { vertical: 'middle', horizontal: 'center' };
-
-                        worksheet.mergeCells('H2', 'L2');
-                        worksheet.getCell('H2').value = 'Produk';
-                        worksheet.getCell('H2').alignment = { vertical: 'middle', horizontal: 'center' };
-
-                        worksheet.mergeCells('M2', 'M3');
-                        worksheet.getCell('M2').value = 'Extra Charge';
-                        worksheet.getCell('M2').alignment = { vertical: 'middle', horizontal: 'center' };
-
-                        worksheet.mergeCells('N2', 'O2');
-                        worksheet.getCell('N2').value = 'Total';
-                        worksheet.getCell('N2').alignment = { vertical: 'middle', horizontal: 'center' };                        
+                        //count(1) as no,b.name as nama,'TERAPIS' as posisi,u.work_year as tahun,sum(total) total,sum(total_commisions) as perawatan, 
+                        //sum(product_commisions) as komisi_produk,sum(total_point) nilai_point,sum(commisions_extra) as extra_charge,'' as komisi_menurut_cat_terapis,'' as selisih,sum(service) as cases,
+                        //'' as simpanan,'' as iuran_perbaikan,'' as denda, '' as potongan_kasbon,'' as komisi_yang_diterima,'' as no_rekening, '' as bank,sum(point_qty) point_qty
 
                         worksheet.columns = [
-                          { key: 'dated', width: 12 },
-                          { key: 'invoice_no', width: 15 },
-                          { key: 'abbr', width: 20 },
-                          { key: 'total_abbr', width: 10 },
-                          { key: 'total_commisions', width: 10 },
-                          { key: 'total_point_qty', width: 10 },
-                          { key: 'total_point', width: 10 },
-                          { key: 'product_abbr', width: 18 },
-                          { key: 'product_price', width: 10 },
-                          { key: 'product_base_commision', width: 10 },
-                          { key: 'product_qty', width: 10 },
-                          { key: 'product_commisions', width: 10 },
-                          { key: 'commisions_extra', width: 13 },
-                          { key: 'total', width: 12 },
-                          { key: 'totalx', width: 20 },
+                          { key: 'no', width: 12 },
+                          { key: 'nama', width: 30 },
+                          { key: 'posisi', width: 20 },
+                          { key: 'tahun', width: 10 },
+                          { key: 'point_qty', width: 10 },
+                          { key: 'total', width: 10 },
+                          { key: 'perawatan', width: 10 },
+                          { key: 'komisi_produk', width: 18 },
+                          { key: 'nilai_point', width: 10 },
+                          { key: 'extra_charge', width: 10 },
+                          { key: 'komisi_menurut_cat_terapis', width: 10 },
+                          { key: 'selisih', width: 10 },
+                          { key: 'cases', width: 13 },
+                          { key: 'simpanan', width: 12 },
+                          { key: 'iuran_perbaikan', width: 20 },
+                          { key: 'denda', width: 20 },
+                          { key: 'potongan_kasbon', width: 20 },
+                          { key: 'komisi_yang_diterima', width: 20 },
+                          { key: 'no_rekening', width: 20 },
+                          { key: 'an', width: 20 },
+                          { key: 'bank', width: 20 },
                         ];
 
                         worksheet.getRow(1).font = { bold: true };
@@ -219,22 +237,13 @@
                         worksheet.getCell('M1').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
                         worksheet.getCell('N1').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
                         worksheet.getCell('O1').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                        worksheet.getCell('P1').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                        worksheet.getCell('Q1').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                        worksheet.getCell('R1').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                        worksheet.getCell('S1').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                        worksheet.getCell('T1').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                        worksheet.getCell('U1').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
 
-                        worksheet.getCell('A2').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
-                        worksheet.getCell('B2').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
-                        worksheet.getCell('C2').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
-                        worksheet.getCell('D2').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
-                        worksheet.getCell('E2').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
-                        worksheet.getCell('F2').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
-                        worksheet.getCell('G2').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
-                        worksheet.getCell('H2').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
-                        worksheet.getCell('I2').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
-                        worksheet.getCell('J2').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
-                        worksheet.getCell('K2').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
-                        worksheet.getCell('L2').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
-                        worksheet.getCell('M2').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
-                        worksheet.getCell('N2').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
-                        worksheet.getCell('O2').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
 
                         worksheet.getCell('A3').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
                         worksheet.getCell('B3').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
@@ -251,40 +260,41 @@
                         worksheet.getCell('M3').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
                         worksheet.getCell('N3').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
                         worksheet.getCell('O3').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                        worksheet.getCell('P3').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                        worksheet.getCell('Q3').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                        worksheet.getCell('R3').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                        worksheet.getCell('S3').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                        worksheet.getCell('T3').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                        worksheet.getCell('U3').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
 
                         let counter = 3;
                         let value_sd_until = 0;
-                        for (let index = 0; index < report_data_detail_t.length; index++) {
-                          const rowElement = report_data_detail_t[index];
-                          if(rowElement.name == element.name ){
-                            let value_sd = 0;
-                            for (let idx = 0; idx < report_data_com_from1.length; idx++) {
-                              const elementFrom = report_data_com_from1[idx];
-                              dateNow = parseInt(rowElement.dated.replaceAll('-','').replaceAll('-','').replaceAll('-',''));
-                              dateFrom = parseInt(elementFrom.dated.replaceAll('-','').replaceAll('-','').replaceAll('-',''));
-                              if(elementFrom.id == rowElement.id && dateNow>=dateFrom){
-                                value_sd = value_sd + parseFloat(elementFrom.total);
-                              }
-                            }
+                        for (let index = 0; index < report_data.length; index++) {
+                          var rowElement = report_data[index];
+                         
 
-                            value_sd_until = value_sd;
-                            
-                            worksheet.addRow({
-                              dated : rowElement.dated, 
-                              invoice_no : rowElement.invoice_no, 
-                              abbr                : ((rowElement.abbr.replaceAll("####", "##")).replaceAll("####", "##")).replaceAll("####","##").replaceAll("####","##").replaceAll("####","##").replaceAll('##','\n'), 
-                              total_abbr          : ((rowElement.total_abbr.replaceAll("####", "##")).replaceAll("####", "##")).replaceAll("####","##").replaceAll("####","##").replaceAll("####","##").replaceAll('##','\n'), 
-                              total_commisions    : ((rowElement.total_commisions.replaceAll("####", "##")).replaceAll("####", "##")).replaceAll("####","##").replaceAll("####","##").replaceAll("####","##").replaceAll('##','\n'), 
-                              total_point_qty     : ((rowElement.total_point_qty.replaceAll("####", "##")).replaceAll("####", "##")).replaceAll("####","##").replaceAll("####","##").replaceAll("####","##").replaceAll('##','\n'), 
-                              total_point         : rowElement.total_point, 
-                              product_abbr        : ((rowElement.product_abbr.replaceAll("####", "##")).replaceAll("####", "##")).replaceAll("####","##").replaceAll("####","##").replaceAll('####','##').replaceAll('##','\n'), 
-                              product_price       : ((rowElement.product_price.replaceAll("####", "##")).replaceAll("####", "##")).replaceAll("####","##").replaceAll("####","##").replaceAll('####','##').replaceAll("####","##").replaceAll('##','\n'), 
-                              product_base_commision : ((rowElement.product_base_commision.replaceAll("####", "##")).replaceAll("####","##").replaceAll("####","##").replaceAll("####", "##")).replaceAll('##','\n'), 
-                              product_qty         : ((rowElement.product_qty.replaceAll("####", "##")).replaceAll("####", "##")).replaceAll("####","##").replaceAll("####","##").replaceAll("####","##").replaceAll("####","##").replaceAll('##','\n'), 
-                              product_commisions  : ((rowElement.product_commisions.replaceAll("####", "##")).replaceAll("####", "##")).replaceAll("####","##").replaceAll("####","##").replaceAll("####","##").replaceAll("####","##").replaceAll('##','\n'), 
-                              commisions_extra    : ((rowElement.commisions_extra.replaceAll("####", "##")).replaceAll("####", "##")).replaceAll("####","##").replaceAll("####","##").replaceAll("####","##").replaceAll("####","##").replaceAll('##','\n'), 
-                              total : rowElement.total, 
-                              totalx : value_sd, 
+                          worksheet.addRow({
+                              no : (index+1), 
+                              nama : rowElement.nama, 
+                              posisi            : rowElement.posisi, 
+                              tahun          : rowElement.tahun, 
+                              point_qty    : rowElement.point_qty, 
+                              total     : rowElement.total, 
+                              perawatan         : rowElement.perawatan, 
+                              komisi_produk        : rowElement.komisi_produk, 
+                              nilai_point       : rowElement.nilai_point, 
+                              extra_charge : rowElement.extra_charge, 
+                              komisi_menurut_cat_terapis         : rowElement.komisi_menurut_cat_terapis, 
+                              selisih  : rowElement.selisih, 
+                              cases    : rowElement.cases, 
+                              simpanan : '', 
+                              iuran_perbaikan : '', 
+                              denda : '', 
+                              potongan_kasbon : '', 
+                              komisi_yang_diterima : '', 
+                              no_rekening : '', 
+                              an : '', 
+                              bank : '', 
                             });
                             worksheet.getCell('B'+counter).alignment = { wrapText: true };
                             worksheet.getCell('C'+counter).alignment = { wrapText: true };
@@ -322,85 +332,13 @@
                                 cell.border = borderStyles;
                               });
                             });
-                          }
+                          
                         }
 
 
                         counter++;
-
-                        let report_data_detail_e_t = resp.data.report_data_detail_e_t;
-                        for (let index = 0; index < report_data_detail_e_t.length; index++) {
-                          const rowElement = report_data_detail_e_t[index];
-                          if(rowElement.name == element.name ){
-                              worksheet.getCell('A'+counter).value = "Total";
-                              worksheet.getCell('A'+counter).fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
-                              worksheet.getCell('A'+counter).alignment = { wrapText: true };
-                              worksheet.getCell('B'+counter).value = rowElement.invoice;
-                              worksheet.getCell('B'+counter).fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
-                              worksheet.getCell('B'+counter).alignment = { wrapText: true, vertical: 'middle', horizontal: 'center' };
-
-                              worksheet.getCell('C'+counter).value = rowElement.service;
-                              worksheet.getCell('C'+counter).fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
-                              worksheet.getCell('C'+counter).alignment = { wrapText: true, vertical: 'middle', horizontal: 'center' };
-
-                              worksheet.getCell('D'+counter).value = rowElement.total_abbr;
-                              worksheet.getCell('D'+counter).fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
-                              worksheet.getCell('D'+counter).alignment = { wrapText: true, vertical: 'middle', horizontal: 'center' };
-
-                              worksheet.getCell('E'+counter).value = rowElement.total_commisions;
-                              worksheet.getCell('E'+counter).fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
-                              worksheet.getCell('E'+counter).alignment = { wrapText: true, vertical: 'middle', horizontal: 'center' };
-
-                              worksheet.getCell('F'+counter).value = rowElement.point_qty;
-                              worksheet.getCell('F'+counter).fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
-                              worksheet.getCell('F'+counter).alignment = { wrapText: true, vertical: 'middle', horizontal: 'center' };
-
-                              worksheet.getCell('G'+counter).value = rowElement.total_point;
-                              worksheet.getCell('G'+counter).fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
-                              worksheet.getCell('G'+counter).alignment = { wrapText: true, vertical: 'middle', horizontal: 'center' };
-
-                              worksheet.mergeCells('H'+counter, 'J'+counter);
-                              worksheet.getCell('H'+counter).fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
-
-
-                              worksheet.getCell('K'+counter).value = rowElement.product_qty;
-                              worksheet.getCell('K'+counter).fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
-                              worksheet.getCell('K'+counter).alignment = { wrapText: true, vertical: 'middle', horizontal: 'center' };
-
-                              worksheet.getCell('L'+counter).value = rowElement.product_commisions;
-                              worksheet.getCell('L'+counter).fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
-                              worksheet.getCell('L'+counter).alignment = { wrapText: true, vertical: 'middle', horizontal: 'center' };
-
-                              worksheet.getCell('M'+counter).value = rowElement.commisions_extra;
-                              worksheet.getCell('M'+counter).fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
-                              worksheet.getCell('M'+counter).alignment = { wrapText: true, vertical: 'middle', horizontal: 'center' };
-
-                              worksheet.getCell('N'+counter).value = rowElement.total;
-                              worksheet.getCell('N'+counter).fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
-                              worksheet.getCell('N'+counter).alignment = { wrapText: true, vertical: 'middle', horizontal: 'center' };
-
-                              worksheet.getCell('O'+counter).value = value_sd_until;
-                              worksheet.getCell('O'+counter).fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
-                              worksheet.getCell('O'+counter).alignment = { wrapText: true, vertical: 'middle', horizontal: 'center' };
-
-                              worksheet.eachRow({ includeEmpty: true }, function(row, rowNumber) {
-                                  row.eachCell({ includeEmpty: true }, function(cell, colNumber) {
-                                    cell.border = borderStyles;
-                                  });
-                                });
-                
-                          }
-                        }
-
                         worksheet.getRow(counter).font = { bold: true };
-                        
-
-                        
-
-
-
-                    });
-                    // End loop terapist
+                    
 
                     //XLSX.writeFile(workbook, "Presidents.xlsx", { compression: true });
 
@@ -419,11 +357,5 @@
       });
  
     });
-
-    let report_data_detail_t = [];
-    let report_data_com_from1 = [];
-    let report_data_terapist = [];
-
-    
  </script>
 </html> 
