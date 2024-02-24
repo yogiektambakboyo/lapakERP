@@ -268,7 +268,7 @@
 
 
                       worksheet.mergeCells('K1', 'O1');
-                      worksheet.getCell('K1').value = 'Tgl : '+resp.data.begindate+' sd '+resp.data.enddate;
+                      worksheet.getCell('K1').value = 'Tgl : '+resp.data.beginnewformat+' sd '+resp.data.endnewformat;
                       worksheet.getCell('K1').alignment = { vertical: 'middle', horizontal: 'center' }; 
                       
                       worksheet.mergeCells('A3', 'A4');
@@ -417,7 +417,7 @@
 
                         total_service = total_service + parseFloat((rowElement.total_service-rowElement.total_tambahan));
                         total_product = total_product + parseFloat(rowElement.total_product);
-                        total_ojek = total_ojek + parseFloat(rowElement.total_ojek);
+                        total_ojek = total_ojek + parseFloat(rowElement.total_ojek) + parseFloat(rowElement.total_tambahan);
                         total_tambahan = total_tambahan + parseFloat(rowElement.total_tambahan);
                         total_extra = total_extra + parseFloat(rowElement.total_extra);
                         total_lebaran = total_lebaran + parseFloat(rowElement.total_lebaran);

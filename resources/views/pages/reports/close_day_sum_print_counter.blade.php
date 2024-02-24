@@ -268,7 +268,7 @@
 
 
                       worksheet.mergeCells('F1', 'I1');
-                      worksheet.getCell('F1').value = 'Tgl : '+resp.data.begindate+' sd '+resp.data.enddate;
+                      worksheet.getCell('F1').value = 'Tgl : '+resp.data.beginnewformat+' sd '+resp.data.endnewformat;
                       worksheet.getCell('F1').alignment = { vertical: 'middle', horizontal: 'center' }; 
                       
                       worksheet.mergeCells('A3', 'A4');

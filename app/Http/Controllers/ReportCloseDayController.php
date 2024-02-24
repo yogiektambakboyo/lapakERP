@@ -1944,7 +1944,7 @@ class ReportCloseDayController extends Controller
             group by b.remark,im.dated,b.id,id.product_id,id.price,ps.abbr
             order by 1,3,5");
             
-            return compact('report_detail','branchx','keyword','report_data','begindate','enddate','report_total');
+            return compact('beginnewformat','endnewformat','report_detail','branchx','keyword','report_data','begindate','enddate','report_total');
         }else if($request->export=='Export Sum Counter'){
             $report_data = DB::select("
                     select b.id as branch_id,b.remark as branch_name,im.dated,sum(id.total+id.vat_total) as total_all,
@@ -2101,7 +2101,7 @@ class ReportCloseDayController extends Controller
                     where im.dated between '".$begindate."' and '".$enddate."'        
             "); 
             
-            return compact('period','shifts','report_total','branchs','keyword','act_permission','report_data','begindate','enddate');
+            return compact('beginnewformat','endnewformat','period','shifts','report_total','branchs','keyword','act_permission','report_data','begindate','enddate');
         }else if($request->export=='Export Sum Pendapatan'){
             $report_data = DB::select("
                     select b.id as branch_id,b.remark as branch_name,im.dated,sum(id.total+id.vat_total) as total_all,
@@ -2256,7 +2256,7 @@ class ReportCloseDayController extends Controller
                     where im.dated between '".$begindate."' and '".$enddate."'        
             "); 
             
-            return compact('period','shifts','report_total','branchx','branchs','keyword','report_data','begindate','enddate');
+            return compact('beginnewformat','endnewformat','period','shifts','report_total','branchx','branchs','keyword','report_data','begindate','enddate');
         }else if($request->export=='Export Sumon'){
             $filter_month_in = $request->filter_month_in;
             $filter_month_out = $request->filter_month_out;

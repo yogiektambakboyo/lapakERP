@@ -474,7 +474,7 @@
                        worksheet.getCell('A1').alignment = { vertical: 'middle', horizontal: 'center' };
 
                        worksheet.mergeCells('F1', 'O1');
-                       worksheet.getCell('F1').value = 'Tgl : '+resp.data.begindate+' sd '+resp.data.enddate;
+                       worksheet.getCell('F1').value = 'Tgl : '+resp.data.beginnewformat+' sd '+resp.data.endnewformat;
                        worksheet.getCell('F1').alignment = { vertical: 'middle', horizontal: 'center' };
 
 
@@ -733,7 +733,7 @@
                                   t_total_all_t = t_total_all_t + parseFloat(rowElementData.total_all);
 
                                   worksheet.getCell('A'+counter).value = rowElement.datedformat;
-                                  worksheet.getCell('B'+counter).value = rowElementData.total_service;
+                                  worksheet.getCell('B'+counter).value = (parseFloat(rowElementData.total_service)-parseFloat(rowElementData.total_tambahan));
                                   worksheet.getCell('C'+counter).value = rowElementData.total_salon;
                                   worksheet.getCell('D'+counter).value = (parseFloat(rowElementData.total_salon)+parseFloat(rowElementData.total_service));
                                   worksheet.getCell('E'+counter).value = rowElement.abbr;
