@@ -267,16 +267,16 @@
                       worksheet.getCell('A1').alignment = { vertical: 'middle', horizontal: 'center' };
 
 
-                      worksheet.mergeCells('F1', 'I1');
-                      worksheet.getCell('F1').value = 'Tgl : '+resp.data.begindate+' sd '+resp.data.enddate;
-                      worksheet.getCell('F1').alignment = { vertical: 'middle', horizontal: 'center' }; 
+                      worksheet.mergeCells('K1', 'O1');
+                      worksheet.getCell('K1').value = 'Tgl : '+resp.data.begindate+' sd '+resp.data.enddate;
+                      worksheet.getCell('K1').alignment = { vertical: 'middle', horizontal: 'center' }; 
                       
                       worksheet.mergeCells('A3', 'A4');
                       worksheet.getCell('A3').value = 'TANGGAL';
                       worksheet.getCell('A3').alignment = { vertical: 'middle', horizontal: 'center' };
 
                       worksheet.mergeCells('B3', 'C3');
-                      worksheet.getCell('B3').value = 'PERAWATAN';
+                      worksheet.getCell('B3').value = 'PERAWATAN & SALON';
                       worksheet.getCell('B3').alignment = { vertical: 'middle', horizontal: 'center' };
 
                       worksheet.getCell('B4').value = 'HARIAN';
@@ -298,7 +298,7 @@
 
 
                       worksheet.mergeCells('F3', 'G3');
-                      worksheet.getCell('F3').value = 'EXTRA CHARGE';
+                      worksheet.getCell('F3').value = 'OJEK + TAMBAHAN TERAPIS';
                       worksheet.getCell('F3').alignment = { vertical: 'middle', horizontal: 'center' };
 
                       worksheet.getCell('F4').value = 'HARIAN';
@@ -308,8 +308,9 @@
                       worksheet.getCell('G4').alignment = { vertical: 'middle', horizontal: 'center' };
 
 
+
                       worksheet.mergeCells('H3', 'I3');
-                      worksheet.getCell('H3').value = 'PENDAPATAN TOTAL';
+                      worksheet.getCell('H3').value = 'EXTRA CHARGE';
                       worksheet.getCell('H3').alignment = { vertical: 'middle', horizontal: 'center' };
 
                       worksheet.getCell('H4').value = 'HARIAN';
@@ -318,12 +319,31 @@
                       worksheet.getCell('I4').value = 'S/D';
                       worksheet.getCell('I4').alignment = { vertical: 'middle', horizontal: 'center' };
 
+
+                      worksheet.mergeCells('J3', 'K3');
+                      worksheet.getCell('J3').value = 'PENDAPATAN TOTAL';
+                      worksheet.getCell('J3').alignment = { vertical: 'middle', horizontal: 'center' };
+
+                      worksheet.getCell('J4').value = 'HARIAN';
+                      worksheet.getCell('J4').alignment = { vertical: 'middle', horizontal: 'center' };
+
+                      worksheet.getCell('K4').value = 'S/D';
+                      worksheet.getCell('K4').alignment = { vertical: 'middle', horizontal: 'center' };
+
+
+
+                      //count(1) as no,b.name as nama,'TERAPIS' as posisi,u.work_year as tahun,sum(total) total,sum(total_commisions) as perawatan, 
+                      //sum(product_commisions) as komisi_produk,sum(total_point) nilai_point,sum(commisions_extra) as extra_charge,'' as komisi_menurut_cat_terapis,'' as selisih,sum(service) as cases,
+                      //'' as simpanan,'' as iuran_perbaikan,'' as denda, '' as potongan_kasbon,'' as komisi_yang_diterima,'' as no_rekening, '' as bank,sum(point_qty) point_qty
+
                       worksheet.columns = [
                         { key: 'tanggal', width: 12 },
                         { key: 'perawatan', width: 30 },
                         { key: 'perawatan_sd', width: 20 },
                         { key: 'produk', width: 20 },
                         { key: 'produk_sd', width: 20 },
+                        { key: 'ojek', width: 20 },
+                        { key: 'ojek_sd', width: 20 },
                         { key: 'extra', width: 20 },
                         { key: 'extra_sd', width: 20 },
                         { key: 'total_all', width: 20 },
@@ -342,6 +362,8 @@
                       worksheet.getCell('G1').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
                       worksheet.getCell('H1').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
                       worksheet.getCell('I1').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                      worksheet.getCell('J1').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                      worksheet.getCell('K1').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
 
 
                       worksheet.getCell('A3').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
@@ -353,6 +375,8 @@
                       worksheet.getCell('G3').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
                       worksheet.getCell('H3').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
                       worksheet.getCell('I3').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                      worksheet.getCell('J3').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                      worksheet.getCell('K3').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
 
                       worksheet.getCell('A4').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
                       worksheet.getCell('B4').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
@@ -363,6 +387,8 @@
                       worksheet.getCell('G4').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
                       worksheet.getCell('H4').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
                       worksheet.getCell('I4').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                      worksheet.getCell('J4').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                      worksheet.getCell('K4').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
 
                       let counter = 3;
                       let value_sd_until = 0;
@@ -414,6 +440,8 @@
                             perawatan_sd : total_service, 
                             produk : rowElement.total_product, 
                             produk_sd : total_product, 
+                            ojek : parseFloat(rowElement.total_ojek) + parseFloat(rowElement.total_tambahan), 
+                            ojek_sd : total_ojek, 
                             extra : parseFloat(rowElement.total_extra), 
                             extra_sd : total_extra, 
                             total_all : parseFloat(rowElement.total_all), 
@@ -427,7 +455,9 @@
                           worksheet.getCell('E'+counter).alignment = { wrapText: true };
                           worksheet.getCell('F'+counter).alignment = { wrapText: true };
                           worksheet.getCell('H'+counter).alignment = { wrapText: true };
-                          worksheet.getCell('I'+counter).alignment = { wrapText: true };                      
+                          worksheet.getCell('I'+counter).alignment = { wrapText: true };
+                          worksheet.getCell('J'+counter).alignment = { wrapText: true };
+                          worksheet.getCell('K'+counter).alignment = { wrapText: true };                        
                           counter++;
                           worksheet.getCell('B'+counter).alignment = { wrapText: true };
                           worksheet.getCell('C'+counter).alignment = { wrapText: true };
@@ -436,6 +466,8 @@
                           worksheet.getCell('F'+counter).alignment = { wrapText: true };
                           worksheet.getCell('H'+counter).alignment = { wrapText: true };
                           worksheet.getCell('I'+counter).alignment = { wrapText: true };
+                          worksheet.getCell('J'+counter).alignment = { wrapText: true };
+                          worksheet.getCell('K'+counter).alignment = { wrapText: true };
 
                           var borderStyles = {
                             top: { style: "thin" },
@@ -461,6 +493,8 @@
                         perawatan_sd : total_service, 
                         produk : total_product, 
                         produk_sd : total_product, 
+                        ojek : total_ojek, 
+                        ojek_sd : total_ojek, 
                         extra : total_extra, 
                         extra_sd : total_extra, 
                         total_all : total_all, 
@@ -474,6 +508,8 @@
                       worksheet.getCell('F'+counter+1).alignment = { wrapText: true };
                       worksheet.getCell('H'+counter+1).alignment = { wrapText: true };
                       worksheet.getCell('I'+counter+1).alignment = { wrapText: true };
+                      worksheet.getCell('J'+counter+1).alignment = { wrapText: true };
+                      worksheet.getCell('K'+counter+1).alignment = { wrapText: true };
 
                       worksheet.eachRow({ includeEmpty: true }, function(row, rowNumber) {
                             row.eachCell({ includeEmpty: true }, function(cell, colNumber) {

@@ -732,7 +732,7 @@
                                   t_total_service_t = t_total_service_t + (parseFloat(rowElementData.total_service)-parseFloat(rowElementData.total_tambahan));
                                   t_total_all_t = t_total_all_t + parseFloat(rowElementData.total_all);
 
-                                  worksheet.getCell('A'+counter).value = rowElement.dated;
+                                  worksheet.getCell('A'+counter).value = rowElement.datedformat;
                                   worksheet.getCell('B'+counter).value = rowElementData.total_service;
                                   worksheet.getCell('C'+counter).value = rowElementData.total_salon;
                                   worksheet.getCell('D'+counter).value = (parseFloat(rowElementData.total_salon)+parseFloat(rowElementData.total_service));

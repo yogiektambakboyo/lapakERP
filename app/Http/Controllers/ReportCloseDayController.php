@@ -1793,7 +1793,7 @@ class ReportCloseDayController extends Controller
                     sum(case when ps.type_id = 2 then id.qty else 0 end) as qty_service
                     from invoice_master im 
                     join invoice_detail id on id.invoice_no  = im.invoice_no 
-                    join product_sku ps on ps.id = id.product_id
+                    join product_sku ps on ps.id = id.product_id and ps.id not in (461)
                     join customers c on c.id = im.customers_id and c.branch_id::character varying like '%".$branchx."%'
                     join branch b on b.id = c.branch_id
                     join users_branch as ub on ub.branch_id = b.id and ub.user_id = '".$user->id."'
@@ -1830,7 +1830,7 @@ class ReportCloseDayController extends Controller
                     sum(case when ps.type_id = 2 then id.qty else 0 end) as qty_service
                     from invoice_master im 
                     join invoice_detail id on id.invoice_no  = im.invoice_no 
-                    join product_sku ps on ps.id = id.product_id 
+                    join product_sku ps on ps.id = id.product_id  and ps.id not in (461)
                     join customers c on c.id = im.customers_id and c.branch_id::character varying like '%".$branchx."%'
                     join branch b on b.id = c.branch_id
                     join users_branch as ub on ub.branch_id = b.id and ub.user_id = '".$user->id."'
@@ -1840,7 +1840,7 @@ class ReportCloseDayController extends Controller
             $report_detail = DB::select("select b.id as branch_id,b.remark as branch_name,im.dated,id.product_id,ps.abbr,sum(id.qty) as qty,id.price,sum(id.total) as total
             from invoice_master im 
             join invoice_detail id on id.invoice_no  = im.invoice_no 
-            join product_sku ps on ps.id = id.product_id and ps.type_id = 1 and ps.category_id !=26  and ps.category_id!=60
+            join product_sku ps on ps.id = id.product_id and ps.type_id = 1 and ps.category_id !=26  and ps.category_id!=60  and ps.id not in (461)
             join customers c on c.id = im.customers_id and c.branch_id::character varying like '%".$branchx."%'
             join branch b on b.id = c.branch_id
             join users_branch as ub on ub.branch_id = b.id and ub.user_id = '".$user->id."'
@@ -1861,7 +1861,7 @@ class ReportCloseDayController extends Controller
             }
         }else if($request->export=='Export Sum New API'){
             $report_data = DB::select("
-                    select b.id as branch_id,b.remark as branch_name,im.dated,sum(id.total+id.vat_total) as total_all,
+                    select to_char(im.dated,'dd-mm-YYYY') as datedformat,b.id as branch_id,b.remark as branch_name,im.dated,sum(id.total+id.vat_total) as total_all,
                     sum(case when ps.type_id = 2 and ps.category_id!=53 and ps.category_id!=60 then id.total+id.vat_total else 0 end) as total_service,
                     sum(case when ps.type_id = 2 and ps.category_id=53 then id.total+id.vat_total else 0 end) as total_salon,
                     sum(case when ps.type_id = 2 and ps.category_id=56 then id.qty*20000 else 0 end) as total_tambahan,
@@ -1889,7 +1889,7 @@ class ReportCloseDayController extends Controller
                     sum(case when ps.type_id = 2 then id.qty else 0 end) as qty_service
                     from invoice_master im 
                     join invoice_detail id on id.invoice_no  = im.invoice_no 
-                    join product_sku ps on ps.id = id.product_id
+                    join product_sku ps on ps.id = id.product_id and ps.id not in (461)
                     join customers c on c.id = im.customers_id and c.branch_id::character varying like '%".$branchx."%'
                     join branch b on b.id = c.branch_id
                     join users_branch as ub on ub.branch_id = b.id and ub.user_id = '".$user->id."'
@@ -1926,17 +1926,17 @@ class ReportCloseDayController extends Controller
                     sum(case when ps.type_id = 2 then id.qty else 0 end) as qty_service
                     from invoice_master im 
                     join invoice_detail id on id.invoice_no  = im.invoice_no 
-                    join product_sku ps on ps.id = id.product_id 
+                    join product_sku ps on ps.id = id.product_id  and ps.id not in (461)
                     join customers c on c.id = im.customers_id and c.branch_id::character varying like '%".$branchx."%'
                     join branch b on b.id = c.branch_id
                     join users_branch as ub on ub.branch_id = b.id and ub.user_id = '".$user->id."'
                     where im.dated between '".$begindate."' and '".$enddate."'        
             "); 
             
-            $report_detail = DB::select("select b.id as branch_id,b.remark as branch_name,im.dated,id.product_id,ps.abbr,sum(id.qty) as qty,id.price,sum(id.total) as total
+            $report_detail = DB::select("select b.id as branch_id,b.remark as branch_name,im.dated,to_char(im.dated,'dd-mm-YYYY') as datedformat,id.product_id,ps.abbr,sum(id.qty) as qty,id.price,sum(id.total) as total
             from invoice_master im 
             join invoice_detail id on id.invoice_no  = im.invoice_no 
-            join product_sku ps on ps.id = id.product_id and ps.type_id = 1 and ps.category_id !=26  and ps.category_id!=60
+            join product_sku ps on ps.id = id.product_id and ps.type_id = 1 and ps.category_id !=26  and ps.category_id!=60 and ps.id not in (461)
             join customers c on c.id = im.customers_id and c.branch_id::character varying like '%".$branchx."%'
             join branch b on b.id = c.branch_id
             join users_branch as ub on ub.branch_id = b.id and ub.user_id = '".$user->id."'
@@ -1973,7 +1973,7 @@ class ReportCloseDayController extends Controller
                     sum(case when ps.type_id = 2 then id.qty else 0 end) as qty_service
                     from invoice_master im 
                     join invoice_detail id on id.invoice_no  = im.invoice_no 
-                    join product_sku ps on ps.id = id.product_id 
+                    join product_sku ps on ps.id = id.product_id  and ps.id not in (461)
                     join customers c on c.id = im.customers_id and c.branch_id::character varying like '%".$branchx."%'
                     join branch b on b.id = c.branch_id
                     join users_branch as ub on ub.branch_id = b.id and ub.user_id = '".$user->id."'
@@ -2009,20 +2009,30 @@ class ReportCloseDayController extends Controller
                     sum(case when ps.type_id = 2 then id.qty else 0 end) as qty_service
                     from invoice_master im 
                     join invoice_detail id on id.invoice_no  = im.invoice_no 
-                    join product_sku ps on ps.id = id.product_id 
+                    join product_sku ps on ps.id = id.product_id  and ps.id not in (461)
                     join customers c on c.id = im.customers_id and c.branch_id::character varying like '%".$branchx."%'
                     join branch b on b.id = c.branch_id
                     join users_branch as ub on ub.branch_id = b.id and ub.user_id = '".$user->id."'
                     where im.dated between '".$begindate."' and '".$enddate."'        
             "); 
             
-            return view('pages.reports.close_day_sum_print_counter',[
-                'company' => Company::get()->first(),
-                'settings' => Settings::get(),
-            ], compact('period','shifts','report_total','branchx','branchs','data','keyword','act_permission','report_data','begindate','enddate'));
+            
+            if($branchx==21||$branchx==23||$branchx==24){
+                return view('pages.reports.close_day_sum_print_counter_tnl',[
+                    'company' => Company::get()->first(),
+                    'settings' => Settings::get(),
+                ], compact('period','shifts','report_total','branchx','branchs','data','keyword','act_permission','report_data','begindate','enddate'));
+    
+            }else{
+                return view('pages.reports.close_day_sum_print_counter',[
+                    'company' => Company::get()->first(),
+                    'settings' => Settings::get(),
+                ], compact('period','shifts','report_total','branchx','branchs','data','keyword','act_permission','report_data','begindate','enddate'));
+    
+            }
         }else if($request->export=='Export Sum Counter API'){
             $report_data = DB::select("
-                    select b.id as branch_id,b.remark as branch_name,im.dated,sum(id.total+id.vat_total) as total_all,
+                    select b.id as branch_id,b.remark as branch_name,im.dated,to_char(im.dated,'dd-mm-YYYY') as datedformat,sum(id.total+id.vat_total) as total_all,
                     sum(case when ps.type_id = 2 then id.total+id.vat_total else 0 end) as total_service,
                     sum(case when ps.type_id = 1 and ps.category_id != 58 and ps.category_id != 60 then id.total+id.vat_total else 0 end) as total_product,
                     sum(case when ps.type_id = 1 and ps.category_id = 60 then id.total+id.vat_total else 0 end) as total_ojek,
@@ -2048,7 +2058,7 @@ class ReportCloseDayController extends Controller
                     sum(case when ps.type_id = 2 then id.qty else 0 end) as qty_service
                     from invoice_master im 
                     join invoice_detail id on id.invoice_no  = im.invoice_no 
-                    join product_sku ps on ps.id = id.product_id 
+                    join product_sku ps on ps.id = id.product_id  and ps.id not in (461)
                     join customers c on c.id = im.customers_id and c.branch_id::character varying like '%".$branchx."%'
                     join branch b on b.id = c.branch_id
                     join users_branch as ub on ub.branch_id = b.id and ub.user_id = '".$user->id."'
@@ -2084,7 +2094,7 @@ class ReportCloseDayController extends Controller
                     sum(case when ps.type_id = 2 then id.qty else 0 end) as qty_service
                     from invoice_master im 
                     join invoice_detail id on id.invoice_no  = im.invoice_no 
-                    join product_sku ps on ps.id = id.product_id 
+                    join product_sku ps on ps.id = id.product_id  and ps.id not in (461)
                     join customers c on c.id = im.customers_id and c.branch_id::character varying like '%".$branchx."%'
                     join branch b on b.id = c.branch_id
                     join users_branch as ub on ub.branch_id = b.id and ub.user_id = '".$user->id."'
@@ -2122,7 +2132,7 @@ class ReportCloseDayController extends Controller
                     sum(case when ps.type_id = 2 then id.qty else 0 end) as qty_service
                     from invoice_master im 
                     join invoice_detail id on id.invoice_no  = im.invoice_no 
-                    join product_sku ps on ps.id = id.product_id 
+                    join product_sku ps on ps.id = id.product_id  and ps.id not in (461)
                     join customers c on c.id = im.customers_id and c.branch_id::character varying like '%".$branchx."%'
                     join branch b on b.id = c.branch_id
                     join users_branch as ub on ub.branch_id = b.id and ub.user_id = '".$user->id."'
@@ -2160,7 +2170,7 @@ class ReportCloseDayController extends Controller
                     sum(case when ps.type_id = 2 then id.qty else 0 end) as qty_service
                     from invoice_master im 
                     join invoice_detail id on id.invoice_no  = im.invoice_no 
-                    join product_sku ps on ps.id = id.product_id 
+                    join product_sku ps on ps.id = id.product_id  and ps.id not in (461)
                     join customers c on c.id = im.customers_id and c.branch_id::character varying like '%".$branchx."%'
                     join branch b on b.id = c.branch_id
                     join users_branch as ub on ub.branch_id = b.id and ub.user_id = '".$user->id."'
@@ -2203,7 +2213,7 @@ class ReportCloseDayController extends Controller
                     join invoice_detail id on id.invoice_no  = im.invoice_no 
                     join product_sku ps on ps.id = id.product_id 
                     join customers c on c.id = im.customers_id and c.branch_id::character varying like '%".$branchx."%'
-                    join branch b on b.id = c.branch_id
+                    join branch b on b.id = c.branch_id and ps.id not in (461)
                     join users_branch as ub on ub.branch_id = b.id and ub.user_id = '".$user->id."'
                     join branch_shift bs on bs.branch_id = b.id
                     join shift s on im.created_at::time  between s.time_start and s.time_end and s.id = bs.shift_id
@@ -2239,7 +2249,7 @@ class ReportCloseDayController extends Controller
                     sum(case when ps.type_id = 2 then id.qty else 0 end) as qty_service
                     from invoice_master im 
                     join invoice_detail id on id.invoice_no  = im.invoice_no 
-                    join product_sku ps on ps.id = id.product_id 
+                    join product_sku ps on ps.id = id.product_id  and ps.id not in (461)
                     join customers c on c.id = im.customers_id and c.branch_id::character varying like '%".$branchx."%'
                     join branch b on b.id = c.branch_id
                     join users_branch as ub on ub.branch_id = b.id and ub.user_id = '".$user->id."'
