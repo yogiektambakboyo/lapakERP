@@ -267,9 +267,9 @@
                       worksheet.getCell('A1').alignment = { vertical: 'middle', horizontal: 'center' };
 
 
-                      worksheet.mergeCells('K1', 'O1');
-                      worksheet.getCell('K1').value = 'Tgl : '+resp.data.beginnewformat+' sd '+resp.data.endnewformat;
-                      worksheet.getCell('K1').alignment = { vertical: 'middle', horizontal: 'center' }; 
+                      worksheet.mergeCells('F1', 'O1');
+                      worksheet.getCell('F1').value = 'Tgl : '+resp.data.beginnewformat+' sd '+resp.data.endnewformat;
+                      worksheet.getCell('F1').alignment = { vertical: 'middle', horizontal: 'center' }; 
                       
                       worksheet.mergeCells('A3', 'A4');
                       worksheet.getCell('A3').value = 'TANGGAL';
