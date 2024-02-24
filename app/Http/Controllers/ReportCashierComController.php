@@ -524,7 +524,7 @@ class ReportCashierComController extends Controller
             order by 1,3");
 
             $report_detail = DB::select("select coalesce(pp.price_buy,0) as modal,b.id as branch_id,b.remark as branch_name,im.dated,id.product_id,ps.abbr,sum(id.qty) as qty,id.price,sum(id.total) as total,
-            coalesce(cmt.base_commision,0) base_commision,coalesce(cm.commisions,0) as commisions,coalesce(cmt.base_commision,0) as base_commision_tp,coalesce(cmt.commisions,0) as commisions_tp,to_char(im.dated,'dd-MM-YYYY') as datedformat 
+            coalesce(cm.base_commision,0) base_commision,coalesce(cm.commisions,0) as commisions,coalesce(cmt.base_commision,0) as base_commision_tp,coalesce(cmt.commisions,0) as commisions_tp,to_char(im.dated,'dd-MM-YYYY') as datedformat 
             from invoice_master im 
             join invoice_detail id on id.invoice_no  = im.invoice_no 
             join product_sku ps on ps.id = id.product_id and ps.type_id = 1 and ps.category_id!=58 and ps.id != 461
