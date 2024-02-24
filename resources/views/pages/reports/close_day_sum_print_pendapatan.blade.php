@@ -293,9 +293,9 @@
                       worksheet.getCell('A1').alignment = { vertical: 'middle', horizontal: 'center' };
 
 
-                      worksheet.mergeCells('K1', 'O1');
-                      worksheet.getCell('K1').value = 'Tgl : '+resp.data.begindate+' sd '+resp.data.enddate;
-                      worksheet.getCell('K1').alignment = { vertical: 'middle', horizontal: 'center' }; 
+                      worksheet.mergeCells('F1', 'M1');
+                      worksheet.getCell('F1').value = 'Tgl : '+resp.data.begindate+' sd '+resp.data.enddate;
+                      worksheet.getCell('F1').alignment = { vertical: 'middle', horizontal: 'center' }; 
 
 
                       
@@ -351,28 +351,7 @@
                       worksheet.getCell('M4').value = 'Q';
                       worksheet.getCell('M4').alignment = { vertical: 'middle', horizontal: 'center' };
 
-                      
-
-
-                      
-
-                      //count(1) as no,b.name as nama,'TERAPIS' as posisi,u.work_year as tahun,sum(total) total,sum(total_commisions) as perawatan, 
-                      //sum(product_commisions) as komisi_produk,sum(total_point) nilai_point,sum(commisions_extra) as extra_charge,'' as komisi_menurut_cat_terapis,'' as selisih,sum(service) as cases,
-                      //'' as simpanan,'' as iuran_perbaikan,'' as denda, '' as potongan_kasbon,'' as komisi_yang_diterima,'' as no_rekening, '' as bank,sum(point_qty) point_qty
-
-                      worksheet.columns = [
-                        { key: 'tanggal', width: 12 },
-                        { key: 'perawatan', width: 30 },
-                        { key: 'perawatan_sd', width: 20 },
-                        { key: 'produk', width: 10 },
-                        { key: 'produk_sd', width: 10 },
-                        { key: 'ojek', width: 10 },
-                        { key: 'ojek_sd', width: 10 },
-                        { key: 'extra', width: 18 },
-                        { key: 'extra_sd', width: 10 },
-                        { key: 'total_all', width: 10 },
-                        { key: 'total_all_sd', width: 10 },
-                      ];
+                  
 
                       worksheet.getRow(1).font = { bold: true };
                       worksheet.getRow(2).font = { bold: true };
@@ -388,6 +367,8 @@
                       worksheet.getCell('I1').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
                       worksheet.getCell('J1').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
                       worksheet.getCell('K1').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                      worksheet.getCell('L1').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                      worksheet.getCell('M1').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
 
 
                       worksheet.getCell('A3').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
@@ -401,6 +382,8 @@
                       worksheet.getCell('I3').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
                       worksheet.getCell('J3').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
                       worksheet.getCell('K3').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                      worksheet.getCell('L3').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                      worksheet.getCell('M3').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
 
                       worksheet.getCell('A4').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
                       worksheet.getCell('B4').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
@@ -413,8 +396,10 @@
                       worksheet.getCell('I4').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
                       worksheet.getCell('J4').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
                       worksheet.getCell('K4').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                      worksheet.getCell('L4').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                      worksheet.getCell('M4').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
 
-                      let counter = 3;
+                      let counter = 5;
                       let value_sd_until = 0;
                       var total_service = 0;
                       var total_salon = 0;
@@ -425,6 +410,8 @@
                       var total_extra = 0;
                       var total_lebaran = 0;
                       var total_cash = 0;
+                      var total_cash_1 = 0;
+                      var total_cash_2 = 0;
                       var total_b1d = 0;
                       var total_b1c = 0;
                       var total_b2d = 0;
@@ -446,6 +433,8 @@
                         total_extra = total_extra + parseFloat(rowElement.total_extra);
                         total_lebaran = total_lebaran + parseFloat(rowElement.total_lebaran);
                         total_cash = total_cash + parseFloat(rowElement.total_cash);
+                        total_cash_1 = total_cash_1 + parseFloat(rowElement.total_cash_1);
+                        total_cash_2 = total_cash_2 + parseFloat(rowElement.total_cash_2);
                         total_b1d = total_b1d + parseFloat(rowElement.total_b1d);
                         total_b1c = total_b1c + parseFloat(rowElement.total_b1c);
                         total_b2d = total_b2d + parseFloat(rowElement.total_b2d);
@@ -456,10 +445,73 @@
                         total_b2t = total_b2t + parseFloat(rowElement.total_b2t);
                         qty_service = qty_service + parseFloat(rowElement.qty_service);
                         total_all = total_all + parseFloat(rowElement.total_all);
-                       
 
-                          worksheet.addRow({
-                            tanggal : rowElement.dated, 
+                        worksheet.mergeCells('A'+counter, 'A'+(counter+3));
+                        worksheet.getCell('A'+counter).value = rowElement.datedformat;
+
+                        worksheet.getCell('B'+counter).value = (rowElement.total_service-rowElement.total_tambahan);
+                        worksheet.getCell('C'+counter).value = (rowElement.total_product);
+                        worksheet.getCell('D'+counter).value = (rowElement.total_cash_1);
+                        worksheet.getCell('E'+counter).value = (rowElement.total_cash_2);
+                        worksheet.getCell('F'+counter).value = (rowElement.total_b1d);
+                        worksheet.getCell('G'+counter).value = (rowElement.total_b1c);
+                        worksheet.getCell('H'+counter).value = (rowElement.total_b1t);
+                        worksheet.getCell('I'+counter).value = (rowElement.total_b1q);
+                        worksheet.getCell('J'+counter).value = (rowElement.total_b2d);
+                        worksheet.getCell('K'+counter).value = (rowElement.total_b2c);
+                        worksheet.getCell('L'+counter).value = (rowElement.total_b2t);
+                        worksheet.getCell('M'+counter).value = (rowElement.total_b2q);
+                        counter++;
+
+                        worksheet.mergeCells('B'+counter, 'C'+(counter+1));
+                        worksheet.getCell('B'+counter).value = (parseFloat(rowElement.total_service-rowElement.total_tambahan)+parseFloat(rowElement.total_product));
+
+                        worksheet.mergeCells('D'+counter, 'E'+counter);
+                        worksheet.getCell('D'+counter).value = parseFloat(rowElement.total_cash_1)+parseFloat(rowElement.total_cash_2);
+
+                        worksheet.mergeCells('F'+counter, 'I'+counter);
+                        worksheet.getCell('F'+counter).value = parseFloat(rowElement.total_b1d)+parseFloat(rowElement.total_b1c)+parseFloat(rowElement.total_b1t)+parseFloat(rowElement.total_b1q);
+
+                        worksheet.mergeCells('J'+counter, 'M'+counter);
+                        worksheet.getCell('J'+counter).value = parseFloat(rowElement.total_b2d)+parseFloat(rowElement.total_b2c)+parseFloat(rowElement.total_b2t)+parseFloat(rowElement.total_b2q);
+                      
+                        counter++;
+
+                        worksheet.mergeCells('D'+counter, 'M'+counter);
+                        worksheet.getCell('D'+counter).value = parseFloat(rowElement.total_cash_1)+parseFloat(rowElement.total_cash_2)+parseFloat(rowElement.total_b1d)+parseFloat(rowElement.total_b1c)+parseFloat(rowElement.total_b1t)+parseFloat(rowElement.total_b1q)+parseFloat(rowElement.total_b2d)+parseFloat(rowElement.total_b2c)+parseFloat(rowElement.total_b2t)+parseFloat(rowElement.total_b2q);
+
+                        counter++;
+
+                        worksheet.mergeCells('B'+counter, 'C'+(counter));
+                        worksheet.getCell('B'+counter).value = (total_service+total_product);
+
+                        worksheet.mergeCells('D'+counter, 'E'+counter);
+                        worksheet.getCell('D'+counter).value = total_cash_1+total_cash_2;
+
+                        worksheet.mergeCells('F'+counter, 'I'+counter);
+                        worksheet.getCell('F'+counter).value = total_b1d+total_b1c+total_b1t+total_b1q;
+
+                        worksheet.mergeCells('J'+counter, 'M'+counter);
+                        worksheet.getCell('J'+counter).value = total_b2d+total_b2c+total_b2t+total_b2q;
+                      
+                        worksheet.getCell('B'+counter).fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'a0a0a0'}};
+                        worksheet.getCell('C'+counter).fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'a0a0a0'}};
+                        worksheet.getCell('D'+counter).fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'a0a0a0'}};
+                        worksheet.getCell('E'+counter).fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'a0a0a0'}};
+                        worksheet.getCell('F'+counter).fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'a0a0a0'}};
+                        worksheet.getCell('G'+counter).fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'a0a0a0'}};
+                        worksheet.getCell('H'+counter).fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'a0a0a0'}};
+                        worksheet.getCell('I'+counter).fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'a0a0a0'}};
+                        worksheet.getCell('J'+counter).fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'a0a0a0'}};
+                        worksheet.getCell('K'+counter).fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'a0a0a0'}};
+                        worksheet.getCell('L'+counter).fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'a0a0a0'}};
+                        worksheet.getCell('M'+counter).fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'a0a0a0'}};
+
+                        
+
+                          /**
+                           * worksheet.addRow({
+                            tanggal : rowElement.datedformat, 
                             perawatan : (rowElement.total_service-rowElement.total_tambahan), 
                             perawatan_sd : total_service, 
                             produk : rowElement.total_product, 
@@ -471,6 +523,7 @@
                             total_all : parseFloat(rowElement.total_all), 
                             total_all_sd : total_all, 
                           });
+                          **/
 
 
                           worksheet.getCell('B'+counter).alignment = { wrapText: true };
@@ -511,35 +564,7 @@
 
                       counter++;
 
-                      worksheet.addRow({
-                        tanggal : "TOTAL", 
-                        perawatan : total_service, 
-                        perawatan_sd : total_service, 
-                        produk : total_product, 
-                        produk_sd : total_product, 
-                        ojek : total_ojek, 
-                        ojek_sd : total_ojek, 
-                        extra : total_extra, 
-                        extra_sd : total_extra, 
-                        total_all : total_all, 
-                        total_all_sd : total_all, 
-                      });
-                      worksheet.getRow(counter+1).font = { bold: true };
-                      worksheet.getCell('B'+counter+1).alignment = { wrapText: true };
-                      worksheet.getCell('C'+counter+1).alignment = { wrapText: true };
-                      worksheet.getCell('D'+counter+1).alignment = { wrapText: true };
-                      worksheet.getCell('E'+counter+1).alignment = { wrapText: true };
-                      worksheet.getCell('F'+counter+1).alignment = { wrapText: true };
-                      worksheet.getCell('H'+counter+1).alignment = { wrapText: true };
-                      worksheet.getCell('I'+counter+1).alignment = { wrapText: true };
-                      worksheet.getCell('J'+counter+1).alignment = { wrapText: true };
-                      worksheet.getCell('K'+counter+1).alignment = { wrapText: true };
-
-                      worksheet.eachRow({ includeEmpty: true }, function(row, rowNumber) {
-                            row.eachCell({ includeEmpty: true }, function(cell, colNumber) {
-                              cell.border = borderStyles;
-                            });
-                          });
+                      
 
                   
 

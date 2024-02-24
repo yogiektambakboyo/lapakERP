@@ -2183,7 +2183,7 @@ class ReportCloseDayController extends Controller
             ], compact('period','shifts','report_total','branchs','branchx','data','keyword','act_permission','report_data','begindate','enddate'));
         }else if($request->export=='Export Sum Pendapatan API'){
             $report_data = DB::select("
-                    select b.id as branch_id,b.remark as branch_name,im.dated,sum(id.total+id.vat_total) as total_all,
+                    select b.id as branch_id,b.remark as branch_name,im.dated,to_char(im.dated,'dd-mm-YYYY') as datedformat,sum(id.total+id.vat_total) as total_all,
                     sum(case when ps.type_id = 2 then id.total+id.vat_total else 0 end) as total_service,
                     sum(case when ps.type_id in (1,8) then id.total+id.vat_total else 0 end) as total_product,
                     sum(case when ps.type_id = 1 and ps.category_id = 60 then id.total+id.vat_total else 0 end) as total_ojek,
