@@ -438,12 +438,13 @@
                           total_base_commision_c = 0;    
                           total_base_commision_tp = 0;    
                           total_qty = 0;  
-                          
+
                           for (let idx = 0; idx < report_detail.length; idx++) {
                             const rowElementDetail = report_detail[idx];
 
                             if(rowElementDetail.branch_id == rowElement.branch_id && rowElementDetail.dated == rowElement.dated){
-                              if(ctx == 0){
+                                
+                                if(ctx == 0){
                                   worksheet.getCell('A'+counter).value = rowElement.datedformat;
                                   worksheet.getCell('B'+counter).value = rowElementDetail.abbr;
                                   worksheet.getCell('C'+counter).value = rowElementDetail.qty;
@@ -524,54 +525,68 @@
 
                                 }
 
-                               total_qty = rowElementDetail.qty + total_qty;    
-                               total_price = rowElementDetail.price + total_price;    
-                               total_total = rowElementDetail.total + total_total;  
-                               total_modal = rowElementDetail.total_modal + (rowElementDetail.modal);  
-                               total_modal_qty = $total_modal_qty + (rowElementDetail.modal*rowElementDetail.qty);  
-                               total_base_commision_c = rowElementDetail.base_commision + rowElementDetail.total_base_commision_c;    
-                               total_commisions_c = rowElementDetail.commisions + rowElementDetail.total_commisions_c;  
-                               total_base_commision_tp = $rdata->base_commision_tp + rowElementDetail.commisions.total_base_commision_tp;    
-                               total_commisions_tp = $rdata->commisions_tp + total_commisions_tp; 
-                               total_final = $total_final + ($rdata->total-(rowElementDetail.commisions_tp+$rdata->rowElementDetail.commisions(rowElementDetail.modal*rowElementDetail.qty))); 
+                               total_qty = parseFloat(rowElementDetail.qty) + total_qty;    
+                               total_price = parseFloat(rowElementDetail.price) + total_price;    
+                               total_total = parseFloat(rowElementDetail.total) + total_total;  
+                               total_modal = total_modal+ parseFloat(rowElementDetail.modal);  
+                               total_modal_qty = total_modal_qty + (parseFloat(rowElementDetail.modal)*parseFloat(rowElementDetail.qty));  
+                               total_base_commision_c = parseFloat(rowElementDetail.base_commision) + total_base_commision_c;    
+                               total_commisions_c = parseFloat(rowElementDetail.commisions) + total_commisions_c;  
+                               total_base_commision_tp =  parseFloat(rowElementDetail.base_commision_tp) + total_base_commision_tp;    
+                               total_commisions_tp = parseFloat(rowElementDetail.commisions_tp) + total_commisions_tp; 
+                               total_final = total_final + (parseFloat(rowElementDetail.total)-(parseFloat(rowElementDetail.commisions_tp)+parseFloat(rowElementDetail.commisions)+(parseFloat(rowElementDetail.modal)*parseFloat(rowElementDetail.qty)))); 
                                 
 
 
-                                total_qty_t = rowElementDetail.qty + total_qty_t;    
-                                total_price_t = rowElementDetail.price + total_price_t;    
-                                total_total_t = rowElementDetail.total + $total_total_t); 
-                                total_modal_t = [total_modal_t + (rowElementDetail.modal)];
+                                total_qty_t = parseFloat(rowElementDetail.qty) + total_qty_t;    
+                                total_price_t = parseFloat(rowElementDetail.price) + total_price_t;    
+                                total_total_t = parseFloat(rowElementDetail.total) + total_total_t; 
+                                total_modal_t = (total_modal_t + parseFloat(rowElementDetail.modal));
                                 total_modal_qty_t = total_modal_qty_t + (parseFloat(rowElementDetail.qty) * parseFloat(rowElementDetail.modal));
 
-                                total_base_commision_c_t = rowElementDetail.base_commision +  total_base_commision_c_t;    
-                                total_total_t = rowElementDetail.total + $total_total_t); 
+                                total_base_commision_c_t = parseFloat(rowElementDetail.base_commision) +  total_base_commision_c_t;    
+                                total_total_t = parseFloat(rowElementDetail.total) + total_total_t; 
                                 total_commisions_c_t = parseFloat(rowElementDetail.commisions) + total_commisions_c_t;   
 
-                                total_base_commision_tp_t = parseFloat(rowElementDetail.commisions)+ (parseFloat(base_commision_tp) + parseFloat(total_base_commision_tp_t));    
-                                total_commisions_tp_t = rowElementDetail.commisions_tp + total_commisions_tp_t;  
-                                total_final_t = total_final_t + (rowElementDetail.total-(rowElementDetail.commisions_tp+rowElementDetail.commisions+(rowElementDetail.modal*rowElementDetail.qty)));
+                                total_base_commision_tp_t = parseFloat(rowElementDetail.commisions)+ (parseFloat(rowElementDetail.base_commision_tp) + parseFloat(total_base_commision_tp_t));    
+                                total_commisions_tp_t = parseFloat(rowElementDetail.commisions_tp) + total_commisions_tp_t;  
+                                total_final_t = total_final_t + (parseFloat(rowElementDetail.total)-(parseFloat(rowElementDetail.commisions_tp)+parseFloat(rowElementDetail.commisions)+(parseFloat(rowElementDetail.modal)*parseFloat(rowElementDetail.qty))));
                                 
                                 
                               }
+
                             }
+                          
+                    
 
+                          worksheet.getCell('A'+counter).value = "SUB TOTAL";
+                          worksheet.getCell('B'+counter).value = "";
+                          worksheet.getCell('C'+counter).value = total_qty;
+                          worksheet.getCell('D'+counter).value = total_price;
+                          worksheet.getCell('E'+counter).value = total_modal;
+                          worksheet.getCell('F'+counter).value = total_total;
+                          worksheet.getCell('G'+counter).value = total_modal_qty;
+                          worksheet.getCell('H'+counter).value = total_base_commision_tp;
+                          worksheet.getCell('I'+counter).value = total_commisions_tp;
+                          worksheet.getCell('J'+counter).value = total_base_commision_c;
+                          worksheet.getCell('K'+counter).value = total_commisions_c;
+                          worksheet.getCell('L'+counter).value = total_final;
 
-                            worksheet.getCell('A'+counter).value = "SUB TOTAL";
-                            worksheet.getCell('B'+counter).value = rowElementDetail.abbr;
-                            worksheet.getCell('C'+counter).value = rowElementDetail.qty;
-                            worksheet.getCell('D'+counter).value = rowElementDetail.price;
-                            worksheet.getCell('E'+counter).value = rowElementDetail.modal;
-                            worksheet.getCell('F'+counter).value = rowElementDetail.total;
-                            worksheet.getCell('G'+counter).value = parseFloat(rowElementDetail.modal) * parseFloat(rowElementDetail.qty);
-                            worksheet.getCell('H'+counter).value = rowElementDetail.base_commision_tp;
-                            worksheet.getCell('I'+counter).value = rowElementDetail.commisions_tp;
-                            worksheet.getCell('J'+counter).value = rowElementDetail.base_commision;
-                            worksheet.getCell('K'+counter).value = rowElementDetail.commisions;
-                            worksheet.getCell('L'+counter).value = parseFloat(rowElementDetail.total) - ((parseFloat(rowElementDetail.modal) * parseFloat(rowElementDetail.qty))+parseFloat(rowElementDetail.commisions_tp)+parseFloat(rowElementDetail.commisions_tp));
-                              
+                          worksheet.getRow(counter).font = { bold: true };
+                          worksheet.getCell('A'+counter).fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                          worksheet.getCell('B'+counter).fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                          worksheet.getCell('C'+counter).fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                          worksheet.getCell('D'+counter).fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                          worksheet.getCell('E'+counter).fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                          worksheet.getCell('F'+counter).fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                          worksheet.getCell('G'+counter).fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                          worksheet.getCell('H'+counter).fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                          worksheet.getCell('I'+counter).fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                          worksheet.getCell('J'+counter).fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                          worksheet.getCell('K'+counter).fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                          worksheet.getCell('L'+counter).fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
 
-
-
+                          counter++;
 
 
                          
@@ -589,6 +604,42 @@
                            });
                         
                        }
+
+                      worksheet.getCell('A'+counter).value = "GRAND TOTAL";
+                      worksheet.getCell('B'+counter).value = "";
+                      worksheet.getCell('C'+counter).value = total_qty_t;
+                      worksheet.getCell('D'+counter).value = total_price_t;
+                      worksheet.getCell('E'+counter).value = total_modal_t;
+                      worksheet.getCell('F'+counter).value = total_total_t;
+                      worksheet.getCell('G'+counter).value = total_modal_qty_t;
+                      worksheet.getCell('H'+counter).value = total_base_commision_tp_t;
+                      worksheet.getCell('I'+counter).value = total_commisions_tp_t;
+                      worksheet.getCell('J'+counter).value = total_base_commision_c_t;
+                      worksheet.getCell('K'+counter).value = total_commisions_c_t;
+                      worksheet.getCell('L'+counter).value = total_final_t;
+
+                      worksheet.getRow(counter).font = { bold: true };
+                      worksheet.getCell('A'+counter).fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                      worksheet.getCell('B'+counter).fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                      worksheet.getCell('C'+counter).fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                      worksheet.getCell('D'+counter).fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                      worksheet.getCell('E'+counter).fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                      worksheet.getCell('F'+counter).fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                      worksheet.getCell('G'+counter).fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                      worksheet.getCell('H'+counter).fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                      worksheet.getCell('I'+counter).fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                      worksheet.getCell('J'+counter).fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                      worksheet.getCell('K'+counter).fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                      worksheet.getCell('L'+counter).fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+
+
+                      worksheet.eachRow({ includeEmpty: true }, function(row, rowNumber) {
+                             row.eachCell({ includeEmpty: true }, function(cell, colNumber) {
+                               cell.border = borderStyles;
+                             });
+                           });
+
+
 
                    // Loop Terapist
 
