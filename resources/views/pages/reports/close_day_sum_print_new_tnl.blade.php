@@ -735,7 +735,7 @@
                                   worksheet.getCell('A'+counter).value = rowElement.datedformat;
                                   worksheet.getCell('B'+counter).value = (parseFloat(rowElementData.total_service)-parseFloat(rowElementData.total_tambahan));
                                   worksheet.getCell('C'+counter).value = rowElementData.total_salon;
-                                  worksheet.getCell('D'+counter).value = (parseFloat(rowElementData.total_salon)+parseFloat(rowElementData.total_service));
+                                  worksheet.getCell('D'+counter).value = (parseFloat(rowElementData.total_salon)+(parseFloat(rowElementData.total_service)-parseFloat(rowElementData.total_tambahan)));
                                   worksheet.getCell('E'+counter).value = rowElement.abbr;
                                   worksheet.getCell('F'+counter).value = rowElement.qty;
                                   worksheet.getCell('G'+counter).value = rowElement.price;
