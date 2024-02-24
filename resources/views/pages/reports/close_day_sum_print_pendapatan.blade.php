@@ -262,6 +262,7 @@
 
   $(document).ready(function() {
     var url = "{{ route('reports.closeday.search') }}";
+    var branchxx = "{{ $branchx }}";
     const params = {
       filter_begin_date_in : "{{ $begindate }}",
       filter_end_date_in : "{{ $enddate }}",
@@ -304,7 +305,12 @@
                       worksheet.getCell('A3').alignment = { vertical: 'middle', horizontal: 'center' };
 
                       worksheet.mergeCells('B3', 'B4');
-                      worksheet.getCell('B3').value = 'PERAWATAN & SALON';
+                      
+                      if(branchxx == "21" ||branchxx == "23" || branchxx == "24"){
+                        worksheet.getCell('B3').value = 'PERAWATAN & SALON';
+                      }else{
+                        worksheet.getCell('B3').value = 'PERAWATAN';
+                      }
                       worksheet.getCell('B3').alignment = { vertical: 'middle', horizontal: 'center' };
 
                       worksheet.mergeCells('C3', 'C4');
