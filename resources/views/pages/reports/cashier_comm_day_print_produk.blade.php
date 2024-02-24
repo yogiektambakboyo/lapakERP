@@ -545,10 +545,9 @@
                                 total_modal_qty_t = total_modal_qty_t + (parseFloat(rowElementDetail.qty) * parseFloat(rowElementDetail.modal));
 
                                 total_base_commision_c_t = parseFloat(rowElementDetail.base_commision) +  total_base_commision_c_t;    
-                                total_total_t = parseFloat(rowElementDetail.total) + total_total_t; 
                                 total_commisions_c_t = parseFloat(rowElementDetail.commisions) + total_commisions_c_t;   
 
-                                total_base_commision_tp_t = parseFloat(rowElementDetail.commisions)+ (parseFloat(rowElementDetail.base_commision_tp) + parseFloat(total_base_commision_tp_t));    
+                                total_base_commision_tp_t = (parseFloat(rowElementDetail.base_commision_tp) + total_base_commision_tp_t);    
                                 total_commisions_tp_t = parseFloat(rowElementDetail.commisions_tp) + total_commisions_tp_t;  
                                 total_final_t = total_final_t + (parseFloat(rowElementDetail.total)-(parseFloat(rowElementDetail.commisions_tp)+parseFloat(rowElementDetail.commisions)+(parseFloat(rowElementDetail.modal)*parseFloat(rowElementDetail.qty))));
                                 
@@ -573,18 +572,18 @@
                           worksheet.getCell('L'+counter).value = total_final;
 
                           worksheet.getRow(counter).font = { bold: true };
-                          worksheet.getCell('A'+counter).fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
-                          worksheet.getCell('B'+counter).fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
-                          worksheet.getCell('C'+counter).fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
-                          worksheet.getCell('D'+counter).fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
-                          worksheet.getCell('E'+counter).fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
-                          worksheet.getCell('F'+counter).fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
-                          worksheet.getCell('G'+counter).fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
-                          worksheet.getCell('H'+counter).fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
-                          worksheet.getCell('I'+counter).fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
-                          worksheet.getCell('J'+counter).fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
-                          worksheet.getCell('K'+counter).fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
-                          worksheet.getCell('L'+counter).fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                          worksheet.getCell('A'+counter).fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'abadac'}};
+                          worksheet.getCell('B'+counter).fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'abadac'}};
+                          worksheet.getCell('C'+counter).fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'abadac'}};
+                          worksheet.getCell('D'+counter).fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'abadac'}};
+                          worksheet.getCell('E'+counter).fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'abadac'}};
+                          worksheet.getCell('F'+counter).fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'abadac'}};
+                          worksheet.getCell('G'+counter).fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'abadac'}};
+                          worksheet.getCell('H'+counter).fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'abadac'}};
+                          worksheet.getCell('I'+counter).fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'abadac'}};
+                          worksheet.getCell('J'+counter).fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'abadac'}};
+                          worksheet.getCell('K'+counter).fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'abadac'}};
+                          worksheet.getCell('L'+counter).fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'abadac'}};
 
                           counter++;
 
