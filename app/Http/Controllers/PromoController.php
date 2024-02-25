@@ -266,13 +266,31 @@ class PromoController extends Controller
         ]);
     }
 
-    public function check(){
+    public function check(Request $request){
         $user = Auth::user();
-        $voucher = DB::select("select p.id,p.promo_id,p.remarks,p.active_day,p.active_time,p.moq,p.value_idx,p.value,p.type_customer,pd.product_id  from promo p
-        join promo_detail pd on pd.promo_id = p.promo_id 
-        join users_branch ub on  ub.branch_id=p.branch_id and ub.user_id = ".$user->id."
-        join branch b on b.id=ub.branch_id 
-        where now()::date between p.date_start and p.date_end");
+
+        $invoice_no = $request->get('invoice_no');
+        $customer_id = $request->get('customer_id');
+
+        $whereinputinvoice = "";
+        $joininputinvoice = "";
+        $joininputinvoicehaving = "";
+        if($invoice_no == ""){
+            $whereinputinvoice = " and p.linked_invoice='0' ";
+        }else{
+            $joininputinvoice = "join invoice_master im on im.invoice_no ='".$invoice_no."' and im.is_checkout = 0 and im.customer_type = p.type_customer 
+                                 left join invoice_detail id on id.invoice_no = id.invoice_no and id.product_id = pd.product_id ";
+            $joininputinvoicehaving = " having count(id.product_id)>0 ";
+        }
+
+        $voucher = DB::select("select p.id,p.promo_id,p.remarks,p.active_day,p.active_time,p.moq,p.value_idx,p.value,p.type_customer,pd.product_id
+            from promo p
+            join promo_detail pd on pd.promo_id = p.promo_id 
+            join users_branch ub on  ub.branch_id=p.branch_id and ub.user_id = ".$user->id."
+            join branch b on b.id = ub.branch_id 
+            join customers c on c.id = ".$customer_id." and c.branch_id = b.id 
+             ".$joininputinvoice."
+            where now()::date between p.date_start and p.date_end ".$whereinputinvoice." group by p.id,p.promo_id,p.remarks,p.active_day,p.active_time,p.moq,p.value_idx,p.value,p.type_customer,pd.product_id " );
         return $voucher; 
     }
 

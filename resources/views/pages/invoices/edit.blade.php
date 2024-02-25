@@ -300,7 +300,7 @@
 
 
 
-        <div class="panel-heading bg-teal-600 text-white mb-2 row"> <div class="col-6"><strong>@lang('general.lbl_order_list')</strong></div><div class="col-6 d-flex justify-content-end"><button class="mx-2 btn btn-sm btn-danger d-none" id="apply-promo-btn">Hitung Promo</button></div></div>
+        <div class="panel-heading bg-teal-600 text-white mb-2 row"> <div class="col-6"><strong>@lang('general.lbl_order_list')</strong></div></div>
         <div class="card text-center font-weight-bold my-3 p-1"><h3><i class="fas fa-fw fa-hands-praying"></i> @lang('general.service')</h3></div>
 
         <div class="row mb-3">
@@ -522,6 +522,25 @@
             </div>
           </div>
         </div>
+
+
+
+        <div class="row mb-3">
+          <div class="col-md-12">
+            <div class="row mb-3">
+                <label class="form-label col-form-label col-md-2" id="label-voucher">No Faktur Tamu ke 2</label>
+                <br>
+                <div class="col-md-3">
+                  <input class="form-control" name="promo_inv" id="promo_inv" type="text" placeholder="">
+                </div>
+                <div class="col-md-4">
+                  <button class="ms-2 btn btn-sm btn-danger" id="apply-promo-btn">Hitung Promo</button>
+                </div>
+            </div>
+            <label class="fst-italic">Setelah masukkan No Faktur, Klik tombol "Hitung Promo" untuk menghitung promo yang didapat</label>
+          </div>
+        </div>
+
 
     </div>
   </div>
@@ -2342,14 +2361,28 @@ $('#customer_id').select2({
 
 
         $("#apply-promo-btn").on('click',function(){
-                var url = "{{ route('promo.check') }}";
+          if($('#customer_id').val().length<=0){
+                    Swal.fire(
+                    {
+                        position: 'top-end',
+                        icon: 'warning',
+                        text: 'Silahkan pilih dulu pelanggan',
+                        showConfirmButton: false,
+                        imageHeight: 30, 
+                        imageWidth: 30,   
+                        timer: 1500
+                    });
+
+            }else{
+            var url = "{{ route('promo.check') }}";
                 const res = axios.get(url,
                 {
                     headers: {
                       'Content-Type': 'application/json'
                     },
                     params : {
-                        voucher_code : $("#input-apply-voucher").val()
+                      invoice_no : $("#promo_inv").val(),
+                      customer_id : $("#customer_id").val(),
                     }
                   }
                 ).then(resp => {
@@ -2479,7 +2512,7 @@ $('#customer_id').select2({
 
                       var obj = orderList[i];
                       var value = obj["abbr"];
-                      if(obj["type_id"]=="Services"){
+                      if(obj["type"]=="Services"){
                         counterno_service  = counterno_service + 1;
                         table.row.add( {
                                 "seq" : counterno_service,
@@ -2535,7 +2568,10 @@ $('#customer_id').select2({
                   }
 
                 });
-            });
+          }
+                
+
+        });
 
 
  

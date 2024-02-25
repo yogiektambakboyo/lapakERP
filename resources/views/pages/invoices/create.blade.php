@@ -287,7 +287,12 @@
 
 
 
-        <div class="panel-heading bg-teal-600 text-white mb-2 row"> <div class="col-6"><strong>@lang('general.lbl_order_list')</strong></div><div class="col-6 d-flex justify-content-end"><button class="mx-2 btn btn-sm btn-danger d-none" id="apply-promo-btn">Hitung Promo</button></div></div>
+        <div class="panel-heading bg-teal-600 text-white mb-2 row"> 
+          <div class="col-9"><strong>@lang('general.lbl_order_list')</strong></div>
+          <div class="col-3 d-flex justify-content-end">
+            
+          </div>
+        </div>
         <div class="card text-center font-weight-bold my-3 p-1"><h3><i class="fas fa-fw fa-hands-praying"></i> @lang('general.service')</h3></div>
 
         <div class="row mb-3">
@@ -483,10 +488,7 @@
                 </div>
             </div>
             <label class="fst-italic">Setelah masukkan Kode Voucher, Klik tombol "Gunakan Voucher" untuk memotong pembayaran</label>
-
           </div>
-
-
           <div class="col-md-6">
             <div class="col-md-12 d-none">
               <div class="col-auto text-end">
@@ -506,6 +508,22 @@
                 <label class="col-md-8 display-5" id="result-total"> <h1>0</h1></label>
               </div>
             </div>
+          </div>
+        </div>
+
+        <div class="row mb-3">
+          <div class="col-md-12">
+            <div class="row mb-3">
+                <label class="form-label col-form-label col-md-2" id="label-voucher">No Faktur Tamu ke 2</label>
+                <br>
+                <div class="col-md-3">
+                  <input class="form-control" name="promo_inv" id="promo_inv" type="text" placeholder="">
+                </div>
+                <div class="col-md-4">
+                  <button class="ms-2 btn btn-sm btn-danger" id="apply-promo-btn">Hitung Promo</button>
+                </div>
+            </div>
+            <label class="fst-italic">Setelah masukkan No Faktur, Klik tombol "Hitung Promo" untuk menghitung promo yang didapat</label>
           </div>
         </div>
 
@@ -2529,6 +2547,21 @@
             });
 
             $("#apply-promo-btn").on('click',function(){
+              console.log($('#customer_id').val());
+              if($('#customer_id').val().length<=0){
+                    Swal.fire(
+                    {
+                        position: 'top-end',
+                        icon: 'warning',
+                        text: 'Silahkan pilih dulu pelanggan',
+                        showConfirmButton: false,
+                        imageHeight: 30, 
+                        imageWidth: 30,   
+                        timer: 1500
+                    });
+
+              }else{
+
                 var url = "{{ route('promo.check') }}";
                 const res = axios.get(url,
                 {
@@ -2536,7 +2569,8 @@
                       'Content-Type': 'application/json'
                     },
                     params : {
-                        voucher_code : $("#input-apply-voucher").val()
+                        invoice_no : $("#promo_inv").val(),
+                        customer_id : $("#customer_id").val(),
                     }
                   }
                 ).then(resp => {
@@ -2722,6 +2756,10 @@
                   }
 
                 });
+
+
+              }
+              
             });
 
  
