@@ -629,7 +629,61 @@ class ReportCashierComController extends Controller
                 'filter_branch_id' => $filter_branch_id,
                 'report_data' => $report_data,
                 'report_detail' => $report_detail,
+                'beginnewformat' => $beginnewformat,
+                'endnewformat' => $endnewformat,
                 'settings' => Settings::get(),
+            ]);
+        }else if($request->export=='Export Com API'){
+
+            $filter_begin_date = $begindate;
+            $filter_begin_end = $enddate;
+            $filter_branch_id =  $branchx;
+
+            $report_data = DB::select("
+                select 
+                coalesce(ex.referral_fee,0) as base_com,
+                right(im.invoice_no,6) as invoice_no,b.id as branch_id,b.remark as branch_name,to_char(im.dated, 'dd-MM-YYYY') as datedformat,
+                im.dated,id.product_id,ps.abbr,sum(id.qty) as qty,id.price,sum(id.total) as total
+                from invoice_master im 
+                join invoice_detail id on id.invoice_no  = im.invoice_no 
+                join users u on u.id = id.referral_by
+                join product_sku ps on ps.id = id.product_id and ps.type_id = 1 and ps.category_id!=58
+                join customers c on c.id = im.customers_id and c.branch_id::character varying like '%".$branchx."%'
+                join branch b on b.id = c.branch_id
+                join users_branch as ub on ub.branch_id = b.id and ub.user_id = '".$user->id."'
+                join product_commisions_ex ex on ex.branch_id = b.id and ex.product_id=ps.id and ex.product_id=id.product_id
+                where im.dated between '".$begindate."' and '".$enddate."' and coalesce(ex.referral_fee,0)>0
+                group by right(im.invoice_no,6),b.remark,im.dated,b.id,id.product_id,id.price,ps.abbr,ex.users_id,im.created_by,id.referral_by,ex.created_by_fee,ex.referral_fee
+                order by 4,5
+            ");
+
+            $report_detail = DB::select("
+                select 
+                coalesce(ex.referral_fee,0) as base_com,
+                right(im.invoice_no,6) as invoice_no,b.id as branch_id,b.remark as branch_name,im.dated,id.product_id,ps.abbr,sum(id.qty) as qty,id.price,sum(id.total) as total,u.name
+                from invoice_master im 
+                join invoice_detail id on id.invoice_no  = im.invoice_no 
+                join users u on u.id = id.referral_by
+                join product_sku ps on ps.id = id.product_id and ps.type_id = 1 and ps.category_id!=58
+                join customers c on c.id = im.customers_id and c.branch_id::character varying like '%".$branchx."%'
+                join branch b on b.id = c.branch_id
+                join users_branch as ub on ub.branch_id = b.id and ub.user_id = '".$user->id."'
+                join product_commisions_ex ex on ex.branch_id = b.id and ex.product_id=ps.id and ex.product_id=id.product_id
+                where im.dated between '".$begindate."' and '".$enddate."'  and coalesce(ex.referral_fee,0)>0
+                group by u.name,right(im.invoice_no,6),b.remark,im.dated,b.id,id.product_id,id.price,ps.abbr,id.referral_by,ex.referral_fee
+                order by 4,5,7,11
+            
+            ");
+            
+    
+            return array_merge([
+                'filter_begin_date' => $filter_begin_date,
+                'filter_begin_end' => $filter_begin_end,
+                'filter_branch_id' => $filter_branch_id,
+                'report_data' => $report_data,
+                'beginnewformat' => $beginnewformat,
+                'endnewformat' => $endnewformat,
+                'report_detail' => $report_detail,
             ]);
         }else if($request->export=='Export Sum Lite API'){
 
