@@ -458,7 +458,7 @@ class HomeController extends Controller
                 }
             }
 
-            return $resp." ".$validate." ".date("Y-m-d")." ".$token;
+            return $resp;
     }
 
 }
