@@ -425,7 +425,7 @@ class HomeController extends Controller
             $name = $request->get("name");
             $name = base64_decode($name);
             $otp = $request->get("adrotp");
-            $msg = '*OTP Notifikasi* \r\n\r\nHai '.$name.', silahkan masukkan kode OTP *'.$otp.'* untuk login aplikasi '.$fromapp.'.\r\n\r\n_Abaikan pesan ini jika anda tidak merasa login ke aplikasi_';
+            $msg = "*OTP Notifikasi* \r\n\r\nHai ".$name.", silahkan masukkan kode OTP *".$otp."* untuk login aplikasi ".$fromapp.".\r\n\r\n_Abaikan pesan ini jika anda tidak merasa login ke aplikasi_";
             $str="number=".$number."&message=".$msg;
 
             $resp = "Token Not Valid";
