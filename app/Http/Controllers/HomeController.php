@@ -417,9 +417,15 @@ class HomeController extends Controller
     public function send_wa(Request $request) 
     {
             $data = [];
+            //$url_acc = "https://kakikupos.com/send-msg-wa?token=".$val_token."&no=".$whatsapp_no_."&adrotp=".$otp."&name=".base64_encode($name);
             $number = $request->get("no");
             $msg = $request->get("msg");
             $token = $request->get("token");
+            $fromapp = $request->get("fromapp");
+            $name = $request->get("name");
+            $name = base64_decode($name);
+            $otp = $request->get("adrotp");
+            $msg = '*OTP Notifikasi* \r\n\r\nHai '.$name.', silahkan masukkan kode OTP *'.$otp.'* untuk login aplikasi '.$fromapp.'.\r\n\r\n_Abaikan pesan ini jika anda tidak merasa login ke aplikasi_';
             $str="number=".$number."&message=".$msg;
 
             $resp = "Token Not Valid";
