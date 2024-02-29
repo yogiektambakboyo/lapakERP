@@ -48,7 +48,7 @@ $(function () {
         showMeridian : false
     });
 });
-$(".multiple-select2").select2({ placeholder: "Select a branch" });
+$(".multiple-select2").select2({ placeholder: "Silahkan pilih" });
 $('#branch_id').select2({ placeholder: "Select a branch" });
 if(($("#hide_val").val())!=null){
     var selectedValues = $("#hide_val").val().split(',');

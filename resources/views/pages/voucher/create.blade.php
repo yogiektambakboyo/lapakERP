@@ -29,24 +29,45 @@
                   <input type="text" class="form-control" name="remark" value="{{ old('remark') }}" required/>
                 </div>
              </div>
-              <div class="row mb-3">
+              <div class="row mb-3 d-none">
                 <label class="form-label col-form-label col-md-2">Kode Voucher Terakhir</label>
                 <div class="col-md-8">
                   <input type="text" class="form-control" name="voucher_code" value="{{ $last_voucher }}" disabled/>
                 </div>
              </div>
+            <div class="row mb-3">
+              <label class="form-label col-form-label col-md-2">Prefix</label>
+              <div class="col-md-8">
+                <input type="text" class="form-control gen-ex" id="prefix" name="prefix" value="" placeholder="Masukkan huruf awal kode voucher"/>
+              </div>
+            </div>
+
+            <div class="row mb-3">
+              <label class="form-label col-form-label col-md-2">Angka Awal</label>
+              <div class="col-md-8">
+                <input type="number" class="form-control gen-ex" id="begin_digit" name="begin_digit" value="" required/>
+              </div>
+            </div>
+
+            <div class="row mb-3">
+              <label class="form-label col-form-label col-md-2">Digit Voucher</label>
+              <div class="col-md-8">
+                <input type="number" class="form-control gen-ex" id="digit" name="digit" value="4" required/>
+              </div>
+            </div>
+
              <div class="row mb-3">
               <label class="form-label col-form-label col-md-2">Jumlah Voucher</label>
               <div class="col-md-8">
-                <input type="text" class="form-control" name="qty_voucher_code" value="{{ old('qty_voucher_code') }}" required/>
+                <input type="number" class="form-control gen-ex" id="qty_voucher_code" name="qty_voucher_code" value="1" placeholder="Masukkan jumlah voucher yang akan dibuat" required/>
               </div>
            </div>
               <div class="row mb-3">
                 <label class="form-label col-form-label col-md-2">@lang('general.lbl_service_name')</label>
                 <div class="col-md-8">
-                  <select class="form-control" 
-                  name="product_id" required>
-                  <option value="">@lang('general.serviceselect')</option>
+                  <select class="form-control multiple-select2 " 
+                  name="product_id[]" required  multiple="multiple">
+                  <option value="%">Semua Perawatan</option>
                   @foreach($products as $product)
                       <option value="{{ $product->id }}">{{  $product->remark }}</option>
                   @endforeach
@@ -98,15 +119,43 @@
             <div class="row mb-3">
               <label class="form-label col-form-label col-md-2">Persentase Potongan Harga (%)</label>
               <div class="col-md-8">
-                <input type="text" class="form-control" name="value" value="{{ old('value') }}" required/>
+                <input type="text" class="form-control" name="value_idx" value="0" required/>
               </div>
             </div>
 
             <div class="row mb-3">
-              <label class="form-label col-form-label col-md-2">Harga Voucher Rp</label>
+              <label class="form-label col-form-label col-md-2">Nilai Potongan Harga (Rp)</label>
               <div class="col-md-8">
-                <input type="text" class="form-control" name="price" value="{{ old('price') }}" required/>
+                <input type="text" class="form-control" name="value" value="0" required/>
               </div>
+            </div>
+
+            <div class="row mb-3">
+              <label class="form-label col-form-label col-md-2">Minimum Pembelian</label>
+              <div class="col-md-8">
+                <input type="text" class="form-control" name="moq" value="1" required/>
+              </div>
+            </div>
+
+            <div class="row mb-3">
+              <label class="form-label col-form-label col-md-2">Pakai Berulang</label>
+              <div class="col-md-8">
+                <select name="unlimeted" class="form-control" id="unlimeted">
+                  <option value="0">Tidak</option>
+                  <option value="1">Ya</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="row mb-3">
+              <label class="form-label col-form-label col-md-2">Harga Jual Voucher (Rp)</label>
+              <div class="col-md-8">
+                <input type="text" class="form-control" name="price" value="0" required/>
+              </div>
+            </div>
+
+            <div class="row mb-3">
+              <label class="form-label col-form-label col-md-12 fst-italic fw-light" id="lbl_example">Contoh Hasil : </label>
             </div>
 
 
@@ -143,6 +192,13 @@
               todayHighlight: true,
           });
           $('#dated_end').val(formattedToday);
+
+          $(".gen-ex").on('change', function(){
+            var s1 = "Contoh Hasil : ";
+            var s2 = $('#prefix').val()+("0000000"+$('#begin_digit').val()).substr((-1*$('#digit').val()),$('#digit').val());
+            var s3 = $('#prefix').val()+("0000000"+((parseInt($('#begin_digit').val())-1)+parseInt($('#qty_voucher_code').val()))).substr((-1*$('#digit').val()),$('#digit').val());
+            $('#lbl_example').text(s1+" "+s2+" s/d "+s3);
+          });
 
        
     </script>

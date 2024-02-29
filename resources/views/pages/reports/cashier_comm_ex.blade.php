@@ -39,6 +39,7 @@
    <body> 
 
       <button id="printPageButton" onClick="window.print();"  class="btn print printPageButton">Cetak Laporan Komisi</button>
+      <button id="btn_export_xls" class="btn btn-primary btn-sm print printPageButton  mt-1 print mb-2">Cetak XLS</button>
     
       <table style="width: 100%">
         <tbody>
@@ -225,20 +226,7 @@
         searching: false,
           dom: 'Bfrtip',
           buttons: [
-              {
-                  extend: 'copyHtml5',
-                  exportOptions: { 
-                    orthogonal: 'export',
-                    columns: ':visible'
-                  }
-              },
-              {
-                  extend: 'excelHtml5',
-                  exportOptions: { 
-                    orthogonal: 'export',
-                    columns: ':visible'
-                  }
-              },
+              
           ]
       });
 
@@ -247,4 +235,306 @@
 
    
 </script>
+
+<script type="text/javascript">
+  //window.print();
+  const workbook = new ExcelJS.Workbook();
+   workbook.creator = 'Kakiku System Apps';
+   workbook.created = new Date();
+
+   let report_data_detail_t = [];
+   let report_data_com_from1 = [];
+   let report_data_terapist = [];
+
+   $(document).ready(function() {
+     var url = "{{ route('reports.cashier.search') }}";
+     const params = {
+       filter_begin_date_in : "{{ $filter_begin_date }}",
+       filter_end_date_in : "{{ $filter_begin_end }}",
+       filter_branch_id_in: "{{ $filter_branch_id }}",
+       export : 'Export Com API',
+     };
+
+     $('#btn_export_xls').on('click',function(){
+       const res = axios.get(url,{ params }, {
+                   headers: {}
+                 }).then(resp => {
+                   report_detail = resp.data.report_detail;
+                   report_data = resp.data.report_data;
+
+                   var beginnewformat = resp.data.beginnewformat;
+                   var endnewformat = resp.data.endnewformat;
+
+                   let data_filtered = [];
+
+                   data_filtered = [];
+
+                       let worksheet = workbook.addWorksheet("Commision Cashier");
+
+                       /*Column headers*/
+                      
+                       worksheet.mergeCells('A1', 'D1');
+                       worksheet.getCell('A1').value = 'Cabang : '+report_data[0].branch_name;
+                       worksheet.getCell('A1').alignment = { vertical: 'middle', horizontal: 'center' };
+
+                       worksheet.mergeCells('E1', 'H1');
+                       worksheet.getCell('E1').value = 'Tgl : '+beginnewformat+' sd '+endnewformat;
+                       worksheet.getCell('E1').alignment = { vertical: 'middle', horizontal: 'center' };
+
+                       worksheet.getCell('A3').value = 'TGL';
+                       worksheet.getCell('A3').alignment = { vertical: 'middle', horizontal: 'center' };
+
+                       worksheet.getCell('B3').value = 'NAMA';
+                       worksheet.getCell('B3').alignment = { vertical: 'middle', horizontal: 'center' };
+
+                       worksheet.getCell('C3').value = 'NO FAKTUR';
+                       worksheet.getCell('C3').alignment = { vertical: 'middle', horizontal: 'center' };
+
+                       worksheet.getCell('D3').value = 'JENIS';
+                       worksheet.getCell('D3').alignment = { vertical: 'middle', horizontal: 'center' };   
+                       
+                       worksheet.getCell('E3').value = 'QTY';
+                       worksheet.getCell('E3').alignment = { vertical: 'middle', horizontal: 'center' };   
+
+                       worksheet.getCell('F3').value = 'HARGA';
+                       worksheet.getCell('F3').alignment = { vertical: 'middle', horizontal: 'center' };   
+
+                       worksheet.getCell('G3').value = 'KOMISI DASAR';
+                       worksheet.getCell('G3').alignment = { vertical: 'middle', horizontal: 'center' };   
+
+                       worksheet.getCell('H3').value = 'KOMISI';
+                       worksheet.getCell('H3').alignment = { vertical: 'middle', horizontal: 'center' };   
+
+                       worksheet.getRow(1).font = { bold: true };
+                       worksheet.getRow(2).font = { bold: true };
+                       worksheet.getRow(3).font = { bold: true };
+
+                       worksheet.getCell('A1').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                       worksheet.getCell('B1').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                       worksheet.getCell('C1').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                       worksheet.getCell('D1').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                       worksheet.getCell('E1').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                       worksheet.getCell('F1').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                       worksheet.getCell('G1').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                       worksheet.getCell('H1').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                       
+                       worksheet.getCell('A3').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                       worksheet.getCell('B3').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                       worksheet.getCell('C3').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                       worksheet.getCell('D3').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                       worksheet.getCell('E3').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                       worksheet.getCell('F3').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                       worksheet.getCell('G3').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                       worksheet.getCell('H3').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                     
+
+
+                       let counter = 4;
+                       var ctx = 0;
+                       var total_qty_t = 0;    
+                       var total_price_t = 0;    
+                       var total_modal_t = 0;    
+                       var total_modal_qty_t = 0;    
+                       var total_total_t = 0;    
+                       var total_base_com_t = 0;    
+                       var total_base_com_qty_t = 0;  
+                       
+                      var total_qty = 0;    
+                      var total_price = 0; 
+                      var total_modal = 0;    
+                      var total_modal_qty = 0;    
+                      var total_total = 0;    
+                      var total_final = 0;    
+                      var total_base_com = 0;    
+                      var total_commisions_tp = 0;    
+                      var total_base_com_qty = 0;    
+
+                       
+                       for (let index = 0; index < report_data.length; index++) {
+                         const rowElement = report_data[index];
+                         let value_sd = 0;
+
+                           
+                          ctx = 0;
+                          total_qty = 0;    
+                          total_price = 0; 
+                          total_modal = 0;    
+                          total_modal_qty = 0;    
+                          total_total = 0;    
+                          total_final = 0;    
+                          total_base_com = 0;    
+                          total_commisions_tp = 0;    
+                          total_base_com_qty = 0;    
+
+                          for (let idx = 0; idx < report_detail.length; idx++) {
+                            const rowElementDetail = report_detail[idx];
+
+                            if(rowElementDetail.branch_id == rowElement.branch_id && rowElementDetail.dated == rowElement.dated){
+                                
+                                if(ctx == 0){
+                                  
+                                  worksheet.getCell('A'+counter).value = rowElement.datedformat;
+                                  worksheet.getCell('B'+counter).value = rowElementDetail.name;
+                                  worksheet.getCell('C'+counter).value = rowElementDetail.invoice_no;
+                                  worksheet.getCell('D'+counter).value = rowElementDetail.abbr;
+                                  worksheet.getCell('E'+counter).value = rowElementDetail.qty;
+                                  worksheet.getCell('F'+counter).value = rowElementDetail.price;
+                                  worksheet.getCell('G'+counter).value = rowElementDetail.base_com;
+                                  worksheet.getCell('H'+counter).value = (parseFloat(rowElementDetail.qty) * parseFloat(rowElementDetail.base_com));
+                                  
+                                  ctx++;
+
+                                  worksheet.getCell('B'+counter).alignment = { wrapText: true, vertical: 'top', horizontal: 'left' };
+                                  worksheet.getCell('C'+counter).alignment = { wrapText: true, vertical: 'top', horizontal: 'left' };
+                                  worksheet.getCell('D'+counter).alignment = { wrapText: true, vertical: 'top', horizontal: 'left' };
+                                  worksheet.getCell('E'+counter).alignment = { wrapText: true, vertical: 'top', horizontal: 'left' };
+                                  worksheet.getCell('F'+counter).alignment = { wrapText: true, vertical: 'top', horizontal: 'left' };
+                                  worksheet.getCell('G'+counter).alignment = { wrapText: true, vertical: 'top', horizontal: 'left' };
+                                  worksheet.getCell('H'+counter).alignment = { wrapText: true, vertical: 'top', horizontal: 'left' };
+                                  counter++;
+                                  worksheet.getCell('B'+counter).alignment = { wrapText: true, vertical: 'top', horizontal: 'left' };
+                                  worksheet.getCell('C'+counter).alignment = { wrapText: true, vertical: 'top', horizontal: 'left' };
+                                  worksheet.getCell('D'+counter).alignment = { wrapText: true, vertical: 'top', horizontal: 'left' };
+                                  worksheet.getCell('E'+counter).alignment = { wrapText: true, vertical: 'top', horizontal: 'left' };
+                                  worksheet.getCell('F'+counter).alignment = { wrapText: true, vertical: 'top', horizontal: 'left' };
+                                  worksheet.getCell('G'+counter).alignment = { wrapText: true, vertical: 'top', horizontal: 'left' };
+                                  worksheet.getCell('H'+counter).alignment = { wrapText: true, vertical: 'top', horizontal: 'left' };
+
+                                }else{
+                                  worksheet.getCell('A'+counter).value = "";
+                                  worksheet.getCell('B'+counter).value = rowElementDetail.name;
+                                  worksheet.getCell('C'+counter).value = rowElementDetail.invoice_no;
+                                  worksheet.getCell('D'+counter).value = rowElementDetail.abbr;
+                                  worksheet.getCell('E'+counter).value = rowElementDetail.qty;
+                                  worksheet.getCell('F'+counter).value = rowElementDetail.price;
+                                  worksheet.getCell('G'+counter).value = rowElementDetail.base_com;
+                                  worksheet.getCell('H'+counter).value = (parseFloat(rowElementDetail.qty) * parseFloat(rowElementDetail.base_com));
+
+                                  ctx++;
+                                  worksheet.getCell('B'+counter).alignment = { wrapText: true, vertical: 'top', horizontal: 'left' };
+                                  worksheet.getCell('C'+counter).alignment = { wrapText: true, vertical: 'top', horizontal: 'left' };
+                                  worksheet.getCell('D'+counter).alignment = { wrapText: true, vertical: 'top', horizontal: 'left' };
+                                  worksheet.getCell('E'+counter).alignment = { wrapText: true, vertical: 'top', horizontal: 'left' };
+                                  worksheet.getCell('F'+counter).alignment = { wrapText: true, vertical: 'top', horizontal: 'left' };
+                                  worksheet.getCell('G'+counter).alignment = { wrapText: true, vertical: 'top', horizontal: 'left' };
+                                  worksheet.getCell('H'+counter).alignment = { wrapText: true, vertical: 'top', horizontal: 'left' };
+                                  counter++;
+                                  worksheet.getCell('B'+counter).alignment = { wrapText: true, vertical: 'top', horizontal: 'left' };
+                                  worksheet.getCell('C'+counter).alignment = { wrapText: true, vertical: 'top', horizontal: 'left' };
+                                  worksheet.getCell('D'+counter).alignment = { wrapText: true, vertical: 'top', horizontal: 'left' };
+                                  worksheet.getCell('E'+counter).alignment = { wrapText: true, vertical: 'top', horizontal: 'left' };
+                                  worksheet.getCell('F'+counter).alignment = { wrapText: true, vertical: 'top', horizontal: 'left' };
+                                  worksheet.getCell('G'+counter).alignment = { wrapText: true, vertical: 'top', horizontal: 'left' };
+                                  worksheet.getCell('H'+counter).alignment = { wrapText: true, vertical: 'top', horizontal: 'left' };
+
+                                }
+
+                               total_qty = parseFloat(rowElementDetail.qty) + total_qty;    
+                               total_price = parseFloat(rowElementDetail.price) + total_price;    
+                               total_total = parseFloat(rowElementDetail.total) + total_total;  
+                               total_base_com = parseFloat(rowElementDetail.base_com) + total_base_com;    
+                               total_base_com_qty = total_base_com_qty + (parseFloat(rowElementDetail.base_com) * parseFloat(rowElementDetail.qty));  
+                                
+                                total_qty_t = parseFloat(rowElementDetail.qty) + total_qty_t;    
+                                total_price_t = parseFloat(rowElementDetail.price) + total_price_t;    
+                                total_total_t = parseFloat(rowElementDetail.total) + total_total_t; 
+                                total_base_com_t = parseFloat(rowElementDetail.base_com) + total_base_com_t;    
+                               total_base_com_qty_t = total_base_com_qty_t + (parseFloat(rowElementDetail.base_com) * parseFloat(rowElementDetail.qty));  
+                                
+                                
+                              }
+
+                            }
+                          
+                    
+
+                          worksheet.getCell('A'+counter).value = "SUB TOTAL";
+                          worksheet.getCell('B'+counter).value = "";
+                          worksheet.getCell('C'+counter).value = "";
+                          worksheet.getCell('D'+counter).value = "";
+                          worksheet.getCell('E'+counter).value = total_qty;
+                          worksheet.getCell('F'+counter).value = total_total;
+                          worksheet.getCell('G'+counter).value = total_base_com;
+                          worksheet.getCell('H'+counter).value = total_base_com_qty;
+
+                          worksheet.getRow(counter).font = { bold: true };
+                          worksheet.getCell('A'+counter).fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'abadac'}};
+                          worksheet.getCell('B'+counter).fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'abadac'}};
+                          worksheet.getCell('C'+counter).fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'abadac'}};
+                          worksheet.getCell('D'+counter).fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'abadac'}};
+                          worksheet.getCell('E'+counter).fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'abadac'}};
+                          worksheet.getCell('F'+counter).fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'abadac'}};
+                          worksheet.getCell('G'+counter).fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'abadac'}};
+                          worksheet.getCell('H'+counter).fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'abadac'}};
+
+                          counter++;
+
+
+                         
+                           var borderStyles = {
+                             top: { style: "thin" },
+                             left: { style: "thin" },
+                             bottom: { style: "thin" },
+                             right: { style: "thin" }
+                           };
+
+                           worksheet.eachRow({ includeEmpty: true }, function(row, rowNumber) {
+                             row.eachCell({ includeEmpty: true }, function(cell, colNumber) {
+                               cell.border = borderStyles;
+                             });
+                           });
+                        
+                       }
+
+                      worksheet.getCell('A'+counter).value = "GRAND TOTAL";
+                      worksheet.getCell('B'+counter).value = "";
+                      worksheet.getCell('C'+counter).value = "";
+                      worksheet.getCell('D'+counter).value = "";
+                      worksheet.getCell('E'+counter).value = total_qty_t;
+                      worksheet.getCell('F'+counter).value = total_total_t;
+                      worksheet.getCell('G'+counter).value = total_base_com_t;
+                      worksheet.getCell('H'+counter).value = total_base_com_qty_t;
+
+                      worksheet.getRow(counter).font = { bold: true };
+                      worksheet.getCell('A'+counter).fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                      worksheet.getCell('B'+counter).fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                      worksheet.getCell('C'+counter).fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                      worksheet.getCell('D'+counter).fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                      worksheet.getCell('E'+counter).fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                      worksheet.getCell('F'+counter).fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                      worksheet.getCell('G'+counter).fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                      worksheet.getCell('H'+counter).fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+
+
+                      worksheet.eachRow({ includeEmpty: true }, function(row, rowNumber) {
+                             row.eachCell({ includeEmpty: true }, function(cell, colNumber) {
+                               cell.border = borderStyles;
+                             });
+                           });
+
+
+
+                   // Loop Terapist
+
+                   //XLSX.writeFile(workbook, "Presidents.xlsx", { compression: true });
+
+
+                 
+                   let filename = "Report_Commission_Cashier_Produk_Khusus_"+(Math.floor(Date.now() / 1000)+".xlsx");
+                   workbook.xlsx.writeBuffer()
+                   .then(function(buffer) {
+                     saveAs(
+                       new Blob([buffer], { type: "application/octet-stream" }),
+                       filename
+                     );
+                 });
+
+                 });
+     });
+
+   });
+
+  
+</script>
+
 </html> 

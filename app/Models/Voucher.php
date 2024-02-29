@@ -18,12 +18,15 @@ class Voucher extends Model
         'voucher_code',
         'remark',
         'value',
+        'value_idx',
         'invoice_no',
         'price',
         'dated_start',
         'dated_end',
         'created_by',
         'created_at',
+        'moq',
+        'unlimeted',
         'updated_at'
     ];
 }

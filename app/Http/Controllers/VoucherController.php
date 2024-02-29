@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use App\Models\User;
 use App\Models\Product;
 use App\Models\Voucher;
+use App\Models\VoucherDetail;
 use Illuminate\Http\Request;
 use Spatie\Permission\Models\Role;
 use App\Models\Branch;
@@ -65,17 +66,15 @@ class VoucherController extends Controller
         $data = $this->data;
         $keyword = "";
         $act_permission = $this->act_permission[0];
-        $products = Product::orderBy('product_sku.remark', 'ASC')
-                    ->join('product_type as pt','pt.id','=','product_sku.type_id')
-                    ->join('product_category as pc','pc.id','=','product_sku.category_id')
-                    ->join('product_brand as pb','pb.id','=','product_sku.brand_id')
-                    ->join('voucher as pr','pr.product_id','=','product_sku.id')
-                    ->join('branch as bc','bc.id','=','pr.branch_id')
-                    ->join('users_branch as ub2','ub2.branch_id', '=', 'pr.branch_id')
-                    ->where('ub2.user_id','=',$user->id)
-                   // ->whereRaw(' now()::date between pr.dated_start and pr.dated_end')
-                    ->orderby('pr.voucher_code','ASC')
-                    ->get(['pr.invoice_no','pr.is_used','pr.price','pr.remark as voucher_remark','pr.voucher_code','product_sku.id','product_sku.remark as product_name','pr.branch_id','bc.remark as branch_name','pr.value as value','pr.dated_start','pr.dated_end','pb.remark as product_brand']);
+       
+        $products = DB::select("select left(string_agg(ps.abbr,', '),25) as product_name,v.invoice_no,v.is_used,v.price,v.remark as voucher_remark,v.voucher_code,v.branch_id,bc.remark as branch_name,v.value as value,v.value_idx,v.dated_start,v.dated_end 
+                                from voucher v 
+                                join voucher_detail vd on vd.voucher_code=v.voucher_code 
+                                join branch as bc on bc.id= v.branch_id
+                                join users_branch as ub2 on ub2.branch_id=v .branch_id
+                                join product_sku ps on ps.id = vd.product_id::bigint
+                                where ub2.user_id = '".$user->id."' group by v.invoice_no,v.is_used,v.price,v.remark,v.voucher_code,v.branch_id,bc.remark,v.value,v.value_idx,v.dated_start,v.dated_end 
+        ;");
         return view('pages.voucher.index',['company' => Company::get()->first()] ,compact('request','branchs','products','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
     }
 
@@ -104,8 +103,8 @@ class VoucherController extends Controller
             return Excel::download(new VoucherExport($strencode), 'voucher_'.Carbon::now()->format('YmdHis').'.xlsx');
         }else if($request->src=='Search'){
             $branchx = "";
-            $whereclause = " upper(pr.voucher_code) like '%".strtoupper($keyword)."%' and '".$begindate."' between pr.dated_start and pr.dated_end ";
-            $products = Product::orderBy('product_sku.remark', 'ASC')
+            $whereclause = " upper(v.voucher_code) like '%".strtoupper($keyword)."%' and '".$begindate."' between v.dated_start and v.dated_end ";
+            /**$products = Product::orderBy('product_sku.remark', 'ASC')
                         ->join('product_type as pt','pt.id','=','product_sku.type_id')
                         ->join('product_category as pc','pc.id','=','product_sku.category_id')
                         ->join('product_brand as pb','pb.id','=','product_sku.brand_id')
@@ -116,12 +115,21 @@ class VoucherController extends Controller
                         ->whereRaw($whereclause)
                         ->where('bc.id','like','%'.$branchx.'%')  
                         ->get(['pr.invoice_no','pr.is_used','pr.remark as voucher_remark','pr.voucher_code','product_sku.id','product_sku.remark as product_name','pr.branch_id','bc.remark as branch_name','pr.value as value','pr.dated_start','pr.dated_end']); 
-                        $request->filter_branch_id = "";
-                        $request->filter_end_date = "";       
+             **/
+            $request->filter_branch_id = "";
+            $request->filter_end_date = "";     
+            $products = DB::select("select left(string_agg(ps.abbr,', '),25) as product_name,v.invoice_no,v.is_used,v.price,v.remark as voucher_remark,v.voucher_code,v.branch_id,bc.remark as branch_name,v.value as value,v.value_idx,v.dated_start,v.dated_end 
+                                from voucher v 
+                                join voucher_detail vd on vd.voucher_code=v.voucher_code 
+                                join branch as bc on bc.id= v.branch_id
+                                join users_branch as ub2 on ub2.branch_id=v .branch_id
+                                join product_sku ps on ps.id = vd.product_id::bigint
+                                where ub2.user_id = '".$user->id."' and ".$whereclause." and bc.id::character varying like '%".$branchx."%' group by v.invoice_no,v.is_used,v.price,v.remark,v.voucher_code,v.branch_id,bc.remark,v.value,v.value_idx,v.dated_start,v.dated_end ;");
+
             return view('pages.voucher.index',['company' => Company::get()->first()], compact('request','branchs','products','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
         }else{
-            $whereclause = " upper(pr.voucher_code) like '%".strtoupper($keyword)."%' and '".$begindate."' between pr.dated_start and pr.dated_end ";
-            $products = Product::orderBy('product_sku.remark', 'ASC')
+            $whereclause = " upper(v.voucher_code) like '%".strtoupper($keyword)."%' and '".$begindate."' between v.dated_start and v.dated_end ";
+            /**$products = Product::orderBy('product_sku.remark', 'ASC')
                         ->join('product_type as pt','pt.id','=','product_sku.type_id')
                         ->join('product_category as pc','pc.id','=','product_sku.category_id')
                         ->join('product_brand as pb','pb.id','=','product_sku.brand_id')
@@ -131,7 +139,17 @@ class VoucherController extends Controller
                         ->where('ub2.user_id','=',$user->id)
                         ->whereRaw($whereclause)
                         ->where('bc.id','like','%'.$branchx.'%')  
-                        ->get(['pr.invoice_no','pr.is_used','pr.remark as voucher_remark','pr.voucher_code','product_sku.id','product_sku.remark as product_name','pr.branch_id','bc.remark as branch_name','pr.value as value','pr.dated_start','pr.dated_end']);                 
+                        ->get(['pr.invoice_no','pr.is_used','pr.remark as voucher_remark','pr.voucher_code','product_sku.id','product_sku.remark as product_name','pr.branch_id','bc.remark as branch_name','pr.value as value','pr.dated_start','pr.dated_end']); 
+            **/
+            $request->filter_branch_id = "";
+            $request->filter_end_date = "";     
+            $products = DB::select("select left(string_agg(ps.abbr,', '),25) as product_name,v.invoice_no,v.is_used,v.price,v.remark as voucher_remark,v.voucher_code,v.branch_id,bc.remark as branch_name,v.value as value,v.value_idx,v.dated_start,v.dated_end 
+                                from voucher v 
+                                join voucher_detail vd on vd.voucher_code=v.voucher_code 
+                                join branch as bc on bc.id= v.branch_id
+                                join users_branch as ub2 on ub2.branch_id=v .branch_id
+                                join product_sku ps on ps.id = vd.product_id::bigint
+                                where ub2.user_id = '".$user->id."' and ".$whereclause." and bc.id::character varying like '%".$branchx."%' group by v.invoice_no,v.is_used,v.price,v.remark,v.voucher_code,v.branch_id,bc.remark,v.value,v.value_idx,v.dated_start,v.dated_end ;");
             return view('pages.voucher.index',['company' => Company::get()->first()], compact('request','branchs','products','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
         }
     }
@@ -154,8 +172,13 @@ class VoucherController extends Controller
         $this->getpermissions($id);
 
 
-        $last_voucher = Voucher::orderBy('id','DESC')->first()->id;
-        if($last_voucher==null or $last_voucher==""){
+        if(Voucher::orderBy('id','DESC')->first() == null){
+            $last_voucher = null;
+        }else{
+            $last_voucher = Voucher::orderBy('id','DESC')->first()->id;
+        }
+        
+        if($last_voucher == null or $last_voucher == ""){
             $l_voucher = 0;
         }else{
             $l_voucher = $last_voucher;
@@ -185,9 +208,21 @@ class VoucherController extends Controller
         //For demo purposes only. When creating user or inviting a user
         // you should create a generated random password and email it to the user
     
+        $prefix = $request->get('prefix');
+        $begin_digit = $request->get('begin_digit');
+        $digit = $request->get('digit');
+        $product_id = $request->get('product_id');
+        $l_voucher = 0;
+
+        if($begin_digit == null or $begin_digit == ""){
+            $l_voucher = 1;
+        }else{
+            $l_voucher = $begin_digit;
+        }
+        
         for($i=0;$i<$request->qty_voucher_code;$i++){
 
-            $last_voucher = Voucher::orderBy('id','DESC')->first()->id;
+            /**$last_voucher = Voucher::orderBy('id','DESC')->first()->id;
             if($last_voucher==null or $last_voucher==""){
                 $l_voucher = 0;
             }else{
@@ -195,24 +230,54 @@ class VoucherController extends Controller
             }
             $now_voucher = "VC-".substr((("000000".$l_voucher+1)),-5);
             $price = $request->get('price') / $request->qty_voucher_code;
-            
+            **/
+
+            $now_voucher = $prefix.substr((("000000".$l_voucher)),(-1*$digit));
+            $price = $request->get('price');
+
         
             $user = Auth::user();
             $voucher->create(
                 array_merge(
                     ['value' => $request->get('value') ],
+                    ['value_idx' => $request->get('value_idx') ],
                     ['dated_start' => Carbon::createFromFormat('d-m-Y', $request->get('dated_start'))->format('Y-m-d') ],
                     ['dated_end' => Carbon::createFromFormat('d-m-Y', $request->get('dated_end'))->format('Y-m-d') ],
-                    ['product_id' => $request->get('product_id') ],
+                    //['product_id' => $request->get('product_id') ],
                     ['branch_id' => $request->get('branch_id') ],
+                    ['moq' => $request->get('moq') ],
+                    ['unlimeted' => $request->get('unlimeted') ],
                     ['remark' => $request->get('remark') ],
                     ['price' => $price ],
                     ['voucher_code' => $now_voucher ],
                     ['created_by' => $user->id ],
                 )
             );
+
+            
+
+            for($j=0;$j<count($product_id);$j++){
+                if($product_id[$j]=="%"){
+                    DB::update("insert into voucher_detail(voucher_code,product_id,created_by,created_at)
+                    select '".$now_voucher."',id,1,now() from product_sku ps 
+                    where ps.type_id = 2");
+                    break;
+                }else{
+                    VoucherDetail::create(
+                        array_merge(
+                            ['product_id' => $product_id[$j] ],
+                            ['voucher_code' => $now_voucher ],
+                            ['created_by' => $user->id ],
+                        )
+                    );
+                }
+
+                
+            }
+
+            $l_voucher++;
         }
-        
+    
         return redirect()->route('voucher.index')
             ->withSuccess(__($request->qty_voucher_code.' Voucher created successfully.'));
     }
@@ -259,19 +324,19 @@ class VoucherController extends Controller
 
         $user  = Auth::user();
         $data = $this->data;
-        $product = Product::join('product_type as pt','pt.id','=','product_sku.type_id')
-        ->join('product_category as pc','pc.id','=','product_sku.category_id')
-        ->join('product_brand as pb','pb.id','=','product_sku.brand_id')
-        ->join('voucher as pr','pr.product_id','=','product_sku.id')
-        ->join('branch as bc','bc.id','=','pr.branch_id')
-        ->where('product_sku.id',$product_id)
-        ->where('bc.id','=',$branch_id)
-        ->where('pr.voucher_code','=',$voucher_code)
-        ->get(['pr.remark as voucher_remark','pr.voucher_code','product_sku.id','product_sku.remark as product_name','pr.branch_id','bc.remark as branch_name','pr.value as value','pr.dated_start','pr.dated_end'])->first(); 
+        $product = DB::select("select v.unlimeted,v.moq,bc.id as branch_id,left(string_agg(ps.abbr,', '),150) as product_name,v.invoice_no,v.is_used,v.price,v.remark as voucher_remark,v.voucher_code,v.branch_id,bc.remark as branch_name,v.value as value,v.value_idx,v.dated_start,v.dated_end 
+                from voucher v 
+                join voucher_detail vd on vd.voucher_code=v.voucher_code and vd.voucher_code='".$voucher_code."'
+                join branch as bc on bc.id= v.branch_id and bc.id = ".$branch_id."
+                join users_branch as ub2 on ub2.branch_id=v .branch_id
+                join product_sku ps on ps.id = vd.product_id::bigint
+                where ub2.user_id = '".$user->id."' group by v.unlimeted,v.moq,bc.id,v.invoice_no,v.is_used,v.price,v.remark,v.voucher_code,v.branch_id,bc.remark,v.value,v.value_idx,v.dated_start,v.dated_end limit 1
+        ;");
+
         return view('pages.voucher.edit', [
             'branchs' => Branch::join('users_branch as ub','ub.branch_id','=','branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']),
             'data' => $data,
-            'product' => $product, 'company' => Company::get()->first(),
+            'product' => $product[0], 'company' => Company::get()->first(),
             'products' => Product::get(),
         ]);
     }
@@ -287,12 +352,15 @@ class VoucherController extends Controller
     public function update(String $branch,String $product,String $dated_start,String $dated_end,String $voucher_code, Request $request) 
     {
         $user = Auth::user();
-        Voucher::where('product_id','=',$product)
-                        ->where('branch_id','=',$branch)
+        Voucher::where('branch_id','=',$branch)
                         ->where('voucher_code','=',$voucher_code)
                         ->update(
                             array_merge(
                                 ['value' => $request->get('value') ],
+                                ['value_idx' => $request->get('value_idx') ],
+                                ['price' => $request->get('price') ],
+                                ['moq' => $request->get('moq') ],
+                                ['unlimeted' => $request->get('unlimeted') ],
                                 ['dated_end' => Carbon::createFromFormat('d-m-Y', $request->get('dated_end'))->format('Y-m-d')],
                                 ['dated_start' => Carbon::createFromFormat('d-m-Y', $request->get('dated_start'))->format('Y-m-d') ],
                             )

@@ -39,6 +39,7 @@
    <body> 
 
       <button id="printPageButton" onClick="window.print();"  class="btn btn-secondary btn-sm mt-1 print mb-2">Cetak Laporan</button>
+      <button id="btn_export_xls" class="btn btn-primary btn-sm print printPageButton  mt-1 print mb-2">Cetak XLS</button>
       <br>
       <table style="width: 100%">
         <tbody>
@@ -216,24 +217,288 @@
       searching: false,
         dom: 'Bfrtip',
         buttons: [
-            {
-                extend: 'copyHtml5',
-                exportOptions: { 
-                  orthogonal: 'export',
-                  columns: ':visible'
-                }
-            },
-            {
-                extend: 'excelHtml5',
-                exportOptions: { 
-                  orthogonal: 'export',
-                  columns: ':visible'
-                }
-            },
+            
         ]
     });
 
 
 
     </script>
+
+<script type="text/javascript">
+  //window.print();
+  //const workbook = XLSX.utils.book_new();
+
+  const workbook = new ExcelJS.Workbook();
+  workbook.creator = 'Kakiku System Apps';
+  workbook.created = new Date();
+  //workbook.modified = new Date();
+
+  $(document).ready(function() {
+    var url = "{{ route('reports.closeday.search') }}";
+    const params = {
+      filter_begin_date_in : "{{ $begindate }}",
+      filter_end_date_in : "{{ $enddate }}",
+      filter_branch_id_in: "{{ $branchx }}",
+      filter_terapist_in: "%",
+      export : 'Export Sum Counter API',
+    };
+
+    $('#btn_export_xls').on('click',function(){
+      const res = axios.get(url,{ params }, {
+                  headers: {}
+                }).then(resp => {
+                  report_data = resp.data.report_data;
+
+                  var beginnewformat = resp.data.beginnewformat;
+                  var endnewformat = resp.data.endnewformat;
+
+                  let data_filtered = [];
+
+                  // Loop Terapist
+                      data_filtered = [];
+
+                      let worksheet = workbook.addWorksheet("DATA");
+
+                      /*Column headers*/
+                      
+                      worksheet.mergeCells('A1', 'E1');
+                      worksheet.getCell('A1').value = 'Cabang : '+report_data[0].branch_name;
+                      worksheet.getCell('A1').alignment = { vertical: 'middle', horizontal: 'center' };
+
+
+                      worksheet.mergeCells('F1', 'I1');
+                      worksheet.getCell('F1').value = 'Tgl : '+resp.data.beginnewformat+' sd '+resp.data.endnewformat;
+                      worksheet.getCell('F1').alignment = { vertical: 'middle', horizontal: 'center' }; 
+                      
+                      worksheet.mergeCells('A3', 'A4');
+                      worksheet.getCell('A3').value = 'TANGGAL';
+                      worksheet.getCell('A3').alignment = { vertical: 'middle', horizontal: 'center' };
+
+                      worksheet.mergeCells('B3', 'C3');
+                      worksheet.getCell('B3').value = 'PERAWATAN';
+                      worksheet.getCell('B3').alignment = { vertical: 'middle', horizontal: 'center' };
+
+                      worksheet.getCell('B4').value = 'HARIAN';
+                      worksheet.getCell('B4').alignment = { vertical: 'middle', horizontal: 'center' };
+
+                      worksheet.getCell('C4').value = 'S/D';
+                      worksheet.getCell('C4').alignment = { vertical: 'middle', horizontal: 'center' };
+
+
+                      worksheet.mergeCells('D3', 'E3');
+                      worksheet.getCell('D3').value = 'PRODUK + MINUMAN';
+                      worksheet.getCell('D3').alignment = { vertical: 'middle', horizontal: 'center' };
+
+                      worksheet.getCell('D4').value = 'HARIAN';
+                      worksheet.getCell('D4').alignment = { vertical: 'middle', horizontal: 'center' };
+
+                      worksheet.getCell('E4').value = 'S/D';
+                      worksheet.getCell('E4').alignment = { vertical: 'middle', horizontal: 'center' };
+
+
+                      worksheet.mergeCells('F3', 'G3');
+                      worksheet.getCell('F3').value = 'EXTRA CHARGE';
+                      worksheet.getCell('F3').alignment = { vertical: 'middle', horizontal: 'center' };
+
+                      worksheet.getCell('F4').value = 'HARIAN';
+                      worksheet.getCell('F4').alignment = { vertical: 'middle', horizontal: 'center' };
+
+                      worksheet.getCell('G4').value = 'S/D';
+                      worksheet.getCell('G4').alignment = { vertical: 'middle', horizontal: 'center' };
+
+
+                      worksheet.mergeCells('H3', 'I3');
+                      worksheet.getCell('H3').value = 'PENDAPATAN TOTAL';
+                      worksheet.getCell('H3').alignment = { vertical: 'middle', horizontal: 'center' };
+
+                      worksheet.getCell('H4').value = 'HARIAN';
+                      worksheet.getCell('H4').alignment = { vertical: 'middle', horizontal: 'center' };
+
+                      worksheet.getCell('I4').value = 'S/D';
+                      worksheet.getCell('I4').alignment = { vertical: 'middle', horizontal: 'center' };
+
+                      worksheet.columns = [
+                        { key: 'tanggal', width: 12 },
+                        { key: 'perawatan', width: 30 },
+                        { key: 'perawatan_sd', width: 20 },
+                        { key: 'produk', width: 20 },
+                        { key: 'produk_sd', width: 20 },
+                        { key: 'extra', width: 20 },
+                        { key: 'extra_sd', width: 20 },
+                        { key: 'total_all', width: 20 },
+                        { key: 'total_all_sd', width: 20 },
+                      ];
+
+                      worksheet.getRow(1).font = { bold: true };
+                      worksheet.getRow(2).font = { bold: true };
+                      worksheet.getRow(3).font = { bold: true };
+                      worksheet.getCell('A1').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                      worksheet.getCell('B1').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                      worksheet.getCell('C1').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                      worksheet.getCell('D1').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                      worksheet.getCell('E1').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                      worksheet.getCell('F1').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                      worksheet.getCell('G1').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                      worksheet.getCell('H1').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                      worksheet.getCell('I1').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+
+
+                      worksheet.getCell('A3').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                      worksheet.getCell('B3').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                      worksheet.getCell('C3').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                      worksheet.getCell('D3').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                      worksheet.getCell('E3').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                      worksheet.getCell('F3').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                      worksheet.getCell('G3').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                      worksheet.getCell('H3').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                      worksheet.getCell('I3').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+
+                      worksheet.getCell('A4').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                      worksheet.getCell('B4').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                      worksheet.getCell('C4').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                      worksheet.getCell('D4').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                      worksheet.getCell('E4').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                      worksheet.getCell('F4').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                      worksheet.getCell('G4').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                      worksheet.getCell('H4').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                      worksheet.getCell('I4').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+
+                      let counter = 3;
+                      let value_sd_until = 0;
+                      var total_service = 0;
+                      var total_salon = 0;
+                      var total_ojek = 0;
+                      var total_tambahan = 0;
+                      var total_product = 0;
+                      var total_drink = 0;
+                      var total_extra = 0;
+                      var total_lebaran = 0;
+                      var total_cash = 0;
+                      var total_b1d = 0;
+                      var total_b1c = 0;
+                      var total_b2d = 0;
+                      var total_b2c = 0;
+                      var total_b1q = 0;
+                      var total_b2q = 0;
+                      var total_b1t = 0;
+                      var total_b2t = 0;
+                      var qty_service = 0;
+                      var total_all = 0;
+                      
+                      for (let index = 0; index < report_data.length; index++) {
+                        var rowElement = report_data[index];
+
+                        total_service = total_service + parseFloat((rowElement.total_service-rowElement.total_tambahan));
+                        total_product = total_product + parseFloat(rowElement.total_product);
+                        total_ojek = total_ojek + parseFloat(rowElement.total_ojek);
+                        total_tambahan = total_tambahan + parseFloat(rowElement.total_tambahan);
+                        total_extra = total_extra + parseFloat(rowElement.total_extra);
+                        total_lebaran = total_lebaran + parseFloat(rowElement.total_lebaran);
+                        total_cash = total_cash + parseFloat(rowElement.total_cash);
+                        total_b1d = total_b1d + parseFloat(rowElement.total_b1d);
+                        total_b1c = total_b1c + parseFloat(rowElement.total_b1c);
+                        total_b2d = total_b2d + parseFloat(rowElement.total_b2d);
+                        total_b2c = total_b2c + parseFloat(rowElement.total_b2c);
+                        total_b1q = total_b1q + parseFloat(rowElement.total_b1q);
+                        total_b2q = total_b2q + parseFloat(rowElement.total_b2q);
+                        total_b1t = total_b1t + parseFloat(rowElement.total_b1t);
+                        total_b2t = total_b2t + parseFloat(rowElement.total_b2t);
+                        qty_service = qty_service + parseFloat(rowElement.qty_service);
+                        total_all = total_all + parseFloat(rowElement.total_all);
+                       
+
+                          worksheet.addRow({
+                            tanggal : rowElement.datedformat, 
+                            perawatan : (rowElement.total_service-rowElement.total_tambahan), 
+                            perawatan_sd : total_service, 
+                            produk : rowElement.total_product, 
+                            produk_sd : total_product, 
+                            extra : parseFloat(rowElement.total_extra), 
+                            extra_sd : total_extra, 
+                            total_all : parseFloat(rowElement.total_all), 
+                            total_all_sd : total_all, 
+                          });
+
+
+                          worksheet.getCell('B'+counter).alignment = { wrapText: true };
+                          worksheet.getCell('C'+counter).alignment = { wrapText: true };
+                          worksheet.getCell('D'+counter).alignment = { wrapText: true };
+                          worksheet.getCell('E'+counter).alignment = { wrapText: true };
+                          worksheet.getCell('F'+counter).alignment = { wrapText: true };
+                          worksheet.getCell('H'+counter).alignment = { wrapText: true };
+                          worksheet.getCell('I'+counter).alignment = { wrapText: true };                      
+                          counter++;
+                          worksheet.getCell('B'+counter).alignment = { wrapText: true };
+                          worksheet.getCell('C'+counter).alignment = { wrapText: true };
+                          worksheet.getCell('D'+counter).alignment = { wrapText: true };
+                          worksheet.getCell('E'+counter).alignment = { wrapText: true };
+                          worksheet.getCell('F'+counter).alignment = { wrapText: true };
+                          worksheet.getCell('H'+counter).alignment = { wrapText: true };
+                          worksheet.getCell('I'+counter).alignment = { wrapText: true };
+
+                          var borderStyles = {
+                            top: { style: "thin" },
+                            left: { style: "thin" },
+                            bottom: { style: "thin" },
+                            right: { style: "thin" }
+                          };
+
+                          worksheet.eachRow({ includeEmpty: true }, function(row, rowNumber) {
+                            row.eachCell({ includeEmpty: true }, function(cell, colNumber) {
+                              cell.border = borderStyles;
+                            });
+                          });
+                        
+                      }
+
+
+                      counter++;
+
+                      worksheet.addRow({
+                        tanggal : "TOTAL", 
+                        perawatan : total_service, 
+                        perawatan_sd : total_service, 
+                        produk : total_product, 
+                        produk_sd : total_product, 
+                        extra : total_extra, 
+                        extra_sd : total_extra, 
+                        total_all : total_all, 
+                        total_all_sd : total_all, 
+                      });
+                      worksheet.getRow(counter+1).font = { bold: true };
+                      worksheet.getCell('B'+counter+1).alignment = { wrapText: true };
+                      worksheet.getCell('C'+counter+1).alignment = { wrapText: true };
+                      worksheet.getCell('D'+counter+1).alignment = { wrapText: true };
+                      worksheet.getCell('E'+counter+1).alignment = { wrapText: true };
+                      worksheet.getCell('F'+counter+1).alignment = { wrapText: true };
+                      worksheet.getCell('H'+counter+1).alignment = { wrapText: true };
+                      worksheet.getCell('I'+counter+1).alignment = { wrapText: true };
+
+                      worksheet.eachRow({ includeEmpty: true }, function(row, rowNumber) {
+                            row.eachCell({ includeEmpty: true }, function(cell, colNumber) {
+                              cell.border = borderStyles;
+                            });
+                          });
+
+                  
+
+                  //XLSX.writeFile(workbook, "Presidents.xlsx", { compression: true });
+
+
+                
+                  let filename = "Report_Commission_Terapist_"+(Math.floor(Date.now() / 1000)+".xlsx");
+                  workbook.xlsx.writeBuffer()
+                  .then(function(buffer) {
+                    saveAs(
+                      new Blob([buffer], { type: "application/octet-stream" }),
+                      filename
+                    );
+                });
+
+                });
+    });
+
+  });
+</script>
 </html> 

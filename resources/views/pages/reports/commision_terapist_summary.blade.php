@@ -14,6 +14,7 @@
                         <button onclick="openDialogFilterSearch('Filter');" class="btn btn-sm btn-lime">@lang('general.btn_filter')</button> 
                         <button onclick="openDialogFilterSearch('Export Excel');" class="btn btn-sm btn-success">Export</button>  
                         <button onclick="openDialogFilterSearch('Export Sum Lite');" class="btn btn-sm btn-success">Export Summary</button>  
+                        <button onclick="openDialogFilterSearch('Export Sum Template');" class="btn btn-sm btn-warning">Export XLS</button>  
                 </div>
             </div>
         </div>
