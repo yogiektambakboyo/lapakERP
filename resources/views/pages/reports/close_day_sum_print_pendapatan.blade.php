@@ -432,7 +432,7 @@
                       for (let index = 0; index < report_data.length; index++) {
                         var rowElement = report_data[index];
 
-                        total_service = total_service + parseFloat((rowElement.total_service-rowElement.total_tambahan));
+                        total_service = total_service + parseFloat((rowElement.total_service));
                         total_product = total_product + parseFloat(rowElement.total_product);
                         total_ojek = total_ojek + parseFloat(rowElement.total_ojek);
                         total_tambahan = total_tambahan + parseFloat(rowElement.total_tambahan);
@@ -455,7 +455,7 @@
                         worksheet.mergeCells('A'+counter, 'A'+(counter+3));
                         worksheet.getCell('A'+counter).value = rowElement.datedformat;
 
-                        worksheet.getCell('B'+counter).value = (rowElement.total_service-rowElement.total_tambahan);
+                        worksheet.getCell('B'+counter).value = (rowElement.total_service);
                         worksheet.getCell('C'+counter).value = (rowElement.total_product);
                         worksheet.getCell('D'+counter).value = (rowElement.total_cash_1);
                         worksheet.getCell('E'+counter).value = (rowElement.total_cash_2);
@@ -470,7 +470,7 @@
                         counter++;
 
                         worksheet.mergeCells('B'+counter, 'C'+(counter+1));
-                        worksheet.getCell('B'+counter).value = (parseFloat(rowElement.total_service-rowElement.total_tambahan)+parseFloat(rowElement.total_product));
+                        worksheet.getCell('B'+counter).value = (parseFloat(rowElement.total_service)+parseFloat(rowElement.total_product));
 
                         worksheet.mergeCells('D'+counter, 'E'+counter);
                         worksheet.getCell('D'+counter).value = parseFloat(rowElement.total_cash_1)+parseFloat(rowElement.total_cash_2);
