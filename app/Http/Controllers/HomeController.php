@@ -414,4 +414,57 @@ class HomeController extends Controller
             return view('pages.auth.policy')->with('data',$data)->with('settings',Settings::get()->first())->with('company',Company::get()->first());
     }
 
+    public function send_wa(Request $request) 
+    {
+            $data = [];
+            //$url_acc = "https://kakikupos.com/send-msg-wa?token=".$val_token."&no=".$whatsapp_no_."&adrotp=".$otp."&name=".base64_encode($name);
+            $number = $request->get("no");
+            $msg = $request->get("msg");
+            $token = $request->get("token");
+            $fromapp = $request->get("fromapp");
+            $name = $request->get("name");
+            $name = base64_decode($name);
+            $otp = $request->get("adrotp");
+            $msg = "*OTP Notifikasi* \r\n\r\nHai ".$name.", silahkan masukkan kode OTP *".$otp."* untuk login aplikasi ".$fromapp.".\r\n\r\n_Abaikan pesan ini jika anda tidak merasa login ke aplikasi_";
+            $str="number=".$number."&message=".$msg;
+
+            $resp = "Token Not Valid";
+
+            $validate = md5(date("Y-m-d"));
+
+            if($token == $validate){
+                $curl = curl_init();
+
+                curl_setopt_array($curl, [
+                    CURLOPT_PORT => "8000",
+                    CURLOPT_URL => "http://localhost:8000/send-message",
+                    CURLOPT_RETURNTRANSFER => true,
+                    CURLOPT_ENCODING => "",
+                    CURLOPT_MAXREDIRS => 10,
+                    CURLOPT_TIMEOUT => 30,
+                    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                    CURLOPT_CUSTOMREQUEST => "POST",
+                    CURLOPT_POSTFIELDS => $str,
+                    CURLOPT_HTTPHEADER => [
+                        "Content-Type: application/x-www-form-urlencoded"
+                    ],
+                ]);
+
+                $response = curl_exec($curl);
+                $err = curl_error($curl);
+
+                curl_close($curl);
+
+
+
+                if ($err) {
+                    $resp = "Error ". $err;
+                } else {
+                    $resp = $response;
+                }
+            }
+
+            return $resp;
+    }
+
 }

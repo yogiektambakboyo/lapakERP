@@ -22,6 +22,7 @@ class VerifyCsrfToken extends Middleware
         '/api_photo_slide_detail',
         '/api_post_invoice_terapist',
         '/get_checkmembership',
+        '/send-msg-wa',
         //
     ];
 }
