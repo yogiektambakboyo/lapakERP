@@ -2615,7 +2615,8 @@
                     counterno_service = 0;
                     var today = new Date();
                     var weekday = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
-                    var time = [today.getHours(),today.getMinutes()].join('');
+                    var minutes = (today.getMinutes() < 10 ? '0' : '') + today.getMinutes()
+                    var time = [today.getHours(),minutes].join('');
                     var PromoHit = 0;
                     var PromoSelected = "";
 
