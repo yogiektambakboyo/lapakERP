@@ -525,7 +525,7 @@
 
 
 
-        <div class="row mb-3 d-none">
+        <div class="row mb-3">
           <div class="col-md-12">
             <div class="row mb-3">
                 <label class="form-label col-form-label col-md-2" id="label-voucher">No Faktur Tamu ke 2</label>
