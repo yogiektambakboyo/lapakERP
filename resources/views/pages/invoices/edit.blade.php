@@ -2427,7 +2427,8 @@ $('#customer_id').select2({
                     counterno_service = 0;
                     var today = new Date();
                     var weekday = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
-                    var time = [today.getHours(),today.getMinutes()].join('');
+                    var minutes = (today.getMinutes() < 10 ? '0' : '') + today.getMinutes()
+                    var time = [today.getHours(),minutes].join('');
                     var PromoHit = 0;
                     var PromoSelected = "";
 
@@ -2452,6 +2453,10 @@ $('#customer_id').select2({
 
                         if(resp.data[j].active_time == "all"){
                           isvalidtime = 1;
+                        }else if(resp.data[j].active_time == "noon"){
+                          if(parseInt(time)>1000 && parseInt(time)<=1700){
+                            isvalidtime = 1;
+                          }
                         }else if(resp.data[j].active_time == "officetime"){
                           if(parseInt(time)>800 && parseInt(time)<=1700){
                             isvalidtime = 1;
