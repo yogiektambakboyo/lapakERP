@@ -2660,7 +2660,9 @@
                           isvalidcust = 1;
                         }
 
-                        console.log($('#customer_type').find(':selected').val()+" - "+ isvalidtime+ "-"+isvalidday+"-"+isvalidday+"-"+(((parseFloat(orderList[i]["price"])) * (parseFloat(orderList[i]["qty"]))) >= (parseFloat(resp.data[j].value))));
+                        console.log(time);
+
+                        console.log($('#customer_type').find(':selected').val()+" - "+ isvalidtime+"-"+isvalidday+"-"+(((parseFloat(orderList[i]["price"])) * (parseFloat(orderList[i]["qty"]))) >= (parseFloat(resp.data[j].value))));
 
                         if(resp.data[j].product_id == orderList[i]["id"] && isvalidday==1 && isvalidtime==1 && isvalidcust==1 && parseFloat(orderList[i]["discount"])==0 && ((parseFloat(orderList[i]["qty"]))>= (parseFloat(resp.data[j].moq))) && (((parseFloat(orderList[i]["price"])) * (parseFloat(orderList[i]["qty"]))) >= (parseFloat(resp.data[j].value)))){
                           orderList[i]["discount"] = ( ((parseFloat(resp.data[j].value_idx)) * (parseFloat(orderList[i]["price"])) * (parseFloat(orderList[i]["qty"])) )/100 ) + (parseFloat(resp.data[j].value));
