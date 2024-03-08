@@ -100,32 +100,42 @@ class APIController extends Controller
         $password = $request->password;
         $phone = $request->phone;
         $address = $request->address;
-        $phone = $request->phone;
-        $phone = $request->phone;
+        $name = $request->name;
+        $email = $request->email;
         $token = $request->token;
+        $ident_id = $request->ident_id;
         $ua = $request->header('User-Agent');
         $token_svr = base64_encode(date('Ymd'));
 
+        $arr = array(
+            'username' => $username,
+            'password' => $password,
+            'phone' => $phone,
+            'address' => $address,
+            'name' => $name,
+            'email' => $email,
+            'ident_id' => $ident_id
+        );
+
+
         if($ua == "Malaikat_Ridwan" && $token == $token_svr){
-            $login = DB::select( DB::raw("select s.id,s.name,s.username,s.password, s.address,s.phone,s.email,coalesce(s.ident_id,'-') ident_id  from sales s 
-                                         where s.username = :username and s.password = :password; "), 
-            array(
-                'username' => $username,
-                'password' => $password
-            ));
+            $login = DB::select( DB::raw(" INSERT INTO public.sales(name, username, password, address, branch_id, active, phone, email, ident_id)
+                                           VALUES(:name, :username, :password, :address, 1, -1, :phone, :email, :ident_id); "), $arr
+                    
+            );
         
 
             if (count($login)>0) {
                 $result = array_merge(
                     ['status' => 'success'],
-                    ['data' => $login],
-                    ['message' => 'Login Berhasil'],
+                    ['data' => $arr],
+                    ['message' => 'Pendaftaran berhasil'],
                 ); 
             }else{
                 $result = array_merge(
                     ['status' => 'failed'],
-                    ['data' => ""],
-                    ['message' => 'Username/Password tidak valid'],
+                    ['data' => $arr],
+                    ['message' => 'Pendaftaran gagal'],
                 );  
             }
         }else{

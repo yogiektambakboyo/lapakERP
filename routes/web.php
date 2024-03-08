@@ -23,6 +23,7 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
      * API Routes
      */
     Route::get('/api_login', 'APIController@api_login')->name('api.login');
+    Route::get('/api_register', 'APIController@api_register_sales')->name('api.register');
 
     /**
      * Home Routes
