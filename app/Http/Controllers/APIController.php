@@ -107,7 +107,7 @@ class APIController extends Controller
         $ua = $request->header('User-Agent');
         $token_svr = md5(date('Ymd'));
 
-        $arr = array(
+        $arr[] = array(
             'username' => $username,
             'password' => $password,
             'phone' => $phone,
