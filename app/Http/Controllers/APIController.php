@@ -56,310 +56,88 @@ class APIController extends Controller
     { 
         $username = $request->username;
         $password = $request->password;
+        $token = $request->token;
+        $ua = $request->header('User-Agent');
+        $token_svr = base64_encode(date('Ymd'));
 
-        if (Auth::attempt(['username' => $username, 'password' => $password])) {
-            //id,name,username,password,active,lastlogin,roles
-            $login = DB::select( DB::raw("select u.id as id,username,'' as password,name,now()::date as downloaddate,'1' as active,b.remark  as lastlogin,'99' as roles from users u join branch b on b.id = u.branch_id  where username = :username"), array(
+        if($ua == "Malaikat_Ridwan" && $token == $token_svr){
+            $login = DB::select( DB::raw("select s.id,s.name,s.username,s.password, s.address,s.phone,s.email,coalesce(s.ident_id,'-') ident_id,s.active  from sales s 
+                                         where s.username = :username and s.password = :password; "), 
+            array(
                 'username' => $username,
+                'password' => $password
             ));
-            $result = array_merge(
-                ['status' => 'success'],
-                ['data' => $login],
-                ['message' => 'Login Succesfully'],
-            ); 
+        
+
+            if (count($login)>0) {
+                $result = array_merge(
+                    ['status' => 'success'],
+                    ['data' => $login],
+                    ['message' => 'Login Berhasil'],
+                ); 
+            }else{
+                $result = array_merge(
+                    ['status' => 'failed'],
+                    ['data' => ""],
+                    ['message' => 'Username/Password tidak valid'],
+                );  
+            }
         }else{
             $result = array_merge(
                 ['status' => 'failed'],
                 ['data' => ""],
-                ['message' => 'Username/Password not valid'],
+                ['message' => 'Tidak diijinkan akses'],
             );  
         }
-
-        return response()->json($result);
-    }
-
-    public function api_product_list(Request $request)
-    { 
-        $result_query = DB::select( DB::raw("
-        select pt.qty,ps.id,ps.remark,ps.abbr,ps.barcode,ps.photo,ps.photo_2,pc.remark as category_name,pb.remark as brand_name from product_sku ps 
-        join product_category pc on pc.id = ps.category_id 
-        join product_brand pb on pb.id = ps.brand_id 
-        left join product_stock pt on pt.product_id = ps.id 
-        join users u on u.id = :users_id and u.active=1 and pt.branch_id = u.branch_id
-        where ps.active = 1"), array(
-            'users_id' => $request->get('user_id'),
-        ));
-        $result = array_merge(
-            ['status' => 'success'],
-            ['data' => $result_query],
-            ['message' => 'Get Product Succesfully'],
-        ); 
-
-        return response()->json($result);
-    }
-
-    public function api_product_list_stock(Request $request)
-    { 
-        $result_query = DB::select( DB::raw("select ps.id,ps.remark,ps.abbr,ps.barcode,ps.photo,ps.photo_2,pc.remark as category_name,pb.remark as brand_name 
-        from product_sku ps 
-        join product_category pc on pc.id = ps.category_id 
-        join product_brand pb on pb.id = ps.brand_id 
-        join product_stock pt on pt.product_id = ps.id 
-        join users u on u.id = :users_id and u.active=1 and pt.branch_id = u.branch_id
-        where ps.active = 1"), array(
-            'users_id' => $request->get('user_id'),
-        ));
-        $result = array_merge(
-            ['status' => 'success'],
-            ['data' => $result_query],
-            ['message' => 'Get Stock Product Succesfully'],
-        ); 
-
-        return response()->json($result);
-    }
-
-    public function api_product_update(Request $request)
-    { 
-        $result_query = DB::select( DB::raw("select ps.id,ps.remark,ps.abbr,ps.barcode,ps.photo,ps.photo_2,pc.remark as category_name,pb.remark as brand_name from product_sku ps 
-        join product_category pc on pc.id = ps.category_id 
-        join product_brand pb on pb.id = ps.brand_id 
-        where active = 1"), array(
-            
-        ));
-        $result = array_merge(
-            ['status' => 'success'],
-            ['data' => $result_query],
-            ['message' => 'Get Product Succesfully'],
-        ); 
-
-        return response()->json($result);
-    }
-
-    public function api_order_list(Request $request)
-    { 
-        $result_query = DB::select( DB::raw("select om.id,om.order_no,om.dated,c.name as customers_name,om.customers_id,om.created_at,om.created_by,u.name as creator_name,om.is_checkout 
-        from order_master om 
-        join customers c on c.id = om.customers_id 
-        join users u on u.id= om.created_by 
-        where om.is_checkout = 0 and om.dated = now()::date"), array());
-        $result = array_merge(
-            ['status' => 'success'],
-            ['data' => $result_query],
-            ['message' => 'Get Orders Succesfully'],
-        ); 
-
-        return response()->json($result);
-    }
-
-    public function api_order_detail(Request $request)
-    { 
-        $result_query = DB::select( DB::raw("select od.order_no,ps.remark as product_name,od.qty,od.product_id  from order_master om 
-        join order_detail od on od.order_no = om.order_no 
-        join product_sku ps on ps.id = od.product_id 
-        where om.order_no = :order_no "), array(
-            'order_no' => $request->get('order_no'),
-        ));
-        $result = array_merge(
-            ['status' => 'success'],
-            ['data' => $result_query],
-            ['message' => 'Get Orders Succesfully'],
-        ); 
-
-        return response()->json($result);
-    }
-
-    public function api_db_version(Request $request)
-    { 
-        $result_query = DB::select( DB::raw("select current_value as db_version  from setting_document_counter sdc where sdc.doc_type = 'DB_Version'; "), array());
-        $result = array_merge(
-            ['status' => 'success'],
-            ['data' => $result_query[0]->db_version],
-            ['message' => 'Get DB Succesfully'],
-        ); 
-
-        return response()->json($result);
-    }
-
-    public function api_ml_list(Request $request)
-    { 
-        $result_query = DB::select( DB::raw("select id,remark,seq,0 as probability  from ml_list ml where active = 1 order by seq"), array());
-        $result = array_merge(
-            ['status' => 'success'],
-            ['data' => $result_query],
-            ['message' => 'Get ML List Succesfully'],
-        ); 
-
-        return response()->json($result);
-    }
-
-    public function api_customer_list(Request $request)
-    { 
-        $result_query = DB::select( DB::raw("select id,name as customer_name from customers c
-        join users_branch ub on ub.user_id = :users_id and ub.branch_id = c.branch_id 
-        order by c.name"), array(
-            'users_id' => $request->get('user_id'),
-        ));
-        $result = array_merge(
-            ['status' => 'success'],
-            ['data' => $result_query],
-            ['message' => 'Get Orders Succesfully'],
-        ); 
-
-        return response()->json($result);
-    }
-
-    
-    public function api_order_create(Request $request)
-    { 
-        $branch = Customer::where('id','=',$request->get('customer_id'))->get(['branch_id'])->first();
-        $count_no = SettingsDocumentNumber::where('doc_type','=','Order')->where('branch_id','=',$branch->branch_id)->where('period','=','Yearly')->get(['current_value','abbr']);
-        $count_no_daily = SettingsDocumentNumber::where('doc_type','=','Order_Queue')->where('branch_id','=',$branch->branch_id)->where('period','=','Daily')->get(['current_value','abbr']);
-        $order_no = $count_no[0]->abbr.'-'.substr(('000'.$branch->branch_id),-3).'-'.date("Y").'-'.substr(('00000000'.((int)($count_no[0]->current_value) + 1)),-8);
-
-        $res_order = Order::create(
-            array_merge(
-                ['order_no' => $order_no ],
-                ['created_by' => $request->get('user_id')],
-                ['dated' => Carbon::parse($request->get('order_date'))->format('Y-m-d') ],
-                ['customers_id' => $request->get('customer_id') ],
-                ['total' => 0 ],
-                ['remark' => $request->get('remark') ],
-                ['payment_nominal' => 0 ],
-                ['payment_type' => 0 ],
-                ['total_payment' => 0 ],
-                ['branch_room_id' => 0],
-                ['voucher_code' => ''],
-                ['total_discount' => 0],
-                ['tax' => 0],
-                ['queue_no' => (int)($count_no_daily[0]->current_value+1)],
-                ['customers_name' => Customer::where('id','=',$request->get('customer_id'))->get(['name'])->first()->name ],
-            )
-        );
-
-        SettingsDocumentNumber::where('doc_type','=','Order')->where('branch_id','=',$branch->branch_id)->where('period','=','Yearly')->update(
-            array_merge(
-                ['current_value' => ((int)($count_no[0]->current_value) + 1)]
-            )
-        );
-
-    
-        if(!$res_order){
-            $result = array_merge(
-                ['status' => 'failed'],
-                ['data' => ''],
-                ['message' => 'Save order failed'],
-            );
-    
-            return $result;
-        }else{
-            $result = array_merge(
-                ['status' => 'success'],
-                ['data' => $order_no],
-                ['message' => 'Save order sucess'],
-            );
-    
-            return $result;
-        }
-
-        /**
         
-        */
+
+        return response()->json($result);
     }
 
-    public function api_customer_create(Request $request)
+    public function api_register_sales(Request $request)
     { 
-        $branch = User::where('id','=',$request->get('user_id'))->get(['branch_id'])->first();
+        $username = $request->username;
+        $password = $request->password;
+        $phone = $request->phone;
+        $address = $request->address;
+        $phone = $request->phone;
+        $phone = $request->phone;
+        $token = $request->token;
+        $ua = $request->header('User-Agent');
+        $token_svr = base64_encode(date('Ymd'));
 
-        $res_cust = Customer::create(
-            array_merge(
-                ['name' => $request->get('name') ],
-                ['created_by' => $request->get('user_id')],
-                ['dated' => date('Y-m-d') ],
-                ['branch_id' => $branch->branch_id ],
-            )
-        );
+        if($ua == "Malaikat_Ridwan" && $token == $token_svr){
+            $login = DB::select( DB::raw("select s.id,s.name,s.username,s.password, s.address,s.phone,s.email,coalesce(s.ident_id,'-') ident_id  from sales s 
+                                         where s.username = :username and s.password = :password; "), 
+            array(
+                'username' => $username,
+                'password' => $password
+            ));
+        
 
-        $c_id = Customer::where('branch_id',$branch->branch_id)->orderBy('id','desc')->get(['id'])->first();
-        if(!$res_cust){
-            $result = array_merge(
-                ['status' => 'failed'],
-                ['data' => ''],
-                ['message' => 'Save customer failed'],
-            );
-    
-            return $result;
-        }else{
-            $result = array_merge(
-                ['status' => 'success'],
-                ['data' => $c_id->id],
-                ['message' => 'Save customer sucess'],
-            );
-    
-            return $result;
-        }
-    }
-
-    public function api_order_update(Request $request)
-    { 
-        $branch = Customer::where('id','=',$request->get('customer_id'))->get(['branch_id'])->first();
-        $res_order = Order::where('order_master.order_no',$request->get('order_no'))->update(
-            array_merge(
-                ['updated_by' => $request->get('user_id')],
-                ['dated' => date('Y-m-d') ],
-                ['customers_id' => $request->get('customer_id') ],
-                ['customers_name' => Customer::where('id','=',$request->get('customer_id'))->get(['name'])->first()->name ],
-            )
-        );
-
-        if(!$res_order){
-            $result = array_merge(
-                ['status' => 'failed'],
-                ['data' => ''],
-                ['message' => 'Save order failed'],
-            );
-    
-            return $result;
-        }else{
-            $order_no = $request->get('order_no');
-            OrderDetail::where('order_no', $order_no)->delete();
-
-            for ($i=0; $i < count($request->get('product')); $i++) { 
-                $uom = ProductUom::where('product_id',$request->get('product')[$i]["product_id"])->join('uom as u','product_uom.uom_id','=','u.id')->get(['u.remark'])->first();
-                $res_order_detail = OrderDetail::create(
-                    array_merge(
-                        ['order_no' => $order_no],
-                        ['product_id' => $request->get('product')[$i]["product_id"]],
-                        ['qty' => $request->get('product')[$i]["qty"]],
-                        ['product_name' => $request->get('product')[$i]["product_name"]],
-                        ['uom' => $uom->remark],
-                        ['seq' => $i ],
-                    )
-                );
-    
-    
-                if(!$res_order_detail){
-                    $result = array_merge(
-                        ['status' => 'failed'],
-                        ['data' => ''],
-                        ['message' => 'Save order detail failed'],
-                    );
-            
-                    return $result;
-                }
+            if (count($login)>0) {
+                $result = array_merge(
+                    ['status' => 'success'],
+                    ['data' => $login],
+                    ['message' => 'Login Berhasil'],
+                ); 
+            }else{
+                $result = array_merge(
+                    ['status' => 'failed'],
+                    ['data' => ""],
+                    ['message' => 'Username/Password tidak valid'],
+                );  
             }
-
+        }else{
             $result = array_merge(
-                ['status' => 'success'],
-                ['data' => $order_no],
-                ['message' => 'Save order sucess'],
-            );
-    
-            return $result;
+                ['status' => 'failed'],
+                ['data' => ""],
+                ['message' => 'Tidak diijinkan akses'],
+            );  
         }
-
-        /**
         
-        */
+
+        return response()->json($result);
     }
 
 }
