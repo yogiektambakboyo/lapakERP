@@ -58,7 +58,7 @@ class APIController extends Controller
         $password = $request->password;
         $token = $request->token;
         $ua = $request->header('User-Agent');
-        $token_svr = base64_encode(date('Ymd'));
+        $token_svr = md5(date('Ymd'));
 
         if($ua == "Malaikat_Ridwan" && $token == $token_svr){
             $login = DB::select( DB::raw("select s.id,s.name,s.username,s.password, s.address,s.phone,s.email,coalesce(s.ident_id,'-') ident_id,s.active  from sales s 
@@ -105,7 +105,7 @@ class APIController extends Controller
         $token = $request->token;
         $ident_id = $request->ident_id;
         $ua = $request->header('User-Agent');
-        $token_svr = base64_encode(date('Ymd'));
+        $token_svr = md5(date('Ymd'));
 
         $arr = array(
             'username' => $username,
