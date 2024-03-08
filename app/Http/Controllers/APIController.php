@@ -107,7 +107,7 @@ class APIController extends Controller
         $ua = $request->header('User-Agent');
         $token_svr = md5(date('Ymd'));
 
-        $arr[] = array(
+        $arr = array(
             'username' => $username,
             'password' => $password,
             'phone' => $phone,
@@ -116,6 +116,8 @@ class APIController extends Controller
             'email' => $email,
             'ident_id' => $ident_id
         );
+
+        $res[] = $arr; 
 
 
         if($ua == "Malaikat_Ridwan" && $token == $token_svr){
@@ -128,13 +130,13 @@ class APIController extends Controller
             if (count($login)>0) {
                 $result = array_merge(
                     ['status' => 'success'],
-                    ['data' => $arr],
+                    ['data' => $res],
                     ['message' => 'Pendaftaran berhasil'],
                 ); 
             }else{
                 $result = array_merge(
                     ['status' => 'failed'],
-                    ['data' => $arr],
+                    ['data' => $res],
                     ['message' => 'Pendaftaran gagal'],
                 );  
             }
