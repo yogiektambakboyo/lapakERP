@@ -103,7 +103,7 @@ class LoginController extends Controller
             curl_setopt($curl, CURLOPT_URL,  "https://solo.wablas.com/api/send-message");
             curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 0);
             curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, 0);
-            $result = curl_exec($curl);
+            //$result = curl_exec($curl);
             curl_close($curl);
 
             DB::select("insert into notif_log(whatsapp_no) values('".$whatsapp_no."'); ");
