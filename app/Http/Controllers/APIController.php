@@ -94,6 +94,48 @@ class APIController extends Controller
         return response()->json($result);
     }
 
+    public function api_user_info(Request $request)
+    { 
+        $username = $request->username;
+        $password = $request->password;
+        $token = $request->token;
+        $ua = $request->header('User-Agent');
+        $token_svr = md5(date('Ymd'));
+
+        if($ua == "Malaikat_Ridwan" && $token == $token_svr){
+            $login = DB::select( DB::raw("select s.id||'' id,s.name,s.username,s.password, s.address,s.phone,s.email,coalesce(s.ident_id,'-') ident_id,s.active||'' as active,coalesce(s.last_login,'2024-01-01') as last_login,t.version_mobile  from sales s join settings  t on 1=1 
+                                         where s.active=1 and s.username = :username and s.password = :password; "), 
+            array(
+                'username' => $username,
+                'password' => $password
+            ));
+        
+
+            if (count($login)>0) {
+                $result = array_merge(
+                    ['status' => 'success'],
+                    ['data' => $login],
+                    ['message' => 'Login Berhasil'],
+                ); 
+            }else{
+                $result = array_merge(
+                    ['status' => 'failed'],
+                    ['data' => ""],
+                    ['message' => 'Username/Password tidak valid'],
+                );  
+            }
+        }else{
+            $result = array_merge(
+                ['status' => 'failed'],
+                ['data' => ""],
+                ['message' => 'Tidak diijinkan akses'],
+            );  
+        }
+        
+
+        return response()->json($result);
+    }
+
     public function api_register_sales(Request $request)
     { 
         $username = $request->username;
