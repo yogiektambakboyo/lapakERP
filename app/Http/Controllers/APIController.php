@@ -121,24 +121,32 @@ class APIController extends Controller
 
 
         if($ua == "Malaikat_Ridwan" && $token == $token_svr){
-            $login = DB::select( DB::raw(" INSERT INTO public.sales(name, username, password, address, branch_id, active, phone, email, ident_id)
-                                           VALUES(:name, :username, :password, :address, 1, -1, :phone, :email, :ident_id); "), $arr
-                    
-            );
-        
+            $check_exist = DB::select( DB::raw(" select email from public.sales where email = :email; "), array("email" => $email));
 
-            if (count($login)>0) {
-                $result = array_merge(
-                    ['status' => 'success'],
-                    ['data' => $res],
-                    ['message' => 'Pendaftaran berhasil'],
-                ); 
-            }else{
+            if(count($check_exist)>0){
                 $result = array_merge(
                     ['status' => 'failed'],
                     ['data' => $res],
-                    ['message' => 'Pendaftaran gagal'],
+                    ['message' => 'Email sudah digunakan akun lain/ Masih dalam proses pengajuan'],
                 );  
+            }else{
+                $login = DB::select( DB::raw(" INSERT INTO public.sales(name, username, password, address, branch_id, active, phone, email, ident_id)
+                                           VALUES(:name, :username, :password, :address, 1, -1, :phone, :email, :ident_id); "), $arr
+                );
+            
+                if (count($login)>0) {
+                    $result = array_merge(
+                        ['status' => 'success'],
+                        ['data' => $res],
+                        ['message' => 'Pendaftaran berhasil'],
+                    ); 
+                }else{
+                    $result = array_merge(
+                        ['status' => 'failed'],
+                        ['data' => $res],
+                        ['message' => 'Pendaftaran gagal'],
+                    );  
+                }
             }
         }else{
             $result = array_merge(
