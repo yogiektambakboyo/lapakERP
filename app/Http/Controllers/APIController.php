@@ -99,6 +99,7 @@ class APIController extends Controller
         $username = $request->username;
         $password = $request->password;
         $token = $request->token;
+        $ident_id = $request->ident_id;
         $ua = $request->header('User-Agent');
         $token_svr = md5(date('Ymd'));
 
@@ -112,6 +113,15 @@ class APIController extends Controller
         
 
             if (count($login)>0) {
+                $update_d = DB::select( DB::raw("update sales set last_login=now(), ident_id=:ident_id
+                                         where s.active=1 and s.username = :username and s.password = :password; "), 
+                    array(
+                        'username' => $username,
+                        'ident_id' => $ident_id,
+                        'password' => $password
+                    )
+                );
+                    
                 $result = array_merge(
                     ['status' => 'success'],
                     ['data' => $login],
