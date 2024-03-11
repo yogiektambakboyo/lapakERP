@@ -2024,7 +2024,7 @@ $('#customer_id').select2({
                     for (var i = 0; i < orderList.length; i++){
                       for (var j = 0; j < resp.data.length;j++){
                         if(resp.data[j].product_id == orderList[i]["id"] && ((parseFloat(orderList[i]["qty"]))>= (parseFloat(resp.data[j].moq))) && (((parseFloat(orderList[i]["price"])) * (parseFloat(orderList[i]["qty"]))) >= (parseFloat(resp.data[j].value))) ){
-                          orderList[i]["discount"] = ( ((parseFloat(resp.data[j].value)) * (parseFloat(orderList[i]["price"])) * (parseFloat(orderList[i]["qty"])) )/100 ) + (parseFloat(resp.data[j].value));
+                          orderList[i]["discount"] = ( ((parseFloat(resp.data[j].value_idx)) * (parseFloat(orderList[i]["price"])) * (parseFloat(orderList[i]["qty"])) )/100 ) + (parseFloat(resp.data[j].value));
                           orderList[i]["total"] = ((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"])+((((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"]))-(parseFloat(orderList[i]["discount"])))*(parseFloat(orderList[i]["vat_total"])/100)))-(parseFloat(orderList[i]["discount"]));
                           $("#remark").val($("#remark").val()+"["+resp.data[j].remark+"]");
                           counterVoucherHit++;
