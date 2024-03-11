@@ -152,6 +152,18 @@ class APIController extends Controller
         $token_svr = md5(date('Ymd'));
 
         if($ua == "Malaikat_Ridwan" && $token == $token_svr){
+            $del_product = DB::select( DB::raw("DELETE FROM public.scan_activity where doc_no=:doc_no "), 
+                array(
+                    'doc_no' => $doc_no
+                )
+            );
+
+            $del_product_detail = DB::select( DB::raw("DELETE FROM public.scan_activity_detail where doc_no=:doc_no "), 
+                array(
+                    'doc_no' => $doc_no
+                )
+            );
+            
             $product = DB::select( DB::raw("INSERT INTO public.scan_activity(doc_no, dated, created_by, created_at, sales_id)VALUES (:doc_no, :dated, :created_by, now(), :sales_id); "), 
             array(
                 'doc_no' => $doc_no,
@@ -178,10 +190,6 @@ class APIController extends Controller
                     ));
             }
 
-
-            
-        
-
             if ($product) {
                 $result = array_merge(
                     ['status' => 'success'],
@@ -192,7 +200,7 @@ class APIController extends Controller
                 $result = array_merge(
                     ['status' => 'failed'],
                     ['data' => ""],
-                    ['message' => 'QR Code tidak ditemukan'],
+                    ['message' => 'Insert gagal'],
                 );  
             }
         }else{
