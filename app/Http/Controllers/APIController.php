@@ -235,7 +235,7 @@ class APIController extends Controller
 
             if (count($login)>0) {
                 $update_d = DB::select( DB::raw("update sales set last_login=now(), ident_id=:ident_id
-                                         where s.active=1 and s.username = :username and s.password = :password; "), 
+                                         where active=1 and username = :username and password = :password; "), 
                     array(
                         'username' => $username,
                         'ident_id' => $ident_id,
