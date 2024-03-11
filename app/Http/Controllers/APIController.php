@@ -109,7 +109,7 @@ class APIController extends Controller
             from stock_lotnumber sl 
             join product_sku ps on ps.alias_code = sl.alias_code 
             join product_category pc on pc.id = ps.category_id 
-            where sl.lot_number = :lot_number and sl.alias_code = :product_id "), 
+            where sl.lot_number = :lot_number and sl.alias_code = :product_id and sl.no_surat like 'STB%' "), 
             array(
                 'lot_number' => $lot_number,
                 'product_id' => $product_id
@@ -120,7 +120,7 @@ class APIController extends Controller
                 $result = array_merge(
                     ['status' => 'success'],
                     ['data' => $product],
-                    ['message' => 'Login Berhasil'],
+                    ['message' => 'Akses Berhasil'],
                 ); 
             }else{
                 $result = array_merge(
