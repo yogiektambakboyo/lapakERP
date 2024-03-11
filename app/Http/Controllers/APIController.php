@@ -145,8 +145,8 @@ class APIController extends Controller
     { 
         $username = $request->username;
         $password = $request->password;
-        $lot_number = $request->lot_number;
-        $product_id = $request->product_id;
+        $dated = $request->dated;
+        $doc_no = $request->doc_no;
         $token = $request->token;
         $ua = $request->header('User-Agent');
         $token_svr = md5(date('Ymd'));
