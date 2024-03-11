@@ -143,8 +143,7 @@ class APIController extends Controller
 
     public function api_insert_scan(Request $request)
     { 
-        $username = $request->username;
-        $password = $request->password;
+        $id = $request->id;
         $dated = $request->dated;
         $doc_no = $request->doc_no;
         $token = $request->token;
@@ -156,8 +155,8 @@ class APIController extends Controller
             array(
                 'doc_no' => $doc_no,
                 'dated' => $dated,
-                'created_by' => $username,
-                'sales_id' => $username
+                'created_by' => $id,
+                'sales_id' => $id
             ));
 
             /**$product = DB::select( DB::raw("INSERT INTO public.scan_activity_detail(
