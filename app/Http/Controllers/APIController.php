@@ -161,19 +161,31 @@ class APIController extends Controller
             ));
 
 
-            /**$product = DB::select( DB::raw("INSERT INTO public.scan_activity_detail(
-                doc_no, product_id, lot_number, qty, point, category_id, product_name, category_name, alias_code, created_at)
-                VALUES (doc_no, product_id, lot_number, qty, point, category_id, product_name, category_name, alias_code, created_at);"), 
-            array(
-                'lot_number' => $lot_number,
-                'product_id' => $product_id
-            ));**/
+            for ($i=0; $i < count($detail); $i++) { 
+                $product = DB::select( DB::raw("INSERT INTO public.scan_activity_detail(
+                        doc_no, product_id, lot_number, qty, point, category_id, product_name, category_name, alias_code)
+                        VALUES (:doc_no, :product_id, :lot_number, :qty, :point, :category_id, :product_name, :category_name, :alias_code);"), 
+                    array(
+                        'doc_no' => $detail[i]->doc_no,
+                        'lot_number' => $detail[i]->lot_number,
+                        'qty' => $detail[i]->qty,
+                        'point' => $detail[i]->point,
+                        'category_id' => $detail[i]->category_id,
+                        'product_name' => $detail[i]->product_name,
+                        'category_name' => $detail[i]->category_name,
+                        'alias_code' => $detail[i]->alias_code,
+                        'product_id' => $detail[i]->product_id
+                    ));
+            }
+
+
+            
         
 
-            if (count($product)>0) {
+            if (count($product)) {
                 $result = array_merge(
                     ['status' => 'success'],
-                    ['data' => $detail],
+                    ['data' => ""],
                     ['message' => 'Insert Berhasil'],
                 ); 
             }else{
