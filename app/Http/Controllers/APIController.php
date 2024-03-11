@@ -94,6 +94,53 @@ class APIController extends Controller
         return response()->json($result);
     }
 
+    public function api_check_lot(Request $request)
+    { 
+        $username = $request->username;
+        $password = $request->password;
+        $lot_number = $request->lot_number;
+        $product_id = $request->product_id;
+        $token = $request->token;
+        $ua = $request->header('User-Agent');
+        $token_svr = md5(date('Ymd'));
+
+        if($ua == "Malaikat_Ridwan" && $token == $token_svr){
+            $product = DB::select( DB::raw("select sl.recid,sl.lot_number,sl.alias_code,sl.qty,sl.qty_available,ps.id as product_id,ps.remark,pc.remark as category_name,pc.add_column_2 as point
+            from stock_lotnumber sl 
+            join product_sku ps on ps.alias_code = sl.alias_code 
+            join product_category pc on pc.id = ps.category_id 
+            where sl.lot_number = :lot_number and sl.alias_code = :product_id "), 
+            array(
+                'lot_number' => $lot_number,
+                'product_id' => $product_id
+            ));
+        
+
+            if (count($product)>0) {
+                $result = array_merge(
+                    ['status' => 'success'],
+                    ['data' => $product],
+                    ['message' => 'Login Berhasil'],
+                ); 
+            }else{
+                $result = array_merge(
+                    ['status' => 'failed'],
+                    ['data' => ""],
+                    ['message' => 'QR Code tidak ditemukan'],
+                );  
+            }
+        }else{
+            $result = array_merge(
+                ['status' => 'failed'],
+                ['data' => ""],
+                ['message' => 'Tidak diijinkan akses'],
+            );  
+        }
+        
+
+        return response()->json($result);
+    }
+
     public function api_user_info(Request $request)
     { 
         $username = $request->username;
