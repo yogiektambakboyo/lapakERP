@@ -166,15 +166,15 @@ class APIController extends Controller
                         doc_no, product_id, lot_number, qty, point, category_id, product_name, category_name, alias_code)
                         VALUES (:doc_no, :product_id, :lot_number, :qty, :point, :category_id, :product_name, :category_name, :alias_code);"), 
                     array(
-                        'doc_no' => $detail[i]->doc_no,
-                        'lot_number' => $detail[i]->lot_number,
-                        'qty' => $detail[i]->qty,
-                        'point' => $detail[i]->point,
-                        'category_id' => $detail[i]->category_id,
-                        'product_name' => $detail[i]->product_name,
-                        'category_name' => $detail[i]->category_name,
-                        'alias_code' => $detail[i]->alias_code,
-                        'product_id' => $detail[i]->product_id
+                        'doc_no' => $detail[$i]->doc_no,
+                        'lot_number' => $detail[$i]->lot_number,
+                        'qty' => $detail[$i]->qty,
+                        'point' => $detail[$i]->point,
+                        'category_id' => $detail[$i]->category_id,
+                        'product_name' => $detail[$i]->product_name,
+                        'category_name' => $detail[$i]->category_name,
+                        'alias_code' => $detail[$i]->alias_code,
+                        'product_id' => $detail[$i]->product_id
                     ));
             }
 
@@ -182,7 +182,7 @@ class APIController extends Controller
             
         
 
-            if (count($product)) {
+            if ($product) {
                 $result = array_merge(
                     ['status' => 'success'],
                     ['data' => ""],
