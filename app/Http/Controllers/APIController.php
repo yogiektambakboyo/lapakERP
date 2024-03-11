@@ -147,6 +147,7 @@ class APIController extends Controller
         $dated = $request->dated;
         $doc_no = $request->doc_no;
         $token = $request->token;
+        $detail = $request->detail;
         $ua = $request->header('User-Agent');
         $token_svr = md5(date('Ymd'));
 
@@ -158,6 +159,7 @@ class APIController extends Controller
                 'created_by' => $id,
                 'sales_id' => $id
             ));
+
 
             /**$product = DB::select( DB::raw("INSERT INTO public.scan_activity_detail(
                 doc_no, product_id, lot_number, qty, point, category_id, product_name, category_name, alias_code, created_at)
@@ -171,8 +173,8 @@ class APIController extends Controller
             if (count($product)>0) {
                 $result = array_merge(
                     ['status' => 'success'],
-                    ['data' => ""],
-                    ['message' => 'Login Berhasil'],
+                    ['data' => $detail],
+                    ['message' => 'Insert Berhasil'],
                 ); 
             }else{
                 $result = array_merge(
