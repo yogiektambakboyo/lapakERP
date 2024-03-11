@@ -141,6 +141,57 @@ class APIController extends Controller
         return response()->json($result);
     }
 
+    public function api_insert_scan(Request $request)
+    { 
+        $username = $request->username;
+        $password = $request->password;
+        $lot_number = $request->lot_number;
+        $product_id = $request->product_id;
+        $token = $request->token;
+        $ua = $request->header('User-Agent');
+        $token_svr = md5(date('Ymd'));
+
+        if($ua == "Malaikat_Ridwan" && $token == $token_svr){
+            $product = DB::select( DB::raw("INSERT INTO public.scan_activity(doc_no, dated, updated_at, updated_by, created_by, created_at, sales_id)VALUES (doc_no, dated, updated_at, updated_by, created_by, created_at, sales_id); "), 
+            array(
+                'lot_number' => $lot_number,
+                'product_id' => $product_id
+            ));
+
+            $product = DB::select( DB::raw("INSERT INTO public.scan_activity_detail(
+                doc_no, product_id, lot_number, qty, point, category_id, product_name, category_name, alias_code, created_at)
+                VALUES (doc_no, product_id, lot_number, qty, point, category_id, product_name, category_name, alias_code, created_at);"), 
+            array(
+                'lot_number' => $lot_number,
+                'product_id' => $product_id
+            ));
+        
+
+            if (count($product)>0) {
+                $result = array_merge(
+                    ['status' => 'success'],
+                    ['data' => $product],
+                    ['message' => 'Login Berhasil'],
+                ); 
+            }else{
+                $result = array_merge(
+                    ['status' => 'failed'],
+                    ['data' => ""],
+                    ['message' => 'QR Code tidak ditemukan'],
+                );  
+            }
+        }else{
+            $result = array_merge(
+                ['status' => 'failed'],
+                ['data' => ""],
+                ['message' => 'Tidak diijinkan akses'],
+            );  
+        }
+        
+
+        return response()->json($result);
+    }
+
     public function api_user_info(Request $request)
     { 
         $username = $request->username;
