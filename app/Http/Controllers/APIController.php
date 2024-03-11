@@ -105,7 +105,7 @@ class APIController extends Controller
         $token_svr = md5(date('Ymd'));
 
         if($ua == "Malaikat_Ridwan" && $token == $token_svr){
-            $product = DB::select( DB::raw("select sl.recid,sl.lot_number,sl.alias_code,sl.qty,coalesce(sl.qty_available,0) as qty_available,ps.id as product_id,ps.remark,pc.remark as category_name,pc.add_column_2 as point
+            $product = DB::select( DB::raw("select pc.id as category_id,sl.recid,sl.lot_number,sl.alias_code,sl.qty,coalesce(sl.qty_available,0) as qty_available,ps.id as product_id,ps.remark,pc.remark as category_name,pc.add_column_2 as point
             from stock_lotnumber sl 
             join product_sku ps on ps.alias_code = sl.alias_code 
             join product_category pc on pc.id = ps.category_id 
