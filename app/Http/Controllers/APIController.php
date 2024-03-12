@@ -123,9 +123,10 @@ class APIController extends Controller
                     ['message' => 'Akses Berhasil'],
                 ); 
             }else{
+                $re = array();
                 $result = array_merge(
                     ['status' => 'failed'],
-                    ['data' => ""],
+                    ['data' => $re],
                     ['message' => 'QR Code tidak ditemukan'],
                 );  
             }
