@@ -173,24 +173,50 @@ class APIController extends Controller
             ));
 
 
+            $counter = 0;
+            $point = 0;
             for ($i=0; $i < count($detail); $i++) { 
-                $product = DB::select( DB::raw("INSERT INTO public.scan_activity_detail(
-                        doc_no, product_id, lot_number, qty, point, category_id, product_name, category_name, alias_code)
-                        VALUES (:doc_no, :product_id, :lot_number, :qty, :point, :category_id, :product_name, :category_name, :alias_code);"), 
+                $product_detail = DB::select( DB::raw("INSERT INTO public.scan_activity_detail(
+                        doc_no, product_id, lot_number, qty, point, category_id, product_name, category_name, alias_code, expired, point_balance)
+                        VALUES (:doc_no, :product_id, :lot_number, :qty, :point, :category_id, :product_name, :category_name, :alias_code,now()+interval'1 year' ,:point_balance);"), 
                     array(
                         'doc_no' => $detail[$i]["doc_no"],
                         'lot_number' => $detail[$i]["lot_number"],
                         'qty' => $detail[$i]["qty"],
                         'point' => $detail[$i]["point"],
+                        'point_balance' => $detail[$i]["point_balance"],
                         'category_id' => $detail[$i]["category_id"],
                         'product_name' => $detail[$i]["product_name"],
                         'category_name' => $detail[$i]["category_name"],
                         'alias_code' => $detail[$i]["alias_code"],
                         'product_id' => $detail[$i]["product_id"]
                     ));
+
+                    $point = $point + (int)$detail[$i]["point"];
+                    $counter++;
             }
 
-            if ($product) {
+            if ($counter>0) {
+
+                $update_poin = DB::select( DB::raw("update sales set point=:point where id = :sales_id); "), 
+                    array(
+                        'point' => $point,
+                        'sales_id' => $id
+                    )
+                );
+
+                
+
+                $insert_log = DB::select( DB::raw("INSERT INTO public.log_point
+                (doc_no, sales_id, point, created_at)
+                VALUES(:doc_no,:sales_id ,:point, now());"), 
+                    array(
+                        'point' => $point,
+                        'doc_no' => $doc_no,
+                        'sales_id' => $id
+                    )
+                );
+
                 $result = array_merge(
                     ['status' => 'success'],
                     ['data' => ""],
@@ -225,7 +251,7 @@ class APIController extends Controller
         $token_svr = md5(date('Ymd'));
 
         if($ua == "Malaikat_Ridwan" && $token == $token_svr){
-            $login = DB::select( DB::raw("select s.id||'' id,s.name,s.username,s.password, s.address,s.phone,s.email,coalesce(s.ident_id,'-') ident_id,s.active||'' as active,coalesce(s.last_login,'2024-01-01') as last_login,t.version_mobile  from sales s join settings  t on 1=1 
+            $login = DB::select( DB::raw("select s.id||'' id,s.name,s.username,s.password, s.address,s.phone,s.email,coalesce(s.ident_id,'-') ident_id,s.active||'' as active,coalesce(s.last_login,'2024-01-01') as last_login,t.version_mobile,s.point  from sales s join settings  t on 1=1 
                                          where s.active=1 and s.username = :username and s.password = :password; "), 
             array(
                 'username' => $username,
