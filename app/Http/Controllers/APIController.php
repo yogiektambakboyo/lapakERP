@@ -251,7 +251,7 @@ class APIController extends Controller
         $token_svr = md5(date('Ymd'));
 
         if($ua == "Malaikat_Ridwan" && $token == $token_svr){
-            $login = DB::select( DB::raw("select s.id||'' id,s.name,s.username,s.password, s.address,s.phone,s.email,coalesce(s.ident_id,'-') ident_id,s.active||'' as active,coalesce(s.last_login,'2024-01-01') as last_login,t.version_mobile,s.point  from sales s join settings  t on 1=1 
+            $login = DB::select( DB::raw("select s.id||'' id,s.name,s.username,s.password, s.address,s.phone,s.email,coalesce(s.ident_id,'-') ident_id,s.active||'' as active,coalesce(s.last_login,'2024-01-01') as last_login,t.version_mobile,s.point as poin  from sales s join settings  t on 1=1 
                                          where s.active=1 and s.username = :username and s.password = :password; "), 
             array(
                 'username' => $username,
