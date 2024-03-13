@@ -10,9 +10,9 @@
 @section('content')
 	<!-- BEGIN login -->
 	<div class="row container">
-		<h2>Kebijakan & Privasi Aplikasi Seluler Crystal Collectible Pearl CCP</h2>
+		<h2>Kebijakan & Privasi Aplikasi Seluler American Agent - American Pillo</h2>
 		<br>
-		Terakhir diperbarui : 02 Januari 2024 10:29 ​​WIB
+		Terakhir diperbarui : 13 Maret 2024 08:52 ​​WIB
 		<br>
 		Kebijakan Privasi ini menjelaskan kebijakan dan prosedur Kami mengenai pengumpulan, penggunaan dan pengungkapan informasi Anda ketika Anda menggunakan Layanan dan memberi tahu Anda tentang hak privasi Anda dan bagaimana hukum melindungi Anda.
 		Kami menggunakan data Pribadi Anda untuk menyediakan dan meningkatkan Layanan. Dengan menggunakan Layanan, Anda menyetujui pengumpulan dan penggunaan informasi sesuai dengan Kebijakan Privasi ini. Kebijakan Privasi ini dibuat dengan bantuan Generator Kebijakan Privasi .
@@ -24,8 +24,8 @@
 		Untuk tujuan Kebijakan Privasi ini:
 		Akun berarti akun unik yang dibuat agar Anda dapat mengakses Layanan kami atau bagian dari Layanan kami.
 		Afiliasi berarti suatu entitas yang mengendalikan, dikendalikan oleh, atau berada di bawah pengendalian yang sama dengan suatu pihak, di mana “kendali” berarti kepemilikan 50% atau lebih saham, kepentingan ekuitas, atau sekuritas lain yang berhak memberikan suara untuk pemilihan direktur atau otoritas pengelola lainnya. .
-		Aplikasi berarti program perangkat lunak yang disediakan oleh Perusahaan yang diunduh oleh Anda pada perangkat elektronik apa pun, bernama Kakiku
-		Perusahaan (disebut sebagai “Perusahaan”, “Kami”, “Kami” atau “Kami” dalam Perjanjian ini) mengacu pada Kakiku.
+		Aplikasi berarti program perangkat lunak yang disediakan oleh Perusahaan yang diunduh oleh Anda pada perangkat elektronik apa pun, bernama Bali Foam American Pillo
+		Perusahaan (disebut sebagai “Perusahaan”, “Kami”, “Kami” atau “Kami” dalam Perjanjian ini) mengacu pada Bali Foam American Pillo.
 		<br>
 		Negara mengacu pada: Indonesia
 		<br>

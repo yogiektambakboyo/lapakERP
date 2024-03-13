@@ -76,16 +76,112 @@ class APIController extends Controller
                     ['message' => 'Login Berhasil'],
                 ); 
             }else{
+                $data_res = array();
                 $result = array_merge(
                     ['status' => 'failed'],
-                    ['data' => ""],
+                    ['data' => $data_res],
                     ['message' => 'Username/Password tidak valid'],
                 );  
             }
         }else{
+            $data_res = array();
             $result = array_merge(
                 ['status' => 'failed'],
-                ['data' => ""],
+                ['data' => $data_res],
+                ['message' => 'Tidak diijinkan akses'],
+            );  
+        }
+        
+
+        return response()->json($result);
+    }
+
+    public function api_gt5_transaction(Request $request)
+    { 
+        $username = $request->username;
+        $password = $request->password;
+        $token = $request->token;
+        $ua = $request->header('User-Agent');
+        $token_svr = md5(date('Ymd'));
+
+        if($ua == "Malaikat_Ridwan" && $token == $token_svr){
+            $data_res = DB::select( DB::raw("select sa.doc_no,sa.dated,sa.sales_id,s.name,sum(sad.point) as point  from scan_activity sa 
+            join scan_activity_detail sad on sad.doc_no = sa.doc_no 
+            join sales s on s.id = sa.sales_id and s.username = :username and s.password = :password
+            group by sa.doc_no,sa.dated,sa.sales_id,s.name,sa.created_at
+            order by sa.created_at desc limit 5; "), 
+            array(
+                'username' => $username,
+                'password' => $password
+            ));
+        
+
+            if (count($login)>0) {
+                $result = array_merge(
+                    ['status' => 'success'],
+                    ['data' => $data_res],
+                    ['message' => 'Akses Berhasil'],
+                ); 
+            }else{
+                $data_res = array();
+                $result = array_merge(
+                    ['status' => 'failed'],
+                    ['data' => $data_res],
+                    ['message' => 'Akses data transaksi gagal'],
+                );  
+            }
+        }else{
+            $data_res = array();
+            $result = array_merge(
+                ['status' => 'failed'],
+                ['data' => $data_res],
+                ['message' => 'Tidak diijinkan akses'],
+            );  
+        }
+        
+
+        return response()->json($result);
+    }
+
+    public function api_gt_transaction(Request $request)
+    { 
+        $username = $request->username;
+        $password = $request->password;
+        $token = $request->token;
+        $ua = $request->header('User-Agent');
+        $token_svr = md5(date('Ymd'));
+
+        if($ua == "Malaikat_Ridwan" && $token == $token_svr){
+            $data_res = DB::select( DB::raw("select sa.doc_no,sa.dated,sa.sales_id,s.name,sum(sad.point) as point  from scan_activity sa 
+            join scan_activity_detail sad on sad.doc_no = sa.doc_no 
+            join sales s on s.id = sa.sales_id and s.username = :username and s.password = :password
+            group by sa.doc_no,sa.dated,sa.sales_id,s.name,sa.created_at
+            order by sa.created_at desc; "), 
+            array(
+                'username' => $username,
+                'password' => $password
+            ));
+        
+
+            if (count($login)>0) {
+                $result = array_merge(
+                    ['status' => 'success'],
+                    ['data' => $data_res],
+                    ['message' => 'Akses Berhasil'],
+                ); 
+            }else{
+                $data_res = array();
+                $result = array_merge(
+                    ['status' => 'failed'],
+                    ['data' => $data_res],
+                    ['message' => 'Akses data transaksi gagal'],
+                );  
+            }
+        }else{
+            $data_res = array();
+            $result = array_merge(
+                ['status' => 'failed'],
+                ['data' => $data_res],
                 ['message' => 'Tidak diijinkan akses'],
             );  
         }
@@ -131,9 +227,10 @@ class APIController extends Controller
                 );  
             }
         }else{
+            $data_res = array();
             $result = array_merge(
                 ['status' => 'failed'],
-                ['data' => ""],
+                ['data' => $data_res],
                 ['message' => 'Tidak diijinkan akses'],
             );  
         }
