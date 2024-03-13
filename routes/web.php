@@ -29,6 +29,8 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
     Route::get('/api_insert_scan', 'APIController@api_insert_scan')->name('api.api_insert_scan');
     Route::get('/api_gt5_transaction', 'APIController@api_gt5_transaction')->name('api.api_gt5_transaction');
     Route::get('/api_gt_transaction', 'APIController@api_gt_transaction')->name('api.api_gt_transaction');
+    Route::get('/api_get_rewards', 'APIController@api_get_rewards')->name('api.api_get_rewards');
+    Route::get('/api_get_rewards_req', 'APIController@api_get_rewards_req')->name('api.api_get_rewards_req');
 
     /**
      * Home Routes

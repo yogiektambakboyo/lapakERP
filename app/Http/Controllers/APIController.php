@@ -391,6 +391,92 @@ class APIController extends Controller
         return response()->json($result);
     }
 
+    public function api_get_rewards(Request $request)
+    { 
+        $username = $request->username;
+        $password = $request->password;
+        $token = $request->token;
+        $ua = $request->header('User-Agent');
+        $token_svr = md5(date('Ymd'));
+
+        if($ua == "Malaikat_Ridwan" && $token == $token_svr){
+            $data_res = DB::select( DB::raw("select id,remark,point,dated_start,dated_end,quota,quota_available from rewards r where quota_available>0;"));
+        
+
+            if (count($data_res)>0) {
+                
+                    
+                $result = array_merge(
+                    ['status' => 'success'],
+                    ['data' => $data_res],
+                    ['message' => 'Akses Data Berhasil'],
+                ); 
+            }else{
+                $a = array();
+                $result = array_merge(
+                    ['status' => 'failed'],
+                    ['data' => $a],
+                    ['message' => 'Akses Data Gagal'],
+                );  
+            }
+        }else{
+            $result = array_merge(
+                ['status' => 'failed'],
+                ['data' => ""],
+                ['message' => 'Tidak diijinkan akses'],
+            );  
+        }
+        
+
+        return response()->json($result);
+    }
+
+    public function api_get_rewards_req(Request $request)
+    { 
+        $username = $request->username;
+        $password = $request->password;
+        $token = $request->token;
+        $ua = $request->header('User-Agent');
+        $token_svr = md5(date('Ymd'));
+
+        if($ua == "Malaikat_Ridwan" && $token == $token_svr){
+            $data_res = DB::select( DB::raw("select r.remark, rt.point, rt.created_at, rt.status  from rewards_transaction rt 
+                                                    join rewards r on r.id = rt.rewards_id 
+                                                    join sales s on s.id = rt.sales_id and s.username = :username and s.password = :password; "), 
+                                                        array(
+                                                        'username' => $username,
+                                                        'password' => $password
+                                                        )
+                                                    );
+        
+            
+
+            if (count($data_res)>0) {
+                $result = array_merge(
+                    ['status' => 'success'],
+                    ['data' => $data_res],
+                    ['message' => 'Akses Data Berhasil'],
+                ); 
+            }else{
+                $a = array();
+                $result = array_merge(
+                    ['status' => 'failed'],
+                    ['data' => $a],
+                    ['message' => 'Akses Data Gagal'],
+                );  
+            }
+        }else{
+            $result = array_merge(
+                ['status' => 'failed'],
+                ['data' => ""],
+                ['message' => 'Tidak diijinkan akses'],
+            );  
+        }
+        
+
+        return response()->json($result);
+    }
+
     public function api_register_sales(Request $request)
     { 
         $username = $request->username;
