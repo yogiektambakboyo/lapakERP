@@ -116,7 +116,7 @@ class APIController extends Controller
             ));
         
 
-            if (count($login)>0) {
+            if (count($data_res)>0) {
                 $result = array_merge(
                     ['status' => 'success'],
                     ['data' => $data_res],
@@ -163,7 +163,7 @@ class APIController extends Controller
             ));
         
 
-            if (count($login)>0) {
+            if (count($data_res)>0) {
                 $result = array_merge(
                     ['status' => 'success'],
                     ['data' => $data_res],
