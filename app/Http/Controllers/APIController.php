@@ -491,7 +491,7 @@ class APIController extends Controller
             $data_res = DB::select( DB::raw("INSERT INTO public.rewards_transaction(rewards_id, sales_id, point, request_at, status, created_at) 
             select r.id, s.id, r.point, now(), 0, now() from sales s 
             join rewards r on r.id=:rewards_id
-            where s.id=:sales_id and s.point>=r.point ); "), 
+            where s.id=:sales_id and s.point>=r.point; "), 
                                                         array(
                                                         'sales_id' => $sales_id,
                                                         'rewards_id' => $rewards_id
