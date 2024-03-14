@@ -105,7 +105,7 @@ class APIController extends Controller
         $token_svr = md5(date('Ymd'));
 
         if($ua == "Malaikat_Ridwan" && $token == $token_svr){
-            $data_res = DB::select( DB::raw("select sa.doc_no,sa.dated,sa.sales_id,s.name,sum(sad.point) as point  from scan_activity sa 
+            $data_res = DB::select( DB::raw("select sa.doc_no,to_char(sa.dated,'dd-mm-YYYY') as dated,sa.sales_id,s.name,sum(sad.point) as point  from scan_activity sa 
             join scan_activity_detail sad on sad.doc_no = sa.doc_no 
             join sales s on s.id = sa.sales_id and s.username = :username and s.password = :password
             group by sa.doc_no,sa.dated,sa.sales_id,s.name,sa.created_at
@@ -152,7 +152,7 @@ class APIController extends Controller
         $token_svr = md5(date('Ymd'));
 
         if($ua == "Malaikat_Ridwan" && $token == $token_svr){
-            $data_res = DB::select( DB::raw("select sa.doc_no,sa.dated,sa.sales_id,s.name,sum(sad.point) as point  from scan_activity sa 
+            $data_res = DB::select( DB::raw("select sa.doc_no,to_char(sa.dated,'dd-mm-YYYY') as dated,sa.sales_id,s.name,sum(sad.point) as point  from scan_activity sa 
             join scan_activity_detail sad on sad.doc_no = sa.doc_no 
             join sales s on s.id = sa.sales_id and s.username = :username and s.password = :password
             group by sa.doc_no,sa.dated,sa.sales_id,s.name,sa.created_at
@@ -400,7 +400,7 @@ class APIController extends Controller
         $token_svr = md5(date('Ymd'));
 
         if($ua == "Malaikat_Ridwan" && $token == $token_svr){
-            $data_res = DB::select( DB::raw("select id,remark,point,dated_start,dated_end,quota,quota_available from rewards r where quota_available>0;"));
+            $data_res = DB::select( DB::raw("select id,remark,point,to_char(dated_start,'dd-mm-YYYY') as dated_start,to_char(dated_end,'dd-mm-YYYY') as dated_end,quota,quota_available from rewards r where quota_available>0;"));
         
 
             if (count($data_res)>0) {
@@ -440,7 +440,7 @@ class APIController extends Controller
         $token_svr = md5(date('Ymd'));
 
         if($ua == "Malaikat_Ridwan" && $token == $token_svr){
-            $data_res = DB::select( DB::raw("select r.remark, rt.point, rt.created_at, rt.status  from rewards_transaction rt 
+            $data_res = DB::select( DB::raw("select r.remark, rt.point, to_char(rt.created_at,'dd-mm-YYYY HH24:MI') as created_at, case when rt.status=0 then 'Review' when rt.status=1 then 'Disetujui' else 'Di Tolak' end as status  from rewards_transaction rt 
                                                     join rewards r on r.id = rt.rewards_id 
                                                     join sales s on s.id = rt.sales_id and s.username = :username and s.password = :password; "), 
                                                         array(
