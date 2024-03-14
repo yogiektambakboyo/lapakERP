@@ -31,6 +31,7 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
     Route::get('/api_gt_transaction', 'APIController@api_gt_transaction')->name('api.api_gt_transaction');
     Route::get('/api_get_rewards', 'APIController@api_get_rewards')->name('api.api_get_rewards');
     Route::get('/api_get_rewards_req', 'APIController@api_get_rewards_req')->name('api.api_get_rewards_req');
+    Route::get('/api_get_rewards_req_create', 'APIController@api_get_rewards_req_create')->name('api.api_get_rewards_req_create');
 
     /**
      * Home Routes

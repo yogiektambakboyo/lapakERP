@@ -477,6 +477,62 @@ class APIController extends Controller
         return response()->json($result);
     }
 
+    public function api_get_rewards_req_create(Request $request)
+    { 
+        $username = $request->username;
+        $password = $request->password;
+        $token = $request->token;
+        $sales_id = $request->sales_id;
+        $rewards_id = $request->rewards_id;
+        $ua = $request->header('User-Agent');
+        $token_svr = md5(date('Ymd'));
+
+        if($ua == "Malaikat_Ridwan" && $token == $token_svr){
+            $data_res = DB::select( DB::raw("INSERT INTO public.rewards_transaction(rewards_id, sales_id, point, request_at, status, created_at) 
+            select r.id, s.id, r.point, now(), 0, now() from sales s 
+            join rewards r on r.id=:rewards_id
+            where s.id=:sales_id and s.point>=r.point ); "), 
+                                                        array(
+                                                        'sales_id' => $sales_id,
+                                                        'rewards_id' => $rewards_id
+                                                        )
+                                                    );
+        
+            
+
+            if (count($data_res)>0) {
+                $data_res = DB::select( DB::raw("update sales set point=point-(select point from rewards where id=:rewards_id) where id=:sales_id ; "), 
+                                                            array(
+                                                            'sales_id' => $sales_id,
+                                                            'rewards_id' => $rewards_id
+                                                            )
+                                                        );
+                                                        
+                $result = array_merge(
+                    ['status' => 'success'],
+                    ['data' => ""],
+                    ['message' => 'Akses Data Berhasil'],
+                ); 
+            }else{
+                $a = array();
+                $result = array_merge(
+                    ['status' => 'failed'],
+                    ['data' => $a],
+                    ['message' => 'Poin tidak mencukupi'],
+                );  
+            }
+        }else{
+            $result = array_merge(
+                ['status' => 'failed'],
+                ['data' => ""],
+                ['message' => 'Tidak diijinkan akses'],
+            );  
+        }
+        
+
+        return response()->json($result);
+    }
+
     public function api_register_sales(Request $request)
     { 
         $username = $request->username;
