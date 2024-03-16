@@ -31,7 +31,12 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
     Route::get('/api_gt_transaction', 'APIController@api_gt_transaction')->name('api.api_gt_transaction');
     Route::get('/api_get_rewards', 'APIController@api_get_rewards')->name('api.api_get_rewards');
     Route::get('/api_get_rewards_req', 'APIController@api_get_rewards_req')->name('api.api_get_rewards_req');
+    Route::get('/api_gt_transaction_detail', 'APIController@api_gt_transaction_detail')->name('api.api_gt_transaction_detail');
     Route::get('/api_get_rewards_req_create', 'APIController@api_get_rewards_req_create')->name('api.api_get_rewards_req_create');
+
+    Route::get('/api_get_remove_account', 'APIController@api_get_remove_account')->name('api.api_get_remove_account');
+    Route::get('/api_get_nonactive_account', 'APIController@api_get_nonactive_account')->name('api.api_get_nonactive_account');
+    Route::get('/api_get_change_password', 'APIController@api_get_change_password')->name('api.api_get_change_password');
 
     /**
      * Home Routes
