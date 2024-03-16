@@ -426,4 +426,16 @@ class HomeController extends Controller
             $data = [];
             return view('pages.auth.policy')->with('data',$data)->with('settings',Settings::get()->first())->with('company',Company::get()->first());
     }
+
+    public function erase_account() 
+    {
+            $data = [];
+            return view('pages.auth.erase_account')->with('data',$data)->with('settings',Settings::get()->first())->with('company',Company::get()->first());
+    }
+
+    public function nonactive_account() 
+    {
+            $data = [];
+            return view('pages.auth.nonactive_account')->with('data',$data)->with('settings',Settings::get()->first())->with('company',Company::get()->first());
+    }
 }

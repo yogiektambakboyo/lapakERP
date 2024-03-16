@@ -43,6 +43,8 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
      */
     Route::get('/', 'HomeController@index')->name('home.index');
     Route::get('/policy', 'HomeController@policy')->name('home.policy');
+    Route::get('/erase_account', 'HomeController@erase_account')->name('home.erase_account');
+    Route::get('/nonactive_account', 'HomeController@nonactive_account')->name('home.nonactive_account');
 
     Route::group(['middleware' => ['guest']], function() {
         /**
