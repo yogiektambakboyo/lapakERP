@@ -481,16 +481,18 @@ class APIController extends Controller
     { 
         $username = $request->username;
         $password = $request->password;
+        $doc_no = $request->doc_no;
         $token = $request->token;
         $ua = $request->header('User-Agent');
         $token_svr = md5(date('Ymd'));
 
         if($ua == "Malaikat_Ridwan" && $token == $token_svr){
             $data_res = DB::select( DB::raw("select sd.product_id,sd.qty,'' as scan_res,'' as seq,sd.category_id,sd.doc_no,sd.product_name,sd.category_name,sd.alias_code,sd.lot_number,sd.point from scan_activity sa 
-                                                    join scan_activity_detail sd on sd.doc_no = sa.doc_no 
+                                                    join scan_activity_detail sd on sd.doc_no = sa.doc_no and sd.doc_no=:doc_no
                                                     join sales s on s.id = sa.sales_id and s.username = :username and s.password = :password; "), 
                                                         array(
                                                         'username' => $username,
+                                                        'doc_no' => $doc_no,
                                                         'password' => $password
                                                         )
                                                     );
