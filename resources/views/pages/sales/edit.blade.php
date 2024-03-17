@@ -75,7 +75,7 @@
                     </div>
                   </div>
            
-                <button type="submit" class="btn btn-primary">@lang('general.lbl_save')</button>
+                <button type="submit" class="btn btn-primary">@lang('general.lbl_save') & Reset Device</button>
                 <a href="{{ route('sales.index') }}" class="btn btn-default">@lang('general.lbl_back') </a>
             </form>
         </div>

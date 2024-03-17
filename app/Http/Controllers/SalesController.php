@@ -211,6 +211,7 @@ class SalesController extends Controller
                 ['address' => $request->get('address') ],
                 ['username' => $request->get('username') ],
                 ['password' => md5($request->get('password')) ],
+                ['ident_id' => '-' ],
                 ['name' => $request->get('name') ],
                 ['address' => $request->get('address') ],
                 ['branch_id' => $request->get('branch_id') ],
