@@ -82,6 +82,8 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
             Route::get('/search', 'UsersController@search')->name('users.search');
             Route::get('/{user}/show', 'UsersController@show')->name('users.show');
             Route::get('/{user}/edit', 'UsersController@edit')->name('users.edit');
+            Route::get('/{user}/editpassword', 'UsersController@editpassword')->name('users.editpassword');
+            Route::post('/{user}/updatepassword', 'UsersController@updatepassword')->name('users.updatepassword');
             Route::patch('/{user}/update', 'UsersController@update')->name('users.update');
             Route::delete('/{user}/delete', 'UsersController@destroy')->name('users.destroy');
             Route::get('/export', 'UsersController@export')->name('users.export');

@@ -274,6 +274,54 @@ class UsersController extends Controller
             ->withSuccess(__('User created successfully.'));
     }
 
+    public function editpassword(User $user) 
+    {
+        $userx = Auth::user();
+        $id = $userx->roles->first()->id;
+        $this->getpermissions($id);
+
+        $data = $this->data;
+        $gender = ['Male','Female'];
+        $active = [1,0];
+        $users = DB::select("select coalesce(u.level_up_date,'1988-01-01'::date) level_up_date,u.work_year,u.employee_status,dt.remark as department,u.id,u.employee_id,u.name,jt.remark as job_title,string_agg(b.id::character varying,',') as branch_name,u.join_date,u.phone_no,u.email,u.username,u.address,u.netizen_id,u.photo_netizen_id,u.photo,u.join_years,u.active,u.referral_id,u.city,u.gender,u.birth_place,u.birth_date 
+                             from users u 
+                             join users_branch ub on ub.user_id=u.id
+                             join branch b on b.id = ub.branch_id
+                             join departments dt on dt.id=u.department_id
+                             join job_title jt on jt.id=u.job_id
+                             where u.id = ? and u.name!='Super Admin' group by u.level_up_date,u.level_up_date,dt.remark,u.id,u.employee_id,u.name,jt.remark,u.join_date,u.phone_no,u.email,u.username,u.address,u.netizen_id,u.photo_netizen_id,u.photo,u.join_years,u.active,u.referral_id,u.city,u.gender,u.birth_place,u.birth_date  ; "
+                             , [$user->id]);
+        $usersReferral = User::where('users.id','!=',$user->id)->get(['users.id','users.name']);
+        return view('pages.users.editpassword', [
+            'user' => $users[0],
+            'userRole' => $user->roles->pluck('name')->toArray(),
+            'roles' => Role::latest()->get(),
+            'branchs' => Branch::join('users_branch as ub','ub.branch_id', '=', 'branch.id')->where('ub.user_id','=',$userx->id)->get(['branch.id','branch.remark']),
+            'userBranchs' => Branch::join('users_branch as ub','ub.branch_id','=','branch.id')->where('ub.user_id','=',$user->id)->get()->pluck('remark')->toArray(),
+            'departments' => Department::latest()->get(),
+            'userDepartements' => Department::latest()->get()->pluck('remark')->toArray(),
+            'jobTitles' => JobTitle::latest()->get(),'company' => Company::get()->first(),
+            'userJobTitles' => JobTitle::latest()->get()->pluck('remark')->toArray(),
+            'gender' => $gender,
+            'active' => $active,
+            'data' => $data,
+            'employeestatusx' => ['On Job Training','Permanent','Outsourcing','Contract','Probation','Leave'],
+            'usersReferrals' => $usersReferral,
+        ]);
+    }
+
+    public function updatepassword(User $user, Request $request) 
+    {
+        $user->update( array_merge( 
+            ['password' => $request->get('password') ],
+        ));
+
+        
+        return redirect()->route('home.index')
+            ->withSuccess(__('Sukses Update Password.'));
+    }
+
+
     /**
      * Store a newly created user skill
      * 
