@@ -143,7 +143,7 @@ class SalesController extends Controller
             array_merge( 
                 ['address' => $request->get('address') ],
                 ['username' => $request->get('username') ],
-                ['password' => $request->get('password') ],
+                ['password' => md5($request->get('password')) ],
                 ['name' => $request->get('name') ],
                 ['address' => $request->get('address') ],
                 ['active' => '1' ],
