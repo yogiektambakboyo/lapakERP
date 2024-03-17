@@ -23,9 +23,8 @@
         <table class="table table-striped"  id="example">
             <thead>
             <tr>
-                <th scope="col" width="1%">#</th>
-                <th scope="col" width="15%">@lang('general.lbl_name')</th>
-                <th scope="col" width="10%">Poin</th>
+                <th scope="col">@lang('general.lbl_name')</th>
+                <th scope="col" width="5%">Poin</th>
                 <th scope="col" width="1%" class="nex"></th> 
                 <th scope="col" width="1%" class="nex"></th> 
             </tr>
@@ -33,7 +32,6 @@
             <tbody>
                 @foreach($categories as $category)
                     <tr>
-                        <th>{{ $category->id }}</th>
                         <td>{{ $category->remark }}</td>
                         <td>{{ $category->add_column_2 }}</td>
                         <td><a href="{{ route('categories.edit', $category->id) }}" class="btn btn-info btn-sm">@lang('general.lbl_edit')</a></td>
