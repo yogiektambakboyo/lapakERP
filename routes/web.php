@@ -436,6 +436,21 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
             Route::get('/export', 'VoucherController@export')->name('voucher.export');
         });
 
+        /**
+         * Product Rewards
+         */
+        Route::group(['prefix' => 'rewards'], function() {
+            Route::get('/', 'RewardsController@index')->name('rewards.index');
+            Route::get('/create', 'RewardsController@create')->name('rewards.create');
+            Route::post('/create', 'RewardsController@store')->name('rewards.store');
+            Route::get('/search', 'RewardsController@search')->name('rewards.search');
+            Route::get('/{branch}/{product}/show', 'RewardsController@show')->name('rewards.show');
+            Route::get('{id}/edit', 'RewardsController@edit')->name('rewards.edit');
+            Route::patch('/{id}/update', 'RewardsController@update')->name('rewards.update');
+            Route::delete('/{branch}/{product}/{dated_start}/{dated_end}/{voucher_code}/delete', 'RewardsController@destroy')->name('rewards.destroy');
+            Route::get('/export', 'RewardsController@export')->name('rewards.export');
+        });
+
         Route::group(['prefix' => 'bufferstock'], function() {
             Route::get('/', 'BufferStockController@index')->name('bufferstock.index');
             Route::get('/create', 'BufferStockController@create')->name('bufferstock.create');
@@ -757,6 +772,21 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
             Route::get('/export', 'SalesController@export')->name('sales.export');
         });
 
+        Route::group(['prefix' => 'reqsales'], function() {
+            Route::get('/', 'SalesRequestController@index')->name('reqsales.index');
+            Route::get('/create', 'SalesRequestController@create')->name('reqsales.create');
+            Route::post('/create', 'SalesRequestController@store')->name('reqsales.store');
+            Route::post('/createapi', 'SalesRequestController@storeapi')->name('reqsales.storeapi');
+            Route::get('/{sales}/show', 'SalesRequestController@show')->name('reqsales.show');
+            Route::get('/{sales}/edit', 'SalesRequestController@edit')->name('reqsales.edit');
+            Route::patch('/{sales}/update', 'SalesRequestController@update')->name('reqsales.update');
+            Route::get('/{sales}/approve', 'SalesRequestController@approve')->name('reqsales.approve');
+            Route::get('/{sales}/reject', 'SalesRequestController@reject')->name('reqsales.reject');
+            Route::delete('/{sales}/delete', 'SalesRequestController@destroy')->name('reqsales.destroy');
+            Route::get('/search', 'SalesRequestController@search')->name('reqsales.search');
+            Route::get('/export', 'SalesRequestController@export')->name('reqsales.export');
+        });
+
         /**
          *  Shift
          */
@@ -822,6 +852,11 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
             Route::get('/export', 'SuppliersController@export')->name('suppliers.export');
         });
 
+        Route::group(['prefix' => 'stocklotnumber'], function() {
+            Route::get('/', 'StockLotNumberController@index')->name('stocklotnumber.index');
+            Route::get('/search', 'StockLotNumberController@search')->name('stocklotnumber.search');
+        });
+
 
         /**
          *  Report
@@ -873,10 +908,13 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
             Route::get('/returnsell_search', 'ReportReturnSellController@search')->name('reports.returnsell.search');
             Route::get('/returnselldetail', 'ReportReturnSellDetailController@index')->name('reports.returnselldetail.index');
             Route::get('/returnselldetail_search', 'ReportReturnSellDetailController@search')->name('reports.returnselldetail.search');
+            Route::get('/scan', 'ReportScanController@index')->name('reports.scan.index');
+            Route::get('/scan_search', 'ReportScanController@search')->name('reports.scan.search');
         });
 
 
         Route::resource('roles', RolesController::class);
         Route::resource('permissions', PermissionsController::class);
+        Route::resource('stocklotnumber', StockLotNumberController::class);
     });
 });

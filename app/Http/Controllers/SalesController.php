@@ -55,7 +55,7 @@ class SalesController extends Controller
         $Sales = Sales::join('branch as b','b.id','sales.branch_id')
                             ->join('users_branch as ub', function($join){
                                 $join->on('ub.branch_id', '=', 'b.id');
-                            })->where('ub.user_id', $user->id)->paginate(10,['sales.*','b.remark as branch_name']);
+                            })->where('ub.user_id', $user->id)->where('sales.active','=','1')->paginate(10,['sales.*','b.remark as branch_name']);
         $data = $this->data;
 
         $request->search = "";
@@ -89,7 +89,7 @@ class SalesController extends Controller
             $Sales = Sales::join('branch as b','b.id','sales.branch_id')
                             ->join('users_branch as ub', function($join){
                                 $join->on('ub.branch_id', '=', 'b.id');
-                            })->where('ub.user_id', $user->id)->where('sales.branch_id','like','%'.$branchx.'%')->where('sales.name','ILIKE','%'.$keyword.'%')->paginate(10,['sales.*','b.remark as branch_name']);
+                            })->where('ub.user_id', $user->id)->where('sales.active','=','1')->where('sales.branch_id','like','%'.$branchx.'%')->where('sales.name','ILIKE','%'.$keyword.'%')->paginate(10,['sales.*','b.remark as branch_name']);
             $request->filter_branch_id = "";
             return view('pages.sales.index', [
                 'sales' => $Sales,'data' => $data , 
@@ -102,7 +102,7 @@ class SalesController extends Controller
             $Sales = Sales::join('branch as b','b.id','sales.branch_id')
                             ->join('users_branch as ub', function($join){
                                 $join->on('ub.branch_id', '=', 'b.id');
-                            })->where('ub.user_id', $user->id)->where('sales.branch_id','like','%'.$branchx.'%')->where('sales.name','ILIKE','%'.$keyword.'%')->paginate(10,['sales.*','b.remark as branch_name']);
+                            })->where('ub.user_id', $user->id)->where('sales.active','=','1')->where('sales.branch_id','like','%'.$branchx.'%')->where('sales.name','ILIKE','%'.$keyword.'%')->paginate(10,['sales.*','b.remark as branch_name']);
             return view('pages.sales.index', [
                 'sales' => $Sales,'data' => $data , 
                 'company' => Company::get()->first(),
@@ -210,7 +210,7 @@ class SalesController extends Controller
             array_merge( 
                 ['address' => $request->get('address') ],
                 ['username' => $request->get('username') ],
-                ['password' => $request->get('password') ],
+                ['password' => md5($request->get('password')) ],
                 ['name' => $request->get('name') ],
                 ['address' => $request->get('address') ],
                 ['branch_id' => $request->get('branch_id') ],
@@ -227,18 +227,18 @@ class SalesController extends Controller
      * @param  \App\Models\Post  $post
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Customer $Customer)
+    public function destroy(Sales $sales)
     {
-        if($Customer->delete()){
+        if($sales->delete()){
             $result = array_merge(
                 ['status' => 'success'],
-                ['data' => $Customer->name],
+                ['data' => $sales->name],
                 ['message' => 'Delete Successfully'],
             );    
         }else{
             $result = array_merge(
                 ['status' => 'failed'],
-                ['data' => $Customer->name],
+                ['data' => $sales->name],
                 ['message' => 'Delete failed'],
             );   
         }
@@ -271,13 +271,7 @@ class SalesController extends Controller
                         'caret' => true,
                         'sub_menu' => []
                     ],
-		                           [
-                            'icon' => 'fa fa-spa',
-                            'title' => \Lang::get('home.service_management'),
-                        'url' => 'javascript:;',
-                        'caret' => true,
-                        'sub_menu' => []
-                    ],
+		            
                     [
                         'icon' => 'fa fa-table',
                         'title' => \Lang::get('home.transaction'),
@@ -325,21 +319,21 @@ class SalesController extends Controller
                 ));
             }
             if($menu['parent']=='Transactions'){
-                array_push($this->data['menu'][3]['sub_menu'], array(
+                array_push($this->data['menu'][2]['sub_menu'], array(
                     'url' => $menu['url'],
                     'title' => $menu['remark'],
                     'route-name' => $menu['name']
                 ));
             }	
             if($menu['parent']=='Reports'){
-                array_push($this->data['menu'][4]['sub_menu'], array(
+                array_push($this->data['menu'][3]['sub_menu'], array(
                     'url' => $menu['url'],
                     'title' => $menu['remark'],
                     'route-name' => $menu['name']
                 ));
             }
             if($menu['parent']=='Settings'){
-                array_push($this->data['menu'][5]['sub_menu'], array(
+                array_push($this->data['menu'][4]['sub_menu'], array(
                     'url' => $menu['url'],
                     'title' => $menu['remark'],
                     'route-name' => $menu['name']

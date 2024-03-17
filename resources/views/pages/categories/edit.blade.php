@@ -1,6 +1,6 @@
 @extends('layouts.default', ['appSidebarSearch' => true])
 
-@section('title', 'Edit Categories')
+@section('title', 'Ubah Kategori')
 
 @section('content')
     <div class="bg-light p-4 rounded">
@@ -18,13 +18,27 @@
                         name="remark" 
                         placeholder="@lang('general.lbl_name')" required>
                     
-                        <input value="2" 
+                        <input value="1" 
                         type="hidden" 
                         class="form-control" 
                         name="type_id" >
 
                     @if ($errors->has('name'))
                         <span class="text-danger text-left">{{ $errors->first('remark') }}</span>
+                    @endif
+                </div>
+
+                <div class="mb-3">
+                    <label for="poin" class="form-label">Poin</label>
+                    <input value="{{ $category->add_column_2 }}" 
+                        type="number" 
+                        class="form-control" 
+                        name="add_column_2" 
+                        placeholder="Poin" required>
+                    
+
+                    @if ($errors->has('add_column_2'))
+                        <span class="text-danger text-left">{{ $errors->first('add_column_2') }}</span>
                     @endif
                 </div>
                 <button type="submit" class="btn btn-primary">@lang('general.lbl_save')</button>

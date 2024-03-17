@@ -44,7 +44,7 @@ class CategoriesController extends Controller
         $id = $user->roles->first()->id;
         $this->getpermissions($id);
 
-        $categories = Category::where('type_id','=','1')->orderBy('remark')->get(['product_category.id','product_category.remark']);
+        $categories = Category::where('type_id','=','1')->orderBy('remark')->get(['product_category.id','product_category.remark','product_category.add_column_2']);
         $data = $this->data;
 
         return view('pages.categories.index', [

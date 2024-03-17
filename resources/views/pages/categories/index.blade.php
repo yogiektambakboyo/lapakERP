@@ -25,6 +25,7 @@
             <tr>
                 <th scope="col" width="1%">#</th>
                 <th scope="col" width="15%">@lang('general.lbl_name')</th>
+                <th scope="col" width="10%">Poin</th>
                 <th scope="col" width="1%" class="nex"></th> 
                 <th scope="col" width="1%" class="nex"></th> 
             </tr>
@@ -34,6 +35,7 @@
                     <tr>
                         <th>{{ $category->id }}</th>
                         <td>{{ $category->remark }}</td>
+                        <td>{{ $category->add_column_2 }}</td>
                         <td><a href="{{ route('categories.edit', $category->id) }}" class="btn btn-info btn-sm">@lang('general.lbl_edit')</a></td>
                         <td>
                             {!! Form::open(['method' => 'DELETE','route' => ['categories.destroy', $category->id],'style'=>'display:inline']) !!}
