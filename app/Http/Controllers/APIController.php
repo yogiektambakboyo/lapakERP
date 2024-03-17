@@ -282,7 +282,7 @@ class APIController extends Controller
                         'lot_number' => $detail[$i]["lot_number"],
                         'qty' => $detail[$i]["qty"],
                         'point' => $detail[$i]["point"],
-                        'point_balance' => $detail[$i]["point_balance"],
+                        'point_balance' => $detail[$i]["point"],
                         'category_id' => $detail[$i]["category_id"],
                         'product_name' => $detail[$i]["product_name"],
                         'category_name' => $detail[$i]["category_name"],
