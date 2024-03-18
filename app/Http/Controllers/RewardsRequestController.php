@@ -97,7 +97,7 @@ class RewardsRequestController extends Controller
 
     public function reject(Request $request, RewardsTrans $sales)
     {
-        $rwd = RewardsTrans::where('id', $sales->id)->get('point')->first();
+        $rwd = RewardsTrans::where('id', $sales->id)->get(['point','sales_id'])->first();
         $poin = $rwd->point;
         $sales_id = $rwd->sales_id;
         RewardsTrans::where('id', $sales->id)
