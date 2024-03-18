@@ -99,6 +99,7 @@ class RewardsRequestController extends Controller
     {
         $rwd = RewardsTrans::where('id', $sales->id)->get('point')->first();
         $poin = $rwd->point;
+        $sales_id = $rwd->sales_id;
         RewardsTrans::where('id', $sales->id)
         ->update(
             array_merge( 
@@ -108,7 +109,7 @@ class RewardsRequestController extends Controller
         );
 
         DB::select("
-            update sales set point=point+".$poin.",updated_at=now() where id = ".$sales->id.";
+            update sales set point=point+".$poin.",updated_at=now() where id = ".$sales_id.";
         ");
 
         $result = array_merge(
