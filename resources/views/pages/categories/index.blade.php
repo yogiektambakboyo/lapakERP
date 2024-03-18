@@ -24,7 +24,8 @@
             <thead>
             <tr>
                 <th scope="col">@lang('general.lbl_name')</th>
-                <th scope="col" width="5%">Poin</th>
+                <th scope="col" width="15%">Jenis</th>
+                <th scope="col" width="10%">Poin</th>
                 <th scope="col" width="1%" class="nex"></th> 
                 <th scope="col" width="1%" class="nex"></th> 
             </tr>
@@ -33,6 +34,7 @@
                 @foreach($categories as $category)
                     <tr>
                         <td>{{ $category->remark }}</td>
+                        <td>{{ $category->add_colum }}</td>
                         <td>{{ $category->add_column_2 }}</td>
                         <td><a href="{{ route('categories.edit', $category->id) }}" class="btn btn-info btn-sm">@lang('general.lbl_edit')</a></td>
                         <td>
