@@ -296,7 +296,7 @@ class APIController extends Controller
 
             if ($counter>0) {
 
-                $update_poin = DB::select( DB::raw("update sales set point=:point where id = :sales_id; "), 
+                $update_poin = DB::select( DB::raw("update sales set point=point+:point where id = :sales_id; "), 
                     array(
                         'point' => $point,
                         'sales_id' => $id

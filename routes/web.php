@@ -789,6 +789,16 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
             Route::get('/export', 'SalesRequestController@export')->name('reqsales.export');
         });
 
+        Route::group(['prefix' => 'reqrewards'], function() {
+            Route::get('/', 'RewardsRequestController@index')->name('reqrewards.index');
+            Route::get('/{sales}/edit', 'RewardsRequestController@edit')->name('reqrewards.edit');
+            Route::patch('/{sales}/update', 'RewardsRequestController@update')->name('reqrewards.update');
+            Route::get('/{sales}/approve', 'RewardsRequestController@approve')->name('reqrewards.approve');
+            Route::get('/{sales}/reject', 'RewardsRequestController@reject')->name('reqrewards.reject');
+            Route::delete('/{sales}/delete', 'RewardsRequestController@destroy')->name('reqrewards.destroy');
+            Route::get('/search', 'RewardsRequestController@search')->name('reqrewards.search');
+        });
+
         /**
          *  Shift
          */
