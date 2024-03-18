@@ -16,6 +16,7 @@ class Sales extends Model
         'password',
         'address',
         'ident_id',
+        'point',
         'branch_id',
         'active'
     ];

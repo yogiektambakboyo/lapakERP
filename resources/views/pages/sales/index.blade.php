@@ -30,6 +30,7 @@
                 <th scope="col">@lang('general.lbl_name')</th>
                 <th scope="col" width="15%">@lang('general.lbl_address')</th>
                 <th scope="col" width="12%">@lang('general.lbl_username')</th>
+                <th scope="col" width="8%">Poin</th>
                 <th scope="col" colspan="" width="1%" class="nex"></th> 
                 <th scope="col" colspan="" width="1%" class="nex"></th> 
             </tr>
@@ -40,6 +41,7 @@
                         <td>{{ $seller->name }}</td>
                         <td>{{ $seller->address }}</td>
                         <td>{{ $seller->username }}</td>
+                        <td>{{ $seller->point }}</td>
                         <td><a href="{{ route('sales.edit', $seller->id) }}" class="btn btn-info btn-sm  {{ $act_permission->allow_edit==1?'':'d-none' }} ">@lang('general.lbl_edit')</a></td>
                         <td>
                             <a onclick="showConfirm({{ $seller->id }}, '{{ $seller->name }}')" class="btn btn-danger btn-sm  {{ $act_permission->allow_delete==1?'':'d-none' }} ">@lang('general.lbl_delete')</a>
