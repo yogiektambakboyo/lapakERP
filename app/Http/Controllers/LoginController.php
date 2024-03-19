@@ -87,24 +87,19 @@ class LoginController extends Controller
             DB::select("update users set pass_wd=".$random_numb." where phone_no='".$whatsapp_no."';");
 
             $curl = curl_init();
-            $token = "Bz7ZeaBPLYvF21GeqUpZk6qA8rFz8zJJlcIgMU7su0rB8lMP00H0akRpKo04k1sH";
-            $data_msg = [
-                'phone' => $whatsapp_no_,
-                'message' => '*OTP Notifikasi* \r\n\r\nHai '.$data[0]->name.', silahkan masukkan kode OTP *'.$random_numb.'* untuk login aplikasi.\r\n\r\n_Abaikan pesan ini jika anda tidak merasa login ke aplikasi_',
-            ];
-            curl_setopt($curl, CURLOPT_HTTPHEADER,
-                array(
-                    "Authorization: $token",
-                )
-            );
-            curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "POST");
+            $val_token = md5(date("Y-m-d"));
+            $url_acc = "https://kakikupos.com/send-msg-wa?token=".$val_token."&no=".$whatsapp_no_."&adrotp=".$random_numb."&fromapp=kakiku"."&name=".base64_encode($name);
+
+
+            curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "GET");
             curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-            curl_setopt($curl, CURLOPT_POSTFIELDS, http_build_query($data_msg));
-            curl_setopt($curl, CURLOPT_URL,  "https://solo.wablas.com/api/send-message");
+            curl_setopt($curl, CURLOPT_URL, $url_acc);
             curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 0);
             curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, 0);
-            //$result = curl_exec($curl);
+            $result = curl_exec($curl);
             curl_close($curl);
+
+
 
             DB::select("insert into notif_log(whatsapp_no) values('".$whatsapp_no."'); ");
 
