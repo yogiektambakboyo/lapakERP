@@ -75,6 +75,8 @@ class LoginController extends Controller
 
         $data_notif = DB::select("select whatsapp_no from notif_log where whatsapp_no ='".$whatsapp_no."'; ");
 
+        $whatsapp_no_ = $whatsapp_no;
+
         if(substr($whatsapp_no,0,2)=="08"){
             $whatsapp_no_ = "628".substr($whatsapp_no,2,strlen($whatsapp_no));
         }
