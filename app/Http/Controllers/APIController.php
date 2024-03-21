@@ -696,7 +696,7 @@ class APIController extends Controller
                 );  
             }else{
                 $login = DB::select( DB::raw(" INSERT INTO public.sales(name, username, password, address, branch_id, active, phone, email, ident_id)
-                                           VALUES(:name, :username, :password, :address, 1, -1, :phone, :email, :ident_id); "), $arr
+                                           VALUES(:name, :username, :password, :address, 1, 0, :phone, :email, :ident_id); "), $arr
                 );
             
                 if (count($login)>0) {
