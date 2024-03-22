@@ -2650,7 +2650,7 @@
                             isvalidtime = 1;
                           }
                         }else if(resp.data[j].active_time == "happyhour"){
-                          if(parseInt(time)>900 && parseInt(time)<=1500){
+                          if(parseInt(time)>900 && parseInt(time)<=1600){
                             isvalidtime = 1;
                           }
                         }else if(resp.data[j].active_time == "night"){
