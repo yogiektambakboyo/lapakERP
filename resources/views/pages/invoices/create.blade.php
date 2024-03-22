@@ -2630,11 +2630,11 @@
                         if(resp.data[j].active_day == "all"){
                           isvalidday = 1;
                         }else if(resp.data[j].active_day == "weekday"){
-                          if(today.getDay()>0 && today.getDay()<=4){
+                          if(today.getDay()>0 && today.getDay()<=5){
                               isvalidday = 1;
                           }
                         }else if(resp.data[j].active_day == "weekend"){
-                          if(today.getDay()==0 || today.getDay()>=5){
+                          if(today.getDay()==0 || today.getDay()>=6){
                               isvalidday = 1;
                           }
                         }
