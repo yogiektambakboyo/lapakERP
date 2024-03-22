@@ -105,7 +105,8 @@
                   $total_commisions_tp = 0;    
                   $total_base_commision_c = 0;    
                   $total_base_commision_tp = 0;    
-                  $total_qty = 0;    
+                  $total_qty = 0;  
+                  $abb_last = "";  
                 @endphp
 
                 @foreach ($report_detail as $rdata)
@@ -127,34 +128,63 @@
                         <td>{{ number_format($rdata->total-($rdata->commisions_tp+$rdata->commisions+($rdata->modal*$rdata->qty)),0,',','.') }}</td>
                       </tr>
                     @else
-                      <tr>
-                        <td></td>
-                        <td>{{ $rdata->abbr }}</td>
-                        <td>{{ number_format($rdata->qty,0,',','.') }}</td>
-                        <td>{{ number_format($rdata->price,0,',','.') }}</td>
-                        <td>{{ number_format($rdata->modal,0,',','.') }}</td>
-                        <td>{{ number_format($rdata->total,0,',','.') }}</td>
-                        <td>{{ number_format($rdata->modal*$rdata->qty,0,',','.') }}</td>
-                        <td>{{ number_format($rdata->base_commision_tp,0,',','.') }}</td>
-                        <td>{{ number_format($rdata->commisions_tp ,0,',','.')}}</td>
-                        <td>{{ number_format($rdata->base_commision,0,',','.') }}</td>
-                        <td>{{ number_format($rdata->commisions,0,',','.') }}</td>
-                        <td>{{ number_format($rdata->total-($rdata->commisions_tp+$rdata->commisions+($rdata->modal*$rdata->qty)),0,',','.') }}</td>
-                      </tr>
+                          @if($abb_last == $rdata->abbr)
+                                <tr>
+                                  <td></td>
+                                  <td>{{ $rdata->abbr }}</td>
+                                  <td>0</td>
+                                  <td>0</td>
+                                  <td>0</td>
+                                  <td>0</td>
+                                  <td>0</td>
+                                  <td>0</td>
+                                  <td>0</td>
+                                  <td>{{ number_format($rdata->base_commision,0,',','.') }}</td>
+                                  <td>{{ number_format($rdata->commisions,0,',','.') }}</td>
+                                  <td>{{ number_format($rdata->commisions*-1,0,',','.') }}</td>
+                                </tr>
+                          @else
+                              <tr>
+                                <td></td>
+                                <td>{{ $rdata->abbr }}</td>
+                                <td>{{ number_format($rdata->qty,0,',','.') }}</td>
+                                <td>{{ number_format($rdata->price,0,',','.') }}</td>
+                                <td>{{ number_format($rdata->modal,0,',','.') }}</td>
+                                <td>{{ number_format($rdata->total,0,',','.') }}</td>
+                                <td>{{ number_format($rdata->modal*$rdata->qty,0,',','.') }}</td>
+                                <td>{{ number_format($rdata->base_commision_tp,0,',','.') }}</td>
+                                <td>{{ number_format($rdata->commisions_tp ,0,',','.')}}</td>
+                                <td>{{ number_format($rdata->base_commision,0,',','.') }}</td>
+                                <td>{{ number_format($rdata->commisions,0,',','.') }}</td>
+                                <td>{{ number_format($rdata->total-($rdata->commisions_tp+$rdata->commisions+($rdata->modal*$rdata->qty)),0,',','.') }}</td>
+                              </tr>
+                          @endif
+                      
                     @endif
                       
                     @php
                       $counter++;  
-                      $total_qty = $rdata->qty + $total_qty;    
-                      $total_price = $rdata->price + $total_price;    
-                      $total_total = $rdata->total + $total_total;  
-                      $total_modal = $total_modal + ($rdata->modal);  
-                      $total_modal_qty = $total_modal_qty + ($rdata->modal*$rdata->qty);  
-                      $total_base_commision_c = $rdata->base_commision + $total_base_commision_c;    
-                      $total_commisions_c = $rdata->commisions + $total_commisions_c;  
-                      $total_base_commision_tp = $rdata->base_commision_tp + $total_base_commision_tp;    
-                      $total_commisions_tp = $rdata->commisions_tp + $total_commisions_tp; 
-                      $total_final = $total_final + ($rdata->total-($rdata->commisions_tp+$rdata->commisions+($rdata->modal*$rdata->qty))); 
+                      
+
+                      if($abb_last == $rdata->abbr){
+                        $total_base_commision_c = $rdata->base_commision + $total_base_commision_c;    
+                        $total_commisions_c = $rdata->commisions + $total_commisions_c;  
+                        $total_final = $total_final + (-1*$rdata->commisions); 
+                      }else{
+                        $total_qty = $rdata->qty + $total_qty;    
+                        $total_price = $rdata->price + $total_price;    
+                        $total_total = $rdata->total + $total_total;  
+                        $total_modal = $total_modal + ($rdata->modal);  
+                        $total_modal_qty = $total_modal_qty + ($rdata->modal*$rdata->qty);  
+                        $total_base_commision_c = $rdata->base_commision + $total_base_commision_c;    
+                        $total_commisions_c = $rdata->commisions + $total_commisions_c;  
+                        $total_base_commision_tp = $rdata->base_commision_tp + $total_base_commision_tp;    
+                        $total_commisions_tp = $rdata->commisions_tp + $total_commisions_tp; 
+                        $total_final = $total_final + ($rdata->total-($rdata->commisions_tp+$rdata->commisions+($rdata->modal*$rdata->qty))); 
+                      }
+
+                      $abb_last = $rdata->abbr;
+
                       
 
 
