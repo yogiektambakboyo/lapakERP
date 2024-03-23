@@ -135,22 +135,23 @@ class PointConvertionController extends Controller
      * 
      * @return \Illuminate\Http\Response
      */
-    public function store(ProductPoint $productpoint, Request $request) 
+    public function store(PointConvertion $pointconvertion, Request $request) 
     {
         //For demo purposes only. When creating user or inviting a user
         // you should create a generated random password and email it to the user
     
         $user = Auth::user();
-        $productpoint->create(
+        $pointconvertion->create(
             array_merge(
                 ['point' => $request->get('point') ],
-                ['product_id' => $request->get('product_id') ],
+                ['point_value' => $request->get('point_value') ],
                 ['branch_id' => $request->get('branch_id') ],
                 ['created_by' => $user->id ],
+                ['created_at' => date('Y-m-d H:i') ],
             )
         );
-        return redirect()->route('productspoint.index')
-            ->withSuccess(__('Product distribution created successfully.'));
+        return redirect()->route('pointconvertion.index')
+            ->withSuccess(__('Buat komisi poin baru berhasil.'));
     }
 
     /**
@@ -223,7 +224,7 @@ class PointConvertionController extends Controller
         PointConvertion::where('id','=',$id)->update(
             array_merge(
                 ['point' => $request->get('point') ],
-                ['point' => $request->get('point_value') ],
+                ['point_value' => $request->get('point_value') ],
                 ['updated_at' => date('Y-m-d H:i') ],
                 ['updated_by' => $user->id ],
             )
