@@ -686,10 +686,11 @@
                                 worksheet.getCell('S'+counter).value = rowElementData.total_all;
                               }else{
 
+                                  var counterDetail = 1;
                                   for (let idx = 0; idx < report_detail.length; idx++) {
                                   const rowElementDetail = report_detail[idx];
 
-                                  var counterDetail = 1;
+                                  
                                   if(rowElementData.dated == rowElementDetail.dated){
                                     last_total_cash = parseFloat(rowElementData.total_cash);
                                     last_total_all = parseFloat(rowElementData.total_all);
@@ -715,8 +716,6 @@
                                         worksheet.getCell('Q'+counter).value = rowElementData.qty_service;
                                         worksheet.getCell('R'+counter).value = "";
                                         worksheet.getCell('S'+counter).value = "";
-
-                                        
 
                                         t_qty = 0;
                                         t_total = 0;
@@ -839,7 +838,7 @@
 
                            
                            if((index+1) == report_data.length ){
-                                counter++;
+                                //counter++;
 
                                 worksheet.getCell('A'+counter).value = "Grand Total";
                                 worksheet.getCell('B'+counter).value = t_total_service_t;
