@@ -48,7 +48,7 @@
             <label class="form-label col-form-label col-md-2">Komisi</label>
             <div class="col-md-8">
               <input class="form-control" 
-                    name="point" type="text" value="{{ $product->point_value }}">
+                    name="point_value" type="text" value="{{ $product->point_value }}">
             </div>
           </div>
 
