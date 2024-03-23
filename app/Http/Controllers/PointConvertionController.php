@@ -242,9 +242,9 @@ class PointConvertionController extends Controller
      */
     public function destroy(String $id) 
     {
-        ProductPoint::where('product_id','=',$product)->where('branch_id','=',$branch)->delete();
-        return redirect()->route('productspoint.index')
-            ->withSuccess(__('Product point deleted successfully.'));
+        PointConvertion::where('id','=',$id)->delete();
+        return redirect()->route('pointconvertion.index')
+            ->withSuccess(__('Komisi poin berhasil dihapus.'));
     }
 
     public function getpermissions($role_id){

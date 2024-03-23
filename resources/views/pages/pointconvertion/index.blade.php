@@ -11,10 +11,6 @@
                     @lang('general.lbl_title')
                 </div>
                 <div class="col-md-10"> 	
-                    <form action="{{ route('pointconvertion.search') }}" method="GET" class="row row-cols-lg-auto g-3 align-items-center">
-                        <div class="col-2"><input type="hidden" class="form-control  form-control-sm" name="search" placeholder="@lang('general.lbl_search')" value="{{ $keyword }}"></div>
-                        <div class="col-2"><input type="submit" class="btn btn-sm btn-success" value="@lang('general.btn_export')" name="export"></div>  
-                    </form>
                 </div>
             </div>
             <div class="col-md-2">
