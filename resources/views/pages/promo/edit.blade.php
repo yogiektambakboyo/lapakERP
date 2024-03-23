@@ -127,7 +127,7 @@
               <option value="all" <?= $product->active_time=="all"?"selected":""; ?>>24 Jam</option>
               <option value="officetime" <?= $product->active_time=="officetime"?"selected":""; ?>>08.00 - 17.00</option>
               <option value="noon" <?= $product->active_time=="noon"?"selected":""; ?>>10.00 - 17.00</option>
-              <option value="happyhour" <?= $product->active_time=="happyhour"?"selected":""; ?>>09.00 - 15.00</option>
+              <option value="happyhour" <?= $product->active_time=="happyhour"?"selected":""; ?>>09.00 - 16.00</option>
               <option value="night" <?= $product->active_time=="night"?"selected":""; ?>>17.01 - 23.59</option>
           </select>
             </div>

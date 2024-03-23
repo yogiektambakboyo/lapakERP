@@ -62,7 +62,7 @@ x@extends('layouts.default', ['appSidebarSearch' => true])
                 <option value="all">24 Jam</option>
                 <option value="officetime">08.00 - 17.00</option>
                 <option value="noon">10.00 - 17.00</option>
-                <option value="happyhour">09.00 - 15.00</option>
+                <option value="happyhour">09.00 - 16.00</option>
                 <option value="night">17.01 - 23.59</option>
             </select>
               </div>
