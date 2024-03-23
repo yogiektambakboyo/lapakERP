@@ -689,6 +689,21 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
             Route::get('/export', 'ProductsPointController@export')->name('productspoint.export');
         });
 
+        /**
+         * Point Komisi
+         */
+        Route::group(['prefix' => 'pointconvertion'], function() {
+            Route::get('/', 'PointConvertionController@index')->name('pointconvertion.index');
+            Route::get('/create', 'PointConvertionController@create')->name('pointconvertion.create');
+            Route::post('/create', 'PointConvertionController@store')->name('pointconvertion.store');
+            Route::get('/search', 'PointConvertionController@search')->name('pointconvertion.search');
+            Route::get('/{branch}/{product}/show', 'PointConvertionController@show')->name('pointconvertion.show');
+            Route::get('/{branch}/{product}/edit', 'PointConvertionController@edit')->name('pointconvertion.edit');
+            Route::patch('/{branch}/{product}/update', 'PointConvertionController@update')->name('pointconvertion.update');
+            Route::delete('/{branch}/{product}/delete', 'PointConvertionController@destroy')->name('pointconvertion.destroy');
+            Route::get('/export', 'PointConvertionController@export')->name('pointconvertion.export');
+        });
+
                 /**
          * Product Point
          */
