@@ -1,9 +1,9 @@
 @extends('layouts.default', ['appSidebarSearch' => true])
 
-@section('title', 'Edit Product Point')
+@section('title', 'Ubah Komisi Poin')
 
 @section('content')
-<form method="POST" action="{{ route('pointconvertion.update', [$product->branch_id,$product->id]) }}"  enctype="multipart/form-data">
+<form method="POST" action="{{ route('pointconvertion.update', [$product->id]) }}"  enctype="multipart/form-data">
   @method('patch')
   @csrf
     <div class="bg-light p-4 rounded">
@@ -22,20 +22,6 @@
         <div class="panel text-white mt-3">
           <div class="panel-heading bg-teal-600"><h4></h4></div>
           <div class="panel-body bg-white text-black">
-            <div class="row mb-3">
-              <label class="form-label col-form-label col-md-2">@lang('general.lbl_product_name')</label>
-              <div class="col-md-8">
-                <select class="form-control" 
-                name="product_id" disabled>
-                <option value="">@lang('general.lbl_productselect')</option>
-                @foreach($products as $productx)
-                    <option value="{{ $productx->id }}"  {{ ($productx->id == $product->id) 
-                      ? 'selected'
-                      : '' }}>{{  $productx->remark }}</option>
-                @endforeach
-              </select>
-              </div>
-          </div>
           <div class="row mb-3">
             <label class="form-label col-form-label col-md-2">@lang('general.lbl_branch')</label>
             <div class="col-md-8">
@@ -57,6 +43,15 @@
                     name="point" type="text" value="{{ $product->point }}">
             </div>
           </div>
+
+          <div class="row mb-3">
+            <label class="form-label col-form-label col-md-2">Komisi</label>
+            <div class="col-md-8">
+              <input class="form-control" 
+                    name="point" type="text" value="{{ $product->point_value }}">
+            </div>
+          </div>
+
           </div>
         </div>
     </div>

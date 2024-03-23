@@ -1,6 +1,6 @@
 @extends('layouts.default', ['appSidebarSearch' => true])
 
-@section('title', 'Konversi Poin')
+@section('title', 'Komisi Poin')
 
 @section('content')
     <div class="bg-light p-4 rounded">
@@ -27,7 +27,7 @@
             <tr>
                 <th scope="col" width="15%">@lang('general.lbl_branch')</th>
                 <th scope="col" width="10%">@lang('general.lbl_point')</th>
-                <th scope="col" width="10%">Komisi @lang('general.lbl_point')</th>
+                <th scope="col" width="10%">Komisi</th>
                 <th scope="col" width="2%" class="nex">@lang('general.lbl_action')</th>   
                 <th scope="col" width="2%" class="nex"></th>  
             </tr>

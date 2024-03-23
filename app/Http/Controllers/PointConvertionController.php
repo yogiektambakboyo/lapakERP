@@ -187,7 +187,7 @@ class PointConvertionController extends Controller
      * 
      * @return \Illuminate\Http\Response
      */
-    public function edit(String $id) 
+    public function edit(String $doc_id) 
     {
         $user = Auth::user();
         $id = $user->roles->first()->id;
@@ -196,19 +196,16 @@ class PointConvertionController extends Controller
         $user  = Auth::user();
         $data = $this->data;
         $active = ['1','0'];
-        $product = Product::join('product_type as pt','pt.id','=','product_sku.type_id')
-        ->join('product_category as pc','pc.id','=','product_sku.category_id')
-        ->join('product_brand as pb','pb.id','=','product_sku.brand_id')
-        ->join('product_point as pr','pr.product_id','=','product_sku.id')
-        ->join('branch as bc','bc.id','=','pr.branch_id')
-        ->where('product_sku.id',$product_id)
-        ->where('bc.id','=',$branch_id)
-        ->get(['product_sku.id as id','product_sku.abbr','product_sku.brand_id','product_sku.category_id','product_sku.type_id','product_sku.remark as product_name','pt.remark as product_type','pc.remark as product_category','pb.remark as product_brand','pr.branch_id','bc.remark as branch_name','pr.point'])->first();
+        $products = PointConvertion::orderBy('point_convertion_branch.branch_id', 'ASC')
+                    ->join('branch as bc','bc.id','=','point_convertion_branch.branch_id')
+                    ->join('users_branch as ub2','ub2.branch_id', '=', 'point_convertion_branch.branch_id')
+                    ->where('ub2.user_id','=',$user->id)
+                    ->where('point_convertion_branch.id','=',$doc_id)
+                    ->get(['point_convertion_branch.id','point_convertion_branch.branch_id','bc.remark as branch_name','point_convertion_branch.point','point_convertion_branch.point_value'])->first();
         return view('pages.pointconvertion.edit', [
             'branchs' => Branch::join('users_branch as ub','ub.branch_id','=','branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']),
             'data' => $data,
             'product' => $product, 'company' => Company::get()->first(),
-            'products' => Product::get(),
         ]);
     }
 
@@ -223,14 +220,17 @@ class PointConvertionController extends Controller
     public function update(String $id, Request $request) 
     {
         $user = Auth::user();
-        ProductPoint::where('product_id','=',$product)->where('branch_id','=',$branch)->update(
+        PointConvertion::where('id','=',$id)->update(
             array_merge(
                 ['point' => $request->get('point') ],
+                ['point' => $request->get('point_value') ],
+                ['updated_at' => date('Y-m-d H:i') ],
+                ['updated_by' => $user->id ],
             )
         );
         
-        return redirect()->route('productspoint.index')
-            ->withSuccess(__('Product distribution updated successfully.'));
+        return redirect()->route('pointconvertion.index')
+            ->withSuccess(__('Komisi poin berhasil di update.'));
     }
 
     /**
