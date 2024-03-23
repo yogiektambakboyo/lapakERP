@@ -719,7 +719,7 @@
                                 }
                               }
 
-                              last_dated = rowElementDetail.dated;
+                              last_dated = rowElementData.dated;
                          
                           
                           }else{
