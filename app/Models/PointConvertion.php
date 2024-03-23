@@ -17,5 +17,6 @@ class PointConvertion extends Model
         'point_value',
         'branch_id',
         'point',
+        'created_by',
     ];
 }

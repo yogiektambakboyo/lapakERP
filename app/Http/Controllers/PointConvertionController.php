@@ -147,7 +147,6 @@ class PointConvertionController extends Controller
                 ['point_value' => $request->get('point_value') ],
                 ['branch_id' => $request->get('branch_id') ],
                 ['created_by' => $user->id ],
-                ['created_at' => date('Y-m-d H:i') ],
             )
         );
         return redirect()->route('pointconvertion.index')
