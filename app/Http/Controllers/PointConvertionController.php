@@ -68,7 +68,6 @@ class PointConvertionController extends Controller
                     ->join('branch as bc','bc.id','=','point_convertion_branch.branch_id')
                     ->join('users_branch as ub2','ub2.branch_id', '=', 'point_convertion_branch.branch_id')
                     ->where('ub2.user_id','=',$user->id)
-                    ->where('pt.id','=','1')
                     ->get(['point_convertion_branch.id','point_convertion_branch.branch_id','bc.remark as branch_name','point_convertion_branch.point','point_convertion_branch.point_value']);
         return view('pages.pointconvertion.index',['company' => Company::get()->first()], compact('products','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
     }
@@ -188,7 +187,7 @@ class PointConvertionController extends Controller
      * 
      * @return \Illuminate\Http\Response
      */
-    public function edit(String $branch_id,String $product_id) 
+    public function edit(String $id) 
     {
         $user = Auth::user();
         $id = $user->roles->first()->id;
@@ -221,7 +220,7 @@ class PointConvertionController extends Controller
      * 
      * @return \Illuminate\Http\Response
      */
-    public function update(String $branch,String $product, Request $request) 
+    public function update(String $id, Request $request) 
     {
         $user = Auth::user();
         ProductPoint::where('product_id','=',$product)->where('branch_id','=',$branch)->update(
@@ -241,7 +240,7 @@ class PointConvertionController extends Controller
      * 
      * @return \Illuminate\Http\Response
      */
-    public function destroy(String $branch,String $product) 
+    public function destroy(String $id) 
     {
         ProductPoint::where('product_id','=',$product)->where('branch_id','=',$branch)->delete();
         return redirect()->route('productspoint.index')

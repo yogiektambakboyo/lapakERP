@@ -697,10 +697,10 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
             Route::get('/create', 'PointConvertionController@create')->name('pointconvertion.create');
             Route::post('/create', 'PointConvertionController@store')->name('pointconvertion.store');
             Route::get('/search', 'PointConvertionController@search')->name('pointconvertion.search');
-            Route::get('/{branch}/{product}/show', 'PointConvertionController@show')->name('pointconvertion.show');
-            Route::get('/{branch}/{product}/edit', 'PointConvertionController@edit')->name('pointconvertion.edit');
-            Route::patch('/{branch}/{product}/update', 'PointConvertionController@update')->name('pointconvertion.update');
-            Route::delete('/{branch}/{product}/delete', 'PointConvertionController@destroy')->name('pointconvertion.destroy');
+            Route::get('/{id}/show', 'PointConvertionController@show')->name('pointconvertion.show');
+            Route::get('/{id}/edit', 'PointConvertionController@edit')->name('pointconvertion.edit');
+            Route::patch('/{id}/update', 'PointConvertionController@update')->name('pointconvertion.update');
+            Route::delete('/{id}/delete', 'PointConvertionController@destroy')->name('pointconvertion.destroy');
             Route::get('/export', 'PointConvertionController@export')->name('pointconvertion.export');
         });
 

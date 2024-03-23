@@ -29,9 +29,9 @@
         <table class="table table-striped" id="example">
             <thead>
             <tr>
-                <th>@lang('general.lbl_name')</th>
                 <th scope="col" width="15%">@lang('general.lbl_branch')</th>
                 <th scope="col" width="10%">@lang('general.lbl_point')</th>
+                <th scope="col" width="10%">Komisi @lang('general.lbl_point')</th>
                 <th scope="col" width="2%" class="nex">@lang('general.lbl_action')</th>   
                 <th scope="col" width="2%" class="nex"></th>  
             </tr>
@@ -40,12 +40,12 @@
 
                 @foreach($products as $product)
                     <tr>
-                        <td>{{ $product->product_name }}</td>
                         <td>{{ $product->branch_name }}</td>
                         <td>{{ $product->point }}</td>
-                        <td><a href="{{ route('pointconvertion.edit', [$product->branch_id,$product->id]) }}" class="btn btn-info btn-sm  {{ $act_permission->allow_edit==1?'':'d-none' }}">@lang('general.lbl_edit')</a></td>
+                        <td>{{ $product->point_value }}</td>
+                        <td><a href="{{ route('pointconvertion.edit', [$product->id]) }}" class="btn btn-info btn-sm  {{ $act_permission->allow_edit==1?'':'d-none' }}">@lang('general.lbl_edit')</a></td>
                         <td class="{{ $act_permission->allow_delete==1?'':'d-none' }}">
-                            {!! Form::open(['method' => 'DELETE','route' => ['pointconvertion.destroy', [$product->branch_id,$product->id]],'style'=>'display:inline']) !!}
+                            {!! Form::open(['method' => 'DELETE','route' => ['pointconvertion.destroy', [$product->id]],'style'=>'display:inline']) !!}
                             {!! Form::submit('Hapus', ['class' => 'btn btn-danger btn-sm']) !!}
                             {!! Form::close() !!}
                         </td>
