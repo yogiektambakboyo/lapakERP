@@ -196,7 +196,7 @@ class PointConvertionController extends Controller
         $user  = Auth::user();
         $data = $this->data;
         $active = ['1','0'];
-        $products = PointConvertion::orderBy('point_convertion_branch.branch_id', 'ASC')
+        $product = PointConvertion::orderBy('point_convertion_branch.branch_id', 'ASC')
                     ->join('branch as bc','bc.id','=','point_convertion_branch.branch_id')
                     ->join('users_branch as ub2','ub2.branch_id', '=', 'point_convertion_branch.branch_id')
                     ->where('ub2.user_id','=',$user->id)
