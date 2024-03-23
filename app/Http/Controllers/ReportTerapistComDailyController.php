@@ -69,8 +69,8 @@ class ReportTerapistComDailyController extends Controller
         $call_proc = DB::select("CALL public.calc_commision_terapist_today();");
 
         $report_data = DB::select("
-                    select a.branch_name,a.com_type,to_char(a.dated,'dd-mm-YYYY') as dated,a.qtyinv,a.work_year,a.name,a.commisions,a.point_qty,coalesce(pc2.point_value,0)  as point_value,a.commisions+coalesce(pc2.point_value,0) as total from (
-                        select b.remark as branch_name,'work_commision' as com_type,im.dated,count(ps.id) as qtyinv,u.work_year,u.name,sum(pc.values*id.qty) as commisions,sum(coalesce(pp.point,0)*id.qty) as point_qty
+                    select a.branch_id,a.branch_name,a.com_type,to_char(a.dated,'dd-mm-YYYY') as dated,a.qtyinv,a.work_year,a.name,a.commisions,a.point_qty,coalesce(pc2.point_value,0)  as point_value,a.commisions+coalesce(pc2.point_value,0) as total from (
+                        select b.id as branch_id,b.remark as branch_name,'work_commision' as com_type,im.dated,count(ps.id) as qtyinv,u.work_year,u.name,sum(pc.values*id.qty) as commisions,sum(coalesce(pp.point,0)*id.qty) as point_qty
                         from invoice_master im 
                         join invoice_detail id on id.invoice_no = im.invoice_no
                         join product_sku ps on ps.id = id.product_id 
@@ -84,9 +84,9 @@ class ReportTerapistComDailyController extends Controller
                             ) u on u.id = id.assigned_to and u.job_id = pc.jobs_id  and u.id = id.assigned_to  and u.work_year = pc.years 
                         left join product_point pp on pp.product_id=ps.id and pp.branch_id=b.id 
                         where pc.values > 0 and im.dated >= now()-interval'7 days'
-                        group by  b.remark,im.dated,u.work_year,u.name
+                        group by  b.id,b.remark,im.dated,u.work_year,u.name
                         union all                                  
-                        select  b.remark as branch_name,'referral' as com_type,im.dated,count(ps.id) as qtyinv,case when date_part('year', age(now(),join_date))::int=0 then 1 when date_part('year', age(now(),join_date))::int>10 then 10  else date_part('year', age(now(),join_date)) end as work_year,u.name,
+                        select b.id as branch_id,b.remark as branch_name,'referral' as com_type,im.dated,count(ps.id) as qtyinv,case when date_part('year', age(now(),join_date))::int=0 then 1 when date_part('year', age(now(),join_date))::int>10 then 10  else date_part('year', age(now(),join_date)) end as work_year,u.name,
                         sum(case when pc.referral_fee<=0 then pc.assigned_to_fee * id.qty else pc.referral_fee * id.qty end) as commisions,
                         0 as point_qty
                         from invoice_master im 
@@ -98,9 +98,9 @@ class ReportTerapistComDailyController extends Controller
                         join product_commisions pc on pc.product_id = id.product_id and pc.branch_id = c.branch_id
                         join users u on u.job_id = 2  and u.id = id.referral_by  
                         where pc.referral_fee+pc.assigned_to_fee+pc.created_by_fee  > 0  and im.dated >= now()-interval'7 days'
-                        group by  b.remark,im.dated,u.join_date,u.name
+                        group by  b.id,b.remark,im.dated,u.join_date,u.name
                         union all            
-                        select b.remark as branch_name,'extra' as com_type,im.dated,count(ps.id) as qtyinv,case when date_part('year', age(now(),join_date))::int=0 then 1 when date_part('year', age(now(),join_date))::int>10 then 10  else date_part('year', age(now(),join_date)) end as work_year,u.name,
+                        select b.id as branch_id,b.remark as branch_name,'extra' as com_type,im.dated,count(ps.id) as qtyinv,case when date_part('year', age(now(),join_date))::int=0 then 1 when date_part('year', age(now(),join_date))::int>10 then 10  else date_part('year', age(now(),join_date)) end as work_year,u.name,
                         sum(pc.assigned_to_fee * id.qty) commisions,
                         0 as point_qty
                         from invoice_master im 
@@ -112,9 +112,9 @@ class ReportTerapistComDailyController extends Controller
                         join product_commisions pc on pc.product_id = id.product_id and pc.branch_id = c.branch_id
                         join users u on u.job_id = 2  and u.id = id.assigned_to  
                         where pc.referral_fee+pc.assigned_to_fee+pc.created_by_fee  > 0 and im.dated >= now()-interval'7 days'
-                        group by  b.remark,im.dated,u.join_date,u.name
+                        group by  b.id,b.remark,im.dated,u.join_date,u.name
 
-                ) a left join point_conversion pc2 on pc2.point_qty = a.point_qty  order by a.branch_name,a.dated,a.name;
+                ) a left join point_conversion_branch pc2 on pc2.point_qty = a.point_qty and pc2.branch_id = a.branch_id  order by a.branch_name,a.dated,a.name;
         ");
         $data = $this->data;
         $keyword = "";
@@ -165,7 +165,7 @@ class ReportTerapistComDailyController extends Controller
                 select dated,a.branch_name,a.id,a.point_qty,a.name,a.invoice,service,coalesce(pc2.point_value,0) as total_point,(a.commisions+coalesce(pc2.point_value,0)) as total,commisions_extra,total_abbr,total_commisions,
                                 product_qty,product_commisions
                                 from (
-                                    select a.branch_name,a.dated,a.user_id as id,a.terapist_name as name,
+                                    select ub.branch_id,a.branch_name,a.dated,a.user_id as id,a.terapist_name as name,
                                     count(distinct right(invoice_no,6)) as invoice,
                                     sum(case when type_id=2 then 1 else 0 end) as service,
                                     sum(point_qty) as point_qty,sum(a.commisions) as commisions,
@@ -177,8 +177,8 @@ class ReportTerapistComDailyController extends Controller
                                     from terapist_commision a
                                     join users_branch as ub on ub.branch_id = a.branch_id and ub.user_id = '".$user->id."'  and ub.branch_id::character varying like '".$filter_branch_id."'
                                     where a.dated  between '".$filter_begin_date."' and  '".$filter_begin_end."' and a.user_id::character varying like '".$terapist."' 
-                                    group by a.branch_name,a.user_id,a.terapist_name,a.dated
-                                ) a left join point_conversion pc2 on pc2.point_qty = a.point_qty  
+                                    group by a.branch_name,a.user_id,a.terapist_name,a.dated,ub.branch_id
+                                ) a left join point_conversion_branch pc2 on pc2.point_qty = a.point_qty  and pc2.branch_id = a.branch_id 
             ) b group by branch_name,id,b.name
 
             ");
@@ -187,7 +187,7 @@ class ReportTerapistComDailyController extends Controller
                     select a.branch_name,a.id,a.dated,a.name,a.invoice_no,a.abbr,coalesce(pc2.point_value,0) as total_point,(a.commisions+coalesce(pc2.point_value,0)) as total,commisions_extra,total_abbr,total_commisions,total_point_qty,product_abbr,
                     product_price,product_base_commision,product_qty,product_commisions
                     from (
-                        select a.branch_name,a.user_id as id,a.dated,a.terapist_name as name,
+                        select a.branch_id,a.branch_name,a.user_id as id,a.dated,a.terapist_name as name,
                         string_agg(distinct right(invoice_no,6),'##') as invoice_no,
                         string_agg(case when type_id=2 then abbr else '' end,'##' order by invoice_no) as abbr,
                         sum(point_qty) as point_qty,sum(a.commisions) as commisions,
@@ -203,15 +203,15 @@ class ReportTerapistComDailyController extends Controller
                         from terapist_commision a
                         join users_branch as ub on ub.branch_id = a.branch_id and ub.user_id = '".$user->id."'  and ub.branch_id::character varying like '".$filter_branch_id."'
                         where a.dated  between '".$filter_begin_date."' and  '".$filter_begin_end."' and a.user_id::character varying like '".$terapist."' 
-                        group by a.branch_name,a.user_id,a.dated,a.terapist_name
-                    ) a left join point_conversion pc2 on pc2.point_qty = a.point_qty 
+                        group by a.branch_name,a.user_id,a.dated,a.terapist_name,a.branch_id
+                    ) a left join point_conversion_branch pc2 on pc2.point_qty = a.point_qty and pc2.branch_id = a.branch_id 
                     order by a.branch_name,a.name,a.dated      
             ");
 
             $report_data_terapist = DB::select("
                     select distinct a.branch_name,a.id,a.name,a.work_year
                     from (
-                        select a.branch_name,a.user_id as id,a.dated,a.terapist_name as name,a.work_year,
+                        select a.branch_id,a.branch_name,a.user_id as id,a.dated,a.terapist_name as name,a.work_year,
                         string_agg(distinct right(invoice_no,6),'##') as invoice_no,
                         string_agg(case when type_id=2 then abbr else '' end,'##' order by invoice_no) as abbr,
                         sum(point_qty) as point_qty,sum(a.commisions) as commisions,
@@ -227,8 +227,8 @@ class ReportTerapistComDailyController extends Controller
                         from terapist_commision a
                         join users_branch as ub on ub.branch_id = a.branch_id and ub.user_id = '".$user->id."'  and ub.branch_id::character varying like '".$filter_branch_id."'
                         where a.dated  between '".$filter_begin_date."' and  '".$filter_begin_end."' and a.user_id::character varying like '".$terapist."' 
-                        group by a.branch_name,a.user_id,a.dated,a.terapist_name,a.work_year
-                    ) a left join point_conversion pc2 on pc2.point_qty = a.point_qty 
+                        group by a.branch_name,a.user_id,a.dated,a.terapist_name,a.work_year,a.branch_id
+                    ) a left join point_conversion_branch pc2 on pc2.point_qty = a.point_qty  and pc2.branch_id = a.branch_id
                     order by 1,3     
             ");
 
@@ -248,11 +248,11 @@ class ReportTerapistComDailyController extends Controller
             $report_data_com_from1 = DB::select("
                     select a.dated,a.user_id as id,(a.commisions+coalesce(pc2.point_value,0)) as total
                     from (
-                        select a.dated,a.user_id,sum(point_qty) as point_qty,sum(a.commisions) as commisions from terapist_commision a
+                        select a.branch_id,a.dated,a.user_id,sum(point_qty) as point_qty,sum(a.commisions) as commisions from terapist_commision a
                         join users_branch as ub on ub.branch_id = a.branch_id and ub.user_id = '".$user->id."'  and ub.branch_id::character varying like '".$filter_branch_id."'
                         where a.dated  between '".$date26."' and  '".$filter_begin_end."'  and a.user_id::character varying like '".$terapist."' 
-                        group by a.dated,a.user_id
-                    ) a left join point_conversion pc2 on pc2.point_qty = a.point_qty 
+                        group by a.dated,a.user_id,a.branch_id
+                    ) a left join point_conversion_branch pc2 on pc2.point_qty = a.point_qty  and pc2.branch_id = a.branch_id
                     order by a.dated           
             ");
     
@@ -282,7 +282,7 @@ class ReportTerapistComDailyController extends Controller
                 select dated,a.branch_name,a.id,a.point_qty,a.name,a.invoice,service,coalesce(pc2.point_value,0) as total_point,(a.commisions+coalesce(pc2.point_value,0)) as total,commisions_extra,total_abbr,total_commisions,
                                 product_qty,product_commisions
                                 from (
-                                    select a.branch_name,a.dated,a.user_id as id,a.terapist_name as name,
+                                    select a.branch_id,a.branch_name,a.dated,a.user_id as id,a.terapist_name as name,
                                     count(distinct right(invoice_no,6)) as invoice,
                                     sum(case when type_id=2 then 1 else 0 end) as service,
                                     sum(point_qty) as point_qty,sum(a.commisions) as commisions,
@@ -294,8 +294,8 @@ class ReportTerapistComDailyController extends Controller
                                     from terapist_commision a
                                     join users_branch as ub on ub.branch_id = a.branch_id and ub.user_id = '".$user->id."'  and ub.branch_id::character varying like '".$filter_branch_id."'
                                     where a.dated  between '".$filter_begin_date."' and  '".$filter_begin_end."' and a.user_id::character varying like '".$terapist."' 
-                                    group by a.branch_name,a.user_id,a.terapist_name,a.dated
-                                ) a left join point_conversion pc2 on pc2.point_qty = a.point_qty  
+                                    group by a.branch_name,a.user_id,a.terapist_name,a.dated,a.branch_id
+                                ) a left join point_conversion_branch pc2 on pc2.point_qty = a.point_qty  and pc2.branch_id = a.branch_id 
             ) b group by branch_name,id,b.name
 
             ");
@@ -304,7 +304,7 @@ class ReportTerapistComDailyController extends Controller
                     select a.branch_name,a.id,a.dated,a.name,a.invoice_no,a.abbr,coalesce(pc2.point_value,0) as total_point,(a.commisions+coalesce(pc2.point_value,0)) as total,commisions_extra,total_abbr,total_commisions,total_point_qty,product_abbr,
                     product_price,product_base_commision,product_qty,product_commisions
                     from (
-                        select a.branch_name,a.user_id as id,a.dated,a.terapist_name as name,
+                        select a.branch_id,a.branch_name,a.user_id as id,a.dated,a.terapist_name as name,
                         string_agg(distinct right(invoice_no,6),'\n') as invoice_no,
                         string_agg(case when type_id=2 then abbr else '' end,'##' order by invoice_no) as abbr,
                         sum(point_qty) as point_qty,sum(a.commisions) as commisions,
@@ -320,15 +320,15 @@ class ReportTerapistComDailyController extends Controller
                         from terapist_commision a
                         join users_branch as ub on ub.branch_id = a.branch_id and ub.user_id = '".$user->id."'  and ub.branch_id::character varying like '".$filter_branch_id."'
                         where a.dated  between '".$filter_begin_date."' and  '".$filter_begin_end."' and a.user_id::character varying like '".$terapist."' 
-                        group by a.branch_name,a.user_id,a.dated,a.terapist_name
-                    ) a left join point_conversion pc2 on pc2.point_qty = a.point_qty 
+                        group by a.branch_name,a.user_id,a.dated,a.terapist_name,a.branch_id
+                    ) a left join point_conversion_branch pc2 on pc2.point_qty = a.point_qty  and pc2.branch_id = a.branch_id 
                     order by a.branch_name,a.name,a.dated      
             ");
 
             $report_data_terapist = DB::select("
                     select distinct a.branch_name,a.id,a.name,a.work_year
                     from (
-                        select a.branch_name,a.user_id as id,a.dated,a.terapist_name as name,a.work_year,
+                        select a.branch_id,a.branch_name,a.user_id as id,a.dated,a.terapist_name as name,a.work_year,
                         string_agg(distinct right(invoice_no,6),'##') as invoice_no,
                         string_agg(case when type_id=2 then abbr else '' end,'##' order by invoice_no) as abbr,
                         sum(point_qty) as point_qty,sum(a.commisions) as commisions,
@@ -344,8 +344,8 @@ class ReportTerapistComDailyController extends Controller
                         from terapist_commision a
                         join users_branch as ub on ub.branch_id = a.branch_id and ub.user_id = '".$user->id."'  and ub.branch_id::character varying like '".$filter_branch_id."'
                         where a.dated  between '".$filter_begin_date."' and  '".$filter_begin_end."' and a.user_id::character varying like '".$terapist."' 
-                        group by a.branch_name,a.user_id,a.dated,a.terapist_name,a.work_year
-                    ) a left join point_conversion pc2 on pc2.point_qty = a.point_qty 
+                        group by a.branch_name,a.user_id,a.dated,a.terapist_name,a.work_year,a.branch_id
+                    ) a left join point_conversion_branch pc2 on pc2.point_qty = a.point_qty  and pc2.branch_id = a.branch_id 
                     order by 1,3     
             ");
 
@@ -365,11 +365,11 @@ class ReportTerapistComDailyController extends Controller
             $report_data_com_from1 = DB::select("
                     select a.dated,a.user_id as id,(a.commisions+coalesce(pc2.point_value,0)) as total
                     from (
-                        select a.dated,a.user_id,sum(point_qty) as point_qty,sum(a.commisions) as commisions from terapist_commision a
+                        select a.branch_id,a.dated,a.user_id,sum(point_qty) as point_qty,sum(a.commisions) as commisions from terapist_commision a
                         join users_branch as ub on ub.branch_id = a.branch_id and ub.user_id = '".$user->id."'  and ub.branch_id::character varying like '".$filter_branch_id."'
                         where a.dated  between '".$date26."' and  '".$filter_begin_end."'  and a.user_id::character varying like '".$terapist."' 
-                        group by a.dated,a.user_id
-                    ) a left join point_conversion pc2 on pc2.point_qty = a.point_qty 
+                        group by a.dated,a.user_id,a.branch_id
+                    ) a left join point_conversion_branch pc2 on pc2.point_qty = a.point_qty  and pc2.branch_id = a.branch_id 
                     order by a.dated           
             ");
 
@@ -403,7 +403,7 @@ class ReportTerapistComDailyController extends Controller
                     select dated,a.branch_name,a.id,a.point_qty,a.name,a.invoice,service,coalesce(pc2.point_value,0) as total_point,(a.commisions+coalesce(pc2.point_value,0)) as total,commisions_extra,total_abbr,total_commisions,
                                     product_qty,product_commisions
                                     from (
-                                        select a.branch_name,a.dated,a.user_id as id,a.terapist_name as name,
+                                        select a.branch_id,a.branch_name,a.dated,a.user_id as id,a.terapist_name as name,
                                         count(distinct right(invoice_no,6)) as invoice,
                                         sum(case when type_id=2 then 1 else 0 end) as service,
                                         sum(point_qty) as point_qty,sum(a.commisions) as commisions,
@@ -415,8 +415,8 @@ class ReportTerapistComDailyController extends Controller
                                         from terapist_commision a
                                         join users_branch as ub on ub.branch_id = a.branch_id and ub.user_id = '".$user->id."'  and ub.branch_id::character varying like '".$filter_branch_id."'
                                         where a.dated  between '".$filter_begin_date."' and  '".$filter_begin_end."' and a.user_id::character varying like  '".$terapist."' 
-                                        group by a.branch_name,a.user_id,a.terapist_name,a.dated
-                                    ) a left join point_conversion pc2 on pc2.point_qty = a.point_qty  
+                                        group by a.branch_name,a.user_id,a.terapist_name,a.dated,a.branch_id
+                                    ) a left join point_conversion_branch pc2 on pc2.point_qty = a.point_qty   and pc2.branch_id = a.branch_id 
                 ) b join users u on u.id=b.id  group by u.work_year,branch_name,b.id,b.name order by 2,3
 
 
@@ -449,7 +449,7 @@ class ReportTerapistComDailyController extends Controller
                     select dated,a.branch_name,a.id,a.point_qty,a.name,a.invoice,service,coalesce(pc2.point_value,0) as total_point,(a.commisions+coalesce(pc2.point_value,0)) as total,commisions_extra,total_abbr,total_commisions,
                                     product_qty,product_commisions
                                     from (
-                                        select a.branch_name,a.dated,a.user_id as id,a.terapist_name as name,
+                                        select a.branch_id,a.branch_name,a.dated,a.user_id as id,a.terapist_name as name,
                                         count(distinct right(invoice_no,6)) as invoice,
                                         sum(case when type_id=2 then 1 else 0 end) as service,
                                         sum(point_qty) as point_qty,sum(a.commisions) as commisions,
@@ -461,8 +461,8 @@ class ReportTerapistComDailyController extends Controller
                                         from terapist_commision a
                                         join users_branch as ub on ub.branch_id = a.branch_id and ub.user_id = '".$user->id."'  and ub.branch_id::character varying like '".$filter_branch_id."'
                                         where a.dated  between '".$filter_begin_date."' and  '".$filter_begin_end."' and a.user_id::character varying like  '".$terapist."' 
-                                        group by a.branch_name,a.user_id,a.terapist_name,a.dated
-                                    ) a left join point_conversion pc2 on pc2.point_qty = a.point_qty  
+                                        group by a.branch_name,a.user_id,a.terapist_name,a.dated,a.branch_id
+                                    ) a left join point_conversion_branch pc2 on pc2.point_qty = a.point_qty and pc2.branch_id = a.branch_id
                 ) b join users u on u.id=b.id  group by u.work_year,branch_name,b.id,b.name order by 3
 
 
@@ -486,7 +486,7 @@ class ReportTerapistComDailyController extends Controller
         }else{
             $report_data = DB::select("
             select a.branch_name,a.com_type,to_char(a.dated,'dd-mm-YYYY') as dated,a.qtyinv,a.work_year,a.name,a.commisions,a.point_qty,coalesce(pc2.point_value,0)  as point_value,a.commisions+coalesce(pc2.point_value,0) as total from (
-                select b.remark as branch_name,'work_commision' as com_type,im.dated,count(ps.id) as qtyinv,u.work_year,u.name,sum(pc.values*id.qty) as commisions,sum(coalesce(pp.point,0)*id.qty) as point_qty
+                select ub.branch_id,b.remark as branch_name,'work_commision' as com_type,im.dated,count(ps.id) as qtyinv,u.work_year,u.name,sum(pc.values*id.qty) as commisions,sum(coalesce(pp.point,0)*id.qty) as point_qty
                 from invoice_master im 
                 join invoice_detail id on id.invoice_no = im.invoice_no
                 join product_sku ps on ps.id = id.product_id 
@@ -500,9 +500,9 @@ class ReportTerapistComDailyController extends Controller
                     ) u on u.id = id.assigned_to and u.job_id = pc.jobs_id  and u.id = id.assigned_to  and u.work_year = pc.years  and u.id::character varying like '".$terapist."' 
                 left join product_point pp on pp.product_id=ps.id and pp.branch_id=b.id 
                 where pc.values > 0 and im.dated between '".$begindate."' and '".$enddate."'  
-                group by  b.remark,im.dated,u.work_year,u.name
+                group by  b.remark,im.dated,u.work_year,u.name,ub.branch_id
                 union all            
-                select  b.remark as branch_name,'referral' as com_type,im.dated,count(ps.id) as qtyinv,case when date_part('year', age(now(),join_date))::int=0 then 1 when date_part('year', age(now(),join_date))::int>10 then 10  else date_part('year', age(now(),join_date)) end as work_year,u.name,sum(pc.referral_fee * id.qty) as commisions,0 as point_qty   
+                select  ub.branch_id,b.remark as branch_name,'referral' as com_type,im.dated,count(ps.id) as qtyinv,case when date_part('year', age(now(),join_date))::int=0 then 1 when date_part('year', age(now(),join_date))::int>10 then 10  else date_part('year', age(now(),join_date)) end as work_year,u.name,sum(pc.referral_fee * id.qty) as commisions,0 as point_qty   
                 from invoice_master im 
                 join invoice_detail id on id.invoice_no = im.invoice_no 
                 join product_sku ps on ps.id = id.product_id 
@@ -512,9 +512,9 @@ class ReportTerapistComDailyController extends Controller
                 join product_commisions pc on pc.product_id = id.product_id and pc.branch_id = c.branch_id
                 join users u on u.job_id = 2  and u.id = id.referral_by and u.id::character varying like '".$terapist."' 
                 where pc.referral_fee  > 0 and im.dated between '".$begindate."' and '".$enddate."'  
-                group by  b.remark,im.dated,u.join_date,u.name
+                group by  b.remark,im.dated,u.join_date,u.name,ub.branch_id
                 union all            
-                select b.remark as branch_name,'extra' as com_type,im.dated,count(ps.id) as qtyinv,case when date_part('year', age(now(),join_date))::int=0 then 1 when date_part('year', age(now(),join_date))::int>10 then 10  else date_part('year', age(now(),join_date)) end as work_year,u.name,
+                select ub.branch_id,b.remark as branch_name,'extra' as com_type,im.dated,count(ps.id) as qtyinv,case when date_part('year', age(now(),join_date))::int=0 then 1 when date_part('year', age(now(),join_date))::int>10 then 10  else date_part('year', age(now(),join_date)) end as work_year,u.name,
                 sum(pc.assigned_to_fee * id.qty) commisions,
                 0 as point_qty
                 from invoice_master im 
@@ -526,8 +526,8 @@ class ReportTerapistComDailyController extends Controller
                 join product_commisions pc on pc.product_id = id.product_id and pc.branch_id = c.branch_id
                 join users u on u.job_id = 2  and u.id = id.assigned_to  and u.id::character varying like '".$terapist."' 
                 where pc.referral_fee+pc.assigned_to_fee+pc.created_by_fee  > 0  and im.dated  between '".$begindate."' and  '".$enddate."'   and c.branch_id::character varying like  '".$branchx."'
-                group by  b.remark,im.dated,u.join_date,u.name
-        ) a left join point_conversion pc2 on pc2.point_qty = a.point_qty order by a.branch_name,a.dated,a.name;          
+                group by  b.remark,im.dated,u.join_date,u.name,ub.branch_id
+        ) a left join point_conversion_branch pc2 on pc2.point_qty = a.point_qty  and pc2.branch_id = a.branch_id order by a.branch_name,a.dated,a.name;          
         ");  
                
             return view('pages.reports.commision_terapist_summary',['company' => Company::get()->first()], compact('users_terapist','report_data','branchs','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
