@@ -114,7 +114,7 @@ class ReportTerapistComDailyController extends Controller
                         where pc.referral_fee+pc.assigned_to_fee+pc.created_by_fee  > 0 and im.dated >= now()-interval'7 days'
                         group by  b.id,b.remark,im.dated,u.join_date,u.name
 
-                ) a left join point_convertion_branch pc2 on pc2.point_qty = a.point_qty and pc2.branch_id = a.branch_id  order by a.branch_name,a.dated,a.name;
+                ) a left join point_convertion_branch pc2 on pc2.point = a.point_qty and pc2.branch_id = a.branch_id  order by a.branch_name,a.dated,a.name;
         ");
         $data = $this->data;
         $keyword = "";
@@ -178,7 +178,7 @@ class ReportTerapistComDailyController extends Controller
                                     join users_branch as ub on ub.branch_id = a.branch_id and ub.user_id = '".$user->id."'  and ub.branch_id::character varying like '".$filter_branch_id."'
                                     where a.dated  between '".$filter_begin_date."' and  '".$filter_begin_end."' and a.user_id::character varying like '".$terapist."' 
                                     group by a.branch_name,a.user_id,a.terapist_name,a.dated,ub.branch_id
-                                ) a left join point_convertion_branch pc2 on pc2.point_qty = a.point_qty  and pc2.branch_id = a.branch_id 
+                                ) a left join point_convertion_branch pc2 on pc2.point = a.point_qty  and pc2.branch_id = a.branch_id 
             ) b group by branch_name,id,b.name
 
             ");
@@ -204,7 +204,7 @@ class ReportTerapistComDailyController extends Controller
                         join users_branch as ub on ub.branch_id = a.branch_id and ub.user_id = '".$user->id."'  and ub.branch_id::character varying like '".$filter_branch_id."'
                         where a.dated  between '".$filter_begin_date."' and  '".$filter_begin_end."' and a.user_id::character varying like '".$terapist."' 
                         group by a.branch_name,a.user_id,a.dated,a.terapist_name,a.branch_id
-                    ) a left join point_convertion_branch pc2 on pc2.point_qty = a.point_qty and pc2.branch_id = a.branch_id 
+                    ) a left join point_convertion_branch pc2 on pc2.point = a.point_qty and pc2.branch_id = a.branch_id 
                     order by a.branch_name,a.name,a.dated      
             ");
 
@@ -228,7 +228,7 @@ class ReportTerapistComDailyController extends Controller
                         join users_branch as ub on ub.branch_id = a.branch_id and ub.user_id = '".$user->id."'  and ub.branch_id::character varying like '".$filter_branch_id."'
                         where a.dated  between '".$filter_begin_date."' and  '".$filter_begin_end."' and a.user_id::character varying like '".$terapist."' 
                         group by a.branch_name,a.user_id,a.dated,a.terapist_name,a.work_year,a.branch_id
-                    ) a left join point_convertion_branch pc2 on pc2.point_qty = a.point_qty  and pc2.branch_id = a.branch_id
+                    ) a left join point_convertion_branch pc2 on pc2.point = a.point_qty  and pc2.branch_id = a.branch_id
                     order by 1,3     
             ");
 
@@ -252,7 +252,7 @@ class ReportTerapistComDailyController extends Controller
                         join users_branch as ub on ub.branch_id = a.branch_id and ub.user_id = '".$user->id."'  and ub.branch_id::character varying like '".$filter_branch_id."'
                         where a.dated  between '".$date26."' and  '".$filter_begin_end."'  and a.user_id::character varying like '".$terapist."' 
                         group by a.dated,a.user_id,a.branch_id
-                    ) a left join point_convertion_branch pc2 on pc2.point_qty = a.point_qty  and pc2.branch_id = a.branch_id
+                    ) a left join point_convertion_branch pc2 on pc2.point = a.point_qty  and pc2.branch_id = a.branch_id
                     order by a.dated           
             ");
     
@@ -295,7 +295,7 @@ class ReportTerapistComDailyController extends Controller
                                     join users_branch as ub on ub.branch_id = a.branch_id and ub.user_id = '".$user->id."'  and ub.branch_id::character varying like '".$filter_branch_id."'
                                     where a.dated  between '".$filter_begin_date."' and  '".$filter_begin_end."' and a.user_id::character varying like '".$terapist."' 
                                     group by a.branch_name,a.user_id,a.terapist_name,a.dated,a.branch_id
-                                ) a left join point_convertion_branch pc2 on pc2.point_qty = a.point_qty  and pc2.branch_id = a.branch_id 
+                                ) a left join point_convertion_branch pc2 on pc2.point = a.point_qty  and pc2.branch_id = a.branch_id 
             ) b group by branch_name,id,b.name
 
             ");
@@ -321,7 +321,7 @@ class ReportTerapistComDailyController extends Controller
                         join users_branch as ub on ub.branch_id = a.branch_id and ub.user_id = '".$user->id."'  and ub.branch_id::character varying like '".$filter_branch_id."'
                         where a.dated  between '".$filter_begin_date."' and  '".$filter_begin_end."' and a.user_id::character varying like '".$terapist."' 
                         group by a.branch_name,a.user_id,a.dated,a.terapist_name,a.branch_id
-                    ) a left join point_convertion_branch pc2 on pc2.point_qty = a.point_qty  and pc2.branch_id = a.branch_id 
+                    ) a left join point_convertion_branch pc2 on pc2.point = a.point_qty  and pc2.branch_id = a.branch_id 
                     order by a.branch_name,a.name,a.dated      
             ");
 
@@ -345,7 +345,7 @@ class ReportTerapistComDailyController extends Controller
                         join users_branch as ub on ub.branch_id = a.branch_id and ub.user_id = '".$user->id."'  and ub.branch_id::character varying like '".$filter_branch_id."'
                         where a.dated  between '".$filter_begin_date."' and  '".$filter_begin_end."' and a.user_id::character varying like '".$terapist."' 
                         group by a.branch_name,a.user_id,a.dated,a.terapist_name,a.work_year,a.branch_id
-                    ) a left join point_convertion_branch pc2 on pc2.point_qty = a.point_qty  and pc2.branch_id = a.branch_id 
+                    ) a left join point_convertion_branch pc2 on pc2.point = a.point_qty  and pc2.branch_id = a.branch_id 
                     order by 1,3     
             ");
 
@@ -369,7 +369,7 @@ class ReportTerapistComDailyController extends Controller
                         join users_branch as ub on ub.branch_id = a.branch_id and ub.user_id = '".$user->id."'  and ub.branch_id::character varying like '".$filter_branch_id."'
                         where a.dated  between '".$date26."' and  '".$filter_begin_end."'  and a.user_id::character varying like '".$terapist."' 
                         group by a.dated,a.user_id,a.branch_id
-                    ) a left join point_convertion_branch pc2 on pc2.point_qty = a.point_qty  and pc2.branch_id = a.branch_id 
+                    ) a left join point_convertion_branch pc2 on pc2.point = a.point_qty  and pc2.branch_id = a.branch_id 
                     order by a.dated           
             ");
 
@@ -416,7 +416,7 @@ class ReportTerapistComDailyController extends Controller
                                         join users_branch as ub on ub.branch_id = a.branch_id and ub.user_id = '".$user->id."'  and ub.branch_id::character varying like '".$filter_branch_id."'
                                         where a.dated  between '".$filter_begin_date."' and  '".$filter_begin_end."' and a.user_id::character varying like  '".$terapist."' 
                                         group by a.branch_name,a.user_id,a.terapist_name,a.dated,a.branch_id
-                                    ) a left join point_convertion_branch pc2 on pc2.point_qty = a.point_qty   and pc2.branch_id = a.branch_id 
+                                    ) a left join point_convertion_branch pc2 on pc2.point = a.point_qty   and pc2.branch_id = a.branch_id 
                 ) b join users u on u.id=b.id  group by u.work_year,branch_name,b.id,b.name order by 2,3
 
 
@@ -462,7 +462,7 @@ class ReportTerapistComDailyController extends Controller
                                         join users_branch as ub on ub.branch_id = a.branch_id and ub.user_id = '".$user->id."'  and ub.branch_id::character varying like '".$filter_branch_id."'
                                         where a.dated  between '".$filter_begin_date."' and  '".$filter_begin_end."' and a.user_id::character varying like  '".$terapist."' 
                                         group by a.branch_name,a.user_id,a.terapist_name,a.dated,a.branch_id
-                                    ) a left join point_convertion_branch pc2 on pc2.point_qty = a.point_qty and pc2.branch_id = a.branch_id
+                                    ) a left join point_convertion_branch pc2 on pc2.point = a.point_qty and pc2.branch_id = a.branch_id
                 ) b join users u on u.id=b.id  group by u.work_year,branch_name,b.id,b.name order by 3
 
 
@@ -527,7 +527,7 @@ class ReportTerapistComDailyController extends Controller
                 join users u on u.job_id = 2  and u.id = id.assigned_to  and u.id::character varying like '".$terapist."' 
                 where pc.referral_fee+pc.assigned_to_fee+pc.created_by_fee  > 0  and im.dated  between '".$begindate."' and  '".$enddate."'   and c.branch_id::character varying like  '".$branchx."'
                 group by  b.remark,im.dated,u.join_date,u.name,ub.branch_id
-        ) a left join point_convertion_branch pc2 on pc2.point_qty = a.point_qty  and pc2.branch_id = a.branch_id order by a.branch_name,a.dated,a.name;          
+        ) a left join point_convertion_branch pc2 on pc2.point = a.point_qty  and pc2.branch_id = a.branch_id order by a.branch_name,a.dated,a.name;          
         ");  
                
             return view('pages.reports.commision_terapist_summary',['company' => Company::get()->first()], compact('users_terapist','report_data','branchs','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
