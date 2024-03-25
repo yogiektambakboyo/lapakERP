@@ -29,5 +29,6 @@ class StockLotNumberTemp extends Model
         'category_name',
         'product_name',
         'type_name',
+        'point',
     ];
 }

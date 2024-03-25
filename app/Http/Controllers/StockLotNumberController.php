@@ -110,6 +110,7 @@ class StockLotNumberController extends Controller
                 $type_name = $det['type_name'];
                 $product_name = $det['product_name'];
                 $qty = $det['qty'];
+                $point = $det['point'];
                 $qty_available = $det['qty_available'];
 
                 $insert_data = StockLotNumberTemp::create(
@@ -125,6 +126,7 @@ class StockLotNumberController extends Controller
                         ['product_name' => $product_name ],
                         ['qty' => $qty ],
                         ['qty_available' => $qty_available ],
+                        ['point' => $point ],
                     )
                 );
 
