@@ -83,19 +83,36 @@ class ReportScanController extends Controller
         $c_token = $request->get('token');
         $s_token = md5(date('Ymd'));
 
+       
+
         if($request->get('user_agent')=="BaliFoamv1" && $c_token == $s_token){
             $begin_dated = $request->get('begin_date');
             $end_dated = $request->get('end_date');
-            $res_data = DB::select(" select sa.doc_no,sa.dated,sa.sales_id,s.name,sa.created_at,sd.product_name,sd.lot_number,sd.point  
-            from scan_activity sa 
-            join sales s on s.id = sa.sales_id
-            join scan_activity_detail sd on sd.doc_no = sa.doc_no  where sa.dated between '".$begin_dated."' and   '".$end_dated."' ;  ");
 
-            $result = array_merge(
-                ['status' => 'success'],
-                ['data' => $res_data ],
-                ['message' => 'Success get '.count($res_data).' data'],
-            );
+            $dated_1 = Carbon::parse($begin_dated);
+            $dated_2 = Carbon::parse($end_dated);
+    
+            $diff = $dated_1->diffInDays($dated_2);
+
+            if($diff<=10){
+                $res_data = DB::select(" select sa.doc_no,sa.dated,sa.sales_id,s.name,sa.created_at,sd.product_name,sd.lot_number,sd.point  
+                from scan_activity sa 
+                join sales s on s.id = sa.sales_id
+                join scan_activity_detail sd on sd.doc_no = sa.doc_no  where sa.dated between '".$begin_dated."' and   '".$end_dated."' ;  ");
+
+                $result = array_merge(
+                    ['status' => 'success'],
+                    ['data' => $res_data ],
+                    ['message' => 'Success get '.count($res_data).' data'],
+                );
+            }else{
+                $result = array_merge(
+                    ['status' => 'failed'],
+                    ['data' => [] ],
+                    ['message' => 'interval date must be lower than 11 Days'],
+                );
+            }
+            
         }else{
             $result = array_merge(
                 ['status' => 'failed'],
