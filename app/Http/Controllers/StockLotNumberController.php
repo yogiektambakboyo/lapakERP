@@ -11,6 +11,7 @@ use Spatie\Permission\Models\Role;
 use App\Http\Controllers\Controller;
 use App\Models\Company;
 use App\Models\StockLotNumber;
+use App\Models\StockLotNumberTemp;
 use App\Http\Controllers\Lang;
 
 
@@ -55,6 +56,16 @@ class StockLotNumberController extends Controller
         ])->with('i', ($request->input('page', 1) - 1) * 5);
     }
 
+    public function get_list(Request $request)
+    {  
+        $data_res = DB::select(" select * from stock_lotnumber limit 1000");
+        return  array_merge([
+            'status' => 'success',
+            'data' => $data_res, 
+            'message' => 'Get Data Succesfully'
+        ]);
+    }
+
     public function search(Request $request) 
     {
         $user = Auth::user();
@@ -72,6 +83,68 @@ class StockLotNumberController extends Controller
             $permissions = StockLotNumber::join('product_sku','product_sku.alias_code','=','stock_lotnumber.alias_code')->where('no_surat','like','%'.$keyword.'%')->orWhere('product_sku.remark','like','%'.$keyword.'%')->orWhere('lot_number','like','%'.$keyword.'%')->orWhere('spkid','like','%'.$keyword.'%')->paginate(100);
             return view('pages.permissions.index_stock', ['permissions' => $permissions,'act_permission' => $act_permission,'company' => Company::get()->first()],compact('data','keyword'))->with('i', ($request->input('page', 1) - 1) * 5);
         }
+    }
+
+    public function store_api(Request $request) 
+    {
+        $res_data = $request->get('detail');
+        $c_token = $request->get('token');
+        $s_token = md5(date('Ymd'));
+
+
+        if($request->get('user_agent')=="BaliFoamv1" && $c_token == $s_token){
+            StockLotNumberTemp::truncate();
+            
+            $c_data = count($res_data);
+
+            for ($i=0; $i < $c_data; $i++) { 
+                $det = $res_data[$i];
+
+                $recid = $det['recid'];
+                $no_surat = $det['no_surat'];
+                $spkid = $det['spkid'];
+                $lot_number = $det['lot_number'];
+                $alias_code = $det['alias_code'];
+                $location = $det['location'];
+                $category_name = $det['category_name'];
+                $type_name = $det['type_name'];
+                $product_name = $det['product_name'];
+                $qty = $det['qty'];
+                $qty_available = $det['qty_available'];
+
+                $insert_data = StockLotNumberTemp::create(
+                    array_merge(
+                        ['recid' => $recid ],
+                        ['no_surat' => $no_surat ],
+                        ['lot_number' => $lot_number ],
+                        ['alias_code' => $alias_code ],
+                        ['location' => $location ],
+                        ['spkid' => $spkid ],
+                        ['category_name' => $category_name ],
+                        ['type_name' => $type_name ],
+                        ['product_name' => $product_name ],
+                        ['qty' => $qty ],
+                        ['qty_available' => $qty_available ],
+                    )
+                );
+
+            }
+
+            $result = array_merge(
+                ['status' => 'success'],
+                ['data' => $res_data ],
+                ['message' => 'Success insert '.$c_data.' data'],
+            );
+        }else{
+            $result = array_merge(
+                ['status' => 'failed'],
+                ['data' => [] ],
+                ['message' => 'Not authorized'],
+            );
+        }
+
+        return $result;
+        
     }
 
     
