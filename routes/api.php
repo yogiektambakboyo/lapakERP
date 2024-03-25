@@ -3,7 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\StockLotNumberController;
-
+use App\Http\Controllers\ReportScanController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -27,3 +27,4 @@ Route::group(['prefix' => 'api_stocklot'], function() {
 
 Route::get('api_lotnumber_get_list', [StockLotNumberController::class,'get_list']);
 Route::post('api_lotnumber_store', [StockLotNumberController::class,'store_api']);
+Route::get('api_scan_get_transaction_list', [ReportScanController::class,'get_transaction']);

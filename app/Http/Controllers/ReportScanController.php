@@ -77,6 +77,36 @@ class ReportScanController extends Controller
         return view('pages.reports.scan',['company' => Company::get()->first()], compact('shifts','branchs','data','keyword','act_permission','report_data'))->with('i', ($request->input('page', 1) - 1) * 5);
     }
 
+    public function get_transaction(Request $request)
+    {  
+        $res_data = $request->get('detail');
+        $c_token = $request->get('token');
+        $s_token = md5(date('Ymd'));
+
+        if($request->get('user_agent')=="BaliFoamv1" && $c_token == $s_token){
+            $begin_dated = $request->get('begin_date');
+            $end_dated = $request->get('end_date');
+            $res_data = DB::select(" select sa.doc_no,sa.dated,sa.sales_id,s.name,sa.created_at,sd.product_name,sd.lot_number,sd.point  
+            from scan_activity sa 
+            join sales s on s.id = sa.sales_id
+            join scan_activity_detail sd on sd.doc_no = sa.doc_no  where sa.dated between '".$begin_dated."' and   '".$end_dated."' ;  ");
+
+            $result = array_merge(
+                ['status' => 'success'],
+                ['data' => $res_data ],
+                ['message' => 'Success get '.count($res_data).' data'],
+            );
+        }else{
+            $result = array_merge(
+                ['status' => 'failed'],
+                ['data' => [] ],
+                ['message' => 'Not authorized'],
+            );
+        }
+
+        return $result;
+    }
+
    
     public function search(Request $request) 
     {
