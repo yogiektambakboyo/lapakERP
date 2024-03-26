@@ -132,6 +132,33 @@ class StockLotNumberController extends Controller
 
             }
 
+            DB::select("UPDATE product_category
+                        SET    add_colum = t2.type_name,add_column_2 = t2.point, updated_at = now()
+                        FROM   product_category t1
+                        JOIN   temp_stock_lotnumber t2 ON t1.remark  = t2.category_name
+                        WHERE  product_category.id = t1.id;");
+
+            DB::select("INSERT into product_category(remark,created_at,type_id,recid,add_colum,add_column_2)
+            select category_name,now(),1,'',type_name,point  from temp_stock_lotnumber
+            where category_name not in (
+                select remark from product_category 
+            );");
+
+            DB::select("INSERT into product_category(remark,created_at,type_id,recid,add_colum,add_column_2)
+            select category_name,now(),1,'',type_name,point  from temp_stock_lotnumber
+            where category_name not in (
+                select remark from product_category 
+            );");
+
+            DB::select("INSERT into product_sku(remark,abbr,alias_code,barcode,category_id,type_id,brand_id,created_at,created_by)
+            select distinct product_name,product_name,product_name,product_name,pc.id as category_id,1,1,now(),1  from temp_stock_lotnumber t
+            join product_category pc on pc.remark = t.category_name where t.product_name not in 
+            (select remark from product_sku);");
+
+            DB::select("INSERT into stock_lotnumber(recid,no_surat,spkid,lot_number,alias_code,location,qty,qty_available)
+            select recid,no_surat,spkid,lot_number,alias_code,location,qty,qty_available from temp_stock_lotnumber
+            where recid not in (select recid from stock_lotnumber)");
+
             $result = array_merge(
                 ['status' => 'success'],
                 ['data' => $res_data ],
