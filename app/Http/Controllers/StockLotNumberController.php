@@ -139,16 +139,11 @@ class StockLotNumberController extends Controller
                         WHERE  product_category.id = t1.id;");
 
             DB::select("INSERT into product_category(remark,created_at,type_id,recid,add_colum,add_column_2)
-            select category_name,now(),1,'',type_name,point  from temp_stock_lotnumber
+            select distinct category_name,now(),1,'',type_name,point  from temp_stock_lotnumber
             where category_name not in (
                 select remark from product_category 
             );");
 
-            DB::select("INSERT into product_category(remark,created_at,type_id,recid,add_colum,add_column_2)
-            select category_name,now(),1,'',type_name,point  from temp_stock_lotnumber
-            where category_name not in (
-                select remark from product_category 
-            );");
 
             DB::select("INSERT into product_sku(remark,abbr,alias_code,barcode,category_id,type_id,brand_id,created_at,created_by)
             select distinct product_name,product_name,product_name,product_name,pc.id as category_id,1,1,now(),1  from temp_stock_lotnumber t
