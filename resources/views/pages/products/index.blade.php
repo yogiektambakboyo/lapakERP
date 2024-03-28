@@ -18,7 +18,6 @@
                 </div>
             </div>
             <div class="col-md-3">
-                <button onclick="openDialogFilterSearch('Filter');" class="btn btn-lime"><span class="fa fa-qrcode"></span> Print QR</button> 
                 <a href="{{ route('products.create') }}" class="btn btn-primary float-right"><span class="fa fa-plus-circle"></span> @lang('general.btn_create')</a>
             </div>
         </div>
