@@ -18,7 +18,7 @@
                         name="remark" 
                         placeholder="@lang('general.lbl_name')" required>
                     
-                        <input value="2" 
+                        <input value="1" 
                         type="hidden" 
                         class="form-control" 
                         name="type_id" >

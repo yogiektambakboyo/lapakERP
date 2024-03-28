@@ -9,7 +9,7 @@
     <div class="bg-light p-4 rounded">
         <div class="row">
           <div class="col-md-10">
-            <h1>@lang('general.product') {{ $product->product_name }}</h1>
+            <h1>Harga {{ $product->product_name }}</h1>
           </div>
           <div class="col-md-2">
             <div class="mt-4">
