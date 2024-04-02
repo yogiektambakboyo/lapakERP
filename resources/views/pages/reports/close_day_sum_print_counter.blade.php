@@ -65,7 +65,10 @@
                 @if(($report_total[0]->total_ojek+$report_total[0]->total_tambahan)>0)
                     <th style="text-align: center;background-color:#FFA726;" scope="col" colspan="2">OJEK + TAMBAHAN TERAPIS</th>    
                 @endif 
-                <th style="text-align: center;background-color:#FFA726;" scope="col" colspan="2">EXTRA CHARGE</th>       
+                <th style="text-align: center;background-color:#FFA726;" scope="col" colspan="2">EXTRA CHARGE</th>   
+                @if(($report_total[0]->total_lebaran)>0)
+                    <th style="text-align: center;background-color:#FFA726;" scope="col" colspan="2">CHANGE LEBARAN</th>    
+                @endif     
                 <th style="text-align: center;background-color:#FFA726;" scope="col" colspan="2">PENDAPATAN TOTAL</th>       
             </tr>
             <tr>
@@ -81,6 +84,10 @@
               
               <th style="text-align: center;background-color:#FFA726;"  scope="col">HARIAN</th>    
               <th style="text-align: center;background-color:#FFA726;"  scope="col">S/D</th>  
+              @if(($report_total[0]->total_lebaran)>0)
+                  <th style="text-align: center;background-color:#FFA726;"  scope="col">HARIAN</th>    
+                  <th style="text-align: center;background-color:#FFA726;"  scope="col">S/D</th>  
+              @endif
               <th style="text-align: center;background-color:#FFA726;"  scope="col">HARIAN</th>    
               <th style="text-align: center;background-color:#FFA726;"  scope="col">S/D</th>  
             </tr>
@@ -138,7 +145,11 @@
                     <td style="text-align: right;">{{ number_format(($total_ojek+$total_tambahan),0,',','.') }}</td>
                   @endif
                   <td style="text-align: right;">{{ number_format($rdata->total_extra,0,',','.') }}</td>
-                  <td style="text-align: right;">{{ number_format($total_extra,0,',','.') }}</td>      
+                  <td style="text-align: right;">{{ number_format($total_extra,0,',','.') }}</td>    
+                  @if(($report_total[0]->total_lebaran)>0)
+                    <td style="text-align: right;">{{ number_format(($rdata->total_lebaran),0,',','.') }}</td>
+                    <td style="text-align: right;">{{ number_format(($total_lebaran),0,',','.') }}</td>
+                  @endif  
                   <td style="text-align: right;">{{ number_format($rdata->total_all,0,',','.') }}</td>
                   <td style="text-align: right;">{{ number_format($total_all,0,',','.') }}</td>                    
                 </tr>  
@@ -159,7 +170,11 @@
                 <td style="text-align: right;">{{ number_format(($total_ojek+$total_tambahan),0,',','.') }}</td>
               @endif
               <td style="text-align: right;">{{ number_format($total_extra,0,',','.') }}</td>
-              <td style="text-align: right;">{{ number_format($total_extra,0,',','.') }}</td>      
+              <td style="text-align: right;">{{ number_format($total_extra,0,',','.') }}</td> 
+              @if(($report_total[0]->total_lebaran)>0)
+                <td style="text-align: right;">{{ number_format(($total_lebaran),0,',','.') }}</td>
+                <td style="text-align: right;">{{ number_format(($total_lebaran),0,',','.') }}</td>
+              @endif     
               <td style="text-align: right;">{{ number_format($total_all,0,',','.') }}</td>
               <td style="text-align: right;">{{ number_format($total_all,0,',','.') }}</td>                    
             </tr>  
