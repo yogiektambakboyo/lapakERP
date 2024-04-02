@@ -322,9 +322,8 @@
                       worksheet.getCell('G4').value = 'S/D';
                       worksheet.getCell('G4').alignment = { vertical: 'middle', horizontal: 'center' };
 
-
                       worksheet.mergeCells('H3', 'I3');
-                      worksheet.getCell('H3').value = 'PENDAPATAN TOTAL';
+                      worksheet.getCell('H3').value = 'CHARGE LEBARAN';
                       worksheet.getCell('H3').alignment = { vertical: 'middle', horizontal: 'center' };
 
                       worksheet.getCell('H4').value = 'HARIAN';
@@ -332,6 +331,16 @@
 
                       worksheet.getCell('I4').value = 'S/D';
                       worksheet.getCell('I4').alignment = { vertical: 'middle', horizontal: 'center' };
+
+                      worksheet.mergeCells('J3', 'K3');
+                      worksheet.getCell('J3').value = 'PENDAPATAN TOTAL';
+                      worksheet.getCell('J3').alignment = { vertical: 'middle', horizontal: 'center' };
+
+                      worksheet.getCell('J4').value = 'HARIAN';
+                      worksheet.getCell('J4').alignment = { vertical: 'middle', horizontal: 'center' };
+
+                      worksheet.getCell('K4').value = 'S/D';
+                      worksheet.getCell('K4').alignment = { vertical: 'middle', horizontal: 'center' };
 
                       worksheet.columns = [
                         { key: 'tanggal', width: 12 },
@@ -341,6 +350,8 @@
                         { key: 'produk_sd', width: 20 },
                         { key: 'extra', width: 20 },
                         { key: 'extra_sd', width: 20 },
+                        { key: 'lebaran', width: 20 },
+                        { key: 'lebaran_sd', width: 20 },
                         { key: 'total_all', width: 20 },
                         { key: 'total_all_sd', width: 20 },
                       ];
@@ -357,6 +368,8 @@
                       worksheet.getCell('G1').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
                       worksheet.getCell('H1').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
                       worksheet.getCell('I1').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                      worksheet.getCell('J1').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                      worksheet.getCell('K1').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
 
 
                       worksheet.getCell('A3').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
@@ -368,6 +381,8 @@
                       worksheet.getCell('G3').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
                       worksheet.getCell('H3').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
                       worksheet.getCell('I3').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                      worksheet.getCell('J3').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                      worksheet.getCell('K3').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
 
                       worksheet.getCell('A4').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
                       worksheet.getCell('B4').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
@@ -378,6 +393,8 @@
                       worksheet.getCell('G4').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
                       worksheet.getCell('H4').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
                       worksheet.getCell('I4').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                      worksheet.getCell('J4').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                      worksheet.getCell('K4').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
 
                       let counter = 3;
                       let value_sd_until = 0;
@@ -431,6 +448,8 @@
                             produk_sd : total_product, 
                             extra : parseFloat(rowElement.total_extra), 
                             extra_sd : total_extra, 
+                            lebaran : parseFloat(rowElement.total_lebaran), 
+                            lebaran_sd : total_lebaran, 
                             total_all : parseFloat(rowElement.total_all), 
                             total_all_sd : total_all, 
                           });
@@ -443,6 +462,8 @@
                           worksheet.getCell('F'+counter).alignment = { wrapText: true };
                           worksheet.getCell('H'+counter).alignment = { wrapText: true };
                           worksheet.getCell('I'+counter).alignment = { wrapText: true };                      
+                          worksheet.getCell('J'+counter).alignment = { wrapText: true };                      
+                          worksheet.getCell('K'+counter).alignment = { wrapText: true };                      
                           counter++;
                           worksheet.getCell('B'+counter).alignment = { wrapText: true };
                           worksheet.getCell('C'+counter).alignment = { wrapText: true };
@@ -451,6 +472,8 @@
                           worksheet.getCell('F'+counter).alignment = { wrapText: true };
                           worksheet.getCell('H'+counter).alignment = { wrapText: true };
                           worksheet.getCell('I'+counter).alignment = { wrapText: true };
+                          worksheet.getCell('J'+counter).alignment = { wrapText: true };
+                          worksheet.getCell('K'+counter).alignment = { wrapText: true };
 
                           var borderStyles = {
                             top: { style: "thin" },
@@ -478,6 +501,8 @@
                         produk_sd : total_product, 
                         extra : total_extra, 
                         extra_sd : total_extra, 
+                        lebaran : total_lebaran, 
+                        lebaran_sd : total_lebaran, 
                         total_all : total_all, 
                         total_all_sd : total_all, 
                       });
@@ -489,6 +514,8 @@
                       worksheet.getCell('F'+counter+1).alignment = { wrapText: true };
                       worksheet.getCell('H'+counter+1).alignment = { wrapText: true };
                       worksheet.getCell('I'+counter+1).alignment = { wrapText: true };
+                      worksheet.getCell('J'+counter+1).alignment = { wrapText: true };
+                      worksheet.getCell('K'+counter+1).alignment = { wrapText: true };
 
                       worksheet.eachRow({ includeEmpty: true }, function(row, rowNumber) {
                             row.eachCell({ includeEmpty: true }, function(cell, colNumber) {
