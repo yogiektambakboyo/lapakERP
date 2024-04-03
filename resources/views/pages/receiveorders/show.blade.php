@@ -158,7 +158,7 @@
                           "qty"         : resp.data[i]["qty"],
                           "exp"         : resp.data[i]["exp"],
                           "bno"         : resp.data[i]["bno"],
-                          "total"       : resp.data[i]["total"],
+                          "total"       : resp.data[i]["subtotal"],
                           "disc"    : resp.data[i]["discount"],
                           "price"       : resp.data[i]["price"]
                     }
