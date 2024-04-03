@@ -258,8 +258,8 @@ class VoucherController extends Controller
 
             for($j=0;$j<count($product_id);$j++){
                 if($product_id[$j]=="%"){
-                    DB::update("insert into voucher_detail(voucher_code,product_id,created_by,created_at)
-                    select '".$now_voucher."',id,1,now() from product_sku ps 
+                    DB::update("insert into voucher_detail(voucher_code,product_id,created_by,created_at,is_allitem)
+                    select '".$now_voucher."',id,1,now(),1 from product_sku ps 
                     where ps.type_id = 2");
                     break;
                 }else{

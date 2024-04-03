@@ -165,6 +165,7 @@ class ServicesController extends Controller
 
         $my_id = Product::orderBy('id', 'desc')->first()->id;
 
+
         ProductUom::create(array_merge(
             ['product_id'=> $my_id],
             ['uom_id' => $request->get('uom_id')],
@@ -193,6 +194,8 @@ class ServicesController extends Controller
                     ['photo' => $final_fileimg_photo],
             ));
         }
+
+        DB::select('insert into voucher_detail select distinct voucher_code,ps.id,now(),1,now() from voucher v  join product_sku ps on ps.id='.$my_id.' and ps.type_id = 2;');
 
         return redirect()->route('services.index')
             ->withSuccess(__('Perawatan created successfully.'));
