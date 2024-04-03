@@ -25,17 +25,17 @@
         <tbody>
           <tr style="text-align: center;height: 50px;background-color:#FFA726;">
             <td style="text-align: left;padding:10px;">
-              <img src="data:image/png;base64,{{ base64_encode(file_get_contents(url("images/user-files/".$settings[0]->icon_file))) }}" height="70px"><br> 
+              <img src="data:image/png;base64,{{ base64_encode(file_get_contents(url("images/user-files/".$settings[0]->icon_file))) }}" height="40px"><br> 
             </td>
             <td style="width: 50%;font-size:10px;">
               <table style="width: 100%">
                 <tbody>
                   <tr style="text-align: center">
-                    <td style="text-align: left;padding:10px;width:20%">
+                    <td style="text-align: left;padding:10px;width:30%">
                       <label style="font-weight: bold;">Tanggal</label><br>
                       <label style="font-weight: bold;">Order No</label><br>
                     </td>
-                    <td style="text-align: left;width: 70%;font-size:10px;">
+                    <td style="text-align: left;width: 60%;font-size:10px;">
                       <label> {{ substr(explode(" ",$order->dated)[0],8,2) }}-{{substr(explode(" ",$order->dated)[0],5,2) }}-{{ substr(explode(" ",$order->dated)[0],0,4) }}</label><br>
                       <label> {{ $order->order_no }}</label><br>
                     </td>
