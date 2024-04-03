@@ -76,6 +76,13 @@
                 <input type="text" class="form-control" name="values" value="{{ old('values') }}"/>
               </div>
             </div>
+            <div class="row mb-3">
+              <label class="form-label col-form-label col-md-2">Charge Lebaran</label>
+              <div class="col-md-8">
+                <input type="text" class="form-control" name="values_extra" value="{{ old('values_extra') }}"/>
+              </div>
+            </div>
+
             </div>
           </div>
         </div>

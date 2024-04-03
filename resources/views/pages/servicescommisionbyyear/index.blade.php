@@ -33,8 +33,9 @@
                 <th>@lang('general.lbl_name')</th>
                 <th scope="col" width="15%">@lang('general.lbl_branch')</th>
                 <th scope="col" width="10%">@lang('general.lbl_jobtitle')</th>
-                <th scope="col" width="10%">@lang('general.lbl_year')</th>
+                <th scope="col" width="8%">@lang('general.lbl_year')</th>
                 <th scope="col" width="10%">@lang('general.lbl_values')</th>
+                <th scope="col" width="15%">Charge Lebaran</th>
                 <th scope="col" width="2%" class="nex">@lang('general.lbl_action')</th>  
                 <th scope="col" width="2%" class="nex"></th>
             </tr>
@@ -48,6 +49,7 @@
                         <td>{{ $product->job_title }}</td>
                         <td>{{ $product->years }}</td>
                         <td>{{ $product->values }}</td>
+                        <td>{{ $product->values_extra }}</td>
                         <td><a href="{{ route('servicescommisionbyyear.edit', [$product->branch_id,$product->id,$product->jobs_id,$product->years]) }}" class="btn btn-info btn-sm  {{ $act_permission->allow_edit==1?'':'d-none' }}">@lang('general.lbl_edit')</a></td>
                         <td class="{{ $act_permission->allow_delete==1?'':'d-none' }}">
                             {!! Form::open(['method' => 'DELETE','route' => ['servicescommisionbyyear.destroy', [$product->branch_id,$product->id,$product->jobs_id,$product->years]],'style'=>'display:inline']) !!}
