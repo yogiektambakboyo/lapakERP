@@ -234,7 +234,6 @@ class VoucherController extends Controller
 
             $now_voucher = $prefix.substr((("000000".$l_voucher)),(-1*$digit));
             $price = $request->get('price');
-
         
             $user = Auth::user();
             $voucher->create(
@@ -243,7 +242,6 @@ class VoucherController extends Controller
                     ['value_idx' => $request->get('value_idx') ],
                     ['dated_start' => Carbon::createFromFormat('d-m-Y', $request->get('dated_start'))->format('Y-m-d') ],
                     ['dated_end' => Carbon::createFromFormat('d-m-Y', $request->get('dated_end'))->format('Y-m-d') ],
-                    //['product_id' => $request->get('product_id') ],
                     ['branch_id' => $request->get('branch_id') ],
                     ['moq' => $request->get('moq') ],
                     ['unlimeted' => $request->get('unlimeted') ],
@@ -261,6 +259,8 @@ class VoucherController extends Controller
                     DB::update("insert into voucher_detail(voucher_code,product_id,created_by,created_at)
                     select '".$now_voucher."',id,1,now() from product_sku ps 
                     where ps.type_id = 2");
+
+                    DB::update("update voucher set is_allitem=1 where voucher_no = '".$now_voucher."';");
                     break;
                 }else{
                     VoucherDetail::create(
