@@ -71,7 +71,7 @@ class ServicesCommisionByYearController extends Controller
                     ->join('users_branch as ub2','ub2.branch_id', '=', 'pr.branch_id')
                     ->where('ub2.user_id','=',$user->id)
                     ->where('type_id','!=','1')
-                    ->get(['jt.remark as job_title','years', 'values', 'pr.jobs_id','product_sku.id','product_sku.remark as product_name','pr.branch_id','bc.remark as branch_name']);
+                    ->get(['jt.remark as job_title','years','values_extra', 'values', 'pr.jobs_id','product_sku.id','product_sku.remark as product_name','pr.branch_id','bc.remark as branch_name']);
         return view('pages.servicescommisionbyyear.index', ['company' => Company::get()->first()],compact('data','keyword','act_permission','products'))->with('i', ($request->input('page', 1) - 1) * 5);
     }
 
@@ -97,7 +97,7 @@ class ServicesCommisionByYearController extends Controller
                         ->where('ub2.user_id','=',$user->id)
                         ->whereRaw($whereclause)
                         ->where('type_id','!=','1')
-                        ->get(['jt.remark as job_title','years', 'values', 'pr.jobs_id','product_sku.id','product_sku.remark as product_name','pr.branch_id','bc.remark as branch_name']);       
+                        ->get(['jt.remark as job_title','years','values_extra', 'values', 'pr.jobs_id','product_sku.id','product_sku.remark as product_name','pr.branch_id','bc.remark as branch_name']);       
             return view('pages.servicescommisionbyyear.index', ['company' => Company::get()->first()],compact('products','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
         }
     }
@@ -149,6 +149,7 @@ class ServicesCommisionByYearController extends Controller
         $productcommisionbyyear->create(
             array_merge(
                 ['values' => $request->get('values') ],
+                ['values_extra' => $request->get('values_extra') ],
                 ['years' => $request->get('years') ],
                 ['jobs_id' => $request->get('jobs_id') ],
                 ['product_id' => $request->get('product_id') ],
@@ -231,7 +232,7 @@ class ServicesCommisionByYearController extends Controller
         ->where('bc.id','=',$branch_id)
         ->where('pr.jobs_id','=',$jobs_id)
         ->where('pr.years','=',$years)
-        ->get(['values','pr.jobs_id', 'jt.remark as job_title', 'years','product_sku.id as id','product_sku.abbr','product_sku.brand_id','product_sku.category_id','product_sku.type_id','product_sku.remark as product_name','pr.branch_id','bc.remark as branch_name'])->first();
+        ->get(['values','values_extra','pr.jobs_id', 'jt.remark as job_title', 'years','product_sku.id as id','product_sku.abbr','product_sku.brand_id','product_sku.category_id','product_sku.type_id','product_sku.remark as product_name','pr.branch_id','bc.remark as branch_name'])->first();
         return view('pages.servicescommisionbyyear.edit', [
             'branchs' => Branch::join('users_branch as ub','ub.branch_id','=','branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']),
             'data' => $data,
@@ -259,7 +260,8 @@ class ServicesCommisionByYearController extends Controller
             ->where('years','=',$years)
             ->update(
             array_merge(
-                ['values' => $request->get('values') ]
+                ['values' => $request->get('values') ],
+                ['values_extra' => $request->get('values_extra') ]
             )
         );
         

@@ -66,11 +66,18 @@
                     <th style="text-align: center;background-color:#FFA726;" scope="col" colspan="2">OJEK + TAMBAHAN TERAPIS</th>    
                 @endif 
                 <th style="text-align: center;background-color:#FFA726;" scope="col" colspan="2">EXTRA CHARGE</th>       
-                <th style="text-align: center;background-color:#FFA726;" scope="col" colspan="2">PENDAPATAN TOTAL</th>       
+                @if(($report_total[0]->total_lebaran)>0)
+                    <th style="text-align: center;background-color:#FFA726;" scope="col" colspan="2">CHANGE LEBARAN</th>    
+                @endif  
+            <th style="text-align: center;background-color:#FFA726;" scope="col" colspan="2">PENDAPATAN TOTAL</th>       
             </tr>
             <tr>
               <th style="text-align: center;background-color:#FFA726;"  scope="col">HARIAN</th>    
               <th style="text-align: center;background-color:#FFA726;"  scope="col">S/D</th>  
+              @if(($report_total[0]->total_lebaran)>0)
+                  <th style="text-align: center;background-color:#FFA726;"  scope="col">HARIAN</th>    
+                  <th style="text-align: center;background-color:#FFA726;"  scope="col">S/D</th>  
+              @endif
               <th style="text-align: center;background-color:#FFA726;"  scope="col">HARIAN</th>    
               <th style="text-align: center;background-color:#FFA726;"  scope="col">S/D</th>  
 
@@ -138,7 +145,11 @@
                     <td style="text-align: right;">{{ number_format(($total_ojek+$total_tambahan),0,',','.') }}</td>
                   @endif
                   <td style="text-align: right;">{{ number_format($rdata->total_extra,0,',','.') }}</td>
-                  <td style="text-align: right;">{{ number_format($total_extra,0,',','.') }}</td>      
+                  <td style="text-align: right;">{{ number_format($total_extra,0,',','.') }}</td> 
+                  @if(($report_total[0]->total_lebaran)>0)
+                    <td style="text-align: right;">{{ number_format(($rdata->total_lebaran),0,',','.') }}</td>
+                    <td style="text-align: right;">{{ number_format(($total_lebaran),0,',','.') }}</td>
+                  @endif       
                   <td style="text-align: right;">{{ number_format($rdata->total_all,0,',','.') }}</td>
                   <td style="text-align: right;">{{ number_format($total_all,0,',','.') }}</td>                    
                 </tr>  
@@ -160,6 +171,10 @@
               @endif
               <td style="text-align: right;">{{ number_format($total_extra,0,',','.') }}</td>
               <td style="text-align: right;">{{ number_format($total_extra,0,',','.') }}</td>      
+              @if(($report_total[0]->total_lebaran)>0)
+                <td style="text-align: right;">{{ number_format(($total_lebaran),0,',','.') }}</td>
+                <td style="text-align: right;">{{ number_format(($total_lebaran),0,',','.') }}</td>
+              @endif  
               <td style="text-align: right;">{{ number_format($total_all,0,',','.') }}</td>
               <td style="text-align: right;">{{ number_format($total_all,0,',','.') }}</td>                    
             </tr>  
@@ -267,7 +282,7 @@
                       worksheet.getCell('A1').alignment = { vertical: 'middle', horizontal: 'center' };
 
 
-                      worksheet.mergeCells('F1', 'O1');
+                      worksheet.mergeCells('F1', 'M1');
                       worksheet.getCell('F1').value = 'Tgl : '+resp.data.beginnewformat+' sd '+resp.data.endnewformat;
                       worksheet.getCell('F1').alignment = { vertical: 'middle', horizontal: 'center' }; 
                       
@@ -321,7 +336,7 @@
 
 
                       worksheet.mergeCells('J3', 'K3');
-                      worksheet.getCell('J3').value = 'PENDAPATAN TOTAL';
+                      worksheet.getCell('J3').value = 'CHARGE LEBARAN';
                       worksheet.getCell('J3').alignment = { vertical: 'middle', horizontal: 'center' };
 
                       worksheet.getCell('J4').value = 'HARIAN';
@@ -329,6 +344,17 @@
 
                       worksheet.getCell('K4').value = 'S/D';
                       worksheet.getCell('K4').alignment = { vertical: 'middle', horizontal: 'center' };
+
+
+                      worksheet.mergeCells('L3', 'M3');
+                      worksheet.getCell('L3').value = 'PENDAPATAN TOTAL';
+                      worksheet.getCell('L3').alignment = { vertical: 'middle', horizontal: 'center' };
+
+                      worksheet.getCell('L4').value = 'HARIAN';
+                      worksheet.getCell('L4').alignment = { vertical: 'middle', horizontal: 'center' };
+
+                      worksheet.getCell('M4').value = 'S/D';
+                      worksheet.getCell('M4').alignment = { vertical: 'middle', horizontal: 'center' };
 
 
 
@@ -346,6 +372,8 @@
                         { key: 'ojek_sd', width: 20 },
                         { key: 'extra', width: 20 },
                         { key: 'extra_sd', width: 20 },
+                        { key: 'lebaran', width: 20 },
+                        { key: 'lebaran_sd', width: 20 },
                         { key: 'total_all', width: 20 },
                         { key: 'total_all_sd', width: 20 },
                       ];
@@ -364,6 +392,8 @@
                       worksheet.getCell('I1').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
                       worksheet.getCell('J1').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
                       worksheet.getCell('K1').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                      worksheet.getCell('L1').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                      worksheet.getCell('M1').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
 
 
                       worksheet.getCell('A3').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
@@ -377,6 +407,8 @@
                       worksheet.getCell('I3').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
                       worksheet.getCell('J3').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
                       worksheet.getCell('K3').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                      worksheet.getCell('L3').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                      worksheet.getCell('M3').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
 
                       worksheet.getCell('A4').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
                       worksheet.getCell('B4').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
@@ -389,6 +421,8 @@
                       worksheet.getCell('I4').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
                       worksheet.getCell('J4').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
                       worksheet.getCell('K4').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                      worksheet.getCell('L4').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                      worksheet.getCell('M4').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
 
                       let counter = 3;
                       let value_sd_until = 0;
@@ -444,6 +478,8 @@
                             ojek_sd : total_ojek, 
                             extra : parseFloat(rowElement.total_extra), 
                             extra_sd : total_extra, 
+                            lebaran : parseFloat(rowElement.total_lebaran), 
+                            lebaran_sd : total_lebaran, 
                             total_all : parseFloat(rowElement.total_all), 
                             total_all_sd : total_all, 
                           });
@@ -458,6 +494,8 @@
                           worksheet.getCell('I'+counter).alignment = { wrapText: true };
                           worksheet.getCell('J'+counter).alignment = { wrapText: true };
                           worksheet.getCell('K'+counter).alignment = { wrapText: true };                        
+                          worksheet.getCell('L'+counter).alignment = { wrapText: true };                        
+                          worksheet.getCell('M'+counter).alignment = { wrapText: true };                        
                           counter++;
                           worksheet.getCell('B'+counter).alignment = { wrapText: true };
                           worksheet.getCell('C'+counter).alignment = { wrapText: true };
@@ -468,6 +506,8 @@
                           worksheet.getCell('I'+counter).alignment = { wrapText: true };
                           worksheet.getCell('J'+counter).alignment = { wrapText: true };
                           worksheet.getCell('K'+counter).alignment = { wrapText: true };
+                          worksheet.getCell('L'+counter).alignment = { wrapText: true };
+                          worksheet.getCell('M'+counter).alignment = { wrapText: true };
 
                           var borderStyles = {
                             top: { style: "thin" },
@@ -497,6 +537,8 @@
                         ojek_sd : total_ojek, 
                         extra : total_extra, 
                         extra_sd : total_extra, 
+                        lebaran : total_lebaran, 
+                        lebaran_sd : total_lebaran, 
                         total_all : total_all, 
                         total_all_sd : total_all, 
                       });
@@ -510,6 +552,8 @@
                       worksheet.getCell('I'+counter+1).alignment = { wrapText: true };
                       worksheet.getCell('J'+counter+1).alignment = { wrapText: true };
                       worksheet.getCell('K'+counter+1).alignment = { wrapText: true };
+                      worksheet.getCell('L'+counter+1).alignment = { wrapText: true };
+                      worksheet.getCell('M'+counter+1).alignment = { wrapText: true };
 
                       worksheet.eachRow({ includeEmpty: true }, function(row, rowNumber) {
                             row.eachCell({ includeEmpty: true }, function(cell, colNumber) {

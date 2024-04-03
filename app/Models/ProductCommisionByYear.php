@@ -18,6 +18,7 @@ class ProductCommisionByYear extends Model
         'jobs_id',
         'years',
         'values',
+        'values_extra',
         'created_by'
     ];
 }
