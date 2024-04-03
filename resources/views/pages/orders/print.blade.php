@@ -25,7 +25,7 @@
         <tbody>
           <tr style="text-align: center;height: 50px;background-color:#FFA726;">
             <td style="text-align: left;padding:10px;">
-              <img src="data:image/png;base64,{{ base64_encode(file_get_contents(url("images/user-files/".$settings[0]->icon_file))) }}" height="100px"><br> 
+              <img src="data:image/png;base64,{{ base64_encode(file_get_contents(url("images/user-files/".$settings[0]->icon_file))) }}" height="70px"><br> 
             </td>
             <td style="width: 50%;font-size:10px;">
               <table style="width: 100%">
