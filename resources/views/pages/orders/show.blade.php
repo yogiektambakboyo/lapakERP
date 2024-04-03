@@ -9,8 +9,8 @@
     <div class="panel-heading  bg-teal-600">
       <div class="panel-title"><h4 class="">Order No : {{ $order->order_no }}</h4></div>
       <div class="">
-        <a href="{{ route('orders.printthermal', $order->id) }}" class="btn btn-warning">Print Thermal</a>
-        <a href="{{ route('orders.print', $order->id) }}" class="btn btn-warning">@lang('general.lbl_print') </a>
+        <a target="_blank" href="{{ route('orders.printthermal', $order->id) }}" class="btn btn-warning">Print Thermal</a>
+        <a target="_blank" href="{{ route('orders.print', $order->id) }}" class="btn btn-warning">@lang('general.lbl_print') </a>
         <a href="{{ route('orders.index') }}" class="btn btn-default">@lang('general.lbl_back') </a>
       </div>
     </div>
