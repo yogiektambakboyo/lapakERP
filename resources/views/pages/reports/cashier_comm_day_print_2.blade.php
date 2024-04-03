@@ -306,13 +306,13 @@
                         worksheet.getCell('H2').alignment = { vertical: 'middle', horizontal: 'center' };
 
 
-                        worksheet.mergeCells('I2', 'J2');
-                        worksheet.getCell('I2').value = 'Total';
+                        worksheet.mergeCells('I2', 'I3');
+                        worksheet.getCell('I2').value = 'Charge Lebaran';
                         worksheet.getCell('I2').alignment = { vertical: 'middle', horizontal: 'center' };                    
 
-                        worksheet.mergeCells('K2', 'L2');
-                        worksheet.getCell('K2').value = 'Total';
-                        worksheet.getCell('L2').alignment = { vertical: 'middle', horizontal: 'center' };                    
+                        worksheet.mergeCells('J2', 'K2');
+                        worksheet.getCell('J2').value = 'Total';
+                        worksheet.getCell('K2').alignment = { vertical: 'middle', horizontal: 'center' };                    
 
                         worksheet.columns = [
                           { key: 'dated', width: 12 },
