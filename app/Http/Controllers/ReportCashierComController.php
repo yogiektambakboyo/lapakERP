@@ -367,7 +367,8 @@ class ReportCashierComController extends Controller
                 string_agg(case when type_id=1 then base_commision::character varying else '' end,'##' order by right(invoice_no,6)) as product_base_commision,
                 string_agg(case when type_id=1 then qty::character varying else '' end,'##' order by right(invoice_no,6)) as product_qty,      
                 string_agg(case when type_id=1 then commisions::character varying else '' end,'##' order by right(invoice_no,6)) as product_commisions,   
-                string_agg(case when type_id=8 then commisions::character varying else '' end,'##' order by right(invoice_no,6)) as commisions_extra,
+                string_agg(case when type_id=8 and a.abbr not like '%CAS LEBARAN%' then commisions::character varying else '' end,'##' order by right(invoice_no,6)) as commisions_extra,
+                string_agg(case when type_id=8 and a.abbr like '%CAS LEBARAN%' then commisions::character varying else '' end,'##' order by right(invoice_no,6)) as commisions_lebaran,
                 sum(a.commisions) as total   
                 from cashier_commision a 
                 join users_branch as ub on ub.branch_id = a.branch_id and ub.user_id = '".$user->id."'
@@ -701,7 +702,8 @@ class ReportCashierComController extends Controller
                 string_agg(case when type_id=1 then base_commision::character varying else '' end,'##' order by right(invoice_no,6)) as product_base_commision,
                 string_agg(case when type_id=1 then qty::character varying else '' end,'##' order by right(invoice_no,6)) as product_qty,      
                 string_agg(case when type_id=1 then commisions::character varying else '' end,'##' order by right(invoice_no,6)) as product_commisions,   
-                string_agg(case when type_id=8 then commisions::character varying else '' end,'##' order by right(invoice_no,6)) as commisions_extra,
+                string_agg(case when type_id=8 and a.abbr not like '%CAS LEBARAN%' then commisions::character varying else '' end,'##' order by right(invoice_no,6)) as commisions_extra,
+                string_agg(case when type_id=8 and a.abbr like '%CAS LEBARAN%' then commisions::character varying else '' end,'##' order by right(invoice_no,6)) as commisions_lebaran,
                 sum(a.commisions) as total   
                 from cashier_commision a 
                 join users_branch as ub on ub.branch_id = a.branch_id and ub.user_id = '".$user->id."'
