@@ -1,10 +1,10 @@
 @extends('layouts.default', ['appSidebarSearch' => true])
 
-@section('title', 'Komisi Poin')
+@section('title', 'Nilai Poin')
 
 @section('content')
     <div class="bg-light p-4 rounded">
-        <h1>@lang('general.lbl_point')</h1>
+        <h1>Nilai Poin</h1>
         <div class="lead row mb-3">
             <div class="col-md-10">
                 <div class="col-md-4">

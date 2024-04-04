@@ -14,6 +14,7 @@ use Maatwebsite\Excel\Facades\Excel;
 use Carbon\Carbon;
 use App\Models\Company;
 use App\Http\Controllers\Lang;
+use Yajra\Datatables\Datatables;
 
 
 
@@ -84,6 +85,13 @@ class CustomersController extends Controller
         if($request->export=='Export Excel'){
             $strencode = base64_encode($keyword.'#'.$branchx.'#'.$user->id);
             return Excel::download(new CustomersExport($strencode), 'customers_'.Carbon::now()->format('YmdHis').'.xlsx');
+        }else if($request->export=='SearchDT'){
+            $Customers = Customer::join('branch as b','b.id','customers.branch_id')
+                            ->join('users_branch as ub', function($join){
+                                $join->on('ub.branch_id', '=', 'b.id');
+                            })->where('ub.user_id', $user->id)->get(['customers.*','b.remark as branch_name']);
+            $request->filter_branch_id = "";
+            return Datatables::of($Customers)->make();
         }else if($request->src=='Search'){
             $Customers = Customer::join('branch as b','b.id','customers.branch_id')
                             ->join('users_branch as ub', function($join){

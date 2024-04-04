@@ -1,6 +1,6 @@
 @extends('layouts.default', ['appSidebarSearch' => true])
 
-@section('title', 'Ubah Komisi Poin')
+@section('title', 'Ubah Nilai Poin')
 
 @section('content')
 <form method="POST" action="{{ route('pointconvertion.update', [$product->id]) }}"  enctype="multipart/form-data">
