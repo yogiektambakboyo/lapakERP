@@ -67,15 +67,15 @@ class VoucherController extends Controller
         $keyword = "";
         $act_permission = $this->act_permission[0];
        
-        $products = DB::select("select left(string_agg(ps.abbr,', '),25) as product_name,v.invoice_no,v.is_used,v.price,v.remark as voucher_remark,v.voucher_code,v.branch_id,bc.remark as branch_name,v.value as value,v.value_idx,v.dated_start,v.dated_end 
+        /**$products = DB::select("select left(string_agg(ps.abbr,', '),25) as product_name,v.invoice_no,v.is_used,v.price,v.remark as voucher_remark,v.voucher_code,v.branch_id,bc.remark as branch_name,v.value as value,v.value_idx,v.dated_start,v.dated_end 
                                 from voucher v 
                                 join voucher_detail vd on vd.voucher_code=v.voucher_code 
                                 join branch as bc on bc.id= v.branch_id
                                 join users_branch as ub2 on ub2.branch_id=v .branch_id
                                 join product_sku ps on ps.id = vd.product_id::bigint
                                 where ub2.user_id = '".$user->id."' group by v.invoice_no,v.is_used,v.price,v.remark,v.voucher_code,v.branch_id,bc.remark,v.value,v.value_idx,v.dated_start,v.dated_end 
-        ;");
-        return view('pages.voucher.index',['company' => Company::get()->first()] ,compact('request','branchs','products','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
+        ;");**/
+        return view('pages.voucher.index',['company' => Company::get()->first()] ,compact('request','branchs','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
     }
 
     public function search(Request $request) 
@@ -101,6 +101,15 @@ class VoucherController extends Controller
         if($request->export=='Export Excel'){
             $strencode = base64_encode($keyword.'#'.$begindate.'#'.$enddate.'#'.$branchx);
             return Excel::download(new VoucherExport($strencode), 'voucher_'.Carbon::now()->format('YmdHis').'.xlsx');
+        }else if($request->export=='SearchDT'){
+            $table_data = DB::select("select left(string_agg(ps.abbr,', '),25) as product_name,v.invoice_no,v.is_used,v.price,v.remark as voucher_remark,v.voucher_code,v.branch_id,bc.remark as branch_name,v.value as value,v.value_idx,v.dated_start,v.dated_end 
+            from voucher v 
+            join voucher_detail vd on vd.voucher_code=v.voucher_code 
+            join branch as bc on bc.id= v.branch_id
+            join users_branch as ub2 on ub2.branch_id=v .branch_id
+            join product_sku ps on ps.id = vd.product_id::bigint
+            where ub2.user_id = '".$user->id."' group by v.invoice_no,v.is_used,v.price,v.remark,v.voucher_code,v.branch_id,bc.remark,v.value,v.value_idx,v.dated_start,v.dated_end;  ");
+            return Datatables::of($table_data)->make();
         }else if($request->src=='Search'){
             $branchx = "";
             $whereclause = " upper(v.voucher_code) like '%".strtoupper($keyword)."%' and '".$begindate."' between v.dated_start and v.dated_end ";

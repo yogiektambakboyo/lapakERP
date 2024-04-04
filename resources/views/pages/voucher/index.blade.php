@@ -31,25 +31,25 @@
 
         <table class="table table-striped" id="example">
             <thead>
-            <tr>
-                <th scope="col" width="10%">@lang('general.lbl_branch')</th>
-                <th>Remark</th>
-                <th scope="col" width="10%">@lang('general.lbl_voucher_code')</th>
-                <th scope="col" width="15%">@lang('general.lbl_service_name')</th> 
-                <th scope="col" width="10%">@lang('general.lbl_date_start')</th>
-                <th scope="col" width="10%">@lang('general.lbl_date_end')</th>
-                <th scope="col" width="7%">@lang('general.lbl_values')</th>
-                <th scope="col" width="7%">@lang('general.lbl_values') Idx</th>
-                <th scope="col" width="7%">@lang('general.lbl_price')</th>
-                <th scope="col" width="10%">Sudah digunakan?</th>
-                <th scope="col" width="10%">No Faktur</th>
-                <th scope="col" width="2%" class="noexport" class="nex">@lang('general.lbl_action')</th>  
-                <th scope="col" width="2%" class="noexport"></th>
-            </tr>
+                <tr>
+                    <th scope="col" width="10%">@lang('general.lbl_branch')</th>
+                    <th>Remark</th>
+                    <th scope="col" width="10%">@lang('general.lbl_voucher_code')</th>
+                    <th scope="col" width="15%">@lang('general.lbl_service_name')</th> 
+                    <th scope="col" width="10%">@lang('general.lbl_date_start')</th>
+                    <th scope="col" width="10%">@lang('general.lbl_date_end')</th>
+                    <th scope="col" width="7%">@lang('general.lbl_values')</th>
+                    <th scope="col" width="7%">@lang('general.lbl_values') Idx</th>
+                    <th scope="col" width="7%">@lang('general.lbl_price')</th>
+                    <th scope="col" width="10%">Sudah digunakan?</th>
+                    <th scope="col" width="10%">No Faktur</th>
+                    <th scope="col" width="2%" class="noexport" class="nex">@lang('general.lbl_action')</th>  
+                    <th scope="col" width="2%" class="noexport"></th>
+                </tr>
             </thead>
             <tbody>
 
-                @foreach($products as $product)
+                {{-- @foreach($products as $product)
                     <tr>
                         <td>{{ $product->branch_name }}</td>
                         <td>{{ $product->voucher_remark }}</td>
@@ -67,7 +67,7 @@
                             <a onclick="showConfirm( '{{ $product->branch_id }}','0','{{ $product->dated_start }}','{{ $product->dated_end }}','{{ $product->voucher_code }}' )" class="btn btn-danger btn-sm  {{ $act_permission->allow_delete==1?'':'d-none' }} ">@lang('general.lbl_delete')</a>
                         </td>
                     </tr>
-                @endforeach
+                @endforeach --}}
             </tbody>
         </table>
 
@@ -214,47 +214,49 @@
 @push('scripts')
 <script type="text/javascript">
     $(document).ready(function () {
-        $('#example').DataTable();
+        //$('#example').DataTable();
 
-        document.addEventListener('DOMContentLoaded', function () {
-            let table = new DataTable('#ajax-datatables', {
-                dom: 'Bfrtip',
-                buttons: [
-                        {
-                            extend: 'copy',
-                            text: 'Copy',
-                            className: 'btn btn-default',
-                            exportOptions: {
-                                columns: ':not(.noexport)'
-                            }
-                        },
-                        {
-                            extend: 'csv',
-                            text: 'CSV',
-                            className: 'btn btn-default',
-                            exportOptions: {
-                                columns: ':not(.noexport)'
-                            }
-                        },
-                        {
-                            extend: 'excel',
-                            text: 'Excel',
-                            className: 'btn btn-default',
-                            exportOptions: {
-                                columns: ':not(.noexport)'
-                            }
-                        },
-                        {
-                            extend: 'pdf',
-                            text: 'PDF',
-                            className: 'btn btn-default',
-                            exportOptions: {
-                                columns: ':not(.noexport)'
-                            }
-                        },
-                ]
+        var table = $('#example').DataTable({
+                ajax: "{{ route('voucher.search') }}?export=SearchDT",
+                processing: true,
+                serverSide: true,
+                lengthMenu: [
+                    [10, 25, 50, -1],
+                    [10, 25, 50, 'All']
+                ],
+                dom: 'frtip',
+                "columns": [
+                    { "data": "branch_name" },
+                    { "data": "voucher_remark" },
+                    { "data": "voucher_code" },
+                    { "data": "product_name" },
+                    { "data": "dated_start" },
+                    { "data": "dated_end" },
+                    { "data": "value" },
+                    { "data": "value_idx" },
+                    { "data": "price" },
+                    { "data": "is_used" },
+                    { "data": "invoice_no" },
+                    { data: null,
+                        render: function ( data, type, row ) {
+                            var url_edit = "{{ route('voucher.edit', [111,222,333,444,555]) }}";
+                            url_edit = url_edit.replace("111",data.branch_id);  
+                            url_edit = url_edit.replace("222",data.product_id);  
+                            url_edit = url_edit.replace("333",data.dated_start);  
+                            url_edit = url_edit.replace("444",data.dated_end);  
+                            url_edit = url_edit.replace("555",data.voucher_code);  
+
+                            return '<a href="'+url_edit+'" class="btn btn-info btn-sm ">Ubah</a>';
+                        }
+                    },
+                    { data: null,
+                        render: function ( data, type, row ) {  
+                            return '<a onclick="showConfirm('+data.branch_id+',0, \''+data.dated_start+'\', \''+data.dated_end+'\', \''+data.voucher_code+'\')" class="btn btn-danger btn-sm ">Hapus</a>';
+                        }
+                    }
+                ],
             });
-        });
+    
 
     });
 </script>
