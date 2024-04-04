@@ -20,6 +20,7 @@ class Voucher extends Model
         'value',
         'value_idx',
         'invoice_no',
+        'is_used',
         'price',
         'dated_start',
         'dated_end',
