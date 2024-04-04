@@ -42,6 +42,7 @@
             </thead>
             <tbody>
 
+                {{--
                 @foreach($products as $product)
                     <tr>
                         <td>{{ $product->product_name }}</td>
@@ -57,7 +58,9 @@
                             {!! Form::close() !!}
                         </td>
                     </tr>
+                    
                 @endforeach
+                --}}
             </tbody>
         </table>
 
@@ -88,17 +91,50 @@
     $(document).ready(function () {
         $('#example').DataTable(
             {
-                dom: 'Bfrtip',
+                ajax: "{{ route('servicescommisionbyyear.search') }}?export=SearchDT",
+                processing: true,
+                serverSide: true,
+                lengthMenu: [
+                    [10, 25, 50, -1],
+                    [10, 25, 50, 'All']
+                ],
+                dom: 'Bflrtip',
+                "columns": [
+                    { "data": "product_name" },
+                    { "data": "branch_name" },
+                    { "data": "job_title" },
+                    { "data": "years" },
+                    { "data": "values" },
+                    { "data": "values_extra" },
+                    {data: null,
+                        render: function ( data, type, row ) {
+                            var url = "{{ route('servicescommisionbyyear.edit', [111,112,113,114]) }}";
+                            var url_fin = url.replace("111",data.branch_id); 
+                            url_fin = url_fin.replace("112",data.id); 
+                            url_fin = url_fin.replace("113",data.jobs_id); 
+                            url_fin = url_fin.replace("114",data.years); 
+                            return '<a href="'+url_fin+'" class="btn btn-info btn-sm ">Ubah</a>';
+                        }
+                    }
+                ],
                 buttons: [
                     {
                         extend: 'copyHtml5',
                         exportOptions: {
+                            modifier: {
+                                page: "all",
+                                search: "none"
+                            },
                             columns: ':not(.nex)'
                         }
                     },
                     {
                         extend: 'excelHtml5',
                         exportOptions: {
+                            modifier: {
+                                page: "all",
+                                search: "none"
+                            },
                             columns: ':not(.nex)'
                         }
                     }

@@ -72,7 +72,17 @@ class ServicesCommisionByYearController extends Controller
                     ->where('ub2.user_id','=',$user->id)
                     ->where('type_id','!=','1')
                     ->get(['jt.remark as job_title','years','values_extra', 'values', 'pr.jobs_id','product_sku.id','product_sku.remark as product_name','pr.branch_id','bc.remark as branch_name']);
-        return view('pages.servicescommisionbyyear.index', ['company' => Company::get()->first()],compact('data','keyword','act_permission','products'))->with('i', ($request->input('page', 1) - 1) * 5);
+        /**$products = DB::select("
+                select jt.remark as job_title,years,values_extra, c.values, c.jobs_id,ps.id,ps.remark as product_name,c.branch_id,bc.remark as branch_name
+                from product_commision_by_year c
+                join branch bc on bc.id = c.branch_id 
+                join product_sku ps on ps.id = c.product_id 
+                join job_title jt on jt.id = c.jobs_id 
+                join users_branch ub on ub.branch_id = c.branch_id and ub.user_id = ".$user->id."
+                where ps.type_id != 1 
+                order by bc.remark,ps.remark,c.years  
+        ");**/
+        return view('pages.servicescommisionbyyear.index', ['company' => Company::get()->first()],compact('data','keyword','act_permission','products'));
     }
 
     public function search(Request $request) 
@@ -87,6 +97,18 @@ class ServicesCommisionByYearController extends Controller
 
         if($request->export=='Export Excel'){
             return Excel::download(new ProductsExport($keyword), 'products_'.Carbon::now()->format('YmdHis').'.xlsx');
+        }else if($request->export=='SearchDT'){
+            $product = DB::select("select jt.remark as job_title,years,values_extra, c.values, c.jobs_id,ps.id,ps.remark as product_name,c.branch_id,bc.remark as branch_name
+                                    from product_commision_by_year c
+                                    join branch bc on bc.id = c.branch_id 
+                                    join product_sku ps on ps.id = c.product_id 
+                                    join job_title jt on jt.id = c.jobs_id 
+                                    join users_branch ub on ub.branch_id = c.branch_id and ub.user_id = ".$user->id."
+                                    where ps.type_id != 1 
+                                    order by bc.remark,ps.remark,c.years  ");
+            return Datatables::of($product)->addColumn('action', function ($product) {
+                return '<a href="#"  onclick="addProduct(\''.$product->branch_id.'\',\''.$product->id.'\', \''.$product->jobs_id.'\', \''.$product->years.'\');" class="btn btn-xs btn-primary"><div class="fa-1x"><i class="fas fa-basket-shopping fa-fw"></i></div></a>';
+            })->make();
         }else{
             $whereclause = " upper(product_sku.remark) like '%".strtoupper($keyword)."%'";
             $products = Product::orderBy('product_sku.remark', 'ASC')
