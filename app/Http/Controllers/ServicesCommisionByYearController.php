@@ -106,9 +106,7 @@ class ServicesCommisionByYearController extends Controller
                                     join users_branch ub on ub.branch_id = c.branch_id and ub.user_id = ".$user->id."
                                     where ps.type_id != 1 
                                     order by bc.remark,ps.remark,c.years  ");
-            return Datatables::of($product)->addColumn('action', function ($product) {
-                return '<a href="#"  onclick="addProduct(\''.$product->branch_id.'\',\''.$product->id.'\', \''.$product->jobs_id.'\', \''.$product->years.'\');" class="btn btn-xs btn-primary"><div class="fa-1x"><i class="fas fa-basket-shopping fa-fw"></i></div></a>';
-            })->make();
+            return Datatables::of($product)->make();
         }else{
             $whereclause = " upper(product_sku.remark) like '%".strtoupper($keyword)."%'";
             $products = Product::orderBy('product_sku.remark', 'ASC')
