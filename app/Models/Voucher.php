@@ -25,6 +25,7 @@ class Voucher extends Model
         'dated_end',
         'created_by',
         'created_at',
+        'is_allitem',
         'moq',
         'unlimeted',
         'updated_at'
