@@ -13,12 +13,6 @@
                 </div>
 
                 <div class="col-md-10"> 	
-                    {{-- <form action="{{ route('customers.search') }}" method="GET" class="row row-cols-lg-auto g-3 align-items-center">
-                        <div class="col-2"><input type="hidden" class="form-control  form-control-sm" name="search" placeholder="@lang('general.lbl_search')" value="{{ $request->search }}"></div>
-                        <input type="hidden" name="filter_branch_id" value="{{ $request->filter_branch_id }}">
-                        <div class="col-2"><a href="#modal-filter"  data-bs-toggle="modal" data-bs-target="#modal-filter" class="btn btn-sm btn-lime">@lang('general.btn_filter')</a></div>   
-                        <div class="col-2"><input type="submit" class="btn btn-sm btn-success" value="@lang('general.btn_export')" name="export"></div>  
-                    </form> --}}
                 </div>
             </div>
             <div class="col-md-2">
@@ -46,7 +40,7 @@
             </tr>
             </thead>
             <tbody>
-                @foreach($customers as $customer)
+                {{--@foreach($customers as $customer)
                     <tr>
                         <th scope="row">{{ $customer->id }}</th>
                         <td>{{ $customer->branch_name }}</td>
@@ -60,6 +54,7 @@
                         </td>
                     </tr>
                 @endforeach
+                --}}
             </tbody>
         </table>
 
@@ -183,10 +178,38 @@
     $(document).ready(function () {
         table = $('#example').DataTable(
             {
-                dom: 'Bfrtip',
+                ajax: "{{ route('customers.search') }}?export=SearchDT",
+                processing: true,
+                serverSide: true,
+                lengthMenu: [
+                    [10, 25, 50, -1],
+                    [10, 25, 50, 'All']
+                ],
+                dom: 'Bflrtip',
                 select: {
                     style: 'multi'
                 },
+                "columns": [
+                    { "data": "id" },
+                    { "data": "branch_name" },
+                    { "data": "name" },
+                    { "data": "address" },
+                    { "data": "phone_no" },
+                    { "data": "status" },
+                    { data: null,
+                        render: function ( data, type, row ) {
+                            var url_edit = "{{ route('customers.edit', 111) }}";
+                            url_edit = url_edit.replace("111",data.id);  
+
+                            return '<a href="'+url_edit+'" class="btn btn-info btn-sm ">Ubah</a>';
+                        }
+                    },
+                    { data: null,
+                        render: function ( data, type, row ) {  
+                            return '<a onclick="showConfirm('+data.id+', \''+data.name+'\')" class="btn btn-danger btn-sm ">Hapus</a>';
+                        }
+                    }
+                ],
                 buttons: [
                     {
                         extend: 'copyHtml5',

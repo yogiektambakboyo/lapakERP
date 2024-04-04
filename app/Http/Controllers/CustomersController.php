@@ -86,10 +86,9 @@ class CustomersController extends Controller
             $strencode = base64_encode($keyword.'#'.$branchx.'#'.$user->id);
             return Excel::download(new CustomersExport($strencode), 'customers_'.Carbon::now()->format('YmdHis').'.xlsx');
         }else if($request->export=='SearchDT'){
-            $Customers = Customer::join('branch as b','b.id','customers.branch_id')
-                            ->join('users_branch as ub', function($join){
-                                $join->on('ub.branch_id', '=', 'b.id');
-                            })->where('ub.user_id', $user->id)->get(['customers.*','b.remark as branch_name']);
+                        $Customers = DB::select("select c.id,c.name,c.address,c.phone_no,case when c.status=1 then 'Aktif' else 'Non' end as status,b.remark as branch_name  from customers c 
+                        join branch b on b.id = c.branch_id 
+                        join users_branch ub on ub.branch_id = b.id and ub.user_id = ".$user->id.";  ");
             $request->filter_branch_id = "";
             return Datatables::of($Customers)->make();
         }else if($request->src=='Search'){
