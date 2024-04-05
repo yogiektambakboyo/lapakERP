@@ -59,7 +59,7 @@
                 @foreach($report_data as $rdata)
                     <tr>
                         <td><button onclick="openDialog('{{ $rdata->branch_id }}','{{ $rdata->dated }}','0');" class="btn btn-warning btn-sm">Print</button></td>
-                        <td><button onclick="openDialog2('{{ $rdata->branch_id }}','{{ $rdata->dated }}','0');" class="btn btn-primary btn-sm">Print Lap. Harian</button> <button onclick="openDialog3('{{ $rdata->branch_id }}','{{ $rdata->dated }}','0');" class="btn btn-danger btn-sm">Print Lap. Harian v2</button></td>
+                        <td><button onclick="openDialog3('{{ $rdata->branch_id }}','{{ $rdata->dated }}','0');" class="btn btn-danger btn-sm">Print Lap. Harian v2</button></td>
                         <th scope="row">{{ $rdata->branch_name }}</th>
                         <td>{{ Carbon\Carbon::parse($rdata->dated)->format('d-m-Y')  }}</td>
                         <td>{{ number_format($rdata->total_service,0,',','.') }}</td>
