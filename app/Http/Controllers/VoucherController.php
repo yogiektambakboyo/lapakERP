@@ -102,12 +102,10 @@ class VoucherController extends Controller
             $strencode = base64_encode($keyword.'#'.$begindate.'#'.$enddate.'#'.$branchx);
             return Excel::download(new VoucherExport($strencode), 'voucher_'.Carbon::now()->format('YmdHis').'.xlsx');
         }else if($request->export=='SearchDT'){
-            $table_data = DB::select("select left(string_agg(ps.abbr,', '),25) as product_name,v.invoice_no,v.is_used,v.price,v.remark as voucher_remark,v.voucher_code,v.branch_id,bc.remark as branch_name,v.value as value,v.value_idx,v.dated_start,v.dated_end 
+            $table_data = DB::select("select '-' as product_name,v.invoice_no,v.is_used,v.price,v.remark as voucher_remark,v.voucher_code,v.branch_id,bc.remark as branch_name,v.value as value,v.value_idx,v.dated_start,v.dated_end 
             from voucher v 
-            join voucher_detail vd on vd.voucher_code=v.voucher_code 
             join branch as bc on bc.id= v.branch_id
             join users_branch as ub2 on ub2.branch_id=v .branch_id
-            join product_sku ps on ps.id = vd.product_id::bigint
             where ub2.user_id = '".$user->id."' group by v.invoice_no,v.is_used,v.price,v.remark,v.voucher_code,v.branch_id,bc.remark,v.value,v.value_idx,v.dated_start,v.dated_end;  ");
             return Datatables::of($table_data)->make();
         }else if($request->src=='Search'){
@@ -377,6 +375,31 @@ class VoucherController extends Controller
 
         return redirect()->route('voucher.index')
             ->withSuccess(__('Voucher updated successfully.'));
+    }
+
+    public function reset(Request $request, String $branch_id, String $voucher_code) 
+    {
+
+        $user = Auth::user();
+        //$voucher_code = $request->get('voucher_code');
+    
+        Voucher::where('voucher.voucher_code','=',$voucher_code)
+        ->update(
+            array_merge(
+                ['is_used' => 0],
+                ['invoice_no' => ""],
+            )
+        );
+
+        DB::update(" INSERT INTO public.voucher_log (voucher_no, remarks, user_id) values('".$voucher_code."','Voucher Reset',".$user->id.") ");
+
+        $result = array_merge(
+            ['status' => 'success'],
+            ['data' => $voucher_code],
+            ['message' => 'Save Successfully'],
+        );
+
+        return $result;
     }
 
     /**

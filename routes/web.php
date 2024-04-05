@@ -535,6 +535,7 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
             Route::post('/create', 'VoucherController@store')->name('voucher.store');
             Route::get('/search', 'VoucherController@search')->name('voucher.search');
             Route::get('/{branch}/{product}/show', 'VoucherController@show')->name('voucher.show');
+            Route::get('/{branch}/{voucher_code}/reset', 'VoucherController@reset')->name('voucher.reset');
             Route::get('/{branch}/{product}/{dated_start}/{dated_end}/{voucher_code}/edit', 'VoucherController@edit')->name('voucher.edit');
             Route::patch('/{branch}/{product}/{dated_start}/{dated_end}/{voucher_code}/update', 'VoucherController@update')->name('voucher.update');
             Route::delete('/{branch}/{product}/{dated_start}/{dated_end}/{voucher_code}/delete', 'VoucherController@destroy')->name('voucher.destroy');

@@ -35,7 +35,6 @@
                     <th scope="col" width="10%">@lang('general.lbl_branch')</th>
                     <th>Remark</th>
                     <th scope="col" width="10%">@lang('general.lbl_voucher_code')</th>
-                    <th scope="col" width="15%">@lang('general.lbl_service_name')</th> 
                     <th scope="col" width="10%">@lang('general.lbl_date_start')</th>
                     <th scope="col" width="10%">@lang('general.lbl_date_end')</th>
                     <th scope="col" width="7%">@lang('general.lbl_values')</th>
@@ -44,6 +43,7 @@
                     <th scope="col" width="10%">Sudah digunakan?</th>
                     <th scope="col" width="10%">No Faktur</th>
                     <th scope="col" width="2%" class="noexport" class="nex">@lang('general.lbl_action')</th>  
+                    <th scope="col" width="2%" class="noexport"></th>
                     <th scope="col" width="2%" class="noexport"></th>
                 </tr>
             </thead>
@@ -208,6 +208,60 @@
             }
             })
         }
+
+        function showConfirmReset(branch_id,data){
+            Swal.fire({
+            title: "@lang('general.lbl_sure')",
+            text: "Anda akan mereset pemakaian voucher "+data+" !",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33', cancelButtonText: "@lang('general.lbl_cancel')",
+            confirmButtonText: "Ya, Reset"
+            }).then((result) => {
+            if (result.isConfirmed) {
+                var url = "{{ route('voucher.reset',['AA','BB']) }}";
+                var lastvalurl = "AA";
+                var lastvalurl2 = "BB";
+                url = url.replace(lastvalurl, branch_id);
+                url = url.replace(lastvalurl2, data);
+
+                console.log(url);
+                const res = axios.get(url, {}, {
+                    headers: {
+                        // Overwrite Axios's automatically set Content-Type
+                        'Content-Type': 'application/json'
+                    }
+                    }).then(resp => {
+                        if(resp.data.status=="success"){
+                            Swal.fire({
+                                title: 'Reset!',
+                                text: "No Voucher "+data+" telah direset",
+                                icon: 'success',
+                                showCancelButton: false,
+                                confirmButtonColor: '#3085d6',
+                                cancelButtonColor: '#d33', cancelButtonText: "@lang('general.lbl_cancel')",
+                                confirmButtonText: "@lang('general.lbl_close') "
+                                }).then((result) => {
+                                    window.location.href = "{{ route('voucher.index') }}"; 
+                                })
+                        }else{
+                            Swal.fire(
+                            {
+                                position: 'top-end',
+                                icon: 'warning',
+                                text: "@lang('general.lbl_msg_failed')"+resp.data.message,
+                                showConfirmButton: false,
+                                imageHeight: 30, 
+                                imageWidth: 30,   
+                                timer: 1500
+                            }
+                            );
+                        }
+                    });
+            }
+            })
+        }
     </script>
 @endpush
 
@@ -229,7 +283,6 @@
                     { "data": "branch_name" },
                     { "data": "voucher_remark" },
                     { "data": "voucher_code" },
-                    { "data": "product_name" },
                     { "data": "dated_start" },
                     { "data": "dated_end" },
                     { "data": "value" },
@@ -237,6 +290,11 @@
                     { "data": "price" },
                     { "data": "is_used" },
                     { "data": "invoice_no" },
+                    { data: null,
+                        render: function ( data, type, row ) {  
+                            return '<a onclick="showConfirmReset('+data.branch_id+', \''+data.voucher_code+'\')" class="btn btn-warning btn-sm ">Reset</a>';
+                        }
+                    },
                     { data: null,
                         render: function ( data, type, row ) {
                             var url_edit = "{{ route('voucher.edit', [111,222,333,444,555]) }}";
