@@ -2099,11 +2099,13 @@ class ReportCloseDayController extends Controller
             $report_data = DB::select("
                     select b.id as branch_id,b.remark as branch_name,im.dated,to_char(im.dated,'dd-mm-YYYY') as datedformat,sum(id.total+id.vat_total) as total_all,
                     sum(case when ps.type_id = 2 then id.total+id.vat_total else 0 end) as total_service,
+                    sum(case when ps.type_id = 2 then (id.total-(id.qty*ps.charge_lebaran))+id.vat_total else 0 end) as total_service_no_cl,
                     sum(case when ps.type_id = 1 and ps.category_id != 58 and ps.category_id != 60 then id.total+id.vat_total else 0 end) as total_product,
                     sum(case when ps.type_id = 1 and ps.category_id = 60 then id.total+id.vat_total else 0 end) as total_ojek,
                     sum(case when ps.type_id = 2 and ps.category_id=56 then id.qty*20000 else 0 end) as total_tambahan,
                     sum(case when ps.type_id = 8 and ps.remark not like '%CHARGE LEBARAN%'  then id.total+id.vat_total else 0 end) as total_extra,
                     sum(case when ps.type_id = 8 and ps.remark like '%CHARGE LEBARAN%'  then id.total+id.vat_total else 0 end) as total_lebaran,
+                    sum(case when ps.charge_lebaran>0 then (id.qty*ps.charge_lebaran) else 0 end) as total_lebaran_cl,
                     sum(case when im.payment_type = 'Cash' then id.total+id.vat_total else 0 end) as total_cash,
                     sum(case when im.payment_type = 'BCA - Debit' then id.total+id.vat_total else 0 end) as total_b_d,
                     sum(case when im.payment_type = 'BCA - Kredit' then id.total+id.vat_total else 0 end) as total_b_k,

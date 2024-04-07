@@ -449,12 +449,12 @@
                       for (let index = 0; index < report_data.length; index++) {
                         var rowElement = report_data[index];
 
-                        total_service = total_service + parseFloat((rowElement.total_service-rowElement.total_tambahan));
+                        total_service = total_service + parseFloat((rowElement.total_service_no_cl-rowElement.total_tambahan));
                         total_product = total_product + parseFloat(rowElement.total_product);
                         total_ojek = total_ojek + parseFloat(rowElement.total_ojek) + parseFloat(rowElement.total_tambahan);
                         total_tambahan = total_tambahan + parseFloat(rowElement.total_tambahan);
                         total_extra = total_extra + parseFloat(rowElement.total_extra);
-                        total_lebaran = total_lebaran + parseFloat(rowElement.total_lebaran);
+                        total_lebaran = total_lebaran + (parseFloat(rowElement.total_lebaran)+parseFloat(rowElement.total_lebaran_cl));
                         total_cash = total_cash + parseFloat(rowElement.total_cash);
                         total_b1d = total_b1d + parseFloat(rowElement.total_b1d);
                         total_b1c = total_b1c + parseFloat(rowElement.total_b1c);
@@ -470,7 +470,7 @@
 
                           worksheet.addRow({
                             tanggal : rowElement.datedformat, 
-                            perawatan : (rowElement.total_service-rowElement.total_tambahan), 
+                            perawatan : (rowElement.total_service_no_cl-rowElement.total_tambahan), 
                             perawatan_sd : total_service, 
                             produk : rowElement.total_product, 
                             produk_sd : total_product, 
@@ -478,7 +478,7 @@
                             ojek_sd : total_ojek, 
                             extra : parseFloat(rowElement.total_extra), 
                             extra_sd : total_extra, 
-                            lebaran : parseFloat(rowElement.total_lebaran), 
+                            lebaran : (parseFloat(rowElement.total_lebaran)+parseFloat(rowElement.total_lebaran_cl)), 
                             lebaran_sd : total_lebaran, 
                             total_all : parseFloat(rowElement.total_all), 
                             total_all_sd : total_all, 

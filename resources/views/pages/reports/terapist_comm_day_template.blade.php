@@ -67,6 +67,7 @@
                   <th>Komisi Produk</th>
                   <th>Nilai Point</th>
                   <th>Extra Charge</th>
+                  <th>Charge Lebaran</th>
                   <th>Komisi Menurut Cat Terapis</th>
                   <th>Selisih</th>
                   <th>Cases</th>
@@ -94,6 +95,7 @@
                       <td>{{ number_format($item->komisi_produk,0,',','.')  }}</td>
                       <td>{{ number_format($item->nilai_point,0,',','.')  }}</td>
                       <td>{{ number_format($item->extra_charge,0,',','.')  }}</td>
+                      <td>{{ number_format($item->charge_lebaran,0,',','.')  }}</td>
                       <td></td>
                       <td></td>
                       <td>{{ $item->cases }}</td>
