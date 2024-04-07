@@ -68,10 +68,14 @@ class ReportCloseShiftController extends Controller
         $report_data = DB::select("
                 select s.id as shift_id,b.id as branch_id,b.remark as branch_name,im.dated ,s.remark as shift_name,sum(id.total+id.vat_total) as total_all,
                 sum(case when ps.type_id = 2 and ps.category_id = 53 then id.total+id.vat_total else 0 end) as total_salon,
+                sum(case when ps.type_id = 2 and ps.category_id = 53 then (id.total-(id.qty*ps.charge_lebaran))+id.vat_total  else 0 end) as total_salon_no_cl,
                 sum(case when ps.type_id = 2 and ps.category_id !=53 then id.total+id.vat_total else 0 end) as total_service,
+                sum(case when ps.type_id = 2 and ps.category_id !=53 then (id.total-(id.qty*ps.charge_lebaran))+id.vat_total else 0 end) as total_service_no_cl,
                 sum(case when ps.type_id = 1 and ps.category_id !=26 then id.total+id.vat_total else 0 end) as total_product,
                 sum(case when ps.type_id = 1 and ps.category_id =26 then id.total+id.vat_total else 0 end) as total_drink,
-                sum(case when ps.type_id = 8 then id.total+id.vat_total else 0 end) as total_extra,
+                sum(case when ps.type_id = 8 and ps.remark not like '%CHARGE LEBARAN%'  then id.total+id.vat_total else 0 end) as total_extra,
+                sum(case when ps.type_id = 8 and ps.remark like '%CHARGE LEBARAN%'  then id.total+id.vat_total else 0 end) as total_lebaran,
+                sum(case when ps.charge_lebaran>0 then (id.qty*ps.charge_lebaran) else 0 end) as total_lebaran_cl,
                 sum(case when im.payment_type = 'Cash' then id.total+id.vat_total else 0 end) as total_cash,
                 sum(case when im.payment_type = 'BCA - Debit' then id.total+id.vat_total else 0 end) as total_b_d,
                 sum(case when im.payment_type = 'BCA - Kredit' then id.total+id.vat_total else 0 end) as total_b_k,
@@ -120,36 +124,73 @@ class ReportCloseShiftController extends Controller
         $filter_begin_date = date(Carbon::parse($request->filter_begin_date)->format('Y-m-d'));
         $filter_shift = $request->get('filter_shift')==null?'%':$request->get('filter_shift');
         $filter_branch_id =  $request->get('filter_branch_id')==null?'%':$request->get('filter_branch_id');
-        $report_data = DB::select("
-            select category_id,shift_name,branch_name,dated,product_name,abbr,type_id,price,qty,case when total=0 then 'Free' else total::character varying end as total,qty_customer from (
-                select ps.category_id,s.remark as shift_name,b.remark as branch_name,im.dated,id.product_name,ps.abbr,ps.type_id,id.price,sum(id.qty) as qty,sum(id.total+id.vat_total) as total,count(distinct im.invoice_no) as qty_customer
-                from invoice_master im 
-                join invoice_detail id on id.invoice_no = im.invoice_no 
-                join customers c on c.id = im.customers_id 
-                join branch b on b.id=c.branch_id
-                join users_branch as ub on ub.branch_id = b.id and ub.user_id = '".$user->id."'
-                join product_sku ps on ps.id = id.product_id 
-                join branch_shift bs on bs.branch_id = b.id
-                join shift s on s.id = ".$filter_shift."  and s.id = bs.shift_id
-                where id.total>0 and id.discount<id.price*id.qty and ps.id!=461 and im.dated = '".$filter_begin_date."' and im.created_at::time  between s.time_start and s.time_end  and c.branch_id = ".$filter_branch_id."
-                group by ps.category_id,s.remark,b.remark,im.dated,id.product_name,ps.abbr,id.price,ps.type_id    
-                union all
-                select ps.category_id,s.remark as shift_name,b.remark as branch_name,im.dated,id.product_name,ps.abbr,ps.type_id,id.price,sum(id.qty) as qty,0 as total,count(distinct im.invoice_no) as qty_customer
-                from invoice_master im 
-                join invoice_detail id on id.invoice_no = im.invoice_no 
-                join customers c on c.id = im.customers_id 
-                join branch b on b.id=c.branch_id
-                join users_branch as ub on ub.branch_id = b.id and ub.user_id = '".$user->id."'
-                join product_sku ps on ps.id = id.product_id 
-                join branch_shift bs on bs.branch_id = b.id
-                join shift s on s.id = ".$filter_shift."  and s.id = bs.shift_id
-                where id.total=0 and id.discount=id.price*id.qty  and ps.id!=461  and im.dated = '".$filter_begin_date."' and im.created_at::time  between s.time_start and s.time_end  and c.branch_id = ".$filter_branch_id."
-                group by ps.category_id,s.remark,b.remark,im.dated,id.product_name,ps.abbr,id.price,ps.type_id     
-            )  a order by abbr             
-        ");
-
         
-
+        if($request->filter_type == "cl"){
+            $filter_begin_date = date(Carbon::parse($request->filter_begin_date_cl)->format('Y-m-d'));
+            $filter_shift = $request->get('filter_shift_cl')==null?'%':$request->get('filter_shift_cl');
+            $filter_branch_id =  $request->get('filter_branch_id_cl')==null?'%':$request->get('filter_branch_id_cl');
+    
+            $report_data = DB::select("
+                select is_cl,charge_lebaran,category_id,shift_name,branch_name,dated,product_name,abbr,type_id,price,qty,case when total=0 then 'Free' else total::character varying end as total,qty_customer from (
+                    select case when ps.charge_lebaran>0 then 1 else 0 end is_cl,ps.charge_lebaran,ps.category_id,s.remark as shift_name,b.remark as branch_name,im.dated,id.product_name,ps.abbr,ps.type_id,id.price-ps.charge_lebaran as price,sum(id.qty) as qty,sum((id.total-(id.qty*ps.charge_lebaran))+id.vat_total) as total,count(distinct im.invoice_no) as qty_customer
+                    from invoice_master im 
+                    join invoice_detail id on id.invoice_no = im.invoice_no 
+                    join customers c on c.id = im.customers_id 
+                    join branch b on b.id=c.branch_id
+                    join users_branch as ub on ub.branch_id = b.id and ub.user_id = '".$user->id."'
+                    join product_sku ps on ps.id = id.product_id 
+                    join branch_shift bs on bs.branch_id = b.id
+                    join shift s on s.id = ".$filter_shift."  and s.id = bs.shift_id
+                    where id.total>0 and id.discount<id.price*id.qty and ps.id!=461 and im.dated = '".$filter_begin_date."' and im.created_at::time  between s.time_start and s.time_end  and c.branch_id = ".$filter_branch_id."
+                    group by ps.category_id,s.remark,b.remark,im.dated,id.product_name,ps.abbr,id.price,ps.type_id,ps.charge_lebaran    
+                    union all
+                    select case when ps.charge_lebaran>0 then 1 else 0 end is_cl,ps.charge_lebaran,ps.category_id,s.remark as shift_name,b.remark as branch_name,im.dated,id.product_name,ps.abbr,ps.type_id,id.price-ps.charge_lebaran as price,sum(id.qty) as qty,0 as total,count(distinct im.invoice_no) as qty_customer
+                    from invoice_master im 
+                    join invoice_detail id on id.invoice_no = im.invoice_no 
+                    join customers c on c.id = im.customers_id 
+                    join branch b on b.id=c.branch_id
+                    join users_branch as ub on ub.branch_id = b.id and ub.user_id = '".$user->id."'
+                    join product_sku ps on ps.id = id.product_id 
+                    join branch_shift bs on bs.branch_id = b.id
+                    join shift s on s.id = ".$filter_shift."  and s.id = bs.shift_id
+                    where id.total=0 and id.discount=id.price*id.qty  and ps.id!=461  and im.dated = '".$filter_begin_date."' and im.created_at::time  between s.time_start and s.time_end  and c.branch_id = ".$filter_branch_id."
+                    group by ps.category_id,s.remark,b.remark,im.dated,id.product_name,ps.abbr,id.price,ps.type_id,ps.charge_lebaran     
+                )  a order by abbr             
+            ");
+        }else{
+            $filter_begin_date = date(Carbon::parse($request->filter_begin_date)->format('Y-m-d'));
+            $filter_shift = $request->get('filter_shift')==null?'%':$request->get('filter_shift');
+            $filter_branch_id =  $request->get('filter_branch_id')==null?'%':$request->get('filter_branch_id');
+        
+            $report_data = DB::select("
+                select 0 as is_cl, 0 as charge_lebaran,category_id,shift_name,branch_name,dated,product_name,abbr,type_id,price,qty,case when total=0 then 'Free' else total::character varying end as total,qty_customer from (
+                    select ps.category_id,s.remark as shift_name,b.remark as branch_name,im.dated,id.product_name,ps.abbr,ps.type_id,id.price,sum(id.qty) as qty,sum(id.total+id.vat_total) as total,count(distinct im.invoice_no) as qty_customer
+                    from invoice_master im 
+                    join invoice_detail id on id.invoice_no = im.invoice_no 
+                    join customers c on c.id = im.customers_id 
+                    join branch b on b.id=c.branch_id
+                    join users_branch as ub on ub.branch_id = b.id and ub.user_id = '".$user->id."'
+                    join product_sku ps on ps.id = id.product_id 
+                    join branch_shift bs on bs.branch_id = b.id
+                    join shift s on s.id = ".$filter_shift."  and s.id = bs.shift_id
+                    where id.total>0 and id.discount<id.price*id.qty and ps.id!=461 and im.dated = '".$filter_begin_date."' and im.created_at::time  between s.time_start and s.time_end  and c.branch_id = ".$filter_branch_id."
+                    group by ps.category_id,s.remark,b.remark,im.dated,id.product_name,ps.abbr,id.price,ps.type_id     
+                    union all
+                    select ps.category_id,s.remark as shift_name,b.remark as branch_name,im.dated,id.product_name,ps.abbr,ps.type_id,id.price,sum(id.qty) as qty,0 as total,count(distinct im.invoice_no) as qty_customer
+                    from invoice_master im 
+                    join invoice_detail id on id.invoice_no = im.invoice_no 
+                    join customers c on c.id = im.customers_id 
+                    join branch b on b.id=c.branch_id
+                    join users_branch as ub on ub.branch_id = b.id and ub.user_id = '".$user->id."'
+                    join product_sku ps on ps.id = id.product_id 
+                    join branch_shift bs on bs.branch_id = b.id
+                    join shift s on s.id = ".$filter_shift."  and s.id = bs.shift_id
+                    where id.total=0 and id.discount=id.price*id.qty  and ps.id!=461  and im.dated = '".$filter_begin_date."' and im.created_at::time  between s.time_start and s.time_end  and c.branch_id = ".$filter_branch_id."
+                    group by ps.category_id,s.remark,b.remark,im.dated,id.product_name,ps.abbr,id.price,ps.type_id     
+                )  a order by abbr             
+            ");
+        }
+        
         $creator = DB::select("
                 select coalesce(string_agg(distinct created_by,', '),'-') as created_by from (select coalesce(u.name,'-') as created_by
                 from invoice_master im 
@@ -208,8 +249,33 @@ class ReportCloseShiftController extends Controller
         $payment_type = ['Cash','BCA - Debit','BCA - Kredit','Mandiri - Debit','Mandiri - Kredit','Transfer','QRIS'];
         $users = User::join('users_branch as ub','ub.branch_id', '=', 'users.branch_id')->where('ub.user_id','=',$user->id)->where('users.job_id','=',2)->get(['users.id','users.name']);
 
+        if($request->filter_type == "cl"){
+            return view('pages.reports.close_shift_print_cl', [
+                'data' => $data,
+                'payment_datas' => $payment_data,
+                'report_datas' => $report_data,
+                'out_datas' => $out_data,
+                'creator' => $creator,
+                'settings' => Settings::get(),
+                'petty_datas' => $petty_datas,
+                'cust' => $cust,
+            ]);
+        }else{
+            return view('pages.reports.close_shift_print', [
+                'data' => $data,
+                'payment_datas' => $payment_data,
+                'report_datas' => $report_data,
+                'out_datas' => $out_data,
+                'creator' => $creator,
+                'settings' => Settings::get(),
+                'petty_datas' => $petty_datas,
+                'cust' => $cust,
+            ]);
+        }
 
-        return view('pages.reports.close_shift_print', [
+        
+
+        /**$pdf = PDF::setOptions(['isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true])->loadView('pages.reports.close_shift_print', [
             'data' => $data,
             'payment_datas' => $payment_data,
             'report_datas' => $report_data,
@@ -218,21 +284,10 @@ class ReportCloseShiftController extends Controller
             'settings' => Settings::get(),
             'petty_datas' => $petty_datas,
             'cust' => $cust,
-        ]);
+        ])->setOptions(['defaultFont' => 'sans-serif'])->setPaper('a4', 'landscape');**/
+        //return $pdf->stream('invoice.pdf');
 
-        $pdf = PDF::setOptions(['isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true])->loadView('pages.reports.close_shift_print', [
-            'data' => $data,
-            'payment_datas' => $payment_data,
-            'report_datas' => $report_data,
-            'out_datas' => $out_data,
-            'creator' => $creator,
-            'settings' => Settings::get(),
-            'petty_datas' => $petty_datas,
-            'cust' => $cust,
-        ])->setOptions(['defaultFont' => 'sans-serif'])->setPaper('a4', 'landscape');
-        return $pdf->stream('invoice.pdf');
-
-        return view('pages.reports.print',['company' => Company::get()->first()], compact('shifts','branchs','data','keyword','act_permission','report_data'))->with('i', ($request->input('page', 1) - 1) * 5);
+        //return view('pages.reports.print',['company' => Company::get()->first()], compact('shifts','branchs','data','keyword','act_permission','report_data'))->with('i', ($request->input('page', 1) - 1) * 5);
     }
 
     public function search(Request $request) 
@@ -260,10 +315,14 @@ class ReportCloseShiftController extends Controller
             $report_data = DB::select("
                     select s.id as shift_id,b.id as branch_id,b.remark as branch_name,im.dated ,s.remark as shift_name,sum(id.total+id.vat_total) as total_all,
                     sum(case when ps.type_id = 2 and ps.category_id = 53 then id.total+id.vat_total else 0 end) as total_salon,
+                    sum(case when ps.type_id = 2 and ps.category_id = 53 then (id.total-(id.qty*ps.charge_lebaran))+id.vat_total  else 0 end) as total_salon_no_cl,
                     sum(case when ps.type_id = 2 and ps.category_id !=53 then id.total+id.vat_total else 0 end) as total_service,
+                    sum(case when ps.type_id = 2 and ps.category_id !=53 then (id.total-(id.qty*ps.charge_lebaran))+id.vat_total else 0 end) as total_service_no_cl,
                     sum(case when ps.type_id = 1 and ps.category_id !=26 then id.total+id.vat_total else 0 end) as total_product,
                     sum(case when ps.type_id = 1 and ps.category_id =26 then id.total+id.vat_total else 0 end) as total_drink,
-                    sum(case when ps.type_id = 8 then id.total+id.vat_total else 0 end) as total_extra,
+                    sum(case when ps.type_id = 8 and ps.remark not like '%CHARGE LEBARAN%'  then id.total+id.vat_total else 0 end) as total_extra,
+                    sum(case when ps.type_id = 8 and ps.remark like '%CHARGE LEBARAN%'  then id.total+id.vat_total else 0 end) as total_lebaran,
+                    sum(case when ps.charge_lebaran>0 then (id.qty*ps.charge_lebaran) else 0 end) as total_lebaran_cl,
                     sum(case when im.payment_type = 'Cash' then id.total+id.vat_total else 0 end) as total_cash,
                     sum(case when im.payment_type = 'BCA - Debit' then id.total+id.vat_total else 0 end) as total_b_d,
                     sum(case when im.payment_type = 'BCA - Kredit' then id.total+id.vat_total else 0 end) as total_b_k,

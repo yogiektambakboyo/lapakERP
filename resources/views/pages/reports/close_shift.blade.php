@@ -25,6 +25,7 @@
             <thead>
             <tr>
                 <th scope="col" width="2%" class="nex">@lang('general.lbl_action')</th> 
+                <th scope="col" width="2%" class="nex">@lang('general.lbl_action')</th> 
                 <th scope="col" width="10%">@lang('general.lbl_branch')</th>
                 <th scope="col" width="6%">@lang('general.lbl_dated')</th>
                 <th>Shift</th>
@@ -33,6 +34,7 @@
                 <th scope="col">@lang('general.product')</th>    
                 <th scope="col">@lang('general.lbl_drink')</th>     
                 <th scope="col">Extra</th>    
+                <th scope="col">Charge Lebaran</th>    
                 <th scope="col">Total</th>    
                 <th scope="col">@lang('general.lbl_cash')</th>     
                 <th scope="col">BCA D</th>    
@@ -60,14 +62,16 @@
                 @foreach($report_data as $rdata)
                     <tr>
                         <td><button onclick="openDialog('{{ $rdata->branch_id }}','{{ $rdata->dated }}','{{ $rdata->shift_id }}');" class="btn btn-warning btn-sm">Print</button></td>
+                        <td><button onclick="openDialog2('{{ $rdata->branch_id }}','{{ $rdata->dated }}','{{ $rdata->shift_id }}');" class="btn btn-primary btn-sm">Print w/ CL</button></td>
                         <th scope="row">{{ $rdata->branch_name }}</th>
                         <td>{{ Carbon\Carbon::parse($rdata->dated)->format('d-m-Y') }}</td>
                         <td>{{ $rdata->shift_name }}</td>
-                        <td>{{ number_format($rdata->total_service,0,',','.') }}</td>
-                        <td>{{ number_format($rdata->total_salon,0,',','.') }}</td>
+                        <td>{{ number_format($rdata->total_service_no_cl,0,',','.') }}</td>
+                        <td>{{ number_format($rdata->total_salon_no_cl,0,',','.') }}</td>
                         <td>{{ number_format($rdata->total_product,0,',','.') }}</td>
                         <td>{{ number_format($rdata->total_drink,0,',','.') }}</td>
                         <td>{{ number_format($rdata->total_extra,0,',','.') }}</td>
+                        <td>{{ number_format(($rdata->total_lebaran_cl+$rdata->total_lebaran),0,',','.') }}</td>
                         <td>{{ number_format($rdata->total_all,0,',','.') }}</td>
                         <td>{{ number_format($rdata->total_cash,0,',','.') }}</td>
                         <td>{{ number_format($rdata->total_b_d,0,',','.') }}</td>
@@ -198,6 +202,7 @@
                             Apakah anda yakin akan mencetak laporan serah terima?
                         </div>
                         <div class="col-md-12">
+                            <input type="hidden" name="filter_type" value="view">
                             <input type="text" 
                             name="filter_begin_date"
                             id="filter_begin_date"
@@ -212,6 +217,61 @@
                         <div class="col-md-12">
                             <select class="form-control" hidden 
                             name="filter_shift" id="filter_shift">
+                            @foreach($shifts as $shift)
+                                <option value="{{ $shift->id }}">{{ $shift->remark }} ( {{ $shift->time_start }} - {{ $shift->time_end }}) </option>
+                            @endforeach
+                        </select>
+                        </div>
+                        <br>
+                        <div class="col-md-12">
+                            <button type="submit" data-bs-dismiss="modal"  class="btn btn-primary form-control">@lang('general.lbl_apply')</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            </div>
+        </div>
+
+        <!-- Vertically centered modal -->
+        <!-- Modal -->
+        <div class="modal fade" id="modal-filter-cl" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+            <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                <h5 class="modal-title"  id="input_expired_list_at_lbl">Konfirmasi</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form target="_blank" action="{{ route('reports.closeshift.getdata') }}" method="GET">   
+                        @csrf 
+                        <div class="col-md-12">
+                            <select class="form-control" 
+                                name="filter_branch_id_cl" id="filter_branch_id_cl" hidden>
+                                @foreach($branchs as $branchx)
+                                    <option value="{{ $branchx->id }}">{{ $branchx->remark }} </option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <div class="col-md-12">
+                            Apakah anda yakin akan mencetak laporan serah terima?
+                        </div>
+                        <div class="col-md-12">
+                            <input type="hidden" name="filter_type" value="cl">
+                            <input type="text" 
+                            name="filter_begin_date_cl"
+                            id="filter_begin_date_cl"
+                            class="form-control" 
+                            value="{{ old('filter_begin_date') }}" required hidden/>
+                            @if ($errors->has('filter_begin_date'))
+                                    <span class="text-danger text-left">{{ $errors->first('filter_begin_date') }}</span>
+                                @endif
+                        </div>
+
+                       
+                        <div class="col-md-12">
+                            <select class="form-control" hidden 
+                            name="filter_shift_cl" id="filter_shift_cl">
                             @foreach($shifts as $shift)
                                 <option value="{{ $shift->id }}">{{ $shift->remark }} ( {{ $shift->time_start }} - {{ $shift->time_end }}) </option>
                             @endforeach
@@ -266,6 +326,7 @@
 
           var myModal = new bootstrap.Modal(document.getElementById('modal-filter'));
           var myModal2 = new bootstrap.Modal(document.getElementById('modal-filter2'));
+          var myModalCL = new bootstrap.Modal(document.getElementById('modal-filter-cl'));
 
           function openDialog(branch_id,dated,shift_id){
             $('#filter_branch_id').val(branch_id);
@@ -275,6 +336,16 @@
             //$('#filter_shift').prop('disabled', true);
             //$('#filter_begin_date').prop('disabled', true);
             myModal.show();
+          }
+
+          function openDialog2(branch_id,dated,shift_id){
+            $('#filter_branch_id_cl').val(branch_id);
+            $('#filter_shift_cl').val(shift_id);
+            $('#filter_begin_date_cl').val(dated.substr(5,2)+"/"+dated.substr(8,2)+"/"+dated.substr(0,4));
+            //$('#filter_branch_id').prop('disabled', true);
+            //$('#filter_shift').prop('disabled', true);
+            //$('#filter_begin_date').prop('disabled', true);
+            myModalCL.show();
           }
 
           function openDialogFilterSearch(command){

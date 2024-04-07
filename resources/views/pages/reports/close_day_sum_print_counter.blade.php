@@ -66,7 +66,7 @@
                     <th style="text-align: center;background-color:#FFA726;" scope="col" colspan="2">OJEK + TAMBAHAN TERAPIS</th>    
                 @endif 
                 <th style="text-align: center;background-color:#FFA726;" scope="col" colspan="2">EXTRA CHARGE</th>   
-                @if(($report_total[0]->total_lebaran)>0)
+                @if(($report_total[0]->total_lebaran+$report_total[0]->total_lebaran_cl)>0)
                     <th style="text-align: center;background-color:#FFA726;" scope="col" colspan="2">CHANGE LEBARAN</th>    
                 @endif     
                 <th style="text-align: center;background-color:#FFA726;" scope="col" colspan="2">PENDAPATAN TOTAL</th>       
@@ -84,7 +84,7 @@
               
               <th style="text-align: center;background-color:#FFA726;"  scope="col">HARIAN</th>    
               <th style="text-align: center;background-color:#FFA726;"  scope="col">S/D</th>  
-              @if(($report_total[0]->total_lebaran)>0)
+              @if(($report_total[0]->total_lebaran+$report_total[0]->total_lebaran_cl)>0)
                   <th style="text-align: center;background-color:#FFA726;"  scope="col">HARIAN</th>    
                   <th style="text-align: center;background-color:#FFA726;"  scope="col">S/D</th>  
               @endif
@@ -116,12 +116,12 @@
         <tbody>
             @foreach($report_data as $rdata)
             <?php 
-                    $total_service = $total_service + ($rdata->total_service-$rdata->total_tambahan);
+                    $total_service = $total_service + ($rdata->total_service_no_cl-$rdata->total_tambahan);
                     $total_product = $total_product + $rdata->total_product;
                     $total_ojek = $total_ojek + $rdata->total_ojek;
                     $total_tambahan = $total_tambahan + $rdata->total_tambahan;
                     $total_extra = $total_extra + $rdata->total_extra;
-                    $total_lebaran = $total_lebaran + $rdata->total_lebaran;
+                    $total_lebaran = $total_lebaran + ($rdata->total_lebaran+$rdata->total_lebaran_cl);
                     $total_cash = $total_cash + $rdata->total_cash;
                     $total_b1d = $total_b1d + $rdata->total_b1d;
                     $total_b1c = $total_b1c + $rdata->total_b1c;
@@ -136,7 +136,7 @@
                 ?>
                 <tr>
                   <td>{{ Carbon\Carbon::parse($rdata->dated)->format('d-m-Y')  }}</td>
-                  <td style="text-align: right;">{{ number_format(($rdata->total_service-$rdata->total_tambahan),0,',','.') }}</td>
+                  <td style="text-align: right;">{{ number_format(($rdata->total_service_no_cl-$rdata->total_tambahan),0,',','.') }}</td>
                   <td style="text-align: right;">{{ number_format($total_service,0,',','.') }}</td> 
                   <td style="text-align: right;">{{ number_format($rdata->total_product,0,',','.') }}</td>
                   <td style="text-align: right;">{{ number_format($total_product,0,',','.') }}</td>   
@@ -146,8 +146,8 @@
                   @endif
                   <td style="text-align: right;">{{ number_format($rdata->total_extra,0,',','.') }}</td>
                   <td style="text-align: right;">{{ number_format($total_extra,0,',','.') }}</td>    
-                  @if(($report_total[0]->total_lebaran)>0)
-                    <td style="text-align: right;">{{ number_format(($rdata->total_lebaran),0,',','.') }}</td>
+                  @if(($report_total[0]->total_lebaran+$report_total[0]->total_lebaran_cl)>0)
+                    <td style="text-align: right;">{{ number_format(($rdata->total_lebaran+$rdata->total_lebaran_cl),0,',','.') }}</td>
                     <td style="text-align: right;">{{ number_format(($total_lebaran),0,',','.') }}</td>
                   @endif  
                   <td style="text-align: right;">{{ number_format($rdata->total_all,0,',','.') }}</td>
@@ -171,7 +171,7 @@
               @endif
               <td style="text-align: right;">{{ number_format($total_extra,0,',','.') }}</td>
               <td style="text-align: right;">{{ number_format($total_extra,0,',','.') }}</td> 
-              @if(($report_total[0]->total_lebaran)>0)
+              @if(($report_total[0]->total_lebaran+$report_total[0]->total_lebaran_cl)>0)
                 <td style="text-align: right;">{{ number_format(($total_lebaran),0,',','.') }}</td>
                 <td style="text-align: right;">{{ number_format(($total_lebaran),0,',','.') }}</td>
               @endif     

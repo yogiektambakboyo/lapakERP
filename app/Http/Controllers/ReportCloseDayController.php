@@ -64,17 +64,23 @@ class ReportCloseDayController extends Controller
 
         $period = DB::select("select period_no,remark from period where period_no<=to_char(now(),'YYYYMM')::int and period_no>=202301  order by period_no asc");
         
+        DB::select("update product_sku set charge_lebaran=35000  where type_id=2 and remark like '%EDISI LEBARAN%' and remark not like '%JR%EDISI%LEBARAN%';");
+        DB::select("update product_sku set charge_lebaran=25000  where type_id=2 and remark like '%JR%EDISI%LEBARAN%';");
+        
         $branchs = Branch::join('users_branch as ub','ub.branch_id', '=', 'branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']);        
 
         $shifts = Shift::orderBy('shift.id')->get(['shift.id','shift.remark','shift.id','shift.time_start','shift.time_end']); 
         $report_data = DB::select("
                 select b.id as branch_id,b.remark as branch_name,im.dated,sum(id.total+id.vat_total) as total_all,
                 sum(case when ps.type_id = 2 and ps.category_id = 53 then id.total+id.vat_total else 0 end) as total_salon,
+                sum(case when ps.type_id = 2 and ps.category_id = 53 then (id.total-(id.qty*ps.charge_lebaran))+id.vat_total  else 0 end) as total_salon_no_cl,
                 sum(case when ps.type_id = 2 and ps.category_id !=53 then id.total+id.vat_total else 0 end) as total_service,
+                sum(case when ps.type_id = 2 and ps.category_id !=53 then (id.total-(id.qty*ps.charge_lebaran))+id.vat_total else 0 end) as total_service_no_cl,
                 sum(case when ps.type_id = 1 and ps.category_id !=26 then id.total+id.vat_total else 0 end) as total_product,
                 sum(case when ps.type_id = 1 and ps.category_id = 26 then id.total+id.vat_total else 0 end) as total_drink,
                 sum(case when ps.type_id = 8 and ps.remark not like '%CHARGE LEBARAN%'  then id.total+id.vat_total else 0 end) as total_extra,
                 sum(case when ps.type_id = 8 and ps.remark like '%CHARGE LEBARAN%'  then id.total+id.vat_total else 0 end) as total_lebaran,
+                sum(case when ps.charge_lebaran>0 then (id.qty*ps.charge_lebaran) else 0 end) as total_lebaran_cl,
                 sum(case when im.payment_type = 'Cash' then id.total+id.vat_total else 0 end) as total_cash,
                 sum(case when im.payment_type = 'BCA - Debit' then id.total+id.vat_total else 0 end) as total_b_d,
                 sum(case when im.payment_type = 'BCA - Kredit' then id.total+id.vat_total else 0 end) as total_b_k,
@@ -119,30 +125,64 @@ class ReportCloseDayController extends Controller
         $branchs = Branch::join('users_branch as ub','ub.branch_id', '=', 'branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']);        
 
         $shifts = Shift::orderBy('shift.id')->get(['shift.id','shift.remark','shift.id','shift.time_start','shift.time_end']); 
-        $filter_begin_date = date(Carbon::parse($request->filter_begin_date)->format('Y-m-d'));
-        $filter_branch_id =  $request->get('filter_branch_id')==null?'%':$request->get('filter_branch_id');
-        $report_data = DB::select("
-        select category_id,branch_name,dated,product_name,abbr,type_id,price,qty,case when total=0 then 'Free' else total::character varying end as total,qty_customer from (
-                select ps.category_id,b.remark as branch_name,im.dated,id.product_name,ps.abbr,ps.type_id,id.price,sum(id.qty) as qty,sum(id.total+id.vat_total) as total,count(c.id) as qty_customer
-                from invoice_master im 
-                join invoice_detail id on id.invoice_no = im.invoice_no 
-                join customers c on c.id = im.customers_id 
-                join branch b on b.id=c.branch_id
-                join product_sku ps on ps.id = id.product_id 
-                where id.total>0 and im.dated = '".$filter_begin_date."'  and c.branch_id = ".$filter_branch_id." and ps.id!=461
-                group by ps.category_id,b.remark,im.dated,id.product_name,ps.abbr,id.price,ps.type_id     
-                union all
-                select ps.category_id,b.remark as branch_name,im.dated,id.product_name,ps.abbr,ps.type_id,id.price,sum(id.qty) as qty,sum(id.total+id.vat_total) as total,count(c.id) as qty_customer
-                from invoice_master im 
-                join invoice_detail id on id.invoice_no = im.invoice_no 
-                join customers c on c.id = im.customers_id 
-                join branch b on b.id=c.branch_id
-                join product_sku ps on ps.id = id.product_id 
-                where id.total=0  and id.discount=id.price*id.qty  and ps.id!=461 and im.dated = '".$filter_begin_date."'  and c.branch_id = ".$filter_branch_id."
-                group by ps.category_id,b.remark,im.dated,id.product_name,ps.abbr,id.price,ps.type_id     
-        ) a    
+        if($request->filter_type == "cl"){
+            $filter_begin_date = date(Carbon::parse($request->filter_begin_date_cl)->format('Y-m-d'));
+            $filter_branch_id =  $request->get('filter_branch_id_cl')==null?'%':$request->get('filter_branch_id_cl');
 
-        ");
+            $report_data = DB::select("
+            select is_cl,charge_lebaran,category_id,branch_name,dated,product_name,abbr,type_id,price,qty,case when total=0 then 'Free' else total::character varying end as total,qty_customer from (
+                    select case when ps.charge_lebaran>0 then 1 else 0 end is_cl,ps.charge_lebaran, ps.category_id,b.remark as branch_name,im.dated,id.product_name,ps.abbr,ps.type_id,id.price-ps.charge_lebaran as price,sum(id.qty) as qty,sum((id.total-(id.qty*ps.charge_lebaran))+id.vat_total) as total,count(c.id) as qty_customer
+                    from invoice_master im 
+                    join invoice_detail id on id.invoice_no = im.invoice_no 
+                    join customers c on c.id = im.customers_id 
+                    join branch b on b.id=c.branch_id
+                    join product_sku ps on ps.id = id.product_id 
+                    where id.total>0 and im.dated = '".$filter_begin_date."'  and c.branch_id = ".$filter_branch_id." and ps.id!=461
+                    group by ps.category_id,b.remark,im.dated,id.product_name,ps.abbr,id.price,ps.type_id,ps.charge_lebaran     
+                    union all
+                    select case when ps.charge_lebaran>0 then 1 else 0 end is_cl,ps.charge_lebaran,ps.category_id,b.remark as branch_name,im.dated,id.product_name,ps.abbr,ps.type_id,id.price-ps.charge_lebaran as price,sum(id.qty) as qty,sum((id.total-(id.qty*ps.charge_lebaran))+id.vat_total) as total,count(c.id) as qty_customer
+                    from invoice_master im 
+                    join invoice_detail id on id.invoice_no = im.invoice_no 
+                    join customers c on c.id = im.customers_id 
+                    join branch b on b.id=c.branch_id
+                    join product_sku ps on ps.id = id.product_id 
+                    where id.total=0  and id.discount=id.price*id.qty  and ps.id!=461 and im.dated = '".$filter_begin_date."'  and c.branch_id = ".$filter_branch_id."
+                    group by ps.category_id,b.remark,im.dated,id.product_name,ps.abbr,id.price,ps.type_id,ps.charge_lebaran    
+            ) a    
+    
+            ");
+
+        }else{
+            $filter_begin_date = date(Carbon::parse($request->filter_begin_date)->format('Y-m-d'));
+            $filter_branch_id =  $request->get('filter_branch_id')==null?'%':$request->get('filter_branch_id');
+
+            $report_data = DB::select("
+            select 0 as is_cl, 0 as charge_lebaran,category_id,branch_name,dated,product_name,abbr,type_id,price,qty,case when total=0 then 'Free' else total::character varying end as total,qty_customer from (
+                    select ps.category_id,b.remark as branch_name,im.dated,id.product_name,ps.abbr,ps.type_id,id.price,sum(id.qty) as qty,sum(id.total+id.vat_total) as total,count(c.id) as qty_customer
+                    from invoice_master im 
+                    join invoice_detail id on id.invoice_no = im.invoice_no 
+                    join customers c on c.id = im.customers_id 
+                    join branch b on b.id=c.branch_id
+                    join product_sku ps on ps.id = id.product_id 
+                    where id.total>0 and im.dated = '".$filter_begin_date."'  and c.branch_id = ".$filter_branch_id." and ps.id!=461
+                    group by ps.category_id,b.remark,im.dated,id.product_name,ps.abbr,id.price,ps.type_id     
+                    union all
+                    select ps.category_id,b.remark as branch_name,im.dated,id.product_name,ps.abbr,ps.type_id,id.price,sum(id.qty) as qty,sum(id.total+id.vat_total) as total,count(c.id) as qty_customer
+                    from invoice_master im 
+                    join invoice_detail id on id.invoice_no = im.invoice_no 
+                    join customers c on c.id = im.customers_id 
+                    join branch b on b.id=c.branch_id
+                    join product_sku ps on ps.id = id.product_id 
+                    where id.total=0  and id.discount=id.price*id.qty  and ps.id!=461 and im.dated = '".$filter_begin_date."'  and c.branch_id = ".$filter_branch_id."
+                    group by ps.category_id,b.remark,im.dated,id.product_name,ps.abbr,id.price,ps.type_id     
+            ) a    
+    
+            ");
+
+        }
+
+    
+       
 
         $creator = DB::select("
                 select string_agg(distinct created_by,', ') created_by from (select coalesce(u.name,'-') as created_by
@@ -194,6 +234,20 @@ class ReportCloseDayController extends Controller
 
         if($request->filter_type == "api"){
             return array_merge([
+                'data' => $data,
+                'payment_datas' => $payment_data,
+                'out_datas' => $out_data,
+                'report_datas' => $report_data,
+                'petty_datas' => $petty_datas,
+                'cust' => $cust,
+                'creator' => $creator,
+                'settings' => Settings::get(),
+                'filter_begin_date' => $filter_begin_date,
+                'filter_begin_end' => $filter_begin_date,
+                'filter_branch_id' => $filter_branch_id,
+            ]);
+        }else if($request->filter_type == "cl"){
+            return view('pages.reports.close_day_print_cl', [
                 'data' => $data,
                 'payment_datas' => $payment_data,
                 'out_datas' => $out_data,
@@ -1727,11 +1781,15 @@ class ReportCloseDayController extends Controller
         }else if($request->export=='Export Sum'){
             $report_data = DB::select("
                     select b.id as branch_id,b.remark as branch_name,im.dated,sum(id.total+id.vat_total) as total_all,
-                    sum(case when ps.type_id = 2 then id.total+id.vat_total else 0 end) as total_service,
-                    sum(case when ps.type_id = 1 and ps.category_id != 26 then id.total+id.vat_total else 0 end) as total_product,
+                    sum(case when ps.type_id = 2 and ps.category_id = 53 then id.total+id.vat_total else 0 end) as total_salon,
+                    sum(case when ps.type_id = 2 and ps.category_id = 53 then (id.total-(id.qty*ps.charge_lebaran))+id.vat_total  else 0 end) as total_salon_no_cl,
+                    sum(case when ps.type_id = 2 and ps.category_id !=53 then id.total+id.vat_total else 0 end) as total_service,
+                    sum(case when ps.type_id = 2 and ps.category_id !=53 then (id.total-(id.qty*ps.charge_lebaran))+id.vat_total else 0 end) as total_service_no_cl,
+                    sum(case when ps.type_id = 1 and ps.category_id !=26 then id.total+id.vat_total else 0 end) as total_product,
                     sum(case when ps.type_id = 1 and ps.category_id = 26 then id.total+id.vat_total else 0 end) as total_drink,
                     sum(case when ps.type_id = 8 and ps.remark not like '%CHARGE LEBARAN%'  then id.total+id.vat_total else 0 end) as total_extra,
                     sum(case when ps.type_id = 8 and ps.remark like '%CHARGE LEBARAN%'  then id.total+id.vat_total else 0 end) as total_lebaran,
+                    sum(case when ps.charge_lebaran>0 then (id.qty*ps.charge_lebaran) else 0 end) as total_lebaran_cl,
                     sum(case when im.payment_type = 'Cash' then id.total+id.vat_total else 0 end) as total_cash,
                     sum(case when im.payment_type = 'BCA - Debit' then id.total+id.vat_total else 0 end) as total_b_d,
                     sum(case when im.payment_type = 'BCA - Kredit' then id.total+id.vat_total else 0 end) as total_b_k,
@@ -1948,12 +2006,16 @@ class ReportCloseDayController extends Controller
         }else if($request->export=='Export Sum Counter'){
             $report_data = DB::select("
                     select b.id as branch_id,b.remark as branch_name,im.dated,sum(id.total+id.vat_total) as total_all,
+                    sum(case when ps.type_id = 2 and ps.category_id = 53 then id.total+id.vat_total else 0 end) as total_salon,
+                    sum(case when ps.type_id = 2 and ps.category_id = 53 then (id.total-(id.qty*ps.charge_lebaran))+id.vat_total  else 0 end) as total_salon_no_cl,
                     sum(case when ps.type_id = 2 then id.total+id.vat_total else 0 end) as total_service,
+                    sum(case when ps.type_id = 2 then (id.total-(id.qty*ps.charge_lebaran))+id.vat_total else 0 end) as total_service_no_cl,
                     sum(case when ps.type_id = 1 and ps.category_id != 58 and ps.category_id != 60 then id.total+id.vat_total else 0 end) as total_product,
                     sum(case when ps.type_id = 1 and ps.category_id = 60 then id.total+id.vat_total else 0 end) as total_ojek,
                     sum(case when ps.type_id = 2 and ps.category_id=56 then id.qty*20000 else 0 end) as total_tambahan,
                     sum(case when ps.type_id = 8 and ps.remark not like '%CHARGE LEBARAN%'  then id.total+id.vat_total else 0 end) as total_extra,
                     sum(case when ps.type_id = 8 and ps.remark like '%CHARGE LEBARAN%'  then id.total+id.vat_total else 0 end) as total_lebaran,
+                    sum(case when ps.charge_lebaran>0 then (id.qty*ps.charge_lebaran) else 0 end) as total_lebaran_cl,
                     sum(case when im.payment_type = 'Cash' then id.total+id.vat_total else 0 end) as total_cash,
                     sum(case when im.payment_type = 'BCA - Debit' then id.total+id.vat_total else 0 end) as total_b_d,
                     sum(case when im.payment_type = 'BCA - Kredit' then id.total+id.vat_total else 0 end) as total_b_k,
@@ -1984,12 +2046,15 @@ class ReportCloseDayController extends Controller
             $report_total = DB::select("
                     select 
                     sum(case when ps.type_id = 2 then id.total+id.vat_total else 0 end) as total_service,
+                    sum(case when ps.type_id = 2 and ps.category_id !=53 then (id.total-(id.qty*ps.charge_lebaran))+id.vat_total else 0 end) as total_service_no_cl,
                     sum(case when ps.type_id = 2 and ps.category_id=53 then id.total+id.vat_total else 0 end) as total_salon,
+                    sum(case when ps.type_id = 2 and ps.category_id = 53 then (id.total-(id.qty*ps.charge_lebaran))+id.vat_total  else 0 end) as total_salon_no_cl,
                     sum(case when ps.type_id = 1 and ps.category_id != 60 then id.total+id.vat_total else 0 end) as total_product,
                     sum(case when ps.type_id = 1 and ps.category_id = 60 then id.total+id.vat_total else 0 end) as total_ojek,
                     sum(case when ps.type_id = 2 and ps.category_id=56 then id.qty*20000 else 0 end) as total_tambahan,
                     sum(case when ps.type_id = 8 and ps.remark not like '%CHARGE LEBARAN%'  then id.total+id.vat_total else 0 end) as total_extra,
                     sum(case when ps.type_id = 8 and ps.remark like '%CHARGE LEBARAN%'  then id.total+id.vat_total else 0 end) as total_lebaran,
+                    sum(case when ps.charge_lebaran>0 then (id.qty*ps.charge_lebaran) else 0 end) as total_lebaran_cl,
                     sum(case when im.payment_type = 'Cash' then id.total+id.vat_total else 0 end) as total_cash,
                     sum(case when im.payment_type = 'BCA - Debit' then id.total+id.vat_total else 0 end) as total_b_d,
                     sum(case when im.payment_type = 'BCA - Kredit' then id.total+id.vat_total else 0 end) as total_b_k,
@@ -2310,11 +2375,14 @@ class ReportCloseDayController extends Controller
             $report_data = DB::select("
                     select b.id as branch_id,b.remark as branch_name,im.dated,sum(id.total+id.vat_total) as total_all,
                     sum(case when ps.type_id = 2 and ps.category_id = 53 then id.total+id.vat_total else 0 end) as total_salon,
+                    sum(case when ps.type_id = 2 and ps.category_id = 53 then (id.total-(id.qty*ps.charge_lebaran))+id.vat_total  else 0 end) as total_salon_no_cl,
                     sum(case when ps.type_id = 2 and ps.category_id !=53 then id.total+id.vat_total else 0 end) as total_service,
+                    sum(case when ps.type_id = 2 and ps.category_id !=53 then (id.total-(id.qty*ps.charge_lebaran))+id.vat_total else 0 end) as total_service_no_cl,
                     sum(case when ps.type_id = 1 and ps.category_id != 26 then id.total+id.vat_total else 0 end) as total_product,
                     sum(case when ps.type_id = 1 and ps.category_id = 26 then id.total+id.vat_total else 0 end) as total_drink,
                     sum(case when ps.type_id = 8 and ps.remark not like '%CHARGE LEBARAN%'  then id.total+id.vat_total else 0 end) as total_extra,
                     sum(case when ps.type_id = 8 and ps.remark like '%CHARGE LEBARAN%'  then id.total+id.vat_total else 0 end) as total_lebaran,
+                    sum(case when ps.charge_lebaran>0 then (id.qty*ps.charge_lebaran) else 0 end) as total_lebaran_cl,
                     sum(case when im.payment_type = 'Cash' then id.total+id.vat_total else 0 end) as total_cash,
                     sum(case when im.payment_type = 'BCA - Debit' then id.total+id.vat_total else 0 end) as total_b_d,
                     sum(case when im.payment_type = 'BCA - Kredit' then id.total+id.vat_total else 0 end) as total_b_k,
@@ -2341,7 +2409,8 @@ class ReportCloseDayController extends Controller
                     where im.dated between '".$begindate."' and '".$enddate."'
                     group by b.remark,im.dated,b.id    
                     order by 3     
-            ");         
+            "); 
+            
             return view('pages.reports.close_day',['company' => Company::get()->first()], compact('period','shifts','begindate','enddate','branchs','data','keyword','act_permission','report_data'))->with('i', ($request->input('page', 1) - 1) * 5);
         }
     }

@@ -93,11 +93,11 @@
             @foreach($report_data as $rdata)
                 <tr>
                     <td>{{ Carbon\Carbon::parse($rdata->dated)->format('d-m-Y')  }}</td>
-                    <td style="text-align: right;">{{ number_format($rdata->total_service,0,',','.') }}</td>
+                    <td style="text-align: right;">{{ number_format($rdata->total_service_no_cl,0,',','.') }}</td>
                     <td style="text-align: right;">{{ number_format($rdata->total_product,0,',','.') }}</td>
                     <td style="text-align: right;">{{ number_format($rdata->total_drink,0,',','.') }}</td>
                     <td style="text-align: right;">{{ number_format($rdata->total_extra,0,',','.') }}</td>
-                    <td style="text-align: right;">{{ number_format($rdata->total_lebaran,0,',','.') }}</td>
+                    <td style="text-align: right;">{{ number_format(($rdata->total_lebaran_cl+$rdata->total_lebaran),0,',','.') }}</td>
                     <td style="text-align: right;">{{ number_format($rdata->total_cash,0,',','.') }}</td>
                     <td style="text-align: right;">{{ number_format($rdata->total_b1d,0,',','.') }}</td>
                     <td style="text-align: right;">{{ number_format($rdata->total_b1c,0,',','.') }}</td>
@@ -111,11 +111,11 @@
                     <td style="text-align: right;">{{ number_format($rdata->total_all,0,',','.') }}</td>                      
                 </tr>
                 <?php 
-                    $total_service = $total_service + $rdata->total_service;
+                    $total_service = $total_service + $rdata->total_service_no_cl;
                     $total_product = $total_product + $rdata->total_product;
                     $total_drink = $total_drink + $rdata->total_drink;
                     $total_extra = $total_extra + $rdata->total_extra;
-                    $total_lebaran = $total_lebaran + $rdata->total_lebaran;
+                    $total_lebaran = $total_lebaran + $rdata->total_lebaran_cl;
                     $total_cash = $total_cash + $rdata->total_cash;
                     $total_b1d = $total_b1d + $rdata->total_b1d;
                     $total_b1c = $total_b1c + $rdata->total_b1c;

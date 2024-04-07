@@ -35,13 +35,13 @@ class CloseDayExport implements FromCollection,WithColumnFormatting, WithHeading
         return [
             'Cabang',
             'Tanggal',
-            'Total All',
             'Total Service',
             'Total Salon',
             'Total Product',
             'Total Drink',
             'Total Extra',
             'Total Cas Lebaran',
+            'Total All',
             'Cash',
             'BANK 1 - Debit',
             'BANK 1 - Kredit',
@@ -59,13 +59,14 @@ class CloseDayExport implements FromCollection,WithColumnFormatting, WithHeading
     public function collection()
     {
         return collect(DB::select("
-            select b.remark as branch_name,im.dated,sum(id.total+id.vat_total) as total_all,
-            sum(case when ps.type_id = 2 and ps.category_id !=53 then id.total+id.vat_total else 0 end) as total_service,
-            sum(case when ps.type_id = 2 and ps.category_id = 53 then id.total+id.vat_total else 0 end) as total_salon,
+            select b.remark as branch_name,im.dated,
+            sum(case when ps.type_id = 2 and ps.category_id !=53 then (id.total-(id.qty*ps.charge_lebaran))+id.vat_total else 0 end) as total_service,
+            sum(case when ps.type_id = 2 and ps.category_id = 53 then (id.total-(id.qty*ps.charge_lebaran))+id.vat_total  else 0 end) as total_salon,
             sum(case when ps.type_id = 1 and ps.category_id !=26 then id.total+id.vat_total else 0 end) as total_product,
             sum(case when ps.type_id = 1 and ps.category_id =26 then id.total+id.vat_total else 0 end) as total_drink,
             sum(case when ps.type_id = 8 and ps.remark not like '%CHARGE LEBARAN%'  then id.total+id.vat_total else 0 end) as total_extra,
-            sum(case when ps.type_id = 8 and ps.remark like '%CHARGE LEBARAN%'  then id.total+id.vat_total else 0 end) as total_lebaran,
+            sum(case when ps.charge_lebaran>0 then (id.qty*ps.charge_lebaran) else 0 end) as total_lebaran,
+            sum(id.total+id.vat_total) as total_all,
             sum(case when im.payment_type = 'Cash' then id.total+id.vat_total else 0 end) as total_cash,
             sum(case when im.payment_type = 'BCA - Debit' or im.payment_type = 'BANK 1 - Debit' then id.total+id.vat_total else 0 end) as total_b1d,
             sum(case when im.payment_type = 'BCA - Kredit' or im.payment_type = 'BANK 1 - Kredit' then id.total+id.vat_total else 0 end) as total_b1c,
