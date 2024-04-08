@@ -54,7 +54,7 @@
               <thead>
                 <tr style="background-color:#FFA726;color:black;">
                   <th colspan="7">Cabang : {{ $report_data[0]->branch_name  }}</th>
-                  <th colspan="14">Tgl : {{ $filter_begin_date  }} ~ {{ $filter_begin_end  }}</th>
+                  <th colspan="15">Tgl : {{ date("d-m-Y", strtotime($filter_begin_date )) }} ~ {{ date("d-m-Y", strtotime($filter_begin_end )) }}</th>
                 </tr>
                 <tr style="text-align: center;background-color:#FFA726;">
                   <th>No</th>
@@ -171,6 +171,7 @@
                           'KOMISI PRODUK',
                           'NILAI POINT',
                           'EXTRA CHARGE',
+                          'CHARGE LEBARAN',
                           'KOMISI MENURUT CAT TERAPIS',
                           'SELISIH',
                           'CASES',
@@ -208,6 +209,7 @@
                           { key: 'komisi_produk', width: 18 },
                           { key: 'nilai_point', width: 10 },
                           { key: 'extra_charge', width: 10 },
+                          { key: 'charge_lebaran', width: 10 },
                           { key: 'komisi_menurut_cat_terapis', width: 10 },
                           { key: 'selisih', width: 10 },
                           { key: 'cases', width: 13 },
@@ -286,6 +288,7 @@
                               komisi_produk        : rowElement.komisi_produk, 
                               nilai_point       : rowElement.nilai_point, 
                               extra_charge : rowElement.extra_charge, 
+                              charge_lebaran : rowElement.charge_lebaran, 
                               komisi_menurut_cat_terapis         : rowElement.komisi_menurut_cat_terapis, 
                               selisih  : rowElement.selisih, 
                               cases    : rowElement.cases, 
