@@ -141,7 +141,7 @@ class ReportCloseDayController extends Controller
                     where id.total>0 and im.dated = '".$filter_begin_date."'  and c.branch_id = ".$filter_branch_id." and ps.id!=461
                     group by ps.category_id,b.remark,im.dated,id.product_name,ps.abbr,id.price,ps.type_id,ps.charge_lebaran     
                     union all
-                    select case when ps.charge_lebaran>0 then 1 else 0 end is_cl,ps.charge_lebaran,ps.category_id,b.remark as branch_name,im.dated,id.product_name,ps.abbr,ps.type_id,id.price-ps.charge_lebaran as price,sum(id.qty) as qty,sum((id.total-(id.qty*ps.charge_lebaran))+id.vat_total) as total,count(c.id) as qty_customer
+                    select case when ps.charge_lebaran>0 then 1 else 0 end is_cl,ps.charge_lebaran,ps.category_id,b.remark as branch_name,im.dated,id.product_name,ps.abbr,ps.type_id,id.price-ps.charge_lebaran as price,sum(id.qty) as qty,sum(case when id.total>0 then id.total-(id.qty*ps.charge_lebaran)+id.vat_total else 0 end) as total,count(c.id) as qty_customer
                     from invoice_master im 
                     join invoice_detail id on id.invoice_no = im.invoice_no 
                     join customers c on c.id = im.customers_id 
