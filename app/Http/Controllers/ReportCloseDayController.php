@@ -64,8 +64,9 @@ class ReportCloseDayController extends Controller
 
         $period = DB::select("select period_no,remark from period where period_no<=to_char(now(),'YYYYMM')::int and period_no>=202301  order by period_no asc");
         
-        DB::select("update product_sku set charge_lebaran=35000  where type_id=2 and remark like '%EDISI LEBARAN%' and remark not like '%JR%EDISI%LEBARAN%';");
+        DB::select("update product_sku set charge_lebaran=35000  where type_id=2 and remark like '%EDISI LEBARAN%' and remark not like '%JR%EDISI%LEBARAN%' and remark not like '%GUNTING%BARBER%';");
         DB::select("update product_sku set charge_lebaran=25000  where type_id=2 and remark like '%JR%EDISI%LEBARAN%';");
+        DB::select("update product_sku set charge_lebaran=15000  where type_id=2 and remark like '%GUNTING%BARBER%EDISI%LEBARAN%';");
         
         $branchs = Branch::join('users_branch as ub','ub.branch_id', '=', 'branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']);        
 
