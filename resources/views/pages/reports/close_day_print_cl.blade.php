@@ -70,6 +70,8 @@
                 $counter_salon = 0;
                 $counter_cl25 = 0;
                 $val_cl25 = 0;
+                $counter_cl15 = 0;
+                $val_cl15 = 0;
                 $counter_cl35 = 0;
                 $val_cl35 = 0;
               @endphp
@@ -97,6 +99,10 @@
                          if($report_data->is_cl==1 && $report_data->charge_lebaran==25000){
                             $counter_cl25 = $counter_cl25 + $report_data->qty;
                             $val_cl25 = $val_cl25 + ($report_data->total=='Free'?0:($report_data->charge_lebaran*$report_data->qty));
+                         }
+                         if($report_data->is_cl==1 && $report_data->charge_lebaran==15000){
+                            $counter_cl15 = $counter_cl15 + $report_data->qty;
+                            $val_cl15 = $val_cl15 + ($report_data->total=='Free'?0:($report_data->charge_lebaran*$report_data->qty));
                          }
                          if($report_data->is_cl==1 && $report_data->charge_lebaran==35000){
                           $counter_cl35 = $counter_cl35 + $report_data->qty;
@@ -312,6 +318,21 @@
                     @endif
                   @endforeach
 
+
+                  @if($val_cl15>0)
+                        <tr>
+                            <td style="text-align: left;">CHARGE LEBARAN 15K</td>
+                            <td style="text-align: center;">{{ number_format(15000,0,',','.') }}</td>
+                            <td style="text-align: center;">{{ number_format($counter_cl15,0,',','.') }}</td>
+                            <td style="text-align: right;">{{  number_format($val_cl15,0,',','.') }}</td>
+                        </tr>
+                        @php
+                          $total_extra = $total_extra+$val_cl15; 
+                          $counter++;   
+                          $total_qty = $total_qty + $counter_cl15;
+                        @endphp
+                    @endif
+                    
                     @if($val_cl25>0)
                         <tr>
                             <td style="text-align: left;">CHARGE LEBARAN 25K</td>
@@ -325,6 +346,8 @@
                           $total_qty = $total_qty + $counter_cl25;
                         @endphp
                     @endif
+
+                    
 
                     @if($val_cl35>0)
                         <tr>
