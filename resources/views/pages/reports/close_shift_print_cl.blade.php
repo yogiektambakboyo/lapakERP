@@ -71,7 +71,7 @@
                 $counter_cl35 = 0;
                 $val_cl35 = 0;
                 $val_cl15 = 0;
-                $counter_cl35 = 0;
+                $counter_cl15 = 0;
               @endphp
               
               <table class="table table-striped" id="service_table">
