@@ -319,7 +319,7 @@
                   @endforeach
 
 
-                  @if($val_cl15>0)
+                  @if($counter_cl15>0)
                         <tr>
                             <td style="text-align: left;">CHARGE LEBARAN 15K</td>
                             <td style="text-align: center;">{{ number_format(15000,0,',','.') }}</td>
@@ -332,8 +332,8 @@
                           $total_qty = $total_qty + $counter_cl15;
                         @endphp
                     @endif
-                    
-                    @if($val_cl25>0)
+
+                    @if($counter_cl25>0)
                         <tr>
                             <td style="text-align: left;">CHARGE LEBARAN 25K</td>
                             <td style="text-align: center;">{{ number_format(25000,0,',','.') }}</td>
@@ -349,7 +349,7 @@
 
                     
 
-                    @if($val_cl35>0)
+                    @if($counter_cl35>0)
                         <tr>
                             <td style="text-align: left;">CHARGE LEBARAN 35K</td>
                             <td style="text-align: center;">{{ number_format(35000,0,',','.') }}</td>
