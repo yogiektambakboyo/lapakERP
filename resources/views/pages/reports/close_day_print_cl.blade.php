@@ -156,10 +156,23 @@
                                 <td style="text-align: right;">{{ $report_data->total=='Free'?'Free':number_format($report_data->total,0,',','.') }}</td>
                             </tr>
                             @php
+                              if($report_data->is_cl==1 && $report_data->charge_lebaran==25000){
+                                  $counter_cl25 = $counter_cl25 + $report_data->qty;
+                                  $val_cl25 = $val_cl25 + ($report_data->total=='Free'?0:($report_data->charge_lebaran*$report_data->qty));
+                              }
+                              if($report_data->is_cl==1 && $report_data->charge_lebaran==15000){
+                                  $counter_cl15 = $counter_cl15 + $report_data->qty;
+                                  $val_cl15 = $val_cl15 + ($report_data->total=='Free'?0:($report_data->charge_lebaran*$report_data->qty));
+                              }
+                              if($report_data->is_cl==1 && $report_data->charge_lebaran==35000){
+                                $counter_cl35 = $counter_cl35 + $report_data->qty;
+                                  $val_cl35 = $val_cl35 + ($report_data->total=='Free'?0:($report_data->charge_lebaran*$report_data->qty));
+                              }
                               $total_salon = $total_salon + ($report_data->total=='Free'?0:$report_data->total); 
                               $counter++;   
                               $total_qty_salon = $total_qty_salon + $report_data->qty;
                             @endphp
+
                           @endif
                       @endforeach
                     </tbody>
