@@ -1547,7 +1547,11 @@ class ReportCloseDayController extends Controller
         DB::select("call call_reportcloseday('".$filter_begin_date."'::date,".$filter_branch_id.");");
         
         $counter_service = DB::select("
-                select product_id,product_abbr,type_id,sum(sub_total) as sum_val,sum(product_qty) as sum_qty from temp_invoice ti where branch_id=".$filter_branch_id." and ti.type_id=2 group by product_id,product_abbr,type_id order by 3,2;                       
+                select product_id,product_abbr,ti.type_id,sum(sub_total) as sum_val,sum(product_qty) as sum_qty,sum(ti.product_qty*ps.charge_lebaran) as sum_cl,sum(case when ps.charge_lebaran>0 then ti.product_qty else 0 end) as  sum_qty_cl
+                from temp_invoice ti 
+                join product_sku ps on ps.id = ti.product_id
+                where branch_id=".$filter_branch_id." and ti.type_id=2 
+                group by ti.product_id,product_abbr,ti.type_id order by 3,2;                       
         ");
 
         $counter_extra = DB::select("
@@ -1559,8 +1563,9 @@ class ReportCloseDayController extends Controller
         ");
 
         $report_data = DB::select("
-                select branch_room,right(invoice_no,6) as invoice_no,invoice_no as invoice_no_full,dated,ti.customers_id,ti.customers_name,ti.shift_name,string_agg(distinct ti.assigned_to_name,', ') as assigned_to_name,string_agg(distinct ti.voucher_code,', ') as voucher_code,(coalesce(total_payment,0)/1000)::float total_payment,payment_type 
+                select branch_room,right(invoice_no,6) as invoice_no,invoice_no as invoice_no_full,sum(ti.product_qty*ps.charge_lebaran) as cl,sum(case when ps.charge_lebaran>0 then ti.product_qty else 0 end) as  count_cl,dated,ti.customers_id,ti.customers_name,ti.shift_name,string_agg(distinct ti.assigned_to_name,', ') as assigned_to_name,string_agg(distinct ti.voucher_code,', ') as voucher_code,(coalesce(total_payment,0)/1000)::float total_payment,payment_type 
                 from temp_invoice ti
+                join product_sku ps on ps.id = ti.product_id
                 where ti.dated = '".$filter_begin_date."'  and ti.branch_id = ".$filter_branch_id."
                 group by branch_room,invoice_no,dated,ti.customers_id,ti.customers_name,ti.shift_name,total_payment,payment_type
                 order by 2                        
@@ -1680,8 +1685,12 @@ class ReportCloseDayController extends Controller
             DB::select("call call_reportcloseday('".$filter_begin_date."'::date,".$filter_branch_id.");");
             
             $counter_service = DB::select("
-                    select product_id,product_abbr,type_id,sum(sub_total) as sum_val,sum(product_qty) as sum_qty from temp_invoice ti where branch_id=".$filter_branch_id." and ti.type_id=2 group by product_id,product_abbr,type_id order by 3,2;                       
-            ");
+                select product_id,product_abbr,ti.type_id,sum(sub_total) as sum_val,sum(product_qty) as sum_qty,sum(ti.product_qty*ps.charge_lebaran) as sum_cl,sum(case when ps.charge_lebaran>0 then ti.product_qty else 0 end) as  sum_qty_cl
+                from temp_invoice ti 
+                join product_sku ps on ps.id = ti.product_id
+                where branch_id=".$filter_branch_id." and ti.type_id=2 
+                group by ti.product_id,product_abbr,ti.type_id order by 3,2;                       
+        ");
 
             $counter_extra = DB::select("
                     select product_id,product_abbr,type_id,sum(sub_total) as sum_val,sum(product_qty) as sum_qty from temp_invoice ti where branch_id=".$filter_branch_id." and  ti.type_id=8 group by product_id,product_abbr,type_id order by 3,2;                       
@@ -1692,11 +1701,12 @@ class ReportCloseDayController extends Controller
             ");
 
             $report_data = DB::select("
-                    select branch_room,right(invoice_no,6) as invoice_no,invoice_no as invoice_no_full,dated,ti.customers_id,ti.customers_name,ti.shift_name,string_agg(distinct ti.assigned_to_name,', ') as assigned_to_name,string_agg(distinct ti.voucher_code,', ') as voucher_code,(coalesce(total_payment,0)/1000)::float total_payment,payment_type 
-                    from temp_invoice ti
-                    where ti.dated = '".$filter_begin_date."'  and ti.branch_id = ".$filter_branch_id."
-                    group by branch_room,invoice_no,dated,ti.customers_id,ti.customers_name,ti.shift_name,total_payment,payment_type
-                    order by 2                        
+                select branch_room,right(invoice_no,6) as invoice_no,invoice_no as invoice_no_full,sum(ti.product_qty*ps.charge_lebaran) as cl,sum(case when ps.charge_lebaran>0 then ti.product_qty else 0 end) as  count_cl,dated,ti.customers_id,ti.customers_name,ti.shift_name,string_agg(distinct ti.assigned_to_name,', ') as assigned_to_name,string_agg(distinct ti.voucher_code,', ') as voucher_code,(coalesce(total_payment,0)/1000)::float total_payment,payment_type 
+                from temp_invoice ti
+                join product_sku ps on ps.id = ti.product_id
+                where ti.dated = '".$filter_begin_date."'  and ti.branch_id = ".$filter_branch_id."
+                group by branch_room,invoice_no,dated,ti.customers_id,ti.customers_name,ti.shift_name,total_payment,payment_type
+                order by 2                        
             ");
 
             $report_data_detail = DB::select("
@@ -1826,7 +1836,9 @@ class ReportCloseDayController extends Controller
             $report_data = DB::select("
                     select b.id as branch_id,b.remark as branch_name,im.dated,sum(id.total+id.vat_total) as total_all,
                     sum(case when ps.type_id = 2 and ps.category_id!=53 and ps.category_id!=60 then id.total+id.vat_total else 0 end) as total_service,
+                    sum(case when ps.type_id = 2 and ps.category_id !=53 then (id.total-(id.qty*ps.charge_lebaran))+id.vat_total else 0 end) as total_service_no_cl,
                     sum(case when ps.type_id = 2 and ps.category_id=53 then id.total+id.vat_total else 0 end) as total_salon,
+                    sum(case when ps.type_id = 2 and ps.category_id = 53 then (id.total-(id.qty*ps.charge_lebaran))+id.vat_total  else 0 end) as total_salon_no_cl,
                     sum(case when ps.type_id = 2 and ps.category_id=56 then id.qty*20000 else 0 end) as total_tambahan,
                     sum(case when ps.type_id = 1 and ps.category_id != 26 and ps.category_id != 60 then id.total+id.vat_total else 0 end) as total_product,
                     sum(case when ps.type_id = 1 and ps.category_id = 26 then id.total+id.vat_total else 0 end) as total_drink,
@@ -1849,6 +1861,7 @@ class ReportCloseDayController extends Controller
                     sum(case when im.payment_type = 'QRIS' or im.payment_type = 'BANK 1 - QRIS' then id.total+id.vat_total else 0 end) as total_b1q,
                     sum(case when im.payment_type = 'BANK 2 - QRIS' then id.total+id.vat_total else 0 end) as total_b2q,
                     count(distinct im.invoice_no) qty_transaction,count(distinct im.invoice_no) qty_customers,
+                    sum(case when ps.charge_lebaran>0 then (id.qty*ps.charge_lebaran) else 0 end) as total_lebaran_cl,
                     sum(case when ps.type_id = 2 then id.qty else 0 end) as qty_service
                     from invoice_master im 
                     join invoice_detail id on id.invoice_no  = im.invoice_no 
@@ -1863,8 +1876,10 @@ class ReportCloseDayController extends Controller
             $report_total = DB::select("
                     select 
                     sum(case when ps.type_id = 2 and ps.category_id!=53 and ps.category_id!=60 then id.total+id.vat_total else 0 end) as total_service,
+                    sum(case when ps.type_id = 2 and ps.category_id !=53 then (id.total-(id.qty*ps.charge_lebaran))+id.vat_total else 0 end) as total_service_no_cl,
                     sum(case when ps.type_id = 2 and ps.category_id=53 then id.total+id.vat_total else 0 end) as total_salon,
                     sum(case when ps.type_id = 2 and ps.category_id=56 then id.qty*20000 else 0 end) as total_tambahan,
+                    sum(case when ps.type_id = 2 and ps.category_id = 53 then (id.total-(id.qty*ps.charge_lebaran))+id.vat_total  else 0 end) as total_salon_no_cl,
                     sum(case when ps.type_id = 1 and ps.category_id != 26 and ps.category_id != 60 then id.total+id.vat_total else 0 end) as total_product,
                     sum(case when ps.type_id = 1 and ps.category_id = 26 then id.total+id.vat_total else 0 end) as total_drink,
                     sum(case when ps.type_id = 1 and ps.category_id = 60 then id.total+id.vat_total else 0 end) as total_ojek,
@@ -1886,6 +1901,7 @@ class ReportCloseDayController extends Controller
                     sum(case when im.payment_type = 'QRIS' or im.payment_type = 'BANK 1 - QRIS' then id.total+id.vat_total else 0 end) as total_b1q,
                     sum(case when im.payment_type = 'BANK 2 - QRIS' then id.total+id.vat_total else 0 end) as total_b2q,
                     count(distinct im.invoice_no) qty_transaction,count(distinct im.invoice_no) qty_customers,
+                    sum(case when ps.charge_lebaran>0 then (id.qty*ps.charge_lebaran) else 0 end) as total_lebaran_cl,
                     sum(case when ps.type_id = 2 then id.qty else 0 end) as qty_service
                     from invoice_master im 
                     join invoice_detail id on id.invoice_no  = im.invoice_no 
@@ -1922,7 +1938,9 @@ class ReportCloseDayController extends Controller
             $report_data = DB::select("
                     select to_char(im.dated,'dd-mm-YYYY') as datedformat,b.id as branch_id,b.remark as branch_name,im.dated,sum(id.total+id.vat_total) as total_all,
                     sum(case when ps.type_id = 2 and ps.category_id!=53 and ps.category_id!=60 then id.total+id.vat_total else 0 end) as total_service,
+                    sum(case when ps.type_id = 2 and ps.category_id !=53 then (id.total-(id.qty*ps.charge_lebaran))+id.vat_total else 0 end) as total_service_no_cl,
                     sum(case when ps.type_id = 2 and ps.category_id=53 then id.total+id.vat_total else 0 end) as total_salon,
+                    sum(case when ps.type_id = 2 and ps.category_id = 53 then (id.total-(id.qty*ps.charge_lebaran))+id.vat_total  else 0 end) as total_salon_no_cl,
                     sum(case when ps.type_id = 2 and ps.category_id=56 then id.qty*20000 else 0 end) as total_tambahan,
                     sum(case when ps.type_id = 1 and ps.category_id != 26 and ps.category_id != 60 then id.total+id.vat_total else 0 end) as total_product,
                     sum(case when ps.type_id = 1 and ps.category_id = 26 then id.total+id.vat_total else 0 end) as total_drink,
@@ -1945,6 +1963,7 @@ class ReportCloseDayController extends Controller
                     sum(case when im.payment_type = 'QRIS' or im.payment_type = 'BANK 1 - QRIS' then id.total+id.vat_total else 0 end) as total_b1q,
                     sum(case when im.payment_type = 'BANK 2 - QRIS' then id.total+id.vat_total else 0 end) as total_b2q,
                     count(distinct im.invoice_no) qty_transaction,count(distinct im.invoice_no) qty_customers,
+                    sum(case when ps.charge_lebaran>0 then (id.qty*ps.charge_lebaran) else 0 end) as total_lebaran_cl,
                     sum(case when ps.type_id = 2 then id.qty else 0 end) as qty_service
                     from invoice_master im 
                     join invoice_detail id on id.invoice_no  = im.invoice_no 
@@ -1959,8 +1978,11 @@ class ReportCloseDayController extends Controller
             $report_total = DB::select("
                     select 
                     sum(case when ps.type_id = 2 and ps.category_id!=53 and ps.category_id!=60 then id.total+id.vat_total else 0 end) as total_service,
+                    sum(case when ps.type_id = 2 and ps.category_id !=53 then (id.total-(id.qty*ps.charge_lebaran))+id.vat_total else 0 end) as total_service_no_cl,
                     sum(case when ps.type_id = 2 and ps.category_id=53 then id.total+id.vat_total else 0 end) as total_salon,
+                    sum(case when ps.type_id = 2 and ps.category_id = 53 then (id.total-(id.qty*ps.charge_lebaran))+id.vat_total  else 0 end) as total_salon_no_cl,
                     sum(case when ps.type_id = 2 and ps.category_id=56 then id.qty*20000 else 0 end) as total_tambahan,
+                    sum(case when ps.charge_lebaran>0 then (id.qty*ps.charge_lebaran) else 0 end) as total_lebaran_cl,
                     sum(case when ps.type_id = 1 and ps.category_id != 26 and ps.category_id != 60 then id.total+id.vat_total else 0 end) as total_product,
                     sum(case when ps.type_id = 1 and ps.category_id = 26 then id.total+id.vat_total else 0 end) as total_drink,
                     sum(case when ps.type_id = 1 and ps.category_id = 60 then id.total+id.vat_total else 0 end) as total_ojek,
@@ -2197,6 +2219,9 @@ class ReportCloseDayController extends Controller
                     sum(case when im.payment_type = 'QRIS' or im.payment_type = 'BANK 1 - QRIS' then id.total+id.vat_total else 0 end) as total_b1q,
                     sum(case when im.payment_type = 'BANK 2 - QRIS' then id.total+id.vat_total else 0 end) as total_b2q,
                     count(distinct im.invoice_no) qty_transaction,count(distinct im.invoice_no) qty_customers,
+                    sum(case when ps.type_id = 2 and ps.category_id !=53 then (id.total-(id.qty*ps.charge_lebaran))+id.vat_total else 0 end) as total_service_no_cl,
+                    sum(case when ps.type_id = 2 and ps.category_id = 53 then (id.total-(id.qty*ps.charge_lebaran))+id.vat_total  else 0 end) as total_salon_no_cl,
+                    sum(case when ps.charge_lebaran>0 then (id.qty*ps.charge_lebaran) else 0 end) as total_lebaran_cl,
                     sum(case when ps.type_id = 2 then id.qty else 0 end) as qty_service
                     from invoice_master im 
                     join invoice_detail id on id.invoice_no  = im.invoice_no 
@@ -2235,6 +2260,9 @@ class ReportCloseDayController extends Controller
                     sum(case when im.payment_type = 'QRIS' or im.payment_type = 'BANK 1 - QRIS' then id.total+id.vat_total else 0 end) as total_b1q,
                     sum(case when im.payment_type = 'BANK 2 - QRIS' then id.total+id.vat_total else 0 end) as total_b2q,
                     count(distinct im.invoice_no) qty_transaction,count(distinct im.invoice_no) qty_customers,
+                    sum(case when ps.type_id = 2 and ps.category_id !=53 then (id.total-(id.qty*ps.charge_lebaran))+id.vat_total else 0 end) as total_service_no_cl,
+                    sum(case when ps.type_id = 2 and ps.category_id = 53 then (id.total-(id.qty*ps.charge_lebaran))+id.vat_total  else 0 end) as total_salon_no_cl,
+                    sum(case when ps.charge_lebaran>0 then (id.qty*ps.charge_lebaran) else 0 end) as total_lebaran_cl,
                     sum(case when ps.type_id = 2 then id.qty else 0 end) as qty_service
                     from invoice_master im 
                     join invoice_detail id on id.invoice_no  = im.invoice_no 
@@ -2276,6 +2304,9 @@ class ReportCloseDayController extends Controller
                     sum(case when im.payment_type = 'QRIS' or im.payment_type = 'BANK 1 - QRIS' then id.total+id.vat_total else 0 end) as total_b1q,
                     sum(case when im.payment_type = 'BANK 2 - QRIS' then id.total+id.vat_total else 0 end) as total_b2q,
                     count(distinct im.invoice_no) qty_transaction,count(distinct im.invoice_no) qty_customers,
+                    sum(case when ps.type_id = 2 and ps.category_id !=53 then (id.total-(id.qty*ps.charge_lebaran))+id.vat_total else 0 end) as total_service_no_cl,
+                    sum(case when ps.type_id = 2 and ps.category_id = 53 then (id.total-(id.qty*ps.charge_lebaran))+id.vat_total  else 0 end) as total_salon_no_cl,
+                    sum(case when ps.charge_lebaran>0 then (id.qty*ps.charge_lebaran) else 0 end) as total_lebaran_cl,
                     sum(case when ps.type_id = 2 then id.qty else 0 end) as qty_service
                     from invoice_master im 
                     join invoice_detail id on id.invoice_no  = im.invoice_no 
@@ -2314,6 +2345,9 @@ class ReportCloseDayController extends Controller
                     sum(case when im.payment_type = 'QRIS' or im.payment_type = 'BANK 1 - QRIS' then id.total+id.vat_total else 0 end) as total_b1q,
                     sum(case when im.payment_type = 'BANK 2 - QRIS' then id.total+id.vat_total else 0 end) as total_b2q,
                     count(distinct im.invoice_no) qty_transaction,count(distinct im.invoice_no) qty_customers,
+                    sum(case when ps.type_id = 2 and ps.category_id !=53 then (id.total-(id.qty*ps.charge_lebaran))+id.vat_total else 0 end) as total_service_no_cl,
+                    sum(case when ps.type_id = 2 and ps.category_id = 53 then (id.total-(id.qty*ps.charge_lebaran))+id.vat_total  else 0 end) as total_salon_no_cl,
+                    sum(case when ps.charge_lebaran>0 then (id.qty*ps.charge_lebaran) else 0 end) as total_lebaran_cl,
                     sum(case when ps.type_id = 2 then id.qty else 0 end) as qty_service
                     from invoice_master im 
                     join invoice_detail id on id.invoice_no  = im.invoice_no 
@@ -2356,6 +2390,9 @@ class ReportCloseDayController extends Controller
                     sum(case when im.payment_type = 'BANK 2 - Transfer' then id.total+id.vat_total else 0 end) as total_b2t,
                     sum(case when im.payment_type = 'QRIS' or im.payment_type = 'BANK 1 - QRIS' then id.total+id.vat_total else 0 end) as total_b1q,
                     sum(case when im.payment_type = 'BANK 2 - QRIS' then id.total+id.vat_total else 0 end) as total_b2q,
+                    sum(case when ps.charge_lebaran>0 then (id.qty*ps.charge_lebaran) else 0 end) as total_lebaran_cl,
+                    sum(case when ps.type_id = 2 and ps.category_id = 53 then (id.total-(id.qty*ps.charge_lebaran))+id.vat_total  else 0 end) as total_salon_no_cl,
+                    sum(case when ps.type_id = 2 and ps.category_id !=53 then (id.total-(id.qty*ps.charge_lebaran))+id.vat_total else 0 end) as total_service_no_cl,
                     count(distinct im.invoice_no) qty_transaction,count(distinct im.invoice_no) qty_customers,
                     sum(case when ps.type_id = 2 then id.qty else 0 end) as qty_service
                     from invoice_master im 

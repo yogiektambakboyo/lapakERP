@@ -170,15 +170,23 @@
                     </td>
                     <td style="vertical-align:top;">
                       @php  
-                      if (str_contains($report_data_detail_ts->commisions_lebaran, "##")) {
-                        $commisions_lebaran = explode("##",$report_data_detail_ts->commisions_lebaran);
-                        foreach ($commisions_lebaran as $value) {
-                          echo $value==""?"":number_format($value,0,',','.')."<br>";
+                        if (str_contains($report_data_detail_ts->commisions_lebaran, "##")) {
+                          $commisions_lebaran = explode("##",$report_data_detail_ts->commisions_lebaran);
+                          foreach ($commisions_lebaran as $value) {
+                            echo $value==""?"":number_format($value,0,',','.')."<br>";
+                          }
+                        }else{
+                          echo $report_data_detail_ts->commisions_lebaran;
                         }
-                      }else{
-                        echo $report_data_detail_ts->commisions_lebaran;
-                      }
-                    @endphp
+                        if (str_contains($report_data_detail_ts->charge_lebaran, "##")) {
+                          $charge_lebaran = explode("##",$report_data_detail_ts->charge_lebaran);
+                          foreach ($charge_lebaran as $value) {
+                            echo $value==""?"":number_format($value,0,',','.')."<br>";
+                          }
+                        }else{
+                          echo $report_data_detail_ts->charge_lebaran;
+                        }
+                      @endphp
                     </td>
                     <td style="vertical-align:top;">
                       {{ number_format($report_data_detail_ts->total,0,',','.') }}
@@ -392,7 +400,7 @@
                               product_qty         : ((rowElement.product_qty.replaceAll("####", "##")).replaceAll("####", "##")).replaceAll("####","##").replaceAll("####","##").replaceAll("####","##").replaceAll("####","##").replaceAll('##','\n'), 
                               product_commisions  : ((rowElement.product_commisions.replaceAll("####", "##")).replaceAll("####", "##")).replaceAll("####","##").replaceAll("####","##").replaceAll("####","##").replaceAll("####","##").replaceAll('##','\n'), 
                               commisions_extra    : ((rowElement.commisions_extra.replaceAll("####", "##")).replaceAll("####", "##")).replaceAll("####","##").replaceAll("####","##").replaceAll("####","##").replaceAll("####","##").replaceAll('##','\n'), 
-                              commisions_lebaran    : ((rowElement.commisions_lebaran.replaceAll("####", "##")).replaceAll("####", "##")).replaceAll("####","##").replaceAll("####","##").replaceAll("####","##").replaceAll("####","##").replaceAll('##','\n'), 
+                              commisions_lebaran    : ((rowElement.charge_lebaran.replaceAll("####", "##")).replaceAll("####", "##")).replaceAll("####","##").replaceAll("####","##").replaceAll("####","##").replaceAll("####","##").replaceAll('##','\n')+'\n'+((rowElement.commisions_lebaran.replaceAll("####", "##")).replaceAll("####", "##")).replaceAll("####","##").replaceAll("####","##").replaceAll("####","##").replaceAll("####","##").replaceAll('##','\n'), 
                               total : rowElement.total, 
                               totalx : value_sd, 
                             });

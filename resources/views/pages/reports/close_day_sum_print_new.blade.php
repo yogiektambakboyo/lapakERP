@@ -72,7 +72,7 @@
                 <th class="<?= $report_total[0]->total_tambahan==0?'d-none':''; ?>"  style="text-align: center;background-color:#FFA726;" rowspan="2"  scope="col">Tambahan Terapis</th> 
                 <th style="text-align: center;background-color:#FFA726;" rowspan="2"  scope="col">Extra</th>    
                 <th style="text-align: center;background-color:#FFA726;" rowspan="2"  scope="col">@lang('general.lbl_drink')</th>     
-                <th class="<?= $report_total[0]->total_lebaran==0?'d-none':''; ?>" style="text-align: center;background-color:#FFA726;" rowspan="2"  scope="col">Charge Lebaran</th>       
+                <th class="<?= ($report_total[0]->total_lebaran+$report_total[0]->total_lebaran_cl==0)?'d-none':''; ?>" style="text-align: center;background-color:#FFA726;" rowspan="2"  scope="col">Charge Lebaran</th>       
                 <th class="<?= $report_total[0]->total_b1d==0?'d-none':''; ?>" style="text-align: center;background-color:#FFA726;" rowspan="2" scope="col">B1 - D</th>    
                 <th  class="<?= $report_total[0]->total_b1c==0?'d-none':''; ?>" style="text-align: center;background-color:#FFA726;" rowspan="2"  scope="col">B1 - K</th>    
                 <th  class="<?= $report_total[0]->total_b2d==0?'d-none':''; ?>" style="text-align: center;background-color:#FFA726;" rowspan="2"  scope="col">B2 - D</th>    
@@ -126,7 +126,7 @@
                 @if($counter_it<=0)
                   <tr>
                     <td>{{ Carbon\Carbon::parse($rdata->dated)->format('d-m-Y')  }}</td>
-                    <td style="text-align: right;">{{ number_format(($rdata->total_service-$rdata->total_tambahan),0,',','.') }}</td>
+                    <td style="text-align: right;">{{ number_format(($rdata->total_service_no_cl-$rdata->total_tambahan),0,',','.') }}</td>
                     <td class="<?= $report_total[0]->total_salon==0?'d-none':''; ?>"  style="text-align: right;">{{ number_format($rdata->total_salon,0,',','.') }}</td>
                     <td class="<?= $report_total[0]->total_salon==0?'d-none':''; ?>"  style="text-align: right;">{{ number_format($rdata->total_salon+($rdata->total_service-$rdata->total_tambahan),0,',','.') }}</td>
                     <td style="text-align: right;"></td>
@@ -137,7 +137,7 @@
                     <td class="<?= $report_total[0]->total_tambahan==0?'d-none':''; ?>"  style="text-align: right;">{{ number_format($rdata->total_tambahan,0,',','.') }}</td>
                     <td style="text-align: right;">{{ number_format($rdata->total_extra,0,',','.') }}</td>
                     <td style="text-align: right;">{{ number_format($rdata->total_drink,0,',','.') }}</td>
-                    <td class="<?= $report_total[0]->total_lebaran==0?'d-none':''; ?>" style="text-align: right;">{{ number_format($rdata->total_lebaran,0,',','.') }}</td>
+                    <td class="<?= ($report_total[0]->total_lebaran+$report_total[0]->total_lebaran_cl==0)?'d-none':''; ?>" style="text-align: right;">{{ number_format(($report_total[0]->total_lebaran+$report_total[0]->total_lebaran_cl),0,',','.') }}</td>
                     <td class="<?= $report_total[0]->total_b1d==0?'d-none':''; ?>" style="text-align: right;">{{ number_format($rdata->total_b1d,0,',','.') }}</td>
                     <td class="<?= $report_total[0]->total_b1c==0?'d-none':''; ?>" style="text-align: right;">{{ number_format($rdata->total_b1c,0,',','.') }}</td>
                     <td class="<?= $report_total[0]->total_b2d==0?'d-none':''; ?>" style="text-align: right;">{{ number_format($rdata->total_b2d,0,',','.') }}</td>
@@ -160,7 +160,7 @@
                               @if($counter_itg==0)
                                 <tr>
                                   <td>{{ Carbon\Carbon::parse($rdata->dated)->format('d-m-Y')  }}</td>
-                                  <td style="text-align: right;">{{ number_format(($rdata->total_service-$rdata->total_tambahan),0,',','.') }}</td>
+                                  <td style="text-align: right;">{{ number_format(($rdata->total_service_no_cl-$rdata->total_tambahan),0,',','.') }}</td>
                                   <td class="<?= $report_total[0]->total_salon==0?'d-none':''; ?>"  style="text-align: right;">{{ number_format($rdata->total_salon,0,',','.') }}</td>
                                   <td class="<?= $report_total[0]->total_salon==0?'d-none':''; ?>"  style="text-align: right;">{{ number_format($rdata->total_salon+($rdata->total_service-$rdata->total_tambahan),0,',','.') }}</td>
 
@@ -180,7 +180,7 @@
                                   <td  class="<?= $report_total[0]->total_tambahan==0?'d-none':''; ?>" style="text-align: right;">{{ number_format($rdata->total_tambahan,0,',','.') }}</td>
                                   <td style="text-align: right;">{{ number_format($rdata->total_extra,0,',','.') }}</td>
                                   <td style="text-align: right;">{{ number_format($rdata->total_drink,0,',','.') }}</td>
-                                  <td  class="<?= $report_total[0]->total_lebaran==0?'d-none':''; ?>" style="text-align: right;">{{ number_format($rdata->total_lebaran,0,',','.') }}</td>
+                                  <td  class="<?= ($report_total[0]->total_lebaran+$report_total[0]->total_lebaran_cl)==0?'d-none':''; ?>" style="text-align: right;">{{ number_format(($rdata->total_lebaran+$rdata->total_lebaran_cl),0,',','.') }}</td>
                                   <td class="<?= $report_total[0]->total_b1d==0?'d-none':''; ?>" style="text-align: right;">{{ number_format($rdata->total_b1d,0,',','.') }}</td>
                                   <td class="<?= $report_total[0]->total_b1c==0?'d-none':''; ?>" style="text-align: right;">{{ number_format($rdata->total_b1c,0,',','.') }}</td>
                                   <td class="<?= $report_total[0]->total_b2d==0?'d-none':''; ?>" style="text-align: right;">{{ number_format($rdata->total_b2d,0,',','.') }}</td>
@@ -218,7 +218,7 @@
                                   <td  class="<?= $report_total[0]->total_tambahan==0?'d-none':''; ?>" style="text-align: right;"></td>
                                   <td style="text-align: right;"></td>
                                   <td style="text-align: right;"></td>
-                                  <td  class="<?= $report_total[0]->total_lebaran==0?'d-none':''; ?>" style="text-align: right;"></td>
+                                  <td  class="<?= ($report_total[0]->total_lebaran+$report_total[0]->total_lebaran_cl)==0?'d-none':''; ?>" style="text-align: right;"></td>
                                   <td class="<?= $report_total[0]->total_b1d==0?'d-none':''; ?>" style="text-align: right;"></td>
                                   <td  class="<?= $report_total[0]->total_b1c==0?'d-none':''; ?>" style="text-align: right;"></td>
                                   <td  class="<?= $report_total[0]->total_b2d==0?'d-none':''; ?>"style="text-align: right;"></td>
@@ -240,7 +240,7 @@
 
                         <?php
                           $colspan_c = 14;
-                          if($report_total[0]->total_lebaran==0){
+                          if($report_total[0]->total_lebaran+$report_total[0]->total_lebaran_cl==0){
                             $colspan_c--;
                           }
                           if($report_total[0]->total_ojek==0){
@@ -301,7 +301,7 @@
                           <td  class="<?= $report_total[0]->total_tambahan==0?'d-none':''; ?>" style="text-align: right;"></td>
                           <td style="text-align: right;"></td>
                           <td style="text-align: right;"></td>
-                          <td  class="<?= $report_total[0]->total_lebaran==0?'d-none':''; ?>" style="text-align: right;"></td>
+                          <td  class="<?= ($report_total[0]->total_lebaran+$report_total[0]->total_lebaran_cl==0)?'d-none':''; ?>" style="text-align: right;"></td>
                           <td class="<?= $report_total[0]->total_b1d==0?'d-none':''; ?>" style="text-align: right;"></td>
                           <td  class="<?= $report_total[0]->total_b1c==0?'d-none':''; ?>" style="text-align: right;"></td>
                           <td  class="<?= $report_total[0]->total_b2d==0?'d-none':''; ?>"style="text-align: right;"></td>
@@ -321,7 +321,7 @@
 
                 
                 <?php 
-                    $total_service = $total_service + ($rdata->total_service-$rdata->total_tambahan);
+                    $total_service = $total_service + ($rdata->total_service_no_cl-$rdata->total_tambahan);
                     $total_salon = $total_salon + $rdata->total_salon;
                     
                     
@@ -330,7 +330,7 @@
                     $total_product = $total_product + $rdata->total_product;
                     $total_drink = $total_drink + $rdata->total_drink;
                     $total_extra = $total_extra + $rdata->total_extra;
-                    $total_lebaran = $total_lebaran + $rdata->total_lebaran;
+                    $total_lebaran = $total_lebaran + ($rdata->total_lebaran+$rdata->total_lebaran_cl);
                     $total_cash = $total_cash + $rdata->total_cash;
                     $total_b1d = $total_b1d + $rdata->total_b1d;
                     $total_b1c = $total_b1c + $rdata->total_b1c;
@@ -358,7 +358,7 @@
               <th class="<?= $report_total[0]->total_tambahan==0?'d-none':''; ?>"  style="text-align: right;">{{ number_format($total_tambahan,0,',','.') }}</th>              
               <th style="text-align: right;">{{ number_format($total_extra,0,',','.') }}</th>                
               <th style="text-align: right;">{{ number_format($total_drink,0,',','.') }}</th>                
-              <th class="<?= $report_total[0]->total_lebaran==0?'d-none':''; ?>"  style="text-align: right;">{{ number_format($total_lebaran,0,',','.') }}</th>                
+              <th class="<?= ($report_total[0]->total_lebaran+$report_total[0]->total_lebaran_cl==0)?'d-none':''; ?>"  style="text-align: right;">{{ number_format($total_lebaran,0,',','.') }}</th>                
                             
               <th  class="<?= $report_total[0]->total_b1d==0?'d-none':''; ?>" style="text-align: right;">{{ number_format($total_b1d,0,',','.') }}</th>                
               <th  class="<?= $report_total[0]->total_b1c==0?'d-none':''; ?>" style="text-align: right;">{{ number_format($total_b1c,0,',','.') }}</th>                
@@ -508,64 +508,69 @@
                        worksheet.getCell('G3').alignment = { vertical: 'middle', horizontal: 'center' };
 
                        worksheet.mergeCells('H2', 'H3');
-                       worksheet.getCell('H2').value = 'Minuman';
+                       worksheet.getCell('H2').value = 'Charge Lebaran';
                        worksheet.getCell('H2').alignment = { vertical: 'middle', horizontal: 'center' };
                        worksheet.getCell('H3').alignment = { vertical: 'middle', horizontal: 'center' };
 
                        worksheet.mergeCells('I2', 'I3');
-                       worksheet.getCell('I2').value = 'B1 - D';
+                       worksheet.getCell('I2').value = 'Minuman';
                        worksheet.getCell('I2').alignment = { vertical: 'middle', horizontal: 'center' };
                        worksheet.getCell('I3').alignment = { vertical: 'middle', horizontal: 'center' };
 
                        worksheet.mergeCells('J2', 'J3');
-                       worksheet.getCell('J2').value = 'B1 - K';
+                       worksheet.getCell('J2').value = 'B1 - D';
                        worksheet.getCell('J2').alignment = { vertical: 'middle', horizontal: 'center' };
                        worksheet.getCell('J3').alignment = { vertical: 'middle', horizontal: 'center' };
 
                        worksheet.mergeCells('K2', 'K3');
-                       worksheet.getCell('K2').value = 'B1 - QRIS';
+                       worksheet.getCell('K2').value = 'B1 - K';
                        worksheet.getCell('K2').alignment = { vertical: 'middle', horizontal: 'center' };
                        worksheet.getCell('K3').alignment = { vertical: 'middle', horizontal: 'center' };
 
                        worksheet.mergeCells('L2', 'L3');
-                       worksheet.getCell('L2').value = 'B1 - TRANSFER';
+                       worksheet.getCell('L2').value = 'B1 - QRIS';
                        worksheet.getCell('L2').alignment = { vertical: 'middle', horizontal: 'center' };
                        worksheet.getCell('L3').alignment = { vertical: 'middle', horizontal: 'center' };
 
                        worksheet.mergeCells('M2', 'M3');
-                       worksheet.getCell('M2').value = 'B2 - D';
+                       worksheet.getCell('M2').value = 'B1 - TRANSFER';
                        worksheet.getCell('M2').alignment = { vertical: 'middle', horizontal: 'center' };
                        worksheet.getCell('M3').alignment = { vertical: 'middle', horizontal: 'center' };
 
                        worksheet.mergeCells('N2', 'N3');
-                       worksheet.getCell('N2').value = 'B2 - K';
+                       worksheet.getCell('N2').value = 'B2 - D';
                        worksheet.getCell('N2').alignment = { vertical: 'middle', horizontal: 'center' };
                        worksheet.getCell('N3').alignment = { vertical: 'middle', horizontal: 'center' };
 
                        worksheet.mergeCells('O2', 'O3');
-                       worksheet.getCell('O2').value = 'B2 - QRIS';
+                       worksheet.getCell('O2').value = 'B2 - K';
                        worksheet.getCell('O2').alignment = { vertical: 'middle', horizontal: 'center' };
                        worksheet.getCell('O3').alignment = { vertical: 'middle', horizontal: 'center' };
 
                        worksheet.mergeCells('P2', 'P3');
-                       worksheet.getCell('P2').value = 'B2 - TRANSFER';
+                       worksheet.getCell('P2').value = 'B2 - QRIS';
                        worksheet.getCell('P2').alignment = { vertical: 'middle', horizontal: 'center' };
                        worksheet.getCell('P3').alignment = { vertical: 'middle', horizontal: 'center' };
 
                        worksheet.mergeCells('Q2', 'Q3');
-                       worksheet.getCell('Q2').value = 'CASES';
+                       worksheet.getCell('Q2').value = 'B2 - TRANSFER';
                        worksheet.getCell('Q2').alignment = { vertical: 'middle', horizontal: 'center' };
                        worksheet.getCell('Q3').alignment = { vertical: 'middle', horizontal: 'center' };
 
                        worksheet.mergeCells('R2', 'R3');
-                       worksheet.getCell('R2').value = 'Total Yang Disetor';
+                       worksheet.getCell('R2').value = 'CASES';
                        worksheet.getCell('R2').alignment = { vertical: 'middle', horizontal: 'center' };
                        worksheet.getCell('R3').alignment = { vertical: 'middle', horizontal: 'center' };
 
                        worksheet.mergeCells('S2', 'S3');
-                       worksheet.getCell('S2').value = 'Total Pendapatan';
+                       worksheet.getCell('S2').value = 'Total Yang Disetor';
                        worksheet.getCell('S2').alignment = { vertical: 'middle', horizontal: 'center' };
                        worksheet.getCell('S3').alignment = { vertical: 'middle', horizontal: 'center' };
+
+                       worksheet.mergeCells('T2', 'T3');
+                       worksheet.getCell('T2').value = 'Total Pendapatan';
+                       worksheet.getCell('T2').alignment = { vertical: 'middle', horizontal: 'center' };
+                       worksheet.getCell('T3').alignment = { vertical: 'middle', horizontal: 'center' };
 
 
                        worksheet.columns = [
@@ -595,6 +600,7 @@
                        worksheet.getCell('Q1').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
                        worksheet.getCell('R1').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
                        worksheet.getCell('S1').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                       worksheet.getCell('T1').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
 
                        worksheet.getCell('A2').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
                        worksheet.getCell('B2').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
@@ -614,6 +620,7 @@
                        worksheet.getCell('Q2').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
                        worksheet.getCell('R2').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
                        worksheet.getCell('S2').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                       worksheet.getCell('T2').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
                        
                        
 
@@ -637,6 +644,7 @@
                        worksheet.getCell('Q3').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
                        worksheet.getCell('R3').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
                        worksheet.getCell('S3').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                       worksheet.getCell('T3').fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
 
 
                        let counter = 4;
@@ -660,30 +668,31 @@
                                 }
                               }
 
-                              t_total_service_t = t_total_service_t + (parseFloat(rowElementData.total_service));
+                              t_total_service_t = t_total_service_t + (parseFloat(rowElementData.total_service_no_cl));
                               t_total_all_t = t_total_all_t + parseFloat(rowElementData.total_all);
 
                               //If exist in Detail
                               if(isexistDetail==0){
                                 worksheet.getCell('A'+counter).value = rowElementData.datedformat;
-                                worksheet.getCell('B'+counter).value = rowElementData.total_service;
+                                worksheet.getCell('B'+counter).value = rowElementData.total_service_no_cl;
                                 worksheet.getCell('C'+counter).value = "";
                                 worksheet.getCell('D'+counter).value = "";
                                 worksheet.getCell('E'+counter).value = "";
                                 worksheet.getCell('F'+counter).value = "";
                                 worksheet.getCell('G'+counter).value = rowElementData.total_extra;
-                                worksheet.getCell('H'+counter).value = rowElementData.total_drink;
-                                worksheet.getCell('I'+counter).value = rowElementData.total_b1d;
-                                worksheet.getCell('J'+counter).value = rowElementData.total_b1c;
-                                worksheet.getCell('K'+counter).value = rowElementData.total_b1q;
-                                worksheet.getCell('L'+counter).value = rowElementData.total_b1t;
-                                worksheet.getCell('M'+counter).value = rowElementData.total_b2d;
-                                worksheet.getCell('N'+counter).value = rowElementData.total_b2c;
-                                worksheet.getCell('O'+counter).value = rowElementData.total_b2q;
-                                worksheet.getCell('P'+counter).value = rowElementData.total_b2t;
-                                worksheet.getCell('Q'+counter).value = rowElementData.qty_service;
-                                worksheet.getCell('R'+counter).value = rowElementData.total_cash;
-                                worksheet.getCell('S'+counter).value = rowElementData.total_all;
+                                worksheet.getCell('H'+counter).value = parseFloat(rowElementData.total_lebaran)+parseFloat(rowElementData.total_lebaran_cl);
+                                worksheet.getCell('I'+counter).value = rowElementData.total_drink;
+                                worksheet.getCell('J'+counter).value = rowElementData.total_b1d;
+                                worksheet.getCell('K'+counter).value = rowElementData.total_b1c;
+                                worksheet.getCell('L'+counter).value = rowElementData.total_b1q;
+                                worksheet.getCell('M'+counter).value = rowElementData.total_b1t;
+                                worksheet.getCell('N'+counter).value = rowElementData.total_b2d;
+                                worksheet.getCell('O'+counter).value = rowElementData.total_b2c;
+                                worksheet.getCell('P'+counter).value = rowElementData.total_b2q;
+                                worksheet.getCell('Q'+counter).value = rowElementData.total_b2t;
+                                worksheet.getCell('R'+counter).value = rowElementData.qty_service;
+                                worksheet.getCell('S'+counter).value = rowElementData.total_cash;
+                                worksheet.getCell('T'+counter).value = rowElementData.total_all;
                               }else{
 
                                   var counterDetail = 1;
@@ -698,24 +707,25 @@
                                     if(counterDetail == 1 ){
                                   
                                         worksheet.getCell('A'+counter).value = rowElementDetail.datedformat;
-                                        worksheet.getCell('B'+counter).value = rowElementData.total_service;
+                                        worksheet.getCell('B'+counter).value = rowElementData.total_service_no_cl;
                                         worksheet.getCell('C'+counter).value = rowElementDetail.abbr;
                                         worksheet.getCell('D'+counter).value = rowElementDetail.qty;
                                         worksheet.getCell('E'+counter).value = rowElementDetail.price;
                                         worksheet.getCell('F'+counter).value = rowElementDetail.total;
                                         worksheet.getCell('G'+counter).value = rowElementData.total_extra;
-                                        worksheet.getCell('H'+counter).value = rowElementData.total_drink;
-                                        worksheet.getCell('I'+counter).value = rowElementData.total_b1d;
-                                        worksheet.getCell('J'+counter).value = rowElementData.total_b1c;
-                                        worksheet.getCell('K'+counter).value = rowElementData.total_b1q;
-                                        worksheet.getCell('L'+counter).value = rowElementData.total_b1t;
-                                        worksheet.getCell('M'+counter).value = rowElementData.total_b2d;
-                                        worksheet.getCell('N'+counter).value = rowElementData.total_b2c;
-                                        worksheet.getCell('O'+counter).value = rowElementData.total_b2q;
-                                        worksheet.getCell('P'+counter).value = rowElementData.total_b2t;
-                                        worksheet.getCell('Q'+counter).value = rowElementData.qty_service;
-                                        worksheet.getCell('R'+counter).value = "";
+                                        worksheet.getCell('H'+counter).value = parseFloat(rowElementData.total_lebaran)+parseFloat(rowElementData.total_lebaran_cl);
+                                        worksheet.getCell('I'+counter).value = rowElementData.total_drink;
+                                        worksheet.getCell('J'+counter).value = rowElementData.total_b1d;
+                                        worksheet.getCell('K'+counter).value = rowElementData.total_b1c;
+                                        worksheet.getCell('L'+counter).value = rowElementData.total_b1q;
+                                        worksheet.getCell('M'+counter).value = rowElementData.total_b1t;
+                                        worksheet.getCell('N'+counter).value = rowElementData.total_b2d;
+                                        worksheet.getCell('O'+counter).value = rowElementData.total_b2c;
+                                        worksheet.getCell('P'+counter).value = rowElementData.total_b2q;
+                                        worksheet.getCell('Q'+counter).value = rowElementData.total_b2t;
+                                        worksheet.getCell('R'+counter).value = rowElementData.qty_service;
                                         worksheet.getCell('S'+counter).value = "";
+                                        worksheet.getCell('T'+counter).value = "";
 
                                         t_qty = 0;
                                         t_total = 0;
@@ -739,6 +749,7 @@
                                       worksheet.getCell('Q'+counter).value = "";
                                       worksheet.getCell('R'+counter).value = "";
                                       worksheet.getCell('S'+counter).value = "";
+                                      worksheet.getCell('T'+counter).value = "";
                                     }
 
                     
@@ -769,6 +780,7 @@
                                       worksheet.getCell('Q'+counter).alignment = { wrapText: true, vertical: 'top', horizontal: 'left' };
                                       worksheet.getCell('R'+counter).alignment = { wrapText: true, vertical: 'top', horizontal: 'left' };
                                       worksheet.getCell('S'+counter).alignment = { wrapText: true, vertical: 'top', horizontal: 'left' };
+                                      worksheet.getCell('T'+counter).alignment = { wrapText: true, vertical: 'top', horizontal: 'left' };
 
                                       worksheet.getCell('A'+counter).value = "";
                                       worksheet.getCell('B'+counter).value = "";
@@ -787,8 +799,9 @@
                                       worksheet.getCell('O'+counter).value = "";
                                       worksheet.getCell('P'+counter).value = "";
                                       worksheet.getCell('Q'+counter).value = "";
-                                      worksheet.getCell('R'+counter).value = last_total_cash;
-                                      worksheet.getCell('S'+counter).value = last_total_all;
+                                      worksheet.getCell('R'+counter).value = "";
+                                      worksheet.getCell('S'+counter).value = last_total_cash;
+                                      worksheet.getCell('T'+counter).value = last_total_all;
                                       worksheet.getRow(counter).font = { bold: true };
                                     }
 
@@ -828,6 +841,7 @@
                            worksheet.getCell('Q'+counter).alignment = { wrapText: true, vertical: 'top', horizontal: 'left' };
                            worksheet.getCell('R'+counter).alignment = { wrapText: true, vertical: 'top', horizontal: 'left' };
                            worksheet.getCell('S'+counter).alignment = { wrapText: true, vertical: 'top', horizontal: 'left' };
+                           worksheet.getCell('T'+counter).alignment = { wrapText: true, vertical: 'top', horizontal: 'left' };
 
                            var borderStyles = {
                              top: { style: "thin" },
@@ -847,18 +861,19 @@
                                 worksheet.getCell('E'+counter).value = "";
                                 worksheet.getCell('F'+counter).value = t_total_t;
                                 worksheet.getCell('G'+counter).value = report_total[0].total_extra;
-                                worksheet.getCell('H'+counter).value = report_total[0].total_drink;
-                                worksheet.getCell('I'+counter).value = report_total[0].total_b1d;
-                                worksheet.getCell('J'+counter).value = report_total[0].total_b1c;
-                                worksheet.getCell('K'+counter).value = report_total[0].total_b1q;
-                                worksheet.getCell('L'+counter).value = report_total[0].total_b1t;
-                                worksheet.getCell('M'+counter).value = report_total[0].total_b2d;
-                                worksheet.getCell('N'+counter).value = report_total[0].total_b2c;
-                                worksheet.getCell('O'+counter).value = report_total[0].total_b2q;
-                                worksheet.getCell('P'+counter).value = report_total[0].total_b2t;
-                                worksheet.getCell('Q'+counter).value = report_total[0].qty_service;
-                                worksheet.getCell('R'+counter).value = report_total[0].total_cash;
-                                worksheet.getCell('S'+counter).value = t_total_all_t;
+                                worksheet.getCell('H'+counter).value = parseFloat(report_total[0].total_lebaran)+parseFloat(report_total[0].total_lebaran_cl);
+                                worksheet.getCell('I'+counter).value = report_total[0].total_drink;
+                                worksheet.getCell('J'+counter).value = report_total[0].total_b1d;
+                                worksheet.getCell('K'+counter).value = report_total[0].total_b1c;
+                                worksheet.getCell('L'+counter).value = report_total[0].total_b1q;
+                                worksheet.getCell('M'+counter).value = report_total[0].total_b1t;
+                                worksheet.getCell('N'+counter).value = report_total[0].total_b2d;
+                                worksheet.getCell('O'+counter).value = report_total[0].total_b2c;
+                                worksheet.getCell('P'+counter).value = report_total[0].total_b2q;
+                                worksheet.getCell('Q'+counter).value = report_total[0].total_b2t;
+                                worksheet.getCell('R'+counter).value = report_total[0].qty_service;
+                                worksheet.getCell('S'+counter).value = report_total[0].total_cash;
+                                worksheet.getCell('T'+counter).value = t_total_all_t;
                                 worksheet.getRow(counter).font = { bold: true };
                             }
 
