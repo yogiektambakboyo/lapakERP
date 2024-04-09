@@ -641,13 +641,25 @@
                               if(index==46){
                                 charCounters = "A";
                                 str_prefix = "B";
-                                worksheet.getCell(str_prefix+charCounters+counter).value = accounting.toFixed(parseFloat(nominal_service/1000), 0);
+                                if(nominal_service==0){
+                                  worksheet.getCell(str_prefix+charCounters+counter).value = accounting.toFixed(parseFloat(nominal_service/1000), 0);
+                                }else{
+                                  worksheet.getCell(str_prefix+charCounters+counter).value = accounting.toFixed(parseFloat((parseFloat(nominal_service)-parseFloat(rowElement.cl))/1000), 0);
+                                }
                               }else if(index==21){
                                 charCounters = "A";
                                 str_prefix = "A";
-                                worksheet.getCell(str_prefix+charCounters+counter).value = accounting.toFixed(parseFloat(nominal_service/1000), 0);
+                                if(nominal_service==0){
+                                  worksheet.getCell(str_prefix+charCounters+counter).value = accounting.toFixed(parseFloat(nominal_service/1000), 0);
+                                }else{
+                                  worksheet.getCell(str_prefix+charCounters+counter).value = accounting.toFixed(parseFloat((parseFloat(nominal_service)-parseFloat(rowElement.cl))/1000), 0);
+                                }
                               }else{
-                                worksheet.getCell(str_prefix+charCounters+counter).value = accounting.toFixed(parseFloat(nominal_service/1000), 0);
+                                if(nominal_service==0){
+                                  worksheet.getCell(str_prefix+charCounters+counter).value = accounting.toFixed(parseFloat(nominal_service/1000), 0);
+                                }else{
+                                  worksheet.getCell(str_prefix+charCounters+counter).value = accounting.toFixed(parseFloat((parseFloat(nominal_service)-parseFloat(rowElement.cl))/1000), 0);
+                                }
                               }
                           
                               charCounters = String.fromCharCode(charCounters.charCodeAt(0) + 1);
