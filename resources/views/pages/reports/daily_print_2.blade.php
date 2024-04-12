@@ -149,7 +149,11 @@
               @foreach($report_data_service as $dio)
                   @if($dio->invoice_no==$detail->invoice_no_full && $dio->type_id==2 && $dio->product_id==$serv->product_id)
                       <?php
-                        $nominal_service = $nominal_service + $dio->sub_total;
+                        if($dio->sub_total>1){
+                          $nominal_service = $nominal_service + ($dio->sub_total - $dio->charge_lebaran);
+                        }else{
+                          $nominal_service = $nominal_service + ($dio->sub_total);
+                        }
                         $nominal_discount = $nominal_discount + $dio->discount;
                         $total_service_rp = $total_service_rp + $dio->sub_total;
                         $total_service_qty = $total_service_qty + $dio->product_qty;
@@ -632,7 +636,11 @@
                                 const d_element = report_data_service[index_x];
 
                                 if(d_element.type_id==2 && element.product_id==d_element.product_id && d_element.invoice_no==rowElement.invoice_no_full){
-                                  nominal_service = nominal_service + parseFloat(d_element.sub_total);
+                                  if(parseFloat(d_element.sub_total>1)){
+                                    nominal_service = nominal_service + parseFloat(d_element.sub_total);
+                                  }else{
+                                    nominal_service = nominal_service + (parseFloat(d_element.sub_total)-parseFloat(d_element.charge_lebaran));
+                                  }
                                   total_service_rp = total_service_rp + parseFloat(d_element.sub_total);
                                   total_service_qty = total_service_qty + parseFloat(d_element.product_qty);
                                 }

@@ -1572,7 +1572,8 @@ class ReportCloseDayController extends Controller
         ");
 
         $report_data_detail = DB::select("
-                select * from temp_invoice ti
+                select ti.*,ps.charge_lebaran from temp_invoice ti
+                join product_sku ps on ps.id = ti.product_id
                 where ti.dated = '".$filter_begin_date."'  and ti.branch_id = ".$filter_branch_id."
                 order by invoice_no,executed_at
         ");
@@ -1710,9 +1711,10 @@ class ReportCloseDayController extends Controller
             ");
 
             $report_data_detail = DB::select("
-                    select * from temp_invoice ti
-                    where ti.dated = '".$filter_begin_date."'  and ti.branch_id = ".$filter_branch_id."
-                    order by invoice_no,executed_at
+                select ti.*,ps.charge_lebaran from temp_invoice ti
+                join product_sku ps on ps.id = ti.product_id
+                where ti.dated = '".$filter_begin_date."'  and ti.branch_id = ".$filter_branch_id."
+                order by invoice_no,executed_at
             ");
 
             $report_data_product = DB::select("
