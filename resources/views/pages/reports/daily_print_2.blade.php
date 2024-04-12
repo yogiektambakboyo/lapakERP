@@ -660,7 +660,7 @@
                                 if(nominal_service==0){
                                   worksheet.getCell(str_prefix+charCounters+counter).value = accounting.toFixed(parseFloat(nominal_service/1000), 0);
                                 }else{
-                                  worksheet.getCell(str_prefix+charCounters+counter).value = accounting.toFixed(parseFloat((parseFloat(nominal_service)/1000), 0);
+                                  worksheet.getCell(str_prefix+charCounters+counter).value = accounting.toFixed((parseFloat(nominal_service)/1000), 0);
                                 }
                               }else{
                                 if(nominal_service==0){
