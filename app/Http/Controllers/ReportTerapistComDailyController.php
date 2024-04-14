@@ -166,6 +166,91 @@ class ReportTerapistComDailyController extends Controller
         if($request->export=='Export Excel'){
             $strencode = base64_encode($begindate.'#'.$enddate.'#'.$branchx.'#'.$user->id.'#'.$terapist);
             return Excel::download(new ReportCommisionTerapistDailyExport($strencode), 'report_commision_terapist_sum_'.Carbon::now()->format('YmdHis').'.xlsx');
+        }else if($request->export=='Export Sum Charge'){
+
+            $filter_begin_date = $begindate;
+            $filter_begin_end = $enddate;
+            $filter_branch_id =  $branchx;
+
+                $report_data = DB::select("
+                    select u.id as user_id,u.name,u.job_id,b.remark as branch_name,im.dated,id.invoice_no,id.product_id,ps.abbr,id.qty,id.price,pc.values_extra  from invoice_master im 
+                    join customers c on c.id = im.customers_id 
+                    join invoice_detail id on id.invoice_no = im.invoice_no 
+                    join product_sku ps on ps.id = id.product_id
+                    join users_branch as ub on ub.branch_id = c.branch_id and ub.user_id = '".$user->id."' and ub.branch_id::character varying like '".$filter_branch_id."'
+                    join (
+                        select r.id,r.name,r.job_id,case when r.work_year=0 then 1 when r.work_year>10 then 10  else r.work_year end as work_year
+                        from users r
+                    ) u on u.id = id.assigned_to
+                    join branch b on b.id = c.branch_id 
+                    join product_commision_by_year pc on pc.values_extra>0 and pc.product_id = id.product_id and pc.branch_id = c.branch_id and pc.jobs_id=u.job_id and pc.years = u.work_year 
+                    where im.dated between '".$filter_begin_date."' and  '".$filter_begin_end."' and c.branch_id = ub.branch_id order by 2
+                ");
+
+                $report_data_terapist = DB::select("
+                    select u.id as user_id,u.name
+                    from invoice_master im 
+                    join customers c on c.id = im.customers_id 
+                    join invoice_detail id on id.invoice_no = im.invoice_no 
+                    join product_sku ps on ps.id = id.product_id
+                    join users_branch as ub on ub.branch_id = c.branch_id and ub.user_id = '".$user->id."' and ub.branch_id::character varying like '".$filter_branch_id."'
+                    join (
+                        select r.id,r.name,r.job_id,case when r.work_year=0 then 1 when r.work_year>10 then 10  else r.work_year end as work_year
+                        from users r
+                    ) u on u.id = id.assigned_to
+                    join branch b on b.id = c.branch_id 
+                    join product_commision_by_year pc on pc.values_extra>0 and pc.product_id = id.product_id and pc.branch_id = c.branch_id and pc.jobs_id=u.job_id and pc.years = u.work_year 
+                    where im.dated between '".$filter_begin_date."' and  '".$filter_begin_end."' and c.branch_id = ub.branch_id group by u.id,u.name order by 2
+                ");
+
+                $dated_list = DB::select("
+
+                    select im.dated,count(distinct id.product_id) as c_product,to_char(im.dated,'dd') as dated_number,to_char(im.dated,'dd-MM-YYYY') as dated_format,to_char(im.dated,'dd-Mon-YYYY') as dated_format_m
+                    from invoice_master im 
+                    join customers c on c.id = im.customers_id 
+                    join invoice_detail id on id.invoice_no = im.invoice_no 
+                    join product_sku ps on ps.id = id.product_id
+                    join users_branch as ub on ub.branch_id = c.branch_id and ub.user_id = '".$user->id."' and ub.branch_id::character varying like '".$filter_branch_id."'
+                    join (
+                        select r.id,r.name,r.job_id,case when r.work_year=0 then 1 when r.work_year>10 then 10  else r.work_year end as work_year
+                        from users r
+                    ) u on u.id = id.assigned_to
+                    join product_commision_by_year pc on pc.values_extra>0 and pc.product_id = id.product_id and pc.branch_id = c.branch_id and pc.jobs_id=u.job_id and pc.years = u.work_year 
+                    where im.dated between '".$filter_begin_date."' and  '".$filter_begin_end."' and c.branch_id = ub.branch_id
+                    group by im.dated order by 1
+
+                ");
+
+
+                $service_list = DB::select("
+
+                    select distinct im.dated,id.product_id,ps.abbr 
+                    from invoice_master im 
+                    join customers c on c.id = im.customers_id 
+                    join invoice_detail id on id.invoice_no = im.invoice_no 
+                    join product_sku ps on ps.id = id.product_id
+                    join users_branch as ub on ub.branch_id = c.branch_id and ub.user_id = '".$user->id."' and ub.branch_id::character varying like '".$filter_branch_id."'
+                    join (
+                        select r.id,r.name,r.job_id,case when r.work_year=0 then 1 when r.work_year>10 then 10  else r.work_year end as work_year
+                        from users r
+                    ) u on u.id = id.assigned_to
+                    join product_commision_by_year pc on pc.values_extra>0 and pc.product_id = id.product_id and pc.branch_id = c.branch_id and pc.jobs_id=u.job_id and pc.years = u.work_year 
+                    where im.dated between '".$filter_begin_date."' and  '".$filter_begin_end."' and c.branch_id = ub.branch_id order by 1,3
+
+                ");
+
+
+            return view('pages.reports.terapist_comm_day_print_cl', [
+                'service_list' => $service_list,
+                'dated_list' => $dated_list,
+                'report_data' => $report_data,
+                'report_data_terapist' => $report_data_terapist,
+                'filter_begin_date' => $filter_begin_date,
+                'filter_begin_end' => $filter_begin_end,
+                'filter_branch_id' => $branchx,
+                'filter_terapist_in' => $terapist,
+                'settings' => Settings::get(),
+            ]);
         }else if($request->export=='Export Sum Lite'){
 
             $filter_begin_date = $begindate;
