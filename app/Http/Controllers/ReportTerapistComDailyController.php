@@ -359,6 +359,8 @@ class ReportTerapistComDailyController extends Controller
 
                 ");
 
+                return $report_data_cashier;
+
 
             return view('pages.reports.terapist_comm_day_print_cl', [
                 'service_list' => $service_list,
