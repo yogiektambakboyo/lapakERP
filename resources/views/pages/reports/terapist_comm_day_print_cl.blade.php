@@ -41,7 +41,7 @@
         <tbody>
           <tr style="text-align: center;background-color:#FFA726;">
               <td style="text-align: left; padding:2px;"><img src="data:image/png;base64,{{ base64_encode(file_get_contents(url("images/user-files/".$settings[0]->icon_file))) }}" width="80px"></td>
-              <th style="width: 40%;">Laporan Komisi Terapist</th>
+              <th style="width: 40%;">Laporan Charge Lebaran</th>
               <td style="width: 16%;font-size:10px;font-style: italic;">
                 <label>Printed at : {{ \Carbon\Carbon::now() }}</label>
               </td>
@@ -50,24 +50,28 @@
       </table>     
             
             {{-- Area Looping --}}
-            <table class="table table-striped" style="width: 100%">
+            <table class="table table-striped" style="width:1800px">
               <thead>
                 <tr style="background-color:#FFA726;color:black;">
-                  <th colspan="7">Cabang : {{ $report_data[0]->branch_name  }}</th>
+                  <th colspan="7">Cabang : {{ count($report_data)>0?$report_data[0]->branch_name:'';  }}</th>
                 </tr>
                 <tr style="background-color:#FFA726;color:black;">
-                  <th width="2%" rowspan="2">NO</th>
-                  <th scope="col" width="15%"  rowspan="2">NAMA TERAPIS DAN KASIR</th>
-                  @php $l_c = 0 @endphp
+                  <th width="30px;" rowspan="2">NO</th>
+                  <th scope="col"  style="width: 100px;"  rowspan="2">NAMA TERAPIS DAN KASIR</th>
                   @foreach ($dated_list as $dated_lists)
-                      <th colspan="{{ $dated_lists->c_product }}">{{ $dated_lists->dated_format_m }} {{ $l_c }}</th>
-                        <th>TOTAL</th>                        
+                      <th colspan="{{ $dated_lists->c_product }}">{{ $dated_lists->dated_format_m }}</th>
+                        <th rowspan="2">SUB TOTAL</th>                        
                   @endforeach
+                  <th rowspan="2">TOTAL</th>                        
                 </tr>
                 <tr style="background-color:#FFA726;color:black;">
+                  @php $l_dated = ""; @endphp
                   @foreach ($service_list as $service_lists)
+                      @if($l_dated != $service_lists->dated && $l_dated!="")
+                          
+                      @endif
                       <td>{{ $service_lists->abbr }}</td>
-
+                      @php $l_dated = $service_lists->dated; @endphp
                   @endforeach
                 </tr>
               </thead>
@@ -80,30 +84,203 @@
 
               @foreach ($report_data_terapist as $item)
                 <tr style="">
-                  <td>@php echo $counter++; @endphp</td>
-                  <td>{{ $item->name }}</td>
+                  <td  rowspan="2">@php echo $counter++; @endphp</td>
+                  <td style="width: 300px">{{ $item->name }}</td>
+                  @php $l_dated = "";$val_c=0;$val_all=0; @endphp
                   @foreach ($service_list as $service_lists)
                       @php $value = 0; @endphp
+                      @if($l_dated != $service_lists->dated && $l_dated!="")
+                          <th>{{ $val_c }}</th> 
+                          @php $val_c=0; @endphp
+                      @endif
                       @foreach ($report_data as $report_datas)
                           @if($report_datas->name == $item->name && $report_datas->dated==$service_lists->dated && $report_datas->product_id==$service_lists->product_id)
-                             @php $value = (int)(($report_datas->values_extra * $report_datas->qty)/1000); @endphp
+                             @php $value = $value + (int)(($report_datas->values_extra * $report_datas->qty)/1000); @endphp
                           @endif
                       @endforeach
                       <td>{{ $value }}</td>
+                      @php $l_dated = $service_lists->dated;$val_c=$val_c+$value;$val_all=$val_all+$value; @endphp
                   @endforeach
+                  <th>{{ $val_c }}</th> 
+                  <th>{{ $val_all }}</th> 
                   
                 </tr>
+                <tr>
+                  <td>{{ count($report_data_cashier)>0?$report_data_cashier[0]->cashier:''; }}</td>
+                  @php $l_dated = "";$val_c=0;$val_all=0; @endphp
+                  @foreach ($service_list as $service_lists)
+                      @php $value = 0; @endphp
+                      @if($l_dated != $service_lists->dated && $l_dated!="")
+                          <th>{{ $val_c }}</th> 
+                          @php $val_c=0; @endphp
+                      @endif
+                      @foreach ($report_data_c as $report_datas)
+                          @if($report_datas->name == $item->name && $report_datas->dated==$service_lists->dated && $report_datas->product_id==$service_lists->product_id)
+                             @php $value = $value + (int)(($report_datas->values_extra * $report_datas->qty)/1000); @endphp
+                          @endif
+                      @endforeach
+                      <td>{{ $value }}</td>
+                      @php $l_dated = $service_lists->dated;$val_c=$val_c+$value;$val_all=$val_all+$value; @endphp
+                  @endforeach
+                  <th>{{ $val_c }}</th> 
+                  <th>{{ $val_all }}</th> 
+                </tr>
               @endforeach
-                    
 
+              <tr style="">
+                <td colspan="2">TERAPIS</td>
+                @php $tot_t = 0; @endphp
+                @foreach ($dated_list as $dated_lists)
+                    <th colspan="{{ $dated_lists->c_product }}"></th>
+                    <th>{{ number_format($dated_lists->charge_lebaran/1000,0,",",".") }} </th>  
+                    @php $tot_t = $tot_t + $dated_lists->charge_lebaran; @endphp
+                @endforeach
+                <th>{{ number_format($tot_t/1000,0,",",".") }}</th>  
+              </tr>
 
-              
+              <tr style="">
+                <td colspan="2">KASIR</td>
+                @php $tot_t = 0; @endphp
+                @foreach ($dated_list_c as $dated_lists)
+                    <th colspan="{{ $dated_lists->c_product }}"></th>
+                    <th>{{ number_format($dated_lists->charge_lebaran/1000,0,",",".") }} </th>  
+                    @php $tot_t = $tot_t + $dated_lists->charge_lebaran; @endphp
+                @endforeach
+                <th>{{ number_format($tot_t/1000,0,",",".") }}</th>  
+              </tr>
+
+              <tr style="">
+                <td colspan="2">GRAND TOTAL</td>
+                @php $tot_t = 0; @endphp
+
+                @for ($i=0;$i<count($dated_list);$i++)
+                    <th colspan="{{ $dated_list[$i]->c_product }}"></th>
+                    <th>{{ number_format(($dated_list[$i]->charge_lebaran+$dated_list_c[$i]->charge_lebaran)/1000,0,",",".") }} </th>  
+                    @php $tot_t = $tot_t + ($dated_list[$i]->charge_lebaran+$dated_list_c[$i]->charge_lebaran); @endphp
+                @endfor
+                <th>{{ number_format($tot_t/1000,0,",",".") }}</th>  
+              </tr>
               </tbody>
             </table>
             
               <div class="pagebreak"> </div>
 
           {{-- End Area Looping --}}
+
+          </br>
+
+          <table class="table table-striped" style="width:450px">
+            <thead>
+              <tr style="background-color:#FFA726;color:black;">
+                <th colspan="{{ count($dated_list)+3 }}">TOTAL TERAPIS</th>
+              </tr>
+              <tr style="background-color:#FFA726;color:black;">
+                <th width="20px;">NO</th>
+                <th scope="col">NAMA TERAPIS</th>
+                @foreach ($dated_list as $dated_lists)
+                      <th   style="width: 30px;">{{ $dated_lists->dm_number }}</th>                        
+                @endforeach
+                <th  style="width: 30px;">TOTAL</th>                        
+              </tr>
+            </thead>
+            <tbody>
+              
+                  <?php
+                    $total_until = 0;
+                    $counter = 1;
+                  ?>
+
+            @foreach ($report_data_terapist as $item)
+              <tr style="">
+                <td>@php echo $counter++;$val = 0 ; @endphp</td>
+                <td style="width: 100px">{{ $item->name }}</td>
+                @foreach ($dated_list as $dated_lists)
+                  @php $value = 0; @endphp
+                  @foreach ($report_data_terapist_det as $report_data_terapist_dets)
+                      @if($report_data_terapist_dets->dated == $dated_lists->dated && $report_data_terapist_dets->user_id==$item->user_id)
+                        @php $value = (int)(($report_data_terapist_dets->charge_lebaran)/1000); @endphp
+                      @endif
+                  @endforeach
+                  <td>{{ $value }}</td> 
+                  @php
+                      $val = $val + $value;
+                  @endphp
+                @endforeach   
+                <th>{{ $val }}</th> 
+              </tr>
+            @endforeach
+
+            <tr style="">
+              <td colspan="2">GRAND TOTAL</td>
+              @php $tot_t = 0; @endphp
+              @foreach ($dated_list as $dated_lists)
+                  <th>{{ number_format($dated_lists->charge_lebaran/1000,0,",",".") }} </th>  
+                  @php $tot_t = $tot_t + $dated_lists->charge_lebaran; @endphp
+              @endforeach
+              <th>{{ number_format($tot_t/1000,0,",",".") }}</th>  
+            </tr>
+
+            
+            </tbody>
+          </table>
+
+
+        </br>
+
+        <table class="table table-striped" style="width:450px">
+          <thead>
+            <tr style="background-color:#FFA726;color:black;">
+              <th colspan="{{ count($dated_list)+3 }}">TOTAL KASIR</th>
+            </tr>
+            <tr style="background-color:#FFA726;color:black;">
+              <th width="20px;">NO</th>
+              <th scope="col">NAMA KASIR</th>
+              @foreach ($dated_list as $dated_lists)
+                    <th   style="width: 30px;">{{ $dated_lists->dm_number }}</th>                        
+              @endforeach
+              <th  style="width: 30px;">TOTAL</th>                        
+            </tr>
+          </thead>
+          <tbody>
+            
+                <?php
+                  $total_until = 0;
+                  $counter = 1;
+                ?>
+
+          @foreach ($report_data_cashier_s as $item)
+            <tr style="">
+              <td>@php echo $counter++;$val = 0 ; @endphp</td>
+              <td style="width: 100px">{{ $item->name }}</td>
+              @foreach ($dated_list as $dated_lists)
+                @php $value = 0; @endphp
+                @foreach ($report_data_cashier_det as $report_data_terapist_dets)
+                    @if($report_data_terapist_dets->dated == $dated_lists->dated)
+                      @php $value = (($report_data_terapist_dets->charge_lebaran/(count($report_data_cashier)>0?$report_data_cashier[0]->c_count:1))/1000); @endphp
+                    @endif
+                @endforeach
+                <td>{{ number_format($value,1,',','.') }}</td> 
+                @php
+                    $val = $val + $value;
+                @endphp
+              @endforeach   
+              <th>{{ $val }}</th> 
+            </tr>
+          @endforeach
+
+          <tr style="">
+            <td colspan="2">GRAND TOTAL</td>
+            @php $tot_t = 0; @endphp
+            @foreach ($dated_list_c as $dated_lists)
+                <th>{{ number_format($dated_lists->charge_lebaran/1000,0,",",".") }} </th>  
+                @php $tot_t = $tot_t + $dated_lists->charge_lebaran; @endphp
+            @endforeach
+            <th>{{ number_format($tot_t/1000,0,",",".") }}</th>  
+          </tr>
+
+          
+          </tbody>
+        </table>
 
 
           <input type="hidden" name="filter_begin_date" id="filter_begin_date" value="{{ $filter_begin_date }}">
