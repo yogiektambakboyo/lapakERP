@@ -162,8 +162,8 @@
 
                 @for ($i=0;$i<count($dated_list);$i++)
                     <th colspan="{{ $dated_list[$i]->c_product }}"></th>
-                    <th>{{ number_format(($dated_list[$i]->charge_lebaran+$dated_list_c[$i]->charge_lebaran)/1000,0,".",",") }} </th>  
-                    @php $tot_t = $tot_t + ($dated_list[$i]->charge_lebaran+$dated_list_c[$i]->charge_lebaran); @endphp
+                    <th>{{ number_format(($dated_list[$i]->charge_lebaran+(count($dated_list_c)>0?$dated_list_c[$i]->charge_lebaran:0))/1000,0,".",",") }} </th>  
+                    @php $tot_t = $tot_t + ($dated_list[$i]->charge_lebaran+(count($dated_list_c)>0?$dated_list_c[$i]->charge_lebaran:0)); @endphp
                 @endfor
                 <th>{{ number_format($tot_t/1000,0,".",",") }}</th>  
               </tr>
