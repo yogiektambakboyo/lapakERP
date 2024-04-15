@@ -272,6 +272,18 @@ class ReportTerapistComDailyController extends Controller
                     where im.dated between '".$filter_begin_date."' and  '".$filter_begin_end."'  and c.branch_id = ub.branch_id 
                 ");
 
+                return  "select string_agg(distinct u.name,', ' order by u.name) as cashier,count( distinct u.id) as c_count 
+                from invoice_master im 
+                join customers c on c.id = im.customers_id 
+                join invoice_detail id on id.invoice_no = im.invoice_no 
+                join users_branch as ub on ub.branch_id = c.branch_id and ub.user_id = '".$user->id."' and ub.branch_id::character varying like '".$filter_branch_id."'
+                join (
+                    select r.id,r.name,r.job_id,case when r.work_year=0 then 1 when r.work_year>10 then 10  else r.work_year end as work_year
+                    from users r
+                ) u on u.id = im.created_by
+                where im.dated between '".$filter_begin_date."' and  '".$filter_begin_end."'  and c.branch_id = ub.branch_id" ;
+
+
                 $report_data_cashier_s = DB::select("
                     select u.id as user_id,u.name
                     from invoice_master im 
@@ -359,7 +371,6 @@ class ReportTerapistComDailyController extends Controller
 
                 ");
 
-                return $report_data_cashier;
 
 
             return view('pages.reports.terapist_comm_day_print_cl', [
