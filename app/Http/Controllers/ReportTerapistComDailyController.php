@@ -269,7 +269,6 @@ class ReportTerapistComDailyController extends Controller
                         select r.id,r.name,r.job_id,case when r.work_year=0 then 1 when r.work_year>10 then 10  else r.work_year end as work_year
                         from users r
                     ) u on u.id = im.created_by
-                    join product_commision_by_year pc on pc.values_extra>0 and pc.product_id = id.product_id and pc.branch_id = c.branch_id and pc.jobs_id=u.job_id and pc.years = u.work_year 
                     where im.dated between '".$filter_begin_date."' and  '".$filter_begin_end."'  and c.branch_id = ub.branch_id 
                 ");
 
@@ -470,7 +469,7 @@ class ReportTerapistComDailyController extends Controller
             
 
                 $report_data_cashier = DB::select("
-                    select string_agg(distinct u.name,', ' order by u.name) as cashier,count( distinct u.id) as c_count 
+                    select string_agg(distinct u.name,', ' order by u.name) as cashier
                     from invoice_master im 
                     join customers c on c.id = im.customers_id 
                     join invoice_detail id on id.invoice_no = im.invoice_no 
@@ -479,7 +478,6 @@ class ReportTerapistComDailyController extends Controller
                         select r.id,r.name,r.job_id,case when r.work_year=0 then 1 when r.work_year>10 then 10  else r.work_year end as work_year
                         from users r
                     ) u on u.id = im.created_by
-                    join product_commision_by_year pc on pc.values_extra>0 and pc.product_id = id.product_id and pc.branch_id = c.branch_id and pc.jobs_id=u.job_id and pc.years = u.work_year 
                     where im.dated between '".$filter_begin_date."' and  '".$filter_begin_end."'  and c.branch_id = ub.branch_id 
                 ");
 
