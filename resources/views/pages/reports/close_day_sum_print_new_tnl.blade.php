@@ -71,8 +71,8 @@
                 <th style="text-align: center;background-color:#FFA726;" colspan="<?= $report_total[0]->total_ojek==0?'4':'5'; ?>" scope="col">@lang('general.product')</th>    
                 <th class="<?= $report_total[0]->total_tambahan==0?'d-none':''; ?>"  style="text-align: center;background-color:#FFA726;" rowspan="2"  scope="col">Tambahan Terapis</th> 
                 <th style="text-align: center;background-color:#FFA726;" rowspan="2"  scope="col">Extra</th>    
+                <th class="<?= ($report_total[0]->total_lebaran+$report_total[0]->total_lebaran_cl==0)?'d-none':''; ?>" style="text-align: center;background-color:#FFA726;" rowspan="2"  scope="col">Charge Lebaran</th>  
                 <th style="text-align: center;background-color:#FFA726;" rowspan="2"  scope="col">@lang('general.lbl_drink')</th>     
-                <th class="<?= ($report_total[0]->total_lebaran+$report_total[0]->total_lebaran_cl==0)?'d-none':''; ?>" style="text-align: center;background-color:#FFA726;" rowspan="2"  scope="col">Charge Lebaran</th>       
                 <th class="<?= $report_total[0]->total_b1d==0?'d-none':''; ?>" style="text-align: center;background-color:#FFA726;" rowspan="2" scope="col">B1 - D</th>    
                 <th  class="<?= $report_total[0]->total_b1c==0?'d-none':''; ?>" style="text-align: center;background-color:#FFA726;" rowspan="2"  scope="col">B1 - K</th>    
                 <th  class="<?= $report_total[0]->total_b2d==0?'d-none':''; ?>" style="text-align: center;background-color:#FFA726;" rowspan="2"  scope="col">B2 - D</th>    
@@ -136,8 +136,8 @@
                     <td class="<?= $report_total[0]->total_ojek==0?'d-none':''; ?>"  style="text-align: right;">{{ number_format($rdata->total_ojek,0,',','.') }}</td>
                     <td class="<?= $report_total[0]->total_tambahan==0?'d-none':''; ?>"  style="text-align: right;">{{ number_format($rdata->total_tambahan,0,',','.') }}</td>
                     <td style="text-align: right;">{{ number_format($rdata->total_extra,0,',','.') }}</td>
-                    <td style="text-align: right;">{{ number_format($rdata->total_drink,0,',','.') }}</td>
                     <td class="<?= ($report_total[0]->total_lebaran+$report_total[0]->total_lebaran_cl==0)?'d-none':''; ?>" style="text-align: right;">{{ number_format(($rdata->total_lebaran+$rdata->total_lebaran_cl),0,',','.') }}</td>
+                    <td style="text-align: right;">{{ number_format($rdata->total_drink,0,',','.') }}</td>
                     <td class="<?= $report_total[0]->total_b1d==0?'d-none':''; ?>" style="text-align: right;">{{ number_format($rdata->total_b1d,0,',','.') }}</td>
                     <td class="<?= $report_total[0]->total_b1c==0?'d-none':''; ?>" style="text-align: right;">{{ number_format($rdata->total_b1c,0,',','.') }}</td>
                     <td class="<?= $report_total[0]->total_b2d==0?'d-none':''; ?>" style="text-align: right;">{{ number_format($rdata->total_b2d,0,',','.') }}</td>
@@ -179,8 +179,8 @@
                                   <td  class="<?= $report_total[0]->total_ojek==0?'d-none':''; ?>" style="text-align: right;">{{ number_format($rdata->total_ojek,0,',','.') }}</td>
                                   <td  class="<?= $report_total[0]->total_tambahan==0?'d-none':''; ?>" style="text-align: right;">{{ number_format($rdata->total_tambahan,0,',','.') }}</td>
                                   <td style="text-align: right;">{{ number_format($rdata->total_extra,0,',','.') }}</td>
-                                  <td style="text-align: right;">{{ number_format($rdata->total_drink,0,',','.') }}</td>
                                   <td  class="<?= ($report_total[0]->total_lebaran+$report_total[0]->total_lebaran_cl==0)?'d-none':''; ?>" style="text-align: right;">{{ number_format(($rdata->total_lebaran+$rdata->total_lebaran_cl),0,',','.') }}</td>
+                                  <td style="text-align: right;">{{ number_format($rdata->total_drink,0,',','.') }}</td>
                                   <td class="<?= $report_total[0]->total_b1d==0?'d-none':''; ?>" style="text-align: right;">{{ number_format($rdata->total_b1d,0,',','.') }}</td>
                                   <td class="<?= $report_total[0]->total_b1c==0?'d-none':''; ?>" style="text-align: right;">{{ number_format($rdata->total_b1c,0,',','.') }}</td>
                                   <td class="<?= $report_total[0]->total_b2d==0?'d-none':''; ?>" style="text-align: right;">{{ number_format($rdata->total_b2d,0,',','.') }}</td>
@@ -217,8 +217,8 @@
                                   <td  class="<?= $report_total[0]->total_ojek==0?'d-none':''; ?>" style="text-align: right;"></td>
                                   <td  class="<?= $report_total[0]->total_tambahan==0?'d-none':''; ?>" style="text-align: right;"></td>
                                   <td style="text-align: right;"></td>
-                                  <td style="text-align: right;"></td>
                                   <td  class="<?= ($report_total[0]->total_lebaran+$report_total[0]->total_lebaran_cl==0)?'d-none':''; ?>" style="text-align: right;"></td>
+                                  <td style="text-align: right;"></td>
                                   <td class="<?= $report_total[0]->total_b1d==0?'d-none':''; ?>" style="text-align: right;"></td>
                                   <td  class="<?= $report_total[0]->total_b1c==0?'d-none':''; ?>" style="text-align: right;"></td>
                                   <td  class="<?= $report_total[0]->total_b2d==0?'d-none':''; ?>"style="text-align: right;"></td>
@@ -300,8 +300,8 @@
                           <td  class="<?= $report_total[0]->total_ojek==0?'d-none':''; ?>" style="text-align: right;"></td>
                           <td  class="<?= $report_total[0]->total_tambahan==0?'d-none':''; ?>" style="text-align: right;"></td>
                           <td style="text-align: right;"></td>
-                          <td style="text-align: right;"></td>
                           <td  class="<?= ($report_total[0]->total_lebaran+$report_total[0]->total_lebaran_cl==0)?'d-none':''; ?>" style="text-align: right;"></td>
+                          <td style="text-align: right;"></td>
                           <td class="<?= $report_total[0]->total_b1d==0?'d-none':''; ?>" style="text-align: right;"></td>
                           <td  class="<?= $report_total[0]->total_b1c==0?'d-none':''; ?>" style="text-align: right;"></td>
                           <td  class="<?= $report_total[0]->total_b2d==0?'d-none':''; ?>"style="text-align: right;"></td>
@@ -357,9 +357,8 @@
               <th class="<?= $report_total[0]->total_ojek==0?'d-none':''; ?>"  style="text-align: right;">{{ number_format($total_ojek,0,',','.') }}</th>              
               <th class="<?= $report_total[0]->total_tambahan==0?'d-none':''; ?>"  style="text-align: right;">{{ number_format($total_tambahan,0,',','.') }}</th>              
               <th style="text-align: right;">{{ number_format($total_extra,0,',','.') }}</th>                
-              <th style="text-align: right;">{{ number_format($total_drink,0,',','.') }}</th>                
               <th class="<?= ($report_total[0]->total_lebaran+$report_total[0]->total_lebaran_cl==0)?'d-none':''; ?>"  style="text-align: right;">{{ number_format($total_lebaran,0,',','.') }}</th>                
-                            
+              <th style="text-align: right;">{{ number_format($total_drink,0,',','.') }}</th>                
               <th  class="<?= $report_total[0]->total_b1d==0?'d-none':''; ?>" style="text-align: right;">{{ number_format($total_b1d,0,',','.') }}</th>                
               <th  class="<?= $report_total[0]->total_b1c==0?'d-none':''; ?>" style="text-align: right;">{{ number_format($total_b1c,0,',','.') }}</th>                
               <th  class="<?= $report_total[0]->total_b2d==0?'d-none':''; ?>" style="text-align: right;">{{ number_format($total_b2d,0,',','.') }}</th>                
@@ -528,14 +527,16 @@
                        worksheet.getCell('K3').alignment = { vertical: 'middle', horizontal: 'center' };
 
                        worksheet.mergeCells('L2', 'L3');
-                       worksheet.getCell('L2').value = 'Minuman';
+                       worksheet.getCell('L2').value = 'Charge Lebaran';
                        worksheet.getCell('L2').alignment = { vertical: 'middle', horizontal: 'center' };
                        worksheet.getCell('L3').alignment = { vertical: 'middle', horizontal: 'center' };
 
                        worksheet.mergeCells('M2', 'M3');
-                       worksheet.getCell('M2').value = 'Charge Lebaran';
+                       worksheet.getCell('M2').value = 'Minuman';
                        worksheet.getCell('M2').alignment = { vertical: 'middle', horizontal: 'center' };
                        worksheet.getCell('M3').alignment = { vertical: 'middle', horizontal: 'center' };
+
+                       
 
 
                        worksheet.mergeCells('N2', 'N3');
