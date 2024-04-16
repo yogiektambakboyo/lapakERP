@@ -126,9 +126,9 @@
                 @if($counter_it<=0)
                   <tr>
                     <td>{{ Carbon\Carbon::parse($rdata->dated)->format('d-m-Y')  }}</td>
-                    <td style="text-align: right;">{{ number_format(($rdata->total_service-$rdata->total_tambahan),0,',','.') }}</td>
-                    <td class="<?= $report_total[0]->total_salon==0?'d-none':''; ?>"  style="text-align: right;">{{ number_format($rdata->total_salon,0,',','.') }}</td>
-                    <td class="<?= $report_total[0]->total_salon==0?'d-none':''; ?>"  style="text-align: right;">{{ number_format($rdata->total_salon+($rdata->total_service-$rdata->total_tambahan),0,',','.') }}</td>
+                    <td style="text-align: right;">{{ number_format(($rdata->total_service_no_cl-$rdata->total_tambahan),0,',','.') }}</td>
+                    <td class="<?= $report_total[0]->total_salon==0?'d-none':''; ?>"  style="text-align: right;">{{ number_format($rdata->total_salon_no_cl,0,',','.') }}</td>
+                    <td class="<?= $report_total[0]->total_salon==0?'d-none':''; ?>"  style="text-align: right;">{{ number_format($rdata->total_salon_no_cl+($rdata->total_service_no_cl-$rdata->total_tambahan),0,',','.') }}</td>
                     <td style="text-align: right;"></td>
                     <td style="text-align: right;"></td>
                     <td style="text-align: right;"></td>
@@ -160,9 +160,9 @@
                               @if($counter_itg==0)
                                 <tr>
                                   <td>{{ Carbon\Carbon::parse($rdata->dated)->format('d-m-Y')  }}</td>
-                                  <td style="text-align: right;">{{ number_format(($rdata->total_service-$rdata->total_tambahan),0,',','.') }}</td>
-                                  <td class="<?= $report_total[0]->total_salon==0?'d-none':''; ?>"  style="text-align: right;">{{ number_format($rdata->total_salon,0,',','.') }}</td>
-                                  <td class="<?= $report_total[0]->total_salon==0?'d-none':''; ?>"  style="text-align: right;">{{ number_format($rdata->total_salon+($rdata->total_service-$rdata->total_tambahan),0,',','.') }}</td>
+                                  <td style="text-align: right;">{{ number_format(($rdata->total_service_no_cl-$rdata->total_tambahan),0,',','.') }}</td>
+                                  <td class="<?= $report_total[0]->total_salon==0?'d-none':''; ?>"  style="text-align: right;">{{ number_format($rdata->total_salon_no_cl,0,',','.') }}</td>
+                                  <td class="<?= $report_total[0]->total_salon==0?'d-none':''; ?>"  style="text-align: right;">{{ number_format($rdata->total_salon_no_cl+($rdata->total_service_no_cl-$rdata->total_tambahan),0,',','.') }}</td>
 
                                   <td style="text-align: left;">
                                     {{ $rdet->abbr."" }}
@@ -321,8 +321,8 @@
 
                 
                 <?php 
-                    $total_service = $total_service + ($rdata->total_service-$rdata->total_tambahan);
-                    $total_salon = $total_salon + $rdata->total_salon;
+                    $total_service = $total_service + ($rdata->total_service_no_cl-$rdata->total_tambahan);
+                    $total_salon = $total_salon + $rdata->total_salon_no_cl;
                     
                     
                     $total_ojek = $total_ojek + $rdata->total_ojek;
