@@ -60,11 +60,11 @@
           ?>
       @endforeach
             <th style="text-align: center;background-color:#FFA726;" scope="col" width="8%">@lang('general.lbl_dated')</th>
+            <th style="text-align: center;background-color:#FFA726;"  scope="col">@lang('general.service')</th>    
             @if($total_cl_>0)
               <th style="text-align: center;background-color:#FFA726;"  scope="col">Salon</th>     
               <th style="text-align: center;background-color:#FFA726;"  scope="col">Total Perawatan & Salon</th>     
-            @endif
-            <th style="text-align: center;background-color:#FFA726;"  scope="col">@lang('general.service')</th>     
+            @endif 
             <th style="text-align: center;background-color:#FFA726;"  scope="col">@lang('general.product')</th>    
             <th style="text-align: center;background-color:#FFA726;"  scope="col">@lang('general.lbl_drink')</th>     
             <th style="text-align: center;background-color:#FFA726;"  scope="col">Extra</th>    
