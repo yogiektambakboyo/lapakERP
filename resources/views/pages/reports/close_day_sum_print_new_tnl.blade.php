@@ -137,7 +137,7 @@
                     <td class="<?= $report_total[0]->total_tambahan==0?'d-none':''; ?>"  style="text-align: right;">{{ number_format($rdata->total_tambahan,0,',','.') }}</td>
                     <td style="text-align: right;">{{ number_format($rdata->total_extra,0,',','.') }}</td>
                     <td style="text-align: right;">{{ number_format($rdata->total_drink,0,',','.') }}</td>
-                    <td class="<?= ($report_total[0]->total_lebaran+$report_total[0]->total_lebaran_cl==0)?'d-none':''; ?>" style="text-align: right;">{{ number_format(($report_total[0]->total_lebaran+$report_total[0]->total_lebaran_cl),0,',','.') }}</td>
+                    <td class="<?= ($report_total[0]->total_lebaran+$report_total[0]->total_lebaran_cl==0)?'d-none':''; ?>" style="text-align: right;">{{ number_format(($rdata->total_lebaran+$rdata->total_lebaran_cl),0,',','.') }}</td>
                     <td class="<?= $report_total[0]->total_b1d==0?'d-none':''; ?>" style="text-align: right;">{{ number_format($rdata->total_b1d,0,',','.') }}</td>
                     <td class="<?= $report_total[0]->total_b1c==0?'d-none':''; ?>" style="text-align: right;">{{ number_format($rdata->total_b1c,0,',','.') }}</td>
                     <td class="<?= $report_total[0]->total_b2d==0?'d-none':''; ?>" style="text-align: right;">{{ number_format($rdata->total_b2d,0,',','.') }}</td>
@@ -180,7 +180,7 @@
                                   <td  class="<?= $report_total[0]->total_tambahan==0?'d-none':''; ?>" style="text-align: right;">{{ number_format($rdata->total_tambahan,0,',','.') }}</td>
                                   <td style="text-align: right;">{{ number_format($rdata->total_extra,0,',','.') }}</td>
                                   <td style="text-align: right;">{{ number_format($rdata->total_drink,0,',','.') }}</td>
-                                  <td  class="<?= ($report_total[0]->total_lebaran+$report_total[0]->total_lebaran_cl==0)?'d-none':''; ?>" style="text-align: right;">{{ number_format(($report_total[0]->total_lebaran+$report_total[0]->total_lebaran_cl),0,',','.') }}</td>
+                                  <td  class="<?= ($report_total[0]->total_lebaran+$report_total[0]->total_lebaran_cl==0)?'d-none':''; ?>" style="text-align: right;">{{ number_format(($rdata->total_lebaran+$rdata->total_lebaran_cl),0,',','.') }}</td>
                                   <td class="<?= $report_total[0]->total_b1d==0?'d-none':''; ?>" style="text-align: right;">{{ number_format($rdata->total_b1d,0,',','.') }}</td>
                                   <td class="<?= $report_total[0]->total_b1c==0?'d-none':''; ?>" style="text-align: right;">{{ number_format($rdata->total_b1c,0,',','.') }}</td>
                                   <td class="<?= $report_total[0]->total_b2d==0?'d-none':''; ?>" style="text-align: right;">{{ number_format($rdata->total_b2d,0,',','.') }}</td>
