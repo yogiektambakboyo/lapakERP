@@ -119,6 +119,7 @@ class BranchsController extends Controller
         $branch_id_destination = $request->get('branch_id_destination');
 
         DB::update("insert into product_distribution(product_id,branch_id,created_at,updated_at,active) select pd.product_id,".$branch_id_destination.",now(),now(),pd.active from product_distribution pd where pd.branch_id = ".$branch_id_source." and ".$branch_id_destination."||''||pd.product_id  not in (select branch_id||''||product_id from product_distribution pd) ");
+        
         DB::update("insert into product_price(product_id, price, branch_id, updated_by, updated_at, created_by, created_at)
         SELECT product_id, price, ".$branch_id_destination.", 1, now(), 1, now()
         FROM product_price where branch_id=".$branch_id_source." and ".$branch_id_destination."||''||product_id  not in 
@@ -138,6 +139,10 @@ class BranchsController extends Controller
         SELECT product_id, ".$branch_id_destination.", point, 1, now(), now()
         FROM product_point where branch_id=".$branch_id_source." and ".$branch_id_destination."||''||product_id  not in 
         (select branch_id||''||product_id from product_point);");
+
+        DB::update("insert into point_convertion_branch(branch_id,point,point_value,created_at,updated_at,created_by,updated_by)
+        SELECT ".$branch_id_destination.",point,point_value,now(),now(),1,1  from point_convertion_branch pcb where pcb.branch_id =".$branch_id_source." and ".$branch_id_destination."||''||point::character varying not in 
+        ( select branch_id::character varying||point::character varying from point_convertion_branch)");
 
         $data = $this->data;
         $result = array_merge(
