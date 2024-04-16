@@ -48,11 +48,22 @@
 
   
       {{-- Area Looping --}}
+
+      @php $total_cl_=0; @endphp
   
       <table class="table table-striped nowrap" id="example"  style="width: 100%">
         <thead>
         <tr>
+          @foreach($report_data as $rdata)
+          <?php 
+              $total_cl_ = $total_cl_ + $rdata->total_salon_no_cl;
+          ?>
+      @endforeach
             <th style="text-align: center;background-color:#FFA726;" scope="col" width="8%">@lang('general.lbl_dated')</th>
+            @if($total_cl_>0)
+              <th style="text-align: center;background-color:#FFA726;"  scope="col">Salon</th>     
+              <th style="text-align: center;background-color:#FFA726;"  scope="col">Total Perawatan & Salon</th>     
+            @endif
             <th style="text-align: center;background-color:#FFA726;"  scope="col">@lang('general.service')</th>     
             <th style="text-align: center;background-color:#FFA726;"  scope="col">@lang('general.product')</th>    
             <th style="text-align: center;background-color:#FFA726;"  scope="col">@lang('general.lbl_drink')</th>     
@@ -73,6 +84,7 @@
         </thead>
           <?php 
               $total_service = 0;
+              $total_cl = 0;
               $total_product = 0;
               $total_drink = 0;
               $total_extra = 0;
@@ -94,6 +106,10 @@
                 <tr>
                     <td>{{ Carbon\Carbon::parse($rdata->dated)->format('d-m-Y')  }}</td>
                     <td style="text-align: right;">{{ number_format($rdata->total_service_no_cl,0,',','.') }}</td>
+                    @if($total_cl_>0)
+                      <td style="text-align: right;">{{ number_format($rdata->total_salon_no_cl,0,',','.') }}</td>
+                      <td style="text-align: right;">{{ number_format(($rdata->total_service_no_cl+$rdata->total_salon_no_cl),0,',','.') }}</td>   
+                    @endif
                     <td style="text-align: right;">{{ number_format($rdata->total_product,0,',','.') }}</td>
                     <td style="text-align: right;">{{ number_format($rdata->total_drink,0,',','.') }}</td>
                     <td style="text-align: right;">{{ number_format($rdata->total_extra,0,',','.') }}</td>
@@ -112,6 +128,7 @@
                 </tr>
                 <?php 
                     $total_service = $total_service + $rdata->total_service_no_cl;
+                    $total_cl = $total_cl + $rdata->total_salon_no_cl;
                     $total_product = $total_product + $rdata->total_product;
                     $total_drink = $total_drink + $rdata->total_drink;
                     $total_extra = $total_extra + $rdata->total_extra;
@@ -131,7 +148,11 @@
             @endforeach
               <tr>
                 <th>Grand Total</th>
-                <th style="text-align: right;">{{ number_format($total_service,0,',','.') }}</th>                
+                <th style="text-align: right;">{{ number_format($total_service,0,',','.') }}</th>  
+                @if($total_cl_>0)
+                  <th style="text-align: right;">{{ number_format($total_cl,0,',','.') }}</th>  
+                  <th style="text-align: right;">{{ number_format(($total_cl+$total_service),0,',','.') }}</th>  
+                @endif              
                 <th style="text-align: right;">{{ number_format($total_product,0,',','.') }}</th>                
                 <th style="text-align: right;">{{ number_format($total_drink,0,',','.') }}</th>                
                 <th style="text-align: right;">{{ number_format($total_extra,0,',','.') }}</th>                
