@@ -104,7 +104,7 @@
         <tbody>
             @foreach($report_data as $rdata)
             <?php 
-                    $total_service = $total_service + $rdata->total_service_no_cl;
+                    $total_service = $total_service + ($rdata->total_service_no_cl+$rdata->total_salon_no_cl);
                     $total_product = $total_product + $rdata->total_product;
                     $total_ojek = $total_ojek + $rdata->total_ojek;
                     $total_tambahan = $total_tambahan + $rdata->total_tambahan;
@@ -126,7 +126,7 @@
                 ?>
                 <tr>
                   <td rowspan="4">{{ Carbon\Carbon::parse($rdata->dated)->format('d-m-Y')  }}</td>
-                  <td style="text-align: right;">{{ number_format($rdata->total_service_no_cl,0,',','.') }}</td>
+                  <td style="text-align: right;">{{ number_format(($rdata->total_service_no_cl+$rdata->total_salon_no_cl),0,',','.') }}</td>
                   <td style="text-align: right;">{{ number_format($rdata->total_product+($rdata->total_lebaran+$rdata->total_lebaran_cl),0,',','.') }}</td>
                   <td style="text-align: right;">{{ number_format($rdata->total_cash_1,0,',','.') }}</td>
                   <td style="text-align: right;">{{ number_format($rdata->total_cash_2,0,',','.') }}</td>
@@ -144,7 +144,7 @@
                  <tr>
                   <td style="text-align: right;"  class="d-none"></td>
                   <td style="text-align: right;"  class="d-none"></td>
-                  <td style="text-align: right;"  rowspan="2" colspan="2">{{ number_format($rdata->total_service_no_cl+$rdata->total_product+($rdata->total_lebaran+$rdata->total_lebaran_cl),0,',','.') }}</td>
+                  <td style="text-align: right;"  rowspan="2" colspan="2">{{ number_format(($rdata->total_service_no_cl+$rdata->total_salon_no_cl)+$rdata->total_product+($rdata->total_lebaran+$rdata->total_lebaran_cl),0,',','.') }}</td>
                   <td style="text-align: right;"  class="d-none"></td>
                   <td style="text-align: right;"  colspan="2">{{ number_format($rdata->total_cash_1+$rdata->total_cash_2,0,',','.') }}</td>
                   <td style="text-align: right;"  class="d-none"></td>
@@ -432,7 +432,7 @@
                       for (let index = 0; index < report_data.length; index++) {
                         var rowElement = report_data[index];
 
-                        total_service = total_service + parseFloat((rowElement.total_service_no_cl));
+                        total_service = total_service + (parseFloat(rowElement.total_service_no_cl)+parseFloat(rowElement.total_salon_no_cl));
                         total_product = total_product + parseFloat(rowElement.total_product) + parseFloat(rowElement.total_lebaran) + parseFloat(rowElement.total_lebaran_cl);
                         total_ojek = total_ojek + parseFloat(rowElement.total_ojek);
                         total_tambahan = total_tambahan + parseFloat(rowElement.total_tambahan);
@@ -455,7 +455,7 @@
                         worksheet.mergeCells('A'+counter, 'A'+(counter+3));
                         worksheet.getCell('A'+counter).value = rowElement.datedformat;
 
-                        worksheet.getCell('B'+counter).value = (rowElement.total_service_no_cl);
+                        worksheet.getCell('B'+counter).value = (parseFloat(rowElement.total_service_no_cl)+parseFloat(rowElement.total_salon_no_cl));
                         worksheet.getCell('C'+counter).value = parseFloat(rowElement.total_product) + parseFloat(rowElement.total_lebaran) + parseFloat(rowElement.total_lebaran_cl);
                         worksheet.getCell('D'+counter).value = (rowElement.total_cash_1);
                         worksheet.getCell('E'+counter).value = (rowElement.total_cash_2);
@@ -470,7 +470,7 @@
                         counter++;
 
                         worksheet.mergeCells('B'+counter, 'C'+(counter+1));
-                        worksheet.getCell('B'+counter).value = (parseFloat(rowElement.total_service_no_cl)+parseFloat(rowElement.total_product)+ parseFloat(rowElement.total_lebaran) + parseFloat(rowElement.total_lebaran_cl));
+                        worksheet.getCell('B'+counter).value = ((parseFloat(rowElement.total_service_no_cl)+parseFloat(rowElement.total_salon_no_cl))+parseFloat(rowElement.total_product)+ parseFloat(rowElement.total_lebaran) + parseFloat(rowElement.total_lebaran_cl));
 
                         worksheet.mergeCells('D'+counter, 'E'+counter);
                         worksheet.getCell('D'+counter).value = parseFloat(rowElement.total_cash_1)+parseFloat(rowElement.total_cash_2);
