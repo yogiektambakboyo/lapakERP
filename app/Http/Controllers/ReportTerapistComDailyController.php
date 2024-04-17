@@ -113,6 +113,22 @@ class ReportTerapistComDailyController extends Controller
                         join users u on u.job_id = 2  and u.id = id.assigned_to  
                         where pc.referral_fee+pc.assigned_to_fee+pc.created_by_fee  > 0 and im.dated >= now()-interval'7 days'
                         group by  b.id,b.remark,im.dated,u.join_date,u.name
+                        union all
+                        select b.id as branch_id,b.remark as branch_name,'charge_lebaran' as com_type,im.dated,count(ps.id) as qtyinv,u.work_year,u.name,sum(pc.values_extra*id.qty) as commisions,sum(coalesce(pp.point,0)*id.qty) as point_qty
+                        from invoice_master im 
+                        join invoice_detail id on id.invoice_no = im.invoice_no
+                        join product_sku ps on ps.id = id.product_id 
+                        join customers c on c.id = im.customers_id 
+                        join branch b on b.id = c.branch_id
+                        join users_branch as ub on ub.branch_id = b.id and ub.user_id = '".$user->id."'
+                        join product_commision_by_year pc on pc.product_id = id.product_id and pc.branch_id = c.branch_id
+                        join (
+                            select r.id,r.name,r.job_id,case when r.work_year=0 then 1 when r.work_year>10 then 10  else r.work_year end as work_year 
+                            from users r
+                            ) u on u.id = id.assigned_to and u.job_id = pc.jobs_id  and u.id = id.assigned_to  and u.work_year = pc.years 
+                        left join product_point pp on pp.product_id=ps.id and pp.branch_id=b.id 
+                        where pc.values_extra > 0 and im.dated >= now()-interval'7 days'
+                        group by  b.id,b.remark,im.dated,u.work_year,u.name
 
                 ) a left join point_convertion_branch pc2 on pc2.point = a.point_qty and pc2.branch_id = a.branch_id  order by a.branch_name,a.dated,a.name;
         ");
@@ -143,13 +159,436 @@ class ReportTerapistComDailyController extends Controller
         $branchs = Branch::join('users_branch as ub','ub.branch_id', '=', 'branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']);        
         
         $begindate = date(Carbon::parse($request->filter_begin_date_in)->format('Y-m-d'));
+        $begindate_f = date(Carbon::parse($request->filter_begin_date_in)->format('d-m-Y'));
         $enddate = date(Carbon::parse($request->filter_end_date_in)->format('Y-m-d'));
+        $enddate_f = date(Carbon::parse($request->filter_end_date_in)->format('d-m-Y'));
         $terapist = $request->filter_terapist_in;
         $branchx = $request->filter_branch_id_in;
 
         if($request->export=='Export Excel'){
             $strencode = base64_encode($begindate.'#'.$enddate.'#'.$branchx.'#'.$user->id.'#'.$terapist);
             return Excel::download(new ReportCommisionTerapistDailyExport($strencode), 'report_commision_terapist_sum_'.Carbon::now()->format('YmdHis').'.xlsx');
+        }else if($request->export=='Export Sum Charge'){
+
+            $filter_begin_date = $begindate;
+            $filter_begin_end = $enddate;
+            $filter_branch_id =  $branchx;
+
+                $report_data = DB::select("
+                    select u.id as user_id,u.name,u.job_id,b.remark as branch_name,im.dated,id.invoice_no,id.product_id,ps.abbr,id.qty,id.price,pc.values_extra  from invoice_master im 
+                    join customers c on c.id = im.customers_id 
+                    join invoice_detail id on id.invoice_no = im.invoice_no 
+                    join product_sku ps on ps.id = id.product_id
+                    join users_branch as ub on ub.branch_id = c.branch_id and ub.user_id = '".$user->id."' and ub.branch_id::character varying like '".$filter_branch_id."'
+                    join (
+                        select r.id,r.name,r.job_id,case when r.work_year=0 then 1 when r.work_year>10 then 10  else r.work_year end as work_year
+                        from users r
+                    ) u on u.id = id.assigned_to
+                    join branch b on b.id = c.branch_id 
+                    join product_commision_by_year pc on pc.values_extra>0 and pc.product_id = id.product_id and pc.branch_id = c.branch_id and pc.jobs_id=u.job_id and pc.years = u.work_year 
+                    where im.dated between '".$filter_begin_date."' and  '".$filter_begin_end."' and c.branch_id = ub.branch_id order by 2
+                ");
+
+                $report_data_c = DB::select("
+                        select u.id as user_id,u.name,u.job_id,b.remark as branch_name,im.dated,id.invoice_no,id.product_id,ps.abbr,id.qty,id.price,pc.values_extra  from invoice_master im 
+                        join customers c on c.id = im.customers_id 
+                        join invoice_detail id on id.invoice_no = im.invoice_no 
+                        join product_sku ps on ps.id = id.product_id
+                        join users_branch as ub on ub.branch_id = c.branch_id and ub.user_id = '".$user->id."' and ub.branch_id::character varying like '".$filter_branch_id."'
+                        join (
+                            select r.id,r.name,r.job_id,case when r.work_year=0 then 1 when r.work_year>10 then 10  else r.work_year end as work_year
+                            from users r
+                        ) u on u.id = id.assigned_to
+                        join (
+                            select r.id,r.name,r.job_id,case when r.work_year=0 then 1 when r.work_year>10 then 10  else r.work_year end as work_year
+                            from users r
+                        ) uc on uc.id = im.created_by
+                        join branch b on b.id = c.branch_id 
+                        join product_commision_by_year pc on pc.values_extra>0 and pc.product_id = id.product_id and pc.branch_id = c.branch_id and pc.jobs_id=uc.job_id and pc.years = u.work_year 
+                        where im.dated between '".$filter_begin_date."' and  '".$filter_begin_end."' and c.branch_id = ub.branch_id order by 2
+                ");
+
+
+                $report_data_terapist = DB::select("
+                    select u.id as user_id,u.name
+                    from invoice_master im 
+                    join customers c on c.id = im.customers_id 
+                    join invoice_detail id on id.invoice_no = im.invoice_no 
+                    join product_sku ps on ps.id = id.product_id
+                    join users_branch as ub on ub.branch_id = c.branch_id and ub.user_id = '".$user->id."' and ub.branch_id::character varying like '".$filter_branch_id."'
+                    join (
+                        select r.id,r.name,r.job_id,case when r.work_year=0 then 1 when r.work_year>10 then 10  else r.work_year end as work_year
+                        from users r
+                    ) u on u.id = id.assigned_to
+                    join branch b on b.id = c.branch_id 
+                    join product_commision_by_year pc on pc.values_extra>0 and pc.product_id = id.product_id and pc.branch_id = c.branch_id and pc.jobs_id=u.job_id and pc.years = u.work_year 
+                    where im.dated between '".$filter_begin_date."' and  '".$filter_begin_end."' and c.branch_id = ub.branch_id group by u.id,u.name order by 2
+                ");
+
+                $report_data_terapist_det = DB::select("
+                    select u.id as user_id,u.name,im.dated,sum(pc.values_extra*id.qty) charge_lebaran
+                    from invoice_master im 
+                    join customers c on c.id = im.customers_id 
+                    join invoice_detail id on id.invoice_no = im.invoice_no 
+                    join product_sku ps on ps.id = id.product_id
+                    join users_branch as ub on ub.branch_id = c.branch_id and ub.user_id = '".$user->id."' and ub.branch_id::character varying like '".$filter_branch_id."'
+                    join (
+                        select r.id,r.name,r.job_id,case when r.work_year=0 then 1 when r.work_year>10 then 10  else r.work_year end as work_year
+                        from users r
+                    ) u on u.id = id.assigned_to
+                    join branch b on b.id = c.branch_id 
+                    join product_commision_by_year pc on pc.values_extra>0 and pc.product_id = id.product_id and pc.branch_id = c.branch_id and pc.jobs_id=u.job_id and pc.years = u.work_year 
+                    where im.dated between '".$filter_begin_date."' and  '".$filter_begin_end."' and c.branch_id = ub.branch_id group by u.id,u.name,im.dated order by 2
+                ");
+
+                $report_data_cashier_det = DB::select("
+                    select im.dated,sum(pc.values_extra*id.qty) charge_lebaran,count(distinct u.id) as c_count 
+                    from invoice_master im 
+                    join customers c on c.id = im.customers_id 
+                    join invoice_detail id on id.invoice_no = im.invoice_no 
+                    join product_sku ps on ps.id = id.product_id
+                    join users_branch as ub on ub.branch_id = c.branch_id and ub.user_id = '".$user->id."' and ub.branch_id::character varying like '".$filter_branch_id."'
+                    join (
+                        select r.id,r.name,r.job_id,case when r.work_year=0 then 1 when r.work_year>10 then 10  else r.work_year end as work_year
+                        from users r
+                    ) u on u.id = im.created_by
+                    join branch b on b.id = c.branch_id 
+                    join product_commision_by_year pc on pc.values_extra>0 and pc.product_id = id.product_id and pc.branch_id = c.branch_id and pc.jobs_id=u.job_id and pc.years = u.work_year 
+                    where im.dated between '".$filter_begin_date."' and  '".$filter_begin_end."' and c.branch_id = ub.branch_id group by im.dated order by 1
+                ");
+
+            
+
+                $report_data_cashier = DB::select("
+                    select string_agg(distinct u.name,', ' order by u.name) as cashier,count( distinct u.id) as c_count 
+                    from invoice_master im 
+                    join customers c on c.id = im.customers_id 
+                    join invoice_detail id on id.invoice_no = im.invoice_no 
+                    join users_branch as ub on ub.branch_id = c.branch_id and ub.user_id = '".$user->id."' and ub.branch_id::character varying like '".$filter_branch_id."'
+                    join (
+                        select r.id,r.name,r.job_id,case when r.work_year=0 then 1 when r.work_year>10 then 10  else r.work_year end as work_year
+                        from users r
+                    ) u on u.id = im.created_by
+                    where im.dated between '".$filter_begin_date."' and  '".$filter_begin_end."'  and c.branch_id = ub.branch_id 
+                ");
+
+                $report_data_cashier_s = DB::select("
+                    select u.id as user_id,u.name
+                    from invoice_master im 
+                    join customers c on c.id = im.customers_id 
+                    join invoice_detail id on id.invoice_no = im.invoice_no 
+                    join users_branch as ub on ub.branch_id = c.branch_id and ub.user_id = '".$user->id."' and ub.branch_id::character varying like '".$filter_branch_id."'
+                    join (
+                        select r.id,r.name,r.job_id,case when r.work_year=0 then 1 when r.work_year>10 then 10  else r.work_year end as work_year
+                        from users r
+                    ) u on u.id = im.created_by
+                    join product_commision_by_year pc on pc.values_extra>0 and pc.product_id = id.product_id and pc.branch_id = c.branch_id and pc.jobs_id=u.job_id and pc.years = u.work_year 
+                    where im.dated between '".$filter_begin_date."' and  '".$filter_begin_end."'  and c.branch_id = ub.branch_id group by u.id,u.name order by 2
+                ");
+
+                $dated_list = DB::select("
+                    select im.dated,count(distinct id.product_id) as c_product,sum(pc.values_extra*id.qty) as charge_lebaran,to_char(im.dated,'dd-MM') as dm_number,to_char(im.dated,'dd') as dated_number,to_char(im.dated,'dd-MM-YYYY') as dated_format,to_char(im.dated,'dd-Mon-YYYY') as dated_format_m
+                    from invoice_master im 
+                    join customers c on c.id = im.customers_id 
+                    join invoice_detail id on id.invoice_no = im.invoice_no 
+                    join product_sku ps on ps.id = id.product_id
+                    join users_branch as ub on ub.branch_id = c.branch_id and ub.user_id = '".$user->id."' and ub.branch_id::character varying like '".$filter_branch_id."'
+                    join (
+                        select r.id,r.name,r.job_id,case when r.work_year=0 then 1 when r.work_year>10 then 10  else r.work_year end as work_year
+                        from users r
+                    ) u on u.id = id.assigned_to
+                    join product_commision_by_year pc on pc.values_extra>0 and pc.product_id = id.product_id and pc.branch_id = c.branch_id and pc.jobs_id=u.job_id and pc.years = u.work_year 
+                    where im.dated between '".$filter_begin_date."' and  '".$filter_begin_end."' and c.branch_id = ub.branch_id
+                    group by im.dated order by 1
+
+                ");
+
+                $dated_list_c = DB::select("
+                    select im.dated,count(distinct id.product_id) as c_product,sum(pc.values_extra*id.qty) as charge_lebaran,to_char(im.dated,'dd') as dated_number,to_char(im.dated,'dd-MM-YYYY') as dated_format,to_char(im.dated,'dd-Mon-YYYY') as dated_format_m
+                    from invoice_master im 
+                    join customers c on c.id = im.customers_id 
+                    join invoice_detail id on id.invoice_no = im.invoice_no 
+                    join product_sku ps on ps.id = id.product_id
+                    join users_branch as ub on ub.branch_id = c.branch_id and ub.user_id = '".$user->id."' and ub.branch_id::character varying like '".$filter_branch_id."'
+                    join (
+                        select r.id,r.name,r.job_id,case when r.work_year=0 then 1 when r.work_year>10 then 10  else r.work_year end as work_year
+                        from users r
+                    ) u on u.id = id.assigned_to
+                    join (
+                        select r.id,r.name,r.job_id,case when r.work_year=0 then 1 when r.work_year>10 then 10  else r.work_year end as work_year
+                        from users r
+                    ) uc on uc.id = im.created_by
+                    join product_commision_by_year pc on pc.values_extra>0 and pc.product_id = id.product_id and pc.branch_id = c.branch_id and pc.jobs_id=uc.job_id and pc.years = u.work_year 
+                    where im.dated between '".$filter_begin_date."' and  '".$filter_begin_end."' and c.branch_id = ub.branch_id
+                    group by im.dated order by 1
+
+                ");
+
+
+                $service_list = DB::select("
+
+                    select distinct im.dated,id.product_id,ps.abbr 
+                    from invoice_master im 
+                    join customers c on c.id = im.customers_id 
+                    join invoice_detail id on id.invoice_no = im.invoice_no 
+                    join product_sku ps on ps.id = id.product_id
+                    join users_branch as ub on ub.branch_id = c.branch_id and ub.user_id = '".$user->id."' and ub.branch_id::character varying like '".$filter_branch_id."'
+                    join (
+                        select r.id,r.name,r.job_id,case when r.work_year=0 then 1 when r.work_year>10 then 10  else r.work_year end as work_year
+                        from users r
+                    ) u on u.id = id.assigned_to
+                    join product_commision_by_year pc on pc.values_extra>0 and pc.product_id = id.product_id and pc.branch_id = c.branch_id and pc.jobs_id=u.job_id and pc.years = u.work_year 
+                    where im.dated between '".$filter_begin_date."' and  '".$filter_begin_end."' and c.branch_id = ub.branch_id order by 1,3
+
+                ");
+
+                $service_list_c = DB::select("
+
+                    select distinct im.dated,id.product_id,ps.abbr 
+                    from invoice_master im 
+                    join customers c on c.id = im.customers_id 
+                    join invoice_detail id on id.invoice_no = im.invoice_no 
+                    join product_sku ps on ps.id = id.product_id
+                    join users_branch as ub on ub.branch_id = c.branch_id and ub.user_id = '".$user->id."' and ub.branch_id::character varying like '".$filter_branch_id."'
+                    join (
+                        select r.id,r.name,r.job_id,case when r.work_year=0 then 1 when r.work_year>10 then 10  else r.work_year end as work_year
+                        from users r
+                    ) u on u.id = im.created_by
+                    join product_commision_by_year pc on pc.values_extra>0 and pc.product_id = id.product_id and pc.branch_id = c.branch_id and pc.jobs_id=u.job_id and pc.years = u.work_year 
+                    where im.dated between '".$filter_begin_date."' and  '".$filter_begin_end."' and c.branch_id = ub.branch_id order by 1,3
+
+                ");
+
+
+
+            return view('pages.reports.terapist_comm_day_print_cl', [
+                'service_list' => $service_list,
+                'dated_list_c' => $dated_list_c,
+                'dated_list' => $dated_list,
+                'report_data' => $report_data,
+                'report_data_c' => $report_data_c,
+                'report_data_terapist' => $report_data_terapist,
+                'report_data_terapist_det' => $report_data_terapist_det,
+                'report_data_cashier' => $report_data_cashier,
+                'report_data_cashier_s' => $report_data_cashier_s,
+                'report_data_cashier_det' => $report_data_cashier_det,
+                'filter_begin_date' => $filter_begin_date,
+                'filter_begin_end' => $filter_begin_end,
+                'filter_branch_id' => $branchx,
+                'filter_terapist_in' => $terapist,
+                'settings' => Settings::get(),
+            ]);
+        }else if($request->export=='Export Sum Charge API'){
+
+            $filter_begin_date = $begindate;
+            $filter_begin_end = $enddate;
+            $filter_branch_id =  $branchx;
+
+                $report_data = DB::select("
+                    select u.id as user_id,u.name,u.job_id,b.remark as branch_name,im.dated,id.invoice_no,id.product_id,ps.abbr,id.qty,id.price,pc.values_extra  from invoice_master im 
+                    join customers c on c.id = im.customers_id 
+                    join invoice_detail id on id.invoice_no = im.invoice_no 
+                    join product_sku ps on ps.id = id.product_id
+                    join users_branch as ub on ub.branch_id = c.branch_id and ub.user_id = '".$user->id."' and ub.branch_id::character varying like '".$filter_branch_id."'
+                    join (
+                        select r.id,r.name,r.job_id,case when r.work_year=0 then 1 when r.work_year>10 then 10  else r.work_year end as work_year
+                        from users r
+                    ) u on u.id = id.assigned_to
+                    join branch b on b.id = c.branch_id 
+                    join product_commision_by_year pc on pc.values_extra>0 and pc.product_id = id.product_id and pc.branch_id = c.branch_id and pc.jobs_id=u.job_id and pc.years = u.work_year 
+                    where im.dated between '".$filter_begin_date."' and  '".$filter_begin_end."' and c.branch_id = ub.branch_id order by 2
+                ");
+
+                $report_data_c = DB::select("
+                        select u.id as user_id,u.name,u.job_id,b.remark as branch_name,im.dated,id.invoice_no,id.product_id,ps.abbr,id.qty,id.price,pc.values_extra  from invoice_master im 
+                        join customers c on c.id = im.customers_id 
+                        join invoice_detail id on id.invoice_no = im.invoice_no 
+                        join product_sku ps on ps.id = id.product_id
+                        join users_branch as ub on ub.branch_id = c.branch_id and ub.user_id = '".$user->id."' and ub.branch_id::character varying like '".$filter_branch_id."'
+                        join (
+                            select r.id,r.name,r.job_id,case when r.work_year=0 then 1 when r.work_year>10 then 10  else r.work_year end as work_year
+                            from users r
+                        ) u on u.id = id.assigned_to
+                        join (
+                            select r.id,r.name,r.job_id,case when r.work_year=0 then 1 when r.work_year>10 then 10  else r.work_year end as work_year
+                            from users r
+                        ) uc on uc.id = im.created_by
+                        join branch b on b.id = c.branch_id 
+                        join product_commision_by_year pc on pc.values_extra>0 and pc.product_id = id.product_id and pc.branch_id = c.branch_id and pc.jobs_id=uc.job_id and pc.years = u.work_year 
+                        where im.dated between '".$filter_begin_date."' and  '".$filter_begin_end."' and c.branch_id = ub.branch_id order by 2
+                ");
+
+
+                $report_data_terapist = DB::select("
+                    select u.id as user_id,u.name
+                    from invoice_master im 
+                    join customers c on c.id = im.customers_id 
+                    join invoice_detail id on id.invoice_no = im.invoice_no 
+                    join product_sku ps on ps.id = id.product_id
+                    join users_branch as ub on ub.branch_id = c.branch_id and ub.user_id = '".$user->id."' and ub.branch_id::character varying like '".$filter_branch_id."'
+                    join (
+                        select r.id,r.name,r.job_id,case when r.work_year=0 then 1 when r.work_year>10 then 10  else r.work_year end as work_year
+                        from users r
+                    ) u on u.id = id.assigned_to
+                    join branch b on b.id = c.branch_id 
+                    join product_commision_by_year pc on pc.values_extra>0 and pc.product_id = id.product_id and pc.branch_id = c.branch_id and pc.jobs_id=u.job_id and pc.years = u.work_year 
+                    where im.dated between '".$filter_begin_date."' and  '".$filter_begin_end."' and c.branch_id = ub.branch_id group by u.id,u.name order by 2
+                ");
+
+                $report_data_terapist_det = DB::select("
+                    select u.id as user_id,u.name,im.dated,sum(pc.values_extra*id.qty) charge_lebaran
+                    from invoice_master im 
+                    join customers c on c.id = im.customers_id 
+                    join invoice_detail id on id.invoice_no = im.invoice_no 
+                    join product_sku ps on ps.id = id.product_id
+                    join users_branch as ub on ub.branch_id = c.branch_id and ub.user_id = '".$user->id."' and ub.branch_id::character varying like '".$filter_branch_id."'
+                    join (
+                        select r.id,r.name,r.job_id,case when r.work_year=0 then 1 when r.work_year>10 then 10  else r.work_year end as work_year
+                        from users r
+                    ) u on u.id = id.assigned_to
+                    join branch b on b.id = c.branch_id 
+                    join product_commision_by_year pc on pc.values_extra>0 and pc.product_id = id.product_id and pc.branch_id = c.branch_id and pc.jobs_id=u.job_id and pc.years = u.work_year 
+                    where im.dated between '".$filter_begin_date."' and  '".$filter_begin_end."' and c.branch_id = ub.branch_id group by u.id,u.name,im.dated order by 2
+                ");
+
+                $report_data_cashier_det = DB::select("
+                    select im.dated,sum(pc.values_extra*id.qty) charge_lebaran,count(distinct u.id) as c_count 
+                    from invoice_master im 
+                    join customers c on c.id = im.customers_id 
+                    join invoice_detail id on id.invoice_no = im.invoice_no 
+                    join product_sku ps on ps.id = id.product_id
+                    join users_branch as ub on ub.branch_id = c.branch_id and ub.user_id = '".$user->id."' and ub.branch_id::character varying like '".$filter_branch_id."'
+                    join (
+                        select r.id,r.name,r.job_id,case when r.work_year=0 then 1 when r.work_year>10 then 10  else r.work_year end as work_year
+                        from users r
+                    ) u on u.id = im.created_by
+                    join branch b on b.id = c.branch_id 
+                    join product_commision_by_year pc on pc.values_extra>0 and pc.product_id = id.product_id and pc.branch_id = c.branch_id and pc.jobs_id=u.job_id and pc.years = u.work_year 
+                    where im.dated between '".$filter_begin_date."' and  '".$filter_begin_end."' and c.branch_id = ub.branch_id group by im.dated order by 1
+                ");
+
+            
+
+                $report_data_cashier = DB::select("
+                    select string_agg(distinct u.name,', ' order by u.name) as cashier
+                    from invoice_master im 
+                    join customers c on c.id = im.customers_id 
+                    join invoice_detail id on id.invoice_no = im.invoice_no 
+                    join users_branch as ub on ub.branch_id = c.branch_id and ub.user_id = '".$user->id."' and ub.branch_id::character varying like '".$filter_branch_id."'
+                    join (
+                        select r.id,r.name,r.job_id,case when r.work_year=0 then 1 when r.work_year>10 then 10  else r.work_year end as work_year
+                        from users r
+                    ) u on u.id = im.created_by
+                    where im.dated between '".$filter_begin_date."' and  '".$filter_begin_end."'  and c.branch_id = ub.branch_id 
+                ");
+
+                $report_data_cashier_s = DB::select("
+                    select u.id as user_id,u.name
+                    from invoice_master im 
+                    join customers c on c.id = im.customers_id 
+                    join invoice_detail id on id.invoice_no = im.invoice_no 
+                    join users_branch as ub on ub.branch_id = c.branch_id and ub.user_id = '".$user->id."' and ub.branch_id::character varying like '".$filter_branch_id."'
+                    join (
+                        select r.id,r.name,r.job_id,case when r.work_year=0 then 1 when r.work_year>10 then 10  else r.work_year end as work_year
+                        from users r
+                    ) u on u.id = im.created_by
+                    join product_commision_by_year pc on pc.values_extra>0 and pc.product_id = id.product_id and pc.branch_id = c.branch_id and pc.jobs_id=u.job_id and pc.years = u.work_year 
+                    where im.dated between '".$filter_begin_date."' and  '".$filter_begin_end."'  and c.branch_id = ub.branch_id group by u.id,u.name order by 2
+                ");
+
+                $dated_list = DB::select("
+                    select im.dated,count(distinct id.product_id) as c_product,sum(pc.values_extra*id.qty) as charge_lebaran,to_char(im.dated,'dd-MM') as dm_number,to_char(im.dated,'dd') as dated_number,to_char(im.dated,'dd-MM-YYYY') as dated_format,to_char(im.dated,'dd-Mon-YYYY') as dated_format_m
+                    from invoice_master im 
+                    join customers c on c.id = im.customers_id 
+                    join invoice_detail id on id.invoice_no = im.invoice_no 
+                    join product_sku ps on ps.id = id.product_id
+                    join users_branch as ub on ub.branch_id = c.branch_id and ub.user_id = '".$user->id."' and ub.branch_id::character varying like '".$filter_branch_id."'
+                    join (
+                        select r.id,r.name,r.job_id,case when r.work_year=0 then 1 when r.work_year>10 then 10  else r.work_year end as work_year
+                        from users r
+                    ) u on u.id = id.assigned_to
+                    join product_commision_by_year pc on pc.values_extra>0 and pc.product_id = id.product_id and pc.branch_id = c.branch_id and pc.jobs_id=u.job_id and pc.years = u.work_year 
+                    where im.dated between '".$filter_begin_date."' and  '".$filter_begin_end."' and c.branch_id = ub.branch_id
+                    group by im.dated order by 1
+
+                ");
+
+                $dated_list_c = DB::select("
+                    select im.dated,count(distinct id.product_id) as c_product,sum(pc.values_extra*id.qty) as charge_lebaran,to_char(im.dated,'dd') as dated_number,to_char(im.dated,'dd-MM-YYYY') as dated_format,to_char(im.dated,'dd-Mon-YYYY') as dated_format_m
+                    from invoice_master im 
+                    join customers c on c.id = im.customers_id 
+                    join invoice_detail id on id.invoice_no = im.invoice_no 
+                    join product_sku ps on ps.id = id.product_id
+                    join users_branch as ub on ub.branch_id = c.branch_id and ub.user_id = '".$user->id."' and ub.branch_id::character varying like '".$filter_branch_id."'
+                    join (
+                        select r.id,r.name,r.job_id,case when r.work_year=0 then 1 when r.work_year>10 then 10  else r.work_year end as work_year
+                        from users r
+                    ) u on u.id = id.assigned_to
+                    join (
+                        select r.id,r.name,r.job_id,case when r.work_year=0 then 1 when r.work_year>10 then 10  else r.work_year end as work_year
+                        from users r
+                    ) uc on uc.id = im.created_by
+                    join product_commision_by_year pc on pc.values_extra>0 and pc.product_id = id.product_id and pc.branch_id = c.branch_id and pc.jobs_id=uc.job_id and pc.years = u.work_year 
+                    where im.dated between '".$filter_begin_date."' and  '".$filter_begin_end."' and c.branch_id = ub.branch_id
+                    group by im.dated order by 1
+
+                ");
+
+
+                $service_list = DB::select("
+
+                    select distinct im.dated,id.product_id,ps.abbr 
+                    from invoice_master im 
+                    join customers c on c.id = im.customers_id 
+                    join invoice_detail id on id.invoice_no = im.invoice_no 
+                    join product_sku ps on ps.id = id.product_id
+                    join users_branch as ub on ub.branch_id = c.branch_id and ub.user_id = '".$user->id."' and ub.branch_id::character varying like '".$filter_branch_id."'
+                    join (
+                        select r.id,r.name,r.job_id,case when r.work_year=0 then 1 when r.work_year>10 then 10  else r.work_year end as work_year
+                        from users r
+                    ) u on u.id = id.assigned_to
+                    join product_commision_by_year pc on pc.values_extra>0 and pc.product_id = id.product_id and pc.branch_id = c.branch_id and pc.jobs_id=u.job_id and pc.years = u.work_year 
+                    where im.dated between '".$filter_begin_date."' and  '".$filter_begin_end."' and c.branch_id = ub.branch_id order by 1,3
+
+                ");
+
+                $service_list_c = DB::select("
+
+                    select distinct im.dated,id.product_id,ps.abbr 
+                    from invoice_master im 
+                    join customers c on c.id = im.customers_id 
+                    join invoice_detail id on id.invoice_no = im.invoice_no 
+                    join product_sku ps on ps.id = id.product_id
+                    join users_branch as ub on ub.branch_id = c.branch_id and ub.user_id = '".$user->id."' and ub.branch_id::character varying like '".$filter_branch_id."'
+                    join (
+                        select r.id,r.name,r.job_id,case when r.work_year=0 then 1 when r.work_year>10 then 10  else r.work_year end as work_year
+                        from users r
+                    ) u on u.id = im.created_by
+                    join product_commision_by_year pc on pc.values_extra>0 and pc.product_id = id.product_id and pc.branch_id = c.branch_id and pc.jobs_id=u.job_id and pc.years = u.work_year 
+                    where im.dated between '".$filter_begin_date."' and  '".$filter_begin_end."' and c.branch_id = ub.branch_id order by 1,3
+
+                ");
+
+
+            return array_merge([
+                'service_list' => $service_list,
+                'dated_list_c' => $dated_list_c,
+                'dated_list' => $dated_list,
+                'report_data' => $report_data,
+                'report_data_c' => $report_data_c,
+                'report_data_terapist' => $report_data_terapist,
+                'report_data_terapist_det' => $report_data_terapist_det,
+                'report_data_cashier' => $report_data_cashier,
+                'report_data_cashier_s' => $report_data_cashier_s,
+                'report_data_cashier_det' => $report_data_cashier_det,
+                'filter_begin_date' => $filter_begin_date,
+                'begindate_f' => $begindate_f,
+                'filter_begin_end' => $filter_begin_end,
+                'enddate_f' => $enddate_f,
+                'filter_branch_id' => $branchx,
+                'filter_terapist_in' => $terapist,
+                'settings' => Settings::get(),
+            ]);
         }else if($request->export=='Export Sum Lite'){
 
             $filter_begin_date = $begindate;
@@ -160,22 +599,30 @@ class ReportTerapistComDailyController extends Controller
            
             $report_data_detail_e_t = DB::select("
 
-            select branch_name,id,b.name,sum(service) service,sum(point_qty) point_qty,sum(b.invoice) invoice,sum(total_point) total_point,sum(total) total,sum(commisions_extra) commisions_extra,sum(total_abbr) total_abbr,sum(total_commisions) total_commisions,sum(product_qty) product_qty, sum(product_commisions) product_commisions 
+            select branch_name,id,b.name,sum(charge_lebaran) charge_lebaran,sum(service) service,sum(point_qty) point_qty,sum(b.invoice) invoice,sum(total_point) total_point,sum(total) total,sum(commisions_extra) commisions_extra,sum(total_abbr) total_abbr,sum(total_commisions) total_commisions,sum(product_qty) product_qty, sum(product_commisions) product_commisions 
             from (
-                select dated,a.branch_name,a.id,a.point_qty,a.name,a.invoice,service,coalesce(pc2.point_value,0) as total_point,(a.commisions+coalesce(pc2.point_value,0)) as total,commisions_extra,total_abbr,total_commisions,
-                                product_qty,product_commisions
+                select dated,a.branch_name,a.id,a.point_qty,a.name,a.invoice,service,coalesce(pc2.point_value,0) as total_point,(a.commisions+coalesce(pc2.point_value,0)+a.charge_lebaran_val) as total,commisions_extra,total_abbr,total_commisions,
+                                product_qty,product_commisions,charge_lebaran
                                 from (
                                     select ub.branch_id,a.branch_name,a.dated,a.user_id as id,a.terapist_name as name,
                                     count(distinct right(invoice_no,6)) as invoice,
                                     sum(case when type_id=2 then 1 else 0 end) as service,
-                                    sum(point_qty) as point_qty,sum(a.commisions) as commisions,
+                                    sum(point_qty) as point_qty,
+                                    sum(a.commisions) as commisions,
+                                    sum(case when pc.values_extra>0 then (pc.values_extra*a.qty) else  0 end) as charge_lebaran_val,
                                     sum(case when type_id=8 then commisions else 0 end) as commisions_extra,
                                     sum(case when type_id=2 then total else 0 end) as total_abbr,
                                     sum(case when type_id=2 then commisions else 0 end) as total_commisions,
                                     sum(case when type_id=1 then qty else 0 end) as product_qty,      
-                                    sum(case when type_id=1 then commisions else 0 end) as product_commisions     
+                                    sum(case when type_id=1 then commisions else 0 end) as product_commisions,
+                                    sum(case when pc.values_extra>0 then (pc.values_extra*a.qty) else 0 end) as charge_lebaran   
                                     from terapist_commision a
                                     join users_branch as ub on ub.branch_id = a.branch_id and ub.user_id = '".$user->id."'  and ub.branch_id::character varying like '".$filter_branch_id."'
+                                    join (
+                                        select r.id,r.name,r.job_id,case when r.work_year=0 then 1 when r.work_year>10 then 10  else r.work_year end as work_year
+                                        from users r
+                                    ) u on u.id = a.user_id
+                                    left join product_commision_by_year pc on pc.product_id = a.product_id and pc.branch_id = a.branch_id and pc.jobs_id=u.job_id and pc.years = u.work_year 
                                     where a.dated  between '".$filter_begin_date."' and  '".$filter_begin_end."' and a.user_id::character varying like '".$terapist."' 
                                     group by a.branch_name,a.user_id,a.terapist_name,a.dated,ub.branch_id
                                 ) a left join point_convertion_branch pc2 on pc2.point = a.point_qty  and pc2.branch_id = a.branch_id 
@@ -184,13 +631,14 @@ class ReportTerapistComDailyController extends Controller
             ");
 
             $report_data_detail_t = DB::select("
-                    select a.branch_name,a.id,a.dated,a.name,a.invoice_no,a.abbr,coalesce(pc2.point_value,0) as total_point,(a.commisions+coalesce(pc2.point_value,0)) as total,commisions_extra,total_abbr,total_commisions,total_point_qty,product_abbr,
-                    product_price,product_base_commision,product_qty,product_commisions
+                    select a.branch_name,a.id,a.dated,a.name,a.invoice_no,a.abbr,coalesce(pc2.point_value,0) as total_point,(a.commisions+coalesce(pc2.point_value,0)+a.charge_lebaran_val) as total,commisions_extra,total_abbr,total_commisions,total_point_qty,product_abbr,
+                    product_price,product_base_commision,product_qty,product_commisions,charge_lebaran
                     from (
                         select a.branch_id,a.branch_name,a.user_id as id,a.dated,a.terapist_name as name,
                         string_agg(distinct right(invoice_no,6),'##') as invoice_no,
                         string_agg(case when type_id=2 then abbr else '' end,'##' order by invoice_no) as abbr,
                         sum(point_qty) as point_qty,sum(a.commisions) as commisions,
+                        sum(case when pc.values_extra>0 then (pc.values_extra*a.qty) else  0 end) as charge_lebaran_val,
                         string_agg(case when type_id=8 then commisions::character varying else '' end,'##' order by invoice_no) as commisions_extra,
                         string_agg(case when type_id=2 then total::character varying else '' end,'##' order by invoice_no) as total_abbr,
                         string_agg(case when type_id=2 then commisions::character varying else '' end,'##' order by invoice_no) as total_commisions,
@@ -199,9 +647,15 @@ class ReportTerapistComDailyController extends Controller
                         string_agg(case when type_id=1 then price::character varying else '' end,'##') as product_price,
                         string_agg(case when type_id=1 then base_commision::character varying else '' end,'##') as product_base_commision,
                         string_agg(case when type_id=1 then qty::character varying else '' end,'##') as product_qty,      
-                        string_agg(case when type_id=1 then commisions::character varying else '' end,'##') as product_commisions     
+                        string_agg(case when type_id=1 then commisions::character varying else '' end,'##') as product_commisions,
+                        string_agg(case when pc.values_extra>0 then (pc.values_extra*a.qty)::character varying else '' end,'##') as charge_lebaran 
                         from terapist_commision a
                         join users_branch as ub on ub.branch_id = a.branch_id and ub.user_id = '".$user->id."'  and ub.branch_id::character varying like '".$filter_branch_id."'
+                        join (
+			                select r.id,r.name,r.job_id,case when r.work_year=0 then 1 when r.work_year>10 then 10  else r.work_year end as work_year
+			                from users r
+			            ) u on u.id = a.user_id
+			            left join product_commision_by_year pc on pc.product_id = a.product_id and pc.branch_id = a.branch_id and pc.jobs_id=u.job_id and pc.years = u.work_year 
                         where a.dated  between '".$filter_begin_date."' and  '".$filter_begin_end."' and a.user_id::character varying like '".$terapist."' 
                         group by a.branch_name,a.user_id,a.dated,a.terapist_name,a.branch_id
                     ) a left join point_convertion_branch pc2 on pc2.point = a.point_qty and pc2.branch_id = a.branch_id 
@@ -246,10 +700,17 @@ class ReportTerapistComDailyController extends Controller
             }
 
             $report_data_com_from1 = DB::select("
-                    select a.dated,a.user_id as id,(a.commisions+coalesce(pc2.point_value,0)) as total
+                    select a.dated,a.user_id as id,(a.commisions+coalesce(pc2.point_value,0)+a.charge_lebaran_val) as total
                     from (
-                        select a.branch_id,a.dated,a.user_id,sum(point_qty) as point_qty,sum(a.commisions) as commisions from terapist_commision a
+                        select a.branch_id,a.dated,a.user_id,sum(point_qty) as point_qty,sum(a.commisions) as commisions,
+                        sum(case when pc.values_extra>0 then (pc.values_extra*a.qty) else  0 end) as charge_lebaran_val
+                        from terapist_commision a
                         join users_branch as ub on ub.branch_id = a.branch_id and ub.user_id = '".$user->id."'  and ub.branch_id::character varying like '".$filter_branch_id."'
+                        join (
+			                select r.id,r.name,r.job_id,case when r.work_year=0 then 1 when r.work_year>10 then 10  else r.work_year end as work_year
+			                from users r
+			            ) u on u.id = a.user_id
+			            left join product_commision_by_year pc on pc.product_id = a.product_id and pc.branch_id = a.branch_id and pc.jobs_id=u.job_id and pc.years = u.work_year 
                         where a.dated  between '".$date26."' and  '".$filter_begin_end."'  and a.user_id::character varying like '".$terapist."' 
                         group by a.dated,a.user_id,a.branch_id
                     ) a left join point_convertion_branch pc2 on pc2.point = a.point_qty  and pc2.branch_id = a.branch_id
@@ -277,37 +738,46 @@ class ReportTerapistComDailyController extends Controller
 
             $report_data_detail_e_t = DB::select("
 
-            select branch_name,id,b.name,sum(service) service,sum(point_qty) point_qty,sum(b.invoice) invoice,sum(total_point) total_point,sum(total) total,sum(commisions_extra) commisions_extra,sum(total_abbr) total_abbr,sum(total_commisions) total_commisions,sum(product_qty) product_qty, sum(product_commisions) product_commisions 
+            select branch_name,id,b.name,sum(charge_lebaran) charge_lebaran,sum(service) service,sum(point_qty) point_qty,sum(b.invoice) invoice,sum(total_point) total_point,sum(total) total,sum(commisions_extra) commisions_extra,sum(total_abbr) total_abbr,sum(total_commisions) total_commisions,sum(product_qty) product_qty, sum(product_commisions) product_commisions 
             from (
-                select dated,a.branch_name,a.id,a.point_qty,a.name,a.invoice,service,coalesce(pc2.point_value,0) as total_point,(a.commisions+coalesce(pc2.point_value,0)) as total,commisions_extra,total_abbr,total_commisions,
-                                product_qty,product_commisions
+                select dated,a.branch_name,a.id,a.point_qty,a.name,a.invoice,service,coalesce(pc2.point_value,0) as total_point,(a.commisions+coalesce(pc2.point_value,0)+a.charge_lebaran_val) as total,commisions_extra,total_abbr,total_commisions,
+                                product_qty,product_commisions,charge_lebaran
                                 from (
-                                    select a.branch_id,a.branch_name,a.dated,a.user_id as id,a.terapist_name as name,
+                                    select ub.branch_id,a.branch_name,a.dated,a.user_id as id,a.terapist_name as name,
                                     count(distinct right(invoice_no,6)) as invoice,
                                     sum(case when type_id=2 then 1 else 0 end) as service,
-                                    sum(point_qty) as point_qty,sum(a.commisions) as commisions,
+                                    sum(point_qty) as point_qty,
+                                    sum(a.commisions) as commisions,
+                                    sum(case when pc.values_extra>0 then (pc.values_extra*a.qty) else  0 end) as charge_lebaran_val,
                                     sum(case when type_id=8 then commisions else 0 end) as commisions_extra,
                                     sum(case when type_id=2 then total else 0 end) as total_abbr,
                                     sum(case when type_id=2 then commisions else 0 end) as total_commisions,
                                     sum(case when type_id=1 then qty else 0 end) as product_qty,      
-                                    sum(case when type_id=1 then commisions else 0 end) as product_commisions     
+                                    sum(case when type_id=1 then commisions else 0 end) as product_commisions,
+                                    sum(case when pc.values_extra>0 then (pc.values_extra*a.qty) else 0 end) as charge_lebaran   
                                     from terapist_commision a
                                     join users_branch as ub on ub.branch_id = a.branch_id and ub.user_id = '".$user->id."'  and ub.branch_id::character varying like '".$filter_branch_id."'
+                                    join (
+                                        select r.id,r.name,r.job_id,case when r.work_year=0 then 1 when r.work_year>10 then 10  else r.work_year end as work_year
+                                        from users r
+                                    ) u on u.id = a.user_id
+                                    left join product_commision_by_year pc on pc.product_id = a.product_id and pc.branch_id = a.branch_id and pc.jobs_id=u.job_id and pc.years = u.work_year 
                                     where a.dated  between '".$filter_begin_date."' and  '".$filter_begin_end."' and a.user_id::character varying like '".$terapist."' 
-                                    group by a.branch_name,a.user_id,a.terapist_name,a.dated,a.branch_id
+                                    group by a.branch_name,a.user_id,a.terapist_name,a.dated,ub.branch_id
                                 ) a left join point_convertion_branch pc2 on pc2.point = a.point_qty  and pc2.branch_id = a.branch_id 
             ) b group by branch_name,id,b.name
 
             ");
 
             $report_data_detail_t = DB::select("
-                    select a.branch_name,a.id,a.dated,a.name,a.invoice_no,a.abbr,coalesce(pc2.point_value,0) as total_point,(a.commisions+coalesce(pc2.point_value,0)) as total,commisions_extra,total_abbr,total_commisions,total_point_qty,product_abbr,
-                    product_price,product_base_commision,product_qty,product_commisions
+            select a.branch_name,a.id,a.dated,a.name,a.invoice_no,a.abbr,coalesce(pc2.point_value,0) as total_point,(a.commisions+coalesce(pc2.point_value,0)+a.charge_lebaran_val) as total,commisions_extra,total_abbr,total_commisions,total_point_qty,product_abbr,
+                    product_price,product_base_commision,product_qty,product_commisions,charge_lebaran
                     from (
                         select a.branch_id,a.branch_name,a.user_id as id,a.dated,a.terapist_name as name,
-                        string_agg(distinct right(invoice_no,6),'\n') as invoice_no,
+                        string_agg(distinct right(invoice_no,6),'##') as invoice_no,
                         string_agg(case when type_id=2 then abbr else '' end,'##' order by invoice_no) as abbr,
                         sum(point_qty) as point_qty,sum(a.commisions) as commisions,
+                        sum(case when pc.values_extra>0 then (pc.values_extra*a.qty) else  0 end) as charge_lebaran_val,
                         string_agg(case when type_id=8 then commisions::character varying else '' end,'##' order by invoice_no) as commisions_extra,
                         string_agg(case when type_id=2 then total::character varying else '' end,'##' order by invoice_no) as total_abbr,
                         string_agg(case when type_id=2 then commisions::character varying else '' end,'##' order by invoice_no) as total_commisions,
@@ -316,13 +786,19 @@ class ReportTerapistComDailyController extends Controller
                         string_agg(case when type_id=1 then price::character varying else '' end,'##') as product_price,
                         string_agg(case when type_id=1 then base_commision::character varying else '' end,'##') as product_base_commision,
                         string_agg(case when type_id=1 then qty::character varying else '' end,'##') as product_qty,      
-                        string_agg(case when type_id=1 then commisions::character varying else '' end,'##') as product_commisions     
+                        string_agg(case when type_id=1 then commisions::character varying else '' end,'##') as product_commisions,
+                        string_agg(case when pc.values_extra>0 then (pc.values_extra*a.qty)::character varying else '' end,'##') as charge_lebaran 
                         from terapist_commision a
                         join users_branch as ub on ub.branch_id = a.branch_id and ub.user_id = '".$user->id."'  and ub.branch_id::character varying like '".$filter_branch_id."'
+                        join (
+			                select r.id,r.name,r.job_id,case when r.work_year=0 then 1 when r.work_year>10 then 10  else r.work_year end as work_year
+			                from users r
+			            ) u on u.id = a.user_id
+			            left join product_commision_by_year pc on pc.product_id = a.product_id and pc.branch_id = a.branch_id and pc.jobs_id=u.job_id and pc.years = u.work_year 
                         where a.dated  between '".$filter_begin_date."' and  '".$filter_begin_end."' and a.user_id::character varying like '".$terapist."' 
                         group by a.branch_name,a.user_id,a.dated,a.terapist_name,a.branch_id
-                    ) a left join point_convertion_branch pc2 on pc2.point = a.point_qty  and pc2.branch_id = a.branch_id 
-                    order by a.branch_name,a.name,a.dated      
+                    ) a left join point_convertion_branch pc2 on pc2.point = a.point_qty and pc2.branch_id = a.branch_id 
+                    order by a.branch_name,a.name,a.dated         
             ");
 
             $report_data_terapist = DB::select("
@@ -363,14 +839,21 @@ class ReportTerapistComDailyController extends Controller
             }
 
             $report_data_com_from1 = DB::select("
-                    select a.dated,a.user_id as id,(a.commisions+coalesce(pc2.point_value,0)) as total
-                    from (
-                        select a.branch_id,a.dated,a.user_id,sum(point_qty) as point_qty,sum(a.commisions) as commisions from terapist_commision a
-                        join users_branch as ub on ub.branch_id = a.branch_id and ub.user_id = '".$user->id."'  and ub.branch_id::character varying like '".$filter_branch_id."'
-                        where a.dated  between '".$date26."' and  '".$filter_begin_end."'  and a.user_id::character varying like '".$terapist."' 
-                        group by a.dated,a.user_id,a.branch_id
-                    ) a left join point_convertion_branch pc2 on pc2.point = a.point_qty  and pc2.branch_id = a.branch_id 
-                    order by a.dated           
+                select a.dated,a.user_id as id,(a.commisions+coalesce(pc2.point_value,0)+a.charge_lebaran_val) as total
+                from (
+                    select a.branch_id,a.dated,a.user_id,sum(point_qty) as point_qty,sum(a.commisions) as commisions,
+                    sum(case when pc.values_extra>0 then (pc.values_extra*a.qty) else  0 end) as charge_lebaran_val
+                    from terapist_commision a
+                    join users_branch as ub on ub.branch_id = a.branch_id and ub.user_id = '".$user->id."'  and ub.branch_id::character varying like '".$filter_branch_id."'
+                    join (
+                        select r.id,r.name,r.job_id,case when r.work_year=0 then 1 when r.work_year>10 then 10  else r.work_year end as work_year
+                        from users r
+                    ) u on u.id = a.user_id
+                    left join product_commision_by_year pc on pc.product_id = a.product_id and pc.branch_id = a.branch_id and pc.jobs_id=u.job_id and pc.years = u.work_year 
+                    where a.dated  between '".$date26."' and  '".$filter_begin_end."'  and a.user_id::character varying like '".$terapist."' 
+                    group by a.dated,a.user_id,a.branch_id
+                ) a left join point_convertion_branch pc2 on pc2.point = a.point_qty  and pc2.branch_id = a.branch_id
+                order by a.dated            
             ");
 
             $beginnewformat = date('d-m-Y',strtotime($filter_begin_date));    
@@ -397,23 +880,30 @@ class ReportTerapistComDailyController extends Controller
             $report_data= DB::select("
 
 
-            select branch_name,b.name as nama,'TERAPIS' as posisi,u.work_year as tahun,sum(total) total,sum(total_commisions) as perawatan, sum(product_commisions) as komisi_produk,sum(total_point) nilai_point,sum(commisions_extra) as extra_charge,'' as komisi_menurut_cat_terapis,'' as selisih,sum(service) as cases,
+            select branch_name,b.name as nama,'TERAPIS' as posisi,u.work_year as tahun,sum(total) total,sum(total_commisions) as perawatan, sum(product_commisions) as komisi_produk,sum(total_point) nilai_point,sum(commisions_extra) as extra_charge,'' as komisi_menurut_cat_terapis,'' as selisih,sum(service) as cases,sum(charge_lebaran) as charge_lebaran,
                 '' as simpanan,'' as iuran_perbaikan,'' as denda, '' as potongan_kasbon,'' as komisi_yang_diterima,'' as no_rekening, '' as bank,sum(point_qty) point_qty
                 from (
-                    select dated,a.branch_name,a.id,a.point_qty,a.name,a.invoice,service,coalesce(pc2.point_value,0) as total_point,(a.commisions+coalesce(pc2.point_value,0)) as total,commisions_extra,total_abbr,total_commisions,
+                    select dated,a.branch_name,a.id,a.point_qty,a.name,a.invoice,service,coalesce(pc2.point_value,0) as total_point,(a.commisions+coalesce(pc2.point_value,0)) as total,commisions_extra,total_abbr,total_commisions,charge_lebaran,
                                     product_qty,product_commisions
                                     from (
                                         select a.branch_id,a.branch_name,a.dated,a.user_id as id,a.terapist_name as name,
                                         count(distinct right(invoice_no,6)) as invoice,
-                                        sum(case when type_id=2 then 1 else 0 end) as service,
+                                        sum(case when a.type_id=2 then 1 else 0 end) as service,
                                         sum(point_qty) as point_qty,sum(a.commisions) as commisions,
-                                        sum(case when type_id=8 then commisions else 0 end) as commisions_extra,
-                                        sum(case when type_id=2 then total else 0 end) as total_abbr,
-                                        sum(case when type_id=2 then commisions else 0 end) as total_commisions,
-                                        sum(case when type_id=1 then qty else 0 end) as product_qty,      
-                                        sum(case when type_id=1 then commisions else 0 end) as product_commisions     
+                                        sum(case when a.type_id=8 then commisions else 0 end) as commisions_extra,
+                                        sum(case when a.type_id=2 then total else 0 end) as total_abbr,
+                                        sum(case when a.type_id=2 then commisions else 0 end) as total_commisions,
+                                        sum(pc.values_extra*a.qty) as charge_lebaran,
+                                        sum(case when a.type_id=1 then qty else 0 end) as product_qty,      
+                                        sum(case when a.type_id=1 then commisions else 0 end) as product_commisions     
                                         from terapist_commision a
+                                        join product_sku ps on ps.id = a.product_id
                                         join users_branch as ub on ub.branch_id = a.branch_id and ub.user_id = '".$user->id."'  and ub.branch_id::character varying like '".$filter_branch_id."'
+                                        join (
+                                            select r.id,r.name,r.job_id,case when r.work_year=0 then 1 when r.work_year>10 then 10  else r.work_year end as work_year
+                                            from users r
+                                        ) u on u.id = a.user_id
+                                        left join product_commision_by_year pc on pc.product_id = a.product_id and pc.branch_id = a.branch_id and pc.jobs_id=u.job_id and pc.years = u.work_year 
                                         where a.dated  between '".$filter_begin_date."' and  '".$filter_begin_end."' and a.user_id::character varying like  '".$terapist."' 
                                         group by a.branch_name,a.user_id,a.terapist_name,a.dated,a.branch_id
                                     ) a left join point_convertion_branch pc2 on pc2.point = a.point_qty   and pc2.branch_id = a.branch_id 
@@ -443,27 +933,34 @@ class ReportTerapistComDailyController extends Controller
             $report_data= DB::select("
 
 
-            select branch_name,count(1) as no,b.name as nama,'TERAPIS' as posisi,u.work_year as tahun,sum(total) total,sum(total_commisions) as perawatan, sum(product_commisions) as komisi_produk,sum(total_point) nilai_point,sum(commisions_extra) as extra_charge,'' as komisi_menurut_cat_terapis,'' as selisih,sum(service) as cases,
+            select branch_name,b.name as nama,'TERAPIS' as posisi,u.work_year as tahun,sum(total) total,sum(total_commisions) as perawatan, sum(product_commisions) as komisi_produk,sum(total_point) nilai_point,sum(commisions_extra) as extra_charge,'' as komisi_menurut_cat_terapis,'' as selisih,sum(service) as cases,sum(charge_lebaran) as charge_lebaran,
                 '' as simpanan,'' as iuran_perbaikan,'' as denda, '' as potongan_kasbon,'' as komisi_yang_diterima,'' as no_rekening, '' as bank,sum(point_qty) point_qty
                 from (
-                    select dated,a.branch_name,a.id,a.point_qty,a.name,a.invoice,service,coalesce(pc2.point_value,0) as total_point,(a.commisions+coalesce(pc2.point_value,0)) as total,commisions_extra,total_abbr,total_commisions,
+                    select dated,a.branch_name,a.id,a.point_qty,a.name,a.invoice,service,coalesce(pc2.point_value,0) as total_point,(a.commisions+coalesce(pc2.point_value,0)) as total,commisions_extra,total_abbr,total_commisions,charge_lebaran,
                                     product_qty,product_commisions
                                     from (
                                         select a.branch_id,a.branch_name,a.dated,a.user_id as id,a.terapist_name as name,
                                         count(distinct right(invoice_no,6)) as invoice,
-                                        sum(case when type_id=2 then 1 else 0 end) as service,
+                                        sum(case when a.type_id=2 then 1 else 0 end) as service,
                                         sum(point_qty) as point_qty,sum(a.commisions) as commisions,
-                                        sum(case when type_id=8 then commisions else 0 end) as commisions_extra,
-                                        sum(case when type_id=2 then total else 0 end) as total_abbr,
-                                        sum(case when type_id=2 then commisions else 0 end) as total_commisions,
-                                        sum(case when type_id=1 then qty else 0 end) as product_qty,      
-                                        sum(case when type_id=1 then commisions else 0 end) as product_commisions     
+                                        sum(case when a.type_id=8 then commisions else 0 end) as commisions_extra,
+                                        sum(case when a.type_id=2 then total else 0 end) as total_abbr,
+                                        sum(case when a.type_id=2 then commisions else 0 end) as total_commisions,
+                                        sum(pc.values_extra*a.qty) as charge_lebaran,
+                                        sum(case when a.type_id=1 then qty else 0 end) as product_qty,      
+                                        sum(case when a.type_id=1 then commisions else 0 end) as product_commisions     
                                         from terapist_commision a
+                                        join product_sku ps on ps.id = a.product_id
                                         join users_branch as ub on ub.branch_id = a.branch_id and ub.user_id = '".$user->id."'  and ub.branch_id::character varying like '".$filter_branch_id."'
+                                        join (
+                                            select r.id,r.name,r.job_id,case when r.work_year=0 then 1 when r.work_year>10 then 10  else r.work_year end as work_year
+                                            from users r
+                                        ) u on u.id = a.user_id
+                                        left join product_commision_by_year pc on pc.product_id = a.product_id and pc.branch_id = a.branch_id and pc.jobs_id=u.job_id and pc.years = u.work_year 
                                         where a.dated  between '".$filter_begin_date."' and  '".$filter_begin_end."' and a.user_id::character varying like  '".$terapist."' 
                                         group by a.branch_name,a.user_id,a.terapist_name,a.dated,a.branch_id
-                                    ) a left join point_convertion_branch pc2 on pc2.point = a.point_qty and pc2.branch_id = a.branch_id
-                ) b join users u on u.id=b.id  group by u.work_year,branch_name,b.id,b.name order by 3
+                                    ) a left join point_convertion_branch pc2 on pc2.point = a.point_qty   and pc2.branch_id = a.branch_id 
+                ) b join users u on u.id=b.id  group by u.work_year,branch_name,b.id,b.name order by 2,3
 
 
             ");

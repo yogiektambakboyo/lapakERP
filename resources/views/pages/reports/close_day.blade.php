@@ -31,8 +31,9 @@
             <tr>
                 <th scope="col" width="2%" class="nex">@lang('general.lbl_action')</th> 
                 <th scope="col" width="12%" class="nex"></th> 
+                <th scope="col" width="12%" class="nex"></th> 
                 <th scope="col" width="10%">@lang('general.lbl_branch')</th>
-                <th scope="col" width="6%">@lang('general.lbl_dated')</th>
+                <th scope="col" width="6%">@lang('general.lbl_dated')</th> 
                 <th scope="col">@lang('general.service')</th>     
                 <th scope="col">Salon</th>     
                 <th scope="col">@lang('general.product')</th>    
@@ -59,15 +60,17 @@
                 @foreach($report_data as $rdata)
                     <tr>
                         <td><button onclick="openDialog('{{ $rdata->branch_id }}','{{ $rdata->dated }}','0');" class="btn btn-warning btn-sm">Print</button></td>
+                        <td><button onclick="openDialog4('{{ $rdata->branch_id }}','{{ $rdata->dated }}','0');" class="btn btn-primary btn-sm">Print w/ CL</button></td>
                         <td><button onclick="openDialog3('{{ $rdata->branch_id }}','{{ $rdata->dated }}','0');" class="btn btn-danger btn-sm">Print Lap. Harian v2</button></td>
                         <th scope="row">{{ $rdata->branch_name }}</th>
                         <td>{{ Carbon\Carbon::parse($rdata->dated)->format('d-m-Y')  }}</td>
-                        <td>{{ number_format($rdata->total_service,0,',','.') }}</td>
-                        <td>{{ number_format($rdata->total_salon,0,',','.') }}</td>
+                        <!-- <td>{{ number_format($rdata->total_service,0,',','.') }}</td> -->
+                        <td>{{ number_format($rdata->total_service_no_cl,0,',','.') }}</td>
+                        <td>{{ number_format($rdata->total_salon_no_cl,0,',','.') }}</td>
                         <td>{{ number_format($rdata->total_product,0,',','.') }}</td>
                         <td>{{ number_format($rdata->total_drink,0,',','.') }}</td>
                         <td>{{ number_format($rdata->total_extra,0,',','.') }}</td>
-                        <td>{{ number_format($rdata->total_lebaran,0,',','.') }}</td>
+                        <td>{{ number_format(($rdata->total_lebaran+$rdata->total_lebaran_cl),0,',','.') }}</td>
                         <td>{{ number_format($rdata->total_all,0,',','.') }}</td>
                         <td>{{ number_format($rdata->total_cash,0,',','.') }}</td>
                         <td>{{ number_format($rdata->total_b1d,0,',','.') }}</td>
@@ -304,12 +307,12 @@
                             name="filter_type"
                             id="filter_type"
                             class="form-control" 
-                            value="view" required hidden/>
-                            <input type="text" 
+                            value="view" hidden/>
+                            <input type="hidden" 
                             name="filter_begin_date"
                             id="filter_begin_date"
                             class="form-control" 
-                            value="{{ old('filter_begin_date') }}" required hidden/>
+                            value="{{ old('filter_begin_date') }}" required/>
                             @if ($errors->has('filter_begin_date'))
                                     <span class="text-danger text-left">{{ $errors->first('filter_begin_date') }}</span>
                                 @endif
@@ -324,6 +327,54 @@
             </div>
             </div>
         </div>
+
+        <!-- Vertically centered modal -->
+        <!-- Modal -->
+        <div class="modal fade" id="modal-filter-cl" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+            <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                <h5 class="modal-title"  id="input_expired_list_at_lbl">Konfirmasi</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form target="_blank" action="{{ route('reports.closeday.getdata') }}" method="GET">   
+                        @csrf 
+                        <div class="col-md-12">
+                            <select class="form-control" 
+                                name="filter_branch_id_cl" id="filter_branch_id_cl" hidden>
+                                @foreach($branchs as $branchx)
+                                    <option value="{{ $branchx->id }}">{{ $branchx->remark }} </option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <div class="col-md-12">
+                            Apakah anda yakin akan mencetak laporan closing harian?
+                        </div>
+                        <div class="col-md-12">
+                            <input type="hidden" 
+                            name="filter_type"
+                            id="filter_type"
+                            class="form-control" 
+                            value="cl"/>
+                            <input type="hidden" 
+                            name="filter_begin_date_cl"
+                            id="filter_begin_date_cl"
+                            class="form-control" 
+                            required/>
+                        </div>
+
+                        <br>
+                        <div class="col-md-12">
+                            <button type="submit" class="btn btn-primary form-control">@lang('general.lbl_apply')</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            </div>
+        </div>
+
 
         <div class="modal fade" id="modal-filter_daily" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
             <div class="modal-dialog">
@@ -461,6 +512,7 @@
           $('#filter_end_date_ins').val(formattedToday);
 
           var myModal = new bootstrap.Modal(document.getElementById('modal-filter'));
+          var myModalCL = new bootstrap.Modal(document.getElementById('modal-filter-cl'));
           var myModal2 = new bootstrap.Modal(document.getElementById('modal-filter2'));
           var myModalsum = new bootstrap.Modal(document.getElementById('modal-filtersum'));
           var myModalsumon = new bootstrap.Modal(document.getElementById('modal-filtersumon'));
@@ -471,19 +523,22 @@
             $('#filter_branch_id').val(branch_id);
             $('#filter_shift').val(shift_id);
             $('#filter_begin_date').val(dated.substr(5,2)+"/"+dated.substr(8,2)+"/"+dated.substr(0,4));
-            //$('#filter_branch_id').prop('disabled', true);
-            //$('#filter_shift').prop('disabled', true);
-            //$('#filter_begin_date').prop('disabled', true);
             myModal.show();
+          }
+
+          function openDialog4(branch_id,dated,shift_id){
+            $('#filter_branch_id_cl').val(branch_id);
+            $('#filter_shift').val(shift_id);
+            console.log(dated.substr(5,2)+"/"+dated.substr(8,2)+"/"+dated.substr(0,4));
+            console.log($('#filter_branch_id').val());
+            $('#filter_begin_date_cl').val(dated.substr(5,2)+"/"+dated.substr(8,2)+"/"+dated.substr(0,4));
+            myModalCL.show();
           }
 
           function openDialog2(branch_id,dated,shift_id){
             $('#filter_branch_id_daily').val(branch_id);
             $('#filter_shift_daily').val(shift_id);
             $('#filter_begin_date_daily').val(dated.substr(5,2)+"/"+dated.substr(8,2)+"/"+dated.substr(0,4));
-            //$('#filter_branch_id').prop('disabled', true);
-            //$('#filter_shift').prop('disabled', true);
-            //$('#filter_begin_date').prop('disabled', true);
             myModal3.show();
           }
 
@@ -491,9 +546,6 @@
             $('#filter_branch_id_daily_').val(branch_id);
             $('#filter_shift_daily_').val(shift_id);
             $('#filter_begin_date_daily_').val(dated.substr(5,2)+"/"+dated.substr(8,2)+"/"+dated.substr(0,4));
-            //$('#filter_branch_id').prop('disabled', true);
-            //$('#filter_shift').prop('disabled', true);
-            //$('#filter_begin_date').prop('disabled', true);
             myModal4.show();
           }
 

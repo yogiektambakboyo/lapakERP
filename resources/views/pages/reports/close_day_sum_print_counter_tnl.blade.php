@@ -66,7 +66,7 @@
                     <th style="text-align: center;background-color:#FFA726;" scope="col" colspan="2">OJEK + TAMBAHAN TERAPIS</th>    
                 @endif 
                 <th style="text-align: center;background-color:#FFA726;" scope="col" colspan="2">EXTRA CHARGE</th>       
-                @if(($report_total[0]->total_lebaran)>0)
+                @if(($report_total[0]->total_lebaran+$report_total[0]->total_lebaran_cl)>0)
                     <th style="text-align: center;background-color:#FFA726;" scope="col" colspan="2">CHANGE LEBARAN</th>    
                 @endif  
             <th style="text-align: center;background-color:#FFA726;" scope="col" colspan="2">PENDAPATAN TOTAL</th>       
@@ -74,7 +74,7 @@
             <tr>
               <th style="text-align: center;background-color:#FFA726;"  scope="col">HARIAN</th>    
               <th style="text-align: center;background-color:#FFA726;"  scope="col">S/D</th>  
-              @if(($report_total[0]->total_lebaran)>0)
+              @if(($report_total[0]->total_lebaran+$report_total[0]->total_lebaran_cl)>0)
                   <th style="text-align: center;background-color:#FFA726;"  scope="col">HARIAN</th>    
                   <th style="text-align: center;background-color:#FFA726;"  scope="col">S/D</th>  
               @endif
@@ -116,12 +116,12 @@
         <tbody>
             @foreach($report_data as $rdata)
             <?php 
-                    $total_service = $total_service + ($rdata->total_service-$rdata->total_tambahan);
+                    $total_service = $total_service + ($rdata->total_service_no_cl-$rdata->total_tambahan);
                     $total_product = $total_product + $rdata->total_product;
                     $total_ojek = $total_ojek + $rdata->total_ojek;
                     $total_tambahan = $total_tambahan + $rdata->total_tambahan;
                     $total_extra = $total_extra + $rdata->total_extra;
-                    $total_lebaran = $total_lebaran + $rdata->total_lebaran;
+                    $total_lebaran = $total_lebaran + ($rdata->total_lebaran+$rdata->total_lebaran_cl);
                     $total_cash = $total_cash + $rdata->total_cash;
                     $total_b1d = $total_b1d + $rdata->total_b1d;
                     $total_b1c = $total_b1c + $rdata->total_b1c;
@@ -136,7 +136,7 @@
                 ?>
                 <tr>
                   <td>{{ Carbon\Carbon::parse($rdata->dated)->format('d-m-Y')  }}</td>
-                  <td style="text-align: right;">{{ number_format(($rdata->total_service-$rdata->total_tambahan),0,',','.') }}</td>
+                  <td style="text-align: right;">{{ number_format(($rdata->total_service_no_cl-$rdata->total_tambahan),0,',','.') }}</td>
                   <td style="text-align: right;">{{ number_format($total_service,0,',','.') }}</td> 
                   <td style="text-align: right;">{{ number_format($rdata->total_product,0,',','.') }}</td>
                   <td style="text-align: right;">{{ number_format($total_product,0,',','.') }}</td>   
@@ -146,8 +146,8 @@
                   @endif
                   <td style="text-align: right;">{{ number_format($rdata->total_extra,0,',','.') }}</td>
                   <td style="text-align: right;">{{ number_format($total_extra,0,',','.') }}</td> 
-                  @if(($report_total[0]->total_lebaran)>0)
-                    <td style="text-align: right;">{{ number_format(($rdata->total_lebaran),0,',','.') }}</td>
+                  @if(($report_total[0]->total_lebaran+$report_total[0]->total_lebaran_cl)>0)
+                    <td style="text-align: right;">{{ number_format(($rdata->total_lebaran+$rdata->total_lebaran_cl),0,',','.') }}</td>
                     <td style="text-align: right;">{{ number_format(($total_lebaran),0,',','.') }}</td>
                   @endif       
                   <td style="text-align: right;">{{ number_format($rdata->total_all,0,',','.') }}</td>
@@ -171,7 +171,7 @@
               @endif
               <td style="text-align: right;">{{ number_format($total_extra,0,',','.') }}</td>
               <td style="text-align: right;">{{ number_format($total_extra,0,',','.') }}</td>      
-              @if(($report_total[0]->total_lebaran)>0)
+              @if(($report_total[0]->total_lebaran+$report_total[0]->total_lebaran_cl)>0)
                 <td style="text-align: right;">{{ number_format(($total_lebaran),0,',','.') }}</td>
                 <td style="text-align: right;">{{ number_format(($total_lebaran),0,',','.') }}</td>
               @endif  
@@ -449,12 +449,12 @@
                       for (let index = 0; index < report_data.length; index++) {
                         var rowElement = report_data[index];
 
-                        total_service = total_service + parseFloat((rowElement.total_service-rowElement.total_tambahan));
+                        total_service = total_service + parseFloat((rowElement.total_service_no_cl-rowElement.total_tambahan));
                         total_product = total_product + parseFloat(rowElement.total_product);
                         total_ojek = total_ojek + parseFloat(rowElement.total_ojek) + parseFloat(rowElement.total_tambahan);
                         total_tambahan = total_tambahan + parseFloat(rowElement.total_tambahan);
                         total_extra = total_extra + parseFloat(rowElement.total_extra);
-                        total_lebaran = total_lebaran + parseFloat(rowElement.total_lebaran);
+                        total_lebaran = total_lebaran + (parseFloat(rowElement.total_lebaran)+parseFloat(rowElement.total_lebaran_cl));
                         total_cash = total_cash + parseFloat(rowElement.total_cash);
                         total_b1d = total_b1d + parseFloat(rowElement.total_b1d);
                         total_b1c = total_b1c + parseFloat(rowElement.total_b1c);
@@ -470,7 +470,7 @@
 
                           worksheet.addRow({
                             tanggal : rowElement.datedformat, 
-                            perawatan : (rowElement.total_service-rowElement.total_tambahan), 
+                            perawatan : (rowElement.total_service_no_cl-rowElement.total_tambahan), 
                             perawatan_sd : total_service, 
                             produk : rowElement.total_product, 
                             produk_sd : total_product, 
@@ -478,7 +478,7 @@
                             ojek_sd : total_ojek, 
                             extra : parseFloat(rowElement.total_extra), 
                             extra_sd : total_extra, 
-                            lebaran : parseFloat(rowElement.total_lebaran), 
+                            lebaran : (parseFloat(rowElement.total_lebaran)+parseFloat(rowElement.total_lebaran_cl)), 
                             lebaran_sd : total_lebaran, 
                             total_all : parseFloat(rowElement.total_all), 
                             total_all_sd : total_all, 
