@@ -161,7 +161,7 @@
                                 <tr>
                                   <td>{{ Carbon\Carbon::parse($rdata->dated)->format('d-m-Y')  }}</td>
                                   <td style="text-align: right;">{{ number_format(($rdata->total_service_no_cl-$rdata->total_tambahan),0,',','.') }}</td>
-                                  <td class="<?= $report_total[0]->total_salon==0?'d-none':''; ?>"  style="text-align: right;">{{ number_format($rdata->total_salon_no_cl,0,',','.') }}</td>
+                                  <td class="<?= $report_total[0]->total_salon==0?'d-none':''; ?>"  style="text-align: right;">{{ number_format($rdata->total_service_no_cl,0,',','.') }}</td>
                                   <td class="<?= $report_total[0]->total_salon==0?'d-none':''; ?>"  style="text-align: right;">{{ number_format($rdata->total_salon_no_cl+($rdata->total_service_no_cl-$rdata->total_tambahan),0,',','.') }}</td>
 
                                   <td style="text-align: left;">
@@ -712,9 +712,9 @@
 
                           if(isexistDetail==0){
                                 worksheet.getCell('A'+counter).value = rowElementData.datedformat;
-                                worksheet.getCell('B'+counter).value = (parseFloat(rowElementData.total_service)-parseFloat(rowElementData.total_tambahan));
-                                worksheet.getCell('C'+counter).value = rowElementData.total_salon;
-                                worksheet.getCell('D'+counter).value = parseFloat(rowElementData.total_salon)+(parseFloat(rowElementData.total_service)-parseFloat(rowElementData.total_tambahan));
+                                worksheet.getCell('B'+counter).value = (parseFloat(rowElementData.total_service_no_cl)-parseFloat(rowElementData.total_tambahan));
+                                worksheet.getCell('C'+counter).value = rowElementData.total_salon_no_cl;
+                                worksheet.getCell('D'+counter).value = parseFloat(rowElementData.total_salon_no_cl)+(parseFloat(rowElementData.total_service_no_cl)-parseFloat(rowElementData.total_tambahan));
                                 worksheet.getCell('E'+counter).value = "";
                                 worksheet.getCell('F'+counter).value = "";
                                 worksheet.getCell('G'+counter).value = "";
@@ -749,9 +749,9 @@
                                     if(counterDetail == 1 ){
                                   
                                         worksheet.getCell('A'+counter).value = rowElementDetail.datedformat;
-                                        worksheet.getCell('B'+counter).value = (parseFloat(rowElementData.total_service)-parseFloat(rowElementData.total_tambahan));
-                                        worksheet.getCell('C'+counter).value = rowElementData.total_salon;
-                                        worksheet.getCell('D'+counter).value = parseFloat(rowElementData.total_salon)+(parseFloat(rowElementData.total_service)-parseFloat(rowElementData.total_tambahan));
+                                        worksheet.getCell('B'+counter).value = (parseFloat(rowElementData.total_service_no_cl)-parseFloat(rowElementData.total_tambahan));
+                                        worksheet.getCell('C'+counter).value = rowElementData.total_salon_no_cl;
+                                        worksheet.getCell('D'+counter).value = parseFloat(rowElementData.total_salon_no_cl)+(parseFloat(rowElementData.total_service_no_cl)-parseFloat(rowElementData.total_tambahan));
                                         worksheet.getCell('E'+counter).value = rowElementDetail.abbr;
                                         worksheet.getCell('F'+counter).value = rowElementDetail.qty;
                                         worksheet.getCell('G'+counter).value = rowElementDetail.price;
