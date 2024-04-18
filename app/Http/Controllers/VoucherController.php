@@ -267,7 +267,7 @@ class VoucherController extends Controller
                     select '".$now_voucher."',id,1,now() from product_sku ps 
                     where ps.type_id = 2");
 
-                    DB::update("update voucher set is_allitem=1 where voucher_no = '".$now_voucher."';");
+                    DB::update("update voucher set is_allitem=1 where voucher_code = '".$now_voucher."';");
                     break;
                 }else{
                     VoucherDetail::create(
