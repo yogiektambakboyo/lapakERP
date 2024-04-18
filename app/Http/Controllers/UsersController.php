@@ -546,6 +546,7 @@ class UsersController extends Controller
             ['gender' => $request->get('gender') ],
             ['netizen_id' => $request->get('netizen_id') ],
             ['city' => $request->get('city') ],
+            ['active' => $request->get('active')==null?'0':'1' ],
             ['work_year' => $request->get('work_year') ],
             ['employee_id' => $request->get('employee_id') ],
             ['job_id' => $request->get('job_id') ],

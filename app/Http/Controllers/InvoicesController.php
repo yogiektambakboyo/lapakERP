@@ -181,8 +181,8 @@ class InvoicesController extends Controller
             select ubb.user_id 
             from users_branch ub 
             join users_branch ubb on ubb.branch_id = ub.branch_id
-            where ub.user_id = ".$user->id."
-            ) and job_id in (1,2)
+            where ub.user_id = ".$user->id." 
+            ) and job_id in (1,2) and users.active=1
             order by name;"
         );
         
@@ -752,7 +752,7 @@ class InvoicesController extends Controller
             from users_branch ub 
             join users_branch ubb on ubb.branch_id = ub.branch_id
             where ub.user_id = ".$user->id."
-            ) and job_id in (1,2)
+            ) and job_id in (1,2)  and users.active=1
             order by name;"
         );
         
@@ -997,7 +997,7 @@ class InvoicesController extends Controller
         $timetable = DB::select(" 
             select u.id,u.name from users u 
             join users_branch ub on ub.user_id = u.id 
-            where u.job_id = 2 and ub.branch_id in (select branch_id from users_branch where user_id=".$user->id.") and u.id not in 
+            where u.job_id = 2 and u.active=1 and ub.branch_id in (select branch_id from users_branch where user_id=".$user->id.") and u.id not in 
             (
                 select distinct id.assigned_to  from invoice_master im 
                 join customers c on c.id = im.customers_id
