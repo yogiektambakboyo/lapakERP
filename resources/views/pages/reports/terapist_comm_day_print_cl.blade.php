@@ -158,12 +158,20 @@
 
               <tr style="">
                 <td colspan="2">GRAND TOTAL</td>
-                @php $tot_t = 0; @endphp
+                @php $tot_t = 0;$c_cl=0; @endphp
 
                 @for ($i=0;$i<count($dated_list);$i++)
                     <th colspan="{{ $dated_list[$i]->c_product }}"></th>
-                    <th>{{ number_format(($dated_list[$i]->charge_lebaran+(count($dated_list_c)>0?$dated_list_c[$i]->charge_lebaran:0))/1000,0,".",",") }} </th>  
-                    @php $tot_t = $tot_t + ($dated_list[$i]->charge_lebaran+(count($dated_list_c)>0?$dated_list_c[$i]->charge_lebaran:0)); @endphp
+                    @php $c_cl=0; @endphp
+                    @for ($j=0;$j<count($dated_list_c);$j++)
+                      @php 
+                        if($dated_list[i]->dated == $dated_list_c[i]->dated){
+                          $c_cl = $dated_list_c[j]->charge_lebaran;
+                        }
+                      @endphp
+                    @endfor
+                    <th>{{ number_format(($dated_list[$i]->charge_lebaran+$c_cl)/1000,0,".",",") }} </th>  
+                    @php $tot_t = $tot_t + ($dated_list[$i]->charge_lebaran+$c_cl); @endphp
                 @endfor
                 <th>{{ number_format($tot_t/1000,0,".",",") }}</th>  
               </tr>
