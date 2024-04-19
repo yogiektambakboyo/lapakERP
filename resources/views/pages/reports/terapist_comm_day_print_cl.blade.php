@@ -282,12 +282,12 @@
                       @php $value = (($report_data_terapist_dets->charge_lebaran/(count($report_data_cashier)>0?$report_data_cashier[0]->c_count:1))/1000); @endphp
                     @endif
                 @endforeach
-                <td>{{ number_format($value,1,',','.') }}</td> 
+                <td>{{ number_format($value,1,'.',',') }}</td> 
                 @php
                     $val = $val + $value;
                 @endphp
               @endforeach   
-              <th>{{ $val }}</th> 
+              <th>{{ number_format($val,1,'.',',') }}</th> 
             </tr>
           @endforeach
 
@@ -305,7 +305,7 @@
             @endforeach
 
             
-            <th>{{ number_format($tot_t/1000,0,".",",") }}</th>  
+            <th>{{ number_format($tot_t/1000,1,".",",") }}</th>  
           </tr>
 
           
