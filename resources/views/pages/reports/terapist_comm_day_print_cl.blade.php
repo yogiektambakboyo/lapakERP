@@ -293,11 +293,18 @@
 
           <tr style="">
             <td colspan="2">GRAND TOTAL</td>
-            @php $tot_t = 0; @endphp
-            @foreach ($dated_list_c as $dated_lists)
-                <th>{{ number_format($dated_lists->charge_lebaran/1000,0,".",",") }} </th>  
-                @php $tot_t = $tot_t + $dated_lists->charge_lebaran; @endphp
+            @php $tot_t = 0;$c_tot=0; @endphp
+            @foreach ($dated_list as $dated_lists)
+              @foreach ($dated_list_c as $dated_c_lists)
+                  @if($dated_c_lists->dated ==$dated_lists->dated )
+                   @php $c_tot = $dated_c_lists->charge_lebaran; @endphp
+                  @endif
+              @endforeach
+              <th>{{ number_format($c_tot/1000,0,".",",") }} </th>  
+              @php $tot_t = $tot_t + $c_tot; @endphp
             @endforeach
+
+            
             <th>{{ number_format($tot_t/1000,0,".",",") }}</th>  
           </tr>
 
