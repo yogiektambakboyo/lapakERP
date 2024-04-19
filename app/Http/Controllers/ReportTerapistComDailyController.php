@@ -282,7 +282,6 @@ class ReportTerapistComDailyController extends Controller
                         select r.id,r.name,r.job_id,case when r.work_year=0 then 1 when r.work_year>10 then 10  else r.work_year end as work_year
                         from users r
                     ) u on u.id = im.created_by
-                    join product_commision_by_year pc on pc.values_extra>0 and pc.product_id = id.product_id and pc.branch_id = c.branch_id and pc.jobs_id=u.job_id and pc.years = u.work_year 
                     where im.dated between '".$filter_begin_date."' and  '".$filter_begin_end."'  and c.branch_id = ub.branch_id group by u.id,u.name order by 2
                 ");
 
