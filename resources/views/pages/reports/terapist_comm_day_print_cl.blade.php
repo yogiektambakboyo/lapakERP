@@ -147,12 +147,20 @@
 
               <tr style="">
                 <td colspan="2">KASIR</td>
-                @php $tot_t = 0; @endphp
-                @foreach ($dated_list_c as $dated_lists)
-                    <th colspan="{{ $dated_lists->c_product }}"></th>
-                    <th>{{ number_format($dated_lists->charge_lebaran/1000,0,".",",") }} </th>  
-                    @php $tot_t = $tot_t + $dated_lists->charge_lebaran; @endphp
-                @endforeach
+                @php $tot_t = 0;$c_cl=0; @endphp
+                @for ($i=0;$i<count($dated_list);$i++)
+                      <th colspan="{{ $dated_list[$i]->c_product }}"></th>
+                      @php $c_cl=0; @endphp
+                      @for ($j=0;$j<count($dated_list_c);$j++)
+                        @php 
+                          if($dated_list[$i]->dated == $dated_list_c[$j]->dated){
+                            $c_cl = $dated_list_c[$j]->charge_lebaran;
+                          }
+                        @endphp
+                      @endfor
+                      <th>{{ number_format(($c_cl)/1000,0,".",",") }} </th>  
+                      @php $tot_t = $tot_t + ($c_cl); @endphp
+                @endfor
                 <th>{{ number_format($tot_t/1000,0,".",",") }}</th>  
               </tr>
 
