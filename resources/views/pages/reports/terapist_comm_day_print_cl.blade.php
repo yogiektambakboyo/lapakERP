@@ -165,8 +165,8 @@
                     @php $c_cl=0; @endphp
                     @for ($j=0;$j<count($dated_list_c);$j++)
                       @php 
-                        if($dated_list[i]->dated == $dated_list_c[i]->dated){
-                          $c_cl = $dated_list_c[j]->charge_lebaran;
+                        if($dated_list[$i]->dated == $dated_list_c[$j]->dated){
+                          $c_cl = $dated_list_c[$j]->charge_lebaran;
                         }
                       @endphp
                     @endfor
