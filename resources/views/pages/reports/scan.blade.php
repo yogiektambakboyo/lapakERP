@@ -64,14 +64,16 @@
                 <div class="modal-body">
                     <form action="{{ route('reports.scan.search') }}" method="GET">   
                         @csrf 
-                        <div class="col-md-10 d-none">
+                        <div class="col-md-10">
                             <label class="form-label col-form-label col-md-4">@lang('general.lbl_branch')</label>
                         </div>
-                        <div class="col-md-12 d-none">
+                        <div class="col-md-12">
                             <select class="form-control" 
-                                name="filter_branch_id_in" id="filter_branch_id_in">
-                                <option value="1">HEAD QUARTER</option>
-                                
+                                name="filter_sales" id="filter_sales">
+                                <option value="%">-- SEMUA --</option>
+                                @foreach($sales_data as $sales)
+                                    {{ echo '<option value="'.$sales->id.'">'.$sales->name.'</option>'; }}
+                                @endforeach
                             </select>
                         </div>
 
