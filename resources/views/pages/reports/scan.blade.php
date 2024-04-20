@@ -44,7 +44,7 @@
                         <td>{{ $rdata->lot_number }}</td>
                         <td>{{ $rdata->point }}</td>
                         <td>{{ $rdata->created_at }}</td>
-                        <td>{{ $rdata->photofile=="-"?"":'<button class="btn btn-danger" onclick="showDialog();">LIHAT FOTO</button>'; }}</td>
+                        <td>@php echo $rdata->photofile=="-"?"":'<button class="btn btn-danger" type="button" onclick="showDialog();">LIHAT FOTO</button>'; @endphp</td>
                     </tr>
                 @endforeach
             </tbody>
