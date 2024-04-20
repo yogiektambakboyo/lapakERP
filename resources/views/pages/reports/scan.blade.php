@@ -74,7 +74,7 @@
                                 name="filter_sales" id="filter_sales">
                                 <option value="%">-- SEMUA --</option>
                                 @foreach($sales_data as $sales)
-                                    {{ echo '<option value="'.$sales->id.'">'.$sales->name.'</option>'; }}
+                                    @php echo '<option value="'.$sales->id.'">'.$sales->name.'</option>'; @endphp
                                 @endforeach
                             </select>
                         </div>
