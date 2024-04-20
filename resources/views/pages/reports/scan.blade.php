@@ -30,6 +30,7 @@
                 <th scope="col" width="8%">Lot Number</th>    
                 <th scope="col" width="8%">Point</th>    
                 <th scope="col">Created At</th>    
+                <th scope="col">Action</th>    
             </tr>
             </thead>
             <tbody>
@@ -43,6 +44,7 @@
                         <td>{{ $rdata->lot_number }}</td>
                         <td>{{ $rdata->point }}</td>
                         <td>{{ $rdata->created_at }}</td>
+                        <td>{{ $rdata->photofile=="-"?"":'<button class="btn btn-danger" onclick="showDialog();">LIHAT FOTO</button>'; }}</td>
                     </tr>
                 @endforeach
             </tbody>
@@ -124,6 +126,24 @@
                             <button type="submit" class="btn btn-primary form-control">@lang('general.lbl_apply')</button>
                         </div>
                     </form>
+                </div>
+            </div>
+            </div>
+        </div>
+
+        <!-- Vertically centered modal -->
+        <!-- Modal -->
+        <div class="modal fade" id="modal-img" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+            <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                <h5 class="modal-title"  id="input_expired_list_at_lbl">@lang('general.lbl_filterdata')</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="col-md-12">
+                        <img src="" width="400px" height="300px">
+                    </div>
                 </div>
             </div>
             </div>
@@ -222,6 +242,7 @@
 
           var myModal = new bootstrap.Modal(document.getElementById('modal-filter'));
           var myModal2 = new bootstrap.Modal(document.getElementById('modal-filter2'));
+          var myModalImg = new bootstrap.Modal(document.getElementById('modal-img'));
 
           function openDialog(branch_id,dated,shift_id){
             $('#filter_branch_id').val(branch_id);
@@ -236,6 +257,10 @@
           function openDialogFilterSearch(command){
             $('#export').val(command);
             myModal2.show();
+          }
+
+          function showDialog(){
+            myModalImg.show();
           }
 
           function showConfirm(id,data){
