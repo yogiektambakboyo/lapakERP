@@ -246,6 +246,7 @@ class APIController extends Controller
         $doc_no = $request->doc_no;
         $token = $request->token;
         $detail = $request->detail;
+        $photofile = $request->filephoto;
         $ua = $request->header('User-Agent');
         $token_svr = md5(date('Ymd'));
 
@@ -262,11 +263,12 @@ class APIController extends Controller
                 )
             );
             
-            $product = DB::select( DB::raw("INSERT INTO public.scan_activity(doc_no, dated, created_by, created_at, sales_id)VALUES (:doc_no, :dated, :created_by, now(), :sales_id); "), 
+            $product = DB::select( DB::raw("INSERT INTO public.scan_activity(doc_no, dated, created_by, created_at, sales_id,photofile)VALUES (:doc_no, :dated, :created_by, now(), :sales_id,:photofile); "), 
             array(
                 'doc_no' => $doc_no,
                 'dated' => $dated,
                 'created_by' => $id,
+                'photofile' => $photofile,
                 'sales_id' => $id
             ));
 
