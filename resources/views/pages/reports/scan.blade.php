@@ -44,7 +44,7 @@
                         <td>{{ $rdata->lot_number }}</td>
                         <td>{{ $rdata->point }}</td>
                         <td>{{ $rdata->created_at }}</td>
-                        <td>@php echo $rdata->photofile=="-"?"":'<button class="btn btn-danger" type="button" onclick="showDialog();">LIHAT FOTO</button>'; @endphp</td>
+                        <td>@php echo $rdata->photofile=="-"?"":'<button class="btn btn-sm btn-danger" type="button" onclick="showDialog(\''.$rdata->photofile.'\');">FOTO</button>'; @endphp</td>
                     </tr>
                 @endforeach
             </tbody>
@@ -137,12 +137,12 @@
             <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                <h5 class="modal-title"  id="input_expired_list_at_lbl">@lang('general.lbl_filterdata')</h5>
+                <h5 class="modal-title"  id="input_expired_list_at_lbl">Lihat Foto</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <div class="col-md-12">
-                        <img src="" width="400px" height="300px">
+                        <img src=""  id="dialog_img" width="400px" height="300px">
                     </div>
                 </div>
             </div>
@@ -259,7 +259,8 @@
             myModal2.show();
           }
 
-          function showDialog(){
+          function showDialog(filephoto){
+            $('#dialog_img').attr("src","https://kakikupos.com/images/smd-image/"+filephoto);
             myModalImg.show();
           }
 
