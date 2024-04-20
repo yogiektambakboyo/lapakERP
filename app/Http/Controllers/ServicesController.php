@@ -195,7 +195,7 @@ class ServicesController extends Controller
             ));
         }
 
-        DB::select('insert into voucher_detail select distinct voucher_code,ps.id,now(),1,now() from voucher v  join product_sku ps on ps.id='.$my_id.' and ps.type_id = 2 where v.is_allitem=1;');
+        DB::select('insert into voucher_detail(voucher_code,product_id,updated_at,created_by,created_at,branch_id) select distinct voucher_code,ps.id,now(),1,now(),v.branch_id from voucher v  join product_sku ps on ps.id='.$my_id.' and ps.type_id = 2 where v.is_allitem=1;');
 
         return redirect()->route('services.index')
             ->withSuccess(__('Perawatan berhasil dibuat.'));
