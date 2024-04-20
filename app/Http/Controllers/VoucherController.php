@@ -102,7 +102,7 @@ class VoucherController extends Controller
             $strencode = base64_encode($keyword.'#'.$begindate.'#'.$enddate.'#'.$branchx);
             return Excel::download(new VoucherExport($strencode), 'voucher_'.Carbon::now()->format('YmdHis').'.xlsx');
         }else if($request->export=='SearchDT'){
-            $table_data = DB::select("select '-' as product_name,v.invoice_no,v.is_used,v.price,v.remark as voucher_remark,v.voucher_code,v.branch_id,bc.remark as branch_name,v.value as value,v.value_idx,v.dated_start,v.dated_end 
+            $table_data = DB::select("select '-' as product_name,v.invoice_no,v.is_used,v.price,v.remark as voucher_remark,v.voucher_code,v.branch_id,bc.remark as branch_name,v.value as value,v.value_idx,to_char(v.dated_start,'dd-MM-YYYY') dated_startf,to_char(v.dated_end,'dd-MM-YYYY') dated_endf,v.dated_start,v.dated_end 
             from voucher v 
             join branch as bc on bc.id= v.branch_id
             join users_branch as ub2 on ub2.branch_id=v .branch_id

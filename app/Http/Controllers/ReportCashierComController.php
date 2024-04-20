@@ -699,14 +699,19 @@ class ReportCashierComController extends Controller
                 select  to_char(dated,'YYYYMMdd') as datedint,branch_name,to_char(dated,'YYYY-MM-dd') as datedorder,to_char(dated,'dd-MM-YYYY') as dated,'0' as name,'0' as id,
                 string_agg(distinct right(invoice_no,6),'##' order by right(invoice_no,6)) as invoice_no,
                 string_agg(case when type_id=1 then abbr else '' end,'##' order by right(invoice_no,6)) as product_abbr,
+                sum(case when type_id=1 then price else 0 end) t_price,
                 string_agg(case when type_id=1 then price::character varying else '' end,'##' order by right(invoice_no,6)) as product_price,
                 string_agg(case when type_id=1 then base_commision::character varying else '' end,'##' order by right(invoice_no,6)) as product_base_commision,
+                sum(case when type_id=1 then base_commision else 0 end) t_komisi,
                 string_agg(case when type_id=1 then qty::character varying else '' end,'##' order by right(invoice_no,6)) as product_qty,      
-                string_agg(case when type_id=1 then commisions::character varying else '' end,'##' order by right(invoice_no,6)) as product_commisions,   
+                sum(case when type_id=1 then qty else 0 end) t_qty,
+                string_agg(case when type_id=1 then commisions::character varying else '' end,'##' order by right(invoice_no,6)) as product_commisions, 
+                sum(case when type_id=1 then commisions else 0 end) t_tkomisi,
                 string_agg(case when type_id=8 and a.abbr not like '%CAS LEBARAN%' then commisions::character varying else '' end,'##' order by right(invoice_no,6)) as commisions_extra,
+                sum(case when type_id=8 and a.abbr not like '%CAS LEBARAN%' then commisions else 0 end) t_extra,
                 string_agg(case when type_id=8 and a.abbr like '%CAS LEBARAN%' then commisions::character varying else '' end,'##' order by right(invoice_no,6)) as commisions_lebaran,
                 string_agg(case when type_id=2 then commisions::character varying else '' end,'##' order by right(invoice_no,6)) as charge_lebaran,
-                sum(a.commisions) as total   
+                sum(a.commisions) as total
                 from cashier_commision a 
                 join users_branch as ub on ub.branch_id = a.branch_id and ub.user_id = '".$user->id."'
                 where a.dated between '".$begindate."' and '".$enddate."'  and a.branch_id::character varying like '%".$branchx."%'
