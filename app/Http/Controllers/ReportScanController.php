@@ -66,7 +66,7 @@ class ReportScanController extends Controller
 
         $shifts = Shift::orderBy('shift.id')->get(['shift.id','shift.remark','shift.id','shift.time_start','shift.time_end']); 
         $report_data = DB::select("
-            select sa.doc_no,sa.dated,sa.sales_id,s.name,sa.created_at,sd.product_name,sd.lot_number,sd.point,coalesce(sd.photofile,'-') photofile  
+            select sa.doc_no,sa.dated,sa.sales_id,s.name,sa.created_at,sd.product_name,sd.lot_number,sd.point,coalesce(sa.photofile,'-') photofile  
             from scan_activity sa 
             join sales s on s.id = sa.sales_id
             join scan_activity_detail sd on sd.doc_no = sa.doc_no             
@@ -158,7 +158,7 @@ class ReportScanController extends Controller
             return Excel::download(new ReportInvoicesExport($strencode), 'report_invoice_'.Carbon::now()->format('YmdHis').'.xlsx');
         }else{
             $report_data = DB::select("
-                select sa.doc_no,sa.dated,sa.sales_id,s.name,sa.created_at,sd.product_name,sd.lot_number,sd.point,coalesce(sd.photofile,'-') photofile  
+                select sa.doc_no,sa.dated,sa.sales_id,s.name,sa.created_at,sd.product_name,sd.lot_number,sd.point,coalesce(sa.photofile,'-') photofile  
                 from scan_activity sa 
                 join sales s on s.id = sa.sales_id and s.id::character varying like '".$sales."'
                 join scan_activity_detail sd on sd.doc_no = sa.doc_no where sa.dated between '".$begindate."' and '".$enddate."'    
