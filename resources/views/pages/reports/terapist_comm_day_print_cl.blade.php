@@ -36,8 +36,8 @@
    <body> 
 
     <button id="printPageButton" onClick="window.print();"  class="btn print printPageButton">Cetak Laporan Komisi</button>
-    <button id="btn_export_xls" class="btn print printPageButton" style="display:none;">Cetak XLS</button>
-    <button id="btn_export_xls" class="btn print printPageButton" style="display:none;">Cetak XLS</button>
+    <button id="btn_export_xls_" class="btn print printPageButton" style="display:none;">Cetak XLS</button>
+    <button id="btn_export_xls" class="btn print printPageButton" style="">Cetak XLS</button>
     <button class="btn print printPageButton" id="btn_ex">Export XLS DETAIL PERAWATAN</button>
     <button class="btn print printPageButton" id="btn_ex_2">Export XLS TOTAL TERAPIS & KASIR</button>
       <table style="width: 100%">
@@ -358,6 +358,7 @@
                     var report_data_terapist_det = resp.data.report_data_terapist_det;
                     var report_data_cashier = resp.data.report_data_cashier;
                     var report_data_cashier_s = resp.data.report_data_cashier_s;
+                    var report_data_cashier_det = resp.data.report_data_cashier_det;
                     var filter_begin_date = resp.data.filter_begin_date;
                     var filter_begin_end = resp.data.filter_begin_end;
                     var filter_branch_id = resp.data.filter_branch_id;
@@ -484,6 +485,287 @@
                         
                     }
 
+                    rowCounter++;
+                    rowCounter++;
+
+                    var charCounterT = "C";
+
+                    // Total Komisi
+                    worksheet.mergeCells('A'+rowCounter, String.fromCharCode(charCounterT.charCodeAt(0) + dated_list.length)+(rowCounter));
+                    worksheet.getCell('A'+rowCounter).value = 'TOTAL TERAPIS';
+                    worksheet.getCell('A'+rowCounter).alignment = { vertical: 'middle', horizontal: 'center' };
+                    worksheet.getRow(rowCounter).font = { bold: true };
+                    worksheet.getCell(str_prefix+charCounterT+rowCounter).fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+
+
+                    rowCounter++;
+
+                    worksheet.getCell('A'+rowCounter).value = 'NO';
+                    worksheet.getCell('A'+rowCounter).alignment = { vertical: 'middle', horizontal: 'center' };
+                    worksheet.getRow(rowCounter).font = { bold: true };
+                    worksheet.getCell('A'+rowCounter).fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+
+
+                    worksheet.getCell('B'+rowCounter).value = 'NAMA TERAPIS';
+                    worksheet.getCell('B'+rowCounter).alignment = { vertical: 'middle', horizontal: 'center' };
+                    worksheet.getRow(rowCounter).font = { bold: true };
+                    worksheet.getCell('B'+rowCounter).fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+
+
+                    worksheet.getCell(str_prefix+charCounterT+rowCounter).fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+
+                    
+                    for (let index = 0; index < dated_list.length; index++) {
+                        const rowElement = dated_list[index];
+                        if(index==46){
+                          charCounterT = "A";
+                          str_prefix = "B";
+                        }else if(index==24){
+                          charCounterT = "A";
+                          str_prefix = "A";
+                        }
+                        worksheet.getCell(str_prefix+charCounterT+rowCounter).value = rowElement.dated_number;
+                        worksheet.getCell(str_prefix+charCounterT+rowCounter).fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                        worksheet.getCell(str_prefix+charCounterT+rowCounter).alignment = { wrapText: true, vertical: 'middle', horizontal: 'center' };
+
+                        charCounterT = String.fromCharCode(charCounterT.charCodeAt(0) + 1);
+                    }
+
+                    worksheet.getCell(charCounterT+rowCounter).value = 'TOTAL';
+                    worksheet.getCell(charCounterT+rowCounter).alignment = { vertical: 'middle', horizontal: 'center' };
+                    worksheet.getRow(rowCounter).font = { bold: true };
+                    worksheet.getCell(charCounterT+rowCounter).fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+
+                    rowCounter++;
+
+
+
+                    for (let index = 0; index < report_data_terapist.length; index++) {
+                        charCounterT = "B";
+                        const rowElement = report_data_terapist[index];
+                       
+                        worksheet.getCell(str_prefix+'A'+rowCounter).value = index+1;
+                        worksheet.getCell(str_prefix+'A'+rowCounter).alignment = { wrapText: true, vertical: 'middle', horizontal: 'center' };
+
+
+                        worksheet.getCell(str_prefix+charCounterT+rowCounter).value = rowElement.name;
+                        worksheet.getCell(str_prefix+charCounterT+rowCounter).alignment = { wrapText: true, vertical: 'middle', horizontal: 'center' };
+
+                        charCounterT = "C";
+                        var valTotal = 0;
+
+                        for (let index = 0; index < dated_list.length; index++) {
+                            const rowElementD = dated_list[index];
+                            if(index==46){
+                              charCounterT = "A";
+                              str_prefix = "B";
+                            }else if(index==24){
+                              charCounterT = "A";
+                              str_prefix = "A";
+                            }
+
+                            var valX = 0;
+
+
+                            for (let g = 0; g < report_data_terapist_det.length; g++) {
+                              const elementDT = report_data_terapist_det[g];
+
+                              if(elementDT.dated == rowElementD.dated && rowElement.user_id == elementDT.user_id){
+                                valX =  valX +  parseFloat(elementDT.charge_lebaran)/1000;
+                              }                              
+                            }
+
+                            valTotal = valTotal + valX;
+                            worksheet.getCell(str_prefix+charCounterT+rowCounter).value = valX;
+                            worksheet.getCell(str_prefix+charCounterT+rowCounter).alignment = { wrapText: true, vertical: 'middle', horizontal: 'center' };
+                            
+                            charCounterT = String.fromCharCode(charCounterT.charCodeAt(0) + 1);
+                        }
+
+                        worksheet.getCell(str_prefix+charCounterT+rowCounter).value = valTotal;
+                        worksheet.getCell(str_prefix+charCounterT+rowCounter).alignment = {wrapText: true, vertical: 'middle', horizontal: 'center' };
+                        worksheet.getCell(str_prefix+charCounterT+rowCounter).font = { bold:true};
+                            
+
+
+                        rowCounter++;
+
+
+                    }
+
+                    charCounterT = "C";
+
+                    worksheet.mergeCells("A"+rowCounter,"B"+rowCounter);
+                    worksheet.getCell(str_prefix+"A"+rowCounter).value = 'GRAND TOTAL';
+
+
+                    var totalAll = 0;
+                    for (let index = 0; index < dated_list.length; index++) {
+                        const rowElementD = dated_list[index];
+                        if(index==46){
+                          charCounterT = "A";
+                          str_prefix = "B";
+                        }else if(index==24){
+                          charCounterT = "A";
+                          str_prefix = "A";
+                        }
+
+                        worksheet.getCell(str_prefix+charCounterT+rowCounter).value = parseFloat(rowElementD.charge_lebaran)/1000;
+                        worksheet.getRow(rowCounter).font = { bold: true };
+
+                        worksheet.getCell(str_prefix+charCounterT+rowCounter).alignment = { wrapText: true, vertical: 'middle', horizontal: 'center' };
+                        
+                        totalAll = totalAll + parseFloat(rowElementD.charge_lebaran)/1000;
+                        charCounterT = String.fromCharCode(charCounterT.charCodeAt(0) + 1);
+                    }
+
+                    worksheet.getCell(str_prefix+charCounterT+rowCounter).value = totalAll;
+                    worksheet.getRow(rowCounter).font = { bold: true };
+                    worksheet.getCell(str_prefix+charCounterT+rowCounter).alignment = { wrapText: true, vertical: 'middle', horizontal: 'center' };
+                    
+
+                    rowCounter++;
+                    rowCounter++;
+
+                    var charCounterT = "C";
+
+                    // Total Kasir
+                    worksheet.mergeCells('A'+rowCounter, String.fromCharCode(charCounterT.charCodeAt(0) + dated_list.length)+(rowCounter));
+                    worksheet.getCell('A'+rowCounter).value = 'TOTAL KASIR';
+                    worksheet.getCell('A'+rowCounter).alignment = { vertical: 'middle', horizontal: 'center' };
+                    worksheet.getRow(rowCounter).font = { bold: true };
+                    worksheet.getCell(str_prefix+charCounterT+rowCounter).fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+
+
+                    rowCounter++;
+
+                    worksheet.getCell('A'+rowCounter).value = 'NO';
+                    worksheet.getCell('A'+rowCounter).alignment = { vertical: 'middle', horizontal: 'center' };
+                    worksheet.getRow(rowCounter).font = { bold: true };
+                    worksheet.getCell('A'+rowCounter).fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+
+
+                    worksheet.getCell('B'+rowCounter).value = 'NAMA KASIR';
+                    worksheet.getCell('B'+rowCounter).alignment = { vertical: 'middle', horizontal: 'center' };
+                    worksheet.getRow(rowCounter).font = { bold: true };
+                    worksheet.getCell('B'+rowCounter).fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+
+
+                    worksheet.getCell(str_prefix+charCounterT+rowCounter).fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+
+                    
+                    for (let index = 0; index < dated_list.length; index++) {
+                        const rowElement = dated_list[index];
+                        if(index==46){
+                          charCounterT = "A";
+                          str_prefix = "B";
+                        }else if(index==24){
+                          charCounterT = "A";
+                          str_prefix = "A";
+                        }
+                        worksheet.getCell(str_prefix+charCounterT+rowCounter).value = rowElement.dated_number;
+                        worksheet.getCell(str_prefix+charCounterT+rowCounter).fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+                        worksheet.getCell(str_prefix+charCounterT+rowCounter).alignment = { wrapText: true, vertical: 'middle', horizontal: 'center' };
+
+                        charCounterT = String.fromCharCode(charCounterT.charCodeAt(0) + 1);
+                    }
+
+                    worksheet.getCell(charCounterT+rowCounter).value = 'TOTAL';
+                    worksheet.getCell(charCounterT+rowCounter).alignment = { vertical: 'middle', horizontal: 'center' };
+                    worksheet.getRow(rowCounter).font = { bold: true };
+                    worksheet.getCell(charCounterT+rowCounter).fill = {type: 'pattern',pattern:'solid',fgColor:{argb:'FFA726'}};
+
+                    rowCounter++;
+
+
+
+                    for (let index = 0; index < report_data_cashier_s.length; index++) {
+                        charCounterT = "B";
+                        const rowElement = report_data_cashier_s[index];
+                       
+                        worksheet.getCell(str_prefix+'A'+rowCounter).value = index+1;
+                        worksheet.getCell(str_prefix+'A'+rowCounter).alignment = { wrapText: true, vertical: 'middle', horizontal: 'center' };
+
+
+                        worksheet.getCell(str_prefix+charCounterT+rowCounter).value = rowElement.name;
+                        worksheet.getCell(str_prefix+charCounterT+rowCounter).alignment = { wrapText: true, vertical: 'middle', horizontal: 'center' };
+
+                        charCounterT = "C";
+                        var valTotal = 0;
+
+                        for (let index = 0; index < dated_list.length; index++) {
+                            const rowElementD = dated_list[index];
+                            if(index==46){
+                              charCounterT = "A";
+                              str_prefix = "B";
+                            }else if(index==24){
+                              charCounterT = "A";
+                              str_prefix = "A";
+                            }
+
+                            var valX = 0;
+
+
+                            for (let g = 0; g < report_data_cashier_det.length; g++) {
+                              const elementDT = report_data_cashier_det[g];
+
+                              if(elementDT.dated == rowElementD.dated){
+                                var c_c = report_data_cashier.length;
+                                var divider = 1;
+                                if(c_c>0){
+                                  divider = report_data_cashier[0].c_count;
+                                }
+                                valX =  valX +  ((parseFloat(elementDT.charge_lebaran)/1000)/divider);
+                              }                              
+                            }
+
+                            valTotal = valTotal + valX;
+                            worksheet.getCell(str_prefix+charCounterT+rowCounter).value = valX;
+                            worksheet.getCell(str_prefix+charCounterT+rowCounter).alignment = { wrapText: true, vertical: 'middle', horizontal: 'center' };
+                            
+                            charCounterT = String.fromCharCode(charCounterT.charCodeAt(0) + 1);
+                        }
+
+                        worksheet.getCell(str_prefix+charCounterT+rowCounter).value = valTotal;
+                        worksheet.getCell(str_prefix+charCounterT+rowCounter).alignment = {wrapText: true, vertical: 'middle', horizontal: 'center' };
+                        worksheet.getCell(str_prefix+charCounterT+rowCounter).font = { bold:true};
+                            
+
+
+                        rowCounter++;
+
+
+                    }
+
+                    charCounterT = "C";
+
+                    worksheet.mergeCells("A"+rowCounter,"B"+rowCounter);
+                    worksheet.getCell(str_prefix+"A"+rowCounter).value = 'GRAND TOTAL';
+
+
+                    var totalAll = 0;
+                    for (let index = 0; index < dated_list.length; index++) {
+                        const rowElementD = dated_list[index];
+                        if(index==46){
+                          charCounterT = "A";
+                          str_prefix = "B";
+                        }else if(index==24){
+                          charCounterT = "A";
+                          str_prefix = "A";
+                        }
+
+                        worksheet.getCell(str_prefix+charCounterT+rowCounter).value = parseFloat(rowElementD.charge_lebaran)/1000;
+                        worksheet.getRow(rowCounter).font = { bold: true };
+
+                        worksheet.getCell(str_prefix+charCounterT+rowCounter).alignment = { wrapText: true, vertical: 'middle', horizontal: 'center' };
+                        
+                        totalAll = totalAll + parseFloat(rowElementD.charge_lebaran)/1000;
+                        charCounterT = String.fromCharCode(charCounterT.charCodeAt(0) + 1);
+                    }
+
+                    worksheet.getCell(str_prefix+charCounterT+rowCounter).value = totalAll;
+                    worksheet.getRow(rowCounter).font = { bold: true };
+                    worksheet.getCell(str_prefix+charCounterT+rowCounter).alignment = { wrapText: true, vertical: 'middle', horizontal: 'center' };
                     
 
                     var borderStyles = {
