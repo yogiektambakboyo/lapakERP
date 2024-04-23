@@ -37,7 +37,7 @@
 
     <button id="printPageButton" onClick="window.print();"  class="btn print printPageButton">Cetak Laporan Komisi</button>
     <button id="btn_export_xls_" class="btn print printPageButton" style="display:none;">Cetak XLS</button>
-    <button id="btn_export_xls" class="btn print printPageButton" style="">Cetak XLS</button>
+    <button id="btn_export_xls" class="btn print printPageButton" style="display:none;">Cetak XLS</button>
     <button class="btn print printPageButton" id="btn_ex">Export XLS DETAIL PERAWATAN</button>
     <button class="btn print printPageButton" id="btn_ex_2">Export XLS TOTAL TERAPIS & KASIR</button>
       <table style="width: 100%">
