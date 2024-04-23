@@ -147,6 +147,7 @@ class ReportTerapistComDailyController extends Controller
 
     public function search(Request $request) 
     {
+        set_time_limit(300);
         $user = Auth::user();
         $id = $user->roles->first()->id;
         $this->getpermissions($id);
