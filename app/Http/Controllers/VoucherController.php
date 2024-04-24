@@ -102,7 +102,7 @@ class VoucherController extends Controller
             $strencode = base64_encode($keyword.'#'.$begindate.'#'.$enddate.'#'.$branchx);
             return Excel::download(new VoucherExport($strencode), 'voucher_'.Carbon::now()->format('YmdHis').'.xlsx');
         }else if($request->export=='SearchDT'){
-            $table_data = DB::select("select '-' as product_name,v.invoice_no,v.is_used,v.price,v.remark as voucher_remark,v.voucher_code,v.branch_id,bc.remark as branch_name,v.value as value,v.value_idx,v.dated_start,v.dated_end 
+            $table_data = DB::select("select '-' as product_name,v.invoice_no,v.is_used,v.price,v.remark as voucher_remark,v.voucher_code,v.branch_id,bc.remark as branch_name,v.value as value,v.value_idx,to_char(v.dated_start,'dd-MM-YYYY') dated_startf,to_char(v.dated_end,'dd-MM-YYYY') dated_endf,v.dated_start,v.dated_end 
             from voucher v 
             join branch as bc on bc.id= v.branch_id
             join users_branch as ub2 on ub2.branch_id=v .branch_id
@@ -263,8 +263,8 @@ class VoucherController extends Controller
 
             for($j=0;$j<count($product_id);$j++){
                 if($product_id[$j]=="%"){
-                    DB::update("insert into voucher_detail(voucher_code,product_id,created_by,created_at)
-                    select '".$now_voucher."',id,1,now() from product_sku ps 
+                    DB::update("insert into voucher_detail(voucher_code,product_id,created_by,created_at,branch_id)
+                    select '".$now_voucher."',id,1,now(),".$request->get('branch_id')." from product_sku ps 
                     where ps.type_id = 2");
 
                     DB::update("update voucher set is_allitem=1 where voucher_code = '".$now_voucher."';");
@@ -274,6 +274,7 @@ class VoucherController extends Controller
                         array_merge(
                             ['product_id' => $product_id[$j] ],
                             ['voucher_code' => $now_voucher ],
+                            ['branch_id' => $request->get('branch_id') ],
                             ['created_by' => $user->id ],
                         )
                     );

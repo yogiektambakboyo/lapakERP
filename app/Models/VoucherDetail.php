@@ -17,6 +17,7 @@ class VoucherDetail extends Model
         'voucher_code',
         'created_by',
         'created_at',
+        'branch_id',
         'updated_at'
     ];
 }

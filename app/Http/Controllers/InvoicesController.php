@@ -334,6 +334,7 @@ class InvoicesController extends Controller
 
         if($request->get('voucher_code')!=""&&$request->get('is_use_voucher')=="1"){
             Voucher::where('voucher.voucher_code','=',$request->get('voucher_code'))
+            ->where('voucher.branch_id','=',$branch->branch_id)
             ->update(
                 array_merge(
                     ['is_used' => 1],
@@ -876,6 +877,7 @@ class InvoicesController extends Controller
 
         if($request->get('voucher_code')!=""&&$request->get('is_use_voucher')=="1"){
             Voucher::where('voucher.voucher_code','=',$request->get('voucher_code'))
+            ->where('voucher.branch_id','=',$branch_id['branch_id'])
             ->update(
                 array_merge(
                     ['is_used' => 1],

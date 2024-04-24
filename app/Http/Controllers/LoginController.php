@@ -10,6 +10,7 @@ use App\Models\Settings;
 use App\Models\Company;
 use App\Http\Controllers\Lang;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Session;
 
 class LoginController extends Controller
 {
@@ -45,9 +46,9 @@ class LoginController extends Controller
 
         $user_data = DB::select("select id from users u where active=1 and u.username = '".$request->get('username')."'");
         if(count($user_data)<=0){
-            //Session::flush();
-            //Auth::logout();
-            //return redirect('login');
+            Session::flush();
+            Auth::logout();
+            return redirect('login');
         }
         
         $user = Auth::getProvider()->retrieveByCredentials($credentials);

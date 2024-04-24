@@ -712,9 +712,9 @@
 
                           if(isexistDetail==0){
                                 worksheet.getCell('A'+counter).value = rowElementData.datedformat;
-                                worksheet.getCell('B'+counter).value = (parseFloat(rowElementData.total_service)-parseFloat(rowElementData.total_tambahan));
-                                worksheet.getCell('C'+counter).value = rowElementData.total_salon;
-                                worksheet.getCell('D'+counter).value = parseFloat(rowElementData.total_salon)+(parseFloat(rowElementData.total_service)-parseFloat(rowElementData.total_tambahan));
+                                worksheet.getCell('B'+counter).value = (parseFloat(rowElementData.total_service_no_cl)-parseFloat(rowElementData.total_tambahan));
+                                worksheet.getCell('C'+counter).value = rowElementData.total_salon_no_cl;
+                                worksheet.getCell('D'+counter).value = parseFloat(rowElementData.total_salon_no_cl)+(parseFloat(rowElementData.total_service_no_cl)-parseFloat(rowElementData.total_tambahan));
                                 worksheet.getCell('E'+counter).value = "";
                                 worksheet.getCell('F'+counter).value = "";
                                 worksheet.getCell('G'+counter).value = "";
@@ -749,9 +749,9 @@
                                     if(counterDetail == 1 ){
                                   
                                         worksheet.getCell('A'+counter).value = rowElementDetail.datedformat;
-                                        worksheet.getCell('B'+counter).value = (parseFloat(rowElementData.total_service)-parseFloat(rowElementData.total_tambahan));
-                                        worksheet.getCell('C'+counter).value = rowElementData.total_salon;
-                                        worksheet.getCell('D'+counter).value = parseFloat(rowElementData.total_salon)+(parseFloat(rowElementData.total_service)-parseFloat(rowElementData.total_tambahan));
+                                        worksheet.getCell('B'+counter).value = (parseFloat(rowElementData.total_service_no_cl)-parseFloat(rowElementData.total_tambahan));
+                                        worksheet.getCell('C'+counter).value = rowElementData.total_salon_no_cl;
+                                        worksheet.getCell('D'+counter).value = parseFloat(rowElementData.total_salon_no_cl)+(parseFloat(rowElementData.total_service_no_cl)-parseFloat(rowElementData.total_tambahan));
                                         worksheet.getCell('E'+counter).value = rowElementDetail.abbr;
                                         worksheet.getCell('F'+counter).value = rowElementDetail.qty;
                                         worksheet.getCell('G'+counter).value = rowElementDetail.price;
