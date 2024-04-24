@@ -38,7 +38,7 @@
                 @foreach($report_data as $rdata)
                     <tr>
                         <th scope="row">{{ $rdata->doc_no }}</th>
-                        <td>{{ Carbon\Carbon::parse($rdata->dated)->format('d-m-Y') }}</td>
+                        <td  data-order="{{ $rdata->dated }}">{{ Carbon\Carbon::parse($rdata->dated)->format('d-m-Y') }}</td>
                         <td>{{ $rdata->name }}</td>
                         <td>{{ $rdata->product_name }}</td>
                         <td>{{ $rdata->lot_number }}</td>
@@ -324,7 +324,7 @@
 <script type="text/javascript">
     $(document).ready(function () {
         $('#example').DataTable(
-            
+            order: [[0, 'desc']]
         );
     });
 </script>
