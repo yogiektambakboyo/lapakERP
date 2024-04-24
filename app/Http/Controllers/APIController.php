@@ -205,7 +205,7 @@ class APIController extends Controller
             from stock_lotnumber sl 
             join product_sku ps on ps.alias_code = sl.alias_code 
             join product_category pc on pc.id = ps.category_id 
-            where sl.lot_number = :lot_number and sl.alias_code = :product_id and sl.no_surat like 'STB%' "), 
+            where sl.is_used=0 and sl.lot_number = :lot_number and sl.alias_code = :product_id and sl.no_surat like 'STB%' "), 
             array(
                 'lot_number' => $lot_number,
                 'product_id' => $product_id
@@ -294,6 +294,13 @@ class APIController extends Controller
 
                     $point = $point + (int)$detail[$i]["point"];
                     $counter++;
+
+                    $update_used = DB::select( DB::raw("update stock_lotnumber set is_used = 1 where alias_code = :alias_code and lot_number = :lot_number; "), 
+                    array(
+                            'lot_number' => $detail[$i]["lot_number"],
+                            'alias_code' => $detail[$i]["alias_code"]
+                        )
+                    );
             }
 
             if ($counter>0) {

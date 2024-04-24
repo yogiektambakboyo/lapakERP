@@ -69,7 +69,7 @@ class ReportScanController extends Controller
             select sa.doc_no,sa.dated,sa.sales_id,s.name,sa.created_at,sd.product_name,sd.lot_number,sd.point,coalesce(sa.photofile,'-') photofile  
             from scan_activity sa 
             join sales s on s.id = sa.sales_id
-            join scan_activity_detail sd on sd.doc_no = sa.doc_no             
+            join scan_activity_detail sd on sd.doc_no = sa.doc_no  order by sa.dated desc           
         ");
 
         $sales_data = DB::select("
@@ -161,7 +161,7 @@ class ReportScanController extends Controller
                 select sa.doc_no,sa.dated,sa.sales_id,s.name,sa.created_at,sd.product_name,sd.lot_number,sd.point,coalesce(sa.photofile,'-') photofile  
                 from scan_activity sa 
                 join sales s on s.id = sa.sales_id and s.id::character varying like '".$sales."'
-                join scan_activity_detail sd on sd.doc_no = sa.doc_no where sa.dated between '".$begindate."' and '".$enddate."'    
+                join scan_activity_detail sd on sd.doc_no = sa.doc_no where sa.dated between '".$begindate."' and '".$enddate."'  order by sa.dated desc
                           
             ");         
             return view('pages.reports.scan',['company' => Company::get()->first()], compact('shifts','sales_data','branchs','data','keyword','act_permission','report_data'))->with('i', ($request->input('page', 1) - 1) * 5);
