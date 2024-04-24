@@ -323,9 +323,9 @@
 @push('scripts')
 <script type="text/javascript">
     $(document).ready(function () {
-        $('#example').DataTable(
-            order: [[0, 'desc']]
-        );
+        new DataTable('#example', {
+            order: [[1, 'desc']]
+        });
     });
 </script>
 @endpush
