@@ -566,7 +566,7 @@ class ReportCashierComController extends Controller
             }
 
             $report_data_com_from1 = DB::select("
-                        select to_char(dated,'dd-MM-YYYY') as dated,'0' as id,sum(a.commisions) as total from cashier_commision a
+                        select to_char(dated,'dd-MM-YYYY') as dated,'0' as id,sum(case when type_id=1 or (type_id=8 and a.abbr not like '%CAS LEBARAN%') then commisions else 0 end) as total from cashier_commision a
                         join users_branch as ub on ub.branch_id = a.branch_id and ub.user_id = '".$user->id."'
                         where dated between '".$date26."'  and '".$enddate."'  and a.branch_id::character varying like  '".$filter_branch_id."' group by dated     
             ");
@@ -736,7 +736,7 @@ class ReportCashierComController extends Controller
             }
 
             $report_data_com_from1 = DB::select("
-                        select to_char(dated,'YYYYMMdd') as datedint,to_char(dated,'dd-MM-YYYY') as dated,'0' as id,sum(a.commisions) as total from cashier_commision a
+                        select to_char(dated,'YYYYMMdd') as datedint,to_char(dated,'dd-MM-YYYY') as dated,'0' as id,sum(case when type_id=1 or (type_id=8 and a.abbr not like '%CAS LEBARAN%') then commisions else 0 end) as total from cashier_commision a
                         join users_branch as ub on ub.branch_id = a.branch_id and ub.user_id = '".$user->id."'
                         where dated between '".$date26."'  and '".$enddate."'  and a.branch_id::character varying like  '".$filter_branch_id."' group by dated     
             ");
