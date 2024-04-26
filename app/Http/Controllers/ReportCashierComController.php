@@ -711,7 +711,7 @@ class ReportCashierComController extends Controller
                 sum(case when type_id=8 and a.abbr not like '%CAS LEBARAN%' then commisions else 0 end) t_extra,
                 string_agg(case when type_id=8 and a.abbr like '%CAS LEBARAN%' then commisions::character varying else '' end,'##' order by right(invoice_no,6)) as commisions_lebaran,
                 string_agg(case when type_id=2 then commisions::character varying else '' end,'##' order by right(invoice_no,6)) as charge_lebaran,
-                sum(a.commisions) as total
+                sum(case when type_id=1 or (type_id=8 and a.abbr not like '%CAS LEBARAN%') then commisions else 0 end) as total
                 from cashier_commision a 
                 join users_branch as ub on ub.branch_id = a.branch_id and ub.user_id = '".$user->id."'
                 where a.dated between '".$begindate."' and '".$enddate."'  and a.branch_id::character varying like '%".$branchx."%'
