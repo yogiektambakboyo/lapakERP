@@ -49,7 +49,7 @@
                     <tr>
                         <td>{{ $order->branch_name }}</td>
                         <td @if ($order->is_checkout == 0) class="bg-danger" @endif>{{ $order->invoice_no }}</td>
-                        <td>{{ Carbon\Carbon::parse($order->dated)->format('d-m-Y') }}</td>
+                        <td data-order="{{ $order->dated }}">{{ Carbon\Carbon::parse($order->dated)->format('d-m-Y') }}</td>
                         <td>{{ $order->customer }}</td>
                         <td>{{ number_format($order->total,0,',','.') }}</td>
                         <td  @if ($order->total_payment < $order->total) class="bg-warning" @endif>{{ number_format($order->total_payment,0,',','.') }}</td>
@@ -290,6 +290,7 @@
 <script type="text/javascript">
     $(document).ready(function () {
         $('#example').DataTable(
+            order: [[1, 'desc']]
         );
     });
 </script>

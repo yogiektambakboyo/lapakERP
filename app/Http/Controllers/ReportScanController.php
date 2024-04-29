@@ -66,15 +66,20 @@ class ReportScanController extends Controller
 
         $shifts = Shift::orderBy('shift.id')->get(['shift.id','shift.remark','shift.id','shift.time_start','shift.time_end']); 
         $report_data = DB::select("
-            select sa.doc_no,sa.dated,sa.sales_id,s.name,sa.created_at,sd.product_name,sd.lot_number,sd.point  
+            select sa.doc_no,sa.dated,sa.sales_id,s.name,sa.created_at,sd.product_name,sd.lot_number,sd.point,coalesce(sa.photofile,'-') photofile  
             from scan_activity sa 
             join sales s on s.id = sa.sales_id
-            join scan_activity_detail sd on sd.doc_no = sa.doc_no             
+            join scan_activity_detail sd on sd.doc_no = sa.doc_no  order by sa.dated desc           
         ");
+
+        $sales_data = DB::select("
+            select id,name from sales s where s.active = 1 order by s.name          
+        ");
+
         $data = $this->data;
         $keyword = "";
         $act_permission = $this->act_permission[0];
-        return view('pages.reports.scan',['company' => Company::get()->first()], compact('shifts','branchs','data','keyword','act_permission','report_data'))->with('i', ($request->input('page', 1) - 1) * 5);
+        return view('pages.reports.scan',['company' => Company::get()->first()], compact('shifts','sales_data','branchs','data','keyword','act_permission','report_data'))->with('i', ($request->input('page', 1) - 1) * 5);
     }
 
     public function get_transaction(Request $request)
@@ -140,21 +145,26 @@ class ReportScanController extends Controller
         
         $begindate = date(Carbon::parse($request->filter_begin_date_in)->format('Y-m-d'));
         $enddate = date(Carbon::parse($request->filter_end_date_in)->format('Y-m-d'));
+        $sales = $request->filter_sales;
         $branchx = $request->filter_branch_id_in;
         $shift_id = $request->filter_shift_id_in;
+
+        $sales_data = DB::select("
+            select id,name from sales s where s.active = 1 order by s.name          
+        ");
 
         if($request->export=='Export Excel'){
              $strencode = base64_encode($shift_id.'#'.$begindate.'#'.$enddate.'#'.$branchx);
             return Excel::download(new ReportInvoicesExport($strencode), 'report_invoice_'.Carbon::now()->format('YmdHis').'.xlsx');
         }else{
             $report_data = DB::select("
-                select sa.doc_no,sa.dated,sa.sales_id,s.name,sa.created_at,sd.product_name,sd.lot_number,sd.point  
+                select sa.doc_no,sa.dated,sa.sales_id,s.name,sa.created_at,sd.product_name,sd.lot_number,sd.point,coalesce(sa.photofile,'-') photofile  
                 from scan_activity sa 
-                join sales s on s.id = sa.sales_id
-                join scan_activity_detail sd on sd.doc_no = sa.doc_no where sa.dated between '".$begindate."' and '".$enddate."'    
+                join sales s on s.id = sa.sales_id and s.id::character varying like '".$sales."'
+                join scan_activity_detail sd on sd.doc_no = sa.doc_no where sa.dated between '".$begindate."' and '".$enddate."'  order by sa.dated desc
                           
             ");         
-            return view('pages.reports.scan',['company' => Company::get()->first()], compact('shifts','branchs','data','keyword','act_permission','report_data'))->with('i', ($request->input('page', 1) - 1) * 5);
+            return view('pages.reports.scan',['company' => Company::get()->first()], compact('shifts','sales_data','branchs','data','keyword','act_permission','report_data'))->with('i', ($request->input('page', 1) - 1) * 5);
         }
     }
 

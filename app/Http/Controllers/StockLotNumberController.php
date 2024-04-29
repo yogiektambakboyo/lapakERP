@@ -146,9 +146,9 @@ class StockLotNumberController extends Controller
 
 
             DB::select("INSERT into product_sku(remark,abbr,alias_code,barcode,category_id,type_id,brand_id,created_at,created_by)
-            select distinct product_name,product_name,product_name,product_name,pc.id as category_id,1,1,now(),1  from temp_stock_lotnumber t
-            join product_category pc on pc.remark = t.category_name where t.product_name not in 
-            (select remark from product_sku);");
+            select distinct product_name,product_name,alias_code,alias_code,pc.id as category_id,1,1,now(),1  from temp_stock_lotnumber t
+            join product_category pc on pc.remark = t.category_name where t.alias_code not in 
+            (select alias_code from product_sku);");
 
             DB::select("INSERT into stock_lotnumber(recid,no_surat,spkid,lot_number,alias_code,location,qty,qty_available)
             select recid,no_surat,spkid,lot_number,alias_code,location,qty,qty_available from temp_stock_lotnumber

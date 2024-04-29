@@ -30,6 +30,7 @@
                 <th scope="col" width="8%">Lot Number</th>    
                 <th scope="col" width="8%">Point</th>    
                 <th scope="col">Created At</th>    
+                <th scope="col">Action</th>    
             </tr>
             </thead>
             <tbody>
@@ -37,12 +38,13 @@
                 @foreach($report_data as $rdata)
                     <tr>
                         <th scope="row">{{ $rdata->doc_no }}</th>
-                        <td>{{ Carbon\Carbon::parse($rdata->dated)->format('d-m-Y') }}</td>
+                        <td  data-order="{{ $rdata->dated }}">{{ Carbon\Carbon::parse($rdata->dated)->format('d-m-Y') }}</td>
                         <td>{{ $rdata->name }}</td>
                         <td>{{ $rdata->product_name }}</td>
                         <td>{{ $rdata->lot_number }}</td>
                         <td>{{ $rdata->point }}</td>
                         <td>{{ $rdata->created_at }}</td>
+                        <td>@php echo $rdata->photofile=="-"?"":'<button class="btn btn-sm btn-danger" type="button" onclick="showDialog(\''.$rdata->photofile.'\');">FOTO</button>'; @endphp</td>
                     </tr>
                 @endforeach
             </tbody>
@@ -64,14 +66,16 @@
                 <div class="modal-body">
                     <form action="{{ route('reports.scan.search') }}" method="GET">   
                         @csrf 
-                        <div class="col-md-10 d-none">
+                        <div class="col-md-10">
                             <label class="form-label col-form-label col-md-4">@lang('general.lbl_branch')</label>
                         </div>
-                        <div class="col-md-12 d-none">
+                        <div class="col-md-12">
                             <select class="form-control" 
-                                name="filter_branch_id_in" id="filter_branch_id_in">
-                                <option value="1">HEAD QUARTER</option>
-                                
+                                name="filter_sales" id="filter_sales">
+                                <option value="%">-- SEMUA --</option>
+                                @foreach($sales_data as $sales)
+                                    @php echo '<option value="'.$sales->id.'">'.$sales->name.'</option>'; @endphp
+                                @endforeach
                             </select>
                         </div>
 
@@ -122,6 +126,24 @@
                             <button type="submit" class="btn btn-primary form-control">@lang('general.lbl_apply')</button>
                         </div>
                     </form>
+                </div>
+            </div>
+            </div>
+        </div>
+
+        <!-- Vertically centered modal -->
+        <!-- Modal -->
+        <div class="modal fade" id="modal-img" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+            <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                <h5 class="modal-title"  id="input_expired_list_at_lbl">Lihat Foto</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="col-md-12">
+                        <img src=""  id="dialog_img" width="400px" height="300px">
+                    </div>
                 </div>
             </div>
             </div>
@@ -220,6 +242,7 @@
 
           var myModal = new bootstrap.Modal(document.getElementById('modal-filter'));
           var myModal2 = new bootstrap.Modal(document.getElementById('modal-filter2'));
+          var myModalImg = new bootstrap.Modal(document.getElementById('modal-img'));
 
           function openDialog(branch_id,dated,shift_id){
             $('#filter_branch_id').val(branch_id);
@@ -234,6 +257,11 @@
           function openDialogFilterSearch(command){
             $('#export').val(command);
             myModal2.show();
+          }
+
+          function showDialog(filephoto){
+            $('#dialog_img').attr("src","https://kakikupos.com/images/smd-image/"+filephoto);
+            myModalImg.show();
           }
 
           function showConfirm(id,data){
@@ -295,9 +323,9 @@
 @push('scripts')
 <script type="text/javascript">
     $(document).ready(function () {
-        $('#example').DataTable(
-            
-        );
+        new DataTable('#example', {
+            order: [[1, 'desc']]
+        });
     });
 </script>
 @endpush

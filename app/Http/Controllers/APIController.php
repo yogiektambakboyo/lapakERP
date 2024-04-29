@@ -201,7 +201,7 @@ class APIController extends Controller
         $token_svr = md5(date('Ymd'));
 
         if($ua == "Malaikat_Ridwan" && $token == $token_svr){
-            $product = DB::select( DB::raw("select pc.id as category_id,sl.recid,sl.lot_number,sl.alias_code,sl.qty,coalesce(sl.qty_available,0) as qty_available,ps.id as product_id,ps.remark,pc.remark as category_name,pc.add_column_2 as point
+            $product = DB::select( DB::raw("select sl.is_used,pc.id as category_id,sl.recid,sl.lot_number,sl.alias_code,sl.qty,coalesce(sl.qty_available,0) as qty_available,ps.id as product_id,ps.remark,pc.remark as category_name,pc.add_column_2 as point
             from stock_lotnumber sl 
             join product_sku ps on ps.alias_code = sl.alias_code 
             join product_category pc on pc.id = ps.category_id 
@@ -213,11 +213,30 @@ class APIController extends Controller
         
 
             if (count($product)>0) {
-                $result = array_merge(
-                    ['status' => 'success'],
-                    ['data' => $product],
-                    ['message' => 'Akses Berhasil'],
-                ); 
+                $is_used = 0;
+
+                for ($i=0; $i < count($product); $i++) { 
+                    if($product[$i]->is_used == 1){
+                        $is_used = 1;
+                    }
+                }
+
+                if($is_used == 1){
+                    $re = array();
+                    $result = array_merge(
+                        ['status' => 'failed'],
+                        ['data' => $re ],
+                        ['message' => 'QR Code sudah pernah discan'],
+                    ); 
+                }else{
+                    $result = array_merge(
+                        ['status' => 'success'],
+                        ['data' => $product],
+                        ['message' => 'Akses Berhasil'],
+                    ); 
+                }
+
+                
             }else{
                 $re = array();
                 $result = array_merge(
@@ -246,6 +265,7 @@ class APIController extends Controller
         $doc_no = $request->doc_no;
         $token = $request->token;
         $detail = $request->detail;
+        $photofile = $request->filephoto;
         $ua = $request->header('User-Agent');
         $token_svr = md5(date('Ymd'));
 
@@ -262,11 +282,12 @@ class APIController extends Controller
                 )
             );
             
-            $product = DB::select( DB::raw("INSERT INTO public.scan_activity(doc_no, dated, created_by, created_at, sales_id)VALUES (:doc_no, :dated, :created_by, now(), :sales_id); "), 
+            $product = DB::select( DB::raw("INSERT INTO public.scan_activity(doc_no, dated, created_by, created_at, sales_id,photofile)VALUES (:doc_no, :dated, :created_by, now(), :sales_id,:photofile); "), 
             array(
                 'doc_no' => $doc_no,
                 'dated' => $dated,
                 'created_by' => $id,
+                'photofile' => $photofile,
                 'sales_id' => $id
             ));
 
@@ -292,6 +313,13 @@ class APIController extends Controller
 
                     $point = $point + (int)$detail[$i]["point"];
                     $counter++;
+
+                    $update_used = DB::select( DB::raw("update stock_lotnumber set is_used = 1 where alias_code = :alias_code and lot_number = :lot_number; "), 
+                    array(
+                            'lot_number' => $detail[$i]["lot_number"],
+                            'alias_code' => $detail[$i]["alias_code"]
+                        )
+                    );
             }
 
             if ($counter>0) {
