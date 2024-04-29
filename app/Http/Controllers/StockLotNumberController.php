@@ -154,6 +154,22 @@ class StockLotNumberController extends Controller
             select recid,no_surat,spkid,lot_number,alias_code,location,qty,qty_available from temp_stock_lotnumber
             where recid not in (select recid from stock_lotnumber)");
 
+            DB::select("delete from tmp_category;");
+            DB::select("insert into tmp_category(alias_code,category_new,category_new_id,category_old,category_old_id)
+            select distinct t.alias_code,t.category_name category_new,pc2.id category_new_id,pc.remark category_old, pc.id category_old_id  from
+            temp_stock_lotnumber t
+            join product_sku ps on ps.alias_code = t.alias_code 
+            join product_category pc on pc.id  = ps.category_id  
+            left join product_category pc2 on pc2.remark  = t.category_name  
+            where  pc.remark != t.category_name;");
+
+            DB::select("UPDATE product_sku
+            SET    category_id = t2.category_new_id,updated_at = now()
+            FROM   product_sku t1
+            JOIN   tmp_category t2 ON t1.alias_code  = t2.alias_code
+            WHERE  product_sku.alias_code = t1.alias_code;");
+
+
             $result = array_merge(
                 ['status' => 'success'],
                 ['data' => $res_data ],
