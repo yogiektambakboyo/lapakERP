@@ -1,4 +1,4 @@
-x@extends('layouts.default', ['appSidebarSearch' => true])
+@extends('layouts.default', ['appSidebarSearch' => true])
 
 @section('title', 'Promo Baru')
 
