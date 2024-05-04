@@ -98,8 +98,8 @@ class LoginController extends Controller
 
             DB::select("update customers set pass_wd=".$random_numb." where whatsapp_no='".$whatsapp_no."';");
             DB::select("update users set pass_wd=".$random_numb." where phone_no='".$whatsapp_no."';");
-            $sal = DB::select("select name from customers where whatsapp_no='".$whatsapp_no."';");
-            $name = $sal[0]->name;
+            //$sal = DB::select("select name from customers where whatsapp_no='".$whatsapp_no."';");
+            $name = $data->name;
 
             $curl = curl_init();
             $val_token = md5(date("Y-m-d"));
