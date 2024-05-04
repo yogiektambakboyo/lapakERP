@@ -174,22 +174,71 @@ class LoginController extends Controller
     public function api_register(Request $request)
     {
         $whatsapp_no = $request->whatsapp_no;
-        $pass_wd = $request->pass_wd;
+        $name = $request->name;
+        $address = $request->address;
+        $handphone = $request->handphone;
+        $city = $request->city;
+        $branch_id = $request->branch_id;
+        $gender_id = $request->gender_id;
+        $file_photo = $request->file_photo;
+        $token = $request->token;
+        $acc_type = $request->acc_type;
+        $user_agent = $request->server('HTTP_USER_AGENT');
 
-        $data = DB::select(" insert into customers_point(customers_id,point) select id,0  from customers c  where c.id not in (select customers_id  from customers_point); ");
+        //name,address,handphone,city,branch_id, gender_id, file_photo, token, acc_type
 
-        $data = DB::select("select c.id,c.name, m.remark as membership,m.point as m_point,'cust' as user_type,coalesce(cp.point,0) as point, 0 as voucher,coalesce(c.external_code,'') as external_code 
-        from customers c 
-        join membership m on m.id = c.membership_id 
-        left join customers_point cp on cp.customers_id = c.id
-        where pass_wd='".$pass_wd."' and c.whatsapp_no ='".$whatsapp_no."' ");
+        $data = DB::select("select * from (select id,name,whatsapp_no,pass_wd,'cust' as user_type from customers c 
+        where c.whatsapp_no is not null and whatsapp_no ='".$whatsapp_no."'
+        union all 
+        select id,name,u.phone_no,pass_wd,'emp' as user_type from users u 
+        where u.phone_no is not null and u.phone_no = '".$whatsapp_no."'
+        ) a limit 1");
 
-        if(count($data)>0){
-            $result = array_merge(
-                ['status' => 'success'],
-                ['data' => $data],
-                ['message' => 'Success'],
-            );    
+        $val_token = md5(date("Y-m-d"));
+        if(count($data)<=0 && $val_token==$token_today && $user_agent=="Malaikat_Ridwan"){
+
+            if($acc_type == "Staff"){
+                $gender = ($gender_id=="Pria"?'Male':'Female');
+                $data = DB::select(" insert into users(name,address,username,password,phone_no,gender,city,photo,branch_id,job_id,department_id,work_year,join_years) 
+                values('".$name."','".$address."',md5(to_char(now(),'YYYY-MM-DD HH24:MI:SS.MS')),md5(to_char(now(),'YYYY-MM-DD HH24:MI:SS.MS')),'".$handphone."','".$gender."','".$address."','".$file_photo."','".$branch_id."',2,2,1,1); ");
+
+                $data = DB::select("select * from (select id,name,whatsapp_no,pass_wd,'cust' as user_type from customers c 
+                where c.whatsapp_no is not null and whatsapp_no ='".$whatsapp_no."'
+                union all 
+                select id,name,u.phone_no,pass_wd,'emp' as user_type from users u 
+                where u.phone_no is not null and u.phone_no = '".$whatsapp_no."'
+                ) a limit 1");
+
+                $data = DB::select("insert into users_branch(user_id,branch_id) values(".$data[0]->id.",".$branch_id.");");
+                
+            }else{
+                $data = DB::select(" insert into customers(name,address,phone_no,whatsapp_no,branch_id,city,gender) 
+                values('".$name."','".$address."','".$handphone."','".$handphone."',".$branch_id.",'".$city."','".$gender_id."'); ");
+            }
+
+            $data = DB::select("select * from (select id,name,whatsapp_no,pass_wd,'cust' as user_type from customers c 
+            where c.whatsapp_no is not null and whatsapp_no ='".$whatsapp_no."'
+            union all 
+            select id,name,u.phone_no,pass_wd,'emp' as user_type from users u 
+            where u.phone_no is not null and u.phone_no = '".$whatsapp_no."'
+            ) a limit 1");
+
+            if(count($data)>0){
+                $result = array_merge(
+                    ['status' => 'success'],
+                    ['data' => $data],
+                    ['message' => 'Success'],
+                );    
+            }else{
+                $data = array();
+                $result = array_merge(
+                    ['status' => 'failed'],
+                    ['data' => $data ],
+                    ['message' => 'Login failed'],
+                );   
+            }
+
+            
         }else{
             $data = array();
             $result = array_merge(
@@ -198,6 +247,7 @@ class LoginController extends Controller
                 ['message' => 'Login failed'],
             );   
         }
+        
         return $result;
         
     }
