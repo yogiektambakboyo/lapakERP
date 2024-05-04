@@ -233,7 +233,7 @@ class LoginController extends Controller
 
     public function api_register(Request $request)
     {
-        $whatsapp_no = $request->whatsapp_no;
+        $whatsapp_no = $request->handphone;
         $name = $request->name;
         $address = $request->address;
         $handphone = $request->handphone;
@@ -241,7 +241,7 @@ class LoginController extends Controller
         $branch_id = $request->branch_id;
         $gender_id = $request->gender_id;
         $file_photo = $request->file_photo;
-        $token = $request->token;
+        $token_today = $request->token;
         $acc_type = $request->acc_type;
         $user_agent = $request->server('HTTP_USER_AGENT');
 
@@ -294,7 +294,7 @@ class LoginController extends Controller
                 $result = array_merge(
                     ['status' => 'failed'],
                     ['data' => $data ],
-                    ['message' => 'Login failed'],
+                    ['message' => 'Register failed'],
                 );   
             }
 
@@ -304,7 +304,7 @@ class LoginController extends Controller
             $result = array_merge(
                 ['status' => 'failed'],
                 ['data' => $data ],
-                ['message' => 'Login failed'],
+                ['message' => 'Validation failed'],
             );   
         }
         
