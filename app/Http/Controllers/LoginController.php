@@ -282,6 +282,33 @@ class LoginController extends Controller
         
     }
 
+    public function api_branch_list(Request $request)
+    {
+        $token_today = $request->token;
+        $val_token = md5(date("Y-m-d"));
+        $user_agent = $request->server('HTTP_USER_AGENT');
+        $whatsapp_no = $request->whatsapp_no;
+        $data = DB::select("select b.id,remark as branch_name,b.address as branch_address,b.longitude, b.latitude from branch b 
+        where b.id>1 and b.active = 1; ");
+
+        if(count($data)>0 && $val_token==$token_today && $user_agent=="Malaikat_Ridwan"){
+            $result = array_merge(
+                ['status' => 'success'],
+                ['data' => $data],
+                ['message' => 'Success'],
+            );    
+        }else{
+            $data = array();
+            $result = array_merge(
+                ['status' => 'failed'],
+                ['data' => $data ],
+                ['message' => 'get Branch failed'],
+            );   
+        }
+        return $result;
+        
+    }
+
     public function api_invoice(Request $request)
     {
         $whatsapp_no = $request->whatsapp_no;

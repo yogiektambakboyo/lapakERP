@@ -16,6 +16,7 @@ class VerifyCsrfToken extends Middleware
         '/api_profile',
         '/api_profile_emp',
         '/api_branch',
+        '/api_branch_list',
         '/api_invoice',
         '/api_post_review',
         '/api_photo_slide',
