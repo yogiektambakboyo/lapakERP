@@ -290,7 +290,7 @@ class LoginController extends Controller
         $whatsapp_no = $request->whatsapp_no;
         $data = DB::select("
         select * from (
-        select '0','-- Pilih Cabang --' as branch_name,'0' as branch_address,0 as longitude,0 as latitude from branch b 
+        select 0 as id,'-- Pilih Cabang --' as branch_name,'0' as branch_address,0 as longitude,0 as latitude from branch b 
         where b.id=1
         UNION
         select b.id,remark as branch_name,b.address as branch_address,b.longitude, b.latitude from branch b 
