@@ -288,8 +288,13 @@ class LoginController extends Controller
         $val_token = md5(date("Y-m-d"));
         $user_agent = $request->server('HTTP_USER_AGENT');
         $whatsapp_no = $request->whatsapp_no;
-        $data = DB::select("select b.id,remark as branch_name,b.address as branch_address,b.longitude, b.latitude from branch b 
-        where b.id>1 and b.active = 1; ");
+        $data = DB::select("
+        select * from (
+        select '0','-- Pilih Cabang --' as branch_name,'0' as branch_address,0 as longitude,0 as latitude from branch b 
+        where b.id=1
+        UNION
+        select b.id,remark as branch_name,b.address as branch_address,b.longitude, b.latitude from branch b 
+        where b.id>1 and b.active = 1) a order by remark; ");
 
         if(count($data)>0 && $val_token==$token_today && $user_agent=="Malaikat_Ridwan"){
             $result = array_merge(
