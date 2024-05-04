@@ -171,6 +171,67 @@ class LoginController extends Controller
         
     }
 
+    public function api_register(Request $request)
+    {
+        $whatsapp_no = $request->whatsapp_no;
+        $pass_wd = $request->pass_wd;
+
+        $data = DB::select(" insert into customers_point(customers_id,point) select id,0  from customers c  where c.id not in (select customers_id  from customers_point); ");
+
+        $data = DB::select("select c.id,c.name, m.remark as membership,m.point as m_point,'cust' as user_type,coalesce(cp.point,0) as point, 0 as voucher,coalesce(c.external_code,'') as external_code 
+        from customers c 
+        join membership m on m.id = c.membership_id 
+        left join customers_point cp on cp.customers_id = c.id
+        where pass_wd='".$pass_wd."' and c.whatsapp_no ='".$whatsapp_no."' ");
+
+        if(count($data)>0){
+            $result = array_merge(
+                ['status' => 'success'],
+                ['data' => $data],
+                ['message' => 'Success'],
+            );    
+        }else{
+            $data = array();
+            $result = array_merge(
+                ['status' => 'failed'],
+                ['data' => $data ],
+                ['message' => 'Login failed'],
+            );   
+        }
+        return $result;
+        
+    }
+
+    public function api_check_hp(Request $request)
+    {
+        $whatsapp_no = $request->whatsapp_no;
+        $token = $request->token;
+
+        $data = DB::select("select * from (select id,name,whatsapp_no,pass_wd,'cust' as user_type from customers c 
+        where c.whatsapp_no is not null and whatsapp_no ='".$whatsapp_no."'
+        union all 
+        select id,name,u.phone_no,pass_wd,'emp' as user_type from users u 
+        where u.phone_no is not null and u.phone_no = '".$whatsapp_no."'
+        ) a limit 1");
+
+        if(count($data)<=0){
+            $result = array_merge(
+                ['status' => 'success'],
+                ['data' => ''],
+                ['message' => 'Success'],
+            );    
+        }else{
+            $data = array();
+            $result = array_merge(
+                ['status' => 'failed'],
+                ['data' => ''],
+                ['message' => 'Nomor Handphone sudah terpakai akun lain'],
+            );   
+        }
+        return $result;
+        
+    }
+
     public function api_profile_emp(Request $request)
     {
         $whatsapp_no = $request->whatsapp_no;
