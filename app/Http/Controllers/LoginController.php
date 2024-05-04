@@ -140,6 +140,67 @@ class LoginController extends Controller
         
     }
 
+    public function api_register_otp(Request $request)
+    {
+        $whatsapp_no = $request->whatsapp_no;
+        $token_today = $request->token;
+        $name = $request->ident_id;
+        $val_token = md5(date("Y-m-d"));
+        $user_agent = $request->server('HTTP_USER_AGENT');
+
+        DB::select("delete  from notif_log nl where created_at <= now()-interval '1 minutes'; ");
+
+        $data_notif = DB::select("select whatsapp_no from notif_log where whatsapp_no ='".$whatsapp_no."'; ");
+
+        $whatsapp_no_ = $whatsapp_no;
+
+        if(substr($whatsapp_no,0,2)=="08"){
+            $whatsapp_no_ = "628".substr($whatsapp_no,2,strlen($whatsapp_no));
+        }
+
+        if(count($data_notif)<=0 && $val_token==$token_today && $user_agent=="Malaikat_Ridwan"){
+            $random_numb = mt_rand(1111,9999);
+            $data[0]->pass_wd = strval($random_numb);
+
+            $curl = curl_init();
+            $val_token = md5(date("Y-m-d"));
+            $url_acc = "https://kakikupos.com/send-msg-wa?token=".$val_token."&no=".$whatsapp_no_."&adrotp=".$random_numb."&fromapp=kakiku"."&name=".base64_encode($name);
+
+
+            curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "GET");
+            curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($curl, CURLOPT_URL, $url_acc);
+            curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 0);
+            curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, 0);
+            $result = curl_exec($curl);
+            curl_close($curl);
+
+            DB::select("insert into notif_log(whatsapp_no) values('".$whatsapp_no."'); ");
+
+            $result = array_merge(
+                ['status' => 'success'],
+                ['data' => strval($random_numb)],
+                ['message' => 'Kode 4 digit OTP terkirim ke nomor Handphone kamu via WhatsApp, silahkan cek dan masukkan disini.'],
+            );    
+        }else if(count($data_notif)>0){
+            $data = array();
+            $result = array_merge(
+                ['status' => 'failed'],
+                ['data' => "" ],
+                ['message' => 'Anda sudah melakukan permintaan OTP, Mohon tunggu 2 menit untuk request OTP lagi'],
+            );   
+        }else{
+            $data = array();
+            $result = array_merge(
+                ['status' => 'failed'],
+                ['data' => $data ],
+                ['message' => 'No handphone belum terdaftar'],
+            );   
+        }
+        return $result;
+        
+    }
+
     public function api_profile(Request $request)
     {
         $whatsapp_no = $request->whatsapp_no;
