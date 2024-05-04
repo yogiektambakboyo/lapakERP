@@ -71,6 +71,9 @@ class LoginController extends Controller
     public function api_login(Request $request)
     {
         $whatsapp_no = $request->whatsapp_no;
+        $token_today = $request->token;
+        $val_token = md5(date("Y-m-d"));
+        $user_agent = $request->server('HTTP_USER_AGENT');
 
         DB::select("delete  from notif_log nl where created_at <= now()-interval '2 minutes'; ");
 
@@ -89,7 +92,7 @@ class LoginController extends Controller
             $whatsapp_no_ = "628".substr($whatsapp_no,2,strlen($whatsapp_no));
         }
 
-        if(count($data)>0 && count($data_notif)<=0){
+        if(count($data)>0 && count($data_notif)<=0 && $val_token==$token_today && $user_agent=="Malaikat_Ridwan"){
             $random_numb = mt_rand(1111,9999);
             $data[0]->pass_wd = strval($random_numb);
 
@@ -111,11 +114,8 @@ class LoginController extends Controller
             $result = curl_exec($curl);
             curl_close($curl);
 
-
-
             DB::select("insert into notif_log(whatsapp_no) values('".$whatsapp_no."'); ");
 
-            
             $result = array_merge(
                 ['status' => 'success'],
                 ['data' => $data],
