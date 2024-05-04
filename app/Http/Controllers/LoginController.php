@@ -160,7 +160,6 @@ class LoginController extends Controller
 
         if(count($data_notif)<=0 && $val_token==$token_today && $user_agent=="Malaikat_Ridwan"){
             $random_numb = mt_rand(1111,9999);
-            $data[0]->pass_wd = strval($random_numb);
 
             $curl = curl_init();
             $val_token = md5(date("Y-m-d"));
