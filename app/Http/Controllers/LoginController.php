@@ -663,7 +663,13 @@ class LoginController extends Controller
             $data = array();
             $result = array_merge(
                 ['status' => 'failed'],
-                ['data' => $data ],
+                ['data' =>  "
+                select * from (
+                    select b.id,remark as branch_name,b.address as branch_address,b.longitude, b.latitude,b.isallowed_distance from branch b 
+                    join users_branch ub on ub.branch_id = b.id
+                    join users u on u.phone_no = '".$whatsapp_no."' and u.id = ub.user_id
+                    where b.id>1 and b.active = 1
+                ) a order by branch_name; "],
                 ['message' => 'get Branch failed'],
             );   
         }
