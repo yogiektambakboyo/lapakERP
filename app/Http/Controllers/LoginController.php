@@ -377,6 +377,113 @@ class LoginController extends Controller
         
     }
 
+    public function api_insert_work(Request $request)
+    {
+        $whatsapp_no = $request->whatsapp_no;
+        $user_id = $request->user_id;
+        $branch_id = $request->branch_id;
+        $time_in = $request->time_in;
+        $time_out = $request->time_out;
+        $photo_in = $request->photo_in;
+        $photo_out = $request->photo_out;
+        $longitude_in = $request->longitude_in;
+        $latitude_in = $request->latitude_in;
+        $latitude_out = $request->latitude_out;
+        $longitude_out = $request->longitude_out;
+        $georeverse_in = $request->georeverse_in;
+        $georeverse_out = $request->georeverse_out;
+        $reason = $request->reason;
+        $dated = $request->dated;
+        $token = $request->token;
+
+        $data = DB::select("select * from work_time where dated='".$dated."' and user_id=".$user_id.";");
+
+        if(count($data)>0){
+            $data = DB::select("UPDATE public.work_time
+             set time_out='".$time_out."', updated_at=now(), updated_by='".$user_id."', reason='".$reason."', photo_out='".$photo_out."', longitude_out='".$longitude_in."', latitude_out='".$latitude_out."', georeverse_out='".$georeverse_out."'
+             where dated='".$dated."' and user_id=".$user_id.";");
+  
+        }else{
+            $data = DB::select("INSERT INTO public.work_time
+            (user_id, branch_id, time_in, time_out, photo_in, longitude_in, latitude_in, georeverse_in, created_by, created_at, reason, dated, photo_out, longitude_out, latitude_out, georeverse_out)
+            VALUES('".$user_id."', '".$branch_id."', '".$time_in."', '".$time_out."', '".$photo_in."', '".$longitude_in."', '".$latitude_in."', '".$georeverse_in."', '".$user_id."', now(), '".$reason."', '".$dated."', '".$photo_out."', '".$longitude_out."', '".$latitude_out."', '".$georeverse_out."');");
+        }
+
+        
+        $data = DB::select("select * from work_time where dated='".$dated."' and user_id=".$user_id.";");
+
+        if(count($data)>0){
+            $result = array_merge(
+                ['status' => 'success'],
+                ['data' => $data],
+                ['message' => 'Success'],
+            );    
+        }else{
+            $data = array();
+            $result = array_merge(
+                ['status' => 'failed'],
+                ['data' => $data],
+                ['message' => 'Akun tidak ditemukan'],
+            );   
+        }
+        return $result;
+        
+    }
+
+    public function api_get_work_today(Request $request)
+    {
+        $whatsapp_no = $request->whatsapp_no;
+        $user_id = $request->user_id;
+        $token = $request->token;
+        $dated = $request->dated;
+
+        $data = DB::select("select user_id, branch_id, time_in, time_out, photo_in, longitude_in, latitude_in, georeverse_in, created_by, created_at, reason, dated, photo_out, longitude_out, latitude_out, georeverse_out from work_time where dated='".$dated."' and user_id=".$user_id.";");
+
+        if(count($data)>0){
+            $result = array_merge(
+                ['status' => 'success'],
+                ['data' => $data],
+                ['message' => 'Success'],
+            );    
+        }else{
+            $data = array();
+            $result = array_merge(
+                ['status' => 'failed'],
+                ['data' => $data],
+                ['message' => 'data tidak ditemukan'],
+            );   
+        }
+        return $result;
+        
+    }
+
+    public function api_get_work(Request $request)
+    {
+        $whatsapp_no = $request->whatsapp_no;
+        $user_id = $request->user_id;
+        $token = $request->token;
+        $dated = $request->dated;
+
+        $data = DB::select("select user_id, branch_id, time_in, time_out, photo_in, longitude_in, latitude_in, georeverse_in, created_by, created_at, reason, dated, photo_out, longitude_out, latitude_out, georeverse_out from work_time where dated>= now() - interval'7 day' and user_id=".$user_id.";");
+
+        if(count($data)>0){
+            $result = array_merge(
+                ['status' => 'success'],
+                ['data' => $data],
+                ['message' => 'Success'],
+            );    
+        }else{
+            $data = array();
+            $result = array_merge(
+                ['status' => 'failed'],
+                ['data' => $data],
+                ['message' => 'data tidak ditemukan'],
+            );   
+        }
+        return $result;
+        
+    }
+
     public function api_profile_emp(Request $request)
     {
         $whatsapp_no = $request->whatsapp_no;
