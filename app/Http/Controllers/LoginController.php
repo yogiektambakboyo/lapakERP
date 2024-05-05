@@ -355,7 +355,7 @@ class LoginController extends Controller
             select u.id,name,u.phone_no,pass_wd,'emp' as user_type,u.photo,u.job_id,jt.remark as job_title,string_agg(ub.branch_id::character varying,',') branch_id,string_agg(b.remark,',') as branch_name  from users u
             join users_branch ub on ub.user_id = u.id
             join branch b on b.id = ub.branch_id
-            join job_title jt on jt.id = u.job_id  where u.phone_no is not null and u.phone_no = '085746879090'
+            join job_title jt on jt.id = u.job_id  where u.phone_no is not null and u.phone_no = '".$whatsapp_no."'
             group by u.id,name,u.phone_no,pass_wd,u.photo,u.job_id,jt.remark
         ) a limit 1");
 
@@ -501,6 +501,38 @@ class LoginController extends Controller
         UNION
         select b.id,remark as branch_name,b.address as branch_address,b.longitude, b.latitude from branch b 
         where b.id>1 and b.active = 1) a order by branch_name; ");
+
+        if(count($data)>0 && $val_token==$token_today && $user_agent=="Malaikat_Ridwan"){
+            $result = array_merge(
+                ['status' => 'success'],
+                ['data' => $data],
+                ['message' => 'Success'],
+            );    
+        }else{
+            $data = array();
+            $result = array_merge(
+                ['status' => 'failed'],
+                ['data' => $data ],
+                ['message' => 'get Branch failed'],
+            );   
+        }
+        return $result;
+        
+    }
+
+    public function api_branch_list_link(Request $request)
+    {
+        $token_today = $request->token;
+        $val_token = md5(date("Y-m-d"));
+        $user_agent = $request->server('HTTP_USER_AGENT');
+        $whatsapp_no = $request->whatsapp_no;
+        $data = DB::select("
+        select * from (
+            select b.id,remark as branch_name,b.address as branch_address,b.longitude, b.latitude from branch b 
+            join users_branch ub on ub.branch_id = b.id
+            join users u on u.phone_no = '".$whatsapp_no."' and u.id = ub.user_id
+            where b.id>1 and b.active = 1
+        ) a order by branch_name; ");
 
         if(count($data)>0 && $val_token==$token_today && $user_agent=="Malaikat_Ridwan"){
             $result = array_merge(
