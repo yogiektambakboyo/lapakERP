@@ -348,7 +348,7 @@ class LoginController extends Controller
         $token = $request->token;
 
         $data = DB::select("select * from (
-            select c.id,name,whatsapp_no,pass_wd,'cust' as user_type,'' as photo,1 as job_id,'customer' as job_title,b2.id as branch_id, b2.remark as branch_name  from customers c 
+            select c.id,name,whatsapp_no,pass_wd,'cust' as user_type,'' as photo,1 as job_id,'customer' as job_title,b2.id::character varying as branch_id, b2.remark as branch_name  from customers c 
             join branch b2 on b2.id= c.branch_id
             where c.whatsapp_no is not null and whatsapp_no ='".$whatsapp_no."'
             union all 
