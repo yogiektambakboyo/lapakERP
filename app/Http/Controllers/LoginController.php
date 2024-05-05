@@ -347,11 +347,11 @@ class LoginController extends Controller
         $whatsapp_no = $request->whatsapp_no;
         $token = $request->token;
 
-        $data = DB::select("select * from (select id,name,whatsapp_no,pass_wd,'cust' as user_type from customers c 
+        $data = DB::select("select * from (select id,name,whatsapp_no,pass_wd,'cust' as user_type,'' as photo,1 as job_id,'customer' as job_title  from customers c 
         where c.whatsapp_no is not null and whatsapp_no ='".$whatsapp_no."'
         union all 
-        select id,name,u.phone_no,pass_wd,'emp' as user_type from users u 
-        where u.phone_no is not null and u.phone_no = '".$whatsapp_no."'
+        select id,name,u.phone_no,pass_wd,'emp' as user_type,u.photo,u.job_id,jt.remark as job_title  from users u 
+        join job_title jt on jt.id = u.job_id  where u.phone_no is not null and u.phone_no = '".$whatsapp_no."'
         ) a limit 1");
 
         if(count($data)>0){
