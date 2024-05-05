@@ -352,10 +352,11 @@ class LoginController extends Controller
             join branch b2 on b2.id= c.branch_id
             where c.whatsapp_no is not null and whatsapp_no ='".$whatsapp_no."'
             union all 
-            select u.id,name,u.phone_no,pass_wd,'emp' as user_type,u.photo,u.job_id,jt.remark as job_title,ub.branch_id, b.remark as branch_name  from users u
+            select u.id,name,u.phone_no,pass_wd,'emp' as user_type,u.photo,u.job_id,jt.remark as job_title,string_agg(ub.branch_id::character varying,',') branch_id,string_agg(b.remark,',') as branch_name  from users u
             join users_branch ub on ub.user_id = u.id
             join branch b on b.id = ub.branch_id
-            join job_title jt on jt.id = u.job_id  where u.phone_no is not null and u.phone_no = '".$whatsapp_no."'
+            join job_title jt on jt.id = u.job_id  where u.phone_no is not null and u.phone_no = '085746879090'
+            group by u.id,name,u.phone_no,pass_wd,u.photo,u.job_id,jt.remark
         ) a limit 1");
 
         if(count($data)>0){
