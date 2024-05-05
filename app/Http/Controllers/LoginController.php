@@ -395,37 +395,50 @@ class LoginController extends Controller
         $reason = $request->reason;
         $dated = $request->dated;
         $token = $request->token;
+        $val_token = md5(date("Y-m-d"));
+        $user_agent = $request->server('HTTP_USER_AGENT');
 
         $data = DB::select("select * from work_time where dated='".$dated."' and user_id=".$user_id.";");
 
-        if(count($data)>0){
-            $data = DB::select("UPDATE public.work_time
-             set time_out='".$time_out."', updated_at=now(), updated_by='".$user_id."', reason='".$reason."', photo_out='".$photo_out."', longitude_out='".$longitude_in."', latitude_out='".$latitude_out."', georeverse_out='".$georeverse_out."'
-             where dated='".$dated."' and user_id=".$user_id.";");
-  
-        }else{
-            $data = DB::select("INSERT INTO public.work_time
-            (user_id, branch_id, time_in, time_out, photo_in, longitude_in, latitude_in, georeverse_in, created_by, created_at, reason, dated, photo_out, longitude_out, latitude_out, georeverse_out)
-            VALUES('".$user_id."', '".$branch_id."', '".$time_in."', '".$time_out."', '".$photo_in."', '".$longitude_in."', '".$latitude_in."', '".$georeverse_in."', '".$user_id."', now(), '".$reason."', '".$dated."', '".$photo_out."', '".$longitude_out."', '".$latitude_out."', '".$georeverse_out."');");
-        }
-
-        
-        $data = DB::select("select * from work_time where dated='".$dated."' and user_id=".$user_id.";");
-
-        if(count($data)>0){
-            $result = array_merge(
-                ['status' => 'success'],
-                ['data' => $data],
-                ['message' => 'Success'],
-            );    
+        if($val_token == $token && $user_agent=="Malaikat_Ridwan"){
+            if(count($data)>0){
+                $data = DB::select("UPDATE public.work_time
+                 set time_out='".$time_out."', updated_at=now(), updated_by='".$user_id."', reason='".$reason."', photo_out='".$photo_out."', longitude_out='".$longitude_in."', latitude_out='".$latitude_out."', georeverse_out='".$georeverse_out."'
+                 where dated='".$dated."' and user_id=".$user_id.";");
+      
+            }else{
+                $data = DB::select("INSERT INTO public.work_time
+                (user_id, branch_id, time_in, time_out, photo_in, longitude_in, latitude_in, georeverse_in, created_by, created_at, reason, dated, photo_out, longitude_out, latitude_out, georeverse_out)
+                VALUES('".$user_id."', '".$branch_id."', '".$time_in."', '".$time_out."', '".$photo_in."', '".$longitude_in."', '".$latitude_in."', '".$georeverse_in."', '".$user_id."', now(), '".$reason."', '".$dated."', '".$photo_out."', '".$longitude_out."', '".$latitude_out."', '".$georeverse_out."');");
+            }
+    
+            
+            $data = DB::select("select * from work_time where dated='".$dated."' and user_id=".$user_id.";");
+    
+            if(count($data)>0){
+                $result = array_merge(
+                    ['status' => 'success'],
+                    ['data' => $data],
+                    ['message' => 'Success'],
+                );    
+            }else{
+                $data = array();
+                $result = array_merge(
+                    ['status' => 'failed'],
+                    ['data' => $data],
+                    ['message' => 'Akun tidak ditemukan'],
+                );   
+            }
         }else{
             $data = array();
             $result = array_merge(
                 ['status' => 'failed'],
                 ['data' => $data],
-                ['message' => 'Akun tidak ditemukan'],
+                ['message' => 'Akses gagal'],
             );   
         }
+
+        
         return $result;
         
     }
@@ -437,7 +450,7 @@ class LoginController extends Controller
         $token = $request->token;
         $dated = $request->dated;
 
-        $data = DB::select("select user_id, branch_id, time_in, time_out, photo_in, longitude_in, latitude_in, georeverse_in, created_by, created_at, reason, dated, photo_out, longitude_out, latitude_out, georeverse_out from work_time where dated='".$dated."' and user_id=".$user_id.";");
+        $data = DB::select("select user_id, branch_id, to_char(time_in,'HH24:MI') time_in_f,to_char(time_out,'HH24:MI') time_out_f,time_in, time_out, photo_in, longitude_in, latitude_in, georeverse_in, created_by, created_at, reason, dated, photo_out, longitude_out, latitude_out, georeverse_out from work_time where dated='".$dated."' and user_id=".$user_id.";");
 
         if(count($data)>0){
             $result = array_merge(
@@ -462,9 +475,8 @@ class LoginController extends Controller
         $whatsapp_no = $request->whatsapp_no;
         $user_id = $request->user_id;
         $token = $request->token;
-        $dated = $request->dated;
 
-        $data = DB::select("select user_id, branch_id, time_in, time_out, photo_in, longitude_in, latitude_in, georeverse_in, created_by, created_at, reason, dated, photo_out, longitude_out, latitude_out, georeverse_out from work_time where dated>= now() - interval'7 day' and user_id=".$user_id.";");
+        $data = DB::select("select user_id, branch_id,  to_char(time_in,'HH24:MI') time_in_f,to_char(time_out,'HH24:MI') time_out_f,time_in, time_out, photo_in, longitude_in, latitude_in, georeverse_in, created_by, created_at, reason, dated, photo_out, longitude_out, latitude_out, georeverse_out from work_time where dated>= now() - interval'7 day' and user_id=".$user_id.";");
 
         if(count($data)>0){
             $result = array_merge(
