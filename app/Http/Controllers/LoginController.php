@@ -342,6 +342,36 @@ class LoginController extends Controller
         
     }
 
+    public function api_user_info(Request $request)
+    {
+        $whatsapp_no = $request->whatsapp_no;
+        $token = $request->token;
+
+        $data = DB::select("select * from (select id,name,whatsapp_no,pass_wd,'cust' as user_type from customers c 
+        where c.whatsapp_no is not null and whatsapp_no ='".$whatsapp_no."'
+        union all 
+        select id,name,u.phone_no,pass_wd,'emp' as user_type from users u 
+        where u.phone_no is not null and u.phone_no = '".$whatsapp_no."'
+        ) a limit 1");
+
+        if(count($data)<=0){
+            $result = array_merge(
+                ['status' => 'success'],
+                ['data' => $data],
+                ['message' => 'Success'],
+            );    
+        }else{
+            $data = array();
+            $result = array_merge(
+                ['status' => 'failed'],
+                ['data' => $data],
+                ['message' => 'Nomor Handphone sudah terpakai akun lain'],
+            );   
+        }
+        return $result;
+        
+    }
+
     public function api_profile_emp(Request $request)
     {
         $whatsapp_no = $request->whatsapp_no;
