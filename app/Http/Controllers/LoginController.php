@@ -354,7 +354,7 @@ class LoginController extends Controller
         where u.phone_no is not null and u.phone_no = '".$whatsapp_no."'
         ) a limit 1");
 
-        if(count($data)<=0){
+        if(count($data)>0){
             $result = array_merge(
                 ['status' => 'success'],
                 ['data' => $data],
@@ -365,7 +365,7 @@ class LoginController extends Controller
             $result = array_merge(
                 ['status' => 'failed'],
                 ['data' => $data],
-                ['message' => 'Nomor Handphone sudah terpakai akun lain'],
+                ['message' => 'Akun tidak ditemukan'],
             );   
         }
         return $result;
