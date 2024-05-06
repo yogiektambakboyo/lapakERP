@@ -476,7 +476,7 @@ class LoginController extends Controller
         $user_id = $request->user_id;
         $token = $request->token;
 
-        $data = DB::select("select user_id, branch_id,  to_char(time_in,'HH24:MI') time_in_f,to_char(time_out,'HH24:MI') time_out_f,time_in, time_out, photo_in, longitude_in, latitude_in, georeverse_in, created_by, created_at, reason,to_char(dated,'DD-MM-YYYY') dated, photo_out, longitude_out, latitude_out, georeverse_out from work_time where dated>= now() - interval'7 day' and user_id=".$user_id.";");
+        $data = DB::select("select user_id, branch_id,  to_char(time_in,'HH24:MI') time_in_f,to_char(time_out,'HH24:MI') time_out_f,time_in, time_out, photo_in, longitude_in, latitude_in, georeverse_in, created_by, created_at, reason,to_char(dated,'DD-MM-YYYY') dated, photo_out, longitude_out, latitude_out, georeverse_out from work_time where dated>= now() - interval'7 day' and user_id=".$user_id." order by dated desc;");
 
         if(count($data)>0){
             $result = array_merge(
