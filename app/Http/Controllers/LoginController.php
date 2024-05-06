@@ -71,6 +71,9 @@ class LoginController extends Controller
     public function api_login(Request $request)
     {
         $whatsapp_no = $request->whatsapp_no;
+        $token_today = $request->token;
+        $val_token = md5(date("Y-m-d"));
+        $user_agent = $request->server('HTTP_USER_AGENT');
 
         DB::select("delete  from notif_log nl where created_at <= now()-interval '2 minutes'; ");
 
@@ -89,14 +92,14 @@ class LoginController extends Controller
             $whatsapp_no_ = "628".substr($whatsapp_no,2,strlen($whatsapp_no));
         }
 
-        if(count($data)>0 && count($data_notif)<=0){
+        if(count($data)>0 && count($data_notif)<=0 && $val_token==$token_today && $user_agent=="Malaikat_Ridwan"){
             $random_numb = mt_rand(1111,9999);
             $data[0]->pass_wd = strval($random_numb);
 
             DB::select("update customers set pass_wd=".$random_numb." where whatsapp_no='".$whatsapp_no."';");
             DB::select("update users set pass_wd=".$random_numb." where phone_no='".$whatsapp_no."';");
-            $sal = DB::select("select name from customers where whatsapp_no='".$whatsapp_no."';");
-            $name = $sal[0]->name;
+            //$sal = DB::select("select name from customers where whatsapp_no='".$whatsapp_no."';");
+            $name = $data[0]->name;
 
             $curl = curl_init();
             $val_token = md5(date("Y-m-d"));
@@ -111,11 +114,8 @@ class LoginController extends Controller
             $result = curl_exec($curl);
             curl_close($curl);
 
-
-
             DB::select("insert into notif_log(whatsapp_no) values('".$whatsapp_no."'); ");
 
-            
             $result = array_merge(
                 ['status' => 'success'],
                 ['data' => $data],
@@ -126,6 +126,66 @@ class LoginController extends Controller
             $result = array_merge(
                 ['status' => 'failed'],
                 ['data' => $data ],
+                ['message' => 'Anda sudah melakukan permintaan OTP, Mohon tunggu 2 menit untuk request OTP lagi'],
+            );   
+        }else{
+            $data = array();
+            $result = array_merge(
+                ['status' => 'failed'],
+                ['data' => $data ],
+                ['message' => 'No handphone belum terdaftar'],
+            );   
+        }
+        return $result;
+        
+    }
+
+    public function api_register_otp(Request $request)
+    {
+        $whatsapp_no = $request->whatsapp_no;
+        $token_today = $request->token;
+        $name = $request->ident_id;
+        $val_token = md5(date("Y-m-d"));
+        $user_agent = $request->server('HTTP_USER_AGENT');
+
+        DB::select("delete  from notif_log nl where created_at <= now()-interval '1 minutes'; ");
+
+        $data_notif = DB::select("select whatsapp_no from notif_log where whatsapp_no ='".$whatsapp_no."'; ");
+
+        $whatsapp_no_ = $whatsapp_no;
+
+        if(substr($whatsapp_no,0,2)=="08"){
+            $whatsapp_no_ = "628".substr($whatsapp_no,2,strlen($whatsapp_no));
+        }
+
+        if(count($data_notif)<=0 && $val_token==$token_today && $user_agent=="Malaikat_Ridwan"){
+            $random_numb = mt_rand(1111,9999);
+
+            $curl = curl_init();
+            $val_token = md5(date("Y-m-d"));
+            $url_acc = "https://kakikupos.com/send-msg-wa?token=".$val_token."&no=".$whatsapp_no_."&adrotp=".$random_numb."&fromapp=kakiku"."&name=".base64_encode($name);
+
+
+            curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "GET");
+            curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($curl, CURLOPT_URL, $url_acc);
+            curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 0);
+            curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, 0);
+            $result = curl_exec($curl);
+            curl_close($curl);
+
+            DB::select("insert into notif_log(whatsapp_no) values('".$whatsapp_no."'); ");
+
+            $result = array_merge(
+                ['status' => 'success'],
+                ['data' => strval($random_numb)],
+                ['message' => 'Kode 4 digit OTP terkirim ke nomor Handphone kamu via WhatsApp, silahkan cek dan masukkan disini.'],
+            );    
+        }else if(count($data_notif)>0){
+            $data = array();
+            $result = array_merge(
+                ['status' => 'failed'],
+                ['data' => "" ],
                 ['message' => 'Anda sudah melakukan permintaan OTP, Mohon tunggu 2 menit untuk request OTP lagi'],
             );   
         }else{
@@ -165,6 +225,271 @@ class LoginController extends Controller
                 ['status' => 'failed'],
                 ['data' => $data ],
                 ['message' => 'Login failed'],
+            );   
+        }
+        return $result;
+        
+    }
+
+    public function api_register(Request $request)
+    {
+        $whatsapp_no = $request->handphone;
+        $name = $request->name;
+        $address = $request->address;
+        $handphone = $request->handphone;
+        $city = $request->city;
+        $branch_id = $request->branch_id;
+        $gender_id = $request->gender_id;
+        $file_photo = $request->file_photo;
+        $token_today = $request->token;
+        $acc_type = $request->acc_type;
+        $user_agent = $request->server('HTTP_USER_AGENT');
+
+        //name,address,handphone,city,branch_id, gender_id, file_photo, token, acc_type
+
+        $data = DB::select("select * from (select id,name,whatsapp_no,pass_wd,'cust' as user_type from customers c 
+        where c.whatsapp_no is not null and whatsapp_no ='".$whatsapp_no."'
+        union all 
+        select id,name,u.phone_no,pass_wd,'emp' as user_type from users u 
+        where u.phone_no is not null and u.phone_no = '".$whatsapp_no."'
+        ) a limit 1");
+
+        $val_token = md5(date("Y-m-d"));
+        if(count($data)<=0 && $val_token==$token_today && $user_agent=="Malaikat_Ridwan"){
+
+            if($acc_type == "Staff"){
+                $gender = ($gender_id=="Pria"?'Male':'Female');
+                $data = DB::select(" insert into users(name,address,username,password,phone_no,gender,city,photo,branch_id,job_id,department_id,work_year,join_years) 
+                values('".$name."','".$address."',md5(to_char(now(),'YYYY-MM-DD HH24:MI:SS.MS')),md5(to_char(now(),'YYYY-MM-DD HH24:MI:SS.MS')),'".$handphone."','".$gender."','".$address."','".$file_photo."','".$branch_id."',2,2,1,1); ");
+
+                $data = DB::select("select * from (select id,name,whatsapp_no,pass_wd,'cust' as user_type from customers c 
+                where c.whatsapp_no is not null and whatsapp_no ='".$whatsapp_no."'
+                union all 
+                select id,name,u.phone_no,pass_wd,'emp' as user_type from users u 
+                where u.phone_no is not null and u.phone_no = '".$whatsapp_no."'
+                ) a limit 1");
+
+                $data = DB::select("insert into users_branch(user_id,branch_id) values(".$data[0]->id.",".$branch_id.");");
+                
+            }else{
+                $data = DB::select(" insert into customers(name,address,phone_no,whatsapp_no,branch_id,city,gender) 
+                values('".$name."','".$address."','".$handphone."','".$handphone."',".$branch_id.",'".$city."','".$gender_id."'); ");
+            }
+
+            $data = DB::select("select * from (select id,name,whatsapp_no,pass_wd,'cust' as user_type from customers c 
+            where c.whatsapp_no is not null and whatsapp_no ='".$whatsapp_no."'
+            union all 
+            select id,name,u.phone_no,pass_wd,'emp' as user_type from users u 
+            where u.phone_no is not null and u.phone_no = '".$whatsapp_no."'
+            ) a limit 1");
+
+            if(count($data)>0){
+                $result = array_merge(
+                    ['status' => 'success'],
+                    ['data' => $data],
+                    ['message' => 'Success'],
+                );    
+            }else{
+                $data = array();
+                $result = array_merge(
+                    ['status' => 'failed'],
+                    ['data' => $data ],
+                    ['message' => 'Register failed'],
+                );   
+            }
+
+            
+        }else{
+            $data = array();
+            $result = array_merge(
+                ['status' => 'failed'],
+                ['data' => $data ],
+                ['message' => 'Validation failed'],
+            );   
+        }
+        
+        return $result;
+        
+    }
+
+    public function api_check_hp(Request $request)
+    {
+        $whatsapp_no = $request->whatsapp_no;
+        $token = $request->token;
+
+        $data = DB::select("select * from (select id,name,whatsapp_no,pass_wd,'cust' as user_type from customers c 
+        where c.whatsapp_no is not null and whatsapp_no ='".$whatsapp_no."'
+        union all 
+        select id,name,u.phone_no,pass_wd,'emp' as user_type from users u 
+        where u.phone_no is not null and u.phone_no = '".$whatsapp_no."'
+        ) a limit 1");
+
+        if(count($data)<=0){
+            $result = array_merge(
+                ['status' => 'success'],
+                ['data' => ''],
+                ['message' => 'Success'],
+            );    
+        }else{
+            $data = array();
+            $result = array_merge(
+                ['status' => 'failed'],
+                ['data' => ''],
+                ['message' => 'Nomor Handphone sudah terpakai akun lain'],
+            );   
+        }
+        return $result;
+        
+    }
+
+    public function api_user_info(Request $request)
+    {
+        $whatsapp_no = $request->whatsapp_no;
+        $token = $request->token;
+
+        $data = DB::select("select * from (
+            select c.id,name,whatsapp_no,pass_wd,'cust' as user_type,'' as photo,1 as job_id,'customer' as job_title,b2.id::character varying as branch_id, b2.remark as branch_name  from customers c 
+            join branch b2 on b2.id= c.branch_id
+            where c.whatsapp_no is not null and whatsapp_no ='".$whatsapp_no."'
+            union all 
+            select u.id,name,u.phone_no,pass_wd,'emp' as user_type,u.photo,u.job_id,jt.remark as job_title,string_agg(ub.branch_id::character varying,',') branch_id,string_agg(b.remark,',') as branch_name  from users u
+            join users_branch ub on ub.user_id = u.id
+            join branch b on b.id = ub.branch_id
+            join job_title jt on jt.id = u.job_id  where u.phone_no is not null and u.phone_no = '".$whatsapp_no."'
+            group by u.id,name,u.phone_no,pass_wd,u.photo,u.job_id,jt.remark
+        ) a limit 1");
+
+        if(count($data)>0){
+            $result = array_merge(
+                ['status' => 'success'],
+                ['data' => $data],
+                ['message' => 'Success'],
+            );    
+        }else{
+            $data = array();
+            $result = array_merge(
+                ['status' => 'failed'],
+                ['data' => $data],
+                ['message' => 'Akun tidak ditemukan'],
+            );   
+        }
+        return $result;
+        
+    }
+
+    public function api_insert_work(Request $request)
+    {
+        $whatsapp_no = $request->whatsapp_no;
+        $user_id = $request->user_id;
+        $branch_id = $request->branch_id;
+        $time_in = $request->time_in;
+        $time_out = $request->time_out;
+        $photo_in = $request->photo_in;
+        $photo_out = $request->photo_out;
+        $longitude_in = $request->longitude_in;
+        $latitude_in = $request->latitude_in;
+        $latitude_out = $request->latitude_out;
+        $longitude_out = $request->longitude_out;
+        $georeverse_in = $request->georeverse_in;
+        $georeverse_out = $request->georeverse_out;
+        $reason = $request->reason;
+        $dated = $request->dated;
+        $token = $request->token;
+        $val_token = md5(date("Y-m-d"));
+        $user_agent = $request->server('HTTP_USER_AGENT');
+
+        $data = DB::select("select * from work_time where dated='".$dated."' and user_id=".$user_id.";");
+
+        if($val_token == $token && $user_agent=="Malaikat_Ridwan"){
+            if(count($data)>0){
+                $data = DB::select("UPDATE public.work_time
+                 set time_out='".$time_out."', updated_at=now(), updated_by='".$user_id."', reason='".$reason."', photo_out='".$photo_out."', longitude_out='".$longitude_in."', latitude_out='".$latitude_out."', georeverse_out='".$georeverse_out."'
+                 where dated='".$dated."' and user_id=".$user_id.";");
+      
+            }else{
+                $data = DB::select("INSERT INTO public.work_time
+                (user_id, branch_id, time_in, time_out, photo_in, longitude_in, latitude_in, georeverse_in, created_by, created_at, reason, dated, photo_out, longitude_out, latitude_out, georeverse_out)
+                VALUES('".$user_id."', '".$branch_id."', '".$time_in."', '".$time_out."', '".$photo_in."', '".$longitude_in."', '".$latitude_in."', '".$georeverse_in."', '".$user_id."', now(), '".$reason."', '".$dated."', '".$photo_out."', '".$longitude_out."', '".$latitude_out."', '".$georeverse_out."');");
+            }
+    
+            
+            $data = DB::select("select * from work_time where dated='".$dated."' and user_id=".$user_id.";");
+    
+            if(count($data)>0){
+                $result = array_merge(
+                    ['status' => 'success'],
+                    ['data' => $data],
+                    ['message' => 'Success'],
+                );    
+            }else{
+                $data = array();
+                $result = array_merge(
+                    ['status' => 'failed'],
+                    ['data' => $data],
+                    ['message' => 'Akun tidak ditemukan'],
+                );   
+            }
+        }else{
+            $data = array();
+            $result = array_merge(
+                ['status' => 'failed'],
+                ['data' => $data],
+                ['message' => 'Akses gagal'],
+            );   
+        }
+
+        
+        return $result;
+        
+    }
+
+    public function api_get_work_today(Request $request)
+    {
+        $whatsapp_no = $request->whatsapp_no;
+        $user_id = $request->user_id;
+        $token = $request->token;
+        $dated = $request->dated;
+
+        $data = DB::select("select user_id, branch_id, to_char(time_in,'HH24:MI') time_in_f,to_char(time_out,'HH24:MI') time_out_f,time_in, time_out, photo_in, longitude_in, latitude_in, georeverse_in, created_by, created_at, reason, dated, photo_out, longitude_out, latitude_out, georeverse_out from work_time where dated='".$dated."' and user_id=".$user_id.";");
+
+        if(count($data)>0){
+            $result = array_merge(
+                ['status' => 'success'],
+                ['data' => $data],
+                ['message' => 'Success'],
+            );    
+        }else{
+            $data = array();
+            $result = array_merge(
+                ['status' => 'failed'],
+                ['data' => $data],
+                ['message' => 'data tidak ditemukan'],
+            );   
+        }
+        return $result;
+        
+    }
+
+    public function api_get_work(Request $request)
+    {
+        $whatsapp_no = $request->whatsapp_no;
+        $user_id = $request->user_id;
+        $token = $request->token;
+
+        $data = DB::select("select user_id, branch_id,  to_char(time_in,'HH24:MI') time_in_f,to_char(time_out,'HH24:MI') time_out_f,time_in, time_out, photo_in, longitude_in, latitude_in, georeverse_in, created_by, created_at, reason,to_char(dated,'DD-MM-YYYY') dated, photo_out, longitude_out, latitude_out, georeverse_out from work_time where dated>= now() - interval'7 day' and user_id=".$user_id.";");
+
+        if(count($data)>0){
+            $result = array_merge(
+                ['status' => 'success'],
+                ['data' => $data],
+                ['message' => 'Success'],
+            );    
+        }else{
+            $data = array();
+            $result = array_merge(
+                ['status' => 'failed'],
+                ['data' => $data],
+                ['message' => 'data tidak ditemukan'],
             );   
         }
         return $result;
@@ -263,6 +588,70 @@ class LoginController extends Controller
         $data = DB::select("select b.id,remark as branch_name,b.address as branch_address,b.longitude, b.latitude from branch b 
         join customers c on c.pass_wd='".$pass_wd."' and c.whatsapp_no ='".$whatsapp_no."'
         where b.id>1 and b.active = 1; ");
+
+        if(count($data)>0){
+            $result = array_merge(
+                ['status' => 'success'],
+                ['data' => $data],
+                ['message' => 'Success'],
+            );    
+        }else{
+            $data = array();
+            $result = array_merge(
+                ['status' => 'failed'],
+                ['data' => $data ],
+                ['message' => 'get Branch failed'],
+            );   
+        }
+        return $result;
+        
+    }
+
+    public function api_branch_list(Request $request)
+    {
+        $token_today = $request->token;
+        $val_token = md5(date("Y-m-d"));
+        $user_agent = $request->server('HTTP_USER_AGENT');
+        $whatsapp_no = $request->whatsapp_no;
+        $data = DB::select("
+        select * from (
+        select 0 as id,'-- Pilih Cabang --' as branch_name,'0' as branch_address,'0' as longitude,'0' as latitude from branch b 
+        where b.id=1
+        UNION
+        select b.id,remark as branch_name,b.address as branch_address,b.longitude, b.latitude from branch b 
+        where b.id>1 and b.active = 1) a order by branch_name; ");
+
+        if(count($data)>0 && $val_token==$token_today && $user_agent=="Malaikat_Ridwan"){
+            $result = array_merge(
+                ['status' => 'success'],
+                ['data' => $data],
+                ['message' => 'Success'],
+            );    
+        }else{
+            $data = array();
+            $result = array_merge(
+                ['status' => 'failed'],
+                ['data' => $data ],
+                ['message' => 'get Branch failed'],
+            );   
+        }
+        return $result;
+        
+    }
+
+    public function api_branch_list_link(Request $request)
+    {
+        $token_today = $request->token;
+        $val_token = md5(date("Y-m-d"));
+        $user_agent = $request->server('HTTP_USER_AGENT');
+        $whatsapp_no = $request->whatsapp_no;
+        $data = DB::select("
+        select * from (
+            select b.id,remark as branch_name,b.address as branch_address,b.longitude, b.latitude,b.isallowed_distance from branch b 
+            join users_branch ub on ub.branch_id = b.id
+            join users u on u.phone_no = '".$whatsapp_no."' and u.id = ub.user_id
+            where b.id>1 and b.active = 1
+        ) a order by branch_name; ");
 
         if(count($data)>0){
             $result = array_merge(

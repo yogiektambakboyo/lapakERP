@@ -42,9 +42,18 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
         Route::post('/login', 'LoginController@login')->name('login.perform');
         Route::post('/api_login', 'LoginController@api_login')->name('login.api_login');
         Route::post('/api_profile', 'LoginController@api_profile')->name('login.api_profile');
+        Route::post('/api_insert_work', 'LoginController@api_insert_work')->name('login.api_insert_work');
         Route::post('/api_profile_emp', 'LoginController@api_profile_emp')->name('login.api_profile_emp');
+        Route::post('/api_register', 'LoginController@api_register')->name('login.api_register');
+        Route::post('/api_get_work_today', 'LoginController@api_get_work_today')->name('login.api_get_work_today');
+        Route::post('/api_get_work', 'LoginController@api_get_work')->name('login.api_get_work');
+        Route::post('/api_register_otp', 'LoginController@api_register_otp')->name('login.api_register_otp');
+        Route::post('/api_user_info', 'LoginController@api_user_info')->name('login.api_user_info');
+        Route::post('/api_check_hp', 'LoginController@api_check_hp')->name('login.api_check_hp');
         Route::post('/api_invoice', 'LoginController@api_invoice')->name('login.api_invoice');
         Route::post('/api_branch', 'LoginController@api_branch')->name('login.api_branch');
+        Route::post('/api_branch_list', 'LoginController@api_branch_list')->name('login.api_branch_list');
+        Route::post('/api_branch_list_link', 'LoginController@api_branch_list_link')->name('login.api_branch_list_link');
         Route::post('/api_post_review', 'LoginController@api_post_review')->name('login.api_post_review');
         Route::post('/api_photo_slide', 'LoginController@api_photo_slide')->name('login.api_photo_slide');
         Route::post('/api_photo_slide_detail', 'LoginController@api_photo_slide_detail')->name('login.api_photo_slide_detail');
