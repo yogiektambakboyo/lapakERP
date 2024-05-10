@@ -231,6 +231,93 @@ class LoginController extends Controller
         
     }
 
+    public function api_insert_leave(Request $request)
+    {
+        $whatsapp_no = $request->whatsapp_no;
+        $token = $request->token;
+        $user_id = $request->user_id;
+        $created_by = $request->user_id;
+        $dated_start = $request->dated_start;
+        $dated_end = $request->dated_end;
+        $reason = $request->reason;
+        $leave_type = $request->leave_type;
+
+        $data = DB::select(" INSERT INTO public.leave_request(user_id, dated_start, dated_end, reason, leave_type, created_at, created_by) 
+        VALUES('".$user_id."', '".$dated_start."', '".$dated_end."', '".$reason."', '".$leave_type."', now(), '".$created_by."');");
+
+        $data = DB::select("select id,user_id,dated_start,dated_end,reason,leave_type,created_at,is_approve,approved_by,approved_at  from leave_request lr 
+        where user_id='".$user_id."' and c.dated_start ='".$dated_start."' and c.dated_end ='".$dated_end."' ");
+
+        if(count($data)>0){
+            $result = array_merge(
+                ['status' => 'success'],
+                ['data' => $data],
+                ['message' => 'Success'],
+            );    
+        }else{
+            $data = array();
+            $result = array_merge(
+                ['status' => 'failed'],
+                ['data' => $data ],
+                ['message' => 'Simpan Pengajuan gagal'],
+            );   
+        }
+        return $result;
+        
+    }
+
+    public function api_get_leave(Request $request)
+    {
+        $whatsapp_no = $request->whatsapp_no;
+        $token = $request->token;
+        $user_id = $request->user_id;
+
+        $data = DB::select("select id,user_id,dated_start,dated_end,reason,leave_type,created_at,is_approve,approved_by,approved_at  from leave_request lr 
+        where user_id='".$user_id."' and c.dated_start >= now()-interval'45 days'; ");
+
+        if(count($data)>0){
+            $result = array_merge(
+                ['status' => 'success'],
+                ['data' => $data],
+                ['message' => 'Success'],
+            );    
+        }else{
+            $data = array();
+            $result = array_merge(
+                ['status' => 'failed'],
+                ['data' => $data ],
+                ['message' => 'Simpan Pengajuan gagal'],
+            );   
+        }
+        return $result;
+        
+    }
+
+    public function api_get_reason(Request $request)
+    {
+        $whatsapp_no = $request->whatsapp_no;
+        $token = $request->token;
+
+        $data = DB::select("select reason_type,remark  from reason r; ");
+
+        if(count($data)>0){
+            $result = array_merge(
+                ['status' => 'success'],
+                ['data' => $data],
+                ['message' => 'Success'],
+            );    
+        }else{
+            $data = array();
+            $result = array_merge(
+                ['status' => 'failed'],
+                ['data' => $data ],
+                ['message' => 'Ambil data alasan gagal'],
+            );   
+        }
+        return $result;
+        
+    }
+
     public function api_register(Request $request)
     {
         $whatsapp_no = $request->handphone;
