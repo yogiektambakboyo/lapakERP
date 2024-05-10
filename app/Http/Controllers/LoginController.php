@@ -249,7 +249,7 @@ class LoginController extends Controller
             VALUES('".$user_id."', '".$dated_start."', '".$dated_end."', '".$reason."', '".$leave_type."', now(), '".$created_by."');");
 
             $data = DB::select("select id,user_id,dated_start,dated_end,reason,leave_type,created_at,is_approve,approved_by,approved_at  from leave_request lr 
-            where user_id='".$user_id."' and c.dated_start ='".$dated_start."' and c.dated_end ='".$dated_end."' ");
+            where user_id='".$user_id."' and lr.dated_start ='".$dated_start."' and c.dated_end ='".$dated_end."' ");
 
             if(count($data)>0){
                 $result = array_merge(
@@ -289,7 +289,7 @@ class LoginController extends Controller
 
         if($val_token==$token && $user_agent=="Malaikat_Ridwan"){
             $data = DB::select("select id,user_id,dated_start,dated_end,reason,leave_type,created_at,is_approve,approved_by,approved_at  from leave_request lr 
-            where user_id='".$user_id."' and c.dated_start >= now()-interval'45 days'; ");
+            where user_id='".$user_id."' and lr.dated_start >= now()-interval'45 days'; ");
 
             if(count($data)>0){
                 $result = array_merge(
