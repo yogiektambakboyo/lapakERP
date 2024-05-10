@@ -249,7 +249,7 @@ class LoginController extends Controller
             VALUES('".$user_id."', '".$dated_start."', '".$dated_end."', '".$reason."', '".$leave_type."', now(), '".$created_by."');");
 
             $data = DB::select("select id,user_id,dated_start,dated_end,reason,leave_type,created_at,is_approve,approved_by,approved_at  from leave_request lr 
-            where user_id='".$user_id."' and lr.dated_start ='".$dated_start."' and c.dated_end ='".$dated_end."' ");
+            where user_id='".$user_id."' and lr.dated_start ='".$dated_start."' and lr.dated_end ='".$dated_end."' ");
 
             if(count($data)>0){
                 $result = array_merge(
@@ -302,7 +302,7 @@ class LoginController extends Controller
                 $result = array_merge(
                     ['status' => 'failed'],
                     ['data' => $data ],
-                    ['message' => 'Simpan Pengajuan gagal'],
+                    ['message' => 'Akses data tidak ditemukan'],
                 );   
             }
         }else{
