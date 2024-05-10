@@ -241,27 +241,40 @@ class LoginController extends Controller
         $dated_end = $request->dated_end;
         $reason = $request->reason;
         $leave_type = $request->leave_type;
+        $val_token = md5(date("Y-m-d"));
+        $user_agent = $request->server('HTTP_USER_AGENT');
 
-        $data = DB::select(" INSERT INTO public.leave_request(user_id, dated_start, dated_end, reason, leave_type, created_at, created_by) 
-        VALUES('".$user_id."', '".$dated_start."', '".$dated_end."', '".$reason."', '".$leave_type."', now(), '".$created_by."');");
+        if($val_token==$token && $user_agent=="Malaikat_Ridwan"){
+            $data = DB::select(" INSERT INTO public.leave_request(user_id, dated_start, dated_end, reason, leave_type, created_at, created_by) 
+            VALUES('".$user_id."', '".$dated_start."', '".$dated_end."', '".$reason."', '".$leave_type."', now(), '".$created_by."');");
 
-        $data = DB::select("select id,user_id,dated_start,dated_end,reason,leave_type,created_at,is_approve,approved_by,approved_at  from leave_request lr 
-        where user_id='".$user_id."' and c.dated_start ='".$dated_start."' and c.dated_end ='".$dated_end."' ");
+            $data = DB::select("select id,user_id,dated_start,dated_end,reason,leave_type,created_at,is_approve,approved_by,approved_at  from leave_request lr 
+            where user_id='".$user_id."' and c.dated_start ='".$dated_start."' and c.dated_end ='".$dated_end."' ");
 
-        if(count($data)>0){
-            $result = array_merge(
-                ['status' => 'success'],
-                ['data' => $data],
-                ['message' => 'Success'],
-            );    
+            if(count($data)>0){
+                $result = array_merge(
+                    ['status' => 'success'],
+                    ['data' => $data],
+                    ['message' => 'Success'],
+                );    
+            }else{
+                $data = array();
+                $result = array_merge(
+                    ['status' => 'failed'],
+                    ['data' => $data ],
+                    ['message' => 'Simpan Pengajuan gagal'],
+                );   
+            }
         }else{
             $data = array();
-            $result = array_merge(
-                ['status' => 'failed'],
-                ['data' => $data ],
-                ['message' => 'Simpan Pengajuan gagal'],
-            );   
+                $result = array_merge(
+                    ['status' => 'failed'],
+                    ['data' => $data ],
+                    ['message' => 'Akses gagal'],
+                ); 
         }
+
+        
         return $result;
         
     }
@@ -271,24 +284,37 @@ class LoginController extends Controller
         $whatsapp_no = $request->whatsapp_no;
         $token = $request->token;
         $user_id = $request->user_id;
+        $val_token = md5(date("Y-m-d"));
+        $user_agent = $request->server('HTTP_USER_AGENT');
 
-        $data = DB::select("select id,user_id,dated_start,dated_end,reason,leave_type,created_at,is_approve,approved_by,approved_at  from leave_request lr 
-        where user_id='".$user_id."' and c.dated_start >= now()-interval'45 days'; ");
+        if($val_token==$token && $user_agent=="Malaikat_Ridwan"){
+            $data = DB::select("select id,user_id,dated_start,dated_end,reason,leave_type,created_at,is_approve,approved_by,approved_at  from leave_request lr 
+            where user_id='".$user_id."' and c.dated_start >= now()-interval'45 days'; ");
 
-        if(count($data)>0){
-            $result = array_merge(
-                ['status' => 'success'],
-                ['data' => $data],
-                ['message' => 'Success'],
-            );    
+            if(count($data)>0){
+                $result = array_merge(
+                    ['status' => 'success'],
+                    ['data' => $data],
+                    ['message' => 'Success'],
+                );    
+            }else{
+                $data = array();
+                $result = array_merge(
+                    ['status' => 'failed'],
+                    ['data' => $data ],
+                    ['message' => 'Simpan Pengajuan gagal'],
+                );   
+            }
         }else{
             $data = array();
-            $result = array_merge(
-                ['status' => 'failed'],
-                ['data' => $data ],
-                ['message' => 'Simpan Pengajuan gagal'],
-            );   
+                $result = array_merge(
+                    ['status' => 'failed'],
+                    ['data' => $data ],
+                    ['message' => 'Akses gagal'],
+                ); 
         }
+
+        
         return $result;
         
     }
@@ -298,22 +324,35 @@ class LoginController extends Controller
         $whatsapp_no = $request->whatsapp_no;
         $token = $request->token;
 
-        $data = DB::select("select reason_type,remark  from reason r; ");
+        $val_token = md5(date("Y-m-d"));
+        $user_agent = $request->server('HTTP_USER_AGENT');
 
-        if(count($data)>0){
-            $result = array_merge(
-                ['status' => 'success'],
-                ['data' => $data],
-                ['message' => 'Success'],
-            );    
+        if($val_token==$token && $user_agent=="Malaikat_Ridwan"){
+            $data = DB::select("select reason_type,remark  from reason r; ");
+
+            if(count($data)>0){
+                $result = array_merge(
+                    ['status' => 'success'],
+                    ['data' => $data],
+                    ['message' => 'Success'],
+                );    
+            }else{
+                $data = array();
+                $result = array_merge(
+                    ['status' => 'failed'],
+                    ['data' => $data ],
+                    ['message' => 'Ambil data alasan gagal'],
+                );   
+            }
         }else{
             $data = array();
-            $result = array_merge(
-                ['status' => 'failed'],
-                ['data' => $data ],
-                ['message' => 'Ambil data alasan gagal'],
-            );   
+                $result = array_merge(
+                    ['status' => 'failed'],
+                    ['data' => $data ],
+                    ['message' => 'Akses gagal'],
+                ); 
         }
+        
         return $result;
         
     }
@@ -347,7 +386,7 @@ class LoginController extends Controller
             if($acc_type == "Staff"){
                 $gender = ($gender_id=="Pria"?'Male':'Female');
                 $data = DB::select(" insert into users(name,address,username,password,phone_no,gender,city,photo,branch_id,job_id,department_id,work_year,join_years) 
-                values('".$name."','".$address."',md5(to_char(now(),'YYYY-MM-DD HH24:MI:SS.MS')),md5(to_char(now(),'YYYY-MM-DD HH24:MI:SS.MS')),'".$handphone."','".$gender."','".$address."','".$file_photo."','".$branch_id."',2,2,1,1); ");
+                values('".$name."','".$address."',md5(to_char(now(),'YYYY-MM-DD HH24:MI:SS.MS')),md5(to_char(now(),'YYYY-MM-DD HH24:MI:SS.MS')),'".$handphone."','".$gender."','".$address."','".$file_photo."','".$branch_id."',10,2,1,1); ");
 
                 $data = DB::select("select * from (select id,name,whatsapp_no,pass_wd,'cust' as user_type from customers c 
                 where c.whatsapp_no is not null and whatsapp_no ='".$whatsapp_no."'
