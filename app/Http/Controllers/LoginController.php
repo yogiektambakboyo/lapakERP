@@ -329,7 +329,7 @@ class LoginController extends Controller
 
         if($val_token==$token && $user_agent=="Malaikat_Ridwan"){
             $data = DB::select("select * from (
-                select 'leave','-- Silahkan pilih keperluan --'
+                select 'leave' as reason_type,'-- Silahkan pilih keperluan --' as remark
                 union
                 select reason_type,remark  from reason r
                 ) a order by 2;");
