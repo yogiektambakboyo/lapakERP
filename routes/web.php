@@ -170,6 +170,19 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
             Route::get('/export', 'InvoicesController@export')->name('invoices.export');
         });
 
+
+        Route::group(['prefix' => 'presence'], function() {
+            Route::get('/', 'PresenceController@index')->name('presence.index');
+            Route::get('/search', 'PresenceController@search')->name('presence.search');
+            Route::get('/export', 'PresenceController@export')->name('presence.export');
+        });
+
+        Route::group(['prefix' => 'leave'], function() {
+            Route::get('/', 'LeaveController@index')->name('leave.index');
+            Route::get('/search', 'LeaveController@search')->name('leave.search');
+            Route::get('/export', 'LeaveController@export')->name('leave.export');
+        });
+
         /**
          * Invoice Internal Routes
          */
