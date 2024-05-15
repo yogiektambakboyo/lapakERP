@@ -316,6 +316,23 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
             Route::get('/export', 'PurchaseOrderController@export')->name('purchaseorders.export');
         });
 
+        Route::group(['prefix' => 'triprequest'], function() {
+            Route::get('/', 'TripRequestController@index')->name('triprequest.index');
+            Route::get('/create', 'TripRequestController@create')->name('triprequest.create');
+            Route::post('/create', 'TripRequestController@store')->name('triprequest.store');
+            Route::post('/search', 'TripRequestController@search')->name('triprequest.search');
+            Route::get('/{triprequest}/show', 'TripRequestController@show')->name('triprequest.show');
+            Route::get('/{triprequest}/print', 'TripRequestController@print')->name('triprequest.print');
+            Route::get('/{triprequest}/edit', 'TripRequestController@edit')->name('triprequest.edit');
+            Route::get('/getproduct', 'TripRequestController@getproduct')->name('triprequest.getproduct');
+            Route::get('/gettimetable', 'TripRequestController@gettimetable')->name('triprequest.gettimetable');
+            Route::get('/{triprequest}/getorder', 'TripRequestController@getorder')->name('triprequest.getorder');
+            Route::patch('/{triprequest}/update', 'TripRequestController@update')->name('triprequest.update');
+            Route::get('/{triprequest}/getdocdata', 'TripRequestController@getdocdata')->name('triprequest.getdocdata');
+            Route::delete('/{triprequest}/delete', 'TripRequestController@destroy')->name('triprequest.destroy');
+            Route::get('/export', 'TripRequestController@export')->name('triprequest.export');
+        });
+
         Route::group(['prefix' => 'purchaseordersinternal'], function() {
             Route::get('/', 'PurchaseOrderInternalController@index')->name('purchaseordersinternal.index');
             Route::get('/create', 'PurchaseOrderInternalController@create')->name('purchaseordersinternal.create');
