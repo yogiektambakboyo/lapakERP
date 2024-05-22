@@ -727,7 +727,7 @@ class HomeController extends Controller
 
                 }
             }
-            return $resp;
+            return "";
     }
 
 }
