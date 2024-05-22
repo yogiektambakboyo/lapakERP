@@ -677,6 +677,8 @@ class HomeController extends Controller
                         $destination = '/images/user-files/'.$file;
                         File::put(public_path($destination), $decoded);
 
+                        $file_link = "https://kakikupos.com/images/user-files/".$file;
+
                         //Send WA
 
                         $curl = curl_init();
@@ -685,7 +687,7 @@ class HomeController extends Controller
                         $number = $wa_no;
                         $caption = "Terlampir Dokumen ".$layout_name." *Nomor  ".$doc_no."*";
                         //$caption = $_GET["caption"];
-                        $file = "https://ik.imagekit.io/npdfebob7/files/invoice20240508065245.pdf";
+                        $file = $file_link;
                         //$file = $_GET["file"];
                         //$str="number=".$number."&message=".$msg;
                         $str="number=".$number."&caption=".$caption."&file=".$file;
