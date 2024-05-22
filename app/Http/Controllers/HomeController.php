@@ -487,11 +487,6 @@ class HomeController extends Controller
             $resp = "Token Not Valid";
             $tokenx = $_GET["tokenx"];
             if($tokenx == "qwsertyqqOPSd"){
-
-                echo "=============================================================<br>";
-                echo "*".str_repeat('&nbsp;', 50)."Get API Filemaker".str_repeat('&nbsp;', 50)."*<br>";
-                echo "=============================================================<br>";
-
                 $curl = curl_init();
                 $today = date('m/d/Y');
 
@@ -504,11 +499,16 @@ class HomeController extends Controller
                 $doc_column = base64_decode($_GET["doc_column"]);
                 $wa_no = base64_decode($_GET["wa_no"]);
 
+                if($layout_name != 'Purchase Order'){
+                    exit("failed wrong layout");
+                }
+
                 //$url = "172.19.20.239";
                 $url = "18.138.115.173";
 
                 if(empty($wa_no)||empty($dbname)||empty($layout_name)||empty($doc_no)||empty($doc_column)){
-                echo "failed";
+                    echo "failed";
+                    exit();
                 }else{
 
                 //Begin If
@@ -546,7 +546,7 @@ class HomeController extends Controller
                     echo "cURL Error #:" . $err;
                 } else {
                     $token = $json_response->response->token;
-                    echo "Login success with token : ".$token;
+                    //echo "Login success with token : ".$token;
 
                     $curl = curl_init();
                     curl_setopt_array($curl, [
@@ -573,101 +573,99 @@ class HomeController extends Controller
                     curl_close($curl);
 
                     if ($err) {
-                    echo "cURL Error #:" . $err;
+                        echo "cURL Error #:" . $err;
                     }else{
-                    echo "<br>";
-                    echo "<br>";
-                    echo "Success get data";
-                    echo "<br>";
-                    echo "<br>";
+                        //echo "<br>";
+                        //echo "<br>";
+                        //echo "Success get data";
+                        //echo "<br>";
+                        //echo "<br>";
 
-                    $json_slab = json_decode($resp);
-                    $result = $json_slab->response->data;
+                        $json_slab = json_decode($resp);
+                        $result = $json_slab->response->data;
 
-                    $query = "";
-                    for ($i=0; $i < count($result); $i++) { 
-                        $res_enc = json_decode(json_encode($result[$i]->fieldData), true);
-                        $result_1[] = $res_enc;
-                    }
+                        $query = "";
+                        for ($i=0; $i < count($result); $i++) { 
+                            $res_enc = json_decode(json_encode($result[$i]->fieldData), true);
+                            $result_1[] = $res_enc;
+                        }
 
-                    $filePDF = $result_1[0]["zFile"];
-                    $fileName = $result_1[0]["zFileName"];
+                        $filePDF = $result_1[0]["zFile"];
+                        $fileName = $result_1[0]["zFileName"];
 
-                    var_dump($result_1);
-                    var_dump($result_1[0]["zFile"]);
-                    echo "<br>";
-                    echo "<br>";
+                        //var_dump($result_1);
+                        //var_dump($result_1[0]["zFile"]);
+                        //echo "<br>";
+                        //echo "<br>";
 
 
-                    $cookieFile = tempnam(sys_get_temp_dir(), "CURLCOOKIE");
-                    $curl = curl_init();
-                    curl_setopt_array($curl, [
-                        CURLOPT_URL => $filePDF,
-                        CURLOPT_COOKIEJAR =>$cookieFile,
-                        CURLOPT_RETURNTRANSFER => true,
-                        CURLOPT_MAXREDIRS => 10,
-                        CURLOPT_SSL_VERIFYHOST => 0,
-                        CURLOPT_SSL_VERIFYPEER => 0,
-                        CURLOPT_TIMEOUT => 30,
-                        CURLOPT_CUSTOMREQUEST => "POST",
-                        CURLOPT_POSTFIELDS => "{\n  \"query\": [\n    { \"".$doc_column."\" : \"".$doc_no."\"  }\n  ],\n  \"limit\": 2500\n}",
-                        CURLOPT_HTTPHEADER => [
-                            "Content-Type: application/pdf",
-                            "Authorization: Bearer ".$token
-                        ],
-                    ]);
+                        $cookieFile = tempnam(sys_get_temp_dir(), "CURLCOOKIE");
+                        $curl = curl_init();
+                        curl_setopt_array($curl, [
+                            CURLOPT_URL => $filePDF,
+                            CURLOPT_COOKIEJAR =>$cookieFile,
+                            CURLOPT_RETURNTRANSFER => true,
+                            CURLOPT_MAXREDIRS => 10,
+                            CURLOPT_SSL_VERIFYHOST => 0,
+                            CURLOPT_SSL_VERIFYPEER => 0,
+                            CURLOPT_TIMEOUT => 30,
+                            CURLOPT_CUSTOMREQUEST => "POST",
+                            CURLOPT_POSTFIELDS => "{\n  \"query\": [\n    { \"".$doc_column."\" : \"".$doc_no."\"  }\n  ],\n  \"limit\": 2500\n}",
+                            CURLOPT_HTTPHEADER => [
+                                "Content-Type: application/pdf",
+                                "Authorization: Bearer ".$token
+                            ],
+                        ]);
+                        
+                        $respf = curl_exec($curl);
+                        $err = curl_error($curl);
+                        curl_close($curl);
+
+                        $curl = curl_init();
+                        curl_setopt_array($curl, [
+                            CURLOPT_URL => $filePDF,
+                            CURLOPT_COOKIEFILE =>$cookieFile,
+                            CURLOPT_RETURNTRANSFER => true,
+                            CURLOPT_MAXREDIRS => 10,
+                            CURLOPT_SSL_VERIFYHOST => 0,
+                            CURLOPT_SSL_VERIFYPEER => 0,
+                            CURLOPT_TIMEOUT => 30,
+                            CURLOPT_CUSTOMREQUEST => "POST",
+                            CURLOPT_POSTFIELDS => "{\n  \"query\": [\n    { \"".$doc_column."\" : \"".$doc_no."\"  }\n  ],\n  \"limit\": 2500\n}",
+                            CURLOPT_HTTPHEADER => [
+                                "Content-Type: application/pdf",
+                                "Authorization: Bearer ".$token
+                            ],
+                        ]);
                     
-                    $respf = curl_exec($curl);
-                    $err = curl_error($curl);
-                    curl_close($curl);
+                        $respf = curl_exec($curl);
+                        $err = curl_error($curl);
+                        curl_close($curl);
 
-                    $curl = curl_init();
-                    curl_setopt_array($curl, [
-                        CURLOPT_URL => $filePDF,
-                        CURLOPT_COOKIEFILE =>$cookieFile,
-                        CURLOPT_RETURNTRANSFER => true,
-                        CURLOPT_MAXREDIRS => 10,
-                        CURLOPT_SSL_VERIFYHOST => 0,
-                        CURLOPT_SSL_VERIFYPEER => 0,
-                        CURLOPT_TIMEOUT => 30,
-                        CURLOPT_CUSTOMREQUEST => "POST",
-                        CURLOPT_POSTFIELDS => "{\n  \"query\": [\n    { \"".$doc_column."\" : \"".$doc_no."\"  }\n  ],\n  \"limit\": 2500\n}",
-                        CURLOPT_HTTPHEADER => [
-                            "Content-Type: application/pdf",
-                            "Authorization: Bearer ".$token
-                        ],
-                    ]);
-                    
-                    $respf = curl_exec($curl);
-                    $err = curl_error($curl);
-                    curl_close($curl);
+                        // Log Out
 
-                    // Log Out
-
-                    $curl = curl_init();
-                    curl_setopt_array($curl, [
-                        CURLOPT_URL => "https://".$url."/fmi/data/vLatest/databases/".$dbname."/sessions/".$token,
-                        CURLOPT_RETURNTRANSFER => true,
-                        CURLOPT_ENCODING => "",
-                        CURLOPT_MAXREDIRS => 10,
-                        CURLOPT_TIMEOUT => 30,
-                        CURLOPT_SSL_VERIFYHOST => 0,
-                        CURLOPT_SSL_VERIFYPEER => 0,
-                        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-                        CURLOPT_CUSTOMREQUEST => "DELETE",
-                        CURLOPT_POSTFIELDS => "",
-                        CURLOPT_HTTPHEADER => [
-                            "Content-Type: application/json",
-                            "Authorization: Bearer ".$token
-                        ],
+                        $curl = curl_init();
+                        curl_setopt_array($curl, [
+                            CURLOPT_URL => "https://".$url."/fmi/data/vLatest/databases/".$dbname."/sessions/".$token,
+                            CURLOPT_RETURNTRANSFER => true,
+                            CURLOPT_ENCODING => "",
+                            CURLOPT_MAXREDIRS => 10,
+                            CURLOPT_TIMEOUT => 30,
+                            CURLOPT_SSL_VERIFYHOST => 0,
+                            CURLOPT_SSL_VERIFYPEER => 0,
+                            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                            CURLOPT_CUSTOMREQUEST => "DELETE",
+                            CURLOPT_POSTFIELDS => "",
+                            CURLOPT_HTTPHEADER => [
+                                "Content-Type: application/json",
+                                "Authorization: Bearer ".$token
+                            ],
                         ]);
                         
                         $response = curl_exec($curl);
                         $err = curl_error($curl);
                         
                         curl_close($curl);
-
-
 
                         $fe = base64_encode($respf);
                         $decoded = base64_decode($fe);
@@ -693,18 +691,18 @@ class HomeController extends Controller
                         $str="number=".$number."&caption=".$caption."&file=".$file;
 
                         curl_setopt_array($curl, [
-                        CURLOPT_PORT => "8000",
-                        CURLOPT_URL => "http://localhost:8000/send-media",
-                        CURLOPT_RETURNTRANSFER => true,
-                        CURLOPT_ENCODING => "",
-                        CURLOPT_MAXREDIRS => 10,
-                        CURLOPT_TIMEOUT => 30,
-                        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-                        CURLOPT_CUSTOMREQUEST => "POST",
-                        CURLOPT_POSTFIELDS => $str,
-                        CURLOPT_HTTPHEADER => [
-                            "Content-Type: application/x-www-form-urlencoded"
-                        ],
+                            CURLOPT_PORT => "8000",
+                            CURLOPT_URL => "http://localhost:8000/send-media",
+                            CURLOPT_RETURNTRANSFER => true,
+                            CURLOPT_ENCODING => "",
+                            CURLOPT_MAXREDIRS => 10,
+                            CURLOPT_TIMEOUT => 30,
+                            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                            CURLOPT_CUSTOMREQUEST => "POST",
+                            CURLOPT_POSTFIELDS => $str,
+                            CURLOPT_HTTPHEADER => [
+                                "Content-Type: application/x-www-form-urlencoded"
+                            ],
                         ]);
 
                         $response = curl_exec($curl);
@@ -713,14 +711,15 @@ class HomeController extends Controller
                         curl_close($curl);
 
                         if ($err) {
-                        echo "cURL Error #:" . $err;
+                            //echo "cURL Error #:" . $err;
                         } else {
-                        echo $response;
+                            //echo $response;
+                            $g = json_decode($response,true);
+                            if($g["status"] == true)
+                            {
+                                echo "success";
+                            }
                         }
-
-
-
-
                     }
 
                 }
