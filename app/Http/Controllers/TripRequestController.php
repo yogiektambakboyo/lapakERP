@@ -66,17 +66,8 @@ class TripRequestController extends Controller
         $id = $user->roles->first()->id;
         $this->getpermissions($id);
 
-        $has_period_stock = DB::select("
-            select periode  from period_stock ps where ps.periode = to_char(now()::date,'YYYYMM')::int;
-        ");
 
-        if(count($has_period_stock)<=0){
-            DB::select("insert into period_stock(periode,branch_id,product_id,balance_begin,balance_end,qty_in,qty_out,updated_at ,created_by,created_at)
-            select to_char(now()::date,'YYYYMM')::int,ps.branch_id,product_id,ps.balance_end,ps.balance_end,0 as qty_in,0 as qty_out,null,1,now()  
-            from period_stock ps where ps.periode=to_char(now()-interval '5 day','YYYYMM')::int;");
-        }
-
-        SettingsDocumentNumber::where('doc_type','=','Purchase')->whereRaw("to_char(updated_at,'YYYYY')!=to_char(now(),'YYYYY') ")->where('period','=','Yearly')->update(
+        SettingsDocumentNumber::where('doc_type','=','Trip')->whereRaw("to_char(updated_at,'YYYYY')!=to_char(now(),'YYYYY') ")->where('period','=','Yearly')->update(
             array_merge(
                 ['current_value' => 0 ],
                 ['updated_at' => Carbon::now() ]
@@ -88,10 +79,18 @@ class TripRequestController extends Controller
         $user = Auth::user();
         $act_permission = $this->act_permission[0];
         $branchs = Branch::join('users_branch as ub','ub.branch_id', '=', 'branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']);
-        $purchases = Purchase::orderBy('id', 'ASC')
-                ->join('users_branch as ub', 'ub.branch_id','purchase_master.branch_id')->where('purchase_master.supplier_name','!=','PUSAT')->where('ub.user_id', $user->id)->where('purchase_master.dated','>=',Carbon::now()->subDay(7))  
-              ->get(['purchase_master.id','purchase_master.branch_name','purchase_master.remark','purchase_master.purchase_no','purchase_master.dated','purchase_master.supplier_name as supplier','purchase_master.total','purchase_master.total_discount','purchase_master.total_payment' ]);
-        return view('pages.purchaseorders.index',['company' => Company::get()->first()],compact('purchases','data','keyword','act_permission','branchs'))->with('i', ($request->input('page', 1) - 1) * 5);
+
+        $doc = DB::select("
+        
+                select distinct b.remark as branch_name,tr.doc_no,tr.id,tr.dated_start,tr.dated_end,tr.location_source,tr.location_destination,tr.remark,tr.total,u.name
+                from trip_request tr 
+                join users u on u.id = tr.user_id 
+                join trip_detail td on td.doc_no = tr.doc_no 
+                join users_branch ub on ub.user_id = u.id and ub.branch_id in (select branch_id from users_branch u where u.user_id = '".$user->id."')
+                join branch b on b.id = ub.branch_id
+                
+            ");
+        return view('pages.triprequest.index',['company' => Company::get()->first()],compact('doc','data','keyword','act_permission','branchs'))->with('i', ($request->input('page', 1) - 1) * 5);
     }
 
     public function search(Request $request) 
@@ -126,7 +125,7 @@ class TripRequestController extends Controller
                 ->where('b.id','like','%'.$branchx.'%')  
                 ->whereBetween('purchase_master.dated',$fil)  
               ->get(['purchase_master.id','b.remark as branch_name','purchase_master.purchase_no','purchase_master.dated','jt.name as supplier','purchase_master.total','purchase_master.total_discount','purchase_master.total_payment' ]);
-              return view('pages.purchaseorders.index',['company' => Company::get()->first()] ,compact('branchs','purchases','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
+              return view('pages.triprequest.index',['company' => Company::get()->first()] ,compact('branchs','purchases','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
         }
     }
 
@@ -152,7 +151,7 @@ class TripRequestController extends Controller
         $payment_type = ['Cash','BCA - Debit','BCA - Kredit','Mandiri - Debit','Mandiri - Kredit','Transfer','QRIS'];
         $suppliers = Supplier::join('users_branch as ub','ub.branch_id', '=', 'suppliers.branch_id')->where('suppliers.name','!=','PUSAT')->where('ub.user_id','=',$user->id)->get(['suppliers.id','suppliers.name']);
         $usersall = User::join('users_branch as ub','ub.branch_id', '=', 'users.branch_id')->where('ub.user_id','=',$user->id)->whereIn('users.job_id',[1,2])->get(['users.id','users.name']);
-        return view('pages.purchaseorders.create',[
+        return view('pages.triprequest.create',[
             'customers' => Customer::join('users_branch as ub','ub.branch_id', '=', 'customers.branch_id')->join('branch as b','b.id','=','ub.branch_id')->where('ub.user_id',$user->id)->get(['customers.id','customers.name','b.remark']),
             'data' => $data,
             'suppliers' => $suppliers,
@@ -309,7 +308,7 @@ class TripRequestController extends Controller
         $suppliers = Supplier::join('users_branch as ub','ub.branch_id', '=', 'suppliers.branch_id')->where('ub.user_id','=',$user->id)->get(['suppliers.id','suppliers.name']);
         $payment_type = ['Cash','BCA - Debit','BCA - Kredit','Mandiri - Debit','Mandiri - Kredit','Transfer','QRIS'];
         $users = User::join('users_branch as ub','ub.branch_id', '=', 'users.branch_id')->where('ub.user_id','=',$user->id)->where('users.job_id','=',2)->get(['users.id','users.name']);
-        return view('pages.purchaseorders.show',[
+        return view('pages.triprequest.show',[
             'data' => $data,
             'suppliers' => $suppliers,
             'branchs' => Branch::join('users_branch as ub','ub.branch_id', '=', 'branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']),
@@ -345,7 +344,7 @@ class TripRequestController extends Controller
             'payment_type' => $payment_type,
         ])->setOptions(['defaultFont' => 'sans-serif'])->setPaper('a4', 'landscape');
         return $pdf->stream('invoice.pdf');
-        return view('pages.purchaseorders.print',[
+        return view('pages.triprequest.print',[
             'data' => $data,
             'suppliers' => $suppliers,
             'branchs' => Branch::join('users_branch as ub','ub.branch_id', '=', 'branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']),
@@ -376,7 +375,7 @@ class TripRequestController extends Controller
         $payment_type = ['Cash','BCA - Debit','BCA - Kredit','Mandiri - Debit','Mandiri - Kredit','Transfer','QRIS'];
         $users = User::join('users_branch as ub','ub.branch_id', '=', 'users.branch_id')->where('ub.user_id','=',$user->id)->where('users.job_id','=',2)->get(['users.id','users.name']);
         $usersReferral = User::get(['users.id','users.name']);
-        return view('pages.purchaseorders.edit',[
+        return view('pages.triprequest.edit',[
             'data' => $data,
             'suppliers' => $suppliers,
             'branchs' => Branch::join('users_branch as ub','ub.branch_id', '=', 'branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']),

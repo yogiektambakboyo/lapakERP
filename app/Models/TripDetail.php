@@ -26,6 +26,7 @@ class TripRequest extends Model
         'updated_by',
         'doc_no',
         'qty',
+        'product_id',
         'price',
         'total'
     ];
