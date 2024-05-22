@@ -35,6 +35,7 @@ class VerifyCsrfToken extends Middleware
         '/api_post_invoice_terapist',
         '/get_checkmembership',
         '/send-msg-wa',
+        '/send-wa-media',
         //
     ];
 }
