@@ -485,7 +485,8 @@ class HomeController extends Controller
     {
             
             $resp = "Token Not Valid";
-            if($token == "qwsertyqqOPSd"){
+            $tokenx = $_GET["tokenx"];
+            if($tokenx == "qwsertyqqOPSd"){
 
                 echo "=============================================================<br>";
                 echo "*".str_repeat('&nbsp;', 50)."Get API Filemaker".str_repeat('&nbsp;', 50)."*<br>";
