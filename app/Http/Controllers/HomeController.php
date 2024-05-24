@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Spatie\Permission\Models\Permission;
 use Auth;
 use App\Models\Settings;
+use File;
 use App\Models\Company;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Lang;
@@ -478,6 +479,321 @@ class HomeController extends Controller
             }
 
             return $resp;
+    }
+
+    public function send_wa_media_cron(Request $request) 
+    {
+            $number = $request->get("no");
+            $msg = $request->get("msg");
+            $token = $request->get("token");
+            $fromapp = $request->get("fromapp");
+            $name = $request->get("name");
+            $name = base64_decode($name);
+            $otp = $request->get("adrotp");
+            $msg = "*OTP Notifikasi* \r\n\r\nHai ".$name.", silahkan masukkan kode OTP *".$otp."* untuk login aplikasi ".$fromapp.".\r\n\r\n_Abaikan pesan ini jika anda tidak merasa login ke aplikasi_";
+            $str="number=".$number."&message=".$msg;
+
+            $resp = "Token Not Valid";
+
+            $validate = md5(date("Y-m-d"));
+
+            if($token == $validate){
+                $curl = curl_init();
+
+                curl_setopt_array($curl, [
+                    CURLOPT_PORT => "8000",
+                    CURLOPT_URL => "http://localhost:8000/send-message",
+                    CURLOPT_RETURNTRANSFER => true,
+                    CURLOPT_ENCODING => "",
+                    CURLOPT_MAXREDIRS => 10,
+                    CURLOPT_TIMEOUT => 30,
+                    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                    CURLOPT_CUSTOMREQUEST => "POST",
+                    CURLOPT_POSTFIELDS => $str,
+                    CURLOPT_HTTPHEADER => [
+                        "Content-Type: application/x-www-form-urlencoded"
+                    ],
+                ]);
+
+                $response = curl_exec($curl);
+                $err = curl_error($curl);
+
+                curl_close($curl);
+
+
+
+                if ($err) {
+                    $resp = "Error ". $err;
+                } else {
+                    $resp = $response;
+                }
+            }
+
+            return $resp;
+    }
+
+    public function send_wa_media(Request $request) 
+    { 
+            $resp = "Token Not Valid";
+            $tokenx = $_GET["tokenx"];
+            if($tokenx == "qwsertyqqOPSd"){
+                $curl = curl_init();
+                $today = date('m/d/Y');
+
+                $result_1 = [];
+                $result_2 = [];
+
+                $dbname      = base64_decode($_GET["dbname"]);
+                $layout_name = base64_decode($_GET["layout_name"]);
+                $doc_no      = base64_decode($_GET["doc_no"]);
+                $doc_column  = base64_decode($_GET["doc_column"]);
+                $wa_no       = base64_decode($_GET["wa_no"]);
+                $msg_greeting       = empty($_GET["msg_greeting"])?'':base64_decode($_GET["msg_greeting"]);
+                $msg_content       = empty($_GET["msg_content"])?'':base64_decode($_GET["msg_content"]);
+                $msg_closed       = empty($_GET["msg_closed"])?'':base64_decode($_GET["msg_closed"]);
+                $msg_disclaimer       = empty($_GET["msg_disclaimer"])?'':base64_decode($_GET["msg_disclaimer"]);
+
+                if($layout_name != 'Purchase Order'){
+                    exit("failed wrong layout");
+                }
+
+                //$url = "172.19.20.239";
+                $url = "18.138.115.173";
+
+                if(empty($wa_no)||empty($dbname)||empty($layout_name)||empty($doc_no)||empty($doc_column)){
+                    echo "failed";
+                    exit();
+                }else{
+                    DB::insert("delete from notif_log nl where created_at < now()-INTERVAL'15 seconds';");
+                    $is_valid = DB::select("select whatsapp_no from notif_log nl where whatsapp_no = '".$wa_no."';");
+                    if(count($is_valid)>=1){
+                        exit("failed, please waiting 15s from sending again");
+                    }else{
+                        DB::insert("insert into notif_log(whatsapp_no,created_at) values('".$wa_no."',now());");
+                    }
+
+                    //Begin If
+                    
+                    //echo "Get Data From ".$dbname." <br>";
+
+                    //token lokal QWRtaW5pc3RyYXRvcjpxd3Jvb3Q=
+                    //token public QWd1czpBNnVzQjRsaQ==
+                    curl_setopt_array($curl, [
+                        CURLOPT_URL => "https://".$url."/fmi/data/vLatest/databases/".$dbname."/sessions",
+                        CURLOPT_RETURNTRANSFER => true,
+                        CURLOPT_ENCODING => "",
+                        CURLOPT_MAXREDIRS => 10,
+                        CURLOPT_SSL_VERIFYHOST => 0,
+                        CURLOPT_SSL_VERIFYPEER => 0,
+                        CURLOPT_TIMEOUT => 30,
+                        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                        CURLOPT_CUSTOMREQUEST => "POST",
+                        CURLOPT_POSTFIELDS => "{ \"fmDataSource\":\n  [ { \"database\":\"".$dbname."\", \"username\":\"\", \"password\":\"\" } ]\n}",
+                        CURLOPT_HTTPHEADER => [
+                        "Authorization: Basic QWRtaW5pc3RyYXRvcjpxd3Jvb3Q=",
+                        "Content-Type: application/json"
+                        ],
+                    ]);
+
+                    $response = curl_exec($curl);
+                    $err = curl_error($curl);
+
+                    curl_close($curl);
+
+                    $json_response = json_decode($response);
+                    $token = "";
+                    $err = "";
+                if ($err) {
+                    echo "cURL Error #:" . $err;
+                } else {
+                    $token = $json_response->response->token;
+                    //echo "Login success with token : ".$token;
+
+                    $curl = curl_init();
+                    curl_setopt_array($curl, [
+                        CURLOPT_URL => "https://".$url."/fmi/data/vLatest/databases/".$dbname."/layouts/".$layout_name."/_find",
+                        CURLOPT_RETURNTRANSFER => true,
+                        CURLOPT_ENCODING => "",
+                        CURLOPT_MAXREDIRS => 10,
+                        CURLOPT_SSL_VERIFYHOST => 0,
+                        CURLOPT_SSL_VERIFYPEER => 0,
+                        CURLOPT_TIMEOUT => 30,
+                        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                        CURLOPT_CUSTOMREQUEST => "POST",
+                        CURLOPT_POSTFIELDS => "{\n  \"query\": [\n    { \"".$doc_column."\" : \"".$doc_no."\"  }\n  ],\n  \"limit\": 2500\n}",
+
+                        CURLOPT_HTTPHEADER => [
+                            "Content-Type: application/json",
+                            "Authorization: Bearer ".$token
+                        ],
+                    ]);
+                    
+                    $resp = curl_exec($curl);
+                    $err = curl_error($curl);
+                    
+                    curl_close($curl);
+
+                    if ($err) {
+                        echo "cURL Error #:" . $err;
+                    }else{
+                        //echo "<br>";
+                        //echo "<br>";
+                        //echo "Success get data";
+                        //echo "<br>";
+                        //echo "<br>";
+
+                        $json_slab = json_decode($resp);
+                        $result = $json_slab->response->data;
+
+                        $query = "";
+                        for ($i=0; $i < count($result); $i++) { 
+                            $res_enc = json_decode(json_encode($result[$i]->fieldData), true);
+                            $result_1[] = $res_enc;
+                        }
+
+                        $filePDF = $result_1[0]["zFile"];
+                        $fileName = $result_1[0]["zFileName"];
+
+                        //var_dump($result_1);
+                        //var_dump($result_1[0]["zFile"]);
+                        //echo "<br>";
+                        //echo "<br>";
+
+
+                        $cookieFile = tempnam(sys_get_temp_dir(), "CURLCOOKIE");
+                        $curl = curl_init();
+                        curl_setopt_array($curl, [
+                            CURLOPT_URL => $filePDF,
+                            CURLOPT_COOKIEJAR =>$cookieFile,
+                            CURLOPT_RETURNTRANSFER => true,
+                            CURLOPT_MAXREDIRS => 10,
+                            CURLOPT_SSL_VERIFYHOST => 0,
+                            CURLOPT_SSL_VERIFYPEER => 0,
+                            CURLOPT_TIMEOUT => 30,
+                            CURLOPT_CUSTOMREQUEST => "POST",
+                            CURLOPT_POSTFIELDS => "{\n  \"query\": [\n    { \"".$doc_column."\" : \"".$doc_no."\"  }\n  ],\n  \"limit\": 2500\n}",
+                            CURLOPT_HTTPHEADER => [
+                                "Content-Type: application/pdf",
+                                "Authorization: Bearer ".$token
+                            ],
+                        ]);
+                        
+                        $respf = curl_exec($curl);
+                        $err = curl_error($curl);
+                        curl_close($curl);
+
+                        $curl = curl_init();
+                        curl_setopt_array($curl, [
+                            CURLOPT_URL => $filePDF,
+                            CURLOPT_COOKIEFILE =>$cookieFile,
+                            CURLOPT_RETURNTRANSFER => true,
+                            CURLOPT_MAXREDIRS => 10,
+                            CURLOPT_SSL_VERIFYHOST => 0,
+                            CURLOPT_SSL_VERIFYPEER => 0,
+                            CURLOPT_TIMEOUT => 30,
+                            CURLOPT_CUSTOMREQUEST => "POST",
+                            CURLOPT_POSTFIELDS => "{\n  \"query\": [\n    { \"".$doc_column."\" : \"".$doc_no."\"  }\n  ],\n  \"limit\": 2500\n}",
+                            CURLOPT_HTTPHEADER => [
+                                "Content-Type: application/pdf",
+                                "Authorization: Bearer ".$token
+                            ],
+                        ]);
+                    
+                        $respf = curl_exec($curl);
+                        $err = curl_error($curl);
+                        curl_close($curl);
+
+                        // Log Out
+
+                        $curl = curl_init();
+                        curl_setopt_array($curl, [
+                            CURLOPT_URL => "https://".$url."/fmi/data/vLatest/databases/".$dbname."/sessions/".$token,
+                            CURLOPT_RETURNTRANSFER => true,
+                            CURLOPT_ENCODING => "",
+                            CURLOPT_MAXREDIRS => 10,
+                            CURLOPT_TIMEOUT => 30,
+                            CURLOPT_SSL_VERIFYHOST => 0,
+                            CURLOPT_SSL_VERIFYPEER => 0,
+                            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                            CURLOPT_CUSTOMREQUEST => "DELETE",
+                            CURLOPT_POSTFIELDS => "",
+                            CURLOPT_HTTPHEADER => [
+                                "Content-Type: application/json",
+                                "Authorization: Bearer ".$token
+                            ],
+                        ]);
+                        
+                        $response = curl_exec($curl);
+                        $err = curl_error($curl);
+                        
+                        curl_close($curl);
+
+                        $fe = base64_encode($respf);
+                        $decoded = base64_decode($fe);
+                        $file = 'zzFile_'.date("YmdHis").'.pdf';
+                        //file_put_contents($file, $decoded);
+
+                        $destination = '/images/user-files/'.$file;
+                        File::put(public_path($destination), $decoded);
+
+                        $file_link = "https://kakikupos.com/images/user-files/".$file;
+
+                        //Send WA
+
+                        $curl = curl_init();
+
+                        //$number = $_GET["no"];
+                        $number = $wa_no;
+                        //$caption = "Terlampir Dokumen ".$layout_name." *Nomor  ".$doc_no."*";
+                        $caption = $msg_greeting." \r\n\r\n ".$msg_content." \r\n\r\n ".$msg_closed." \r\n\r\n "."_".$msg_disclaimer."_";
+                        //$caption = $_GET["caption"];
+                        $file = $file_link;
+                        //$file = $_GET["file"];
+                        //$str="number=".$number."&message=".$msg;
+                        $str="number=".$number."&caption=".$caption."&file=".$file."&filename=".(str_replace(' ', '', $doc_no)).".pdf";
+
+                        curl_setopt_array($curl, [
+                            CURLOPT_PORT => "8000",
+                            CURLOPT_URL => "http://localhost:8000/send-media",
+                            CURLOPT_RETURNTRANSFER => true,
+                            CURLOPT_ENCODING => "",
+                            CURLOPT_MAXREDIRS => 10,
+                            CURLOPT_TIMEOUT => 30,
+                            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                            CURLOPT_CUSTOMREQUEST => "POST",
+                            CURLOPT_POSTFIELDS => $str,
+                            CURLOPT_HTTPHEADER => [
+                                "Content-Type: application/x-www-form-urlencoded"
+                            ],
+                        ]);
+
+                        $response = curl_exec($curl);
+                        $err = curl_error($curl);
+
+                        curl_close($curl);
+
+                        if ($err) {
+                            //echo "cURL Error #:" . $err;
+                            DB::insert("INSERT INTO wa_queue(whatsapp_no, is_send, created_at, msg, file_link) VALUES('".$number."', 0, now(), '".$caption."', '".$file_link."');");
+                        } else {
+                            //echo $response;
+                            $g = json_decode($response,true);
+                            if($g["status"] == true)
+                            {
+                                echo "success";
+                                DB::insert("INSERT INTO wa_queue(whatsapp_no, is_send, created_at, msg, file_link) VALUES('".$number."', 1, now(), '".$caption."', '".$file_link."');");
+                            }else{
+                                DB::insert("INSERT INTO wa_queue(whatsapp_no, is_send, created_at, msg, file_link) VALUES('".$number."', 0, now(), '".$caption."', '".$file_link."');");
+                            }
+                        }
+                    }
+
+                }
+                //End If
+
+                }
+            }
+            return "";
     }
 
 }
