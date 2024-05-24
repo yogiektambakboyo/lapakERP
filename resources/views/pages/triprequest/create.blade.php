@@ -1,173 +1,190 @@
 @extends('layouts.default', ['appSidebarSearch' => true])
 
-@section('title', 'Create New Purchase Order')
+@section('title', 'Buat Perjalanan')
 
 @section('content')
-<form method="POST" action="{{ route('purchaseorders.store') }}"  enctype="multipart/form-data">
+<form method="POST" action="{{ route('triprequest.store') }}"  enctype="multipart/form-data">
   @csrf
   <div class="panel text-white">
     <div class="panel-heading  bg-teal-600">
-      <div class="panel-title"><h4 class="">@lang('general.lbl_purchase_order_new')</h4></div>
+      <div class="panel-title"><h4 class="">Buat Perjalanan Baru</h4></div>
       <div class="">
-        <a href="{{ route('purchaseorders.index') }}" class="btn btn-default">@lang('general.lbl_cancel')</a>
+        <a href="{{ route('triprequest.index') }}" class="btn btn-default">@lang('general.lbl_cancel')</a>
         <button type="button" id="save-btn" class="btn btn-info">@lang('general.lbl_save')</button>
       </div>
     </div>
     <div class="panel-body bg-white text-black">
         <div class="row mb-3">
           <div class="row mb-3">
-          <div class="col-md-12">
-            <div class="row mb-3">
-              <label class="form-label col-form-label col-md-1">@lang('general.lbl_dated_mmddYYYY')</label>
-              <div class="col-md-2">
-                <input type="text" 
-                name="doc_dated"
-                id="doc_dated"
-                class="form-control" 
-                value="{{ old('purchase_date') }}" required/>
-                @if ($errors->has('purchase_date'))
-                          <span class="text-danger text-left">{{ $errors->first('purchase_date') }}</span>
-                      @endif
-              </div>
+              <div class="col-md-12">
+                
+                <div class="row mb-3">
+                    <label class="form-label col-form-label col-md-1">@lang('general.lbl_dated_mmddYYYY')</label>
+                    <div class="col-md-2">
+                      <input type="text" 
+                      name="doc_dated"
+                      id="doc_dated"
+                      class="form-control" 
+                      value="{{ old('doc_dated') }}" required/>
+                      @if ($errors->has('doc_dated'))
+                                <span class="text-danger text-left">{{ $errors->first('doc_dated') }}</span>
+                            @endif
+                    </div>
 
-              <label class="form-label col-form-label col-md-1">@lang('general.lbl_shipto')</label>
-              <div class="col-md-2">
-                <select class="form-control" 
-                    name="branch_id" id="branch_id" required>
-                    <option value="">@lang('general.lbl_branchselect')</option>
-                    @foreach($branchs as $branch)
-                        <option value="{{ $branch->id }}">{{ $branch->remark }} </option>
-                    @endforeach
-                </select>
-              </div>
+                    <label class="form-label col-form-label col-md-2">Cabang Asal</label>
+                    <div class="col-md-2">
+                      <select class="form-control" 
+                          name="branch_id_source" id="branch_id_source" required>
+                          <option value="">@lang('general.lbl_branchselect')</option>
+                          @foreach($branchs as $branch)
+                              <option value="{{ $branch->id }}">{{ $branch->remark }} </option>
+                          @endforeach
+                      </select>
+                    </div>
 
-              <label class="form-label col-form-label col-md-1">Supplier</label>
-              <div class="col-md-2">
-                <select class="form-control" 
-                    name="supplier_id" id="supplier_id" required>
-                    <option value="">Select Suppliers</option>
-                    @foreach($suppliers as $supplier)
-                        <option value="{{ $supplier->id }}">{{ $supplier->name }} </option>
-                    @endforeach
-                </select>
-              </div>
+                    <label class="form-label col-form-label col-md-2">Cabang Tujuan</label>
+                    <div class="col-md-2">
+                      <select class="form-control" 
+                          name="branch_id_destination" id="branch_id_destination" required>
+                          <option value="">@lang('general.lbl_branchselect')</option>
+                          @foreach($branchsall as $branch)
+                              <option value="{{ $branch->id }}">{{ $branch->remark }} </option>
+                          @endforeach
+                      </select>
+                    </div>
+                </div>
 
-                <label class="form-label col-form-label col-md-1">@lang('general.lbl_remark')</label>
-                <div class="col-md-2">
-                  <input type="text" 
-                  name="remark"
-                  id="remark"
-                  class="form-control" 
-                  value="{{ old('remark') }}"/>
+                <div class="row mb-3">
+                    <label class="form-label col-form-label col-md-1">Staff</label>
+                    <div class="col-md-3">
+                      <select class="form-control" 
+                          name="branch_id_destination" id="branch_id_destination" required>
+                          <option value="">Pilih Staff</option>
+                          @foreach($usersall as $usersall)
+                              <option value="{{ $usersall->id }}">{{ $usersall->name }} </option>
+                          @endforeach
+                      </select>
+                    </div>
+
+
+                    <label class="form-label col-form-label col-md-1">@lang('general.lbl_remark')</label>
+                    <div class="col-md-2">
+                      <input type="text" 
+                      name="remark"
+                      id="remark"
+                      class="form-control" 
+                      value="{{ old('remark') }}"/>
+                      </div>
+                </div>
+
+                <div class="panel-heading bg-teal-600 text-white"><strong>@lang('general.lbl_order_list')</strong></div>
+                <div class="row mb-3">
+                  <div class="col-md-3">
+                    <label class="form-label col-form-label">@lang('general.product')</label>
+                    <select class="form-control" 
+                          name="input_product_id" id="input_product_id" required>
+                          <option value="">@lang('general.lbl_productselect')</option>
+                      </select>
                   </div>
-            </div>
-
-            <div class="panel-heading bg-teal-600 text-white"><strong>@lang('general.lbl_order_list')</strong></div>
-            <div class="row mb-3">
-              <div class="col-md-3">
-                <label class="form-label col-form-label">@lang('general.product')</label>
-                <select class="form-control" 
-                      name="input_product_id" id="input_product_id" required>
-                      <option value="">@lang('general.lbl_productselect')</option>
-                  </select>
-              </div>
 
 
-              <div class="col-md-1">
-                <label class="form-label col-form-label">@lang('general.lbl_uom')</label>
-                <input type="text" 
-                name="input_product_uom"
-                id="input_product_uom"
-                class="form-control" 
-                value="{{ old('input_product_uom') }}" required disabled/>
-              </div>
+                  <div class="col-md-1">
+                    <label class="form-label col-form-label">@lang('general.lbl_uom')</label>
+                    <input type="text" 
+                    name="input_product_uom"
+                    id="input_product_uom"
+                    class="form-control" 
+                    value="{{ old('input_product_uom') }}" required disabled/>
+                  </div>
 
-              <div class="col-md-2">
-                <label class="form-label col-form-label">@lang('general.lbl_price')</label>
-                <input type="text" 
-                name="input_product_price"
-                id="input_product_price"
-                class="form-control" 
-                value="{{ old('input_product_price') }}" required/>
-              </div>
+                  <div class="col-md-2">
+                    <label class="form-label col-form-label">@lang('general.lbl_price')</label>
+                    <input type="text" 
+                    name="input_product_price"
+                    id="input_product_price"
+                    class="form-control" 
+                    value="{{ old('input_product_price') }}" required/>
+                  </div>
 
-              <div class="col-md-1">
-                <label class="form-label col-form-label">@lang('general.lbl_qty')</label>
-                <input type="text" 
-                name="input_product_qty"
-                id="input_product_qty"
-                class="form-control" 
-                value="{{ old('input_product_qty') }}" required/>
-              </div>
+                  <div class="col-md-1">
+                    <label class="form-label col-form-label">@lang('general.lbl_qty')</label>
+                    <input type="text" 
+                    name="input_product_qty"
+                    id="input_product_qty"
+                    class="form-control" 
+                    value="{{ old('input_product_qty') }}" required/>
+                  </div>
 
-              <div class="col-md-1">
-                <label class="form-label col-form-label">@lang('general.lbl_discountrp')</label>
-                <input type="text" 
-                name="input_product_disc"
-                id="input_product_disc"
-                class="form-control" 
-                value="{{ old('input_product_disc') }}" required/>
-              </div>
+                  <div class="col-md-1">
+                    <label class="form-label col-form-label">@lang('general.lbl_discountrp')</label>
+                    <input type="text" 
+                    name="input_product_disc"
+                    id="input_product_disc"
+                    class="form-control" 
+                    value="{{ old('input_product_disc') }}" required/>
+                  </div>
 
-              <div class="col-md-2">
-                <label class="form-label col-form-label">Total</label>
-                <input type="hidden" 
-                name="input_product_vat_total"
-                id="input_product_vat_total"
-                class="form-control" 
-                value="{{ old('input_product_vat_total') }}" required disabled/>
-                <input type="text" 
-                name="input_product_total"
-                id="input_product_total"
-                class="form-control" 
-                value="{{ old('input_product_total') }}" required disabled/>
-              </div>
+                  <div class="col-md-2">
+                    <label class="form-label col-form-label">Total</label>
+                    <input type="hidden" 
+                    name="input_product_vat_total"
+                    id="input_product_vat_total"
+                    class="form-control" 
+                    value="{{ old('input_product_vat_total') }}" required disabled/>
+                    <input type="text" 
+                    name="input_product_total"
+                    id="input_product_total"
+                    class="form-control" 
+                    value="{{ old('input_product_total') }}" required disabled/>
+                  </div>
 
-              <div class="col-md-2">
-                <div class="col-md-12"><label class="form-label col-form-label">_</label></div>
-                <a href="#" id="input_product_submit" class="btn btn-green"><div class="fa-1x"><i class="fas fa-plus fa-fw"></i>@lang('general.lbl_add_product')</div></a>
-              </div>
-            </div>
+                  <div class="col-md-2">
+                    <div class="col-md-12"><label class="form-label col-form-label">_</label></div>
+                    <a href="#" id="input_product_submit" class="btn btn-green"><div class="fa-1x"><i class="fas fa-plus fa-fw"></i>@lang('general.lbl_add_product')</div></a>
+                  </div>
+                </div>
+                
+
+                <table class="table table-striped" id="order_table">
+                  <thead>
+                  <tr>
+                      <th>@lang('general.lbl_product_name')</th> 
+                      <th scope="col" width="10%">@lang('general.lbl_uom')</th>
+                      <th scope="col" width="10%">@lang('general.lbl_price')</th>
+                      <th scope="col" width="5%">@lang('general.lbl_qty')</th>
+                      <th scope="col" width="10%">Disc</th>
+                      <th scope="col" width="10%">Total</th>
+                      <th scope="col" width="20%" class="nex">@lang('general.lbl_action')</th> 
+                  </tr>
+                  </thead>
+                  <tbody>
+                  </tbody>
+                </table> 
+                
             
+                <br>
+                <div class="row mb-3">
+                  <label class="form-label col-form-label col-md-8 text-end"><h2>Sub Total </h2></label>
+                  <div class="col-md-4">
+                    <h3 class="text-end"><label id="sub-total">0</label></h3>
+                  </div>
 
-            <table class="table table-striped" id="order_table">
-              <thead>
-              <tr>
-                  <th>@lang('general.lbl_product_name')</th> 
-                  <th scope="col" width="10%">@lang('general.lbl_uom')</th>
-                  <th scope="col" width="10%">@lang('general.lbl_price')</th>
-                  <th scope="col" width="5%">@lang('general.lbl_qty')</th>
-                  <th scope="col" width="10%">Disc</th>
-                  <th scope="col" width="10%">Total</th>
-                  <th scope="col" width="20%" class="nex">@lang('general.lbl_action')</th> 
-              </tr>
-              </thead>
-              <tbody>
-              </tbody>
-            </table> 
-            
-        
-            <br>
-            <div class="row mb-3">
-              <label class="form-label col-form-label col-md-8 text-end"><h2>Sub Total </h2></label>
-              <div class="col-md-4">
-                <h3 class="text-end"><label id="sub-total">0</label></h3>
+                  <label class="form-label col-form-label col-md-8 text-end d-none"><h2>@lang('general.lbl_tax') </h2></label>
+                  <div class="col-md-4  d-none">
+                    <h3 class="text-end"><label id="vat-total">0</label></h3>
+                  </div>
+
+                  <label class="form-label col-form-label col-md-8 text-end "><h1>Total</h1></label>
+                  <div class="col-md-4">
+                    <h1 class="display-5 text-end"><label id="result-total">Rp. 0</label></h1>
+                  </div>
+                </div>
               </div>
 
-              <label class="form-label col-form-label col-md-8 text-end d-none"><h2>@lang('general.lbl_tax') </h2></label>
-              <div class="col-md-4  d-none">
-                <h3 class="text-end"><label id="vat-total">0</label></h3>
-              </div>
+            <div class="col-md-12">
 
-              <label class="form-label col-form-label col-md-8 text-end "><h1>Total</h1></label>
-              <div class="col-md-4">
-                <h1 class="display-5 text-end"><label id="result-total">Rp. 0</label></h1>
-              </div>
             </div>
-          </div>
 
-          <div class="col-md-12">
-          </div>
         </div>
     </div>
   </div>
@@ -200,7 +217,7 @@
           });
           $('#schedule_date').val(formattedToday);
 
-          var url = "{{ route('purchaseorders.getproduct') }}";
+          var url = "{{ route('triprequest.getproduct') }}";
           var lastvalurl = "XX";
           console.log(url);
           url = url.replace(lastvalurl, $(this).val())
