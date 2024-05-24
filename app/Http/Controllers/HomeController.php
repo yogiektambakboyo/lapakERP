@@ -543,11 +543,15 @@ class HomeController extends Controller
                 $result_1 = [];
                 $result_2 = [];
 
-                $dbname = base64_decode($_GET["dbname"]);
+                $dbname      = base64_decode($_GET["dbname"]);
                 $layout_name = base64_decode($_GET["layout_name"]);
-                $doc_no = base64_decode($_GET["doc_no"]);
-                $doc_column = base64_decode($_GET["doc_column"]);
-                $wa_no = base64_decode($_GET["wa_no"]);
+                $doc_no      = base64_decode($_GET["doc_no"]);
+                $doc_column  = base64_decode($_GET["doc_column"]);
+                $wa_no       = base64_decode($_GET["wa_no"]);
+                $msg_greeting       = empty($_GET["msg_greeting"])?'':base64_decode($_GET["msg_greeting"]);
+                $msg_content       = empty($_GET["msg_content"])?'':base64_decode($_GET["msg_content"]);
+                $msg_closed       = empty($_GET["msg_closed"])?'':base64_decode($_GET["msg_closed"]);
+                $msg_disclaimer       = empty($_GET["msg_disclaimer"])?'':base64_decode($_GET["msg_disclaimer"]);
 
                 if($layout_name != 'Purchase Order'){
                     exit("failed wrong layout");
@@ -740,7 +744,8 @@ class HomeController extends Controller
 
                         //$number = $_GET["no"];
                         $number = $wa_no;
-                        $caption = "Terlampir Dokumen ".$layout_name." *Nomor  ".$doc_no."*";
+                        //$caption = "Terlampir Dokumen ".$layout_name." *Nomor  ".$doc_no."*";
+                        $caption = $msg_greeting." \r\n\r\n ".$msg_content." \r\n\r\n ".$msg_closed." \r\n\r\n "."_".$msg_disclaimer."_";
                         //$caption = $_GET["caption"];
                         $file = $file_link;
                         //$file = $_GET["file"];
