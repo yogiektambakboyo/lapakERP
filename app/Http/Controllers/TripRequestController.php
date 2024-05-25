@@ -288,7 +288,6 @@ class TripRequestController extends Controller
         $data = $this->data;
         $suppliers = Supplier::join('users_branch as ub','ub.branch_id', '=', 'suppliers.branch_id')->where('ub.user_id','=',$user->id)->get(['suppliers.id','suppliers.name']);
         $payment_type = ['Cash','BCA - Debit','BCA - Kredit','Mandiri - Debit','Mandiri - Kredit','Transfer','QRIS'];
-        $users = User::join('users_branch as ub','ub.branch_id', '=', 'users.branch_id')->where('ub.user_id','=',$user->id)->where('users.job_id','=',2)->get(['users.id','users.name']);
         $usersall = User::join('users_branch as ub','ub.branch_id', '=', 'users.branch_id')->where('ub.user_id','=',$user->id)->whereIn('users.job_id',[1,2])->orderBy('users.name','asc')->get(['users.id','users.name']);
         
         return view('pages.triprequest.show',[
@@ -348,7 +347,7 @@ class TripRequestController extends Controller
      * 
      * @return \Illuminate\Http\Response
      */
-    public function edit(Purchase $purchase) 
+    public function edit(TripRequest $triprequest) 
     {
         $user = Auth::user();
         $id = $user->roles->first()->id;
@@ -357,15 +356,16 @@ class TripRequestController extends Controller
         $data = $this->data;
         $suppliers = Supplier::join('users_branch as ub','ub.branch_id', '=', 'suppliers.branch_id')->where('suppliers.name','!=','PUSAT')->where('ub.user_id','=',$user->id)->get(['suppliers.id','suppliers.name']);
         $payment_type = ['Cash','BCA - Debit','BCA - Kredit','Mandiri - Debit','Mandiri - Kredit','Transfer','QRIS'];
-        $users = User::join('users_branch as ub','ub.branch_id', '=', 'users.branch_id')->where('ub.user_id','=',$user->id)->where('users.job_id','=',2)->get(['users.id','users.name']);
+        $usersall = User::join('users_branch as ub','ub.branch_id', '=', 'users.branch_id')->where('ub.user_id','=',$user->id)->whereIn('users.job_id',[1,2])->orderBy('users.name','asc')->get(['users.id','users.name']);
         $usersReferral = User::get(['users.id','users.name']);
         return view('pages.triprequest.edit',[
             'data' => $data,
             'suppliers' => $suppliers,
+            'branchsall' => Branch::where('branch.id','>','1')->get(['branch.id','branch.remark']),
             'branchs' => Branch::join('users_branch as ub','ub.branch_id', '=', 'branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']),
-            'users' => $users,
-            'purchase' => $purchase,
-            'purchaseDetails' => PurchaseDetail::join('purchase_master as om','om.purchase_no','=','purchase_detail.purchase_no')->join('product_sku as ps','ps.id','=','purchase_detail.product_id')->join('product_uom as u','u.product_id','=','purchase_detail.product_id')->join('uom as um','um.id','=','u.uom_id')->where('purchase_detail.purchase_no',$purchase->purchase_no)->get(['um.remark as uom','purchase_detail.qty','purchase_detail.price','purchase_detail.subtotal as total','ps.id','ps.remark as product_name','purchase_detail.discount']),
+            'usersall' => $usersall,
+            'purchase' => $triprequest,
+            'TripDetails' => TripDetail::join('trip_request as om','om.doc_no','=','trip_detail.doc_no')->join('product_sku as ps','ps.id','=','trip_detail.product_id')->where('trip_detail.doc_no',$triprequest->doc_no)->get(['trip_detail.uom as uom','trip_detail.qty','trip_detail.price','trip_detail.total as subtotal','ps.id','ps.remark as product_name']),
             'usersReferrals' => $usersReferral,
             'payment_type' => $payment_type, 'company' => Company::get()->first(),
         ]);
@@ -407,34 +407,32 @@ class TripRequestController extends Controller
      * 
      * @return \Illuminate\Http\Response
      */
-    public function update(Purchase $purchase, Request $request) 
+    public function update(TripRequest $triprequest, Request $request) 
     {
 
         $user = Auth::user();
-        $purchase_no = $request->get('purchase_no');
+        $doc_no = $request->get('doc_no');
 
-        PurchaseDetail::where('purchase_no', $purchase_no)->delete();
-
-        $res_purchase = $purchase->update(
+        TripDetail::where('doc_no', $doc_no)->delete();
+        
+        $res_update = TripRequest::where('doc_no', $doc_no)->update(
             array_merge(
                 ['updated_by'   => $user->id],
-                ['dated' => Carbon::createFromFormat('d-m-Y', $request->get('dated'))->format('Y-m-d') ],
-                ['supplier_id' => $request->get('supplier_id') ],
-                ['supplier_name' => $request->get('supplier_name') ],
-                ['total' => $request->get('total_order') ],
-                ['total_vat' => $request->get('total_vat') ],
+                ['updated_at'   => date('Y-m-d H:i:s')],
+                ['dated_start' => Carbon::createFromFormat('d-m-Y', $request->get('dated_start'))->format('Y-m-d') ],
+                ['dated_end' => Carbon::createFromFormat('d-m-Y', $request->get('dated_end'))->format('Y-m-d') ],
                 ['remark' => $request->get('remark') ],
-                ['branch_id' => $request->get('branch_id')],
-                ['total_discount' => $request->get('total_discount') ],
-                ['branch_name' => $request->get('branch_name')],
+                ['location_source' => $request->get('location_source') ],
+                ['location_destination' => $request->get('location_destination') ],
+                ['total' => $request->get('total') ],
             )
         );
 
-        if(!$res_purchase){
+        if(!$res_update){
             $result = array_merge(
                 ['status' => 'failed'],
                 ['data' => ''],
-                ['message' => 'Save purchase failed'],
+                ['message' => 'Save trip failed'],
             );
     
             return $result;
@@ -442,29 +440,26 @@ class TripRequestController extends Controller
 
 
         for ($i=0; $i < count($request->get('product')); $i++) { 
-            $res_purchase_detail = PurchaseDetail::create(
+            $res_upd_detail = TripDetail::create(
                 array_merge(
-                    ['purchase_no' => $purchase_no],
+                    ['doc_no' => $doc_no],
                     ['product_id' => $request->get('product')[$i]["id"]],
                     ['qty' => $request->get('product')[$i]["qty"]],
                     ['price' => $request->get('product')[$i]["price"]],
-                    ['subtotal' => $request->get('product')[$i]["total"]],
-                    ['subtotal_vat' => floatval($request->get('product')[$i]["total"])*(1+(floatval($request->get('product')[$i]["vat_total"])/100))],
-                    ['vat' => $request->get('product')[$i]["vat_total"]],
-                    ['discount' => $request->get('product')[$i]["disc"]],
-                    ['vat_total' => (floatval($request->get('product')[$i]["vat_total"])*floatval($request->get('product')[$i]["total"]))/100],
-                    ['product_remark' => $request->get('product')[$i]["abbr"]],
+                    ['total' => $request->get('product')[$i]["total"]],
+                    ['remark' => $request->get('product')[$i]["abbr"]],
                     ['uom' => $request->get('product')[$i]["uom"]],
                     ['seq' => $i ],
+                    ['created_by' => $user->id],
                 )
             );
 
 
-            if(!$res_purchase_detail){
+            if(!$res_upd_detail){
                 $result = array_merge(
                     ['status' => 'failed'],
                     ['data' => ''],
-                    ['message' => 'Save purchase detail failed'],
+                    ['message' => 'Save trip detail failed'],
                 );
         
                 return $result;
@@ -474,7 +469,7 @@ class TripRequestController extends Controller
 
         $result = array_merge(
             ['status' => 'success'],
-            ['data' => $purchase_no],
+            ['data' => $doc_no],
             ['message' => 'Save Successfully'],
         );
 

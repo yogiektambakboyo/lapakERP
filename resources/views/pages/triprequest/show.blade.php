@@ -5,7 +5,7 @@
 @section('content')
   <div class="panel text-white">
     <div class="panel-heading  bg-teal-600">
-      <div class="panel-title"><h4 class="">No Perjalanan {{ $purchase->purchase_no }}</h4></div>
+      <div class="panel-title"><h4 class="">No Perjalanan {{ $purchase->doc_no }}</h4></div>
       <div class="">
         <a href="{{ route('triprequest.print', $purchase->id) }}" class="btn btn-warning">@lang('general.lbl_print') </a>
         <a href="{{ route('triprequest.index') }}" class="btn btn-default">@lang('general.lbl_back') </a>

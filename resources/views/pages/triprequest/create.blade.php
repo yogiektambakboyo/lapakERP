@@ -396,7 +396,7 @@
               {
                 position: 'top-end',
                 icon: 'warning',
-                text: 'Please choose at least 1 product',
+                text: 'Silahkan pilih dahulu minimal 1 produk',
                 showConfirmButton: false,
                 imageHeight: 30, 
                 imageWidth: 30,   
