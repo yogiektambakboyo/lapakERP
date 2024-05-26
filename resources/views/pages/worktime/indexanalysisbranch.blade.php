@@ -4,7 +4,7 @@
 
 @section('content')
     <div class="bg-light p-4 rounded">
-        <h1>Analisa Kehadiran per Staff</h1>
+        <h1>Analisa Kehadiran per Cabang</h1>
         <div class="lead row mb-3">
             <div class="col-md-10">
                 <div class="col-md-12">
@@ -25,10 +25,10 @@
 
         <div class="row mt-2">
             <div class="col-md-2">
-                <h4>Nama</h4>
+                <h4>Periode</h4>
             </div>
             <div class="col-md-4">
-                <h4>{{  count($worktime)<=0?'':$worktime[0]->name }}</h4>
+                <h4>{{  $filter_begin_date.' - '.$filter_end_date }}</h4>
             </div>
 
             <div class="col-md-3">
@@ -49,15 +49,10 @@
                 <h4>Jumlah Izin</h4>
             </div>
             <div class="col-md-3">
-                <h4>{{  $leave==null?'':(count($leave)) }}</h4>
+                <h4>{{  (count($leave)) }}</h4>
             </div>
 
-            <div class="col-md-2">
-                <h4>Periode</h4>
-            </div>
-            <div class="col-md-10">
-                <h4>{{  $filter_begin_date.' - '.$filter_end_date }}</h4>
-            </div>
+           
         </div>
 
         <div class="row mt-4">
@@ -73,8 +68,8 @@
         
                         @foreach($worktime as $order)
                             <tr>
-                                <td>{{ $order->dated }}</td>
-                                <td>{{ $order->status }}</td>
+                                <td>{{ $order->name }}</td>
+                                <td>{{ $order->sum }}</td>
                             </tr>
                         @endforeach
                     </tbody>
@@ -84,8 +79,8 @@
                 <table class="table table-striped" id="table_leave">
                     <thead>
                     <tr>
-                        <th>Tgl</th>
-                        <th>Reason</th>
+                        <th>Nama</th>
+                        <th>Jumlah Izin</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -113,7 +108,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form action="{{ route('presenceanalysis.search') }}" method="GET">   
+                    <form action="{{ route('presenceanalysisbranch.search') }}" method="GET">   
                         @csrf 
                         <div class="col-md-10">
                             <label class="form-label col-form-label col-md-4">@lang('general.lbl_branch')</label>
@@ -128,16 +123,7 @@
                             </select>
                         </div>
 
-                        <div class="col-md-10">
-                            <label class="form-label col-form-label col-md-4">Staff</label>
-                        </div>
-                        <div class="col-md-12">
-                            <select class="form-control" 
-                                name="filter_user_id" id="filter_user_id">
-                                <option value="%">Pilih Staff</option>
-                            </select>
-                        </div>
-
+            
                         <div class="col-md-12">
                             <label class="form-label col-form-label col-md-4">@lang('general.lbl_date_start')</label>
                         </div>
@@ -263,39 +249,6 @@
         );
     });
 
-
-    $('#filter_branch_id').on('change', function(){
-        const res = axios.get("{{ route('presenceanalysis.getallstaff') }}", {
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            params: {
-                branch_id : $('#filter_branch_id').find(':selected').val()
-            }
-        }).then(resp => {
-            if(resp.data.length<=0){
-                Swal.fire(
-                {
-                    position: 'top-end',
-                    icon: 'warning',
-                    text: 'Data tidak ditemukan',
-                    showConfirmButton: false,
-                    imageHeight: 30, 
-                    imageWidth: 30,   
-                    timer: 1500
-                    }
-                );
-            }else{
-                    $("#filter_user_id").find("option").remove();   
-                    for (let index = 0; index < resp.data.data.length; index++) {
-                        const element = resp.data.data[index];
-                        $("#filter_user_id").append(new Option(""+element.name, ""+element.id));
-                    }
-            }
-            
-        });
-            
-    });
 
 </script>
 @endpush
