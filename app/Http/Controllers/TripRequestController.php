@@ -303,7 +303,7 @@ class TripRequestController extends Controller
         ]);
     }
 
-    public function print(Purchase $purchase) 
+    public function print(TripRequest $triprequest) 
     {
         $user = Auth::user();
         $id = $user->roles->first()->id;
@@ -315,26 +315,25 @@ class TripRequestController extends Controller
         $payment_type = ['Cash','BCA - Debit','BCA - Kredit','Mandiri - Debit','Mandiri - Kredit','Transfer','QRIS'];
         $users = User::join('users_branch as ub','ub.branch_id', '=', 'users.branch_id')->where('ub.user_id','=',$user->id)->where('users.job_id','=',2)->get(['users.id','users.name']);
 
-        $pdf = PDF::setOptions(['isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true])->loadView('pages.purchaseorders.print', [
-            'data' => $data,
-            'suppliers' => $suppliers,
-            'branchs' => Branch::join('users_branch as ub','ub.branch_id', '=', 'branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']),
-            'users' => $users,
-            'settings' => Settings::get(),
-            'purchase' => $purchase,
-            'purchaseDetails' => PurchaseDetail::join('purchase_master as om','om.purchase_no','=','purchase_detail.purchase_no')->join('branch as bh','bh.id','=','om.branch_id')->join('product_sku as ps','ps.id','=','purchase_detail.product_id')->join('product_uom as u','u.product_id','=','purchase_detail.product_id')->join('uom as um','um.id','=','u.uom_id')->where('purchase_detail.purchase_no',$purchase->purchase_no)->get(['um.remark as uom','purchase_detail.qty','purchase_detail.price','purchase_detail.subtotal as total','ps.id','ps.remark as product_name','purchase_detail.discount','bh.remark as branch_name','bh.address']),
-            'usersReferrals' => User::get(['users.id','users.name']),
-            'payment_type' => $payment_type,
-        ])->setOptions(['defaultFont' => 'sans-serif'])->setPaper('a4', 'landscape');
-        return $pdf->stream('invoice.pdf');
+        $usersall = User::join('users_branch as ub','ub.branch_id', '=', 'users.branch_id')->where('ub.user_id','=',$user->id)->whereIn('users.job_id',[1,2])->orderBy('users.name','asc')->get(['users.id','users.name']);
+
+        $product = DB::select(" select om.total,om.doc_no,u.name,0 as vat,od.qty,od.product_id,0 as discount,od.price,0 as subtotal_vat,od.total as subtotal,od.remark as remark,od.remark as abbr,od.uom as uom,om.dated_start,om.dated_end,om.user_id,b.remark as location_source,b2.remark as  location_destination,om.remark as d_remark
+        from trip_detail od 
+        join trip_request om on om.doc_no = od.doc_no
+        join branch b on b.id::character varying=location_source
+        join branch b2 on b2.id::character varying=location_destination
+        join users u on u.id = om.user_id
+        where od.doc_no='".$triprequest->doc_no."' ");
+
         return view('pages.triprequest.print',[
+            'settings' => Settings::get(),
             'data' => $data,
             'suppliers' => $suppliers,
             'branchs' => Branch::join('users_branch as ub','ub.branch_id', '=', 'branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']),
-            'users' => $users,
-            'settings' => Settings::get(),
-            'purchase' => $purchase,
-            'purchaseDetails' => PurchaseDetail::join('purchase_master as om','om.purchase_no','=','purchase_detail.purchase_no')->join('branch as bh','bh.id','=','om.branch_id')->join('product_sku as ps','ps.id','=','purchase_detail.product_id')->join('product_uom as u','u.product_id','=','purchase_detail.product_id')->join('uom as um','um.id','=','u.uom_id')->where('purchase_detail.purchase_no',$purchase->purchase_no)->get(['um.remark as uom','purchase_detail.qty','purchase_detail.price','purchase_detail.subtotal as total','ps.id','ps.remark as product_name','purchase_detail.discount','bh.remark as branch_name','bh.address']),
+            'users' => $usersall,
+            'branchsall' => Branch::where('branch.id','>','1')->get(['branch.id','branch.remark']),
+            'purchase' => $product[0],
+            'purchaseDetails' => TripDetail::join('trip_request as om','om.doc_no','=','trip_detail.doc_no')->join('product_sku as ps','ps.id','=','trip_detail.product_id')->where('trip_detail.doc_no',$triprequest->doc_no)->get(['trip_detail.uom as uom','trip_detail.qty','trip_detail.price','trip_detail.total as subtotal','ps.id','trip_detail.remark as product_name']),
             'usersReferrals' => User::get(['users.id','users.name']),
             'payment_type' => $payment_type, 'company' => Company::get()->first(),
         ]);
@@ -382,7 +381,7 @@ class TripRequestController extends Controller
     {
         $data = $this->data;
         $user = Auth::user();
-        $product = DB::select(" select u.name,0 as vat,od.qty,od.product_id,0 as discount,od.price,0 as subtotal_vat,od.total as subtotal,od.remark as remark,od.remark as abbr,od.uom as uom,om.dated_start,om.dated_end,om.user_id,b.remark as location_destination,b2.remark as  location_source,om.remark as d_remark
+        $product = DB::select(" select u.name,0 as vat,od.qty,od.product_id,0 as discount,od.price,0 as subtotal_vat,od.total as subtotal,od.remark as remark,od.remark as abbr,od.uom as uom,om.dated_start,om.dated_end,om.user_id,b.remark as location_source,b2.remark as  location_destination,om.remark as d_remark
         from trip_detail od 
         join trip_request om on om.doc_no = od.doc_no
         join branch b on b.id::character varying=location_source
