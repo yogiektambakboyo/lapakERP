@@ -259,45 +259,28 @@
 <script type="text/javascript">
     $(document).ready(function () {
 
-        document.addEventListener('DOMContentLoaded', function () {
-            let table = new DataTable('#example', {
+        $(document).ready(function () {
+        $('#example').DataTable(
+            {
                 dom: 'Bfrtip',
                 buttons: [
-                        {
-                            extend: 'copy',
-                            text: 'Copy',
-                            className: 'btn btn-default',
-                            exportOptions: {
-                                columns: ':not(.noexport)'
-                            }
-                        },
-                        {
-                            extend: 'csv',
-                            text: 'CSV',
-                            className: 'btn btn-default',
-                            exportOptions: {
-                                columns: ':not(.noexport)'
-                            }
-                        },
-                        {
-                            extend: 'excel',
-                            text: 'Excel',
-                            className: 'btn btn-default',
-                            exportOptions: {
-                                columns: ':not(.noexport)'
-                            }
-                        },
-                        {
-                            extend: 'pdf',
-                            text: 'PDF',
-                            className: 'btn btn-default',
-                            exportOptions: {
-                                columns: ':not(.noexport)'
-                            }
-                        },
+                    {
+                        extend: 'copyHtml5',
+                        exportOptions: {
+                            columns: ':not(.nex)'
+                        }
+                    },
+                    {
+                        extend: 'excelHtml5',
+                        exportOptions: {
+                            columns: ':not(.nex)'
+                        }
+                    }
                 ]
-            });
-        });
+            }
+        );
+    });
+
 
     });
 </script>
