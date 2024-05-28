@@ -1,10 +1,10 @@
 @extends('layouts.default', ['appSidebarSearch' => true])
 
-@section('title', 'Laporan - Serah Terima')
+@section('title', 'Laporan - Pengiriman WA')
 
 @section('content')
     <div class="bg-light p-4 rounded">
-        <h1>@lang('general.lbl_report') - @lang('general.lbl_invoice')</h1>
+        <h1>@lang('general.lbl_report') - Pengiriman WhatsApp </h1>
         <div class="lead row mb-3">
             <div class="col-md-10">
                 <div class="col-md-8">
@@ -24,17 +24,10 @@
         <table class="table table-striped" id="example">
             <thead>
             <tr>
-                <th scope="col" width="12%">@lang('general.lbl_branch')</th>
-                <th scope="col" width="6%">@lang('general.lbl_dated')</th>
-                <th>Shift</th>
-                <th scope="col">@lang('general.invoice_no')</th>    
-                <th scope="col">Nama Tamu</th>    
-                <th scope="col">Jenis Kelamin</th>    
-                <th scope="col">Total</th>    
-                <th scope="col" width="8%">Pembayaran</th>    
-                <th scope="col"  width="8%">@lang('general.lbl_type_payment')</th>  
-                <th scope="col">Edit At</th>          
-                <th scope="col" width="8%">Created By</th>    
+                <th scope="col" width="12%">Nomor Tujuan</th>
+                <th>Pesan</th>
+                <th scope="col" width="12%">Link File</th>
+                <th scope="col">Status</th>          
                 <th scope="col">Created At</th>    
             </tr>
             </thead>
@@ -42,17 +35,10 @@
 
                 @foreach($report_data as $rdata)
                     <tr>
-                        <th scope="row">{{ $rdata->branch_name }}</th>
-                        <td>{{ Carbon\Carbon::parse($rdata->dated)->format('d-m-Y') }}</td>
-                        <td>{{ $rdata->shift_name }}</td>
-                        <td>{{ $rdata->invoice_no }}</td>
-                        <td>{{ $rdata->customers_name }}</td>
-                        <td>{{ $rdata->gender }}</td>
-                        <td>{{ number_format($rdata->total,0,',','.') }}</td>
-                        <td>{{ number_format($rdata->total_payment,0,',','.') }}</td>
-                        <td>{{ $rdata->payment_type }}</td>
-                        <td>{{ $rdata->updated_at }}</td>
-                        <td>{{ $rdata->created_by_name }}</td>
+                        <th scope="row">{{ $rdata->whatsapp_no }}</th>
+                        <td>{{ $rdata->msg }}</td>
+                        <td>{{ $rdata->file_link }}</td>
+                        <td>{{ $rdata->is_send }}</td>
                         <td>{{ $rdata->created_at }}</td>
                     </tr>
                 @endforeach
@@ -77,15 +63,6 @@
                         @csrf 
                         <div class="col-md-10">
                             <label class="form-label col-form-label col-md-4">@lang('general.lbl_branch')</label>
-                        </div>
-                        <div class="col-md-12">
-                            <select class="form-control" 
-                                name="filter_branch_id_in" id="filter_branch_id_in">
-                                <option value="%">-- All -- </option>
-                                @foreach($branchs as $branchx)
-                                    <option value="{{ $branchx->id }}">{{ $branchx->remark }} </option>
-                                @endforeach
-                            </select>
                         </div>
 
                         <div class="col-md-12">
@@ -118,18 +95,7 @@
                         </div>
 
 
-                        <div class="col-md-10">
-                            <label class="form-label col-form-label col-md-4">Shift</label>
-                        </div>
-                        <div class="col-md-12">
-                            <select class="form-control" 
-                            name="filter_shift_in" id="filter_shift_in">
-                            <option value="%">-- All -- </option>
-                            @foreach($shifts as $shift)
-                                <option value="{{ $shift->id }}">{{ $shift->remark }} ( {{ $shift->time_start }} - {{ $shift->time_end }}) </option>
-                            @endforeach
-                        </select>
-                        </div>
+                        
                         <br>
                         <div class="col-md-12">
                             <button type="submit" class="btn btn-primary form-control">@lang('general.lbl_apply')</button>

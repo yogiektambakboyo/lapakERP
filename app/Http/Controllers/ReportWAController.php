@@ -52,23 +52,15 @@ class ReportWAController extends Controller
         $user = Auth::user();
         $id = $user->roles->first()->id;
         $this->getpermissions($id);
-        $branchs = Branch::join('users_branch as ub','ub.branch_id', '=', 'branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']);        
 
-        $shifts = Shift::orderBy('shift.id')->get(['shift.id','shift.remark','shift.id','shift.time_start','shift.time_end']); 
         $report_data = DB::select("
-                select  c.gender,b.remark as branch_name,im.dated,s.remark as shift_name,im.invoice_no,im.customers_name,im.total,im.total_payment,im.payment_type,coalesce(im.ref_no,'-') ref_no,u.name as created_by_name,im.created_at,im.updated_at,im.updated_by
-                from invoice_master im 
-                join customers c on c.id = im.customers_id 
-                join users u on u.id=im.created_by
-                join branch b on b.id = c.branch_id
-                join users_branch as ub on ub.branch_id = b.id and ub.user_id = '".$user->id."'
-                left join shift s on im.created_at::time  between s.time_start and s.time_end
-                where im.dated>now()-interval'7 days'             
+                select id,whatsapp_no,case when is_send=1 then 'Terkirim' else 'Pending' end as is_send,created_at,msg,file_link  from wa_queue wq 
+                where created_at>now()-interval'1 days' order by created_at desc         
         ");
         $data = $this->data;
         $keyword = "";
         $act_permission = $this->act_permission[0];
-        return view('pages.reports.waqueue',['company' => Company::get()->first()], compact('shifts','branchs','data','keyword','act_permission','report_data'))->with('i', ($request->input('page', 1) - 1) * 5);
+        return view('pages.reports.waqueue',['company' => Company::get()->first()], compact('data','keyword','act_permission','report_data'))->with('i', ($request->input('page', 1) - 1) * 5);
     }
 
    
@@ -82,30 +74,14 @@ class ReportWAController extends Controller
         $data = $this->data;
         $act_permission = $this->act_permission[0];
         
-        $branchs = Branch::join('users_branch as ub','ub.branch_id', '=', 'branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']);        
-        $shifts = Shift::orderBy('shift.id')->get(['shift.id','shift.remark','shift.id','shift.time_start','shift.time_end']); 
-        
         $begindate = date(Carbon::parse($request->filter_begin_date_in)->format('Y-m-d'));
         $enddate = date(Carbon::parse($request->filter_end_date_in)->format('Y-m-d'));
-        $branchx = $request->filter_branch_id_in;
-        $shift_id = $request->filter_shift_id_in;
-
-        if($request->export=='Export Excel'){
-             $strencode = base64_encode($shift_id.'#'.$begindate.'#'.$enddate.'#'.$branchx);
-            return Excel::download(new ReportInvoicesExport($strencode), 'report_invoice_'.Carbon::now()->format('YmdHis').'.xlsx');
-        }else{
-            $report_data = DB::select("
-                select  c.gender,b.remark as branch_name,im.dated,s.remark as shift_name,im.invoice_no,im.customers_name,im.total,im.total_payment,im.payment_type,coalesce(im.ref_no,'-') ref_no,u.name as created_by_name,im.created_at,im.updated_at,im.updated_by
-                from invoice_master im 
-                join customers c on c.id = im.customers_id and c.branch_id::character varying like '%".$branchx."%'
-                join users u on u.id=im.created_by
-                join branch b on b.id = c.branch_id
-                join users_branch as ub on ub.branch_id = b.id and ub.user_id = ".$user->id."
-                left join shift s on im.created_at::time  between s.time_start and s.time_end and s.id::character varying like '%".$shift_id."%'
-                where im.dated between '".$begindate."' and '".$enddate."'              
+    
+        $report_data = DB::select("
+                 select id,whatsapp_no,case when is_send=1 then 'Terkirim' else 'Pending' end as is_send,created_at,msg,file_link  from wa_queue wq 
+                where created_at between '".$begindate."' and '".$enddate."' order by created_at desc       
             ");         
-            return view('pages.reports.waqueue',['company' => Company::get()->first()], compact('shifts','branchs','data','keyword','act_permission','report_data'))->with('i', ($request->input('page', 1) - 1) * 5);
-        }
+            return view('pages.reports.waqueue',['company' => Company::get()->first()], compact('data','keyword','act_permission','report_data'))->with('i', ($request->input('page', 1) - 1) * 5);
     }
 
 
