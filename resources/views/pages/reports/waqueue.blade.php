@@ -258,9 +258,47 @@
 @push('scripts')
 <script type="text/javascript">
     $(document).ready(function () {
-        $('#example').DataTable(
-            
-        );
+
+        document.addEventListener('DOMContentLoaded', function () {
+            let table = new DataTable('#example', {
+                dom: 'Bfrtip',
+                buttons: [
+                        {
+                            extend: 'copy',
+                            text: 'Copy',
+                            className: 'btn btn-default',
+                            exportOptions: {
+                                columns: ':not(.noexport)'
+                            }
+                        },
+                        {
+                            extend: 'csv',
+                            text: 'CSV',
+                            className: 'btn btn-default',
+                            exportOptions: {
+                                columns: ':not(.noexport)'
+                            }
+                        },
+                        {
+                            extend: 'excel',
+                            text: 'Excel',
+                            className: 'btn btn-default',
+                            exportOptions: {
+                                columns: ':not(.noexport)'
+                            }
+                        },
+                        {
+                            extend: 'pdf',
+                            text: 'PDF',
+                            className: 'btn btn-default',
+                            exportOptions: {
+                                columns: ':not(.noexport)'
+                            }
+                        },
+                ]
+            });
+        });
+
     });
 </script>
 @endpush
