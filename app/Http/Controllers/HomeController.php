@@ -348,7 +348,6 @@ class HomeController extends Controller
     public function send_wa(Request $request) 
     {
             $data = [];
-            //$url_acc = "https://kakikupos.com/send-msg-wa?token=".$val_token."&no=".$whatsapp_no_."&adrotp=".$otp."&name=".base64_encode($name);
             $number = $request->get("no");
             $msg = $request->get("msg");
             $token = $request->get("token");
@@ -653,7 +652,7 @@ class HomeController extends Controller
                         $destination = '/images/user-files/'.$file;
                         File::put(public_path($destination), $decoded);
 
-                        $file_link = "https://kakikupos.com/images/user-files/".$file;
+                        $file_link = "https://notification.lapakkreatif.com/images/user-files/".$file;
 
                         //Send WA
 
