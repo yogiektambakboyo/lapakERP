@@ -1095,6 +1095,10 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
             Route::get('/closeday_search', 'ReportCloseDayController@search')->name('reports.closeday.search');
             Route::get('/invoice', 'ReportInvoiceController@index')->name('reports.invoice.index');
             Route::get('/invoice_search', 'ReportInvoiceController@search')->name('reports.invoice.search');
+
+            Route::get('/waqueue', 'ReportWAController@index')->name('reports.waqueue.index');
+            Route::get('/waqueue_search', 'ReportWAController@search')->name('reports.waqueue.search');
+            
             Route::get('/invoicedetail', 'ReportInvoiceDetailController@index')->name('reports.invoicedetail.index');
             Route::get('/invoicedetail_search', 'ReportInvoiceDetailController@search')->name('reports.invoicedetail.search');
             Route::get('/purchase', 'ReportPurchaseController@index')->name('reports.purchase.index');
