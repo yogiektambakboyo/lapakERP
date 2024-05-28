@@ -118,15 +118,7 @@
                 <div class="modal-body">
                     <form action="{{ route('reports.closeshift.getdata') }}" method="GET">   
                         @csrf 
-                        <div class="col-md-12">
-                            <select class="form-control" 
-                                name="filter_branch_id" id="filter_branch_id" hidden>
-                                @foreach($branchs as $branchx)
-                                    <option value="{{ $branchx->id }}">{{ $branchx->remark }} </option>
-                                @endforeach
-                            </select>
-                        </div>
-
+                       
                         <div class="col-md-12">
                             Apakah anda yakin akan mencetak laporan serah terima?
                         </div>
@@ -142,14 +134,7 @@
                         </div>
 
                        
-                        <div class="col-md-12">
-                            <select class="form-control" hidden 
-                            name="filter_shift" id="filter_shift">
-                            @foreach($shifts as $shift)
-                                <option value="{{ $shift->id }}">{{ $shift->remark }} ( {{ $shift->time_start }} - {{ $shift->time_end }}) </option>
-                            @endforeach
-                        </select>
-                        </div>
+                        
                         <br>
                         <div class="col-md-12">
                             <button type="submit" class="btn btn-primary form-control">@lang('general.lbl_apply')</button>
