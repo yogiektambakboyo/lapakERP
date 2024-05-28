@@ -105,27 +105,6 @@ class ReportWAController extends Controller
                         'sub_menu' => []
                     ],
                     [
-                        'icon' => 'fa fa-box',
-                        'title' => \Lang::get('home.product_management'),
-                        'url' => 'javascript:;',
-                        'caret' => true,
-                        'sub_menu' => []
-                    ],
-		                           [
-                            'icon' => 'fa fa-spa',
-                            'title' => \Lang::get('home.service_management'),
-                        'url' => 'javascript:;',
-                        'caret' => true,
-                        'sub_menu' => []
-                    ],
-                    [
-                        'icon' => 'fa fa-table',
-                        'title' => \Lang::get('home.transaction'),
-                        'url' => 'javascript:;',
-                        'caret' => true,
-                        'sub_menu' => []
-                    ],
-                    [
                         'icon' => 'fa fa-chart-column',
                         'title' => \Lang::get('home.reports'),
                         'url' => 'javascript:;',
@@ -150,36 +129,15 @@ class ReportWAController extends Controller
                     'route-name' => $menu['name']
                 ));
             }
-            if($menu['parent']=='Products'){
+            if($menu['parent']=='Reports'){
                 array_push($this->data['menu'][1]['sub_menu'], array(
                     'url' => $menu['url'],
                     'title' => $menu['remark'],
                     'route-name' => $menu['name']
                 ));
             }
-            if($menu['parent']=='Services'){
-                array_push($this->data['menu'][2]['sub_menu'], array(
-                    'url' => $menu['url'],
-                    'title' => $menu['remark'],
-                    'route-name' => $menu['name']
-                ));
-            }
-            if($menu['parent']=='Transactions'){
-                array_push($this->data['menu'][3]['sub_menu'], array(
-                    'url' => $menu['url'],
-                    'title' => $menu['remark'],
-                    'route-name' => $menu['name']
-                ));
-            }	
-            if($menu['parent']=='Reports'){
-                array_push($this->data['menu'][4]['sub_menu'], array(
-                    'url' => $menu['url'],
-                    'title' => $menu['remark'],
-                    'route-name' => $menu['name']
-                ));
-            }
             if($menu['parent']=='Settings'){
-                array_push($this->data['menu'][5]['sub_menu'], array(
+                array_push($this->data['menu'][2]['sub_menu'], array(
                     'url' => $menu['url'],
                     'title' => $menu['remark'],
                     'route-name' => $menu['name']

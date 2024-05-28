@@ -20,7 +20,6 @@
 	<!-- BEGIN row -->
 	<div class="row">
 		<!-- BEGIN col-6 -->
-		
 	</div>
 @endsection
 
