@@ -159,7 +159,7 @@ class UsersController extends Controller
             'gender' => $gender,
             'active' => $active,
             'data' => $data,'company' => Company::get()->first(),
-            'employeestatusx' => ['On Job Training','Permanent','Outsourcing','Contract','Probation','Leave'],
+            'employeestatusx' => ['On Job Training','Permanent','Outsourcing','Contract','Probation','Cuti','Kampung'],
             'usersReferrals' => $usersReferral,
         ]);
     }
@@ -415,7 +415,7 @@ class UsersController extends Controller
             'userTrainers' => User::where('job_id','=','7')->get(['id','name']),
             'userSkills' => $user_skill,
             'userExperiences' => UserExperience::get(),
-            'employeestatusx' => ['On Job Training','Permanent','Outsourcing','Contract','Probation','Leave'],
+            'employeestatusx' => ['On Job Training','Permanent','Outsourcing','Contract','Probation','Cuti','Kampung'],
             'usersReferrals' => $usersReferral,'company' => Company::get()->first(),
             'usersMutations' => UserMutation::join('job_title as j','j.id','=','users_mutation.job_id')->join('departments as d','d.id','=','users_mutation.department_id')->join('branch as b','b.id','=','users_mutation.branch_id')->where('users_mutation.user_id',$user->id)->orderBy('users_mutation.created_at','ASC')->get(['users_mutation.*','j.remark as job_name','b.remark as branch_name','d.remark as department_name']),
         ],compact('data'));
@@ -459,7 +459,7 @@ class UsersController extends Controller
             'gender' => $gender,
             'active' => $active,
             'data' => $data,
-            'employeestatusx' => ['On Job Training','Permanent','Outsourcing','Contract','Probation','Leave'],
+            'employeestatusx' => ['On Job Training','Permanent','Outsourcing','Contract','Probation','Cuti','Kampung'],
             'usersReferrals' => $usersReferral,
         ]);
     }

@@ -82,6 +82,7 @@ class PresenceAnalysisBranchController extends Controller
         $act_permission = $this->act_permission[0];
 
         $leave = [];
+        $leave_sum = [];
         $worktime_sum = [];
         $filter_end_date = "";
         $filter_begin_date = "";
@@ -92,7 +93,7 @@ class PresenceAnalysisBranchController extends Controller
         join branch b  on b.id = ub.branch_id 
         where ub.branch_id in (select ub2.branch_id from users_branch ub2 where ub2.user_id = ".$user->id."  ) and wt.dated>now()-interval'7 day'
         order by wt.id");
-        return view('pages.worktime.indexanalysisbranch',['company' => Company::get()->first()], compact('worktime_sum','filter_end_date','filter_begin_date','leave','worktime','data','keyword','act_permission','branchs','payment_type'))->with('i', ($request->input('page', 1) - 1) * 5);
+        return view('pages.worktime.indexanalysisbranch',['company' => Company::get()->first()], compact('leave_sum','worktime_sum','filter_end_date','filter_begin_date','leave','worktime','data','keyword','act_permission','branchs','payment_type'))->with('i', ($request->input('page', 1) - 1) * 5);
     }
 
 
@@ -140,18 +141,18 @@ class PresenceAnalysisBranchController extends Controller
         }else{
             $worktime = DB::select("
                 select b.remark as branch_name,u.name,count(c.dated) counter,sum(case when wt.dated is null then 0 else 1 end) as sum from calendar c 
-                join users u on u.id = 772
+                join users u on 1=1
                 join users_branch ub  on ub.user_id = u.id 
-                join branch b  on b.id = ub.branch_id and b.id::character varying like  '%'
+                join branch b  on b.id = ub.branch_id and b.id::character varying like  '%".$request->filter_branch_id."%'
                 left join work_time wt on wt.dated = c.dated and wt.user_id = u.id
-                where c.dated between '".$begindate."' and '".$enddate."' group by u.name,b.remark;
+                where c.dated between '".$begindate."' and '".$enddate."' group by u.name,b.remark order by 2 desc;
             ");
 
             $worktime_sum = DB::select("
                 select count(c.dated) counter,sum(case when wt.dated is null then 0 else 1 end) as sum from calendar c 
-                join users u on u.id = 772
+                join users u on 1=1
                 join users_branch ub  on ub.user_id = u.id 
-                join branch b  on b.id = ub.branch_id and b.id::character varying like  '%'
+                join branch b  on b.id = ub.branch_id and b.id::character varying like '%".$request->filter_branch_id."%'
                 left join work_time wt on wt.dated = c.dated and wt.user_id = u.id
                 where c.dated between '".$begindate."' and '".$enddate."';
             ");
@@ -159,15 +160,25 @@ class PresenceAnalysisBranchController extends Controller
             $leave = DB::select("
                 select u.id as user_id,u.name as dated,count(wt.user_id) as status
                 from calendar c 
-                join users u on u.id = 772
+                join users u on 1=1
                 join users_branch ub  on ub.user_id = u.id 
-                join branch b  on b.id = ub.branch_id and b.id::character varying like  '%'
+                join branch b  on b.id = ub.branch_id and b.id::character varying like '%".$request->filter_branch_id."%'
                 join leave_request wt on c.dated between wt.dated_start and wt.dated_end and wt.user_id = u.id
                 where c.dated between '".$begindate."' and '".$enddate."'
                 group by u.id,u.name
             ");
+
+            $leave_sum = DB::select("
+                select count(wt.user_id) as counter
+                from calendar c 
+                join users u on 1=1
+                join users_branch ub  on ub.user_id = u.id 
+                join branch b  on b.id = ub.branch_id and b.id::character varying like '%".$request->filter_branch_id."%'
+                join leave_request wt on c.dated between wt.dated_start and wt.dated_end and wt.user_id = u.id
+                where c.dated between '".$begindate."' and '".$enddate."'
+            ");
         
-        return view('pages.worktime.indexanalysisbranch',['company' => Company::get()->first()], compact('worktime_sum','filter_end_date','filter_begin_date','leave','worktime','data','keyword','act_permission','branchs'))->with('i', ($request->input('page', 1) - 1) * 5);
+        return view('pages.worktime.indexanalysisbranch',['company' => Company::get()->first()], compact('leave_sum','worktime_sum','filter_end_date','filter_begin_date','leave','worktime','data','keyword','act_permission','branchs'))->with('i', ($request->input('page', 1) - 1) * 5);
         }
     }
 

@@ -140,18 +140,18 @@ class PresenceAnalysisController extends Controller
         }else{
             $worktime = DB::select("
                 select b.remark as branch_name,c.dated,u.id as user_id,u.name,case when wt.dated is null then '-' else to_char(wt.time_in,'HH24:MI')||' - '||to_char(wt.time_out,'HH24:MI') end as status from calendar c 
-                join users u on u.id = 772
+                join users u on u.id = ".$request->filter_user_id."
                 join users_branch ub  on ub.user_id = u.id 
-                join branch b  on b.id = ub.branch_id and b.id::character varying like  '%'
+                join branch b  on b.id = ub.branch_id and b.id::character varying like '%".$request->filter_branch_id."%'
                 left join work_time wt on wt.dated = c.dated and wt.user_id = u.id
                 where c.dated between '".$begindate."' and '".$enddate."';
             ");
 
             $worktime_sum = DB::select("
                 select count(c.dated) counter,sum(case when wt.dated is null then 0 else 1 end) as sum from calendar c 
-                join users u on u.id = 772
+                join users u on u.id = ".$request->filter_user_id."
                 join users_branch ub  on ub.user_id = u.id 
-                join branch b  on b.id = ub.branch_id and b.id::character varying like  '%'
+                join branch b  on b.id = ub.branch_id and b.id::character varying like '%".$request->filter_branch_id."%'
                 left join work_time wt on wt.dated = c.dated and wt.user_id = u.id
                 where c.dated between '".$begindate."' and '".$enddate."';
             ");
@@ -159,9 +159,9 @@ class PresenceAnalysisController extends Controller
             $leave = DB::select("
                 select c.dated,u.id as user_id,u.name,wt.reason as status 
                 from calendar c 
-                join users u on u.id = 772
+                join users u on u.id = ".$request->filter_user_id."
                 join users_branch ub  on ub.user_id = u.id 
-                join branch b  on b.id = ub.branch_id and b.id::character varying like  '%'
+                join branch b  on b.id = ub.branch_id and b.id::character varying like '%".$request->filter_branch_id."%'
                 join leave_request wt on c.dated between wt.dated_start and wt.dated_end and wt.user_id = u.id
                 where c.dated between '".$begindate."' and '".$enddate."'
             ");

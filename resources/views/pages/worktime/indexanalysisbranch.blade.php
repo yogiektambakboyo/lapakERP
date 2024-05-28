@@ -49,7 +49,7 @@
                 <h4>Jumlah Izin</h4>
             </div>
             <div class="col-md-3">
-                <h4>{{  (count($leave)) }}</h4>
+                <h4>{{  count($leave_sum)<=0?'':$leave_sum[0]->counter }}</h4>
             </div>
 
            
