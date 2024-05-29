@@ -652,7 +652,7 @@ class HomeController extends Controller
                         $destination = '/images/user-files/'.$file;
                         File::put(public_path($destination), $decoded);
 
-                        $file_link = "https://notification.lapakkreatif.com/images/user-files/".$file;
+                        $file_link = "https://whatsapp.matadewi.com/images/user-files/".$file;
 
                         //Send WA
 
