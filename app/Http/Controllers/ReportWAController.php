@@ -54,7 +54,7 @@ class ReportWAController extends Controller
         $this->getpermissions($id);
 
         $report_data = DB::select("
-                select id,whatsapp_no,case when is_send=1 then 'Terkirim' else 'Pending' end as is_send,created_at,msg,file_link  from wa_queue wq 
+                select id,whatsapp_no,case when is_send=1 then 'Terkirim' else 'Gagal' end as is_send,created_at,msg,file_link  from wa_queue wq 
                 where created_at>now()-interval'1 days' order by created_at desc         
         ");
         $data = $this->data;
