@@ -192,7 +192,7 @@ class ProductsController extends Controller
             insert into product_stock(product_id,branch_id,qty,created_at,created_by)
             select ps.id,b.id,0,now(),1  from product_sku ps
             join branch b on 1=1
-            where b.id>1 and ps.id::character varying||b.id::character varying not in (select product_id::character varying||branch_id::character varying  from product_stock);
+            where b.id>1 and ps.id=".$my_id.";
         
         ");
 
@@ -200,7 +200,7 @@ class ProductsController extends Controller
             insert into period_stock(periode,product_id,branch_id,balance_begin,balance_end,qty_in,qty_out,created_at,created_by)
             select to_char(now(),'YYYYMM')::int,ps.id,b.id,0,0,0,0,now(),1  from product_sku ps
             join branch b on 1=1
-            where b.id>1 and ps.id::character varying||b.id::character varying not in (select product_id::character varying||branch_id::character varying  from period_stock)
+            where b.id>1 and ps.id=".$my_id.";
             
         ");
 
@@ -208,7 +208,7 @@ class ProductsController extends Controller
             insert into period_price_sell(period,product_id,branch_id,value,created_at,created_by)
             select to_char(now(),'YYYYMM')::int,ps.id,b.id,0,now(),1  from product_sku ps
             join branch b on 1=1
-            where b.id>1 and ps.id::character varying||b.id::character varying not in (select product_id::character varying||branch_id::character varying  from period_price_sell)
+            where b.id>1 and ps.id=".$my_id.";
         ");
 
         return redirect()->route('products.index')

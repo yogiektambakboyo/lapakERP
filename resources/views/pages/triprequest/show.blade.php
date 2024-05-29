@@ -1,14 +1,14 @@
 @extends('layouts.default', ['appSidebarSearch' => true])
 
-@section('title', 'Show Purchase Order')
+@section('title', 'Lihat Perjalanan')
 
 @section('content')
   <div class="panel text-white">
     <div class="panel-heading  bg-teal-600">
-      <div class="panel-title"><h4 class="">Purchase Order {{ $purchase->purchase_no }}</h4></div>
+      <div class="panel-title"><h4 class="">No Perjalanan {{ $purchase->doc_no }}</h4></div>
       <div class="">
-        <a href="{{ route('purchaseorders.print', $purchase->id) }}" class="btn btn-warning">@lang('general.lbl_print') </a>
-        <a href="{{ route('purchaseorders.index') }}" class="btn btn-default">@lang('general.lbl_back') </a>
+        <a href="{{ route('triprequest.print', $purchase->id) }}" target="_blank" class="btn btn-warning">@lang('general.lbl_print') </a>
+        <a href="{{ route('triprequest.index') }}" class="btn btn-default">@lang('general.lbl_back') </a>
       </div>
     </div>
     <div class="panel-body bg-white text-black">
@@ -30,29 +30,39 @@
                       @endif
               </div>
 
-              <label class="form-label col-form-label col-md-1">Shipto</label>
-              <div class="col-md-2">
-                <select class="form-control" 
-                    name="branch_id" id="branch_id" required disabled>
-                    <option value="">@lang('general.lbl_branchselect')</option>
-                    @foreach($branchs as $branch)
-                        <option value="{{ $branch->id }}"  {{ $purchase->branch_id == $branch->id ? 'selected' : '' }}>{{ $branch->remark }} </option>
-                    @endforeach
-                </select>
+              <label class="form-label col-form-label col-md-1">Cabang Asal</label>
+              <div class="col-md-3">
+                <input type="text" 
+                name="location_source"
+                id="location_source"
+                class="form-control" 
+                value="{{ $purchase->location_source }}"
+                required disabled/>
               </div>
 
-              <label class="form-label col-form-label col-md-1">Supplier</label>
-              <div class="col-md-2">
-                <select class="form-control" 
-                    name="supplier_id" id="supplier_id" required disabled>
-                    <option value="">Select Suppliers</option>
-                    @foreach($suppliers as $supplier)
-                        <option value="{{ $supplier->id }}" {{ $purchase->supplier_id == $supplier->id ? 'selected' : '' }} >{{ $supplier->id }} - {{ $supplier->name }} </option>
-                    @endforeach
-                </select>
+              <label class="form-label col-form-label col-md-2">Cabang Tujuan</label>
+              <div class="col-md-3">
+                <input type="text" 
+                name="location_destination"
+                id="location_destination"
+                class="form-control" 
+                value="{{ $purchase->location_destination }}"
+                required disabled/>
               </div>
 
-                <label class="form-label col-form-label col-md-1">@lang('general.lbl_remark')</label>
+                
+            </div>
+
+            <div class="row mb-3">
+              <label class="form-label col-form-label col-md-1">Staff</label>
+                <div class="col-md-2">
+                  <input type="text" 
+                  name="staff"
+                  id="staff"
+                  class="form-control" 
+                  value="{{ $purchase->staff }}" disabled/>
+                  </div>
+              <label class="form-label col-form-label col-md-1">@lang('general.lbl_remark')</label>
                 <div class="col-md-2">
                   <input type="text" 
                   name="remark"
@@ -75,7 +85,6 @@
                   <th scope="col" width="10%">@lang('general.lbl_uom')</th>
                   <th scope="col" width="10%">@lang('general.lbl_price')</th>
                   <th scope="col" width="5%">@lang('general.lbl_qty')</th>
-                  <th scope="col" width="5%">Disc</th>
                   <th scope="col" width="10%">Total</th>
               </tr>
               </thead>
@@ -86,19 +95,19 @@
             
             <br>
             <div class="row mb-3">
-              <label class="form-label col-form-label col-md-9 text-end"><h2>Sub Total </h2></label>
-              <div class="col-md-3">
+              <label class="form-label col-form-label col-md-9 text-end d-none"><h2>Sub Total </h2></label>
+              <div class="col-md-3 d-none">
                 <h3 class="text-end"><label id="sub-total">{{ number_format(($purchase->total-$purchase->total_vat),0,',','.') }}</label></h3>
               </div>
 
               <label class="form-label col-form-label col-md-9 text-end d-none"><h2>@lang('general.lbl_tax') </h2></label>
               <div class="col-md-3 d-none">
-                <h3 class="text-end"><label id="vat-total">{{ number_format($purchase->total_vat,0,',','.') }}</label></h3>
+                <h3 class="text-end"><label id="vat-total">{{ number_format($purchase->total,0,',','.') }}</label></h3>
               </div>
 
               <label class="form-label col-form-label col-md-9 text-end"><h1>Total</h1></label>
               <div class="col-md-3">
-                <h1 class="display-5 text-end"><label id="order-total">Rp. 0</label></h1>
+                <h1 class="display-5 text-end"><label id="order-total">Rp. {{ number_format($purchase->total,0,',','.') }}</label></h1>
               </div>
             </div>
           <div class="col-md-12">
@@ -132,7 +141,7 @@
           });
 
         
-          var url = "{{ route('purchaseorders.getdocdata',$purchase->purchase_no) }}";
+          var url = "{{ route('triprequest.getdocdata',$purchase->doc_no) }}";
           const resGetPO = axios.get(url, {
             headers: {
                 'Content-Type': 'application/json'
@@ -152,6 +161,10 @@
                     }
 
                     orderList.push(product);
+
+                    $('#location_source').val(resp.data[i]["location_source"]);
+                    $('#location_destination').val(resp.data[i]["location_destination"]);
+                    $('#staff').val(resp.data[i]["name"]);
                 }
 
                 for (var i = 0; i < orderList.length; i++){
@@ -163,12 +176,12 @@
                     "uom"         : obj["uom"],
                     "price"       : obj["price"],
                     "qty"         : obj["qty"],
-                    "disc"         : obj["disc"],
                     "total"       : obj["total"],
                   }).draw(false);
-                  order_total = order_total + (parseFloat(orderList[i]["total_vat"]));
+                  order_total = order_total + (parseFloat(orderList[i]["total"]));
                 }
 
+              
                 $('#order-total').text(currency(order_total, { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
 
           });
@@ -186,7 +199,6 @@
             { data: 'uom' },
             { data: 'price' },
             { data: 'qty' },
-            { data: 'disc' },
             { data: 'total' },
         ],
         }); 

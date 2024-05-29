@@ -178,6 +178,19 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
             Route::get('/export', 'PresenceController@export')->name('presence.export');
         });
 
+        Route::group(['prefix' => 'presenceanalysis'], function() {
+            Route::get('/', 'PresenceAnalysisController@index')->name('presenceanalysis.index');
+            Route::get('/search', 'PresenceAnalysisController@search')->name('presenceanalysis.search');
+            Route::get('/getallstaff', 'PresenceAnalysisController@getallstaff')->name('presenceanalysis.getallstaff');
+            Route::get('/export', 'PresenceAnalysisController@export')->name('presenceanalysis.export');
+        });
+
+        Route::group(['prefix' => 'presenceanalysisbranch'], function() {
+            Route::get('/', 'PresenceAnalysisBranchController@index')->name('presenceanalysisbranch.index');
+            Route::get('/search', 'PresenceAnalysisBranchController@search')->name('presenceanalysisbranch.search');
+            Route::get('/export', 'PresenceAnalysisBranchController@export')->name('presenceanalysisbranch.export');
+        });
+
         Route::group(['prefix' => 'leave'], function() {
             Route::get('/', 'LeaveController@index')->name('leave.index');
             Route::get('/search', 'LeaveController@search')->name('leave.search');
@@ -601,6 +614,30 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
             Route::patch('/{branch}/{product}/{dated_start}/{dated_end}/{promo_id}/update', 'PromoController@update')->name('promo.update');
             Route::delete('/{branch}/{product}/{dated_start}/{dated_end}/{promo_id}/delete', 'PromoController@destroy')->name('promo.destroy');
             Route::get('/export', 'PromoController@export')->name('promo.export');
+        });
+
+        Route::group(['prefix' => 'reason'], function() {
+            Route::get('/', 'ReasonController@index')->name('reason.index');
+            Route::get('/create', 'ReasonController@create')->name('reason.create');
+            Route::post('/create', 'ReasonController@store')->name('reason.store');
+            Route::get('/search', 'ReasonController@search')->name('reason.search');
+            Route::get('/{id}/show', 'ReasonController@show')->name('reason.show');
+            Route::get('/{id}/edit', 'ReasonController@edit')->name('reason.edit');
+            Route::patch('/{id}/update', 'ReasonController@update')->name('reason.update');
+            Route::delete('/{id}/delete', 'ReasonController@destroy')->name('reason.destroy');
+            Route::get('/export', 'ReasonController@export')->name('reason.export');
+        });
+
+        Route::group(['prefix' => 'calendar'], function() {
+            Route::get('/', 'CalendarController@index')->name('calendar.index');
+            Route::get('/create', 'CalendarController@create')->name('calendar.create');
+            Route::post('/create', 'CalendarController@store')->name('calendar.store');
+            Route::get('/search', 'CalendarController@search')->name('calendar.search');
+            Route::get('/{id}/show', 'CalendarController@show')->name('calendar.show');
+            Route::get('/{id}/edit', 'CalendarController@edit')->name('calendar.edit');
+            Route::patch('/{id}/update', 'CalendarController@update')->name('calendar.update');
+            Route::delete('/{id}/delete', 'CalendarController@destroy')->name('calendar.destroy');
+            Route::get('/export', 'CalendarController@export')->name('calendar.export');
         });
 
         Route::group(['prefix' => 'bufferstock'], function() {

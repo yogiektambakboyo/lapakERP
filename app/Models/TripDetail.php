@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class TripRequest extends Model
+class TripDetail extends Model
 {
     use HasFactory;
 
@@ -28,6 +28,8 @@ class TripRequest extends Model
         'qty',
         'product_id',
         'price',
+        'uom',
+        'seq',
         'total'
     ];
 }

@@ -1,13 +1,13 @@
 @extends('layouts.default', ['appSidebarSearch' => true])
 
-@section('title', 'Edit Purchase Order')
+@section('title', 'Ubah Perjalanan')
 
 @section('content')
   <div class="panel text-white">
     <div class="panel-heading  bg-teal-600">
-      <div class="panel-title"><h4 class="">Purchase Order {{ $purchase->purchase_no }}</h4></div>
+      <div class="panel-title"><h4 class="">Perjalanan {{ $purchase->doc_no }}</h4></div>
       <div class="">
-        <a href="{{ route('purchaseorders.index') }}" class="btn btn-default">@lang('general.lbl_cancel')</a>
+        <a href="{{ route('triprequest.index') }}" class="btn btn-default">@lang('general.lbl_cancel')</a>
         <button type="button" id="save-btn" class="btn btn-info">@lang('general.lbl_save')</button>
       </div>
     </div>
@@ -19,48 +19,66 @@
             <div class="row mb-3">
               <label class="form-label col-form-label col-md-1">@lang('general.lbl_dated_mmddYYYY')</label>
               <div class="col-md-2">
-                <input id="purchase_no" name="purchase_no" type="hidden" value="{{ $purchase->purchase_no }}">
+                <input id="doc_no" name="doc_no" type="hidden" value="{{ $purchase->doc_no }}">
                 <input type="text" 
-                name="dated"
-                id="dated"
+                name="doc_dated"
+                id="doc_dated"
                 class="form-control" 
-                value="{{ Carbon\Carbon::parse($purchase->dated)->format('d-m-Y') }}"
+                value="{{ Carbon\Carbon::parse($purchase->dated_start)->format('d-m-Y') }}"
                 required/>
-                @if ($errors->has('dated'))
-                          <span class="text-danger text-left">{{ $errors->first('dated') }}</span>
+                @if ($errors->has('doc_dated'))
+                          <span class="text-danger text-left">{{ $errors->first('doc_dated') }}</span>
                       @endif
               </div>
 
-              <label class="form-label col-form-label col-md-1">Shipto</label>
-              <div class="col-md-2">
-                <select class="form-control" 
-                    name="branch_id" id="branch_id" required>
-                    <option value="">@lang('general.lbl_branchselect')</option>
-                    @foreach($branchs as $branch)
-                        <option value="{{ $branch->id }}"  {{ $purchase->branch_id == $branch->id ? 'selected' : '' }}>{{ $branch->remark }} </option>
-                    @endforeach
-                </select>
-              </div>
+                <label class="form-label col-form-label col-md-1">Cabang Asal</label>
+                <div class="col-md-3">
+                  <select class="form-control" 
+                      name="branch_id_source" id="branch_id_source" required>
+                      <option value="">@lang('general.lbl_branchselect')</option>
+                      @foreach($branchs as $branch)
+                          <?php $selected=$purchase->location_source==$branch->id?'selected':''; ?>
+                          <option value="{{ $branch->id }}" {{ $selected }}>{{ $branch->remark }}</option>
+                      @endforeach
+                  </select>
+                </div>
 
-              <label class="form-label col-form-label col-md-1">Supplier</label>
-              <div class="col-md-2">
-                <select class="form-control" 
-                    name="supplier_id" id="supplier_id" required>
-                    <option value="">Select Suppliers</option>
-                    @foreach($suppliers as $supplier)
-                        <option value="{{ $supplier->id }}" {{ $purchase->supplier_id == $supplier->id ? 'selected' : '' }} >{{ $supplier->id }} - {{ $supplier->name }} </option>
-                    @endforeach
-                </select>
-              </div>
+                <label class="form-label col-form-label col-md-2">Cabang Tujuan</label>
+                <div class="col-md-3">
+                  <select class="form-control" 
+                      name="branch_id_destination" id="branch_id_destination" required>
+                      <option value="">@lang('general.lbl_branchselect')</option>
+                      @foreach($branchsall as $branch)
+                          <?php $selected=$purchase->location_destination==$branch->id?'selected':''; ?>
+                          <option value="{{ $branch->id }}" {{ $selected }}>{{ $branch->remark }} </option>
+                      @endforeach
+                  </select>
+                </div>
 
-                <label class="form-label col-form-label col-md-1">@lang('general.lbl_remark')</label>
-                <div class="col-md-2">
-                  <input type="text" 
-                  name="remark"
-                  id="remark"
-                  class="form-control" 
-                  value="{{ $purchase->remark }}"/>
-                  </div>
+            </div>
+
+            <div class="row mb-3">
+              <label class="form-label col-form-label col-md-1">Staff</label>
+                    <div class="col-md-3">
+                      <select class="form-control" 
+                          name="user_id" id="user_id" required>
+                          <option value="">Pilih Staff</option>
+                          @foreach($usersall as $usersall)
+                              <?php $selected=$purchase->user_id==$usersall->id?'selected':''; ?>
+                              <option value="{{ $usersall->id }}" {{ $selected }}>{{ $usersall->name }} </option>
+                          @endforeach
+                      </select>
+                    </div>
+
+
+                    <label class="form-label col-form-label col-md-1">@lang('general.lbl_remark')</label>
+                    <div class="col-md-2">
+                      <input type="text" 
+                      name="remark"
+                      id="remark"
+                      class="form-control" 
+                      value="{{ $purchase->remark }}"/>
+                      </div>
             </div>
 
             <div class="panel-heading bg-teal-600 text-white"><strong>@lang('general.lbl_order_list')</strong></div>
@@ -73,6 +91,15 @@
                   </select>
               </div>
 
+              <div class="col-md-3">
+                <label class="form-label col-form-label">Deskripsi</label>
+                <input type="text" 
+                  name="input_product_desc"
+                  id="input_product_desc"
+                  class="form-control" 
+                  value="{{ old('input_product_desc') }}"/>
+              </div>
+
 
               <div class="col-md-1">
                 <label class="form-label col-form-label">@lang('general.lbl_uom')</label>
@@ -83,7 +110,7 @@
                 value="{{ old('input_product_uom') }}" required disabled/>
               </div>
 
-              <div class="col-md-2">
+              <div class="col-md-1">
                 <label class="form-label col-form-label">@lang('general.lbl_price')</label>
                 <input type="text" 
                 name="input_product_price"
@@ -101,7 +128,7 @@
                 value="{{ old('input_product_qty') }}" required/>
               </div>
 
-              <div class="col-md-1">
+              <div class="col-md-1 d-none">
                 <label class="form-label col-form-label">@lang('general.lbl_discountrp')</label>
                 <input type="text" 
                 name="input_product_disc"
@@ -110,7 +137,7 @@
                 value="{{ old('input_product_disc') }}" required/>
               </div>
 
-              <div class="col-md-2">
+              <div class="col-md-1">
                 <label class="form-label col-form-label">Total</label>
                 <input type="hidden" 
                 name="input_product_vat_total"
@@ -139,7 +166,6 @@
                 <th scope="col" width="10%">@lang('general.lbl_uom')</th>
                 <th scope="col" width="10%">@lang('general.lbl_price')</th>
                 <th scope="col" width="5%">@lang('general.lbl_qty')</th>
-                <th scope="col" width="10%">Disc</th>
                 <th scope="col" width="10%">Total</th>
                 <th scope="col" width="20%" class="nex">@lang('general.lbl_action')</th>  
               </tr>
@@ -150,8 +176,8 @@
             
             
             <div class="row mb-3">
-              <label class="form-label col-form-label col-md-9 text-end"><h2>Sub Total </h2></label>
-              <div class="col-md-3">
+              <label class="form-label col-form-label col-md-9 text-end  d-none"><h2>Sub Total </h2></label>
+              <div class="col-md-3  d-none">
                 <h3 class="text-end"><label id="sub-total">{{ number_format(($purchase->total-$purchase->total_vat),0,',','.') }}</label></h3>
               </div>
 
@@ -162,7 +188,7 @@
 
               <label class="form-label col-form-label col-md-9 text-end"><h1>Total</h1></label>
               <div class="col-md-3">
-                <h1 class="display-5 text-end"><label id="order-total">Rp. 0</label></h1>
+                <h1 class="display-5 text-end"><label id="order-total">Rp. {{ number_format($purchase->total,0,',','.') }}</label></h1>
               </div>
             </div>
           <div class="col-md-12">
@@ -196,7 +222,7 @@
               todayHighlight: true,
           });
 
-          var url = "{{ route('purchaseorders.getproduct') }}";
+          var url = "{{ route('triprequest.getproduct') }}";
           var lastvalurl = "XX";
           url = url.replace(lastvalurl, $(this).val())
           lastvalurl = $(this).val();
@@ -305,8 +331,7 @@
                     }
                   );
                 }else{
-                  addProduct($('#input_product_id').val(),$('#input_product_id option:selected').text(), $('#input_product_price').val(), $('#input_product_total').val(), $('#input_product_qty').val(), $('#input_product_uom').val(), $('#input_product_vat_total').val(),$('#input_product_disc').val());
-                  //addProduct($('#input_product_id').val(),$('#input_product_id option:selected').text(), $('#input_product_price').val(), $('#input_product_total').val(), $('#input_product_qty').val(), $('#input_product_uom').val(),$('#input_product_id option:selected').text());
+                  addProduct($('#input_product_id').val(),($('#input_product_id option:selected').text()+" "+$('#input_product_desc').val()), $('#input_product_price').val(), $('#input_product_total').val(), $('#input_product_qty').val(), $('#input_product_uom').val(), $('#input_product_vat_total').val(),$('#input_product_disc').val());
                 }
               });
               
@@ -314,7 +339,7 @@
           });
 
 
-          var url = "{{ route('purchaseorders.getdocdata',$purchase->purchase_no) }}";
+          var url = "{{ route('triprequest.getdocdata',$purchase->doc_no) }}";
           const resGetPO = axios.get(url, {
             headers: {
                 'Content-Type': 'application/json'
@@ -349,7 +374,7 @@
                     "disc"         : obj["disc"],
                     "total"       : obj["total"],
                   }).draw(false);
-                  order_total = order_total + (parseFloat(orderList[i]["total_vat"]));
+                  order_total = order_total + (parseFloat(orderList[i]["total"]));
                 }
 
                 $('#order-total').text(currency(order_total, { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
@@ -358,39 +383,39 @@
       });
 
         $('#save-btn').on('click',function(){
-          if($('#branch_id').val()==''){
-            $('#branch_id').focus();
+          if($('#branch_id_source').val()==''){
+            $('#branch_id_source').focus();
             Swal.fire(
               {
                 position: 'top-end',
                 icon: 'warning',
-                text: 'Please choose shipto',
+                text: 'Silahkan pilih cabang asal',
                 showConfirmButton: false,
                 imageHeight: 30, 
                 imageWidth: 30,   
                 timer: 1500
               }
             );
-          }else if($('#supplier_id').val()==''){
-            $('#supplier_id').focus();
+          }else if($('#branch_id_destination').val()==''){
+            $('#branch_id_destination').focus();
             Swal.fire(
               {
                 position: 'top-end',
                 icon: 'warning',
-                text: 'Please choose supplier',
+                text: 'Silahkan pilih cabang tujuan',
                 showConfirmButton: false,
                 imageHeight: 30, 
                 imageWidth: 30,   
                 timer: 1500
               }
             );
-          }else if($('#purchase_date').val()==''){
-            $('#purchase_date').focus();
+          }else if($('#user_id').val()==''){
+            $('#user_id').focus();
             Swal.fire(
               {
                 position: 'top-end',
                 icon: 'warning',
-                text: 'Please choose purchase date',
+                text: 'Silahkan pilih staff',
                 showConfirmButton: false,
                 imageHeight: 30, 
                 imageWidth: 30,   
@@ -402,7 +427,7 @@
               {
                 position: 'top-end',
                 icon: 'warning',
-                text: 'Please choose at least 1 product',
+                text: 'Silahkan pilih dahulu minimal 1 produk',
                 showConfirmButton: false,
                 imageHeight: 30, 
                 imageWidth: 30,   
@@ -410,28 +435,38 @@
               }
             );
           }else{
+            let swal = Swal.fire({
+                    title: 'Loading...',
+                    html: 'Please wait, Request under processing',
+                    allowEscapeKey: false,
+                    allowOutsideClick: false,
+                    didOpen: () => {
+                      Swal.showLoading()
+                    }
+                });  
+
               const json = JSON.stringify({
-                branch_id : $('#branch_id').val(),
                 product : orderList,
-                supplier_id : $('#supplier_id').val(),
-                supplier_name : $('#supplier_id option:selected').text(),
-                branch_name : $('#branch_id option:selected').text(),
+                location_source : $('#branch_id_source option:selected').val(),
+                location_destination : $('#branch_id_destination option:selected').val(),
+                user_id : $('#user_id option:selected').val(),
                 remark : $('#remark').val(),
-                total_order : order_total,
-                dated : $('#dated').val(),
-                purchase_no : $('#purchase_no').val(),
+                total : order_total,
+                dated_start : $('#doc_dated').val(),
+                dated_end : $('#doc_dated').val(),
+                doc_no : $('#doc_no').val(),
                 total_vat : 0,
                 total_discount : 0
               }
             );
-            const res = axios.patch("{{ route('purchaseorders.update',$purchase->id) }}", json, {
+            const res = axios.patch("{{ route('triprequest.update',$purchase->id) }}", json, {
               headers: {
                 // Overwrite Axios's automatically set Content-Type
                 'Content-Type': 'application/json'
               }
             }).then(resp => {
                   if(resp.data.status=="success"){
-                    window.location.href = "{{ route('purchaseorders.index') }}"; 
+                    window.location.href = "{{ route('triprequest.index') }}"; 
                   }else{
                     Swal.fire(
                       {
@@ -463,7 +498,6 @@
             { data: 'uom' },
             { data: 'price' },
             { data: 'qty' },
-            { data: 'disc' },
             { data: 'total' },
             { data: null},
         ],
@@ -515,7 +549,6 @@
                     "uom"       : obj["uom"],
                     "price"       : currency(obj["price"], { separator: ".", decimal: ",", symbol: "", precision: 0 }).format(),
                     "qty"       : currency(obj["qty"], { separator: ".", decimal: ",", symbol: "", precision: 0 }).format(),
-                    "disc"       : currency(obj["disc"], { separator: ".", decimal: ",", symbol: "", precision: 0 }).format(),
                     "total"       : currency(obj["total"], { separator: ".", decimal: ",", symbol: "", precision: 0 }).format(),
                     "action"    : "",
               }).draw(false);            
@@ -579,7 +612,6 @@
                     "uom"       : obj["uom"],
                     "price"       : currency(obj["price"], { separator: ".", decimal: ",", symbol: "", precision: 0 }).format(),
                     "qty"       : currency(obj["qty"], { separator: ".", decimal: ",", symbol: "", precision: 0 }).format(),
-                    "disc"       : currency(obj["disc"], { separator: ".", decimal: ",", symbol: "", precision: 0 }).format(),
                     "total"       : currency(obj["total"], { separator: ".", decimal: ",", symbol: "", precision: 0 }).format(),
                     "action"    : "",
                 }).draw(false);

@@ -3,7 +3,7 @@
 <html>  
    <head> 
       <meta charset = "utf-8"> 
-      <title>Purchase</title>
+      <title>Perjalanan</title>
       <style>
         body {background-color: whitesmoke;}
         h1   {color: blue;}
@@ -28,10 +28,10 @@
               <img src="data:image/png;base64,{{ base64_encode(file_get_contents(url("images/user-files/".$settings[0]->icon_file))) }}" width="180px"><br>
               <label>{{ $purchaseDetails[0]->branch_name }}</label><br>
               <label>{{ $purchaseDetails[0]->address }}</label></td>
-            <td style="width: 50%;font-size:30px;"><p style="color: #212121;">Purchase Order</p></td>
+            <td style="width: 50%;font-size:30px;"><p style="color: #212121;">PERJALANAN</p></td>
           </tr>
           <tr style="background-color: chocolate;">
-            <td colspan="2"><br></td>
+            <td colspan="2" style="text-align: center">{{ $purchase->doc_no }}<br></td>
           </tr>
         </tbody>
       </table>
@@ -39,26 +39,20 @@
         <tbody>
           <tr style="text-align: center;height: 70px">
             <td style="text-align: left;padding:20px;width:20%;vertical-align: text-top;">        
-              <label style="font-weight: bold;">Supplier :</label><br>
-              <label>{{ $suppliers[0]->name }}</label><br>
-              <label>{{ $suppliers[0]->address }}</label><br>
-              <label>{{ $suppliers[0]->email }}</label><br>
-              <label>{{ $suppliers[0]->handphone }}</label><br>
+              <label style="font-weight: bold;">Staff :</label><br>
+              <label>{{ $purchase->name }}</label><br>
             </td>
             <td style="text-align: left;padding:20px;width:35%;vertical-align: text-top;">        
-              <label style="font-weight: bold;">Shipto :</label><br>
-              <label>{{ $purchaseDetails[0]->branch_name }}</label><br>
-              <label>{{ $purchaseDetails[0]->address }}</label></td>
+              <label style="font-weight: bold;">Cabang Asal :</label><br>
+              <label>{{ $purchase->location_source }}</label><br>
             </td>
-            <td style="text-align: right;width: 50%;font-size:15px;width:15%;vertical-align: text-top;">
-              <label>@lang('general.lbl_dated')  :</label><br>
-              <label>Purchase No :</label><br>
-              <label>@lang('general.lbl_remark')  :</label><br>
+            <td style="text-align: left;padding:20px;width:35%;vertical-align: text-top;">        
+              <label style="font-weight: bold;">Cabang Tujuan :</label><br>
+              <label>{{ $purchase->location_destination }}</label><br>
             </td>
-            <td style="text-align: left;width: 50%;font-size:15px;width:15%;padding-left:10px;vertical-align: text-top;">
-              <label>{{ substr(explode(" ",$purchase->dated)[0],8,2) }}-{{substr(explode(" ",$purchase->dated)[0],5,2) }}-{{ substr(explode(" ",$purchase->dated)[0],0,4) }}</label><br>
-              <label>{{ $purchase->purchase_no }}</label><br>
-              <label>{{ $purchase->remark }}</label><br>
+            <td style="text-align: left;padding:20px;width:35%;vertical-align: text-top;">        
+              <label style="font-weight: bold;">Tanggal :</label><br>
+              <label>{{ substr(explode(" ",$purchase->dated_start)[0],8,2) }}-{{substr(explode(" ",$purchase->dated_start)[0],5,2) }}-{{ substr(explode(" ",$purchase->dated_start)[0],0,4) }}</label><br>
             </td>
           </tr>
         </tbody>
@@ -81,7 +75,7 @@
                   <td style="text-align: center;">{{ $purchaseDetail->uom }}</td>
                   <td style="text-align: center;">{{ number_format($purchaseDetail->price,0,',','.') }}</td>
                   <td style="text-align: center;">{{ number_format($purchaseDetail->qty,0,',','.') }}</td>
-                  <td style="text-align: right;">{{ number_format($purchaseDetail->total,0,',','.') }}</td>
+                  <td style="text-align: right;">{{ number_format($purchaseDetail->subtotal,0,',','.') }}</td>
               </tr>
           @endforeach
 
@@ -103,16 +97,6 @@
         <thead>
         </thead>
         <tbody>
-          <tr>
-            <td style="text-align: left;width:70%;"></td>
-            <td style="text-align: right;width:20%;background-color:#FFA726;">Sub Total</td>
-            <td style="text-align: right;width:10%;background-color:#FFA726;">Rp. {{ number_format(($purchase->total-$purchase->total_vat),0,',','.') }}</td>
-          </tr>
-          <tr>
-            <td style="text-align: left;width:70%;"></td>
-            <td style="text-align: right;width:20%;background-color:#FFA726;">@lang('general.lbl_tax') </th>
-            <td style="text-align: right;width:10%;background-color:#FFA726;">Rp. {{ number_format($purchase->total_vat,0,',','.') }}</th>
-          </tr>
           <tr>
             <th style="text-align: left;width:70%;"></th>
             <th style="text-align: right;width:20%;background-color:#FFA726;">Total</th>
