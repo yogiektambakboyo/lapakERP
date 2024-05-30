@@ -397,28 +397,38 @@ class HomeController extends Controller
             return $resp;
     }
 
-    public function send_wa_media_cron(Request $request) 
+    public function send_wa_media_resend(Request $request) 
     {
-            $number = $request->get("no");
-            $msg = $request->get("msg");
-            $token = $request->get("token");
-            $fromapp = $request->get("fromapp");
-            $name = $request->get("name");
-            $name = base64_decode($name);
-            $otp = $request->get("adrotp");
-            $msg = "*OTP Notifikasi* \r\n\r\nHai ".$name.", silahkan masukkan kode OTP *".$otp."* untuk login aplikasi ".$fromapp.".\r\n\r\n_Abaikan pesan ini jika anda tidak merasa login ke aplikasi_";
-            $str="number=".$number."&message=".$msg;
+        $token = $request->token;
+        $validate = md5(date("Y-m-d"));
 
-            $resp = "Token Not Valid";
+        if($token == $validate){
+            // Get Data from DB
+            if(empty($request->id)){
+                $get_data = DB::select("select id,whatsapp_no,msg,file_link,sender_id  from wa_queue wq where is_send=0 order by created_at desc limit 1");
+            }else{
+                $id = (int)$request->id;
+                $get_data = DB::select("select id,whatsapp_no,msg,file_link,sender_id  from wa_queue wq where id=".$id." and is_send=0 limit 1");
+            }
+            foreach ($get_data as $item) {
+                //Send WA
+                $id = $item["id"];
+                $wa_no = $item["whatsapp_no"];
+                $msg = $item["msg"];
+                $file_link = $item["file_link"];
+                $sender_id = $item["sender_id"];
 
-            $validate = md5(date("Y-m-d"));
-
-            if($token == $validate){
                 $curl = curl_init();
+
+                $number = $wa_no;
+                $caption = $msg;
+                $file = $file_link;
+                $doc_no = "Dokumen PDF PO";
+                $str="number=".$number."&caption=".$caption."&file=".$file."&filename=".(str_replace(' ', '', $doc_no)).".pdf";
 
                 curl_setopt_array($curl, [
                     CURLOPT_PORT => "8000",
-                    CURLOPT_URL => "http://localhost:8000/send-message",
+                    CURLOPT_URL => "http://localhost:8000/send-media",
                     CURLOPT_RETURNTRANSFER => true,
                     CURLOPT_ENCODING => "",
                     CURLOPT_MAXREDIRS => 10,
@@ -436,16 +446,92 @@ class HomeController extends Controller
 
                 curl_close($curl);
 
+                if ($err) {
+                    //echo "cURL Error #:" . $err;
+                    DB::insert("UPDATE wa_queue set updated_at=now(),remark='Failed sending msg ServerWA Down ".strval($err)."' where id=".$id.";");
+                } else {
+                    //echo $response;
+                    $g = json_decode($response,true);
+                    if($g["status"] == true)
+                    {
+                        echo "success";
+                        DB::insert("UPDATE wa_queue set updated_at=now(),is_send=1 where id=".$id.";");
+                    }else{
+                        DB::insert("UPDATE wa_queue set updated_at=now(),remark='Failed sending msg ".strval($g)."' where id=".$id.";");
+                    }
+                }
 
+                //End Send WA
+            }
+        }
+
+        
+    }
+
+    public function send_wa_media_cron(Request $request) 
+    {
+        $token = $request->token;
+        $validate = "SecretK3Y#";
+
+        if($token == $validate){
+            // Get Data from DB
+            $get_data = DB::select("select id,whatsapp_no,msg,file_link,sender_id  from wa_queue wq where is_send=0 order by created_at desc limit 1");
+            foreach ($get_data as $item) {
+                //Send WA
+                $id = $item["id"];
+                $wa_no = $item["whatsapp_no"];
+                $msg = $item["msg"];
+                $file_link = $item["file_link"];
+                $sender_id = $item["sender_id"];
+
+                $curl = curl_init();
+
+                $number = $wa_no;
+                $caption = $msg;
+                $file = $file_link;
+                $doc_no = "Dokumen PDF PO";
+                $str="number=".$number."&caption=".$caption."&file=".$file."&filename=".(str_replace(' ', '', $doc_no)).".pdf";
+
+                curl_setopt_array($curl, [
+                    CURLOPT_PORT => "8000",
+                    CURLOPT_URL => "http://localhost:8000/send-media",
+                    CURLOPT_RETURNTRANSFER => true,
+                    CURLOPT_ENCODING => "",
+                    CURLOPT_MAXREDIRS => 10,
+                    CURLOPT_TIMEOUT => 30,
+                    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                    CURLOPT_CUSTOMREQUEST => "POST",
+                    CURLOPT_POSTFIELDS => $str,
+                    CURLOPT_HTTPHEADER => [
+                        "Content-Type: application/x-www-form-urlencoded"
+                    ],
+                ]);
+
+                $response = curl_exec($curl);
+                $err = curl_error($curl);
+
+                curl_close($curl);
 
                 if ($err) {
-                    $resp = "Error ". $err;
+                    //echo "cURL Error #:" . $err;
+                    DB::insert("UPDATE wa_queue set updated_at=now(),remark='Failed sending msg ServerWA Down ".strval($err)."' where id=".$id.";");
                 } else {
-                    $resp = $response;
+                    //echo $response;
+                    $g = json_decode($response,true);
+                    if($g["status"] == true)
+                    {
+                        echo "success";
+                        DB::insert("UPDATE wa_queue set updated_at=now(),is_send=1 where id=".$id.";");
+                    }else{
+                        DB::insert("UPDATE wa_queue set updated_at=now(),remark='Failed sending msg ".strval($g)."' where id=".$id.";");
+                    }
                 }
-            }
 
-            return $resp;
+                //End Send WA
+            }
+        }
+
+        
     }
 
     public function send_wa_media(Request $request) 
@@ -570,12 +656,6 @@ class HomeController extends Controller
                         $filePDF = $result_1[0]["zFile"];
                         $fileName = $result_1[0]["zFileName"];
 
-                        //var_dump($result_1);
-                        //var_dump($result_1[0]["zFile"]);
-                        //echo "<br>";
-                        //echo "<br>";
-
-
                         $cookieFile = tempnam(sys_get_temp_dir(), "CURLCOOKIE");
                         $curl = curl_init();
                         curl_setopt_array($curl, [
@@ -658,14 +738,9 @@ class HomeController extends Controller
 
                         $curl = curl_init();
 
-                        //$number = $_GET["no"];
                         $number = $wa_no;
-                        //$caption = "Terlampir Dokumen ".$layout_name." *Nomor  ".$doc_no."*";
                         $caption = $msg_greeting." \r\n\r\n ".$msg_content." \r\n\r\n ".$msg_closed." \r\n\r\n "."_".$msg_disclaimer."_";
-                        //$caption = $_GET["caption"];
                         $file = $file_link;
-                        //$file = $_GET["file"];
-                        //$str="number=".$number."&message=".$msg;
                         $str="number=".$number."&caption=".$caption."&file=".$file."&filename=".(str_replace(' ', '', $doc_no)).".pdf";
 
                         curl_setopt_array($curl, [
@@ -690,16 +765,16 @@ class HomeController extends Controller
 
                         if ($err) {
                             //echo "cURL Error #:" . $err;
-                            DB::insert("INSERT INTO wa_queue(whatsapp_no, is_send, created_at, msg, file_link) VALUES('".$number."', 0, now(), '".$caption."', '".$file_link."');");
+                            DB::insert("INSERT INTO wa_queue(whatsapp_no, is_send, created_at, msg, file_link,remark,sender_id) VALUES('".$number."', 0, now(), '".$caption."', '".$file_link."','Failed sending WA - Server Down ".strval($err)."',1);");
                         } else {
                             //echo $response;
                             $g = json_decode($response,true);
                             if($g["status"] == true)
                             {
                                 echo "success";
-                                DB::insert("INSERT INTO wa_queue(whatsapp_no, is_send, created_at, msg, file_link) VALUES('".$number."', 1, now(), '".$caption."', '".$file_link."');");
+                                DB::insert("INSERT INTO wa_queue(whatsapp_no, is_send, created_at, msg, file_link,remark,sender_id) VALUES('".$number."', 1, now(), '".$caption."', '".$file_link."',' ',1);");
                             }else{
-                                DB::insert("INSERT INTO wa_queue(whatsapp_no, is_send, created_at, msg, file_link) VALUES('".$number."', 0, now(), '".$caption."', '".$file_link."');");
+                                DB::insert("INSERT INTO wa_queue(whatsapp_no, is_send, created_at, msg, file_link,remark,sender_id) VALUES('".$number."', 0, now(), '".$caption."', '".$file_link."','Failed sending WA ".strval($g)."',1);");
                             }
                         }
                     }
