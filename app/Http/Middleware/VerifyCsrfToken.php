@@ -38,6 +38,7 @@ class VerifyCsrfToken extends Middleware
         '/send-wa-media',
         '/send_wa_media_resend',
         '/send_wa_media_cron',
+        '/send_wa_group',
         //
     ];
 }
