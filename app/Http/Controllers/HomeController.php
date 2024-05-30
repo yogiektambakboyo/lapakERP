@@ -399,7 +399,7 @@ class HomeController extends Controller
 
     public function send_wa_group(Request $request) 
     {
-            $token              = base64_decode($_GET["token"]);
+            $token              = $_GET["tokenx"];
             $group_name         = base64_decode($_GET["group_name"]);
             $wa_no              = base64_decode($_GET["group_id"]);
             $msg_greeting       = empty($_GET["msg_greeting"])?'':base64_decode($_GET["msg_greeting"]);
@@ -408,9 +408,12 @@ class HomeController extends Controller
             $msg_disclaimer     = empty($_GET["msg_disclaimer"])?'':base64_decode($_GET["msg_disclaimer"]);
             
             $resp = "Token Not Valid";
-            $validate = md5(date("Y-m-d"));
+            
+            if($msg_content == ""){
+                exit();
+            }
 
-            if($token == $validate){
+            if($token == "qwsertyqqOPSd"){
                         //Send WA
                         $curl = curl_init();
 
