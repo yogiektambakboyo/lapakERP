@@ -54,7 +54,7 @@ class ReportWAController extends Controller
         $this->getpermissions($id);
 
         $report_data = DB::select("
-                select id,whatsapp_no,case when is_send=1 then 'Terkirim' else 'Gagal' end as is_send,created_at,msg,file_link  from wa_queue wq 
+                select id,whatsapp_no,case when is_send=1 then 'Terkirim' else 'Gagal' end as is_send,created_at+interval'7 hours' created_at,msg,file_link  from wa_queue wq 
                 where created_at>now()-interval'1 days' order by created_at desc         
         ");
         $data = $this->data;
@@ -78,8 +78,8 @@ class ReportWAController extends Controller
         $enddate = date(Carbon::parse($request->filter_end_date_in)->format('Y-m-d'));
     
         $report_data = DB::select("
-                 select id,whatsapp_no,case when is_send=1 then 'Terkirim' else 'Pending' end as is_send,created_at,msg,file_link  from wa_queue wq 
-                where created_at between '".$begindate."' and '".$enddate."' order by created_at desc       
+                 select id,whatsapp_no,case when is_send=1 then 'Terkirim' else 'Gagal' end as is_send,created_at+interval'7 hours' created_at,msg,file_link  from wa_queue wq 
+                where created_at::date between '".$begindate."' and '".$enddate."' order by created_at desc       
             ");         
             return view('pages.reports.waqueue',['company' => Company::get()->first()], compact('data','keyword','act_permission','report_data'))->with('i', ($request->input('page', 1) - 1) * 5);
     }

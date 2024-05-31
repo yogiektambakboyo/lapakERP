@@ -58,7 +58,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form action="{{ route('reports.invoice.search') }}" method="GET">   
+                    <form action="{{ route('reports.waqueue.search') }}" method="GET">   
                         @csrf 
                         <div class="col-md-10">
                             <label class="form-label col-form-label col-md-4">@lang('general.lbl_branch')</label>
