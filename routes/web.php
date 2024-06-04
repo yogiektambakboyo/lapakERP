@@ -867,6 +867,8 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
         Route::group(['prefix' => 'stocklotnumber'], function() {
             Route::get('/', 'StockLotNumberController@index')->name('stocklotnumber.index');
             Route::get('/search', 'StockLotNumberController@search')->name('stocklotnumber.search');
+            Route::get('/create', 'StockLotNumberController@create')->name('stocklotnumber.create');
+            Route::post('/create', 'StockLotNumberController@store')->name('stocklotnumber.store');
         });
 
 

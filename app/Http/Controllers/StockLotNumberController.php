@@ -13,6 +13,7 @@ use App\Models\Company;
 use App\Models\StockLotNumber;
 use App\Models\StockLotNumberTemp;
 use App\Http\Controllers\Lang;
+use App\Models\Product;
 
 
 
@@ -80,7 +81,7 @@ class StockLotNumberController extends Controller
         if($request->export=='Export Excel'){
             return Excel::download(new BranchsExport($keyword), 'branchs_'.Carbon::now()->format('YmdHis').'.xlsx');
         }else{
-            $permissions = StockLotNumber::join('product_sku','product_sku.alias_code','=','stock_lotnumber.alias_code')->where('no_surat','like','%'.$keyword.'%')->orWhere('product_sku.remark','like','%'.$keyword.'%')->orWhere('lot_number','like','%'.$keyword.'%')->orWhere('spkid','like','%'.$keyword.'%')->paginate(100);
+            $permissions = StockLotNumber::join('product_sku','product_sku.alias_code','=','stock_lotnumber.alias_code')->where('no_surat','ilike','%'.$keyword.'%')->orWhere('product_sku.remark','ilike','%'.$keyword.'%')->orWhere('lot_number','ilike','%'.$keyword.'%')->orWhere('spkid','ilike','%'.$keyword.'%')->paginate(100);
             return view('pages.permissions.index_stock', ['permissions' => $permissions,'act_permission' => $act_permission,'company' => Company::get()->first()],compact('data','keyword'))->with('i', ($request->input('page', 1) - 1) * 5);
         }
     }
@@ -135,7 +136,7 @@ class StockLotNumberController extends Controller
             DB::select("UPDATE product_category
                         SET    add_colum = t2.type_name,add_column_2 = t2.point, updated_at = now()
                         FROM   product_category t1
-                        JOIN   temp_stock_lotnumber t2 ON t1.remark  = t2.category_name
+                        JOIN   temp_stock_lotnumber t2 ON trim(t1.remark)  = trim(t2.category_name)
                         WHERE  product_category.id = t1.id;");
 
             DB::select("INSERT into product_category(remark,created_at,type_id,recid,add_colum,add_column_2)
@@ -151,8 +152,10 @@ class StockLotNumberController extends Controller
             (select alias_code from product_sku);");
 
             DB::select("INSERT into stock_lotnumber(recid,no_surat,spkid,lot_number,alias_code,location,qty,qty_available)
-            select recid,no_surat,spkid,lot_number,alias_code,location,qty,qty_available from temp_stock_lotnumber
-            where recid not in (select recid from stock_lotnumber)");
+            select s.recid,s.no_surat,s.spkid,s.lot_number,s.alias_code,s.location,s.qty,s.qty_available 
+            from temp_stock_lotnumber s
+            left join stock_lotnumber sl on sl.recid = s.recid  
+            where sl.recid is null;");
 
             DB::select("delete from tmp_category;");
             DB::select("insert into tmp_category(alias_code,category_new,category_new_id,category_old,category_old_id)
@@ -167,7 +170,7 @@ class StockLotNumberController extends Controller
             SET    category_id = t2.category_new_id,updated_at = now()
             FROM   product_sku t1
             JOIN   tmp_category t2 ON t1.alias_code  = t2.alias_code
-            WHERE  product_sku.alias_code = t1.alias_code;");
+            WHERE  product_sku.alias_code = t1.alias_code  and t2.category_new_id is not null;");
 
 
             $result = array_merge(
@@ -185,6 +188,56 @@ class StockLotNumberController extends Controller
 
         return $result;
         
+    }
+
+    public function store(Request $request) 
+    {
+        
+        $lot_number = $request->get('lot_number');
+        $alias_code = $request->get('alias_code');
+        $spkid      = $request->get('spkid');
+        $recid = md5(date('YmdHis'));
+        $location = "Warehouse";
+        $no_surat = "MANUAL";
+
+        $insert_data = StockLotNumber::create(
+            array_merge(
+                ['recid' => $recid ],
+                ['no_surat' => $no_surat ],
+                ['lot_number' => $lot_number ],
+                ['alias_code' => $alias_code ],
+                ['location' => $location ],
+                ['spkid' => $spkid ],
+                ['qty' => 1 ],
+                ['qty_available' => 1 ]
+            )
+        );
+
+        return redirect()->route('stocklotnumber.index')
+        ->withSuccess(__(' Berhasil buat stok lot number'.$lot_number));
+        
+    }
+
+     /**
+     * Show form for creating user
+     * 
+     * @return \Illuminate\Http\Response
+     */
+    public function create() 
+    {
+        $user = Auth::user();
+        $id = $user->roles->first()->id;
+        $this->getpermissions($id);
+
+        $products = Product::orderBy('product_sku.remark', 'ASC')
+                    ->get(['product_sku.remark','product_sku.id']);
+
+        $data = $this->data;
+        $user = Auth::user();
+        return view('pages.stocklotnumber.create',[
+            'data' => $data,
+            'products' => $products,
+        ]);
     }
 
     

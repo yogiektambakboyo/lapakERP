@@ -6,7 +6,7 @@
     <div class="bg-light p-4 rounded">
         <h2>Lot Number</h2>
         <div class="lead row mb-3">
-            <div class="col-md-10">
+            <div class="col-md-12">
                 <div class="col-md-4">
                     @lang('general.lbl_title')
                 </div>
@@ -16,6 +16,9 @@
                     <div class="col-12"><input type="text" class="form-control  form-control-lg" name="search" placeholder="@lang('general.lbl_search') . . ." value="{{ $keyword }}"></div>
                     <div class="col-12"><input type="submit" class="btn btn-secondary" value="@lang('general.btn_search')" name="submit"></div>   
                 </form>
+            </div>
+            <div class="col-md-2">
+                <a href="{{ route('stocklotnumber.create') }}" class="btn btn-primary btn-sm float-right"><span class="fa fa-plus-circle"></span>  @lang('general.btn_create')</a>
             </div>
         </div>
 
