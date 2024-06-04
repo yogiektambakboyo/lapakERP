@@ -214,7 +214,7 @@ class StockLotNumberController extends Controller
         );
 
         return redirect()->route('stocklotnumber.index')
-        ->withSuccess(__(' Berhasil buat stok lot number'.$lot_number));
+        ->withSuccess(__(' Berhasil buat stok lot number '.$lot_number));
         
     }
 
@@ -230,7 +230,7 @@ class StockLotNumberController extends Controller
         $this->getpermissions($id);
 
         $products = Product::orderBy('product_sku.remark', 'ASC')
-                    ->get(['product_sku.remark','product_sku.id']);
+                    ->get(['product_sku.remark','product_sku.alias_code']);
 
         $data = $this->data;
         $user = Auth::user();
