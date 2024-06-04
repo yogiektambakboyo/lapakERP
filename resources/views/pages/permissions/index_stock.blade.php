@@ -11,7 +11,7 @@
                     @lang('general.lbl_title')
                 </div>
             </div>
-            <div class="col-md-8"> 	
+            <div class="col-md-10"> 	
                 <form action="{{ route('stocklotnumber.search') }}" method="GET" class="row row-cols-lg-auto g-3 align-items-center">
                     <div class="col-12"><input type="text" class="form-control  form-control-lg" name="search" placeholder="@lang('general.lbl_search') . . ." value="{{ $keyword }}"></div>
                     <div class="col-12"><input type="submit" class="btn btn-secondary" value="@lang('general.btn_search')" name="submit"></div>   
