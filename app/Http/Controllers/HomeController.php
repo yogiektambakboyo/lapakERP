@@ -347,54 +347,72 @@ class HomeController extends Controller
 
     public function send_wa(Request $request) 
     {
-            $data = [];
-            $number = $request->get("no");
-            $msg = $request->get("msg");
-            $token = $request->get("token");
-            $fromapp = $request->get("fromapp");
-            $name = $request->get("name");
-            $name = base64_decode($name);
-            $otp = $request->get("adrotp");
-            $msg = "*OTP Notifikasi* \r\n\r\nHai ".$name.", silahkan masukkan kode OTP *".$otp."* untuk login aplikasi ".$fromapp.".\r\n\r\n_Abaikan pesan ini jika anda tidak merasa login ke aplikasi_";
-            $str="number=".$number."&message=".$msg;
+        $resp = "Token Not Valid";
+        $tokenx = $_GET["tokenx"];
+        $token_calc = base64_decode($_GET["token_calc"]);
+        $token_ver = base64_decode(date('Ymd'));
+        if($tokenx == "qwsertyqqOPSd" && $token_ver == $token_calc ){
+            $wa_no              = base64_decode($_GET["wa_no"]);
+            $msg_greeting       = empty($_GET["msg_greeting"])?'':base64_decode($_GET["msg_greeting"]);
+            $msg_content        = empty($_GET["msg_content"])?'':base64_decode($_GET["msg_content"]);
+            $msg_closed         = empty($_GET["msg_closed"])?'':base64_decode($_GET["msg_closed"]);
+            $msg_disclaimer     = empty($_GET["msg_disclaimer"])?'':base64_decode($_GET["msg_disclaimer"]);
 
-            $resp = "Token Not Valid";
-
-            $validate = md5(date("Y-m-d"));
-
-            if($token == $validate){
-                $curl = curl_init();
-
-                curl_setopt_array($curl, [
-                    CURLOPT_PORT => "8000",
-                    CURLOPT_URL => "http://localhost:8000/send-message",
-                    CURLOPT_RETURNTRANSFER => true,
-                    CURLOPT_ENCODING => "",
-                    CURLOPT_MAXREDIRS => 10,
-                    CURLOPT_TIMEOUT => 30,
-                    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-                    CURLOPT_CUSTOMREQUEST => "POST",
-                    CURLOPT_POSTFIELDS => $str,
-                    CURLOPT_HTTPHEADER => [
-                        "Content-Type: application/x-www-form-urlencoded"
-                    ],
-                ]);
-
-                //$response = curl_exec($curl);
-                $err = curl_error($curl);
-
-                curl_close($curl);
-
-
-
-                if ($err) {
-                    $resp = "Error ". $err;
-                } else {
-                    $resp = $response;
-                }
+            if(empty($wa_no)||empty($msg_content)){
+                echo "failed";
+                exit();
             }
 
-            return $resp;
+            DB::insert("delete from notif_log nl where created_at < now()-INTERVAL'15 seconds';");
+            $is_valid = DB::select("select whatsapp_no from notif_log nl where whatsapp_no = '".$wa_no."';");
+            if(count($is_valid)>=1){
+                exit("failed, please waiting 15s from sending again");
+            }else{
+                DB::insert("insert into notif_log(whatsapp_no,created_at) values('".$wa_no."',now());");
+            }
+
+            $number = $wa_no;
+            $caption = $msg_greeting." \r\n\r\n ".$msg_content." \r\n\r\n ".$msg_closed." \r\n\r\n "."_".$msg_disclaimer."_";
+            $str="number=".$number."&message=".$caption;
+
+            $curl = curl_init();
+
+            curl_setopt_array($curl, [
+                CURLOPT_PORT => "8000",
+                CURLOPT_URL => "http://localhost:8000/send-message",
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_ENCODING => "",
+                CURLOPT_MAXREDIRS => 10,
+                CURLOPT_TIMEOUT => 30,
+                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                CURLOPT_CUSTOMREQUEST => "POST",
+                CURLOPT_POSTFIELDS => $str,
+                CURLOPT_HTTPHEADER => [
+                    "Content-Type: application/x-www-form-urlencoded"
+                ],
+            ]);
+
+            $response = curl_exec($curl);
+            $err = curl_error($curl);
+
+            curl_close($curl);
+            if ($err) {
+                //echo "cURL Error #:" . $err;
+                DB::insert("INSERT INTO wa_queue(whatsapp_no, is_send, created_at, msg, file_link,remark,sender_id) VALUES('".$number."', 0, now(), '".$caption."', ' ','Failed sending WA - Server Down ".strval($err)."',1);");
+            } else {
+                //echo $response;
+                $g = json_decode($response,true);
+                if($g["status"] == true)
+                {
+                    echo "success";
+                    DB::insert("INSERT INTO wa_queue(whatsapp_no, is_send, created_at, msg, file_link,remark,sender_id) VALUES('".$number."', 1, now(), '".$caption."', ' ',' ',1);");
+                }else{
+                    DB::insert("INSERT INTO wa_queue(whatsapp_no, is_send, created_at, msg, file_link,remark,sender_id) VALUES('".$number."', 0, now(), '".$caption."', ' ','Failed sending WA ".strval($g)."',1);");
+                }
+            }
+        }
+        
+        return $resp;
     }
 
     public function send_wa_group(Request $request) 
