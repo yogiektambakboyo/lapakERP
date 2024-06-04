@@ -349,9 +349,9 @@ class HomeController extends Controller
     {
         $resp = "Token Not Valid";
         $tokenx = $_GET["tokenx"];
-        $token_calc = base64_decode($_GET["token_calc"]);
+        //$token_calc = base64_decode($_GET["token_calc"]);
         $token_ver = base64_decode(date('Ymd'));
-        if($tokenx == "qwsertyqqOPSd" && $token_ver == $token_calc ){
+        if($tokenx == "qwsertyqqOPSd"){
             $wa_no              = base64_decode($_GET["wa_no"]);
             $msg_greeting       = empty($_GET["msg_greeting"])?'':base64_decode($_GET["msg_greeting"]);
             $msg_content        = empty($_GET["msg_content"])?'':base64_decode($_GET["msg_content"]);
