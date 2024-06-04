@@ -237,6 +237,7 @@ class StockLotNumberController extends Controller
         return view('pages.stocklotnumber.create',[
             'data' => $data,
             'products' => $products,
+            'company' => Company::get()->first()
         ]);
     }
 
