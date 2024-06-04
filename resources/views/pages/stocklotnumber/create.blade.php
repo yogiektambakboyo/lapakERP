@@ -29,7 +29,7 @@
                         type="text" 
                         class="form-control" 
                         name="lot_number" 
-                        placeholder="@lang('general.lot_number')" required>
+                        placeholder="Lot Number" required>
 
                     @if ($errors->has('lot_number'))
                         <span class="text-danger text-left">{{ $errors->first('lot_number') }}</span>
