@@ -373,7 +373,7 @@
                                 
                                 if(ctx == 0){
                                   
-                                  worksheet.getCell('A'+counter).value = rowElement.datedformat;
+                                  worksheet.getCell('A'+counter).value = rowElementDetail.datedformat;
                                   worksheet.getCell('B'+counter).value = rowElementDetail.name;
                                   worksheet.getCell('C'+counter).value = rowElementDetail.invoice_no;
                                   worksheet.getCell('D'+counter).value = rowElementDetail.abbr;
