@@ -46,7 +46,7 @@
           <tr style="text-align: center;background-color:#FFA726;">
               <td style="text-align: left; padding:2px;"><img src="data:image/png;base64,{{ base64_encode(file_get_contents(url("images/user-files/".$settings[0]->icon_file))) }}" width="80px"></td>
               <td style="width: 40%;">LAPORAN KOMISI PRODUK KASIR</td>
-              <td style="width: 40%;">{{ $filter_begin_date." s/d ".$filter_begin_end }}</td>
+              <td style="width: 40%;">{{ $beginnewformat." s/d ".$endnewformat }}</td>
               <td style="width: 30%;">CABANG  : {{ count((array)$report_data)>0?$report_data[0]->branch_name:"" }}</td>
           </tr>
         </tbody>
