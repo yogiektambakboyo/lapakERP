@@ -595,7 +595,7 @@ class ReportCashierComController extends Controller
                 right(im.invoice_no,6) as invoice_no,b.id as branch_id,b.remark as branch_name,im.dated,id.product_id,ps.abbr,sum(id.qty) as qty,id.price,sum(id.total) as total
                 from invoice_master im 
                 join invoice_detail id on id.invoice_no  = im.invoice_no 
-                join users u on u.id = id.referral_by
+                join users u on u.id = id.referral_by and u.job_id = 1
                 join product_sku ps on ps.id = id.product_id and ps.type_id = 1 and ps.category_id!=58
                 join customers c on c.id = im.customers_id and c.branch_id::character varying like '%".$branchx."%'
                 join branch b on b.id = c.branch_id
@@ -612,7 +612,7 @@ class ReportCashierComController extends Controller
                 right(im.invoice_no,6) as invoice_no,b.id as branch_id,b.remark as branch_name,im.dated,id.product_id,ps.abbr,sum(id.qty) as qty,id.price,sum(id.total) as total,u.name
                 from invoice_master im 
                 join invoice_detail id on id.invoice_no  = im.invoice_no 
-                join users u on u.id = id.referral_by
+                join users u on u.id = id.referral_by  and u.job_id = 1
                 join product_sku ps on ps.id = id.product_id and ps.type_id = 1 and ps.category_id!=58
                 join customers c on c.id = im.customers_id and c.branch_id::character varying like '%".$branchx."%'
                 join branch b on b.id = c.branch_id
@@ -648,7 +648,7 @@ class ReportCashierComController extends Controller
                 im.dated,id.product_id,ps.abbr,sum(id.qty) as qty,id.price,sum(id.total) as total
                 from invoice_master im 
                 join invoice_detail id on id.invoice_no  = im.invoice_no 
-                join users u on u.id = id.referral_by
+                join users u on u.id = id.referral_by and u.job_id = 1
                 join product_sku ps on ps.id = id.product_id and ps.type_id = 1 and ps.category_id!=58
                 join customers c on c.id = im.customers_id and c.branch_id::character varying like '%".$branchx."%'
                 join branch b on b.id = c.branch_id
@@ -665,7 +665,7 @@ class ReportCashierComController extends Controller
                 right(im.invoice_no,6) as invoice_no,b.id as branch_id,b.remark as branch_name,im.dated,id.product_id,ps.abbr,sum(id.qty) as qty,id.price,sum(id.total) as total,u.name
                 from invoice_master im 
                 join invoice_detail id on id.invoice_no  = im.invoice_no 
-                join users u on u.id = id.referral_by
+                join users u on u.id = id.referral_by and u.job_id = 1
                 join product_sku ps on ps.id = id.product_id and ps.type_id = 1 and ps.category_id!=58
                 join customers c on c.id = im.customers_id and c.branch_id::character varying like '%".$branchx."%'
                 join branch b on b.id = c.branch_id
