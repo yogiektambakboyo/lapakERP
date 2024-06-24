@@ -590,9 +590,7 @@ class ReportCashierComController extends Controller
             $filter_branch_id =  $branchx;
 
             $report_data = DB::select("
-                select 
-                coalesce(ex.referral_fee,0) as base_com,
-                right(im.invoice_no,6) as invoice_no,b.id as branch_id,b.remark as branch_name,im.dated,to_char(im.dated, 'dd-MM-YYYY') as datedformat,id.product_id,ps.abbr,sum(id.qty) as qty,id.price,sum(id.total) as total
+                select b.id as branch_id,b.remark as branch_name,im.dated
                 from invoice_master im 
                 join invoice_detail id on id.invoice_no  = im.invoice_no 
                 join users u on u.id = id.referral_by and u.job_id = 1
@@ -602,14 +600,14 @@ class ReportCashierComController extends Controller
                 join users_branch as ub on ub.branch_id = b.id and ub.user_id = '".$user->id."'
                 join product_commisions_ex ex on ex.branch_id = b.id and ex.product_id=ps.id and ex.product_id=id.product_id
                 where im.dated between '".$begindate."' and '".$enddate."' and coalesce(ex.referral_fee,0)>0
-                group by right(im.invoice_no,6),b.remark,im.dated,b.id,id.product_id,id.price,ps.abbr,ex.users_id,im.created_by,id.referral_by,ex.created_by_fee,ex.referral_fee
-                order by 4,5
+                group by b.remark,im.dated,b.id
+                order by 3,1
             ");
 
             $report_detail = DB::select("
                 select 
                 coalesce(ex.referral_fee,0) as base_com,
-                right(im.invoice_no,6) as invoice_no,b.id as branch_id,b.remark as branch_name,im.dated,id.product_id,ps.abbr,sum(id.qty) as qty,id.price,sum(id.total) as total,u.name
+                right(im.invoice_no,6) as invoice_no,b.id as branch_id,b.remark as branch_name,im.dated,id.product_id,ps.abbr,sum(id.qty) as qty,id.price,sum(id.total) as total,u.name,to_char(im.dated, 'dd-MM-YYYY') as datedformat
                 from invoice_master im 
                 join invoice_detail id on id.invoice_no  = im.invoice_no 
                 join users u on u.id = id.referral_by  and u.job_id = 1
