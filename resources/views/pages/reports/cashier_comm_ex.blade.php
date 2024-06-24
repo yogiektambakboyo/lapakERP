@@ -453,7 +453,7 @@
                           worksheet.getCell('C'+counter).value = "";
                           worksheet.getCell('D'+counter).value = "";
                           worksheet.getCell('E'+counter).value = total_qty;
-                          worksheet.getCell('F'+counter).value = total_total;
+                          worksheet.getCell('F'+counter).value = total_price;
                           worksheet.getCell('G'+counter).value = total_base_com;
                           worksheet.getCell('H'+counter).value = total_base_com_qty;
 
@@ -491,7 +491,7 @@
                       worksheet.getCell('C'+counter).value = "";
                       worksheet.getCell('D'+counter).value = "";
                       worksheet.getCell('E'+counter).value = total_qty_t;
-                      worksheet.getCell('F'+counter).value = total_total_t;
+                      worksheet.getCell('F'+counter).value = total_price_t;
                       worksheet.getCell('G'+counter).value = total_base_com_t;
                       worksheet.getCell('H'+counter).value = total_base_com_qty_t;
 
