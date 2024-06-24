@@ -592,7 +592,7 @@ class ReportCashierComController extends Controller
             $report_data = DB::select("
                 select 
                 coalesce(ex.referral_fee,0) as base_com,
-                right(im.invoice_no,6) as invoice_no,b.id as branch_id,b.remark as branch_name,im.dated,id.product_id,ps.abbr,sum(id.qty) as qty,id.price,sum(id.total) as total
+                right(im.invoice_no,6) as invoice_no,b.id as branch_id,b.remark as branch_name,im.dated,to_char(im.dated, 'dd-MM-YYYY') as datedformat,id.product_id,ps.abbr,sum(id.qty) as qty,id.price,sum(id.total) as total
                 from invoice_master im 
                 join invoice_detail id on id.invoice_no  = im.invoice_no 
                 join users u on u.id = id.referral_by and u.job_id = 1

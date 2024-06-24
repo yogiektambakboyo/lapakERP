@@ -109,11 +109,11 @@
                 @endphp
 
                 @foreach ($report_detail as $rdata)
-                  @if($rdata->branch_id == $data->branch_id && $rdata->dated == $data->dated)
+                  @if($rdata->branch_id == $data->branch_id && $rdata->dated == $data->dated && $rdata->invoice_no == $data->invoice_no && $rdata->product_id == $data->product_id)
 
                     @if ($counter == 0)
                       <tr>
-                        <td>{{ $data->dated }}</td>
+                        <td>{{ $data->datedformat }}</td>
                         <td>{{ $rdata->name }}</td>
                         <td>{{ $rdata->invoice_no }}</td>
                         <td>{{ $rdata->abbr }}</td>
