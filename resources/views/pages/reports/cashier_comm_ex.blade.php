@@ -46,7 +46,7 @@
           <tr style="text-align: center;background-color:#FFA726;">
               <td style="text-align: left; padding:2px;"><img src="data:image/png;base64,{{ base64_encode(file_get_contents(url("images/user-files/".$settings[0]->icon_file))) }}" width="80px"></td>
               <td style="width: 40%;">LAPORAN KOMISI PRODUK KASIR</td>
-              <td style="width: 40%;">{{ $filter_begin_date." s/d ".$filter_begin_end }}</td>
+              <td style="width: 40%;">{{ $beginnewformat." s/d ".$endnewformat }}</td>
               <td style="width: 30%;">CABANG  : {{ count((array)$report_data)>0?$report_data[0]->branch_name:"" }}</td>
           </tr>
         </tbody>
@@ -113,7 +113,7 @@
 
                     @if ($counter == 0)
                       <tr>
-                        <td>{{ $data->dated }}</td>
+                        <td>{{ $rdata->datedformat }}</td>
                         <td>{{ $rdata->name }}</td>
                         <td>{{ $rdata->invoice_no }}</td>
                         <td>{{ $rdata->abbr }}</td>
@@ -373,7 +373,7 @@
                                 
                                 if(ctx == 0){
                                   
-                                  worksheet.getCell('A'+counter).value = rowElement.datedformat;
+                                  worksheet.getCell('A'+counter).value = rowElementDetail.datedformat;
                                   worksheet.getCell('B'+counter).value = rowElementDetail.name;
                                   worksheet.getCell('C'+counter).value = rowElementDetail.invoice_no;
                                   worksheet.getCell('D'+counter).value = rowElementDetail.abbr;
@@ -453,7 +453,7 @@
                           worksheet.getCell('C'+counter).value = "";
                           worksheet.getCell('D'+counter).value = "";
                           worksheet.getCell('E'+counter).value = total_qty;
-                          worksheet.getCell('F'+counter).value = total_total;
+                          worksheet.getCell('F'+counter).value = total_price;
                           worksheet.getCell('G'+counter).value = total_base_com;
                           worksheet.getCell('H'+counter).value = total_base_com_qty;
 
@@ -491,7 +491,7 @@
                       worksheet.getCell('C'+counter).value = "";
                       worksheet.getCell('D'+counter).value = "";
                       worksheet.getCell('E'+counter).value = total_qty_t;
-                      worksheet.getCell('F'+counter).value = total_total_t;
+                      worksheet.getCell('F'+counter).value = total_price_t;
                       worksheet.getCell('G'+counter).value = total_base_com_t;
                       worksheet.getCell('H'+counter).value = total_base_com_qty_t;
 
