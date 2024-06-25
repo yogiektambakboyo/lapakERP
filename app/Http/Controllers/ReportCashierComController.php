@@ -594,7 +594,7 @@ class ReportCashierComController extends Controller
                 from invoice_master im 
                 join invoice_detail id on id.invoice_no  = im.invoice_no 
                 join users u on u.id = id.referral_by and u.job_id = 1
-                join product_sku ps on ps.id = id.product_id and ps.type_id = 1 and ps.category_id!=58
+                join product_sku ps on ps.id = id.product_id and ps.type_id = 1
                 join customers c on c.id = im.customers_id and c.branch_id::character varying like '%".$branchx."%'
                 join branch b on b.id = c.branch_id
                 join users_branch as ub on ub.branch_id = b.id and ub.user_id = '".$user->id."'
@@ -611,7 +611,7 @@ class ReportCashierComController extends Controller
                 from invoice_master im 
                 join invoice_detail id on id.invoice_no  = im.invoice_no 
                 join users u on u.id = id.referral_by  and u.job_id = 1
-                join product_sku ps on ps.id = id.product_id and ps.type_id = 1 and ps.category_id!=58
+                join product_sku ps on ps.id = id.product_id and ps.type_id = 1
                 join customers c on c.id = im.customers_id and c.branch_id::character varying like '%".$branchx."%'
                 join branch b on b.id = c.branch_id
                 join users_branch as ub on ub.branch_id = b.id and ub.user_id = '".$user->id."'
@@ -644,7 +644,7 @@ class ReportCashierComController extends Controller
                 from invoice_master im 
                 join invoice_detail id on id.invoice_no  = im.invoice_no 
                 join users u on u.id = id.referral_by and u.job_id = 1
-                join product_sku ps on ps.id = id.product_id and ps.type_id = 1 and ps.category_id!=58
+                join product_sku ps on ps.id = id.product_id and ps.type_id = 1
                 join customers c on c.id = im.customers_id and c.branch_id::character varying like '%".$branchx."%'
                 join branch b on b.id = c.branch_id
                 join users_branch as ub on ub.branch_id = b.id and ub.user_id = '".$user->id."'
@@ -661,7 +661,7 @@ class ReportCashierComController extends Controller
                 from invoice_master im 
                 join invoice_detail id on id.invoice_no  = im.invoice_no 
                 join users u on u.id = id.referral_by and u.job_id = 1
-                join product_sku ps on ps.id = id.product_id and ps.type_id = 1 and ps.category_id!=58
+                join product_sku ps on ps.id = id.product_id and ps.type_id = 1
                 join customers c on c.id = im.customers_id and c.branch_id::character varying like '%".$branchx."%'
                 join branch b on b.id = c.branch_id
                 join users_branch as ub on ub.branch_id = b.id and ub.user_id = '".$user->id."'
