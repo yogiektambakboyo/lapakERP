@@ -4,7 +4,7 @@
 	'appHeaderHide' => true,
 	'appContentClass' => 'p-0'
 ])
-@section('title', 'Login Page')
+@section('title', 'Landing Page')
 
 @section('content')
 <body data-bs-spy='scroll' data-bs-target='#header' data-bs-offset='51'>
@@ -15,7 +15,7 @@
 			<!-- begin container -->
 			<div class="container">
 				<!-- begin navbar-brand -->
-				<a href="index.html" class="navbar-brand">
+				<a href="<?= url('/'); ?>" class="navbar-brand">
 					<span class="brand-logo"></span>
 					<span class="brand-text">
 						<span class="text-theme">Lapak</span> Kreatif
