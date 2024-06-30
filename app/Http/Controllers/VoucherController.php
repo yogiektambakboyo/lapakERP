@@ -333,8 +333,8 @@ class VoucherController extends Controller
                 from voucher v 
                 join voucher_detail vd on vd.voucher_code=v.voucher_code and vd.voucher_code='".$voucher_code."'
                 join branch as bc on bc.id= v.branch_id and bc.id = ".$branch_id."
-                join users_branch as ub2 on ub2.branch_id=v .branch_id
-                join product_sku ps on ps.id = vd.product_id::bigint
+                join users_branch as ub2 on ub2.branch_id=v.branch_id
+                left join product_sku ps on ps.id = vd.product_id::bigint
                 where ub2.user_id = '".$user->id."' group by v.unlimeted,v.moq,bc.id,v.invoice_no,v.is_used,v.price,v.remark,v.voucher_code,v.branch_id,bc.remark,v.value,v.value_idx,v.dated_start,v.dated_end limit 1
         ;");
 
