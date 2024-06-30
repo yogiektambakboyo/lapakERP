@@ -16,9 +16,6 @@ class HomeController extends Controller
     private $data;
     public function index() 
     {
-        if(str_contains(url()->current(),'poin.')){
-            return Redirect::to('https://kakikupoin.masuk.id');
-        }
         $user = Auth::user();
         if($user != null){
             $join_date_renew = DB::select("UPDATE users SET join_years = case when extract(year from age(now(),join_date))<=0 then 1 else extract(year from age(now(),join_date)) end");  
@@ -243,7 +240,8 @@ class HomeController extends Controller
             ])->with('data',$data)->with('company',Company::get()->first());
         }else{
             $data = [];
-            return view('pages.auth.login')->with('data',$data)->with('settings',Settings::get()->first())->with('company',Company::get()->first());
+            return redirect()->route('login.profile', []);
+            //return view('pages.auth.login')->with('data',$data)->with('settings',Settings::get()->first())->with('company',Company::get()->first());
         }
     }
 
