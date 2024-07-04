@@ -11,6 +11,8 @@
 	<link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet" />
 	<link href="assets/css/one-page-parallax/vendor.min.css" rel="stylesheet" />
 	<link href="assets/css/one-page-parallax/app.min.css" rel="stylesheet" />
+	<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" />
+	<link href="assets/css/app.css" rel="stylesheet" />
 </head>
 @php
 	$bodyClass = (!empty($appBoxedLayout)) ? 'boxed-layout ' : '';
@@ -60,6 +62,10 @@
 
 	<script src="assets/js/one-page-parallax/vendor.min.js"></script>
 	<script src="assets/js/one-page-parallax/app.min.js"></script>
+	<link
+		rel="stylesheet"
+		href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"
+	/>
 	<script src="https://unpkg.com/typeit@8.7.1/dist/index.umd.js"></script>
 
 	<script type="text/javascript">

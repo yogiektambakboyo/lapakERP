@@ -25,4 +25,5 @@
 <link href="/assets/css/daterangepicker.css" rel="stylesheet" />
 <link href="/assets/css/bootstrap-timepicker.min.css" rel="stylesheet" />
 
+
 @stack('css')

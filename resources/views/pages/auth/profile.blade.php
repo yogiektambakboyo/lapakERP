@@ -686,8 +686,14 @@
 					<a href="#"><i class="fab fa-google-plus-g fa-fw"></i></a>
 					<a href="#"><i class="fab fa-dribbble fa-fw"></i></a>
 				</p>
+
+				
 			</div>
 		</div>
+
+		<a href="https://api.whatsapp.com/send?phone=6285746879090&text=Hai%21%20Kak%20Yogi%20Mau%20tanya%20dong" class="custom-float animate__animated animate__infinite animate__tada animate__delay-2s" target="_blank">
+			<i class="fa fa-whatsapp my-float"></i>
+		</a>
 		<!-- end #footer -->
 		<!-- begin theme-panel -->
 	<div class="theme-panel">
