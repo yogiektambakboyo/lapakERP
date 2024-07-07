@@ -2,36 +2,99 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
 use Illuminate\Http\Request;
-use App\Http\Requests\RegisterRequest;
+use App\Http\Requests\LoginRequest;
+use Illuminate\Support\Facades\Auth;
+use App\Services\Login\RememberMeExpiration;
+use App\Models\Settings;
 use App\Models\Company;
+use App\Models\Branch;
+use App\Models\User;
+use Spatie\Permission\Models\Role;
+use App\Models\UserBranch;
+use App\Models\UserMutation;
 use App\Http\Controllers\Lang;
-
 
 class RegisterController extends Controller
 {
+    use RememberMeExpiration;
+
     /**
-     * Display register page.
+     * Display login page.
      * 
-     * @return \Illuminate\Http\Response
+     * @return Renderable
      */
     public function show()
     {
-        //return view('auth.register');
+        return view('auth.register',[
+            'settings' => Settings::get()->first(),'company' => Company::get()->first()
+        ]);
+    }
+
+    public function profile()
+    {
+        return view('pages.auth.profile',['settings' => Settings::get()->first(),'company' => Company::get()->first()]);
     }
 
     /**
-     * Handle account registration request
-     * 
-     * @param RegisterRequest $request
+     * Store a newly created user
+     * @param Request $request
      * 
      * @return \Illuminate\Http\Response
      */
-    public function register(RegisterRequest $request) 
+    public function store_regis(Request $request) 
     {
-        //$user = User::create($request->validated());
-        //auth()->login($user);
-        return redirect('/')->with('success', "Account successfully registered.");
+        //For demo purposes only. When creating user or inviting a user
+        // you should create a generated random password and email it to the user
+
+        $company = $request->get('company');
+
+        Branch::create(array_merge(
+            ['remark' => $company],
+            ['address' => $company],
+            ['city' => $company],
+            ['abbr' => $company],
+            ['active' => "1"]
+        ));
+
+        $my_branch_id = Branch::orderBy('id', 'desc')->first()->id;
+        
+
+        User::create(
+            array_merge(
+                ['password' => $request->get('password') ],
+                ['email' => $request->get('email') ],
+                ['name' => $company ],
+                ['username' => $request->get('email') ],
+                ['branch_id' => $my_branch_id ],
+                ['active' => '1' ],
+                ['job_id' => 13 ],
+                ['department_id' => 1 ]
+            )
+        );
+
+        $my_id = User::orderBy('id', 'desc')->first()->id;
+
+        UserBranch::create(
+            array_merge(
+                ['user_id' => $my_id],
+                ['branch_id' => $my_branch_id],
+            )
+        );
+
+        UserMutation::create(array_merge(
+            ['user_id' => $my_id],
+            ['job_id' => 13 ],
+            ['department_id' => 1 ],
+            ['branch_id' => $my_branch_id]
+        ));
+
+        $rolex = Role::where('id', 13)->first();
+        $user_x = User::where(['id' => $my_id])->first();
+        $user_x->assignRole($rolex);
+
+        return redirect()->route('register.show')
+            ->withSuccess(__('Proses registrasi berhasil, silahkan login menggunakan email dan password yang telah didaftarkan'));
     }
+
 }

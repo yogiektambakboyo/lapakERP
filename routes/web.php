@@ -29,7 +29,7 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
          * Register Routes
          */
         Route::get('/register', 'RegisterController@show')->name('register.show');
-        Route::post('/register', 'RegisterController@register')->name('register.perform');
+        Route::post('/register_regis', 'RegisterController@store_regis')->name('register.store_regis');
 
         /**
          * Login Routes

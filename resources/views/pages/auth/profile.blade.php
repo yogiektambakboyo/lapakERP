@@ -35,14 +35,29 @@
 						<li class="nav-item dropdown">
 							<a class="nav-link active" href="#home">BERANDA</a>
 						</li>
+						<li class="nav-item dropdown">
+							<a class="nav-link active" href="#home" data-click="scroll-to-target" data-scroll-target="#home">PRODUK <b class="caret"></b></a>
+							<div class="dropdown-menu dropdown-menu-left animate__animated animate__fadeInDown">
+								<a class="dropdown-item" href="#">eOrder Sales (SFA)</a>
+								<a class="dropdown-item" href="#">LapakERP <span class="badge badge-warning">coming soon</span></a>
+								<a class="dropdown-item" href="#">ePresensi  <span class="badge badge-secondary">coming soon</span></a>
+							</div>
+						</li>
+						<li class="nav-item"><a class="nav-link" href="#service" data-click="scroll-to-target">LAYANAN</a></li>
 						<li class="nav-item"><a class="nav-link" href="#about" data-click="scroll-to-target">TENTANG</a></li>
 						<li class="nav-item"><a class="nav-link" href="#team" data-click="scroll-to-target">TIM</a></li>
-						<li class="nav-item"><a class="nav-link" href="#service" data-click="scroll-to-target">LAYANAN</a></li>
-						<li class="nav-item"><a class="nav-link" href="#work" data-click="scroll-to-target">PRODUK</a></li>
 						<li class="nav-item"><a class="nav-link" href="#client" data-click="scroll-to-target">KLIEN</a></li>
 						<li class="nav-item"><a class="nav-link" href="#pricing" data-click="scroll-to-target">HARGA</a></li>
 						<li class="nav-item"><a class="nav-link" href="#contact" data-click="scroll-to-target">KONTAK</a></li>
 					</ul>
+
+					<div class="ms-4">
+						<a class="btn btn-sm btn-success" href="/login">LOGIN</a>
+						<a class="btn btn-sm btn-danger ms-1" href="/register">DAFTAR</a>
+					</div>
+
+					
+
 				</div>
 				<!-- end navbar-collapse -->
 			</div>
@@ -541,6 +556,25 @@
 				<ul class="pricing-table pricing-col-4">
 					<li data-animation="true" data-animation-type="animate__fadeInUp">
 						<div class="pricing-container">
+							<h3>Paket Free</h3>
+							<div class="price">
+								<div class="price-figure">
+									<span class="price-number">Rp 0 -,/Gratis</span>
+									<span class="price-tenure">Selamanya</span>
+								</div>
+							</div>
+							<ul class="features">
+								<li>Web + Android <br>(Aplikasi Bersama)</li>
+								<li>1 Cabang</li>
+								<li>Cocok untuk bisnis kecil yang baru mulai eksplorasi teknologi.</li>
+							</ul>
+							<div class="footer">
+								<a href="/register" class="btn btn-inverse btn-theme btn-block">Daftar Sekarang</a>
+							</div>
+						</div>
+					</li>
+					<li data-animation="true" data-animation-type="animate__fadeInUp">
+						<div class="pricing-container">
 							<h3>Paket Starter</h3>
 							<div class="price">
 								<div class="price-figure">
@@ -550,12 +584,12 @@
 							</div>
 							<ul class="features">
 								<li>2GB Storage</li>
-								<li>Up to 20 User Mobile</li>
-								<li>Web + Aplikasi Android</li>
-								<li>1 Admin Web Portal</li>
-								<li>Minimal komitmen 6 Bulan</li>
-								<li>Cocok untuk bisnis kecil yang baru mulai eksplorasi teknologi.</li>
-								<li>08.00-17.00/5 Day Work WhatsApp Support</li>
+								<li>Up to 50 User Mobile</li>
+								<li>Web + Android</li>
+								<li>1 Cabang</li>
+								<li>Min. kontrak 6 Bulan</li>
+								<li>08-17/5 Day Work Support</li>
+								<li>Cocok untuk bisnis yang ingin berkembang pesat.</li>
 							</ul>
 							<div class="footer">
 								<a target="_blank" href="https://api.whatsapp.com/send?phone=6285746879090&text=Hi%20Yogi%2C%20Saya%20mau%20buat%20paket%20starter.%20Apakah%20bisa%20dibantu%3F" class="btn btn-inverse btn-theme btn-block">Hubungi Saya</a>
@@ -572,42 +606,20 @@
 								</div>
 							</div>
 							<ul class="features">
-								<li>5GB Storage</li>
-								<li>Up to 50 User Mobile</li>
-								<li>Web + Aplikasi Android</li>
-								<li>3 Admin Web Portal</li>
-								<li>Minimal komitmen 3 Bulan</li>
-								<li>Solusi lengkap untuk para kreatif yang butuh alat kerja kekinian.</li>
-								<li>08.00-17.00/5 Day Work WhatsApp Support</li>
+								<li>10GB Storage</li>
+								<li>Up to 100 User Mobile</li>
+								<li>Multi Cabang</li>
+								<li>Web + Android</li>
+								<li>Min. kontrak 3 Bulan</li>
+								<li>08-17/5 Day Work Support</li>
+								<li>Solusi untuk bisnis yang serius ingin meningkatkan efisiensi operasional.</li>
 							</ul>
 							<div class="footer">
 								<a target="_blank" href="https://api.whatsapp.com/send?phone=6285746879090&text=Hi%20Yogi%2C%20Saya%20mau%20buat%20paket%20kreatif.%20Apakah%20bisa%20dibantu%3F" class="btn btn-inverse btn-theme btn-block">Hubungi Saya</a>
 							</div>
 						</div>
 					</li>
-					<li data-animation="true" data-animation-type="animate__fadeInUp">
-						<div class="pricing-container">
-							<h3>Paket Bisnis Pro</h3>
-							<div class="price">
-								<div class="price-figure">
-									<span class="price-number">Rp 1.000K</span>
-									<span class="price-tenure">per Bulan</span>
-								</div>
-							</div>
-							<ul class="features">
-								<li>20GB Storage</li>
-								<li>Up to 150 User Mobile</li>
-								<li>10 Admin Web Portal</li>
-								<li>Web + Aplikasi Android + Aplikasi iPhone/Apple </li>
-								<li>Minimal komitmen 3 Bulan</li>
-								<li>Untuk bisnis yang serius ingin meningkatkan efisiensi operasional.</li>
-								<li>24/7 WhatsApp Support</li>
-							</ul>
-							<div class="footer">
-								<a target="_blank" href="https://api.whatsapp.com/send?phone=6285746879090&text=Hi%20Yogi%2C%20Saya%20mau%20buat%20paket%20bisnis.%20Apakah%20bisa%20dibantu%3F" class="btn btn-inverse btn-theme btn-block">Hubungi Saya</a>
-							</div>
-						</div>
-					</li>
+					
 					<li data-animation="true" data-animation-type="animate__fadeInUp">
 						<div class="pricing-container">
 							<h3>Paket Developer Plus</h3>
@@ -652,7 +664,7 @@
 							P: 085746879090<br />
 						</p>
 						<p>
-							<a href="mailto:hello@emailaddress.com" class="text-theme">yogiektambakboyo@gmail.com</a>
+							<a href="mailto:yogiektambakboyo@gmail.com" class="text-theme">yogiektambakboyo@gmail.com</a>
 						</p>
 					</div>
 					<!-- end col-6 -->
@@ -691,7 +703,26 @@
 			</div>
 		</div>
 
-		<a href="https://api.whatsapp.com/send?phone=6285746879090&text=Hai%21%20Kak%20Yogi%20Mau%20tanya%20dong" class="custom-float animate__animated animate__infinite animate__tada animate__delay-2s" target="_blank">
+		{{-- Modal Promo --}}
+		<div class="modal fade" id="modal-promo" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+			<div class="modal-dialog modal-xl">
+			  <div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				  </div>
+				<div class="modal-body">
+					<div class="d-flex justify-content-center">
+						<a href="/register">
+							<img src="assets/img/user/banner_promo.jpg" alt="">
+						</a>
+					</div>
+				</div>
+			  </div>
+			</div>
+		</div>
+		{{-- End Modal Promo --}}
+
+		<a href="https://api.whatsapp.com/send?phone=6285746879090&text=Hai%21%20Kak%20Yogi%20Mau%20tanya%20dong" class="custom-float animate__animated animate__repeat-1 animate__tada animate__delay-2s" target="_blank">
 			<i class="fa fa-whatsapp my-float"></i>
 		</a>
 		<!-- end #footer -->

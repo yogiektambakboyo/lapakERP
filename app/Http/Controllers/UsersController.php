@@ -258,6 +258,65 @@ class UsersController extends Controller
     }
 
     /**
+     * Store a newly created user
+     * 
+     * @param User $user
+     * @param StoreUserRequest $request
+     * 
+     * @return \Illuminate\Http\Response
+     */
+    public function store_regis(User $user, StoreUserRequest $request) 
+    {
+        //For demo purposes only. When creating user or inviting a user
+        // you should create a generated random password and email it to the user
+
+        $user->create(
+            array_merge(
+                $request->validated(), 
+                ['password' => $request->get('password') ],
+                ['email' => $request->get('email') ],
+                ['join_date' => Carbon::parse($request->get('join_date'))->format('Y-m-d') ],
+                ['gender' => $request->get('gender') ],
+                ['netizen_id' => $request->get('netizen_id') ],
+                ['active' => '1' ],
+                ['city' => $request->get('city') ],
+                ['employee_id' => $request->get('employee_id') ],
+                ['job_id' => $request->get('job_id') ],
+                ['department_id' => $request->get('department_id') ],
+                ['address' => $request->get('address') ],
+            )
+        );
+
+        $my_id = User::orderBy('id', 'desc')->first()->id;
+
+        $arr = $request->get('branch_id');
+        for ($i=0; $i < count($arr); $i++) { 
+            UserBranch::create(
+                array_merge(
+                    ['user_id' => User::orderBy('id', 'desc')->first()->id],
+                    ['branch_id' => (int)$arr[$i]],
+                )
+            );
+
+            User::where(['id' => $my_id])->update( array_merge(
+                    ['branch_id' => (int)$arr[$i] ],
+            ));
+
+            UserMutation::create(array_merge(
+                ['user_id' => User::orderBy('id', 'desc')->first()->id ],
+                ['job_id' => $request->get('job_id') ],
+                ['branch_id' => (int)$arr[$i]],
+                ['department_id' => $request->get('department_id') ],
+            ));
+        }
+
+        return redirect()->route('users.index')
+            ->withSuccess(__('User created successfully.'));
+    }
+
+    
+
+    /**
      * Store a newly created user skill
      * 
      *

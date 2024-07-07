@@ -30,6 +30,12 @@
 			<div class="login-body">
 				<!-- BEGIN login-content -->
 				<div class="login-content fs-13px">
+					<div class="row">
+                        <div class="col-9"></div>
+                        <div class="col-3">
+                            <a class="btn btn-primary mb-2 mt-2 btn-sm" id="btn-back" href="/profile">KEMBALI</a>
+                        </div>
+                    </div>
 					<form action="{{ route('login.perform') }}" method="post">
 						<input type="hidden" name="_token" value="{{ csrf_token() }}" />
 						<div class="form-floating mb-20px">

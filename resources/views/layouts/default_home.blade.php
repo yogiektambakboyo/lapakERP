@@ -75,15 +75,19 @@
 		  })
 		  .type("<strong>Creative </strong>")
 		  .pause(200)
-		  .type("<span class='text-teal'>Team</span>")
+		  .type("<span class='text-theme'>Team</span>")
 		  .pause(300)
 		  .delete(4)
-		  .type("<span class='text-teal'>Agency</span>")
+		  .type("<span class='text-theme'>Agency</span>")
 		  .pause(300)
 		  .delete(6)
-		  .type("<span class='text-teal'>Solution</span>")
+		  .type("<span class='text-theme'>Solution</span>")
 		  .pause(300)
 		  .go();
+
+		setTimeout(function() {
+			$('#modal-promo').modal('show');	
+		}, 2000);
 	</script>
 </body>
 </html>
