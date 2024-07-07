@@ -39,7 +39,7 @@
 							<a class="nav-link active" href="#home" data-click="scroll-to-target" data-scroll-target="#home">PRODUK <b class="caret"></b></a>
 							<div class="dropdown-menu dropdown-menu-left animate__animated animate__fadeInDown">
 								<a class="dropdown-item" href="/eorder">eOrder Sales (SFA)</a>
-								<a class="dropdown-item" href="#">LapakERP <span class="badge badge-warning">coming soon</span></a>
+								<a class="dropdown-item" href="/lapakerp">LapakERP <span class="badge badge-warning">coming soon</span></a>
 								<a class="dropdown-item" href="#">ePresensi  <span class="badge badge-secondary">coming soon</span></a>
 							</div>
 						</li>
