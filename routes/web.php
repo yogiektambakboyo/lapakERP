@@ -38,6 +38,8 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
         Route::post('/login', 'LoginController@login')->name('login.perform');
 
         Route::get('/profile', 'LoginController@profile')->name('login.profile');
+        Route::get('/eorder', 'LoginController@eorder')->name('login.eorder');
+        Route::get('/lapakerp', 'LoginController@lapakerp')->name('login.lapakerp');
 
     });
 

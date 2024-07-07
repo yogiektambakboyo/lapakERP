@@ -38,7 +38,7 @@
 						<li class="nav-item dropdown">
 							<a class="nav-link active" href="#home" data-click="scroll-to-target" data-scroll-target="#home">PRODUK <b class="caret"></b></a>
 							<div class="dropdown-menu dropdown-menu-left animate__animated animate__fadeInDown">
-								<a class="dropdown-item" href="/eorder">eOrder Sales (SFA)</a>
+								<a class="dropdown-item" href="#">eOrder Sales (SFA)</a>
 								<a class="dropdown-item" href="#">LapakERP <span class="badge badge-warning">coming soon</span></a>
 								<a class="dropdown-item" href="#">ePresensi  <span class="badge badge-secondary">coming soon</span></a>
 							</div>
@@ -53,7 +53,7 @@
 
 					<div class="ms-4">
 						<a class="btn btn-sm btn-success" href="/login">LOGIN</a>
-						<a class="btn btn-sm btn-danger ms-1" href="/register">DAFTAR GRATIS</a>
+						<a class="btn btn-sm btn-danger ms-1" href="/register">DAFTAR</a>
 					</div>
 
 					
@@ -713,7 +713,7 @@
 				<div class="modal-body">
 					<div class="d-flex justify-content-center">
 						<a href="/register">
-							<img src="assets/img/user/banner_promo.jpg" width="100%" alt="">
+							<img src="assets/img/user/banner_promo.jpg" alt="">
 						</a>
 					</div>
 				</div>

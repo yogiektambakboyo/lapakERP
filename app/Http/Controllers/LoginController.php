@@ -31,6 +31,16 @@ class LoginController extends Controller
         return view('pages.auth.profile',['settings' => Settings::get()->first(),'company' => Company::get()->first()]);
     }
 
+    public function eorder()
+    {
+        return view('pages.auth.eorder',['settings' => Settings::get()->first(),'company' => Company::get()->first()]);
+    }
+
+    public function lapakerp()
+    {
+        return view('pages.auth.lapakerp',['settings' => Settings::get()->first(),'company' => Company::get()->first()]);
+    }
+
     /**
      * Handle account login request
      * 
