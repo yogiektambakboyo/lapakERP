@@ -185,6 +185,12 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
             Route::get('/export', 'PresenceAnalysisController@export')->name('presenceanalysis.export');
         });
 
+        Route::group(['prefix' => 'listterapist'], function() {
+            Route::get('/', 'TerapistController@index')->name('listterapist.index');
+            Route::get('/search', 'TerapistController@search')->name('listterapist.search');
+            Route::get('/export', 'TerapistController@export')->name('listterapist.export');
+        });
+
         Route::group(['prefix' => 'presenceanalysisbranch'], function() {
             Route::get('/', 'PresenceAnalysisBranchController@index')->name('presenceanalysisbranch.index');
             Route::get('/search', 'PresenceAnalysisBranchController@search')->name('presenceanalysisbranch.search');
