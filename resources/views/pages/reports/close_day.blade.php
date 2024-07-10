@@ -63,7 +63,7 @@
                         <td><button onclick="openDialog4('{{ $rdata->branch_id }}','{{ $rdata->dated }}','0');" class="btn btn-primary btn-sm">Print w/ CL</button></td>
                         <td><button onclick="openDialog3('{{ $rdata->branch_id }}','{{ $rdata->dated }}','0');" class="btn btn-danger btn-sm">Print Lap. Harian v2</button></td>
                         <th scope="row">{{ $rdata->branch_name }}</th>
-                        <td>{{ Carbon\Carbon::parse($rdata->dated)->format('d-m-Y')  }}</td>
+                        <td  data-order="{{ $rdata->dated }}">{{ Carbon\Carbon::parse($rdata->dated)->format('d-m-Y')  }}</td>
                         <!-- <td>{{ number_format($rdata->total_service,0,',','.') }}</td> -->
                         <td>{{ number_format($rdata->total_service_no_cl,0,',','.') }}</td>
                         <td>{{ number_format($rdata->total_salon_no_cl,0,',','.') }}</td>
