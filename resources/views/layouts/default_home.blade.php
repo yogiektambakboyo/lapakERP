@@ -2,10 +2,28 @@
 <html lang="{{ app()->getLocale() }}">
 <head>
 	<meta charset="utf-8" />
-	<title>Lapak Kreatif</title>
 	<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport" />
-	<meta content="" name="description" />
-	<meta content="" name="author" />
+	<meta content="Lapak Kreatif Lamongan" name="author" />
+
+	<!-- HTML Meta Tags -->
+	<title>Lapak Kreatif Lamongan</title>
+	<meta name="description" content="eOrder - Solusi Rekap Pemesanan Sales Terbaik & Gratis Selamanyaaa. Tersedia dalam Web, Android & iOS">
+
+	<!-- Facebook Meta Tags -->
+	<meta property="og:url" content="https://lapakkreatif.com">
+	<meta property="og:type" content="website">
+	<meta property="og:title" content="Lapak Kreatif Lamongan">
+	<meta property="og:description" content="eOrder - Solusi Rekap Pemesanan Sales Terbaik & Gratis Selamanyaaa. Tersedia dalam Web, Android & iOS">
+	<meta property="og:image" content="">
+
+	<!-- Twitter Meta Tags -->
+	<meta name="twitter:card" content="summary_large_image">
+	<meta property="twitter:domain" content="lapakkreatif.com">
+	<meta property="twitter:url" content="https://lapakkreatif.com">
+	<meta name="twitter:title" content="Lapak Kreatif Lamongan">
+	<meta name="twitter:description" content="eOrder - Solusi Rekap Pemesanan Sales Terbaik & Gratis Selamanyaaa. Tersedia dalam Web, Android & iOS">
+	<meta name="twitter:image" content="">
+
 	
 	<!-- ================== BEGIN core-css ================== -->
 	<link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet" />
