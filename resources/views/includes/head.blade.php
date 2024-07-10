@@ -19,6 +19,18 @@
 <meta name="twitter:description" content="eOrder - Solusi Rekap Pemesanan Sales Terbaik & Gratis Selamanyaaa. Tersedia dalam Web, Android & iOS">
 <meta name="twitter:image" content="">
 
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-VT39GBYGX9">
+</script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-VT39GBYGX9');
+</script>
+
 <!-- ================== BEGIN BASE CSS STYLE ================== -->
 <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet" />
 <link href="/assets/css/vendor.min.css" rel="stylesheet" />

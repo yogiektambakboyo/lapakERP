@@ -31,6 +31,16 @@
 	<link href="assets/css/one-page-parallax/app.min.css" rel="stylesheet" />
 	<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" />
 	<link href="assets/css/app.css" rel="stylesheet" />
+
+	<!-- Google tag (gtag.js) -->
+	<script async src="https://www.googletagmanager.com/gtag/js?id=G-VT39GBYGX9"></script>
+	<script>
+		window.dataLayer = window.dataLayer || [];
+		function gtag(){dataLayer.push(arguments);}
+		gtag('js', new Date());
+
+		gtag('config', 'G-VT39GBYGX9');
+	</script>
 </head>
 @php
 	$bodyClass = (!empty($appBoxedLayout)) ? 'boxed-layout ' : '';
