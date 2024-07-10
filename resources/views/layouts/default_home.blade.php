@@ -114,7 +114,7 @@
 		  .go();
 
 		setTimeout(function() {
-			$('#modal-promo').modal('show');	
+			//$('#modal-promo').modal('show');	
 		}, 2000);
 	</script>
 </body>
