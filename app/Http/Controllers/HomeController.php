@@ -245,6 +245,12 @@ class HomeController extends Controller
         }
     }
 
+    public function policy() 
+    {
+            $data = [];
+            return view('pages.auth.policy')->with('data',$data)->with('settings',Settings::get()->first())->with('company',Company::get()->first());
+    }
+
     public function getpermissions($role_id){
         $id = $role_id;
         $permissions = Permission::join('role_has_permissions',function ($join)  use ($id) {
