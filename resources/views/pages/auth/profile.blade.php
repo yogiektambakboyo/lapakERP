@@ -425,7 +425,9 @@
 					<!-- end col-9 -->
 					<!-- begin col-3 -->
 					<div class="col-lg-3">
-						<a href="https://play.google.com/store/apps/dev?id=8515839296231278601" target="_blank" class="btn btn-warning btn-theme btn-block">Play Store</a>
+						<a href="https://play.google.com/store/apps/dev?id=8515839296231278601" target="_blank">
+							<img src="assets/img/user/google_play.png" alt="">
+						</a>
 					</div>
 					<!-- end col-3 -->
 				</div>

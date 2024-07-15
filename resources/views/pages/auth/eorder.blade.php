@@ -86,35 +86,7 @@
 		</div>
 		<!-- end #home -->
 	
-		
-		<!-- begin #quote -->
-		<div id="quote" class="content bg-black-darker has-bg" data-scrollview="true">
-			<!-- begin content-bg -->
-			<div class="content-bg" style="background-image: url(assets/img/bg/bg-quote.jpg)"
-				data-paroller-factor="0.5"
-				data-paroller-factor-md="0.01"
-				data-paroller-factor-xs="0.01">
-			</div>
-			<!-- end content-bg -->
-			<!-- begin container -->
-			<div class="container" data-animation="true" data-animation-type="animate__fadeInLeft">
-				<!-- begin row -->
-				<div class="row">
-					<!-- begin col-12 -->
-					<div class="col-lg-12 quote">
-						<i class="fa fa-quote-left"></i> Passion leads to design, design leads to performance, <br />
-						performance leads to <span class="text-theme">success</span>!  
-						<i class="fa fa-quote-right"></i>
-						<small>Hamba Tuhan, Developer Teams</small>
-					</div>
-					<!-- end col-12 -->
-				</div>
-				<!-- end row -->
-			</div>
-			<!-- end container -->
-		</div>
-		<!-- end #quote -->
-		
+	
 		<!-- beign #service -->
 		<div id="service" class="content" data-scrollview="true">
 			<!-- begin container -->
@@ -125,7 +97,7 @@
 				<!-- begin row -->
 				<div class="row">
 					<!-- begin col-4 -->
-					<div class="col-lg-4 col-md-6">
+					<div class="col-lg-6 col-md-6">
 						<div class="service">
 							<div class="icon" data-animation="true" data-animation-type="animate__bounceIn"><i class="fa fa-cog"></i></div>
 							<div class="info">
@@ -134,9 +106,10 @@
 							</div>
 						</div>
 					</div>
+
 					<!-- end col-4 -->
 					<!-- begin col-4 -->
-					<div class="col-lg-4 col-md-6">
+					<div class="col-lg-6 col-md-6">
 						<div class="service">
 							<div class="icon" data-animation="true" data-animation-type="animate__bounceIn"><i class="fa fa-paint-brush"></i></div>
 							<div class="info">
@@ -147,7 +120,7 @@
 					</div>
 					<!-- end col-4 -->
 					<!-- begin col-4 -->
-					<div class="col-lg-4 col-md-6">
+					<div class="col-lg-6 col-md-6">
 						<div class="service">
 							<div class="icon" data-animation="true" data-animation-type="animate__bounceIn"><i class="fa fa-file"></i></div>
 							<div class="info">
@@ -158,7 +131,7 @@
 					</div>
 					<!-- end col-4 -->
 					<!-- begin col-4 -->
-					<div class="col-lg-4 col-md-6">
+					<div class="col-lg-6 col-md-6">
 						<div class="service">
 							<div class="icon" data-animation="true" data-animation-type="animate__bounceIn"><i class="fa fa-code"></i></div>
 							<div class="info">
@@ -169,7 +142,7 @@
 					</div>
 					<!-- end col-4 -->
 					<!-- begin col-4 -->
-					<div class="col-lg-4 col-md-6">
+					<div class="col-lg-6 col-md-6">
 						<div class="service">
 							<div class="icon" data-animation="true" data-animation-type="animate__bounceIn"><i class="fa fa-shopping-cart"></i></div>
 							<div class="info">
@@ -180,7 +153,7 @@
 					</div>
 					<!-- end col-4 -->
 					<!-- begin col-4 -->
-					<div class="col-lg-4 col-md-6">
+					<div class="col-lg-6 col-md-6">
 						<div class="service">
 							<div class="icon" data-animation="true" data-animation-type="animate__bounceIn"><i class="fa fa-heart"></i></div>
 							<div class="info">
@@ -192,6 +165,16 @@
 					<!-- end col-4 -->
 				</div>
 				<!-- end row -->
+			</div>
+
+			<div class="row">
+				<div class="col-lg-2">
+				</div>
+				<div class="col-lg-8">
+					<img src="images/cover_web_01.png" class="img-fluid">
+				</div>
+				<div class="col-lg-2">
+				</div>
 			</div>
 			<!-- end container -->
 		</div>
