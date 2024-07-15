@@ -10,6 +10,7 @@
 <meta property="og:title" content="Lapak Kreatif Lamongan">
 <meta property="og:description" content="eOrder - Solusi Rekap Pemesanan Sales Terbaik & Gratis Selamanyaaa. Tersedia dalam Web, Android & iOS">
 <meta property="og:image" content="">
+<link rel="icon" href="favicon.ico">
 
 <!-- Twitter Meta Tags -->
 <meta name="twitter:card" content="summary_large_image">
