@@ -137,7 +137,7 @@ class CustomersController extends Controller
         return view('pages.customers.create',
         [
             'data'=>$data,
-            'branchs' => Branch::latest()->get(), 
+            'branchs' => Branch::join('users_branch as ub','ub.branch_id','=','branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']), 
             'company' => Company::get()->first(),
             'segments' => CustomersSegment::get()->first(),
             'userBranchs' => Branch::latest()->get()->pluck('remark')->toArray(),
@@ -226,7 +226,9 @@ class CustomersController extends Controller
         $data = $this->data;
         $sellers = Sales::join('users_branch as ub','ub.branch_id','=','sales.branch_id')->where('ub.user_id','=',$user->id)->orderBy('sales.name')->get(['sales.id','sales.name']);
         return view('pages.customers.edit', [
-            'customer' => $Customer ,'data' => $data ,'branchs' => Branch::latest()->get(), 'company' => Company::get()->first(),
+            'customer' => $Customer ,'data' => $data ,
+            'branchs' => Branch::join('users_branch as ub','ub.branch_id','=','branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']),
+            'company' => Company::get()->first(),
             'userBranchs' => Branch::latest()->get()->pluck('remark')->toArray(),
             'segments' => CustomersSegment::orderBy('remark','asc')->get(['id','remark']),
             'sellers' => $sellers,
