@@ -39,7 +39,7 @@
 							<a class="nav-link active" href="#home" data-click="scroll-to-target" data-scroll-target="#home">PRODUK <b class="caret"></b></a>
 							<div class="dropdown-menu dropdown-menu-left animate__animated animate__fadeInDown">
 								<a class="dropdown-item" href="/eorder">eOrder Sales (SFA)</a>
-								<a class="dropdown-item" href="/lapakerp">LapakERP <span class="badge badge-warning">coming soon</span></a>
+								<a class="dropdown-item" href="/lapakerp">LapakERP</a>
 								<a class="dropdown-item" href="#">ePresensi  <span class="badge badge-secondary">coming soon</span></a>
 							</div>
 						</li>
@@ -73,10 +73,10 @@
 			<!-- end content-bg -->
 			<!-- begin container -->
 			<div class="container home-content">
-				<h1 id="">Sales Kamu Ribet?</h1>
-				<h3>Aplikasi kita bikin urusan perekapan pemesanan jadi super gampang dan efisien. Yuk, cobain sekarang!</h3>
+				<h1 id="">LapakERP</h1>
+				<h3>Bisnisnya Jalan, Boss-nya Jalan-Jalan</h3>
 				<p>
-					Temukan Cara Terbaru dan Tercanggih untuk Kelola Pemesanan Sales Tanpa Ribet!
+					Sekarang Anda bisa analisa bisnis semudah baca koran
 				</p>
 					<a href="#service" class="btn btn-outline-white">Detail Fitur</a>
 					<a href="/register" class="btn btn-danger btn-primary">Daftar Gratis</a> 				
@@ -85,41 +85,94 @@
 			<!-- end container -->
 		</div>
 		<!-- end #home -->
-	
-		
-		<!-- begin #quote -->
-		<div id="quote" class="content bg-black-darker has-bg" data-scrollview="true">
-			<!-- begin content-bg -->
-			<div class="content-bg" style="background-image: url(assets/img/bg/bg-quote.jpg)"
-				data-paroller-factor="0.5"
-				data-paroller-factor-md="0.01"
-				data-paroller-factor-xs="0.01">
-			</div>
-			<!-- end content-bg -->
+
+		<!-- beign #profit -->
+		<div id="profit" class="content" data-scrollview="true">
 			<!-- begin container -->
-			<div class="container" data-animation="true" data-animation-type="animate__fadeInLeft">
+			<div class="container">
+				<h2 class="content-title">Puluhan tahun jalanin Bisnis, tapi masih repot dengan ginian?</h2>
+				<p class="content-desc">
+				</p>
 				<!-- begin row -->
 				<div class="row">
-					<!-- begin col-12 -->
-					<div class="col-lg-12 quote">
-						<i class="fa fa-quote-left"></i> Passion leads to design, design leads to performance, <br />
-						performance leads to <span class="text-theme">success</span>!  
-						<i class="fa fa-quote-right"></i>
-						<small>Hamba Tuhan, Developer Teams</small>
+					<!-- begin col-6 -->
+					<div class="col-lg-6 col-md-6">
+						<div class="service">
+							<div class="icon" data-animation="true" data-animation-type="animate__bounceIn"><i class="fa-solid fa-xmark"></i></div>
+							<div class="info mt-3">
+								<h5 class="title">Cashflow seret akibat ratusan piutang tidak tertagih</h5>
+							</div>
+						</div>
 					</div>
-					<!-- end col-12 -->
+					<!-- end col-6 -->
+					<!-- begin col-6 -->
+					<div class="col-lg-6 col-md-6">
+						<div class="service">
+							<div class="icon" data-animation="true" data-animation-type="animate__bounceIn"><i class="fa-solid fa-xmark"></i></div>
+							<div class="info mt-1">
+								<h5 class="title">Kewalahan saat melakukan stok opname ribuan stok secara manual</h5>
+							</div>
+						</div>
+					</div>
+					<!-- end col-6 -->
+
+
+
+					<!-- begin col-6 -->
+					<div class="col-lg-6 col-md-6">
+						<div class="service">
+							<div class="icon" data-animation="true" data-animation-type="animate__bounceIn"><i class="fa-solid fa-xmark"></i></div>
+							<div class="info mt-1">
+								<h5 class="title">Tidak punya data stok yang akurat, hitungnya masih manual</h5>
+							</div>
+						</div>
+					</div>
+					<!-- end col-6 -->
+					<!-- begin col-6 -->
+					<div class="col-lg-6 col-md-6">
+						<div class="service">
+							<div class="icon" data-animation="true" data-animation-type="animate__bounceIn"><i class="fa-solid fa-xmark"></i></div>
+							<div class="info mt-1">
+								<h5 class="title">Profit tipis akibat sales nakal markup harga dan membuat nota dobel</h5>
+							</div>
+						</div>
+					</div>
+					<!-- end col-6 -->
+
+					<!-- begin col-6 -->
+					<div class="col-lg-6 col-md-6">
+						<div class="service">
+							<div class="icon" data-animation="true" data-animation-type="animate__bounceIn"><i class="fa-solid fa-xmark"></i></div>
+							<div class="info mt-1">
+								<h5 class="title">Rugi karena harga produk tidak uptodate dan tidak sadar jualan di bawah HPP</h5>
+							</div>
+						</div>
+					</div>
+					<!-- end col-6 -->
+					<!-- begin col-6 -->
+					<div class="col-lg-6 col-md-6">
+						<div class="service">
+							<div class="icon" data-animation="true" data-animation-type="animate__bounceIn"><i class="fa-solid fa-xmark"></i></div>
+							<div class="info mt-1">
+								<h5 class="title">Lambat dalam mengambil keputusan karena butuh waktu berhari-hari</h5>
+							</div>
+						</div>
+					</div>
+					<!-- end col-6 -->
+					
 				</div>
 				<!-- end row -->
 			</div>
 			<!-- end container -->
 		</div>
-		<!-- end #quote -->
+		<!-- end #profit -->
 		
+	
 		<!-- beign #service -->
 		<div id="service" class="content" data-scrollview="true">
 			<!-- begin container -->
 			<div class="container">
-				<h2 class="content-title">Keren apa aja yang bisa kamu dapetin kalo pake eOrder?</h2>
+				<h2 class="content-title">Keren apa aja yang bisa kamu dapetin kalo pake LapakERP?</h2>
 				<p class="content-desc">
 				</p>
 				<!-- begin row -->
@@ -129,8 +182,8 @@
 						<div class="service">
 							<div class="icon" data-animation="true" data-animation-type="animate__bounceIn"><i class="fa fa-cog"></i></div>
 							<div class="info">
-								<h4 class="title">Manajemen Pemesanan</h4>
-								<p class="desc">Semua pesanan bisa kamu kelola dengan mudah dan praktis dengan satu layar di smartphone.</p>
+								<h4 class="title">Cashflow Lancar Bisnis Makin Besar</h4>
+								<p class="desc">Cashflow bisnis terjamin lancar, memudahkan proses penagihan sehingga tidak ada lagi piutang nyangkut berbulan-bulan.</p>
 							</div>
 						</div>
 					</div>
@@ -140,8 +193,8 @@
 						<div class="service">
 							<div class="icon" data-animation="true" data-animation-type="animate__bounceIn"><i class="fa fa-paint-brush"></i></div>
 							<div class="info">
-								<h4 class="title">Pelacakan Kunjungan dan Penjualan</h4>
-								<p class="desc">Pantau kunjungan sales ke toko dan penjualan kamu secara real-time..</p>
+								<h4 class="title">Monitor Stok secara Real-time</h4>
+								<p class="desc">Tidak perlu lagi bingung dengan stok yang hilang atau berbeda dengan catatan! lapakERP akan membantu Anda monitor stok secara real-time.</p>
 							</div>
 						</div>
 					</div>
@@ -151,8 +204,8 @@
 						<div class="service">
 							<div class="icon" data-animation="true" data-animation-type="animate__bounceIn"><i class="fa fa-file"></i></div>
 							<div class="info">
-								<h4 class="title">Analisis Data</h4>
-								<p class="desc">Analisis data penjualan biar keputusan kamu makin mantap.</p>
+								<h4 class="title">Analisa Biaya untuk Hindari Kerugian</h4>
+								<p class="desc">Hindari kerugian dengan analisa biaya yang mudah dan cepat! Dilengkapi laporan keuangan yang mudah dibaca seperti rekening koran.</p>
 							</div>
 						</div>
 					</div>
@@ -162,8 +215,8 @@
 						<div class="service">
 							<div class="icon" data-animation="true" data-animation-type="animate__bounceIn"><i class="fa fa-code"></i></div>
 							<div class="info">
-								<h4 class="title">Hemat jadwal kunjungan ke toko</h4>
-								<p class="desc">Percepat proses perencanaan dan capai pengurangan hingga 20% dalam waktu pembuatan rencana kunjungan sales ke toko</p>
+								<h4 class="title">Pantau Aktivitas Sales Kanvas dari HP</h4>
+								<p class="desc">Aplikasi Android untuk monitoring Salesman dilengkapi GPS Tracking</p>
 							</div>
 						</div>
 					</div>
@@ -173,8 +226,8 @@
 						<div class="service">
 							<div class="icon" data-animation="true" data-animation-type="animate__bounceIn"><i class="fa fa-shopping-cart"></i></div>
 							<div class="info">
-								<h4 class="title">Optimalkan kunjungan harian sales</h4>
-								<p class="desc">Berdayakan sales lapangan Anda untuk menyelesaikan hingga 25% lebih banyak kunjungan, memaksimalkan rute dan potensi penjualan Anda.</p>
+								<h4 class="title">Kontrol Banyak Cabang</h4>
+								<p class="desc">Jagonya kontrol puluhan cabang realtime & terpusat</p>
 							</div>
 						</div>
 					</div>
@@ -184,8 +237,8 @@
 						<div class="service">
 							<div class="icon" data-animation="true" data-animation-type="animate__bounceIn"><i class="fa fa-heart"></i></div>
 							<div class="info">
-								<h4 class="title">Efisiensi biaya operasional </h4>
-								<p class="desc">Turunkan biaya operasional penjualan Anda hingga 20%, mendorong efisiensi dan meningkatkan profit.</p>
+								<h4 class="title">Layanan Bantuan</h4>
+								<p class="desc">Kami siap membantu 24 Jam/7 Hari jika ada kendala</p>
 							</div>
 						</div>
 					</div>
@@ -196,45 +249,6 @@
 			<!-- end container -->
 		</div>
 		<!-- end #service -->
-		
-		<!-- beign #action-box -->
-		<div id="action-box" class="content has-bg" data-scrollview="true">
-			<!-- begin content-bg -->
-			<div class="content-bg" style="background-image: url(assets/img/bg/bg-action.jpg)"
-				data-paroller-factor="0.5"
-				data-paroller-factor-md="0.01"
-				data-paroller-factor-xs="0.01">
-			</div>
-			<!-- end content-bg -->
-			<!-- begin container -->
-			<div class="container" data-animation="true" data-animation-type="animate__fadeInRight">
-				<!-- begin row -->
-				<div class="row action-box">
-					<!-- begin col-9 -->
-					<div class="col-lg-9">
-						<div class="icon-large text-theme">
-							<i class="fab fa-google-play"></i>
-						</div>
-						<h3>Cari tahu aplikasi kami di Play Store</h3>
-						<p>
-							
-						</p>
-					</div>
-					<!-- end col-9 -->
-					<!-- begin col-3 -->
-					<div class="col-lg-3">
-						<a href="https://play.google.com/store/apps/details?id=com.lapakkreatiflamongan.smdsforce" target="_blank">
-							<img src="assets/img/user/google_play.png" alt="">
-						</a>
-					</div>
-					<!-- end col-3 -->
-				</div>
-				<!-- end row -->
-			</div>
-			<!-- end container -->
-		</div>
-		<!-- end #action-box -->
-	
 		
 		<!-- begin #pricing -->
 		<div id="pricing" class="content" data-scrollview="true">
