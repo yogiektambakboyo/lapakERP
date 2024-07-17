@@ -4,7 +4,7 @@
 
 @section('content')
     <div class="bg-light p-4 rounded">
-        <h1>Kehadiran Harian</h1>
+        <h1>Rekap Kehadiran</h1>
         <div class="lead row mb-3">
             <div class="col-md-10">
                 <div class="col-md-12">

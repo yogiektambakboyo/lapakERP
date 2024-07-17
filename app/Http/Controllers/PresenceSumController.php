@@ -97,7 +97,7 @@ class PresenceSumController extends Controller
             join users u on u.id = wt.user_id 
             join users_branch ub  on ub.user_id = u.id 
             join branch b  on b.id = ub.branch_id 
-            where ub.branch_id in (select ub2.branch_id from users_branch ub2 where ub2.user_id = ".$user->id."  ) and c.dated>now()-interval'307 day'
+            where ub.branch_id in (select ub2.branch_id from users_branch ub2 where ub2.user_id = ".$user->id."  ) and c.dated>now()-interval'7 day'
             group by b.remark,c.dated
         ) a 
         group by a.branch_name,a.dated,a.dated_f
