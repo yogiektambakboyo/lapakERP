@@ -87,7 +87,7 @@ class PresenceAnalysisBranchController extends Controller
         $filter_end_date = "";
         $filter_begin_date = "";
         
-        $worktime = DB::select("select wt.id,b.remark as branch_name,u.name as nama,wt.dated,to_char(wt.dated,'dd-MM-YYYY') as dated_f,to_char(wt.time_in,'HH24:MI') time_in,case when to_char(wt.time_out,'HH24:MI')=to_char(wt.time_in,'HH24:MI') then '00:00' else to_char(wt.time_out,'HH24:MI') end time_out,wt.georeverse_in,wt.georeverse_out,wt.photo_in,wt.photo_out  from work_time wt 
+        $worktime = DB::select("select wt.id,b.remark as branch_name,u.name as name,wt.dated,to_char(wt.dated,'dd-MM-YYYY') as dated_f,to_char(wt.time_in,'HH24:MI') time_in,case when to_char(wt.time_out,'HH24:MI')=to_char(wt.time_in,'HH24:MI') then '00:00' else to_char(wt.time_out,'HH24:MI') end time_out,wt.georeverse_in,wt.georeverse_out,wt.photo_in,wt.photo_out  from work_time wt 
         join users u on u.id = wt.user_id 
         join users_branch ub  on ub.user_id = u.id 
         join branch b  on b.id = ub.branch_id 

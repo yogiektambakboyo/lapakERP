@@ -35,7 +35,7 @@
                 <h4>Persentase Kehadiran</h4>
             </div>
             <div class="col-md-3">
-                <h4>{{  count($worktime)<=0?'':(number_format(((floatval($worktime_sum[0]->sum))*100)/floatval($worktime_sum[0]->counter),2,",","."))."%" }}</h4>
+                <h4>{{  count($worktime_sum)<=0?'':(number_format(((floatval($worktime_sum[0]->sum))*100)/floatval($worktime_sum[0]->counter),2,",","."))."%" }}</h4>
             </div>
 
             <div class="col-md-2">
