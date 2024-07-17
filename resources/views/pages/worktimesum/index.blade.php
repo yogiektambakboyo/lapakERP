@@ -11,7 +11,7 @@
                     Atur data kehadiran anda disini, data yang tampil adalah 7 hari kebelakang. Silahkan gunakan Saring untuk data lebih lengkap
                 </div>
                 <div class="col-md-10"> 	
-                    <form action="{{ route('presence.search') }}" method="GET" class="row row-cols-lg-auto g-3 align-items-center">
+                    <form action="{{ route('presencesum.search') }}" method="GET" class="row row-cols-lg-auto g-3 align-items-center">
                         <input type="hidden" name="filter_begin_date" value="2022-01-01"><input type="hidden" name="filter_end_date" value="2035-01-01">
                         <div class="col-2"><input type="hidden" class="form-control  form-control-sm" name="search" placeholder="@lang('general.lbl_search')" value="{{ $keyword }}"></div>
                         <div class="col-2"><a href="#modal-filter"  data-bs-toggle="modal" data-bs-target="#modal-filter" class="btn btn-sm btn-lime">@lang('general.btn_filter')</a></div>   
@@ -28,14 +28,9 @@
             <thead>
             <tr>
                 <th scope="col" width="14%">@lang('general.lbl_branch')</th>
-                <th>Nama</th>
                 <th scope="col" width="8%">@lang('general.lbl_dated')</th>
-                <th scope="col" width="15%">Jam Masuk</th>
-                <th scope="col" width="10%">Jam Keluar</th>
-                <th scope="col" width="10%">Foto Masuk</th>
-                <th scope="col" width="10%">Lokasi</th>
-                <th scope="col" width="10%">Foto Keluar</th>
-                <th scope="col" width="10%">Lokasi</th>
+                <th scope="col" width="15%">Jumlah Presensi</th>
+                <th scope="col" width="10%">Jumlah Izin</th>
             </tr>
             </thead>
             <tbody>
@@ -43,14 +38,9 @@
                 @foreach($worktime as $order)
                     <tr>
                         <td>{{ $order->branch_name }}</td>
-                        <td>{{ $order->nama }}</td>
                         <td>{{ Carbon\Carbon::parse($order->dated)->format('d-m-Y') }}</td>
-                        <td>{{ $order->time_in }}</td>
-                        <td>{{ $order->time_out }}</td>
-                        <td><button onclick="showImg('<?= $order->photo_in; ?>');" class="btn btn-primary btn-sm">Lihat Foto</button></td>
-                        <td>{{ $order->georeverse_in }}</td>
-                        <td><button onclick="showImg('<?= $order->photo_out; ?>');" class="btn btn-primary btn-sm">Lihat Foto</button></td>
-                        <td>{{ $order->georeverse_out }}</td>
+                        <td>{{ $order->c_in }}</td>
+                        <td>{{ $order->c_leave }}</td>
                     </tr>
                 @endforeach
             </tbody>
@@ -81,7 +71,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form action="{{ route('presence.search') }}" method="GET">   
+                    <form action="{{ route('presencesum.search') }}" method="GET">   
                         @csrf 
                         <div class="col-md-10">
                             <label class="form-label col-form-label col-md-4">@lang('general.lbl_branch')</label>

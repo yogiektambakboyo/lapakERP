@@ -1,14 +1,13 @@
 @extends('layouts.default', ['appSidebarSearch' => true])
 
-@section('title', 'Rekap Kehadiran')
+@section('title', 'Analisa Kehadiran')
 
 @section('content')
     <div class="bg-light p-4 rounded">
-        <h1>Kehadiran Harian</h1>
+        <h1>Analisa Kehadiran per Staff</h1>
         <div class="lead row mb-3">
             <div class="col-md-10">
                 <div class="col-md-12">
-                    Atur data kehadiran anda disini, data yang tampil adalah 7 hari kebelakang. Silahkan gunakan Saring untuk data lebih lengkap
                 </div>
                 <div class="col-md-10"> 	
                     <form action="{{ route('presence.search') }}" method="GET" class="row row-cols-lg-auto g-3 align-items-center">
@@ -24,54 +23,87 @@
             @include('layouts.partials.messages')
         </div>
 
-        <table class="table table-striped" id="example">
-            <thead>
-            <tr>
-                <th scope="col" width="14%">@lang('general.lbl_branch')</th>
-                <th>Nama</th>
-                <th scope="col" width="8%">@lang('general.lbl_dated')</th>
-                <th scope="col" width="15%">Jam Masuk</th>
-                <th scope="col" width="10%">Jam Keluar</th>
-                <th scope="col" width="10%">Foto Masuk</th>
-                <th scope="col" width="10%">Lokasi</th>
-                <th scope="col" width="10%">Foto Keluar</th>
-                <th scope="col" width="10%">Lokasi</th>
-            </tr>
-            </thead>
-            <tbody>
-
-                @foreach($worktime as $order)
-                    <tr>
-                        <td>{{ $order->branch_name }}</td>
-                        <td>{{ $order->nama }}</td>
-                        <td>{{ Carbon\Carbon::parse($order->dated)->format('d-m-Y') }}</td>
-                        <td>{{ $order->time_in }}</td>
-                        <td>{{ $order->time_out }}</td>
-                        <td><button onclick="showImg('<?= $order->photo_in; ?>');" class="btn btn-primary btn-sm">Lihat Foto</button></td>
-                        <td>{{ $order->georeverse_in }}</td>
-                        <td><button onclick="showImg('<?= $order->photo_out; ?>');" class="btn btn-primary btn-sm">Lihat Foto</button></td>
-                        <td>{{ $order->georeverse_out }}</td>
-                    </tr>
-                @endforeach
-            </tbody>
-        </table>
-
-        <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-            <div class="modal-dialog">
-              <div class="modal-content">
-                <div class="modal-header">
-                  <h1 class="modal-title fs-5" id="staticBackdropLabel">Foto</h1>
-                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                  <img id="img_photo" src="" width="400px;" height="500px;" alt="">
-                </div>
-                <div class="modal-footer">
-                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
-                </div>
-              </div>
+        <div class="row mt-2">
+            <div class="col-md-2">
+                <h4>Nama</h4>
             </div>
-          </div>
+            <div class="col-md-4">
+                <h4>{{  count($worktime)<=0?'':$worktime[0]->name }}</h4>
+            </div>
+
+            <div class="col-md-3">
+                <h4>Persentase Kehadiran</h4>
+            </div>
+            <div class="col-md-3">
+                <h4>{{  count($worktime_sum)<=0?'':(number_format(((floatval($worktime_sum[0]->sum))*100)/floatval($worktime_sum[0]->counter),2,",","."))."%" }}</h4>
+            </div>
+
+            <div class="col-md-2">
+                <h4>Cabang</h4>
+            </div>
+            <div class="col-md-4">
+                <h4>{{  count($worktime)<=0?'':$worktime[0]->branch_name }}</h4>
+            </div>
+
+            <div class="col-md-3">
+                <h4>Jumlah Izin</h4>
+            </div>
+            <div class="col-md-3">
+                <h4>{{  $leave==null?'':(count($leave)) }}</h4>
+            </div>
+
+            <div class="col-md-2">
+                <h4>Periode</h4>
+            </div>
+            <div class="col-md-10">
+                <h4>{{  $filter_begin_date.' - '.$filter_end_date }}</h4>
+            </div>
+        </div>
+
+        <div class="row mt-4">
+            <div class="col-md-6">
+                <table class="table table-striped" id="example">
+                    <thead>
+                    <tr>
+                        <th>Tgl</th>
+                        <th>Jam Presensi</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+        
+                        @foreach($worktime as $order)
+                            <tr>
+                                <td>{{ $order->dated }}</td>
+                                <td>{{ $order->status }}</td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+            <div class="col-md-6">
+                <table class="table table-striped" id="table_leave">
+                    <thead>
+                    <tr>
+                        <th>Tgl</th>
+                        <th>Reason</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+        
+                        @foreach($leave as $order)
+                            <tr>
+                                <td>{{ $order->dated }}</td>
+                                <td>{{ $order->status }}</td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        
+
+
 
         <div class="modal fade" id="modal-filter" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
             <div class="modal-dialog">
@@ -81,7 +113,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form action="{{ route('presence.search') }}" method="GET">   
+                    <form action="{{ route('presenceanalysis.search') }}" method="GET">   
                         @csrf 
                         <div class="col-md-10">
                             <label class="form-label col-form-label col-md-4">@lang('general.lbl_branch')</label>
@@ -89,10 +121,20 @@
                         <div class="col-md-12">
                             <select class="form-control" 
                                 name="filter_branch_id" id="filter_branch_id">
-                                <option value="%">@lang('general.lbl_allbranch')</option>
+                                <option value="">Pilih Cabang Dahulu</option>
                                 @foreach($branchs as $branchx)
                                     <option value="{{ $branchx->id }}">{{ $branchx->remark }} </option>
                                 @endforeach
+                            </select>
+                        </div>
+
+                        <div class="col-md-10">
+                            <label class="form-label col-form-label col-md-4">Staff</label>
+                        </div>
+                        <div class="col-md-12">
+                            <select class="form-control" 
+                                name="filter_user_id" id="filter_user_id">
+                                <option value="%">Pilih Staff</option>
                             </select>
                         </div>
 
@@ -165,18 +207,6 @@
               todayHighlight: true,
           });
           $('#filter_end_date').val(formattedToday);
-
-          
-          const myModal = new bootstrap.Modal('#staticBackdrop', {
-            keyboard: true
-          });
-
-          function showImg(imgfile){
-            myModal.show();
-            $("#img_photo").attr("src","https://kakikupos.com/images/smd-image/"+imgfile);
-          }
-
-        
     </script>
 @endpush
 
@@ -211,6 +241,60 @@
                 ]
             }
         );
+
+        $('#table_leave').DataTable(
+            {
+                dom: 'Bfrtip',
+                buttons: [
+                    {
+                        extend: 'copyHtml5',
+                        exportOptions: {
+                            columns: ':not(.nex)'
+                        }
+                    },
+                    {
+                        extend: 'excelHtml5',
+                        exportOptions: {
+                            columns: ':not(.nex)'
+                        }
+                    }
+                ]
+            }
+        );
+    });
+
+
+    $('#filter_branch_id').on('change', function(){
+        const res = axios.get("{{ route('presenceanalysis.getallstaff') }}", {
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            params: {
+                branch_id : $('#filter_branch_id').find(':selected').val()
+            }
+        }).then(resp => {
+            if(resp.data.length<=0){
+                Swal.fire(
+                {
+                    position: 'top-end',
+                    icon: 'warning',
+                    text: 'Data tidak ditemukan',
+                    showConfirmButton: false,
+                    imageHeight: 30, 
+                    imageWidth: 30,   
+                    timer: 1500
+                    }
+                );
+            }else{
+                    $("#filter_user_id").find("option").remove();   
+                    for (let index = 0; index < resp.data.data.length; index++) {
+                        const element = resp.data.data[index];
+                        $("#filter_user_id").append(new Option(""+element.name, ""+element.id));
+                    }
+            }
+            
+        });
+            
     });
 
 </script>
