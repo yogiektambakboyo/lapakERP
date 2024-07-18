@@ -14,6 +14,8 @@ use Spatie\Permission\Models\Role;
 use App\Models\UserBranch;
 use App\Models\UserMutation;
 use App\Http\Controllers\Lang;
+use App\Mail\NotifEmail;
+use Illuminate\Support\Facades\Mail;
 
 class RegisterController extends Controller
 {
@@ -93,6 +95,18 @@ class RegisterController extends Controller
         $user_x = User::where(['id' => $my_id])->first();
         $user_x->assignRole($rolex);
 
+        $name = $company;
+        $content = "https://lapakkreatif.com/activated_acc/"+md5($my_id);
+
+		Mail::to($request->get('email'))->send(new NotifEmail($name,$content));
+
+        return redirect()->route('register.show')
+            ->withSuccess(__('Proses registrasi berhasil, silahkan login menggunakan email dan password yang telah didaftarkan'));
+    }
+
+    public function activated_acc(Request $request) 
+    {
+       $mid = $request->get("");
         return redirect()->route('register.show')
             ->withSuccess(__('Proses registrasi berhasil, silahkan login menggunakan email dan password yang telah didaftarkan'));
     }
