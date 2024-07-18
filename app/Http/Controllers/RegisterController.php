@@ -96,7 +96,7 @@ class RegisterController extends Controller
         $user_x->assignRole($rolex);
 
         $name = $company;
-        $content = "https://lapakkreatif.com/activated_acc/"+md5($my_id);
+        $content = "https://lapakkreatif.com/activated_acc/".md5($my_id);
 
 		Mail::to($request->get('email'))->send(new NotifEmail($name,$content));
 
