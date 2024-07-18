@@ -38,7 +38,7 @@
                 @foreach($worktime as $order)
                     <tr>
                         <td>{{ $order->branch_name }}</td>
-                        <td>{{ Carbon\Carbon::parse($order->dated)->format('d-m-Y') }}</td>
+                        <td  data-order="{{ $order->dated }}">{{ Carbon\Carbon::parse($order->dated)->format('d-m-Y') }}</td>
                         <td>{{ $order->c_in }}</td>
                         <td>{{ $order->c_leave }}</td>
                     </tr>

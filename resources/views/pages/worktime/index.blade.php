@@ -44,7 +44,7 @@
                     <tr>
                         <td>{{ $order->branch_name }}</td>
                         <td>{{ $order->nama }}</td>
-                        <td>{{ Carbon\Carbon::parse($order->dated)->format('d-m-Y') }}</td>
+                        <td data-order="{{ $order->dated }}">{{ Carbon\Carbon::parse($order->dated)->format('d-m-Y') }}</td>
                         <td>{{ $order->time_in }}</td>
                         <td>{{ $order->time_out }}</td>
                         <td><button onclick="showImg('<?= $order->photo_in; ?>');" class="btn btn-primary btn-sm">Lihat Foto</button></td>

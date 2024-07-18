@@ -73,7 +73,7 @@
         
                         @foreach($worktime as $order)
                             <tr>
-                                <td>{{ $order->dated }}</td>
+                                <td data-order="{{ $order->dated }}">{{ $order->dated }}</td>
                                 <td>{{ $order->status }}</td>
                             </tr>
                         @endforeach
@@ -92,7 +92,7 @@
         
                         @foreach($leave as $order)
                             <tr>
-                                <td>{{ $order->dated }}</td>
+                                <td  data-order="{{ $order->dated }}">{{ $order->dated }}</td>
                                 <td>{{ $order->status }}</td>
                             </tr>
                         @endforeach
