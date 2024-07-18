@@ -178,6 +178,12 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
             Route::get('/export', 'PresenceController@export')->name('presence.export');
         });
 
+        Route::group(['prefix' => 'presencesum'], function() {
+            Route::get('/', 'PresenceSumController@index')->name('presencesum.index');
+            Route::get('/search', 'PresenceSumController@search')->name('presencesum.search');
+            Route::get('/export', 'PresenceSumController@export')->name('presencesum.export');
+        });
+
         Route::group(['prefix' => 'presenceanalysis'], function() {
             Route::get('/', 'PresenceAnalysisController@index')->name('presenceanalysis.index');
             Route::get('/search', 'PresenceAnalysisController@search')->name('presenceanalysis.search');
