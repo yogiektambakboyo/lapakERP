@@ -37,6 +37,11 @@
                         </div>
                     </div>
 					<form action="{{ route('login.perform') }}" method="post">
+						@if(session()->has('success'))
+                            <div class="alert alert-success">
+                                {{ session('success') }}
+                            </div>
+                        @endif
 						<input type="hidden" name="_token" value="{{ csrf_token() }}" />
 						<div class="form-floating mb-20px">
 							<input type="text"  name="username" value="{{ old('username') }}" class="form-control fs-13px h-45px" id="emailAddress" placeholder="Username"  required="required"/>

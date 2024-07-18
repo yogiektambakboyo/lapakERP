@@ -16,6 +16,7 @@ use App\Models\UserMutation;
 use App\Http\Controllers\Lang;
 use App\Mail\NotifEmail;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\DB;
 
 class RegisterController extends Controller
 {
@@ -69,7 +70,7 @@ class RegisterController extends Controller
                 ['name' => $company ],
                 ['username' => $request->get('email') ],
                 ['branch_id' => $my_branch_id ],
-                ['active' => '1' ],
+                ['active' => '0' ],
                 ['job_id' => 13 ],
                 ['department_id' => 1 ]
             )
@@ -96,19 +97,22 @@ class RegisterController extends Controller
         $user_x->assignRole($rolex);
 
         $name = $company;
-        $content = "https://lapakkreatif.com/activated_acc/".md5($my_id);
+        $content = "https://lapakkreatif.com/activated_acc?acc_id=".md5($my_id);
 
 		Mail::to($request->get('email'))->send(new NotifEmail($name,$content));
 
         return redirect()->route('register.show')
-            ->withSuccess(__('Proses registrasi berhasil, silahkan login menggunakan email dan password yang telah didaftarkan'));
+            ->withSuccess(__('Proses registrasi berhasil, silahkan cek email anda untuk proses selanjutnya'));
     }
 
     public function activated_acc(Request $request) 
     {
-       $mid = $request->get("");
-        return redirect()->route('register.show')
-            ->withSuccess(__('Proses registrasi berhasil, silahkan login menggunakan email dan password yang telah didaftarkan'));
+        $mid = $request->get("acc_id");
+
+        DB::select("update users set active=1,updated_at=now() where md5(id::character varying)='".$mid."';");
+
+        return redirect()->route('login.show')
+            ->withSuccess(__('Proses verifikasi berhasil, silahkan login menggunakan email dan password yang telah didaftarkan'));
     }
 
 }
