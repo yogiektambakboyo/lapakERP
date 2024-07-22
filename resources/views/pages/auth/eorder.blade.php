@@ -367,11 +367,10 @@
 					An admin & front end theme with serious impact.
 				</p>
 				<p class="social-list">
-					<a href="#"><i class="fab fa-facebook-f fa-fw"></i></a>
-					<a href="#"><i class="fab fa-instagram fa-fw"></i></a>
-					<a href="#"><i class="fab fa-twitter fa-fw"></i></a>
-					<a href="#"><i class="fab fa-google-plus-g fa-fw"></i></a>
-					<a href="#"><i class="fab fa-dribbble fa-fw"></i></a>
+					<a href="https://www.instagram.com/lapakkreatiflamongan"><i class="fab fa-instagram fa-fw"></i></a>
+					<a href="https://x.com/lapakkreatiflmg"><i class="fab fa-twitter fa-fw"></i></a>
+					<a href="https://www.youtube.com/@LapakKreatifLamongan"><i class="fab fa-youtube fa-fw"></i></a>
+					<a href="https://www.facebook.com/profile.php?id=100079772493705&locale=id_ID"><i class="fab fa-facebook-f fa-fw"></i></a>
 				</p>
 
 				
