@@ -370,7 +370,7 @@
             $('#label_seller').text($('#filter_seller_id_in').find(':selected').text());
             $('#label_tgl').text(formattedToday);
 
-        $('#app').removeClass('app app-sidebar-fixed app-header-fixed-minified').addClass('app app-sidebar-fixed app-header-fixed-minified app-sidebar-minified');
+        //$('#app').removeClass('app app-sidebar-fixed app-header-fixed-minified').addClass('app app-sidebar-fixed app-header-fixed-minified app-sidebar-minified');
 
     </script>
 @endpush
