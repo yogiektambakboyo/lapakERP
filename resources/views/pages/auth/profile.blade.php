@@ -39,7 +39,7 @@
 							<a class="nav-link active" href="#home" data-click="scroll-to-target" data-scroll-target="#home">PRODUK <b class="caret"></b></a>
 							<div class="dropdown-menu dropdown-menu-left animate__animated animate__fadeInDown">
 								<a class="dropdown-item" href="/eorder">eOrder Sales (SFA)</a>
-								<a class="dropdown-item" href="/lapakerp">LapakERP <span class="badge badge-warning">coming soon</span></a>
+								<a class="dropdown-item" href="/lapakerp">LapakERP</a>
 								<a class="dropdown-item" href="#">ePresensi  <span class="badge badge-secondary">coming soon</span></a>
 							</div>
 						</li>
@@ -425,7 +425,9 @@
 					<!-- end col-9 -->
 					<!-- begin col-3 -->
 					<div class="col-lg-3">
-						<a href="https://play.google.com/store/apps/dev?id=8515839296231278601" target="_blank" class="btn btn-warning btn-theme btn-block">Play Store</a>
+						<a href="https://play.google.com/store/apps/dev?id=8515839296231278601" target="_blank">
+							<img src="assets/img/user/google_play.png" alt="">
+						</a>
 					</div>
 					<!-- end col-3 -->
 				</div>
@@ -692,11 +694,10 @@
 					An admin & front end theme with serious impact.
 				</p>
 				<p class="social-list">
-					<a href="#"><i class="fab fa-facebook-f fa-fw"></i></a>
-					<a href="#"><i class="fab fa-instagram fa-fw"></i></a>
-					<a href="#"><i class="fab fa-twitter fa-fw"></i></a>
-					<a href="#"><i class="fab fa-google-plus-g fa-fw"></i></a>
-					<a href="#"><i class="fab fa-dribbble fa-fw"></i></a>
+					<a href="https://www.instagram.com/lapakkreatiflamongan"><i class="fab fa-instagram fa-fw"></i></a>
+					<a href="https://x.com/lapakkreatiflmg"><i class="fab fa-twitter fa-fw"></i></a>
+					<a href="https://www.youtube.com/@LapakKreatifLamongan"><i class="fab fa-youtube fa-fw"></i></a>
+					<a href="https://www.facebook.com/profile.php?id=100079772493705&locale=id_ID"><i class="fab fa-facebook-f fa-fw"></i></a>
 				</p>
 
 				

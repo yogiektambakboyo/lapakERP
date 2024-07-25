@@ -125,7 +125,7 @@ class SuppliersController extends Controller
         $this->getpermissions($id);
  
         $data = $this->data;
-        return view('pages.suppliers.create',['data'=>$data,'branchs' => Branch::latest()->get(), 'company' => Company::get()->first(),
+        return view('pages.suppliers.create',['data'=>$data,'branchs' => Branch::join('users_branch as ub','ub.branch_id','=','branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']), 'company' => Company::get()->first(),
         'userBranchs' => Branch::latest()->get()->pluck('remark')->toArray(),]);
     }
 
@@ -188,7 +188,7 @@ class SuppliersController extends Controller
         $this->getpermissions($id);
         $data = $this->data;
         return view('pages.suppliers.edit', [
-            'supplier' => $supplier ,'data' => $data ,'branchs' => Branch::latest()->get(), 'company' => Company::get()->first(),
+            'supplier' => $supplier ,'data' => $data ,'branchs' => Branch::join('users_branch as ub','ub.branch_id','=','branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']), 'company' => Company::get()->first(),
             'userBranchs' => Branch::latest()->get()->pluck('remark')->toArray()
         ]);
     }

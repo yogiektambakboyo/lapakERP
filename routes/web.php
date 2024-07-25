@@ -29,9 +29,9 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
          * Register Routes
          */
         Route::get('/register', 'RegisterController@show')->name('register.show');
+        Route::get('/activated_acc', 'RegisterController@activated_acc')->name('register.activated_acc');
         Route::post('/register_regis', 'RegisterController@store_regis')->name('register.store_regis');
         Route::get('/policy', 'HomeController@policy')->name('home.policy');
-
         /**
          * Login Routes
          */
