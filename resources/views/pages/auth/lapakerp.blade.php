@@ -273,6 +273,7 @@
 								<li>Web + Android <br>(Aplikasi Bersama)</li>
 								<li>1 Cabang</li>
 								<li>Cocok untuk bisnis kecil yang baru mulai eksplorasi teknologi.</li>
+								<li><small>Komisi Afiliasi : Rp. 500/Pengguna</small></li>
 							</ul>
 							<div class="footer">
 								<a href="/register" class="btn btn-inverse btn-theme btn-block">Daftar Sekarang</a>
@@ -296,6 +297,7 @@
 								<li>Min. kontrak 6 Bulan</li>
 								<li>08-17/5 Day Work Support</li>
 								<li>Cocok untuk bisnis yang ingin berkembang pesat.</li>
+								<li><small>Komisi Afiliasi Rp25.000/Pengguna/Bulan</small></li>
 							</ul>
 							<div class="footer">
 								<a target="_blank" href="https://api.whatsapp.com/send?phone=6285746879090&text=Hi%20Yogi%2C%20Saya%20mau%20buat%20paket%20starter.%20Apakah%20bisa%20dibantu%3F" class="btn btn-inverse btn-theme btn-block">Hubungi Saya</a>
@@ -319,6 +321,7 @@
 								<li>Min. kontrak 3 Bulan</li>
 								<li>08-17/5 Day Work Support</li>
 								<li>Solusi untuk bisnis yang serius ingin meningkatkan efisiensi operasional.</li>
+								<li><small>Komisi Afiliasi Rp50.000/Pengguna/Bulan</small></li>
 							</ul>
 							<div class="footer">
 								<a target="_blank" href="https://api.whatsapp.com/send?phone=6285746879090&text=Hi%20Yogi%2C%20Saya%20mau%20buat%20paket%20kreatif.%20Apakah%20bisa%20dibantu%3F" class="btn btn-inverse btn-theme btn-block">Hubungi Saya</a>
@@ -338,6 +341,7 @@
 								<li>Biar produkmu jadi beda dan sesuai keinginan, pilihlah solusi custom dari Software House Keren. Kamu bisa mengatur segalanya sesuai gaya hidup dan kebutuhanmu. </li>
 								<li>Pilih fitur yang kamu butuhkan, buang yang gak perlu. Kami akan kustomisasi aplikasi sesuai kebutuhanmu.</li>
 								<li>24/7 WhatsApp Support</li>
+								<li><small>Komisi Afiliasi 15%</small></li>
 							</ul>
 							<div class="footer">
 								<a target="_blank" href="https://api.whatsapp.com/send?phone=6285746879090&text=Hi%20Yogi%2C%20Saya%20mau%20buat%20custom%20projek.%20Apakah%20bisa%20dibantu%3F" class="btn btn-inverse btn-theme btn-block">Hubungi Saya</a>
