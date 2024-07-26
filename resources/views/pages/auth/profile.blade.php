@@ -221,14 +221,14 @@
 					<!-- begin col-4 -->
 					<div class="col-lg-4">
 						<!-- begin team -->
-						<div class="team">
+						<div class="team shadow p-3 mb-5 bg-body rounded">
 							<div class="image" data-animation="true" data-animation-type="animate__flipInX">
 								<img src="assets/img/user/g1.png" alt="Ryan Teller" />
 							</div>
 							<div class="info">
 								<h3 class="name">Yogi Aditya</h3>
 								<div class="title text-theme">FOUNDER</div>
-								<p>Bos kita yang nggak pernah kehabisan ide keren. Dia yang pertama kali ngerintis dari garasi, dan sekarang jadi jendral kita yang memimpin tim menuju kesuksesan!</p>
+								<p>Bos kita yang nggak pernah kehabisan ide keren. Dia yang pertama kali ngerintis & sekarang jadi jendral yang memimpin tim menuju kesuksesan!</p>
 								<div class="social">
 									<a href="#"><i class="fab fa-facebook-f fa-lg fa-fw"></i></a>
 									<a href="#"><i class="fab fa-twitter fa-lg fa-fw"></i></a>
@@ -242,7 +242,7 @@
 					<!-- begin col-4 -->
 					<div class="col-lg-4">
 						<!-- begin team -->
-						<div class="team">
+						<div class="team shadow p-3 mb-5 bg-body rounded">
 							<div class="image" data-animation="true" data-animation-type="animate__flipInX">
 								<img src="assets/img/user/g2.png" alt="Jonny Cash" />
 							</div>
@@ -263,12 +263,12 @@
 					<!-- begin col-4 -->
 					<div class="col-lg-4">
 						<!-- begin team -->
-						<div class="team">
+						<div class="team shadow p-3 mb-5 bg-body rounded">
 							<div class="image" data-animation="true" data-animation-type="animate__flipInX">
 								<img src="assets/img/user/g3.png" alt="Mia Donovan" />
 							</div>
 							<div class="info">
-								<h3 class="name">Nabila Alhamhyra</h3>
+								<h3 class="name">Nabila Almahyra</h3>
 								<div class="title text-theme">PROJEK MANAJER</div>
 								<p>Manajer kita yang kece abis! Dia yang bikin proyek berjalan mulus dan hasilnya selalu sesuai ekspektasi klien. </p>
 								<div class="social">
