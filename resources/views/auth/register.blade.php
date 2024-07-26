@@ -60,6 +60,20 @@
 							@endif
 						</div>
 						<div class="form-floating mb-20px">
+							<input type="number"  name="phone_no" value="{{ old('phone_no') }}" class="form-control fs-13px h-45px" id="phone_no" placeholder="Nomor HP"  required="required"/>
+							<label for="phone_no" class="d-flex align-items-center py-0">Masukkan Nomor Handphone (628xxxxx)</label>
+							@if ($errors->has('phone_no'))
+								<span class="text-danger text-left">{{ $errors->first('phone_no') }}</span>
+							@endif
+						</div>
+						<div class="form-floating mb-20px">
+							<input type="text"  name="address" value="{{ old('address') }}" class="form-control fs-13px h-45px" id="address" placeholder="Alamat"  required="required"/>
+							<label for="address" class="d-flex align-items-center py-0">Masukkan Alamat</label>
+							@if ($errors->has('address'))
+								<span class="text-danger text-left">{{ $errors->first('address') }}</span>
+							@endif
+						</div>
+						<div class="form-floating mb-20px">
 							<input type="password" name="password" class="form-control fs-13px h-45px" id="password" placeholder="Password"  required="required"/>
 							<label for="password" class="d-flex align-items-center py-0">Masukkan Password (Minimal 6 karakter)</label>
 							@if ($errors->has('password'))
@@ -71,6 +85,14 @@
 							<label for="password_again" class="d-flex align-items-center py-0">Masukkan Password Sekali Lagi</label>
 							@if ($errors->has('password_again'))
 								<span class="text-danger text-left">{{ $errors->first('password_again') }}</span>
+							@endif
+						</div>
+
+						<div class="form-floating mb-20px">
+							<input type="text"  name="referral_id" value="{{ old('referral_id') }}" class="form-control fs-13px h-45px" id="address" placeholder="Kode Afiliator"/>
+							<label for="referral_id" class="d-flex align-items-center py-0">Masukkan Kode Affiliator Teman Anda</label>
+							@if ($errors->has('referral_id'))
+								<span class="text-danger text-left">{{ $errors->first('referral_id') }}</span>
 							@endif
 						</div>
 						<div class="login-buttons">
@@ -94,8 +116,10 @@
 
         var pass_lama = $('#password').val();
         var pass_again = $('#password_again').val();
+        var address = $('#address').val();
+        var phone_no = $('#phone_no').val();
 
-        if(pass_lama != pass_again || pass_again.length < 6 ){
+        if(pass_lama != pass_again || pass_again.length < 6 || address.length < 6 || phone_no.length < 8){
             $('#submit').addClass('d-none');
         }
 
@@ -106,8 +130,24 @@
 
         var pass_lama = $('#password').val();
         var pass_again = $('#password_again').val();
+        var address = $('#address').val();
+        var phone_no = $('#phone_no').val();
 
-        if(pass_lama != pass_again || pass_again.length < 6){
+        if(pass_lama != pass_again || pass_again.length < 6 || address.length < 6 || phone_no.length < 8){
+            $('#submit').addClass('d-none');
+        }
+
+    });
+
+	$('#address').on('change keyup paste', function(){
+        $('#submit').removeClass('d-none');
+
+        var pass_lama = $('#password').val();
+        var pass_again = $('#password_again').val();
+        var address = $('#address').val();
+        var phone_no = $('#phone_no').val();
+		
+        if(pass_lama != pass_again || pass_again.length < 6 || address.length < 6 || phone_no.length < 8){
             $('#submit').addClass('d-none');
         }
 

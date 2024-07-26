@@ -47,6 +47,7 @@ class User extends Authenticatable
         'referral_id',
         'birth_place',
         'birth_date',
+        'code_aff',
     ];
 
     /**
