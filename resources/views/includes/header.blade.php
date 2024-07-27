@@ -56,7 +56,7 @@
 		<div class="navbar-item dropdown">
 			<a href="#" data-bs-toggle="dropdown" class="navbar-link dropdown-toggle icon">
 				<i class="fa fa-bell"></i>
-				<span class="badge">5</span>
+				<!-- <span class="badge">5</span> -->
 			</a>
 			@include('includes.component.header-dropdown-notification')
 		</div>

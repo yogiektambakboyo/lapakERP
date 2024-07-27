@@ -126,6 +126,7 @@ class RegisterController extends Controller
         $name = $company;
         $content = "https://lapakkreatif.com/activated_acc?acc_id=".md5($my_id);
 
+       
 		Mail::to($request->get('email'))->send(new NotifEmail($name,$content));
 
         return redirect()->route('register.show')
@@ -137,7 +138,13 @@ class RegisterController extends Controller
         $mid = $request->get("acc_id");
 
         DB::select("update users set active=1,updated_at=now() where md5(id::character varying)='".$mid."';");
-
+        
+        DB::select("insert into user_poin(user_id,poin,updated_at) select id,0,now() from users where md5(id::character varying)='".$mid."';");
+        
+        DB::select("update user_poin set poin=poin+500 where user_id=(select id from users where code_aff = (select referral_id from users where md5(id::character varying)='".$mid."' and referral_id is not null)); ");
+        
+        DB::select("INSERT INTO public.log_poin(user_id, poin_value, created_at, remarks) select id,500,now(),'Registration new member' from users where id=(select id from users where code_aff = (select referral_id from users where md5(id::character varying)='".$mid."' and referral_id is not null));");
+        
         return redirect()->route('login.show')
             ->withSuccess(__('Proses verifikasi berhasil, silahkan login menggunakan email dan password yang telah didaftarkan'));
     }
