@@ -125,7 +125,7 @@
 							</div>
 							<div class="author">
 								<div class="image">
-									<img src="assets/img/user/user-1.jpg" alt="Yogi Aditya" />
+									<img src="assets/img/user/g1.png" alt="Yogi Aditya" />
 								</div>
 								<div class="info">
 									Yogi Aditya
