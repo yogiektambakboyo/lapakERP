@@ -39,6 +39,26 @@ class RegisterController extends Controller
         return view('pages.auth.profile',['settings' => Settings::get()->first(),'company' => Company::get()->first()]);
     }
 
+    public function generateRandomString($length = 3) {
+        $characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $charactersLength = strlen($characters);
+        $randomString = '';
+        for ($i = 0; $i < $length; $i++) {
+            $randomString .= $characters[random_int(0, $charactersLength - 1)];
+        }
+        return $randomString;
+    }
+
+    public function generateRandomNumber($length = 2) {
+        $characters = '123456789';
+        $charactersLength = strlen($characters);
+        $randomString = '';
+        for ($i = 0; $i < $length; $i++) {
+            $randomString .= $characters[random_int(0, $charactersLength - 1)];
+        }
+        return $randomString;
+    }
+
     /**
      * Store a newly created user
      * @param Request $request
@@ -62,14 +82,21 @@ class RegisterController extends Controller
 
         $my_branch_id = Branch::orderBy('id', 'desc')->first()->id;
         
+        
+        $genStr = $this->generateRandomString();
+        $oldStr = strtoupper($company.''.$genStr);
+        $code_aff = substr(str_ireplace(array('a','e','i','o','u',' '), '', $oldStr),0,3).''.$this->generateRandomNumber();
 
         User::create(
             array_merge(
                 ['password' => $request->get('password') ],
                 ['email' => $request->get('email') ],
+                ['referral_id' => $request->get('referral_id') ],
                 ['name' => $company ],
                 ['username' => $request->get('email') ],
-                ['branch_id' => $my_branch_id ],
+                ['code_aff' => $code_aff ],
+                ['join_years' => '1' ],
+                ['join_date' => date('Y-m-d') ],
                 ['active' => '0' ],
                 ['job_id' => 13 ],
                 ['department_id' => 1 ]

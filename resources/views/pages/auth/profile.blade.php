@@ -44,10 +44,9 @@
 							</div>
 						</li>
 						<li class="nav-item"><a class="nav-link" href="#service" data-click="scroll-to-target">LAYANAN</a></li>
-						<li class="nav-item"><a class="nav-link" href="#about" data-click="scroll-to-target">TENTANG</a></li>
-						<li class="nav-item"><a class="nav-link" href="#team" data-click="scroll-to-target">TIM</a></li>
-						<li class="nav-item"><a class="nav-link" href="#client" data-click="scroll-to-target">KLIEN</a></li>
+						<li class="nav-item"><a class="nav-link" href="#work" data-click="scroll-to-target">KLIEN</a></li>
 						<li class="nav-item"><a class="nav-link" href="#pricing" data-click="scroll-to-target">HARGA</a></li>
+						<li class="nav-item"><a class="nav-link" href="#afiliate" data-click="scroll-to-target">PROGRAM AFILIASI</a></li>
 						<li class="nav-item"><a class="nav-link" href="#contact" data-click="scroll-to-target">KONTAK</a></li>
 					</ul>
 
@@ -222,14 +221,14 @@
 					<!-- begin col-4 -->
 					<div class="col-lg-4">
 						<!-- begin team -->
-						<div class="team">
+						<div class="team shadow p-3 mb-5 bg-body rounded">
 							<div class="image" data-animation="true" data-animation-type="animate__flipInX">
-								<img src="assets/img/user/user-1.jpg" alt="Ryan Teller" />
+								<img src="assets/img/user/g1.png" alt="Ryan Teller" />
 							</div>
 							<div class="info">
 								<h3 class="name">Yogi Aditya</h3>
 								<div class="title text-theme">FOUNDER</div>
-								<p>Bos kita yang nggak pernah kehabisan ide keren. Dia yang pertama kali ngerintis dari garasi, dan sekarang jadi jendral kita yang memimpin tim menuju kesuksesan!</p>
+								<p>Bos kita yang nggak pernah kehabisan ide keren. Dia yang pertama kali ngerintis & sekarang jadi jendral yang memimpin tim menuju kesuksesan!</p>
 								<div class="social">
 									<a href="#"><i class="fab fa-facebook-f fa-lg fa-fw"></i></a>
 									<a href="#"><i class="fab fa-twitter fa-lg fa-fw"></i></a>
@@ -243,9 +242,9 @@
 					<!-- begin col-4 -->
 					<div class="col-lg-4">
 						<!-- begin team -->
-						<div class="team">
+						<div class="team shadow p-3 mb-5 bg-body rounded">
 							<div class="image" data-animation="true" data-animation-type="animate__flipInX">
-								<img src="assets/img/user/user-2.jpg" alt="Jonny Cash" />
+								<img src="assets/img/user/g2.png" alt="Jonny Cash" />
 							</div>
 							<div class="info">
 								<h3 class="name">Dhanurendra M.</h3>
@@ -264,12 +263,12 @@
 					<!-- begin col-4 -->
 					<div class="col-lg-4">
 						<!-- begin team -->
-						<div class="team">
+						<div class="team shadow p-3 mb-5 bg-body rounded">
 							<div class="image" data-animation="true" data-animation-type="animate__flipInX">
-								<img src="assets/img/user/user-3.jpg" alt="Mia Donovan" />
+								<img src="assets/img/user/g3.png" alt="Mia Donovan" />
 							</div>
 							<div class="info">
-								<h3 class="name">Nabila Alhamhyra</h3>
+								<h3 class="name">Nabila Almahyra</h3>
 								<div class="title text-theme">PROJEK MANAJER</div>
 								<p>Manajer kita yang kece abis! Dia yang bikin proyek berjalan mulus dan hasilnya selalu sesuai ekspektasi klien. </p>
 								<div class="social">
@@ -441,7 +440,7 @@
 		<div id="work" class="content" data-scrollview="true">
 			<!-- begin container -->
 			<div class="container" data-animation="true" data-animation-type="animate__fadeInDown">
-				<h2 class="content-title">Our Latest Work</h2>
+				<h2 class="content-title">Projek Keren</h2>
 				<p class="content-desc">
 					Mari kita jalan-jalan di dalam katalog produk keren dari Software House Keren! Produk kami bikin hidup lebih seru dan mudah. Cek yuk!
 				</p>
@@ -472,6 +471,21 @@
 							<div class="desc">
 								<span class="desc-title">SPA & Reflexiology Management</span>
 								<span class="desc-text">Buatin manajemen jadi lebih rapi dan efisien. </span>
+							</div>
+						</div>
+						<!-- end work -->
+					</div>
+					<!-- end col-3 -->
+					<!-- begin col-3 -->
+					<div class="col-lg-3 col-md-4">
+						<!-- begin work -->
+						<div class="work">
+							<div class="image">
+								<a href="https://nugaspace.com"  target="_blank"><img src="assets/img/work/client-3.png" alt="Nugaspace" /></a>
+							</div>
+							<div class="desc">
+								<span class="desc-title">Nugaspace - Working Space</span>
+								<span class="desc-text">Tempat nugas paling adem se-Surabaya Timur</span>
 							</div>
 						</div>
 						<!-- end work -->
@@ -569,6 +583,7 @@
 								<li>Web + Android <br>(Aplikasi Bersama)</li>
 								<li>1 Cabang</li>
 								<li>Cocok untuk bisnis kecil yang baru mulai eksplorasi teknologi.</li>
+								<li><small>Komisi Afiliasi : Rp. 500/Pengguna</small></li>
 							</ul>
 							<div class="footer">
 								<a href="/register" class="btn btn-inverse btn-theme btn-block">Daftar Sekarang</a>
@@ -592,6 +607,7 @@
 								<li>Min. kontrak 6 Bulan</li>
 								<li>08-17/5 Day Work Support</li>
 								<li>Cocok untuk bisnis yang ingin berkembang pesat.</li>
+								<li><small>Komisi Afiliasi Rp25.000/Pengguna/Bulan</small></li>
 							</ul>
 							<div class="footer">
 								<a target="_blank" href="https://api.whatsapp.com/send?phone=6285746879090&text=Hi%20Yogi%2C%20Saya%20mau%20buat%20paket%20starter.%20Apakah%20bisa%20dibantu%3F" class="btn btn-inverse btn-theme btn-block">Hubungi Saya</a>
@@ -615,6 +631,7 @@
 								<li>Min. kontrak 3 Bulan</li>
 								<li>08-17/5 Day Work Support</li>
 								<li>Solusi untuk bisnis yang serius ingin meningkatkan efisiensi operasional.</li>
+								<li><small>Komisi Afiliasi Rp50.000/Pengguna/Bulan</small></li>
 							</ul>
 							<div class="footer">
 								<a target="_blank" href="https://api.whatsapp.com/send?phone=6285746879090&text=Hi%20Yogi%2C%20Saya%20mau%20buat%20paket%20kreatif.%20Apakah%20bisa%20dibantu%3F" class="btn btn-inverse btn-theme btn-block">Hubungi Saya</a>
@@ -634,6 +651,7 @@
 								<li>Biar produkmu jadi beda dan sesuai keinginan, pilihlah solusi custom dari Software House Keren. Kamu bisa mengatur segalanya sesuai gaya hidup dan kebutuhanmu. </li>
 								<li>Pilih fitur yang kamu butuhkan, buang yang gak perlu. Kami akan kustomisasi aplikasi sesuai kebutuhanmu.</li>
 								<li>24/7 WhatsApp Support</li>
+								<li><small>Komisi Afiliasi 15%</small></li>
 							</ul>
 							<div class="footer">
 								<a target="_blank" href="https://api.whatsapp.com/send?phone=6285746879090&text=Hi%20Yogi%2C%20Saya%20mau%20buat%20custom%20projek.%20Apakah%20bisa%20dibantu%3F" class="btn btn-inverse btn-theme btn-block">Hubungi Saya</a>
@@ -645,6 +663,31 @@
 			<!-- end container -->
 		</div>
 		<!-- end #pricing -->
+
+		<!-- begin #afiliate -->
+		<div id="afiliate" class="content bg-light" data-scrollview="true">
+			<!-- begin container -->
+			<div class="container">
+				<h2 class="content-title">Program Afiliasi</h2>
+				<p class="content-desc">
+					Pengen dapat penghasilan tambahan bulanan? Ceritain produk kita ke teman kamu yang punya usaha dan ajak mereka untuk ikut berkembang bersama lapakERP. Sebagai ucapan terima kasih karena udah promosikan produk dari kita, kamu akan berhak mendapatkan komisi sesuai paket produk yang temanmu pakai.
+				</p>
+				<!-- begin row -->
+				<div class="row">
+					<!-- begin col-6 -->
+					<div class="col-lg-1"></div>
+					<div class="col-lg-10" data-animation="true" data-animation-type="animate__fadeInLeft">
+						<img class="img-fluid" src="assets/img/work/afiliate.png"/>
+
+					</div>
+					<div class="col-lg-1"></div>
+					<!-- end col-6 -->
+				</div>
+				<!-- end row -->
+			</div>
+			<!-- end container -->
+		</div>
+		<!-- end #afiliate -->
 		
 		<!-- begin #contact -->
 		<div id="contact" class="content bg-light" data-scrollview="true">
@@ -672,7 +715,12 @@
 					<!-- end col-6 -->
 					<!-- begin col-6 -->
 					<div class="col-lg-6 form-col" data-animation="true" data-animation-type="animate__fadeInRight">
-						
+						<p class="social-list">
+							<a href="https://www.instagram.com/lapakkreatiflamongan"><i class="fab fa-instagram fa-fw h3"></i></a>
+							<a href="https://x.com/lapakkreatiflmg"><i class="fab fa-twitter fa-fw h3"></i></a>
+							<a href="https://www.youtube.com/@LapakKreatifLamongan"><i class="fab fa-youtube fa-fw h3"></i></a>
+							<a href="https://www.facebook.com/profile.php?id=100079772493705&locale=id_ID"><i class="fab fa-facebook-f fa-fw h3"></i></a>
+						</p>
 					</div>
 					<!-- end col-6 -->
 				</div>
@@ -693,14 +741,7 @@
 					&copy; Copyright Lapak Kreatif 2021 <br />
 					An admin & front end theme with serious impact.
 				</p>
-				<p class="social-list">
-					<a href="https://www.instagram.com/lapakkreatiflamongan"><i class="fab fa-instagram fa-fw"></i></a>
-					<a href="https://x.com/lapakkreatiflmg"><i class="fab fa-twitter fa-fw"></i></a>
-					<a href="https://www.youtube.com/@LapakKreatifLamongan"><i class="fab fa-youtube fa-fw"></i></a>
-					<a href="https://www.facebook.com/profile.php?id=100079772493705&locale=id_ID"><i class="fab fa-facebook-f fa-fw"></i></a>
-				</p>
 
-				
 			</div>
 		</div>
 

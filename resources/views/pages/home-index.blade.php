@@ -12,9 +12,19 @@
 
 @section('content')
 	<!-- BEGIN page-header -->
-	<h1 class="page-header">@lang('home.welcome'), @auth
-		{{auth()->user()->name}} 
-	@endauth </h1>
+	<div class="row">
+		<div class="col-lg-4">
+			<h1 class="page-header">@lang('home.welcome'), @auth
+				{{auth()->user()->name}} 
+			@endauth </h1>
+		</div>
+		<div class="col-lg-8 d-flex flex-row-reverse bd-highlight">
+			<button class="btn btn-sm" onclick="copyClip()"><i class="fa fa-clipboard fa-2"></i></button>
+			<h3>KODE AFFILIATOR : <span class="badge bg-secondary">@auth{{auth()->user()->code_aff}} @endauth</span></h3>
+			<input type="hidden" id="code_aff" value="@auth{{auth()->user()->code_aff}} @endauth">
+		</div>
+	</div>
+	
 	<!-- END page-header -->
 	
 	<!-- BEGIN row -->
@@ -272,16 +282,20 @@
 
 @push('scripts')
 <script>
-	$("#default-daterange").daterangepicker({
-	  opens: "right",
-	  format: "MM/DD/YYYY",
-	  separator: " to ",
-	  startDate: moment().subtract("days", 29),
-	  endDate: moment(),
-	  minDate: "01/01/2021",
-	  maxDate: "12/31/2021",
-	}, function (start, end) {
-	  $("#default-daterange input").val(start.format("MMMM D, YYYY") + " - " + end.format("MMMM D, YYYY"));
-	});
+
+
+	function copyClip() {
+		// Get the text field
+		var copyText = document.getElementById("code_aff");
+
+		// Select the text field
+		copyText.select();
+		//copyText.setSelectionRange(0, 99999); // For mobile devices
+
+		// Copy the text inside the text field
+		navigator.clipboard.writeText(copyText.value);
+		// Alert the copied text
+		alert("Copied : " + copyText.value);
+	}
   </script>
 @endpush
