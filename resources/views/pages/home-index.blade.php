@@ -13,12 +13,12 @@
 @section('content')
 	<!-- BEGIN page-header -->
 	<div class="row">
-		<div class="col-lg-4">
+		<div class="col-lg-6">
 			<h1 class="page-header">@lang('home.welcome'), @auth
 				{{auth()->user()->name}} 
 			@endauth </h1>
 		</div>
-		<div class="col-lg-8 d-flex flex-row-reverse bd-highlight">
+		<div class="col-lg-6 d-flex flex-row-reverse bd-highlight">
 			<button class="btn btn-sm" onclick="copyClip()"><i class="fa fa-clipboard fa-2"></i></button>
 			<h3>KODE AFFILIATOR : <span class="badge bg-secondary">@auth{{auth()->user()->code_aff}} @endauth</span></h3>
 			<input type="hidden" id="code_aff" value="@auth{{auth()->user()->code_aff}} @endauth">
