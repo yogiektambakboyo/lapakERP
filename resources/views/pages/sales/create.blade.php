@@ -12,7 +12,7 @@
             <form method="POST" action="{{ route('sales.store') }}">
                 @csrf
                 <div class="mb-3">
-                    <label for="name" class="form-label">@lang('general.lbl_name')</label>
+                    <label for="name" class="form-label">@lang('general.lbl_name') *</label>
                     <input value="{{ old('name') }}" 
                         type="text" 
                         class="form-control" 
@@ -25,7 +25,7 @@
                 </div>
 
                 <div class="mb-3">
-                    <label for="address" class="form-label">@lang('general.lbl_address')</label>
+                    <label for="address" class="form-label">@lang('general.lbl_address') *</label>
                     <input value="{{ old('address') }}" 
                         type="text" 
                         class="form-control" 
@@ -38,7 +38,7 @@
                 </div>
 
                 <div class="mb-3">
-                    <label for="username" class="form-label">@lang('general.lbl_username')</label>
+                    <label for="username" class="form-label">@lang('general.lbl_username') *</label>
                     <input value="{{ old('username') }}" 
                         type="text" 
                         class="form-control" 
@@ -51,7 +51,7 @@
                 </div>
 
                 <div class="mb-3">
-                    <label for="password" class="form-label">@lang('general.lbl_password')</label>
+                    <label for="password" class="form-label">@lang('general.lbl_password') * (Minimal 4 karakter tanpa spasi)</label>
                     <input value="{{ old('password') }}" 
                         type="text" 
                         class="form-control" 
@@ -64,7 +64,7 @@
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label">@lang('general.lbl_branch')</label>
+                    <label class="form-label">@lang('general.lbl_branch') *</label>
                     <div class="col-md-12">
                       <select class="form-control" 
                             name="branch_id">
@@ -82,7 +82,7 @@
                         type="text" 
                         class="form-control" 
                         name="external_code" 
-                        placeholder="@lang('general.lbl_external_code')" required>
+                        placeholder="@lang('general.lbl_external_code')">
 
                     @if ($errors->has('external_code'))
                         <span class="text-danger text-left">{{ $errors->first('external_code') }}</span>
