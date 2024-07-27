@@ -44,7 +44,7 @@
 							</div>
 						</li>
 						<li class="nav-item"><a class="nav-link" href="#service" data-click="scroll-to-target">LAYANAN</a></li>
-						<li class="nav-item"><a class="nav-link" href="#work" data-click="scroll-to-target">KLIEN</a></li>
+						<!-- <li class="nav-item"><a class="nav-link" href="#work" data-click="scroll-to-target">KLIEN</a></li> -->
 						<li class="nav-item"><a class="nav-link" href="#pricing" data-click="scroll-to-target">HARGA</a></li>
 						<li class="nav-item"><a class="nav-link" href="#afiliate" data-click="scroll-to-target">PROGRAM AFILIASI</a></li>
 						<li class="nav-item"><a class="nav-link" href="#contact" data-click="scroll-to-target">KONTAK</a></li>
@@ -435,68 +435,6 @@
 			<!-- end container -->
 		</div>
 		<!-- end #action-box -->
-		
-		<!-- begin #work -->
-		<div id="work" class="content" data-scrollview="true">
-			<!-- begin container -->
-			<div class="container" data-animation="true" data-animation-type="animate__fadeInDown">
-				<h2 class="content-title">Projek Keren</h2>
-				<p class="content-desc">
-					Mari kita jalan-jalan di dalam katalog produk keren dari Software House Keren! Produk kami bikin hidup lebih seru dan mudah. Cek yuk!
-				</p>
-				<!-- begin row -->
-				<div class="row row-space-10">
-					<!-- begin col-3 -->
-					<div class="col-lg-3 col-md-4">
-						<!-- begin work -->
-						<div class="work">
-							<div class="image">
-								<a href="https://play.google.com/store/apps/details?id=com.lapakkreatiflamongan.smdsforce" target="_blank"><img src="assets/img/work/work-img-1.jpg" alt="Work 1" /></a>
-							</div>
-							<div class="desc">
-								<span class="desc-title">Sales Force Automation</span>
-								<span class="desc-text">Desain modern, fitur serba bisa.</span>
-							</div>
-						</div>
-						<!-- end work -->
-					</div>
-					<!-- end col-3 -->
-					<!-- begin col-3 -->
-					<div class="col-lg-3 col-md-4">
-						<!-- begin work -->
-						<div class="work">
-							<div class="image">
-								<a href="https://play.google.com/store/apps/details?id=com.lapakkreatif.kakiku.kakiku_mobile"  target="_blank"><img src="assets/img/work/work-img-2.jpg" alt="Work 2" /></a>
-							</div>
-							<div class="desc">
-								<span class="desc-title">SPA & Reflexiology Management</span>
-								<span class="desc-text">Buatin manajemen jadi lebih rapi dan efisien. </span>
-							</div>
-						</div>
-						<!-- end work -->
-					</div>
-					<!-- end col-3 -->
-					<!-- begin col-3 -->
-					<div class="col-lg-3 col-md-4">
-						<!-- begin work -->
-						<div class="work">
-							<div class="image">
-								<a href="https://nugaspace.com"  target="_blank"><img src="assets/img/work/client-3.png" alt="Nugaspace" /></a>
-							</div>
-							<div class="desc">
-								<span class="desc-title">Nugaspace - Working Space</span>
-								<span class="desc-text">Tempat nugas paling adem se-Surabaya Timur</span>
-							</div>
-						</div>
-						<!-- end work -->
-					</div>
-					<!-- end col-3 -->
-				</div>
-				<!-- end row -->
-			</div>
-			<!-- end container -->
-		</div>
-		<!-- end #work -->
 		
 		<!-- begin #client -->
 		<div id="client" class="content has-bg bg-green" data-scrollview="true">
