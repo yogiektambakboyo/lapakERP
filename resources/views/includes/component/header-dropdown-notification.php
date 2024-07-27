@@ -1,5 +1,5 @@
 <div class="dropdown-menu media-list dropdown-menu-end">
-	<div class="dropdown-header">NOTIFICATIONS (5)</div>
+	<!-- <div class="dropdown-header">NOTIFICATIONS (5)</div>
 	<a href="javascript:;" class="dropdown-item media">
 		<div class="media-left">
 			<i class="fa fa-bug media-object bg-gray-500"></i>
@@ -53,4 +53,5 @@
 	<div class="dropdown-footer text-center">
 		<a href="javascript:;" class="text-decoration-none">View more</a>
 	</div>
+-->
 </div>
