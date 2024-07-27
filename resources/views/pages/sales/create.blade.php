@@ -38,7 +38,7 @@
                 </div>
 
                 <div class="mb-3">
-                    <label for="username" class="form-label">@lang('general.lbl_username') *</label>
+                    <label for="username" class="form-label">@lang('general.lbl_username') * (Rekomendasi penamaan KODEPERUSAHAAN_NAMASALES )</label>
                     <input value="{{ old('username') }}" 
                         type="text" 
                         class="form-control" 
