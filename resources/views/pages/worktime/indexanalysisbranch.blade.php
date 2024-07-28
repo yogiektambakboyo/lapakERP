@@ -60,7 +60,7 @@
                 <table class="table table-striped" id="example">
                     <thead>
                     <tr>
-                        <th>Tgl</th>
+                        <th>Nama</th>
                         <th>Jam Presensi</th>
                     </tr>
                     </thead>
