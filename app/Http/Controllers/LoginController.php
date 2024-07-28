@@ -769,6 +769,42 @@ class LoginController extends Controller
         
     }
 
+    public function api_voucher_list(Request $request)
+    {
+        $token_today = $request->token;
+        $val_token = md5(date("Y-m-d"));
+        $user_agent = $request->server('HTTP_USER_AGENT');
+        $whatsapp_no = $request->whatsapp_no;
+        $data = DB::select("
+                            select v.voucher_code,v.remark,v.dated_start,v.dated_end,v.user_id,to_char(v.dated_end,'dd-mm-YYYY') as dated_end_format,
+                            case when v.is_allitem = 1 then 'Semua Perawatan' else string_agg(ps.abbr ,', ')  end as use_for,v.value,v.value_idx  
+                            from voucher v 
+                            join voucher_detail vd on v.voucher_code=vd.voucher_code
+                            join product_sku ps on ps.id = vd.product_id::bigint 
+                            join customers ub on ub.branch_id = v.branch_id and ub.id = v.user_id and ub.whatsapp_no = '".$whatsapp_no."'
+                            where now()::date between v.dated_start and v.dated_end and v.invoice_no is null
+                            group by v.voucher_code,v.remark,v.dated_start,v.dated_end,v.is_allitem,v.user_id,v.value,v.value_idx
+                            order by 3 asc
+        ");
+
+        if(count($data)>0 && $val_token==$token_today && $user_agent=="Malaikat_Ridwan"){
+            $result = array_merge(
+                ['status' => 'success'],
+                ['data' => $data],
+                ['message' => 'Success'],
+            );    
+        }else{
+            $data = array();
+            $result = array_merge(
+                ['status' => 'failed'],
+                ['data' => $data ],
+                ['message' => 'get Branch failed'],
+            );   
+        }
+        return $result;
+        
+    }
+
     public function api_branch_list_link(Request $request)
     {
         $token_today = $request->token;
