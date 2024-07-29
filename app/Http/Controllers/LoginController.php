@@ -782,8 +782,8 @@ class LoginController extends Controller
                             from voucher v 
                             join voucher_detail vd on v.voucher_code=vd.voucher_code
                             join customers ub on ub.id = v.user_id and ub.whatsapp_no = '".$whatsapp_no."'
+                            join branch b on b.id = v.branch_id
                             left join product_sku ps on ps.id = vd.product_id::bigint 
-                            join branch b on b.id = ub.branch_id
                             where now()::date between v.dated_start and v.dated_end and v.invoice_no is null
                             group by v.caption_1,v.caption_2,b.address,b.phone_no,b.abbr,v.voucher_code,v.remark,v.dated_start,v.dated_end,v.is_allitem,v.user_id,v.value,v.value_idx
                             order by 3 asc
