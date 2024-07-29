@@ -777,13 +777,15 @@ class LoginController extends Controller
         $whatsapp_no = $request->whatsapp_no;
         $data = DB::select("
                             select v.voucher_code,v.remark,v.dated_start,v.dated_end,v.user_id,to_char(v.dated_end,'dd-mm-YYYY') as dated_end_format,
+                            b.address,b.phone_no,b.abbr,v.caption_1,v.caption_2,
                             case when v.is_allitem = 1 then 'Semua Perawatan' else string_agg(ps.abbr ,', ')  end as use_for,v.value,v.value_idx  
                             from voucher v 
                             join voucher_detail vd on v.voucher_code=vd.voucher_code
                             join product_sku ps on ps.id = vd.product_id::bigint 
                             join customers ub on ub.branch_id = v.branch_id and ub.id = v.user_id and ub.whatsapp_no = '".$whatsapp_no."'
+                            join branch b on b.id = ub.branch_id
                             where now()::date between v.dated_start and v.dated_end and v.invoice_no is null
-                            group by v.voucher_code,v.remark,v.dated_start,v.dated_end,v.is_allitem,v.user_id,v.value,v.value_idx
+                            group by v.caption_1,v.caption_2,b.address,b.phone_no,b.abbr,v.voucher_code,v.remark,v.dated_start,v.dated_end,v.is_allitem,v.user_id,v.value,v.value_idx
                             order by 3 asc
         ");
 
