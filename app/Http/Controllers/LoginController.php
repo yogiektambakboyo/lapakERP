@@ -777,7 +777,7 @@ class LoginController extends Controller
         $whatsapp_no = $request->whatsapp_no;
         $data = DB::select("
                             select v.voucher_code,v.remark,v.dated_start,v.dated_end,v.user_id,to_char(v.dated_end,'dd-mm-YYYY') as dated_end_format,
-                            b.address,b.phone_no,b.abbr,v.caption_1,v.caption_2,
+                            left(b.address,55) as address,b.phone_no,b.abbr,v.caption_1,v.caption_2,
                             case when v.is_allitem = 1 then 'Semua Perawatan' else string_agg(ps.abbr ,', ')  end as use_for,v.value,v.value_idx  
                             from voucher v 
                             join voucher_detail vd on v.voucher_code=vd.voucher_code
