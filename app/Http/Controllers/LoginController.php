@@ -477,6 +477,8 @@ class LoginController extends Controller
         $whatsapp_no = $request->whatsapp_no;
         $token = $request->token;
 
+        DB::select("update voucher set pass_digit=null  where pass_digit is not null and pass_digit_updated_at<now()-interval'16 minutes';");
+
         $data = DB::select("select * from (
             select c.id,name,whatsapp_no,pass_wd,'cust' as user_type,'' as photo,1 as job_id,'customer' as job_title,b2.id::character varying as branch_id, b2.remark as branch_name  from customers c 
             join branch b2 on b2.id= c.branch_id
@@ -775,6 +777,7 @@ class LoginController extends Controller
         $val_token = md5(date("Y-m-d"));
         $user_agent = $request->server('HTTP_USER_AGENT');
         $whatsapp_no = $request->whatsapp_no;
+        DB::select("update voucher set pass_digit=null where pass_digit is not null and pass_digit_updated_at<now()-interval'16 minutes';");
         $data = DB::select("
                             select v.voucher_code,v.remark,v.dated_start,v.dated_end,v.user_id,to_char(v.dated_end,'dd-mm-YYYY') as dated_end_format,
                             left(b.address,55) as address,b.phone_no,b.abbr,v.caption_1,v.caption_2,v.id,
@@ -814,6 +817,9 @@ class LoginController extends Controller
         $user_agent = $request->server('HTTP_USER_AGENT');
         $whatsapp_no = $request->whatsapp_no;
         $voucher_code = $request->voucher_code;
+
+        DB::select("update voucher set pass_digit=null  where pass_digit is not null and pass_digit_updated_at<now()-interval'16 minutes';");
+
         $data = DB::select("
                             select v.voucher_code,v.remark,v.dated_start,v.dated_end,v.user_id,to_char(v.dated_end,'dd-mm-YYYY') as dated_end_format,
                             left(b.address,55) as address,b.phone_no,b.abbr,v.caption_1,v.caption_2,v.id,
