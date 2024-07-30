@@ -38,6 +38,7 @@ class VerifyCsrfToken extends Middleware
         '/send-wa-media',
         '/api_voucher_list',
         '/api_voucher_one',
+        '/api_voucher_one_update',
         //
     ];
 }

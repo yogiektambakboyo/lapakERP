@@ -777,7 +777,7 @@ class LoginController extends Controller
         $whatsapp_no = $request->whatsapp_no;
         $data = DB::select("
                             select v.voucher_code,v.remark,v.dated_start,v.dated_end,v.user_id,to_char(v.dated_end,'dd-mm-YYYY') as dated_end_format,
-                            left(b.address,55) as address,b.phone_no,b.abbr,v.caption_1,v.caption_2,
+                            left(b.address,55) as address,b.phone_no,b.abbr,v.caption_1,v.caption_2,v.id,
                             case when v.is_allitem = 1 then 'Semua Perawatan' else string_agg(ps.abbr ,', ')  end as use_for,v.value,v.value_idx  
                             from voucher v 
                             join voucher_detail vd on v.voucher_code=vd.voucher_code
@@ -785,7 +785,7 @@ class LoginController extends Controller
                             join branch b on b.id = v.branch_id
                             left join product_sku ps on ps.id = vd.product_id::bigint 
                             where now()::date between v.dated_start and v.dated_end and v.invoice_no is null
-                            group by v.caption_1,v.caption_2,b.address,b.phone_no,b.abbr,v.voucher_code,v.remark,v.dated_start,v.dated_end,v.is_allitem,v.user_id,v.value,v.value_idx
+                            group by v.id,v.caption_1,v.caption_2,b.address,b.phone_no,b.abbr,v.voucher_code,v.remark,v.dated_start,v.dated_end,v.is_allitem,v.user_id,v.value,v.value_idx
                             order by 3 asc
         ");
 
@@ -816,7 +816,7 @@ class LoginController extends Controller
         $voucher_code = $request->voucher_code;
         $data = DB::select("
                             select v.voucher_code,v.remark,v.dated_start,v.dated_end,v.user_id,to_char(v.dated_end,'dd-mm-YYYY') as dated_end_format,
-                            left(b.address,55) as address,b.phone_no,b.abbr,v.caption_1,v.caption_2,
+                            left(b.address,55) as address,b.phone_no,b.abbr,v.caption_1,v.caption_2,v.id,
                             case when v.is_allitem = 1 then 'Semua Perawatan' else string_agg(ps.abbr ,', ')  end as use_for,v.value,v.value_idx  
                             from voucher v 
                             join voucher_detail vd on v.voucher_code=vd.voucher_code
@@ -824,7 +824,7 @@ class LoginController extends Controller
                             join branch b on b.id = v.branch_id
                             left join product_sku ps on ps.id = vd.product_id::bigint 
                             where v.voucher_code = '".$voucher_code."' and now()::date between v.dated_start and v.dated_end and v.invoice_no is null
-                            group by v.caption_1,v.caption_2,b.address,b.phone_no,b.abbr,v.voucher_code,v.remark,v.dated_start,v.dated_end,v.is_allitem,v.user_id,v.value,v.value_idx
+                            group by v.id,v.caption_1,v.caption_2,b.address,b.phone_no,b.abbr,v.voucher_code,v.remark,v.dated_start,v.dated_end,v.is_allitem,v.user_id,v.value,v.value_idx
                             order by 3 asc
         ");
 
@@ -840,6 +840,39 @@ class LoginController extends Controller
                 ['status' => 'failed'],
                 ['data' => $data ],
                 ['message' => 'get Branch failed'],
+            );   
+        }
+        return $result;
+        
+    }
+
+    public function api_voucher_one_update(Request $request)
+    {
+        $token_today = $request->token;
+        $val_token = md5(date("Y-m-d"));
+        $user_agent = $request->server('HTTP_USER_AGENT');
+        $whatsapp_no = $request->whatsapp_no;
+        $voucher_code = $request->voucher_code;
+        $pass_digit = $request->pass_digit;
+        $id = $request->id;
+        
+
+        if(count($data)>0 && $val_token==$token_today && $user_agent=="Malaikat_Ridwan"){
+            $data = DB::select("
+                update voucher set pass_digit_updated_at = now(),pass_digit = '".$pass_digit."' where voucher_code = '".$voucher_code."' and id='".$id."';  
+            ");
+            
+            $result = array_merge(
+                ['status' => 'success'],
+                ['data' => ''],
+                ['message' => 'Success'],
+            );    
+        }else{
+            $data = array();
+            $result = array_merge(
+                ['status' => 'failed'],
+                ['data' => ''],
+                ['message' => 'Failed update voucher'],
             );   
         }
         return $result;
