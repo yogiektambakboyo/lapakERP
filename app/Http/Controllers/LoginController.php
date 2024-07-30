@@ -207,17 +207,25 @@ class LoginController extends Controller
 
         $data = DB::select(" insert into customers_point(customers_id,point) select id,0  from customers c  where c.id not in (select customers_id  from customers_point); ");
 
-        $data = DB::select("select c.id,c.name, m.remark as membership,m.point as m_point,'cust' as user_type,coalesce(cp.point,0) as point, 0 as voucher,coalesce(c.external_code,'') as external_code 
+        $data = DB::select("select c.id,c.name, m.remark as membership,m.point as m_point,'cust' as user_type,coalesce(cp.point,0) as point,count(v.id) as voucher,coalesce(c.external_code,'') as external_code 
         from customers c 
         join membership m on m.id = c.membership_id 
         left join customers_point cp on cp.customers_id = c.id
-        where pass_wd='".$pass_wd."' and c.whatsapp_no ='".$whatsapp_no."' ");
+        left join voucher v on v.user_id = c.id and v.is_used = 0
+        where pass_wd='".$pass_wd."' and c.whatsapp_no ='".$whatsapp_no."'
+        group by c.id,c.name, m.remark,m.point,cp.point,coalesce(c.external_code,''); ");
 
         if(count($data)>0){
             $result = array_merge(
                 ['status' => 'success'],
                 ['data' => $data],
-                ['message' => 'Success'],
+                ['message' => "select c.id,c.name, m.remark as membership,m.point as m_point,'cust' as user_type,coalesce(cp.point,0) as point,count(v.id) as voucher,coalesce(c.external_code,'') as external_code 
+        from customers c 
+        join membership m on m.id = c.membership_id 
+        left join customers_point cp on cp.customers_id = c.id
+        left join voucher v on v.user_id = c.id and v.is_used = 0
+        where pass_wd='".$pass_wd."' and c.whatsapp_no ='".$whatsapp_no."'
+        group by c.id,c.name, m.remark,m.point,cp.point,coalesce(c.external_code,''); "],
             );    
         }else{
             $data = array();
@@ -809,6 +817,8 @@ class LoginController extends Controller
         return $result;
         
     }
+
+
 
     public function api_voucher_one(Request $request)
     {
