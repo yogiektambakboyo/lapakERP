@@ -857,8 +857,8 @@ class LoginController extends Controller
         $id = $request->id;
         
 
-        if(count($data)>0 && $val_token==$token_today && $user_agent=="Malaikat_Ridwan"){
-            $data = DB::select("
+        if($val_token==$token_today && $user_agent=="Malaikat_Ridwan"){
+            DB::select("
                 update voucher set pass_digit_updated_at = now(),pass_digit = '".$pass_digit."' where voucher_code = '".$voucher_code."' and id='".$id."';  
             ");
             
@@ -868,7 +868,6 @@ class LoginController extends Controller
                 ['message' => 'Success'],
             );    
         }else{
-            $data = array();
             $result = array_merge(
                 ['status' => 'failed'],
                 ['data' => ''],
