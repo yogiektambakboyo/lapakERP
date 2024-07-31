@@ -207,11 +207,13 @@ class LoginController extends Controller
 
         $data = DB::select(" insert into customers_point(customers_id,point) select id,0  from customers c  where c.id not in (select customers_id  from customers_point); ");
 
-        $data = DB::select("select c.id,c.name, m.remark as membership,m.point as m_point,'cust' as user_type,coalesce(cp.point,0) as point, 0 as voucher,coalesce(c.external_code,'') as external_code 
+        $data = DB::select("select c.id,c.name, m.remark as membership,m.point as m_point,'cust' as user_type,coalesce(cp.point,0) as point,count(v.id) as voucher,coalesce(c.external_code,'') as external_code 
         from customers c 
         join membership m on m.id = c.membership_id 
         left join customers_point cp on cp.customers_id = c.id
-        where pass_wd='".$pass_wd."' and c.whatsapp_no ='".$whatsapp_no."' ");
+        left join voucher v on v.user_id = c.id and v.is_used = 0
+        where pass_wd='".$pass_wd."' and c.whatsapp_no ='".$whatsapp_no."'
+        group by c.id,c.name, m.remark,m.point,cp.point,coalesce(c.external_code,''); ");
 
         if(count($data)>0){
             $result = array_merge(
@@ -476,6 +478,8 @@ class LoginController extends Controller
     {
         $whatsapp_no = $request->whatsapp_no;
         $token = $request->token;
+
+        DB::select("update voucher set pass_digit=null  where pass_digit is not null and pass_digit_updated_at<now()-interval'16 minutes';");
 
         $data = DB::select("select * from (
             select c.id,name,whatsapp_no,pass_wd,'cust' as user_type,'' as photo,1 as job_id,'customer' as job_title,b2.id::character varying as branch_id, b2.remark as branch_name  from customers c 
@@ -763,6 +767,121 @@ class LoginController extends Controller
                 ['status' => 'failed'],
                 ['data' => $data ],
                 ['message' => 'get Branch failed'],
+            );   
+        }
+        return $result;
+        
+    }
+
+    public function api_voucher_list(Request $request)
+    {
+        $token_today = $request->token;
+        $val_token = md5(date("Y-m-d"));
+        $user_agent = $request->server('HTTP_USER_AGENT');
+        $whatsapp_no = $request->whatsapp_no;
+        DB::select("update voucher set pass_digit=null where pass_digit is not null and pass_digit_updated_at<now()-interval'16 minutes';");
+        $data = DB::select("
+                            select v.voucher_code,v.remark,v.dated_start,v.dated_end,v.user_id,to_char(v.dated_end,'dd-mm-YYYY') as dated_end_format,
+                            left(b.address,55) as address,b.phone_no,b.abbr,v.caption_1,v.caption_2,v.id,
+                            case when v.is_allitem = 1 then 'Semua Perawatan' else string_agg(ps.abbr ,', ')  end as use_for,v.value,v.value_idx  
+                            from voucher v 
+                            join voucher_detail vd on v.voucher_code=vd.voucher_code
+                            join customers ub on ub.id = v.user_id and ub.whatsapp_no = '".$whatsapp_no."'
+                            join branch b on b.id = v.branch_id
+                            left join product_sku ps on ps.id = vd.product_id::bigint 
+                            where now()::date between v.dated_start and v.dated_end and v.invoice_no is null
+                            group by v.id,v.caption_1,v.caption_2,b.address,b.phone_no,b.abbr,v.voucher_code,v.remark,v.dated_start,v.dated_end,v.is_allitem,v.user_id,v.value,v.value_idx
+                            order by 3 asc
+        ");
+
+        if(count($data)>0 && $val_token==$token_today && $user_agent=="Malaikat_Ridwan"){
+            $result = array_merge(
+                ['status' => 'success'],
+                ['data' => $data],
+                ['message' => 'Success'],
+            );    
+        }else{
+            $data = array();
+            $result = array_merge(
+                ['status' => 'failed'],
+                ['data' => $data ],
+                ['message' => 'get Branch failed'],
+            );   
+        }
+        return $result;
+        
+    }
+
+
+
+    public function api_voucher_one(Request $request)
+    {
+        $token_today = $request->token;
+        $val_token = md5(date("Y-m-d"));
+        $user_agent = $request->server('HTTP_USER_AGENT');
+        $whatsapp_no = $request->whatsapp_no;
+        $voucher_code = $request->voucher_code;
+
+        DB::select("update voucher set pass_digit=null  where pass_digit is not null and pass_digit_updated_at<now()-interval'16 minutes';");
+
+        $data = DB::select("
+                            select v.voucher_code,v.remark,v.dated_start,v.dated_end,v.user_id,to_char(v.dated_end,'dd-mm-YYYY') as dated_end_format,
+                            left(b.address,55) as address,b.phone_no,b.abbr,v.caption_1,v.caption_2,v.id,
+                            case when v.is_allitem = 1 then 'Semua Perawatan' else string_agg(ps.abbr ,', ')  end as use_for,v.value,v.value_idx  
+                            from voucher v 
+                            join voucher_detail vd on v.voucher_code=vd.voucher_code
+                            join customers ub on ub.id = v.user_id and ub.whatsapp_no = '".$whatsapp_no."'
+                            join branch b on b.id = v.branch_id
+                            left join product_sku ps on ps.id = vd.product_id::bigint 
+                            where v.voucher_code = '".$voucher_code."' and now()::date between v.dated_start and v.dated_end and v.invoice_no is null
+                            group by v.id,v.caption_1,v.caption_2,b.address,b.phone_no,b.abbr,v.voucher_code,v.remark,v.dated_start,v.dated_end,v.is_allitem,v.user_id,v.value,v.value_idx
+                            order by 3 asc
+        ");
+
+        if(count($data)>0 && $val_token==$token_today && $user_agent=="Malaikat_Ridwan"){
+            $result = array_merge(
+                ['status' => 'success'],
+                ['data' => $data],
+                ['message' => 'Success'],
+            );    
+        }else{
+            $data = array();
+            $result = array_merge(
+                ['status' => 'failed'],
+                ['data' => $data ],
+                ['message' => 'get Branch failed'],
+            );   
+        }
+        return $result;
+        
+    }
+
+    public function api_voucher_one_update(Request $request)
+    {
+        $token_today = $request->token;
+        $val_token = md5(date("Y-m-d"));
+        $user_agent = $request->server('HTTP_USER_AGENT');
+        $whatsapp_no = $request->whatsapp_no;
+        $voucher_code = $request->voucher_code;
+        $pass_digit = $request->pass_digit;
+        $id = $request->id;
+        
+
+        if($val_token==$token_today && $user_agent=="Malaikat_Ridwan"){
+            DB::select("
+                update voucher set pass_digit_updated_at = now(),pass_digit = '".$pass_digit."' where voucher_code = '".$voucher_code."' and id='".$id."';  
+            ");
+            
+            $result = array_merge(
+                ['status' => 'success'],
+                ['data' => ''],
+                ['message' => 'Success'],
+            );    
+        }else{
+            $result = array_merge(
+                ['status' => 'failed'],
+                ['data' => ''],
+                ['message' => 'Failed update voucher'],
             );   
         }
         return $result;
