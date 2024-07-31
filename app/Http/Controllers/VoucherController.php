@@ -13,6 +13,7 @@ use App\Models\Branch;
 use App\Models\JobTitle;
 use App\Models\Department;
 use App\Models\ProductType;
+use App\Models\Customer;
 use App\Models\ProductBrand;
 use App\Models\ProductCategory;
 use App\Http\Requests\StoreUserRequest;
@@ -195,6 +196,7 @@ class VoucherController extends Controller
         $user  = Auth::user();
         $data = $this->data;
         return view('pages.voucher.create',[
+            'customers' => Customer::join('users_branch as ub','ub.branch_id', '=', 'customers.branch_id')->join('branch as b','b.id','=','ub.branch_id')->where('customers.status','=','1')->where('ub.user_id',$user->id)->orderBy('customers.name')->limit(30)->get(['customers.id','customers.name','b.remark']),
             'last_voucher' => $now_voucher,
             'products' => DB::select('select ps.id,ps.remark from product_sku as ps where ps.type_id=2 order by ps.remark;'),
             'data' => $data, 'company' => Company::get()->first(),
@@ -243,21 +245,42 @@ class VoucherController extends Controller
             $price = $request->get('price');
         
             $user = Auth::user();
-            $voucher->create(
-                array_merge(
-                    ['value' => $request->get('value') ],
-                    ['value_idx' => $request->get('value_idx') ],
-                    ['dated_start' => Carbon::createFromFormat('d-m-Y', $request->get('dated_start'))->format('Y-m-d') ],
-                    ['dated_end' => Carbon::createFromFormat('d-m-Y', $request->get('dated_end'))->format('Y-m-d') ],
-                    ['branch_id' => $request->get('branch_id') ],
-                    ['moq' => $request->get('moq') ],
-                    ['unlimeted' => $request->get('unlimeted') ],
-                    ['remark' => $request->get('remark') ],
-                    ['price' => $price ],
-                    ['voucher_code' => $now_voucher ],
-                    ['created_by' => $user->id ],
-                )
-            );
+            if($request->get('customer_id')=='%'){
+                $voucher->create(
+                    array_merge(
+                        ['value' => $request->get('value') ],
+                        ['value_idx' => $request->get('value_idx') ],
+                        ['dated_start' => Carbon::createFromFormat('d-m-Y', $request->get('dated_start'))->format('Y-m-d') ],
+                        ['dated_end' => Carbon::createFromFormat('d-m-Y', $request->get('dated_end'))->format('Y-m-d') ],
+                        ['branch_id' => $request->get('branch_id') ],
+                        ['moq' => $request->get('moq') ],
+                        ['unlimeted' => $request->get('unlimeted') ],
+                        ['remark' => $request->get('remark') ],
+                        ['price' => $price ],
+                        ['voucher_code' => $now_voucher ],
+                        ['created_by' => $user->id ],
+                    )
+                );
+            }else{
+                $voucher->create(
+                    array_merge(
+                        ['value' => $request->get('value') ],
+                        ['value_idx' => $request->get('value_idx') ],
+                        ['dated_start' => Carbon::createFromFormat('d-m-Y', $request->get('dated_start'))->format('Y-m-d') ],
+                        ['dated_end' => Carbon::createFromFormat('d-m-Y', $request->get('dated_end'))->format('Y-m-d') ],
+                        ['branch_id' => $request->get('branch_id') ],
+                        ['moq' => $request->get('moq') ],
+                        ['unlimeted' => $request->get('unlimeted') ],
+                        ['remark' => $request->get('remark') ],
+                        ['user_id' => $request->get('customer_id') ],
+                        ['price' => $price ],
+                        ['voucher_code' => $now_voucher ],
+                        ['created_by' => $user->id ],
+                    )
+                );
+            }
+
+            
 
             
 
@@ -329,16 +352,17 @@ class VoucherController extends Controller
 
         $user  = Auth::user();
         $data = $this->data;
-        $product = DB::select("select v.unlimeted,v.moq,bc.id as branch_id,left(string_agg(ps.abbr,', '),150) as product_name,v.invoice_no,v.is_used,v.price,v.remark as voucher_remark,v.voucher_code,v.branch_id,bc.remark as branch_name,v.value as value,v.value_idx,v.dated_start,v.dated_end 
+        $product = DB::select("select v.unlimeted,v.moq,bc.id as branch_id,left(string_agg(ps.abbr,', '),150) as product_name,v.invoice_no,v.is_used,v.price,v.remark as voucher_remark,v.voucher_code,v.branch_id,bc.remark as branch_name,v.value as value,v.value_idx,v.dated_start,v.dated_end,v.user_id,v.caption_1,v.caption_2
                 from voucher v 
                 join voucher_detail vd on vd.voucher_code=v.voucher_code and vd.voucher_code='".$voucher_code."'
                 join branch as bc on bc.id= v.branch_id and bc.id = ".$branch_id."
                 join users_branch as ub2 on ub2.branch_id=v.branch_id
                 left join product_sku ps on ps.id = vd.product_id::bigint
-                where ub2.user_id = '".$user->id."' group by v.unlimeted,v.moq,bc.id,v.invoice_no,v.is_used,v.price,v.remark,v.voucher_code,v.branch_id,bc.remark,v.value,v.value_idx,v.dated_start,v.dated_end limit 1
+                where ub2.user_id = '".$user->id."' group by v.unlimeted,v.moq,bc.id,v.invoice_no,v.is_used,v.price,v.remark,v.voucher_code,v.branch_id,bc.remark,v.value,v.value_idx,v.dated_start,v.dated_end,v.user_id,v.caption_1,v.caption_2 limit 1
         ;");
 
         return view('pages.voucher.edit', [
+            'customers' => Customer::join('users_branch as ub','ub.branch_id', '=', 'customers.branch_id')->join('branch as b','b.id','=','ub.branch_id')->where('customers.status','=','1')->where('ub.user_id',$user->id)->orderBy('customers.name')->limit(30)->get(['customers.id','customers.name','b.remark']),
             'branchs' => Branch::join('users_branch as ub','ub.branch_id','=','branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']),
             'data' => $data,
             'product' => $product[0], 'company' => Company::get()->first(),
@@ -366,10 +390,22 @@ class VoucherController extends Controller
                                 ['price' => $request->get('price') ],
                                 ['moq' => $request->get('moq') ],
                                 ['unlimeted' => $request->get('unlimeted') ],
+                                ['caption_1' => $request->get('caption_1') ],
+                                ['caption_2' => $request->get('caption_2') ],
                                 ['dated_end' => Carbon::createFromFormat('d-m-Y', $request->get('dated_end'))->format('Y-m-d')],
                                 ['dated_start' => Carbon::createFromFormat('d-m-Y', $request->get('dated_start'))->format('Y-m-d') ],
                             )
                         );
+        
+        if($request->get('customer_id') != "%"){
+            Voucher::where('branch_id','=',$branch)
+            ->where('voucher_code','=',$voucher_code)
+            ->update(
+                array_merge(
+                    ['user_id' => $request->get('customer_id') ],
+                )
+            );
+        }
 
         return redirect()->route('voucher.index')
             ->withSuccess(__('Voucher updated successfully.'));

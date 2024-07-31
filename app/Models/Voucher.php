@@ -29,6 +29,9 @@ class Voucher extends Model
         'is_allitem',
         'moq',
         'unlimeted',
-        'updated_at'
+        'updated_at',
+        'user_id',
+        'caption_1',
+        'caption_2',
     ];
 }

@@ -155,6 +155,34 @@
             </div>
 
             <div class="row mb-3">
+              <label class="form-label col-form-label col-md-2">Customer</label>
+              <div class="col-md-8">
+                <select class="form-control" 
+                    name="customer_id" id="customer_id">
+                    <option value="%">@lang('general.lbl_customerselect')</option>
+                    @foreach($customers as $customer)
+                        <option value="{{ $customer->id }}">{{ $customer->name }}</option>
+                    @endforeach
+                </select>
+              </div>
+            </div>
+
+            <div class="row mb-3">
+              <label class="form-label col-form-label col-md-2">Caption 1</label>
+              <div class="col-md-8">
+                <input type="text" class="form-control" name="caption_1" value=""/>
+              </div>
+            </div>
+
+            <div class="row mb-3">
+              <label class="form-label col-form-label col-md-2">Caption 2</label>
+              <div class="col-md-8">
+                <input type="text" class="form-control" name="caption_2" value=""/>
+              </div>
+            </div>
+
+
+            <div class="row mb-3">
               <label class="form-label col-form-label col-md-12 fst-italic fw-light" id="lbl_example">Contoh Hasil : </label>
             </div>
 
@@ -198,6 +226,20 @@
             var s2 = $('#prefix').val()+("0000000"+$('#begin_digit').val()).substr((-1*$('#digit').val()),$('#digit').val());
             var s3 = $('#prefix').val()+("0000000"+((parseInt($('#begin_digit').val())-1)+parseInt($('#qty_voucher_code').val()))).substr((-1*$('#digit').val()),$('#digit').val());
             $('#lbl_example').text(s1+" "+s2+" s/d "+s3);
+          });
+
+          $('#customer_id').select2({
+          ajax: {
+              dataType: 'json',
+              url: function (params) {
+                $urld = "{{ route('customers.search') }}";
+                if(params.term == ""){
+                  return $urld+'?src=api&search=%';
+                }else{
+                  return $urld+'?src=api&search='+params.term;
+                }
+              }
+            },
           });
 
        

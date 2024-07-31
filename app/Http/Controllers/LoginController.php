@@ -871,6 +871,8 @@ class LoginController extends Controller
             DB::select("
                 update voucher set pass_digit_updated_at = now(),pass_digit = '".$pass_digit."' where voucher_code = '".$voucher_code."' and id='".$id."';  
             ");
+
+            DB::select("INSERT INTO public.voucher_log(voucher_no, remarks, user_id, created_at) VALUES('".$voucher_code."', 'Request code transaction ".$pass_digit." ', 0, now());");
             
             $result = array_merge(
                 ['status' => 'success'],

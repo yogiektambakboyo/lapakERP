@@ -227,13 +227,15 @@ class OrdersController extends Controller
 
     public function checkvoucher(Request $request){
         $user = Auth::user();
+        DB::select("INSERT INTO public.voucher_log(voucher_no, remarks, user_id, created_at) VALUES('".$request->get('voucher_code')."', 'Apply voucher at faktur','".$user->id."', now());");
+
         $voucher = DB::select("
                                     select '%' as product_id,v.remark,v.value,v.value_idx,v.moq,v.is_allitem from voucher v
                                     join users_branch ub on  ub.branch_id=v.branch_id 
                                     join branch b on b.id=ub.branch_id 
                                     where (v.is_used=0 or v.unlimeted=1) and ub.user_id='".$user->id."' 
                                     and now() between v.dated_start and v.dated_end and v.voucher_code = '".$request->get('voucher_code')."'
-                                    and v.is_allitem >=1
+                                    and v.is_allitem >=1   and v.user_id is null
                                     union
                                     select vd.product_id,v.remark,v.value,v.value_idx,v.moq,v.is_allitem from voucher v
                                     join users_branch ub on  ub.branch_id=v.branch_id 
@@ -241,7 +243,24 @@ class OrdersController extends Controller
                                     join voucher_detail vd on vd.voucher_code=v.voucher_code and vd.branch_id = v.branch_id
                                     where (v.is_used=0 or v.unlimeted=1) and ub.user_id='".$user->id."' 
                                     and now() between v.dated_start and v.dated_end and v.voucher_code = '".$request->get('voucher_code')."'
-                                    and v.is_allitem <=0;
+                                    and v.is_allitem <=0  and v.user_id is null
+
+                                    union
+                                    select '%' as product_id,v.remark,v.value,v.value_idx,v.moq,v.is_allitem from voucher v
+                                    join users_branch ub on  ub.branch_id=v.branch_id 
+                                    join branch b on b.id=ub.branch_id 
+                                    where (v.is_used=0 or v.unlimeted=1) and ub.user_id='".$user->id."' 
+                                    and now() between v.dated_start and v.dated_end and v.pass_digit = '".$request->get('voucher_code')."'
+                                    and v.is_allitem >=1 and v.user_id is not null
+                                    union
+                                    select vd.product_id,v.remark,v.value,v.value_idx,v.moq,v.is_allitem from voucher v
+                                    join users_branch ub on  ub.branch_id=v.branch_id 
+                                    join branch b on b.id=ub.branch_id 
+                                    join voucher_detail vd on vd.voucher_code=v.voucher_code and vd.branch_id = v.branch_id
+                                    where (v.is_used=0 or v.unlimeted=1) and ub.user_id='".$user->id."' 
+                                    and now() between v.dated_start and v.dated_end and v.pass_digit = '".$request->get('voucher_code')."'
+                                    and v.is_allitem <=0  and v.user_id is not null
+                                    ;
                                 ");
         return $voucher; 
     }
