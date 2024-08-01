@@ -234,9 +234,9 @@
               url: function (params) {
                 $urld = "{{ route('customers.search') }}";
                 if(params.term == ""){
-                  return $urld+'?src=api&search=%';
+                  return $urld+'?src=api_v2&search=%';
                 }else{
-                  return $urld+'?src=api&search='+params.term;
+                  return $urld+'?src=api_v2&search='+params.term;
                 }
               }
             },
