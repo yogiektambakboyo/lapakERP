@@ -114,7 +114,20 @@ class CustomersController extends Controller
             ]);
 
             return response()->json($datajson, 200);
-        }else{
+        }else if($request->src == "api_v2"){
+            $Customers = DB::select("select c.id, c.name||' No WA : '||coalesce(c.whatsapp_no,'-')||'' as text
+                                    from customers c 
+                                    join branch as bc on bc.id= c.branch_id
+                                    join users_branch as ub2 on ub2.branch_id=bc.id
+                                    where ub2.user_id = '".$user->id."' and c.name ilike '%".$keyword."%';  ");
+
+            $datajson = array_merge([
+                'results' => $Customers
+            ]);
+
+            return response()->json($datajson, 200);
+        }
+        else{
             $Customers = Customer::join('branch as b','b.id','customers.branch_id')
                             ->join('users_branch as ub', function($join){
                                 $join->on('ub.branch_id', '=', 'b.id');

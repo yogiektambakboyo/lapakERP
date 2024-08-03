@@ -95,10 +95,14 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
     })->name('user.index'); **/
 
     Route::group(['middleware' => ['auth', 'permission']], function() {
+        Route::get('/kirimemail','NotifEmailController@send_mail');
+
         /**
          * Logout Routes
          */
         Route::get('/logout', 'LogoutController@perform')->name('logout.perform');
+
+
 
         /**
          * User Routes

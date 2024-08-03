@@ -129,6 +129,35 @@
             </div>
           </div>
 
+          <div class="row mb-3">
+            <label class="form-label col-form-label col-md-2">Customer</label>
+            <div class="col-md-8">
+              <select class="form-control" 
+                  name="customer_id" id="customer_id">
+                  <option value="%">@lang('general.lbl_customerselect')</option>
+                  @foreach($customers as $customer)
+                      <option value="{{ $customer->id }}" {{ ($product->user_id == $customer->id) 
+                        ? 'selected'
+                        : ''}}>{{ $customer->name }}</option>
+                  @endforeach
+              </select>
+            </div>
+          </div>
+
+          <div class="row mb-3">
+            <label class="form-label col-form-label col-md-2">Caption 1</label>
+            <div class="col-md-8">
+              <input type="text" class="form-control" name="caption_1"  value="{{ $product->caption_1 }}"/>
+            </div>
+          </div>
+
+          <div class="row mb-3">
+            <label class="form-label col-form-label col-md-2">Caption 2</label>
+            <div class="col-md-8">
+              <input type="text" class="form-control" name="caption_2"  value="{{ $product->caption_1 }}"/>
+            </div>
+          </div>
+
 
           </div>
         </div>
@@ -160,6 +189,20 @@
               todayHighlight: true,
           });
           //$('#dated_end').val(formattedToday);
+
+          $('#customer_id').select2({
+            ajax: {
+              dataType: 'json',
+              url: function (params) {
+                $urld = "{{ route('customers.search') }}";
+                if(params.term == ""){
+                  return $urld+'?src=api&search=%';
+                }else{
+                  return $urld+'?src=api&search='+params.term;
+                }
+              }
+            },
+          });
 
        
     </script>
