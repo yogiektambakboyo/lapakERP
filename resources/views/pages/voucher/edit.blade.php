@@ -132,9 +132,10 @@
           <div class="row mb-3">
             <label class="form-label col-form-label col-md-2">Customer</label>
             <div class="col-md-8">
+              <input type="hidden" id="customer_input" value="{{ $product->user_id }}">
               <select class="form-control" 
                   name="customer_id" id="customer_id">
-                  <option value="%">@lang('general.lbl_customerselect')</option>
+                  <option value="%">@lang('general.lbl_customerselect') {{ $product->user_id }}</option>
                   @foreach($customers as $customer)
                       <option value="{{ $customer->id }}" {{ ($product->user_id == $customer->id) 
                         ? 'selected'
@@ -190,6 +191,7 @@
           });
           //$('#dated_end').val(formattedToday);
 
+          $('#customer_id').val($('#customer_input').val()).change();
           $('#customer_id').select2({
             ajax: {
               dataType: 'json',

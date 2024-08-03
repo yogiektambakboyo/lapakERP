@@ -256,6 +256,8 @@ class VoucherController extends Controller
                         ['moq' => $request->get('moq') ],
                         ['unlimeted' => $request->get('unlimeted') ],
                         ['remark' => $request->get('remark') ],
+                        ['caption_1' => $request->get('caption_1') ],
+                        ['caption_2' => $request->get('caption_2') ],
                         ['price' => $price ],
                         ['voucher_code' => $now_voucher ],
                         ['created_by' => $user->id ],
@@ -273,6 +275,8 @@ class VoucherController extends Controller
                         ['unlimeted' => $request->get('unlimeted') ],
                         ['remark' => $request->get('remark') ],
                         ['user_id' => $request->get('customer_id') ],
+                        ['caption_1' => $request->get('caption_1') ],
+                        ['caption_2' => $request->get('caption_2') ],
                         ['price' => $price ],
                         ['voucher_code' => $now_voucher ],
                         ['created_by' => $user->id ],
@@ -362,7 +366,7 @@ class VoucherController extends Controller
         ;");
 
         return view('pages.voucher.edit', [
-            'customers' => Customer::join('users_branch as ub','ub.branch_id', '=', 'customers.branch_id')->join('branch as b','b.id','=','ub.branch_id')->where('customers.status','=','1')->where('ub.user_id',$user->id)->orderBy('customers.name')->limit(30)->get(['customers.id','customers.name','b.remark']),
+            'customers' => Customer::join('users_branch as ub','ub.branch_id', '=', 'customers.branch_id')->join('voucher as v','v.user_id','=','customers.id')->join('branch as b','b.id','=','ub.branch_id')->where('v.voucher_code',$voucher_code)->where('customers.status','=','1')->where('ub.user_id',$user->id)->orderBy('customers.name')->limit(30)->get(['customers.id','customers.name','b.remark']),
             'branchs' => Branch::join('users_branch as ub','ub.branch_id','=','branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']),
             'data' => $data,
             'product' => $product[0], 'company' => Company::get()->first(),
