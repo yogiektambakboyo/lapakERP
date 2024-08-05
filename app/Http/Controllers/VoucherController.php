@@ -366,7 +366,7 @@ class VoucherController extends Controller
         ;");
 
         return view('pages.voucher.edit', [
-            'customers' => Customer::join('users_branch as ub','ub.branch_id', '=', 'customers.branch_id')->join('voucher as v','v.user_id','=','customers.id')->join('branch as b','b.id','=','ub.branch_id')->where('v.voucher_code',$voucher_code)->where('customers.status','=','1')->where('ub.user_id',$user->id)->orderBy('customers.name')->limit(30)->get(['customers.id','customers.name','b.remark']),
+            'customers' => Customer::join('users_branch as ub','ub.branch_id', '=', 'customers.branch_id')->join('voucher as v','v.user_id','=','customers.id')->join('branch as b','b.id','=','ub.branch_id')->where('v.voucher_code',$voucher_code)->where('customers.status','=','1')->where('ub.user_id',$user->id)->orderBy('customers.name')->limit(30)->get(['customers.id','customers.name','b.remark','customers.whatsapp_no']),
             'branchs' => Branch::join('users_branch as ub','ub.branch_id','=','branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']),
             'data' => $data,
             'product' => $product[0], 'company' => Company::get()->first(),

@@ -139,7 +139,7 @@
                   @foreach($customers as $customer)
                       <option value="{{ $customer->id }}" {{ ($product->user_id == $customer->id) 
                         ? 'selected'
-                        : ''}}>{{ $customer->name }}</option>
+                        : ''}}>{{ $customer->name }} No WA : {{ $customer->whatsapp_no }}  ({{ $customer->id }})</option>
                   @endforeach
               </select>
             </div>
@@ -155,7 +155,7 @@
           <div class="row mb-3">
             <label class="form-label col-form-label col-md-2">Caption 2</label>
             <div class="col-md-8">
-              <input type="text" class="form-control" name="caption_2"  value="{{ $product->caption_1 }}"/>
+              <input type="text" class="form-control" name="caption_2"  value="{{ $product->caption_2 }}"/>
             </div>
           </div>
 
@@ -198,9 +198,9 @@
               url: function (params) {
                 $urld = "{{ route('customers.search') }}";
                 if(params.term == ""){
-                  return $urld+'?src=api&search=%';
+                  return $urld+'?src=api_v2&search=%';
                 }else{
-                  return $urld+'?src=api&search='+params.term;
+                  return $urld+'?src=api_v2&search='+params.term;
                 }
               }
             },

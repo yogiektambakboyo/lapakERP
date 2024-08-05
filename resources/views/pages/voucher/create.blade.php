@@ -230,7 +230,7 @@
             context.font = "35px Arial";
             context.fillText("Rp.",245,75);
 
-            context.font = "18px Arial";
+            context.font = "14px Arial";
             context.fillText("CAPTION_1",300,225);
 
             context.font = "12px Arial";
@@ -309,7 +309,7 @@
               
 
               var cap_1 = $('#caption_1').val();
-              context.font = "18px Arial";
+              context.font = "14px Arial";
               context.fillText(cap_1,300,225);
 
               var cap_2 = $('#caption_2').val();
