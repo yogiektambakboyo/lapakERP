@@ -537,7 +537,7 @@ class LoginController extends Controller
         if($val_token == $token && $user_agent=="Malaikat_Ridwan"){
             if(count($data)>0){
                 $data = DB::select("UPDATE public.work_time
-                 set time_out='".$time_out."', updated_at=now(), updated_by='".$user_id."', reason='".$reason."', photo_out='".$photo_out."', longitude_out='".$longitude_in."', latitude_out='".$latitude_out."', georeverse_out='".$georeverse_out."'
+                 set time_out='".$time_out."', updated_at=now(), updated_by='".$user_id."', reason='".$reason."', photo_out='".$photo_out."', longitude_out='".$longitude_out."', latitude_out='".$latitude_out."', georeverse_out='".$georeverse_out."'
                  where dated='".$dated."' and user_id=".$user_id.";");
       
             }else{
