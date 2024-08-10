@@ -127,6 +127,19 @@ class CustomersController extends Controller
 
             return response()->json($datajson, 200);
         }
+        else if($request->src == "api_v3"){
+            $Customers = DB::select("select c.id, c.name||' - '||coalesce(c.whatsapp_no,'') as text
+                                    from customers c 
+                                    join branch as bc on bc.id= c.branch_id
+                                    join users_branch as ub2 on ub2.branch_id=bc.id
+                                    where ub2.user_id = '".$user->id."' and (c.name ilike '%".$keyword."%' or c.whatsapp_no ilike '%".$keyword."%' or c.name||''||c.whatsapp_no ilike '%".str_replace(' ', '', $keyword)."%') ;  ");
+
+            $datajson = array_merge([
+                'results' => $Customers
+            ]);
+
+            return response()->json($datajson, 200);
+        }
         else{
             $Customers = Customer::join('branch as b','b.id','customers.branch_id')
                             ->join('users_branch as ub', function($join){

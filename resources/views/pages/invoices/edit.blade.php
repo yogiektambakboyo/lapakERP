@@ -623,16 +623,15 @@
 
 @push('scripts')
     <script type="text/javascript">
-
-$('#customer_id').select2({
+        $('#customer_id').select2({
           ajax: {
             dataType: 'json',
             url: function (params) {
               $urld = "{{ route('customers.search') }}";
               if(params.term == ""){
-                return $urld+'?src=api&search=%';
+                return $urld+'?src=api_v3&search=%';
               }else{
-                return $urld+'?src=api&search='+params.term;
+                return $urld+'?src=api_v3&search='+params.term;
               }
             }
           },
