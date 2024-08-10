@@ -878,6 +878,39 @@
           },
         });
 
+        $('#cust_phone_no').on('keyup',function(){
+          if($('#cust_phone_no').val().length>8){
+            
+              var url = "{{ route('customers.search') }}";
+              url = url+'?src=api_v4&search='+$('#cust_phone_no').val();
+              const res = axios.get(url,
+                {
+                    headers: {
+                      'Content-Type': 'application/json'
+                    },
+                    params : {
+                        
+                    }
+                }
+              ).then(resp => {
+                    if(resp.data.results.length>=1){
+                      Swal.fire(
+                        {
+                          position: 'top-end',
+                          icon: 'warning',
+                          text: "Nomor HP yang anda masukkan sudah dipakai oleh "+resp.data.results[0].text,
+                          showConfirmButton: false,
+                          imageHeight: 30, 
+                          imageWidth: 30,   
+                          timer: 1500
+                        }
+                      );
+                    }
+              });
+
+          }
+        });
+
         $('#btn_save_customer').on('click', function(){
         if($('#cust_name').val()==''){
             $('#cust_name').focus();
