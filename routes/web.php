@@ -70,6 +70,8 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
         Route::post('/api_post_review_new', 'LoginController@api_post_review_new')->name('login.api_post_review_new');
         Route::post('/api_photo_slide', 'LoginController@api_photo_slide')->name('login.api_photo_slide');
         Route::post('/api_photo_slide_detail', 'LoginController@api_photo_slide_detail')->name('login.api_photo_slide_detail');
+        Route::post('/api_post_review_ios_master', 'LoginController@api_post_review_ios_master')->name('login.api_post_review_ios_master');
+        Route::post('/api_post_review_ios_detail', 'LoginController@api_post_review_ios_detail')->name('login.api_post_review_ios_detail');
 
          /**
          * Other Routes

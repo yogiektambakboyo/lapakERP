@@ -40,6 +40,8 @@ class VerifyCsrfToken extends Middleware
         '/api_voucher_list',
         '/api_voucher_one',
         '/api_voucher_one_update',
+        '/api_post_review_ios_master',
+        '/api_post_review_ios_detail',
         //
     ];
 }

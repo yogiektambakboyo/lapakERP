@@ -1063,6 +1063,54 @@ class LoginController extends Controller
         
     }
 
+    public function api_post_review_ios_master(Request $request)
+    {
+        $whatsapp_no = $request->whatsapp_no;
+        $pass_wd = $request->pass_wd;
+        $invoice_no = $request->invoice_no;
+        $value_review = $request->value_review;
+        $remarks = $request->comment;
+        $notes = $request->service_selected;
+        $customers_id = $request->customers_id;
+        $data = DB::select(" INSERT INTO public.invoice_review
+        (invoice_no, customers_id, value_review, remarks, created_at, notes)
+        VALUES('".$invoice_no."', '".$customers_id."', '".$value_review."', '".$remarks."',now(), '".$notes."'); ");
+
+        $result = array_merge(
+            ['status' => 'success'],
+            ['data' => $invoice_no],
+            ['message' => 'Success'],
+        ); 
+        return $result;
+        
+    }
+
+    public function api_post_review_ios_detail(Request $request)
+    {
+        $whatsapp_no = $request->whatsapp_no;
+        $pass_wd = $request->pass_wd;
+        $invoice_no = $request->invoice_no;
+        $value_review = $request->value_review;
+        $assigned_to = $request->assigned_to;
+        $customers_id = $request->customers_id;
+
+        $data = DB::select(" INSERT INTO public.invoice_review_detail
+                (invoice_no, user_id, value_review, created_at)
+                VALUES('".$invoice_no."', '".$assigned_to."', '".$value_review."',now()); ");
+
+        $data = DB::select(" update customers_point set updated_at=now(),point = point+(select distinct m.point  from customers c 
+        join membership m on m.id = c.membership_id where c.id = ".$customers_id." ) where customers_id = ".$customers_id."; ");
+
+        $result = array_merge(
+            ['status' => 'success'],
+            ['data' => $invoice_no],
+            ['message' => 'Success'],
+        );  
+
+        return $result;
+        
+    }
+
     /**
      * Handle response after user authenticated
      * 
