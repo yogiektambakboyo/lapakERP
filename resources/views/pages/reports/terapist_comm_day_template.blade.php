@@ -120,10 +120,10 @@
           <input type="hidden" name="filter_terapist_in" id="filter_terapist_in" value="{{ $filter_terapist_in }}">
    </body> 
    <!-- use version 0.19.3 -->
-   <script src="https://code.jquery.com/jquery-3.6.4.min.js" integrity="sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8=" crossorigin="anonymous"></script>
-   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>   
-   <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.3.0/exceljs.min.js"></script>
-   <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/1.3.8/FileSaver.min.js"></script>
+   <script src="/assets/js/jquery-3.6.4.min.js" integrity="sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8=" crossorigin="anonymous"></script>
+   <script src="/assets/js/axios.min.js"></script>   
+   <script src="/assets/js/exceljs.min.js"></script>
+   <script src="/assets/js/FileSaver.min.js"></script>
    <script type="text/javascript">
     //window.print();
     //const workbook = XLSX.utils.book_new();
