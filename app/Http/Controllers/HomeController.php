@@ -493,6 +493,8 @@ class HomeController extends Controller
                 $id = $data[0]->id;
                 $str="number=".$number."&message=".$msg;
 
+                echo "".$str;
+
                 $resp = "Token Not Valid";
 
                 $curl = curl_init();
