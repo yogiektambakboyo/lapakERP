@@ -448,7 +448,7 @@ class HomeController extends Controller
 
             $validate = md5(date("Y-m-d"));
 
-            if($token == $validate){
+            if($token == $validate && !empty($otp)  && !empty($name)  && !empty($fromapp)  && !empty($token)  && !empty($no)){
                 $curl = curl_init();
 
                 curl_setopt_array($curl, [
@@ -485,7 +485,7 @@ class HomeController extends Controller
     public function send_wa_cron(Request $request) 
     {
             $data = [];
-            $data = DB::select("select id,whatsapp_no,msg from wa_queue where is_send = 0 order by created_at desc limit 1");
+            $data = DB::select("select id,whatsapp_no,msg from wa_queue where length(msg)>=10 and is_send = 0 and whatsapp_no is not null and length(whatsapp_no)>8 order by created_at desc limit 1");
 
             if(count($data)>0){
                 $number = $data[0]->whatsapp_no;
