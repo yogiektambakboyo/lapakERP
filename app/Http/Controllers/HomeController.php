@@ -444,6 +444,8 @@ class HomeController extends Controller
 
             $resp = "Token Not Valid";
 
+            DB::select("INSERT INTO public.wa_queue(whatsapp_no, is_send, created_at, msg) values('".$number."', 0, now(), '".$msg."');");
+
             $validate = md5(date("Y-m-d"));
 
             if($token == $validate){
@@ -469,16 +471,61 @@ class HomeController extends Controller
 
                 curl_close($curl);
 
-
-
                 if ($err) {
                     $resp = "Error ". $err;
                 } else {
+                    DB::select("UPDATE wa_queue set is_send=1,updated_at=now() where whatsapp_no='".$number."';");
                     $resp = $response;
                 }
             }
 
             return $resp;
+    }
+
+    public function send_wa_cron(Request $request) 
+    {
+            $data = [];
+            $data = DB::select("select id,whatsapp_no,msg from wa_queue where is_send = 0 order by created_at desc limit 1");
+
+            if(count($data)>0){
+                $number = $data[0]->no;
+                $msg = $data[0]->msg;
+                $id = $data[0]->id;
+                $str="number=".$number."&message=".$msg;
+
+                $resp = "Token Not Valid";
+
+                $curl = curl_init();
+
+                curl_setopt_array($curl, [
+                    CURLOPT_PORT => "8001",
+                    CURLOPT_URL => "http://localhost:8001/send-message",
+                    CURLOPT_RETURNTRANSFER => true,
+                    CURLOPT_ENCODING => "",
+                    CURLOPT_MAXREDIRS => 10,
+                    CURLOPT_TIMEOUT => 30,
+                    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                    CURLOPT_CUSTOMREQUEST => "POST",
+                    CURLOPT_POSTFIELDS => $str,
+                    CURLOPT_HTTPHEADER => [
+                        "Content-Type: application/x-www-form-urlencoded"
+                    ],
+                ]);
+
+                $response = curl_exec($curl);
+                $err = curl_error($curl);
+
+                curl_close($curl);
+
+                if ($err) {
+                    $resp = "Error ". $err;
+                } else {
+                    DB::select("UPDATE wa_queue set is_send=1,updated_at=now() where id=".$id."; ");
+                    $resp = $response;
+                }
+
+                return $resp;
+            }
     }
 
     public function send_wa_media_cron(Request $request) 

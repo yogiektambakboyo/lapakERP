@@ -25,7 +25,7 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
     Route::get('/', 'HomeController@index')->name('home.index');
     Route::get('/policy', 'HomeController@policy')->name('home.policy');
     Route::get('/send-msg-wa', 'HomeController@send_wa')->name('home.send_wa');
-    Route::get('/send-wa-media', 'HomeController@send_wa_media')->name('home.send_wa_media');
+    Route::get('/send-msg-wa-cron', 'HomeController@send_wa_cron')->name('home.send_wa_cron');
     Route::get('/get_checkmembership', 'LoginController@get_checkmembership')->name('login.get_checkmembership');
     Route::get('/policy', 'HomeController@policy')->name('home.policy');
     Route::get('/erase_account', 'HomeController@erase_account')->name('home.erase_account');
