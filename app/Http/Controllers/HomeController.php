@@ -530,6 +530,70 @@ class HomeController extends Controller
             }
     }
 
+    public function send_wa_daily_rep(Request $request) 
+    {
+        DB::select("delete from notif_log nl where created_at <= now()-interval '5 minutes'; ");
+        $data_notif = DB::select("select whatsapp_no from notif_log where whatsapp_no ='085746879090'; ");
+
+        if(count($data_notif)<=0){
+            $number = "6285746879090";
+            $msg = "Assalamualaikum.\r\n\r\nLapor boss, WA Server 1 Lancar";
+            $str="number=".$number."&message=".$msg;
+
+            $curl = curl_init();
+            curl_setopt_array($curl, [
+                CURLOPT_PORT => "8000",
+                CURLOPT_URL => "http://localhost:8000/send-message",
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_ENCODING => "",
+                CURLOPT_MAXREDIRS => 10,
+                CURLOPT_TIMEOUT => 30,
+                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                CURLOPT_CUSTOMREQUEST => "POST",
+                CURLOPT_POSTFIELDS => $str,
+                CURLOPT_HTTPHEADER => [
+                    "Content-Type: application/x-www-form-urlencoded"
+                ],
+            ]);
+
+            $response = curl_exec($curl);
+            $err = curl_error($curl);
+
+            curl_close($curl);
+
+            $number = "6285746879090";
+            $msg = "Assalamualaikum.\r\n\r\nLapor boss, WA Server 2 Lancar";
+            $str="number=".$number."&message=".$msg;
+
+            $curl = curl_init();
+            curl_setopt_array($curl, [
+                CURLOPT_PORT => "8001",
+                CURLOPT_URL => "http://localhost:8001/send-message",
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_ENCODING => "",
+                CURLOPT_MAXREDIRS => 10,
+                CURLOPT_TIMEOUT => 30,
+                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                CURLOPT_CUSTOMREQUEST => "POST",
+                CURLOPT_POSTFIELDS => $str,
+                CURLOPT_HTTPHEADER => [
+                    "Content-Type: application/x-www-form-urlencoded"
+                ],
+            ]);
+
+            $response = curl_exec($curl);
+            $err = curl_error($curl);
+
+            curl_close($curl);
+
+            return "OK";
+        }else{
+            return "Failed";
+        }
+            
+        
+    }
+
     public function send_wa_media_cron(Request $request) 
     {
             $number = $request->get("no");
