@@ -536,6 +536,8 @@ class HomeController extends Controller
         $data_notif = DB::select("select whatsapp_no from notif_log where whatsapp_no ='085746879090'; ");
 
         if(count($data_notif)<=0){
+            DB::select("insert into notif_log(whatsapp_no) values('085746879090'); ");
+
             $number = "6285746879090";
             $msg = "Assalamualaikum.\r\n\r\nLapor boss, WA Server 1 Lancar";
             $str="number=".$number."&message=".$msg;
