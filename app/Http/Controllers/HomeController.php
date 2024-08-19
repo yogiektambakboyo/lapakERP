@@ -448,7 +448,7 @@ class HomeController extends Controller
 
             $validate = md5(date("Y-m-d"));
 
-            if($token == $validate && !empty($otp)  && !empty($name)  && !empty($fromapp)  && !empty($token)  && !empty($no)){
+            if($token == $validate && !empty($otp)  && !empty($name)  && !empty($fromapp)  && !empty($token)  && !empty($number)){
                 $curl = curl_init();
 
                 curl_setopt_array($curl, [
