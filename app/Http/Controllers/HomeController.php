@@ -488,7 +488,7 @@ class HomeController extends Controller
             $data = DB::select("select id,whatsapp_no,msg from wa_queue where is_send = 0 order by created_at desc limit 1");
 
             if(count($data)>0){
-                $number = $data[0]->no;
+                $number = $data[0]->whatsapp_no;
                 $msg = $data[0]->msg;
                 $id = $data[0]->id;
                 $str="number=".$number."&message=".$msg;
