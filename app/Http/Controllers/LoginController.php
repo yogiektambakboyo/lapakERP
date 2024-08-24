@@ -92,7 +92,7 @@ class LoginController extends Controller
             $whatsapp_no_ = "628".substr($whatsapp_no,2,strlen($whatsapp_no));
         }
 
-        if(count($data)>0 && count($data_notif)<=0 && $val_token==$token_today && $user_agent=="Malaikat_Ridwan"){
+        if(count($data)>0 && count($data_notif)<=0 && $val_token==$token_today && $user_agent=="Malaikat_Ridwan" && strlen($data[0]->name)>2){
             $random_numb = mt_rand(1111,9999);
             $data[0]->pass_wd = strval($random_numb);
 

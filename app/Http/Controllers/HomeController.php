@@ -444,11 +444,10 @@ class HomeController extends Controller
 
             $resp = "Token Not Valid";
 
-            DB::select("INSERT INTO public.wa_queue(whatsapp_no, is_send, created_at, msg) values('".$number."', 0, now(), '".$msg."');");
-
             $validate = md5(date("Y-m-d"));
 
-            if($token == $validate && !empty($otp)  && !empty($name)  && !empty($fromapp)  && !empty($token)  && !empty($number)){
+            if($token == $validate && !empty($otp) && strlen($name)>2 && !empty($name)  && !empty($fromapp)  && !empty($token)  && !empty($number)){
+                DB::select("INSERT INTO public.wa_queue(whatsapp_no, is_send, created_at, msg) values('".$number."', 0, now(), '".$msg."');");
                 $curl = curl_init();
 
                 curl_setopt_array($curl, [
