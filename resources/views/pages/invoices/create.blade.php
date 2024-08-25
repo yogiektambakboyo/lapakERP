@@ -2802,6 +2802,265 @@
               
             });
 
+
+            $("#apply-promo-btn-new").on('click',function(){
+              console.log($('#customer_id').val());
+              if($('#customer_id').val().length<=0){
+                    Swal.fire(
+                    {
+                        position: 'top-end',
+                        icon: 'warning',
+                        text: 'Silahkan pilih dulu pelanggan',
+                        showConfirmButton: false,
+                        imageHeight: 30, 
+                        imageWidth: 30,   
+                        timer: 1500
+                    });
+
+              }else{
+
+                var url = "{{ route('promo.check_v1') }}";
+                const res = axios.get(url,
+                {
+                    headers: {
+                      'Content-Type': 'application/json'
+                    },
+                    params : {
+                        invoice_no : $("#promo_inv").val(),
+                        customer_id : $("#customer_id").val(),
+                    }
+                  }
+                ).then(resp => {
+                  if(orderList.length==0){
+                    Swal.fire(
+                    {
+                        position: 'top-end',
+                        icon: 'warning',
+                        text: 'Masukkan dahulu sku yang dipesan pelanggan',
+                        showConfirmButton: false,
+                        imageHeight: 30, 
+                        imageWidth: 30,   
+                        timer: 1500
+                    });
+                  }else if(resp.data.voucher.length==0){
+                    Swal.fire(
+                    {
+                        position: 'top-end',
+                        icon: 'warning',
+                        text: 'Promo tidak ditemukan',
+                        showConfirmButton: false,
+                        imageHeight: 30, 
+                        imageWidth: 30,   
+                        timer: 1500
+                    });
+
+                  }else{
+                    table.clear().draw(false);
+                    table_product.clear().draw(false);
+                    order_total = 0;
+                    disc_total = 0;
+                    _vat_total = 0;
+                    sub_total = 0;
+
+
+                    orderList.sort(function(a, b) {
+                        return parseFloat(a.entry_time) - parseFloat(b.entry_time);
+                    });
+
+
+                    counterno = 0;
+                    counterno_service = 0;
+                    var today = new Date();
+                    var weekday = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+                    var minutes = (today.getMinutes() < 10 ? '0' : '') + today.getMinutes()
+                    var time = [today.getHours(),minutes].join('');
+                    var PromoHit = 0;
+                    var PromoSelected = "";
+                    var data_voucher = resp.data.voucher;
+                    var data_voucher_term = resp.data.voucher_term;
+
+                    for (var i = 0; i < orderList.length; i++){
+                      for (var j = 0; j < data_voucher.length;j++){
+                        var isvalidday = 0;
+                        var isvalidtime = 0;
+                        var isvalidcust = 0;
+                        
+                        
+                        if(data_voucher[j].active_day == "all"){
+                          isvalidday = 1;
+                        }else if(data_voucher[j].active_day == "weekday"){
+                          if(today.getDay()>0 && today.getDay()<=5){
+                              isvalidday = 1;
+                          }
+                        }else if(data_voucher[j].active_day == "weekend"){
+                          if(today.getDay()==0 || today.getDay()>=6){
+                              isvalidday = 1;
+                          }
+                        }
+
+                        if(data_voucher[j].active_time == "all"){
+                          isvalidtime = 1;
+                        }else if(data_voucher[j].active_time == "officetime"){
+                          if(parseInt(time)>800 && parseInt(time)<=1700){
+                            isvalidtime = 1;
+                          }
+                        }else if(data_voucher[j].active_time == "noon"){
+                          if(parseInt(time)>1000 && parseInt(time)<=1700){
+                            isvalidtime = 1;
+                          }
+                        }else if(data_voucher[j].active_time == "happyhour"){
+                          if(parseInt(time)>900 && parseInt(time)<=1600){
+                            isvalidtime = 1;
+                          }
+                        }else if(data_voucher[j].active_time == "night"){
+                          if(parseInt(time)>1700 && parseInt(time)<=2359){
+                            isvalidtime = 1;
+                          }
+                        }
+
+                        if(data_voucher[j].type_customer == "all"){
+                          isvalidcust = 1;
+                        }else if(data_voucher[j].type_customer == $('#customer_type').find(':selected').val()){
+                          isvalidcust = 1;
+                        }
+
+                        console.log(time);
+
+                        console.log($('#customer_type').find(':selected').val()+" - "+ isvalidtime+"-"+isvalidday+"-"+(((parseFloat(orderList[i]["price"])) * (parseFloat(orderList[i]["qty"]))) >= (parseFloat(data_voucher[j].value))));
+
+                        if(data_voucher[j].product_id == orderList[i]["id"] && isvalidday==1 && isvalidtime==1 && isvalidcust==1 && parseFloat(orderList[i]["discount"])==0 && ((parseFloat(orderList[i]["qty"]))>= (parseFloat(data_voucher[j].moq))) && (((parseFloat(orderList[i]["price"])) * (parseFloat(orderList[i]["qty"]))) >= (parseFloat(data_voucher[j].value)))){
+
+                          if(data_voucher[j].is_term == "0"){
+                            orderList[i]["discount"] = ( ((parseFloat(data_voucher[j].value_idx)) * (parseFloat(orderList[i]["price"])) * (parseFloat(orderList[i]["qty"])) )/100 ) + (parseFloat(data_voucher[j].value));
+                            orderList[i]["total"] = ((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"])+((((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"]))-(parseFloat(orderList[i]["discount"])))*(parseFloat(orderList[i]["vat_total"])/100)))-(parseFloat(orderList[i]["discount"]));
+                            $("#remark").val($("#remark").val()+"["+data_voucher[j].remarks+"]");
+                            PromoSelected = data_voucher[j].remarks;
+                            PromoHit = 1;
+                            break;
+                          }else{
+                            console.log("Loop data voucher term");
+                            for (var k = 0; k < data_voucher_term.length;k++){
+                              console.log("Loop data voucher term k"+k);
+                              if( data_voucher_term[k].promo_id == data_voucher[j].promo_id ){
+                                for (var l = 0; l < orderList.length; l++){
+                                  if(data_voucher_term[k].product_id == orderList[l]["id"] && ((parseFloat(orderList[l]["qty"]))>= (parseFloat(data_voucher_term[k].qty))) ){
+                                    orderList[i]["discount"] = ( ((parseFloat(data_voucher[j].value_idx)) * (parseFloat(orderList[i]["price"])) * (parseFloat(orderList[i]["qty"])) )/100 ) + (parseFloat(data_voucher[j].value));
+                                    orderList[i]["total"] = ((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"])+((((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"]))-(parseFloat(orderList[i]["discount"])))*(parseFloat(orderList[i]["vat_total"])/100)))-(parseFloat(orderList[i]["discount"]));
+                                    $("#remark").val($("#remark").val()+"["+data_voucher[j].remarks+"]");
+                                    PromoSelected = data_voucher[j].remarks;
+                                    PromoHit = 1;
+                                    console.log("Masuk If data voucher term");
+                                    break;
+                                  }
+                                  
+                                }
+
+                                if(PromoHit == 1){
+                                    break;
+                                }
+                              }
+                            }
+
+                            if(PromoHit == 1){
+                              break;
+                            }
+
+                          }
+
+                          
+                        }
+                      }
+
+                      if(PromoHit == 0){
+                        Swal.fire(
+                        {
+                            position: 'top-end',
+                            icon: 'warning',
+                            text: 'Tidak ada promo yang cocok dengan pesanan',
+                            showConfirmButton: false,
+                            imageHeight: 30, 
+                            imageWidth: 30,   
+                            timer: 1500
+                        });
+
+                      }else{
+                        Swal.fire(
+                        {
+                            position: 'top-end',
+                            icon: 'warning',
+                            text: 'Promo '+PromoSelected+' telah diterapkan di faktur ini',
+                            showConfirmButton: false,
+                            imageHeight: 30, 
+                            imageWidth: 30,   
+                            timer: 1500
+                        });
+                      }
+
+
+                      var obj = orderList[i];
+                      var value = obj["abbr"];
+                      if(obj["type_id"]=="Services"){
+                        counterno_service  = counterno_service + 1;
+                        table.row.add( {
+                                "seq" : counterno_service,
+                                "id"        : obj["id"],
+                                "abbr"      : obj["abbr"],
+                                "uom"       : obj["uom"],
+                                "price"     : obj["price"],
+                                "discount"  : obj["discount"],
+                                "qty"       : obj["qty"],
+                                "total"     : obj["total"],
+                                "assignedto": obj["assignedto"] + " (" + obj["executed_at"] + ")",
+                                "referralby" : obj["referralby"],
+                                "action"    : "",
+                          }).draw(false);
+                        }else{
+                          counterno = counterno + 1;
+                          table_product.row.add( {
+                              "seq" : counterno,
+                              "id"        : obj["id"],
+                                "abbr"      : obj["abbr"],
+                                "uom"       : obj["uom"],
+                                "price"     : obj["price"],
+                                "discount"  : obj["discount"],
+                                "qty"       : obj["qty"],
+                                "total"     : obj["total"],
+                                "assignedto": obj["assignedto"],
+                                "referralby" : obj["referralby"],
+                                "action"    : "",
+                          }).draw(false);
+                        }
+
+
+                        disc_total = disc_total + (parseFloat(orderList[i]["discount"]));
+                        sub_total = sub_total + (((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"]))-(parseFloat(orderList[i]["discount"])));
+                        _vat_total = _vat_total + ((((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"]))-(parseFloat(orderList[i]["discount"])))*(parseFloat(orderList[i]["vat_total"])/100));
+                        order_total = order_total + ((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"])+((((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"]))-(parseFloat(orderList[i]["discount"])))*(parseFloat(orderList[i]["vat_total"])/100)))-(parseFloat(orderList[i]["discount"]));
+
+                        if(($('#payment_nominal').val())>order_total){
+                          $('#order_charge').css('color', 'black');
+                          $('#order_charge').text(currency((($('#payment_nominal').val())-order_total), { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
+                        }else{
+                          $('#order_charge').text("Rp. 0");
+                          $('#order_charge').css('color', 'red');
+                          $('#order_charge').text(currency((($('#payment_nominal').val())-order_total), { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
+                        }
+
+                    }
+
+                    $('#result-total').text(currency(order_total, { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
+                    $('#vat-total').text(currency(_vat_total, { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
+                    $('#sub-total').text(currency(sub_total, { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
+
+                  }
+
+                });
+
+
+              }
+              
+            });
+
  
     </script>
 @endpush

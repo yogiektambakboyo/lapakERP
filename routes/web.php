@@ -632,6 +632,7 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
             Route::post('/create', 'PromoController@store')->name('promo.store');
             Route::get('/search', 'PromoController@search')->name('promo.search');
             Route::get('/check', 'PromoController@check')->name('promo.check');
+            Route::get('/check_v1', 'PromoController@check_v1')->name('promo.check_v1');
             Route::get('/{branch}/{product}/show', 'PromoController@show')->name('promo.show');
             Route::get('/{branch}/{product}/{dated_start}/{dated_end}/{promo_id}/edit', 'PromoController@edit')->name('promo.edit');
             Route::patch('/{branch}/{product}/{dated_start}/{dated_end}/{promo_id}/update', 'PromoController@update')->name('promo.update');

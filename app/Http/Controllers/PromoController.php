@@ -311,29 +311,28 @@ class PromoController extends Controller
             $joininputinvoicehaving = " having count(id.product_id)>0 ";
         }
 
-        $voucher = DB::select("select p.id,p.promo_id,p.remarks,p.active_day,p.active_time,p.moq,p.value_idx,p.value,p.type_customer,pd.product_id
+        $voucher_term = DB::select("select distinct p.id,p.promo_id,pt.qty,pt.product_id
             from promo p
             join promo_detail pd on pd.promo_id = p.promo_id 
-            join promo_detail_term pt on pt.promo_id = pd.promo_id
+            join promo_detail_term pt on pt.promo_id = pd.promo_id and pt.branch_id = p.branch_id
             join users_branch ub on  ub.branch_id=p.branch_id and ub.user_id = ".$user->id."
             join branch b on b.id = ub.branch_id 
-            join customers c on c.id = ".$customer_id." and c.branch_id = b.id 
-             ".$joininputinvoice."
-            where now()::date between p.date_start and p.date_end ".$whereinputinvoice." group by p.id,p.promo_id,p.remarks,p.active_day,p.active_time,p.moq,p.value_idx,p.value,p.type_customer,pd.product_id " );
+            join customers c on c.id = ".$customer_id." and c.branch_id = b.id
+            where now()::date between p.date_start and p.date_end and p.linked_invoice='0';" );
 
-        $voucher = DB::select("select p.id,p.promo_id,p.remarks,p.active_day,p.active_time,p.moq,p.value_idx,p.value,p.type_customer,pd.product_id
+        $voucher = DB::select("select p.id,p.promo_id,p.remarks,p.active_day,p.active_time,p.moq,p.value_idx,p.value,p.type_customer,pd.product_id,p.is_term
             from promo p
             join promo_detail pd on pd.promo_id = p.promo_id 
             join users_branch ub on  ub.branch_id=p.branch_id and ub.user_id = ".$user->id."
             join branch b on b.id = ub.branch_id 
             join customers c on c.id = ".$customer_id." and c.branch_id = b.id 
              ".$joininputinvoice."
-            where now()::date between p.date_start and p.date_end ".$whereinputinvoice." group by p.id,p.promo_id,p.remarks,p.active_day,p.active_time,p.moq,p.value_idx,p.value,p.type_customer,pd.product_id " );
+            where now()::date between p.date_start and p.date_end ".$whereinputinvoice." group by p.id,p.promo_id,p.remarks,p.active_day,p.active_time,p.moq,p.value_idx,p.value,p.type_customer,pd.product_id,p.is_term " );
 
         $result = array_merge(
             ['voucher' => $voucher],
-            ['data' => $product],
-            ['message' => 'Delete Successfully'],
+            ['voucher_term' => $voucher_term],
+            ['message' => 'Promo Successfully'],
         );  
         return $result;
     }
