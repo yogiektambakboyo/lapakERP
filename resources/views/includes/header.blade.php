@@ -61,9 +61,15 @@
 			@include('includes.component.header-dropdown-notification')
 		</div>
 		
-		@isset($appHeaderLanguageBar)
-			@include('includes.component.header-language-bar')
-		@endisset
+		<div class="navbar-item dropdown">
+			<a href="#" class="navbar-link dropdown-toggle" data-bs-toggle="dropdown">
+				<span class="d-none d-sm-inline ms-1"><img src="{{ url('/') }}{{ App::getLocale()=='en'?'/assets/img/flag/en.png':'/assets/img/flag/id.png' }}" width="16px" height="16px"></span> <b class="caret"></b>
+			</a>
+			<div class="dropdown-menu dropdown-menu-end">
+				<a href="{{ route('setting.lang',"en") }}" class="dropdown-item"><span class="flag-icon flag-icon-us me-2" title="us"></span> English</a>
+				<a href="{{ route('setting.lang',"id") }}" class="dropdown-item"><span class="flag-icon flag-icon-cn me-2" title="id"></span> Indonesia</a>
+			</div>
+		</div>
 		
 		<div class="navbar-item navbar-user dropdown">
 			<a href="#" class="navbar-link dropdown-toggle d-flex align-items-center" data-bs-toggle="dropdown">

@@ -50,8 +50,10 @@ class BranchsController extends Controller
         $data = $this->data;
         $keyword = "";
         $act_permission = $this->act_permission[0];
+        //$bahasa = App::getLocale();
+
         return view('pages.branchs.index', [
-            'branchs' => $branchs,'data' => $data , 'keyword' => $keyword,'company' => Company::get()->first() ,'act_permission' => $act_permission
+            'branchs' => $branchs,'data' => $data , 'bahasa' => "",'keyword' => $keyword,'company' => Company::get()->first() ,'act_permission' => $act_permission
         ]);
     }
 
@@ -236,42 +238,42 @@ class BranchsController extends Controller
             if($menu['parent']=='Users'){
                 array_push($this->data['menu'][0]['sub_menu'], array(
                     'url' => $menu['url'],
-                    'title' => $menu['remark'],
+                     'title' => \Lang::get('sidebar.'.str_replace(" ","",$menu['remark'])),
                     'route-name' => $menu['name']
                 ));
             }
             if($menu['parent']=='Products'){
                 array_push($this->data['menu'][1]['sub_menu'], array(
                     'url' => $menu['url'],
-                    'title' => $menu['remark'],
+                     'title' => \Lang::get('sidebar.'.str_replace(" ","",$menu['remark'])),
                     'route-name' => $menu['name']
                 ));
             }
             if($menu['parent']=='Services'){
                 array_push($this->data['menu'][2]['sub_menu'], array(
                     'url' => $menu['url'],
-                    'title' => $menu['remark'],
+                     'title' => \Lang::get('sidebar.'.str_replace(" ","",$menu['remark'])),
                     'route-name' => $menu['name']
                 ));
             }
             if($menu['parent']=='Transactions'){
                 array_push($this->data['menu'][3]['sub_menu'], array(
                     'url' => $menu['url'],
-                    'title' => $menu['remark'],
+                     'title' => \Lang::get('sidebar.'.str_replace(" ","",$menu['remark'])),
                     'route-name' => $menu['name']
                 ));
             }	
             if($menu['parent']=='Reports'){
                 array_push($this->data['menu'][4]['sub_menu'], array(
                     'url' => $menu['url'],
-                    'title' => $menu['remark'],
+                     'title' => \Lang::get('sidebar.'.str_replace(" ","",$menu['remark'])),
                     'route-name' => $menu['name']
                 ));
             }
             if($menu['parent']=='Settings'){
                 array_push($this->data['menu'][5]['sub_menu'], array(
                     'url' => $menu['url'],
-                    'title' => $menu['remark'],
+                     'title' => \Lang::get('sidebar.'.str_replace(" ","",$menu['remark'])),
                     'route-name' => $menu['name']
                 ));
             }

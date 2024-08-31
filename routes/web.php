@@ -23,6 +23,10 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
      * Home Routes
      */
     Route::get('/', 'HomeController@index')->name('home.index');
+    Route::get('/lang/{locale}', function ($locale) {
+        Session::put('locale', $locale);
+        return redirect()->back();
+    })->name('setting.lang');
 
     Route::group(['middleware' => ['guest']], function() {
         /**
@@ -41,6 +45,8 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
         Route::get('/profile', 'LoginController@profile')->name('login.profile');
         Route::get('/eorder', 'LoginController@eorder')->name('login.eorder');
         Route::get('/lapakerp', 'LoginController@lapakerp')->name('login.lapakerp');
+
+       
 
     });
 

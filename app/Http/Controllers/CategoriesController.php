@@ -199,42 +199,42 @@ class CategoriesController extends Controller
             if($menu['parent']=='Users'){
                 array_push($this->data['menu'][0]['sub_menu'], array(
                     'url' => $menu['url'],
-                    'title' => $menu['remark'],
+                     'title' => \Lang::get('sidebar.'.str_replace(" ","",$menu['remark'])),
                     'route-name' => $menu['name']
                 ));
             }
             if($menu['parent']=='Products'){
                 array_push($this->data['menu'][1]['sub_menu'], array(
                     'url' => $menu['url'],
-                    'title' => $menu['remark'],
+                     'title' => \Lang::get('sidebar.'.str_replace(" ","",$menu['remark'])),
                     'route-name' => $menu['name']
                 ));
             }
             if($menu['parent']=='Services'){
                 array_push($this->data['menu'][2]['sub_menu'], array(
                     'url' => $menu['url'],
-                    'title' => $menu['remark'],
+                     'title' => \Lang::get('sidebar.'.str_replace(" ","",$menu['remark'])),
                     'route-name' => $menu['name']
                 ));
             }
             if($menu['parent']=='Transactions'){
                 array_push($this->data['menu'][3]['sub_menu'], array(
                     'url' => $menu['url'],
-                    'title' => $menu['remark'],
+                     'title' => \Lang::get('sidebar.'.str_replace(" ","",$menu['remark'])),
                     'route-name' => $menu['name']
                 ));
             }	
             if($menu['parent']=='Reports'){
                 array_push($this->data['menu'][4]['sub_menu'], array(
                     'url' => $menu['url'],
-                    'title' => $menu['remark'],
+                     'title' => \Lang::get('sidebar.'.str_replace(" ","",$menu['remark'])),
                     'route-name' => $menu['name']
                 ));
             }
             if($menu['parent']=='Settings'){
                 array_push($this->data['menu'][5]['sub_menu'], array(
                     'url' => $menu['url'],
-                    'title' => $menu['remark'],
+                     'title' => \Lang::get('sidebar.'.str_replace(" ","",$menu['remark'])),
                     'route-name' => $menu['name']
                 ));
             }

@@ -16,7 +16,7 @@
 					<div class="menu-profile-info">
 						<div class="d-flex align-items-center">
 							<div class="flex-grow-1">
-								Sean Ngu
+								John Doe
 							</div>
 							<div class="menu-caret ms-auto"></div>
 						</div>
@@ -49,11 +49,11 @@
 			
 			@if ($appSidebarSearch)
 			<div class="menu-search mb-n3">
-        <input type="text" class="form-control" placeholder="@lang('home.search')" data-sidebar-search="true" />
+        <input type="text" class="form-control" placeholder="@lang('sidebar.search')" data-sidebar-search="true" />
 			</div>
 			@endif
 			
-			<div class="menu-header">@lang('home.navigation')</div>
+			<div class="menu-header">@lang('sidebar.navigation')</div>
 			
 			@php
 				$currentUrl = (Request::path() != '/') ? '/'. Request::path() : '/';

@@ -1,5 +1,6 @@
 <?php
 return [
+    "navigation" => "Navigasi",
     "title" => "Pengguna",
     "label" => "Kelola data anda disini",
     "lbl_title" => "Kelola data anda disini",
@@ -14,6 +15,8 @@ return [
     "lbl_order_no" => "Nomor Pesanan",
     "lbl_return_no" => "Nomor Retur",
     "lbl_segment" => "Segment",
+    "lbl_language" => "ID",
+
 
     "product" => "Produk",
     "productselect" => "Pilih Produk",
