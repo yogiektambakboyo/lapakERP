@@ -73,7 +73,7 @@ class PurchaseOrderController extends Controller
         if(count($has_period_stock)<=0){
             DB::select("insert into period_stock(periode,branch_id,product_id,balance_begin,balance_end,qty_in,qty_out,updated_at ,created_by,created_at)
             select to_char(now()::date,'YYYYMM')::int,ps.branch_id,product_id,ps.balance_end,ps.balance_end,0 as qty_in,0 as qty_out,null,1,now()  
-            from period_stock ps where where ps.periode=to_char(now()-interval '5 day','YYYYMM')::int;");
+            from period_stock ps where ps.periode=to_char(now()-interval '5 day','YYYYMM')::int;");
         }
 
         SettingsDocumentNumber::where('doc_type','=','Purchase')->whereRaw("to_char(updated_at,'YYYYY')!=to_char(now(),'YYYYY') ")->where('period','=','Yearly')->update(
@@ -531,7 +531,7 @@ class PurchaseOrderController extends Controller
                 $query->on('role_has_permissions.permission_id', '=', 'permissions.id')
                 ->where('role_has_permissions.role_id','=',$id)->where('permissions.name','like','%.index%')->where('permissions.url','!=','null');
             });
-           })->orderby('permissions.remark')->get(['permissions.name','permissions.url','permissions.remark','permissions.parent']);
+           })->orderby('permissions.seq')->get(['permissions.name','permissions.url','permissions.remark','permissions.parent']);
 
            $this->data = [
             'menu' => 
@@ -550,7 +550,7 @@ class PurchaseOrderController extends Controller
                         'caret' => true,
                         'sub_menu' => []
                     ],
-		   [
+		            [
                         'icon' => 'fa fa-box',
                         'title' => \Lang::get('home.service_management'),
                         'url' => 'javascript:;',

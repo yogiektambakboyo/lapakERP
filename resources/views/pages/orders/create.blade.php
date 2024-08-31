@@ -1,6 +1,6 @@
 @extends('layouts.default', ['appSidebarSearch' => true])
 
-@section('title', 'Create New SPK')
+@section('title', 'Buat Pesanan Baru')
 
 @section('content')
 <form method="POST" action="{{ route('orders.store') }}"  enctype="multipart/form-data">
@@ -18,8 +18,8 @@
         <div class="row mb-3">
           <div class="col-md-12">
             <div class="row mb-3">
-              <label class="form-label col-form-label col-md-2">@lang('general.lbl_dated_mmddYYYY')</label>
-              <div class="col-md-1">
+              <label class="form-label col-form-label col-md-1">@lang('general.lbl_dated_mmddYYYY')</label>
+              <div class="col-md-2">
                 <input type="hidden" 
                 name="voucher_code"
                 id="voucher_code"
@@ -47,14 +47,22 @@
               <div class="col-md-1">
                 <a type="button" id="add-customer-btn" class="btn btn-green"  href="#modal-add-customer" data-bs-toggle="modal" data-bs-target="#modal-add-customer"><span class="fas fa-user-plus"></span></a>
               </div>
-              <label class="form-label col-form-label col-md-1">@lang('general.lbl_schedule')</label>
-              <div class="col-md-3">
+              <label class="form-label col-form-label col-md-1  d-none">@lang('general.lbl_schedule')</label>
+              <div class="col-md-3 d-none">
                   <div class="input-group">
                     <input type="text" class="form-control" id="scheduled" disabled>
                     <button type="button" class="btn btn-indigo" data-bs-toggle="modal" data-bs-target="#modal-scheduled" >
                       <span class="fas fa-calendar-days"></span>
                     </button>
                   </div>
+              </div>
+              <label class="form-label col-form-label col-md-2">@lang('general.lbl_nominal_payment')</label>
+              <div class="col-md-2">
+                <input type="text" 
+                id="payment_nominal"
+                name="payment_nominal"
+                class="form-control" 
+                value="{{ old('remark') }}"/>
               </div>
             </div>
             <div class="row mb-3">
@@ -77,17 +85,12 @@
                   </select>
               </div>
 
-                <label class="form-label col-form-label col-md-2">@lang('general.lbl_nominal_payment')</label>
-                <div class="col-md-1">
-                  <input type="text" 
-                  id="payment_nominal"
-                  name="payment_nominal"
-                  class="form-control" 
-                  value="{{ old('remark') }}"/>
-                  </div>
+                
 
+                <div class="col-md-1">
+                </div>
                   <label class="form-label col-form-label col-md-1">@lang('general.lbl_charge')</label>
-                  <div class="col-md-2">
+                  <div class="col-md-3">
                     <h2 class="text-end"><label id="order_charge">Rp. 0</label></h2>
                   </div>
                 
@@ -204,20 +207,20 @@
               <div class="col-md-6">
                 <div class="col-md-12">
                   <div class="col-auto text-end">
-                    <label class="col-md-2"><h2>Sub Total </h2></label>
-                    <label class="col-md-8" id="sub-total"> <h3>0</h3></label>
+                    <label class="col-md-2">Sub Total</label>
+                    <label class="col-md-8" id="sub-total"> 0</label>
                   </div>
                 </div>
                 <div class="col-md-12">
                   <div class="col-auto text-end">
-                    <label class="col-md-2"><h2>@lang('general.lbl_tax') </h2></label>
-                    <label class="col-md-8" id="vat-total"> <h3>0</h3></label>
+                    <label class="col-md-2">@lang('general.lbl_tax')</label>
+                    <label class="col-md-8" id="vat-total">0</label>
                   </div>
                 </div>
                 <div class="col-md-12">
                   <div class="col-auto text-end">
-                    <label class="col-md-2"><h1>Total </h1></label>
-                    <label class="col-md-8 display-5" id="result-total"> <h1>0</h1></label>
+                    <label class="col-md-2  h3">Total</label>
+                    <label class="col-md-8  h3" id="result-total">0</label>
                   </div>
                 </div>
               </div>
@@ -425,14 +428,14 @@
           if (dd < 10) dd = '0' + dd;
           if (mm < 10) mm = '0' + mm;
 
-          const formattedToday = mm + '/' + dd + '/' + yyyy;
+          const formattedToday = dd + '-' + mm + '-' + yyyy;
           $('#order_date').datepicker({
-              format : 'yyyy-mm-dd',
+              dateFormat : 'dd-mm-yy',
               todayHighlight: true,
           });
           $('#order_date').val(formattedToday);
           $('#schedule_date').datepicker({
-              format : 'yyyy-mm-dd',
+            dateFormat : 'dd-mm-yy',
               todayHighlight: true,
           });
           $('#schedule_date').val(formattedToday);
@@ -665,19 +668,6 @@
                 timer: 1500
               }
             );
-          }else if($('#scheduled').val()==''){
-            $('#scheduled').focus();
-            Swal.fire(
-              {
-                position: 'top-end',
-                icon: 'warning',
-                text: 'Please choose schedule',
-                showConfirmButton: false,
-                imageHeight: 30, 
-                imageWidth: 30,   
-                timer: 1500
-              }
-            );
           }else if(orderList.length<=0){
             Swal.fire(
               {
@@ -693,12 +683,6 @@
           }else{
 
             counterBlank = 0;
-            for (var i=0;i<orderList.length;i++){
-                if(orderList[i]["assignedto"]==""){
-                  counterBlank++;
-                }
-            }
-
             if(counterBlank>0){
               Swal.fire(
               {
