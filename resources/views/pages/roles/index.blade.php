@@ -19,12 +19,14 @@
             @include('layouts.partials.messages')
         </div>
 
-        <table class="table  table-striped">
+        <table id="table_view" class="table table-striped nowrap" width="100%">
          <thead>
           <tr>
              <th width="1%">No</th>
-             <th>@lang('general.lbl_name')</th>
-             <th width="3%" colspan="3">Action</th>
+             <th width="90%">@lang('general.lbl_name')</th>
+             <th width="3%" colspan="0">Action</th>
+             <th width="3%" colspan="0" class="d-none"></th>
+             <th width="3%" colspan="0" class="d-none"></th>
           </tr>
         </thead> 
         <tbody>
@@ -47,10 +49,8 @@
             @endforeach
         </tbody>
         </table>
-
-        <div class="d-flex">
-            {!! $roles->links() !!}
-        </div>
-
     </div>
 @endsection
+
+@section('scripts')
+

@@ -48,7 +48,7 @@
 	</div>
 	
 	@yield('outside-content')
-	
 	@include('includes.page-js')
+	@yield('script')
 </body>
 </html>
