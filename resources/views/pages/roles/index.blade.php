@@ -22,9 +22,8 @@
         <table id="table_view" class="table table-striped nowrap" width="100%">
          <thead>
           <tr>
-             <th width="1%">No</th>
              <th width="90%">@lang('general.lbl_name')</th>
-             <th width="3%" colspan="0">Action</th>
+             <th width="3%" colspan="0">@lang('general.lbl_action')</th>
              <th width="3%" colspan="0" class="d-none"></th>
              <th width="3%" colspan="0" class="d-none"></th>
           </tr>
@@ -32,7 +31,6 @@
         <tbody>
             @foreach ($roles as $key => $role)
             <tr>
-                <th>{{ $role->id }}</th>
                 <td>{{ $role->name }}</td>
                 <td>
                     <a class="btn btn-warning btn-sm" href="{{ route('roles.show', $role->id) }}">Show</a>
@@ -52,5 +50,14 @@
     </div>
 @endsection
 
-@section('scripts')
+
+@push('scripts')
+<script type="text/javascript">
+    let table;
+    $(document).ready(function () {
+        table = $('#table_view').DataTable({
+        });
+    });
+</script>
+@endpush
 

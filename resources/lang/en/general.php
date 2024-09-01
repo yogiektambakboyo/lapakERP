@@ -43,7 +43,11 @@ return [
     "lbl_trip_id" => "Trip ID",
     "lbl_joindatebefore" => "Tgl Bergabung (Sebelum)",
     "lbl_action" => "Action",
+    "lbl_voucher_code" => "Voucher Code",
     "lbl_year" => "Year",
+    "lbl_currency_name" => "Currency Name",
+    "lbl_currency_new" => "Currency New",
+
     "lbl_years" => "Years",
     "lbl_join_years" => "Lama Tahun",
     "lbl_yearselect" => "Pilih Tahun",

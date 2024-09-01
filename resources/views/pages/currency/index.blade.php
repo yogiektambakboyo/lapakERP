@@ -4,7 +4,7 @@
 
 @section('content')
     <div class="bg-light p-4 rounded">
-        <h2>@lang('general.lbl_branch')</h2>
+        <h2>@lang('sidebar.MataUang')</h2>
         <div class="lead row mb-3">
             <div class="col-md-10">
                 <div class="col-md-8">
@@ -12,7 +12,7 @@
                 </div>
             </div>
             <div class="col-md-2">
-                <a href="{{ route('branchs.create') }}" class="btn btn-primary float-right"><span class="fa fa-plus-circle"></span> @lang('general.btn_create')</a>
+                <a href="{{ route('currency.create') }}" class="btn btn-primary float-right"><span class="fa fa-plus-circle"></span> @lang('general.btn_create')</a>
             </div>
         </div>
         
@@ -24,10 +24,9 @@
             <thead>
             <tr>
                 <th scope="col" width="15%">@lang('general.lbl_name')</th>
-                <th scope="col">@lang('general.lbl_address')</th>
-                <th scope="col">@lang('general.lbl_city')</th> 
                 <th scope="col">@lang('general.lbl_abbr')</th>  
-                <th scope="col" colspan="0" width="1%"></th> 
+                <th scope="col">@lang('general.lbl_active')</th>
+                <th scope="col" width="1%">@lang('general.lbl_action')</th>
                 <th scope="col" colspan="0" width="1%"></th> 
             </tr>
             </thead>
@@ -35,10 +34,9 @@
                 @foreach($branchs as $key => $branch)
                     <tr>
                         <td>{{ $branch->remark }}</td>
-                        <td>{{ $branch->address }}</td>
-                        <td>{{ $branch->city }}</td>
                         <td>{{ $branch->abbr }}</td>
-                        <td><a href="{{ route('branchs.edit', $branch->id) }}" class="btn btn-info btn-sm  {{ $act_permission->allow_edit==1?'':'d-none' }} ">@lang('general.lbl_edit')</a></td>
+                        <td>{{ $branch->active }}</td>
+                        <td><a href="{{ route('currency.edit', $branch->id) }}" class="btn btn-info btn-sm  {{ $act_permission->allow_edit==1?'':'d-none' }} ">@lang('general.lbl_edit')</a></td>
                         <td>
                             <a onclick="showConfirm({{ $branch->id }}, '{{ $branch->remark }}')" class="btn btn-danger btn-sm  {{ $act_permission->allow_delete==1?'':'d-none' }} ">@lang('general.lbl_delete')</a>
                         </td>
@@ -98,7 +96,7 @@
             confirmButtonText: "@lang('general.lbl_sure_delete')"
             }).then((result) => {
                 if (result.isConfirmed) {
-                    var url = "{{ route('branchs.destroy','XX') }}";
+                    var url = "{{ route('currency.destroy','XX') }}";
                     var lastvalurl = "XX";
                     console.log(url);
                     url = url.replace(lastvalurl, id)
@@ -118,7 +116,7 @@
                                         cancelButtonColor: '#d33', cancelButtonText: "@lang('general.lbl_cancel')",
                                         confirmButtonText: "@lang('general.lbl_close') "
                                         }).then((result) => {
-                                            window.location.href = "{{ route('branchs.index') }}"; 
+                                            window.location.href = "{{ route('currency.index') }}"; 
                                         })
                                 }else{
                                     Swal.fire(

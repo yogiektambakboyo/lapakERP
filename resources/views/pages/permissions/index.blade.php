@@ -20,19 +20,18 @@
             @include('layouts.partials.messages')
         </div>
 
-        <table class="table table-striped">
+        <table id="table_view" class="table table-striped nowrap" width="100%">
             <thead>
             <tr>
-                <th scope="col" width="1%">#</th>
-                <th scope="col" width="15%">@lang('general.lbl_name')</th>
-                <th scope="col">Guard</th> 
-                <th scope="col" colspan="3" width="1%"></th> 
+                <th scope="col" width="80%">@lang('general.lbl_name')</th>
+                <th width="7%" scope="col">Guard</th> 
+                <th width="3%" colspan="0">@lang('general.lbl_action')</th>
+                <th width="3%" colspan="0" class="d-none"></th>
             </tr>
             </thead>
             <tbody>
                 @foreach($permissions as $permission)
                     <tr>
-                        <th>{{ $permission->id }}</th>
                         <td>{{ $permission->name }}</td>
                         <td>{{ $permission->guard_name }}</td>
                         <td><a href="{{ route('permissions.edit', $permission->id) }}" class="btn btn-info btn-sm">@lang('general.lbl_edit')</a></td>
@@ -46,9 +45,15 @@
             </tbody>
         </table>
 
-        <div class="d-flex">
-            {!! $permissions->links() !!}
-        </div>
-
     </div>
 @endsection
+
+@push('scripts')
+<script type="text/javascript">
+    let table;
+    $(document).ready(function () {
+        table = $('#table_view').DataTable({
+        });
+    });
+</script>
+@endpush

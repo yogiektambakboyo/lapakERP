@@ -553,6 +553,19 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
         });
 
         /**
+         *  Currency
+         */
+        Route::group(['prefix' => 'currency'], function() {
+            Route::get('/', 'CurrencyController@index')->name('currency.index');
+            Route::get('/create', 'CurrencyController@create')->name('currency.create');
+            Route::post('/create', 'CurrencyController@store')->name('currency.store');
+            Route::get('/{currency}/show', 'CurrencyController@show')->name('currency.show');
+            Route::get('/{currency}/edit', 'CurrencyController@edit')->name('currency.edit');
+            Route::patch('/{currency}/update', 'CurrencyController@update')->name('currency.update');
+            Route::delete('/{currency}/delete', 'CurrencyController@destroy')->name('currency.destroy');
+        });
+
+        /**
          *  Company
          */
         Route::group(['prefix' => 'company'], function() {

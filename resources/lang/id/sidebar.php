@@ -19,6 +19,7 @@ return [
     "Pelanggan" => "Pelanggan",
     "Sales" => "Sales",
     "Vendor" => "Vendor",
+    "MataUang" => "Mata Uang",
 
     "Satuan" => "UOM",
     "Merek" => "Brand",
