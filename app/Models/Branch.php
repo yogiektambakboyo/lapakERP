@@ -16,6 +16,7 @@ class Branch extends Model
         'address',
         'city',
         'abbr',
+        'currency',
         'active'
     ];
 }

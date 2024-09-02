@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Spatie\Permission\Models\Permission;
 use App\Models\Branch;
+use App\Models\Currency;
 use App\Exports\BranchsExport;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
@@ -47,13 +48,14 @@ class BranchsController extends Controller
         $this->getpermissions($id);
 
         $branchs = Branch::all();
+        
         $data = $this->data;
         $keyword = "";
         $act_permission = $this->act_permission[0];
         //$bahasa = App::getLocale();
 
         return view('pages.branchs.index', [
-            'branchs' => $branchs,'data' => $data , 'bahasa' => "",'keyword' => $keyword,'company' => Company::get()->first() ,'act_permission' => $act_permission
+            'branchs' => $branchs,'data' => $data ,'keyword' => $keyword,'company' => Company::get()->first() ,'act_permission' => $act_permission
         ]);
     }
 
@@ -87,9 +89,10 @@ class BranchsController extends Controller
         $user = Auth::user();
         $id = $user->roles->first()->id;
         $this->getpermissions($id);
+        $currency = Currency::all();
  
         $data = $this->data;
-        return view('pages.branchs.create',['data'=>$data ,'company' => Company::get()->first()]);
+        return view('pages.branchs.create',['data' => $data, 'currency' => $currency,'company' => Company::get()->first()]);
     }
 
     /**
@@ -121,10 +124,11 @@ class BranchsController extends Controller
         $user = Auth::user();
         $id = $user->roles->first()->id;
         $this->getpermissions($id);
+        $currency = Currency::all();
 
         $data = $this->data;
         return view('pages.branchs.edit', [
-            'branch' => $branch ,'data' => $data, 'company' => Company::get()->first()
+            'branch' => $branch ,'data' => $data, 'currency' => $currency, 'company' => Company::get()->first()
         ]);
     }
 
@@ -145,6 +149,7 @@ class BranchsController extends Controller
             ['remark' => $request->get('remark') ],
             ['address' => $request->get('address') ],
             ['city' => $request->get('city') ],
+            ['currency' => $request->get('currency') ],
             ['abbr' => $request->get('abbr') ],
         ));
         

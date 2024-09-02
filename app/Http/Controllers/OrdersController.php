@@ -27,6 +27,7 @@ use Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
 use App\Models\Company;
+use App\Models\Currency;
 use Barryvdh\DomPDF\Facade\Pdf;
 use charlieuki\ReceiptPrinter\ReceiptPrinter as ReceiptPrinter;
 use App\Http\Controllers\Lang;
@@ -156,6 +157,7 @@ class OrdersController extends Controller
         $user = Auth::user();
         $id = $user->roles->first()->id;
         $this->getpermissions($id);
+        $currency = Currency::all();
 
         $data = $this->data;
         $payment_type = ['Cash','BCA - Debit','BCA - Kredit','Mandiri - Debit','Mandiri - Kredit','Transfer','QRIS'];
@@ -174,7 +176,8 @@ class OrdersController extends Controller
             'customers' => Customer::join('users_branch as ub','ub.branch_id', '=', 'customers.branch_id')->join('branch as b','b.id','=','ub.branch_id')->where('ub.user_id',$user->id)->get(['customers.id','customers.name','b.remark']),
             'data' => $data,
             'users' => $users,
-            'branchs' => Branch::join('users_branch as ub','ub.branch_id', '=', 'branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']),
+            'currency' => $currency,
+            'branchs' => Branch::join('users_branch as ub','ub.branch_id', '=', 'branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark','branch.currency']),
             'payment_type' => $payment_type, 'company' => Company::get()->first(),
             'rooms' => Room::join('users_branch as ub','ub.branch_id', '=', 'branch_room.branch_id')->where('ub.user_id','=',$user->id)->get(['branch_room.id','branch_room.remark']),
         ]);
@@ -375,6 +378,8 @@ class OrdersController extends Controller
     {
         $user = Auth::user();
         $branch = Customer::where('id','=',$request->get('customer_id'))->get(['branch_id'])->first();
+
+        
         //$count_no = DB::select("select max(id) as id from order_master om where to_char(om.dated,'YYYY')=to_char(now(),'YYYY') ");
         $count_no = SettingsDocumentNumber::where('doc_type','=','Order')->where('branch_id','=',$branch->branch_id)->where('period','=','Yearly')->get(['current_value','abbr']);
         $count_no_daily = SettingsDocumentNumber::where('doc_type','=','Order_Queue')->where('branch_id','=',$branch->branch_id)->where('period','=','Daily')->get(['current_value','abbr']);
@@ -388,11 +393,11 @@ class OrdersController extends Controller
                 ['customers_id' => $request->get('customer_id') ],
                 ['total' => $request->get('total_order') ],
                 ['remark' => $request->get('remark') ],
+                ['currency' => $request->get('currency') ],
+                ['kurs' => $request->get('kurs') ],
                 ['payment_nominal' => $request->get('payment_nominal') ],
                 ['payment_type' => $request->get('payment_type') ],
                 ['total_payment' => (int)$request->get('payment_nominal')>=(int)$request->get('total_order')?(int)$request->get('total_order'):$request->get('payment_nominal') ],
-                ['scheduled_at' => Carbon::parse($request->get('scheduled_at'))->format('Y-m-d H:i:s.u') ],
-                ['branch_room_id' => $request->get('branch_room_id')],
                 ['voucher_code' => $request->get('voucher_code')],
                 ['total_discount' => $request->get('total_discount')],
                 ['tax' => $request->get('total_vat')],
@@ -435,18 +440,9 @@ class OrdersController extends Controller
                     ['uom' => $request->get('product')[$i]["uom"]],
                     ['vat' => $request->get('product')[$i]["vat_total"]],
                     ['vat_total' => $request->get('product')[$i]["total_vat"]],
-                    ['seq' => $i ],
-                    ['assigned_to' => $request->get('product')[$i]["assignedtoid"]],
-                    ['assigned_to_name' => User::where('id','=',$request->get('product')[$i]["assignedtoid"])->get(['name'])->first()->name ],
-                    ['referral_by' => $user->id],
-                    ['referral_by_name' => User::where('id','=', $user->id)->get(['name'])->first()->name],
+                    ['seq' => $i ]
                 )
             );
-
-            $counters_ = DB::select("select count(users_id)+1 as c from shift_counter where branch_id='".$branch->branch_id."';"); 
-            DB::select("update shift_counter set queue_no=".$counters_[0]->c.",updated_at=now() where users_id=".$request->get('product')[$i]['assignedtoid']."; ");
-            DB::select("update shift_counter set queue_no=queue_no-1,updated_at=now() where  branch_id='".$branch->branch_id."'; ");
-
 
             if(!$res_order_detail){
                 $result = array_merge(
@@ -547,6 +543,7 @@ class OrdersController extends Controller
         $user = Auth::user();
         $id = $user->roles->first()->id;
         $this->getpermissions($id);
+        $currency = Currency::all();
 
         $data = $this->data;
         $user = Auth::user();
@@ -559,6 +556,7 @@ class OrdersController extends Controller
             'data' => $data,
             'order' => $order,
             'room' => $room,
+            'currency' => $currency,
             'rooms' => Room::join('users_branch as ub','ub.branch_id', '=', 'branch_room.branch_id')->where('ub.user_id','=',$user->id)->get(['branch_room.id','branch_room.remark']),
             'users' => $users,
             'orderDetails' => OrderDetail::join('order_master as om','om.order_no','=','order_detail.order_no')->join('product_sku as ps','ps.id','=','order_detail.product_id')->join('product_uom as u','u.product_id','=','order_detail.product_id')->join('uom as um','um.id','=','u.uom_id')->leftjoin('users as us','us.id','=','order_detail.assigned_to')->where('order_detail.order_no',$order->order_no)->get(['us.name as assigned_to','um.remark as uom','order_detail.qty','order_detail.price','order_detail.total as sub_total','om.total as total','ps.id','ps.remark as product_name','order_detail.discount']),
@@ -620,6 +618,8 @@ class OrdersController extends Controller
                 ['customers_id' => $request->get('customer_id') ],
                 ['total' => $request->get('total_order') ],
                 ['remark' => $request->get('remark') ],
+                ['currency' => $request->get('currency') ],
+                ['kurs' => $request->get('kurs') ],
                 ['payment_nominal' => $request->get('payment_nominal') ],
                 ['payment_type' => $request->get('payment_type') ],
                 ['total_payment' => (int)$request->get('payment_nominal')>=(int)$request->get('total_order')?(int)$request->get('total_order'):$request->get('payment_nominal') ],

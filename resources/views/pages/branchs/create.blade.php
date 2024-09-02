@@ -59,6 +59,21 @@
                     @endif
                 </div>
 
+                <div class="mb-3">
+                    <label for="abbr" class="form-label">@lang('sidebar.MataUang')</label>
+                    <select class="form-select" name="currency" id="currency">
+                        @php
+                         for ($i=0; $i < count($currency); $i++) { 
+                            echo '<option value="'.$currency[$i]->remark.'">'.$currency[$i]->remark.'</option>';
+                         }   
+                        @endphp
+                    </select>
+
+                    @if ($errors->has('currency'))
+                        <span class="text-danger text-left">{{ $errors->first('currency') }}</span>
+                    @endif
+                </div>
+
                 <button type="submit" class="btn btn-primary">@lang('general.lbl_save')</button>
                 <a href="{{ route('branchs.index') }}" class="btn btn-default">@lang('general.lbl_back') </a>
             </form>

@@ -106,7 +106,7 @@ return [
     "lbl_alljobtitle" => "Semua Jabatan",
     "lbl_jobtitleselect" => "Pilih Jabatan",
     "lbl_apply" => "Terapkan",
-    "lbl_apply_voucher" => "Gunakan Voucher",
+    "lbl_apply_voucher" => "Apply Voucher",
     "lbl_terapist" => "Terapis",
     "lbl_tax" => "Pajak",
     "lbl_print" => "Cetak",

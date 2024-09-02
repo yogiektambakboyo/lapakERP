@@ -188,13 +188,51 @@
             
             <div class="row mb-3">
               <div class="col-md-6">
+
                 <div class="row mb-3">
-                    <label class="form-label col-form-label col-md-3" id="label-voucher">Voucher</label>
+                  <label class="form-label col-form-label col-md-2">@lang('sidebar.MataUang')</label>
+                  <div class="col-md-2">
+                    <input type="hidden" name="curr_def" id="curr_def" value="{{ $branchs[0]->currency }}">
+                    <select class="form-select" name="currency" id="currency">
+                        @php
+                        $selected = "";
+                        $curr = "";
+
+                        for ($i=0; $i < count($branchs); $i++) { 
+                          $curr = $branchs[$i]->currency;
+                        }
+                        for ($i=0; $i < count($currency); $i++) { 
+                           if($currency[$i]->remark == $curr){
+                             $selected = "selected";
+                           }else{
+                            $selected = "";
+                           }
+                            echo '<option value="'.$currency[$i]->remark.'" '.$selected.'>'.$currency[$i]->remark.'</option>';
+                        }   
+                        @endphp
+                    </select>
+                  </div>
+
+                  <label class="form-label col-form-label col-md-2 kurs d-none" id="label-kurs">Kurs</label>
+                  <br>
+                  <div class="col-md-3 kurs  d-none">
+                    <input type="number" class="form-control kurs  d-none" id="kurs" value="1" name="kurs">
+                  </div>
+                  <label class="form-label col-form-label col-md-2 kurs d-none">{{ $branchs[0]->currency }}</label>
+                  
+
+                  @if ($errors->has('currency'))
+                      <span class="text-danger text-left">{{ $errors->first('currency') }}</span>
+                  @endif
+                </div>
+
+                <div class="row mb-3">
+                    <label class="form-label col-form-label col-md-2" id="label-voucher">Voucher</label>
                     <br>
-                    <div class="col-md-5">
+                    <div class="col-md-4">
                       <input type="text" class="form-control" id="input-apply-voucher">
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-4">
                       <button type="button" id="apply-voucher-btn" class="btn btn-warning">@lang('general.lbl_apply_voucher')</button>
                     </div>
                     <div class="col-md-1">
@@ -418,6 +456,16 @@
           $("#cancel-voucher-btn").hide();
           voucherNo = "";
           voucherNoPID = "";
+
+          $('#currency').on('change', function(){
+            if($('#currency').find(':selected').val() == $('#curr_def').val()){
+              $('.kurs').addClass('d-none');
+              $('#kurs').val("1");
+            }else{
+              $('.kurs').removeClass('d-none');
+              $('#label-kurs').text("Kurs 1 "+$('#currency').find(':selected').val()+" = ");
+            }
+          });
 
 
           const today = new Date();
@@ -680,6 +728,19 @@
                 timer: 1500
               }
             );
+          }else if($('#currency').find(':selected').val() != $('#curr_def').val() && parseFloat($('#kurs').value)<=1 ){
+            $('#currency').focus();
+            Swal.fire(
+              {
+                position: 'top-end',
+                icon: 'warning',
+                text: 'Please fill valid kurs',
+                showConfirmButton: false,
+                imageHeight: 30, 
+                imageWidth: 30,   
+                timer: 1500
+              }
+            );
           }else{
 
             counterBlank = 0;
@@ -708,6 +769,8 @@
                   branch_room_id : $('#room_id').val(),
                   total_discount : disc_total,
                   total_vat : _vat_total,
+                  currency : $('#currency').find(':selected').val(),
+                  kurs : $('#kurs').val(),
                   voucher_code :  $("#voucher_code").val()
                 }
               );

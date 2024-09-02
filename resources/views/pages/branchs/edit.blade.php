@@ -63,6 +63,26 @@
                     @endif
                 </div>
 
+                <div class="mb-3">
+                    <label for="abbr" class="form-label">@lang('sidebar.MataUang')</label>
+                    <select class="form-select" name="currency" id="currency">
+                        @php
+                         $curr = $branch->currency;
+                         for ($i=0; $i < count($currency); $i++) { 
+                            $selected = "";
+                            if($currency[$i]->abbr == $curr){
+                                $selected = "selected";
+                            }
+                            echo '<option value="'.$currency[$i]->abbr.'" '.$selected.' >'.$currency[$i]->remark.'</option>';
+                         }   
+                        @endphp
+                    </select>
+
+                    @if ($errors->has('currency'))
+                        <span class="text-danger text-left">{{ $errors->first('currency') }}</span>
+                    @endif
+                </div>
+
                 <button type="submit" class="btn btn-primary">Save branch</button>
                 <a href="{{ route('branchs.index') }}" class="btn btn-default">@lang('general.lbl_back') </a>
             </form>

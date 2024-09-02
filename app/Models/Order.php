@@ -27,6 +27,8 @@ class Order extends Model
         'total_payment',
         'total_discount',
         'remark',
+        'currency',
+        'kurs',
         'payment_type',
         'payment_nominal',
         'voucher_code',
