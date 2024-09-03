@@ -82,15 +82,6 @@
               </div>
 
               
-              <label class="form-label col-form-label col-md-1">@lang('general.lbl_schedule')</label>
-              <div class="col-md-3">
-                  <div class="input-group">
-                    <input type="text" class="form-control" id="scheduled"  value="{{ $room->remark }} - {{ $invoice->scheduled_at }}" disabled>
-                    <button type="button" class="btn btn-indigo" data-bs-toggle="modal" data-bs-target="#modal-scheduled" >
-                      <span class="fas fa-calendar-days"></span>
-                    </button>
-                  </div>
-              </div>
             </div>
             <div class="row mb-3">
               <label class="form-label col-form-label col-md-1">@lang('general.lbl_type_payment')</label>

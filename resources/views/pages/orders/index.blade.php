@@ -32,8 +32,6 @@
         <table class="table table-striped" id="example">
             <thead>
             <tr>
-                <th scope="col" width="1%">#</th>
-                <th scope="col" width="10%">@lang('general.lbl_branch')</th>
                 <th>@lang('general.lbl_order_no')   </th>
                 <th scope="col" width="8%">@lang('general.lbl_dated')</th>
                 <th scope="col" width="15%">@lang('general.lbl_total_customer')</th>
@@ -48,8 +46,6 @@
 
                 @foreach($orders as $order)
                     <tr>
-                        <th scope="row">{{ $order->id }}</th>
-                        <td>{{ $order->branch_name }}</td>
                         <td>{{ $order->order_no }}</td>
                         <td>{{ substr(explode(" ",$order->dated)[0],8,2) }}-{{ substr(explode(" ",$order->dated)[0],5,2) }}-{{ substr(explode(" ",$order->dated)[0],0,4) }}</td>
                         <td>{{ $order->customer }}</td>
