@@ -107,6 +107,15 @@ class BranchsController extends Controller
             'remark' => 'required|unique:branch'
         ]);
 
+        $insert_doc = DB::select('
+            insert into setting_document_counter(doc_type,abbr,"period",current_value,branch_id)
+            select sdc.doc_type,sdc.abbr,sdc.period,sdc.current_value,b.id 
+            from branch b 
+            join setting_document_counter sdc on sdc.branch_id=1
+            where b.id not in (select distinct branch_id from setting_document_counter)
+            order by b.id;
+        ');
+
         Branch::create($request->all());
 
         return redirect()->route('branchs.index')

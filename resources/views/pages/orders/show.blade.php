@@ -24,7 +24,7 @@
                 name="order_date"
                 id="order_date"
                 class="form-control" 
-                value="{{ $order->dated }}" readonly/>
+                value="{{ substr(explode(" ",$order->dated)[0],8,2) }}-{{ substr(explode(" ",$order->dated)[0],5,2) }}-{{ substr(explode(" ",$order->dated)[0],0,4) }}" readonly/>
                 @if ($errors->has('order_date'))
                           <span class="text-danger text-left">{{ $errors->first('join_date') }}</span>
                       @endif
@@ -42,10 +42,11 @@
             </div>
           </div>
 
-          <div class="col-md-8">
+          <div class="col-md-4">
             <div class="row mb-3">
-              <label class="form-label col-form-label col-md-2">@lang('general.lbl_customer')</label>
-              <div class="col-md-4">
+              <label class="form-label col-form-label col-md-4">@lang('general.lbl_customer')</label>
+              <div class="col-md-8">
+                <input type="hidden" name="curr_def" id="curr_def" value="{{ $branchs[0]->currency }}">
                 <select class="form-control" 
                     name="customer_id" id="customer_id" readonly>
                     <option value="">@lang('general.lbl_customerselect')</option>
@@ -58,9 +59,37 @@
               </div>
             </div>
             <div class="row mb-3">
-            
-              
+              <label class="form-label col-form-label col-md-4">@lang('general.lbl_payment')</label>
+              <div class="col-md-8">
+                <select class="form-control" 
+                    name="payment_type" id="payment_type">
+                    <option value="">@lang('general.lbl_customerselect')</option>
+                    @foreach($payment_type as $value)
+                        <option value="{{ $value }}" {{ ($value == $order->payment_type ) 
+                          ? 'selected'
+                          : ''}}>{{ $value }}</option>
+                    @endforeach
+                </select>
+              </div>
             </div>
+
+          </div>
+
+          <div class="col-md-4">
+              <div class="row mb-3">
+                <label class="form-label col-form-label col-md-6">@lang('general.lbl_nominal_payment')</label>
+                <div class="col-md-6">
+                  <input type="text" id="payment_nominal" name="payment_nominal" readonly class="form-control" value="{{ $order->payment_nominal }}"/>
+                </div>
+              </div>
+  
+              <div class="row mb-3">
+                <label class="form-label col-form-label col-md-4">@lang('general.lbl_charge')</label>
+                <div class="col-md-8">
+                  <h2 class="text-end"><label id="order_charge">{{ $order->payment_nominal>0?$order->payment_nominal-$order->total:"0" }}</label></h2>
+                </div>
+              </div>
+  
           </div>
 
           <div class="col-md-12">
@@ -105,17 +134,24 @@
             <div class="col-md-6">
               <div class="col-md-12">
                 <div class="col-auto text-end">
-                  <label class="col-md-2"><h2>Sub Total </h2></label>
-                  <label class="col-md-8" id="sub-total"> <h3>Rp. {{ number_format(($order->total-$order->tax), 0, ',', '.') }}</h3></label>
+                  <label class="col-md-4">Sub Total</label>
+                  <label class="col-md-4" id="sub-total">{{ number_format(($order->total-$order->tax), 0, ',', '.') }}</label>
                 </div>
               </div>
               <div class="col-md-12">
                 <div class="col-auto text-end">
-                  <label class="col-md-2"><h1>Total </h1></label>
-                  <label class="col-md-8 display-5" id="result-total"> <h1>Rp. {{ number_format($order->total, 0, ',', '.') }}</h1></label>
+                  <label class="col-md-4">@lang('general.lbl_tax')</label>
+                  <label class="col-md-4" id="vat-total">0</label>
+                </div>
+              </div>
+              <div class="col-md-12">
+                <div class="col-auto text-end">
+                  <label id="lbl_total"  class="col-md-4 h3">Total</label>
+                  <label class="col-md-4 h3" id="result-total">{{ number_format($order->total, 0, ',', '.') }}</label>
                 </div>
               </div>
             </div>
+
           </div>
         </div>
     </div>
@@ -125,5 +161,6 @@
 
 @push('scripts')
     <script type="text/javascript">
+      $('#lbl_total').text("Total ("+$('#curr_def').val()+")");
     </script>
 @endpush

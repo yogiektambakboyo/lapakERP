@@ -16,7 +16,8 @@
     <div class="panel-body bg-white text-black">
 
         <div class="row mb-3">
-          <div class="col-md-4">
+
+          <div class="col-md-3">
             <div class="row mb-3">
               <label class="form-label col-form-label col-md-4">@lang('general.lbl_dated_mmddYYYY')</label>
               <div class="col-md-8">
@@ -25,7 +26,7 @@
                 name="order_date"
                 id="order_date"
                 class="form-control" 
-                value="{{ substr(explode(" ",$order->dated)[0],5,2) }}/{{ substr(explode(" ",$order->dated)[0],8,2) }}/{{ substr(explode(" ",$order->dated)[0],0,4) }}" required/>
+                value="{{ substr(explode(" ",$order->dated)[0],8,2) }}-{{ substr(explode(" ",$order->dated)[0],5,2) }}-{{ substr(explode(" ",$order->dated)[0],0,4) }}" required/>
                 @if ($errors->has('order_date'))
                           <span class="text-danger text-left">{{ $errors->first('join_date') }}</span>
                       @endif
@@ -43,10 +44,10 @@
             </div>
           </div>
 
-          <div class="col-md-8">
+          <div class="col-md-4">
             <div class="row mb-3">
-              <label class="form-label col-form-label col-md-2">@lang('general.lbl_customer')</label>
-              <div class="col-md-4">
+              <label class="form-label col-form-label col-md-4">@lang('general.lbl_customer')</label>
+              <div class="col-md-8">
                 <select class="form-control" 
                     name="customer_id" id="customer_id">
                     <option value="">@lang('general.lbl_customerselect')</option>
@@ -58,10 +59,44 @@
                 </select>
               </div>
             </div>
-           </div>
-                
+            <div class="row mb-3">
+              <label class="form-label col-form-label col-md-4">@lang('general.lbl_payment')</label>
+              <div class="col-md-8">
+                <select class="form-control" 
+                    name="payment_type" id="payment_type">
+                    <option value="">@lang('general.lbl_customerselect')</option>
+                    @foreach($payment_type as $value)
+                        <option value="{{ $value }}" {{ ($value == $order->payment_type ) 
+                          ? 'selected'
+                          : ''}}>{{ $value }}</option>
+                    @endforeach
+                </select>
+              </div>
+            </div>
           </div>
-          <div class="row mb-3">
+
+
+          <div class="col-md-4">
+            <div class="row mb-3">
+              <label class="form-label col-form-label col-md-6">@lang('general.lbl_nominal_payment')</label>
+              <div class="col-md-6">
+                <input type="text" id="payment_nominal" name="payment_nominal" class="form-control" value="{{ $order->payment_nominal }}"/>
+              </div>
+            </div>
+
+            <div class="row mb-3">
+              <label class="form-label col-form-label col-md-4">@lang('general.lbl_charge')</label>
+              <div class="col-md-8">
+                <h2 class="text-end"><label id="order_charge">{{ $order->payment_nominal-$order->total }}</label></h2>
+              </div>
+            </div>
+
+          </div>
+
+                
+        </div>
+
+        <div class="row mb-3">
             <div class="panel-heading bg-teal-600 text-white"><strong>@lang('general.lbl_order_list')</strong></div>
               <br>
               <div class="row mb-3">
@@ -154,12 +189,49 @@
           <div class="row mb-3">
             <div class="col-md-6">
               <div class="row mb-3">
+                <label class="form-label col-form-label col-md-3">@lang('sidebar.MataUang')</label>
+                <div class="col-md-2">
+                  <input type="hidden" name="curr_def" id="curr_def" value="{{ $branchs[0]->currency }}">
+                  <select class="form-select" name="currency" id="currency">
+                      @php
+                      $selected = "";
+                      $curr = "";
+
+                      for ($i=0; $i < count($branchs); $i++) { 
+                        $curr = $branchs[$i]->currency;
+                      }
+                      for ($i=0; $i < count($currency); $i++) { 
+                         if($currency[$i]->remark == $curr){
+                           $selected = "selected";
+                         }else{
+                          $selected = "";
+                         }
+                          echo '<option value="'.$currency[$i]->remark.'" '.$selected.'>'.$currency[$i]->remark.'</option>';
+                      }   
+                      @endphp
+                  </select>
+                </div>
+
+                <label class="form-label col-form-label col-md-2 kurs d-none" id="label-kurs">Kurs</label>
+                <br>
+                <div class="col-md-3 kurs  d-none">
+                  <input type="number" class="form-control kurs  d-none" id="kurs" value="1" name="kurs">
+                </div>
+                <label class="form-label col-form-label col-md-2 kurs d-none">{{ $branchs[0]->currency }}</label>
+                
+
+                @if ($errors->has('currency'))
+                    <span class="text-danger text-left">{{ $errors->first('currency') }}</span>
+                @endif
+              </div>
+
+              <div class="row mb-3">
                   <label class="form-label col-form-label col-md-3" id="label-voucher">Voucher</label>
                   <br>
                   <div class="col-md-5">
                     <input type="text" class="form-control" id="input-apply-voucher">
                   </div>
-                  <div class="col-md-3">
+                  <div class="col-md-4">
                     <button type="button" id="apply-voucher-btn" class="btn btn-warning">@lang('general.lbl_apply_voucher')</button>
                   </div>
                   <div class="col-md-1">
@@ -172,14 +244,20 @@
             <div class="col-md-6">
               <div class="col-md-12">
                 <div class="col-auto text-end">
-                  <label class="col-md-4"><h2>Sub Total </h2></label>
-                  <label class="col-md-8" id="sub-total"> <h3>Rp. {{ number_format(($order->total-$order->tax), 0, ',', '.') }}</h3></label>
+                  <label class="col-md-4">Sub Total</label>
+                  <label class="col-md-4" id="sub-total">{{ number_format(($order->total-$order->tax), 0, ',', '.') }}</label>
                 </div>
               </div>
               <div class="col-md-12">
                 <div class="col-auto text-end">
-                  <label class="col-md-2"><h1>Total </h1></label>
-                  <label class="col-md-8 display-5" id="result-total"> <h1>Rp. {{ number_format($order->total, 0, ',', '.') }}</h1></label>
+                  <label class="col-md-4">@lang('general.lbl_tax')</label>
+                  <label class="col-md-4" id="vat-total">0</label>
+                </div>
+              </div>
+              <div class="col-md-12">
+                <div class="col-auto text-end">
+                  <label id="lbl_total"  class="col-md-4 h3">Total</label>
+                  <label class="col-md-4 h3" id="result-total">{{ number_format($order->total, 0, ',', '.') }}</label>
                 </div>
               </div>
             </div>
@@ -197,7 +275,22 @@
     <script type="text/javascript">
       $(function () {
           $('#order_date').datepicker({
-              format : 'yyyy-mm-dd'
+            dateFormat : 'dd-mm-yy',
+            todayHighlight: true,
+          });
+
+          $('#lbl_total').text("Total ("+$('#curr_def').val()+")");
+
+          $('#currency').on('change', function(){
+            if($('#currency').find(':selected').val() == $('#curr_def').val()){
+              $('.kurs').addClass('d-none');
+              $('#kurs').val("1");
+            }else{
+              $('.kurs').removeClass('d-none');
+              $('#label-kurs').text("Kurs 1 "+$('#currency').find(':selected').val()+" = ");
+            }
+            $('#lbl_total').text("Total ("+$('#currency').find(':selected').val()+")");
+
           });
 
 
@@ -391,16 +484,16 @@
               sub_total = sub_total + (((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"]))-(parseFloat(orderList[i]["discount"])));
               order_total = order_total + ((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"])+((((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"]))-(parseFloat(orderList[i]["discount"])))*(parseFloat(0))))-(parseFloat(orderList[i]["discount"]));
               if(($('#payment_nominal').val())>order_total){
-                $('#order_charge').text(currency((($('#payment_nominal').val())-order_total), { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
+                $('#order_charge').text(currency((($('#payment_nominal').val())-order_total), { separator: ".", decimal: ",", symbol: "", precision: 0 }).format());
               }else{
-                $('#order_charge').text("Rp. 0");
+                $('#order_charge').text("0");
               }
           }
 
 
 
-          $('#result-total').text(currency(order_total, { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
-          $('#sub-total').text(currency(sub_total, { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
+          $('#result-total').text(currency(order_total, { separator: ".", decimal: ",", symbol: "", precision: 0 }).format());
+          $('#sub-total').text(currency(sub_total, { separator: ".", decimal: ",", symbol: "", precision: 0 }).format());
 
         }
 
@@ -467,14 +560,14 @@
                 _vat_total = _vat_total + ((((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"]))-(parseFloat(orderList[i]["discount"])))*(parseFloat(orderList[i]["vat_total"])/100));
                 order_total = order_total + ((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"])+((((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"]))-(parseFloat(orderList[i]["discount"])))*(parseFloat(0))))-(parseFloat(orderList[i]["discount"]));
               if(($('#payment_nominal').val())>order_total){
-                $('#order_charge').text(currency((($('#payment_nominal').val())-order_total), { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
+                $('#order_charge').text(currency((($('#payment_nominal').val())-order_total), { separator: ".", decimal: ",", symbol: "", precision: 0 }).format());
               }else{
-                $('#order_charge').text("Rp. 0");
+                $('#order_charge').text("0");
               }
             }
 
-            $('#result-total').text(currency(order_total, { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
-            $('#sub-total').text(currency(sub_total, { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
+            $('#result-total').text(currency(order_total, { separator: ".", decimal: ",", symbol: "", precision: 0 }).format());
+            $('#sub-total').text(currency(sub_total, { separator: ".", decimal: ",", symbol: "", precision: 0 }).format());
         });
 
             $("#payment_nominal").on("input", function(){
@@ -486,9 +579,9 @@
                   var obj = productList[i];
                   order_total = order_total + ((parseInt(productList[i]["qty"]))*parseFloat(productList[i]["price"]));
                   if(($('#payment_nominal').val())>order_total){
-                    $('#order_charge').text(currency((($('#payment_nominal').val())-order_total), { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
+                    $('#order_charge').text(currency((($('#payment_nominal').val())-order_total), { separator: ".", decimal: ",", symbol: "", precision: 0 }).format());
                   }else{
-                    $('#order_charge').text("Rp. 0");
+                    $('#order_charge').text("0");
                   }
                 }
               });
@@ -581,14 +674,14 @@
                         order_total = order_total + ((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"])+((((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"]))-(parseFloat(orderList[i]["discount"])))*(parseFloat(0))))-(parseFloat(orderList[i]["discount"]));
 
                         if(($('#payment_nominal').val())>order_total){
-                          $('#order_charge').text(currency((($('#payment_nominal').val())-order_total), { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
+                          $('#order_charge').text(currency((($('#payment_nominal').val())-order_total), { separator: ".", decimal: ",", symbol: "", precision: 0 }).format());
                         }else{
-                          $('#order_charge').text("Rp. 0");
+                          $('#order_charge').text("0");
                         }
                     }
 
-                    $('#result-total').text(currency(order_total, { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
-                    $('#sub-total').text(currency(sub_total, { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
+                    $('#result-total').text(currency(order_total, { separator: ".", decimal: ",", symbol: "", precision: 0 }).format());
+                    $('#sub-total').text(currency(sub_total, { separator: ".", decimal: ",", symbol: "", precision: 0 }).format());
 
 
                     if(counterVoucherHit>0){
@@ -665,14 +758,14 @@
                     order_total = order_total + ((parseInt(orderList[i]["qty"])) * parseFloat(orderList[i]["price"])) - (parseFloat(orderList[i]["discount"]));
 
                     if(($('#payment_nominal').val())>order_total){
-                      $('#order_charge').text(currency((($('#payment_nominal').val())-order_total), { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
+                      $('#order_charge').text(currency((($('#payment_nominal').val())-order_total), { separator: ".", decimal: ",", symbol: "", precision: 0 }).format());
                     }else{
-                      $('#order_charge').text("Rp. 0");
+                      $('#order_charge').text("0");
                     }
                 }
 
-                $('#result-total').text(currency(order_total, { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
-                $('#sub-total').text(currency(sub_total, { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
+                $('#result-total').text(currency(order_total, { separator: ".", decimal: ",", symbol: "", precision: 0 }).format());
+                $('#sub-total').text(currency(sub_total, { separator: ".", decimal: ",", symbol: "", precision: 0 }).format());
 
             });
 

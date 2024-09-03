@@ -16,10 +16,11 @@
     <div class="panel-body bg-white text-black">
 
         <div class="row mb-3">
-          <div class="col-md-3">
+          <div class="col-md-2">
+
             <div class="row mb-3">
-              <label class="form-label col-form-label col-md-6">@lang('general.lbl_dated_mmddYYYY')</label>
-              <div class="col-md-6">
+              <label class="form-label col-form-label col-md-4">@lang('general.lbl_dated_mmddYYYY')</label>
+              <div class="col-md-8">
                 <input type="text" 
                 name="invoice_date"
                 id="invoice_date"
@@ -30,6 +31,8 @@
                       @endif
               </div>
             </div>
+
+
             <div class="row mb-3">
               <label class="form-label col-form-label col-md-4">@lang('general.lbl_remark')</label>
               <div class="col-md-8">
@@ -58,8 +61,8 @@
 
 
 
-              <label class="form-label col-form-label col-md-1">@lang('general.lbl_customer')</label>
-              <div class="col-md-2">
+              <label class="form-label col-form-label col-md-2">@lang('general.lbl_customer')</label>
+              <div class="col-md-3">
                 <select class="form-control" 
                     name="customer_id" id="customer_id" required>
                     <option value="">@lang('general.lbl_customerselect')</option>
@@ -72,30 +75,21 @@
                 <a type="button" id="add-customer-btn" class="btn btn-green"  href="#modal-add-customer" data-bs-toggle="modal" data-bs-target="#modal-add-customer"><span class="fas fa-user-plus"></span></a>
               </div>
 
-              <label class="form-label col-form-label col-md-1">@lang('general.lbl_customer_type')</label>
-              <div class="col-md-2">
-                <select class="form-control" 
-                    name="customer_type" id="customer_type" required>
-                    <option value="">@lang('general.lbl_tipeselect')</option>
-                    @foreach($type_customers as $type_customer)
-                        <option value="{{ $type_customer }}"> {{ $type_customer }}</option>
-                    @endforeach
-                </select>
-              </div>
-
-              <label class="form-label col-form-label col-md-1">@lang('general.lbl_schedule')</label>
-              <div class="col-md-3">
-                  <div class="input-group">
-                    <input type="text" class="form-control" id="scheduled" disabled>
-                    <button type="button" class="btn btn-indigo" data-bs-toggle="modal" data-bs-target="#modal-scheduled" >
-                      <span class="fas fa-calendar-days"></span>
-                    </button>
+              <label class="form-label col-form-label col-md-3">@lang('general.lbl_nominal_payment')</label>
+                <div class="col-md-2">
+                  <input type="text" 
+                  id="payment_nominal"
+                  name="payment_nominal"
+                  class="form-control" 
+                  value="{{ old('payment_nominal') }}" required/>
                   </div>
-              </div>
+
+                 
             </div>
+
             <div class="row mb-3">
-              <label class="form-label col-form-label col-md-1">@lang('general.lbl_type_payment')</label>
-              <div class="col-md-2">
+              <label class="form-label col-form-label col-md-2">@lang('general.lbl_type_payment')</label>
+              <div class="col-md-4">
                 <select class="form-control" 
                       name="payment_type" id ="payment_type" required>
                       <option value="">@lang('general.lbl_type_paymentselect')</option>
@@ -105,21 +99,13 @@
                   </select>
               </div>
 
-                <label class="form-label col-form-label col-md-2">@lang('general.lbl_nominal_payment')</label>
-                <div class="col-md-2">
-                  <input type="text" 
-                  id="payment_nominal"
-                  name="payment_nominal"
-                  class="form-control" 
-                  value="{{ old('payment_nominal') }}" required/>
-                  </div>
-
-                  <label class="form-label col-form-label col-md-1">@lang('general.lbl_charge')</label>
-                  <div class="col-md-3">
-                    <h2 class="text-end"><label id="order_charge">Rp. 0</label></h2>
-                  </div>
-                
+              <label class="form-label col-form-label col-md-2">@lang('general.lbl_charge')</label>
+              <div class="col-md-3">
+                <h2 class="text-end"><label id="order_charge">Rp. 0</label></h2>
+              </div>
+          
             </div>
+
             <div class="modal fade" id="modal-filter" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
               <div class="modal-dialog">
               <div class="modal-content">
@@ -674,17 +660,12 @@
           if (dd < 10) dd = '0' + dd;
           if (mm < 10) mm = '0' + mm;
 
-          const formattedToday = mm + '/' + dd + '/' + yyyy;
+          const formattedToday = dd + '-' + mm + '-' + yyyy;
           $('#invoice_date').datepicker({
-              format : 'yyyy-mm-dd',
+            dateFormat : 'dd-mm-yy',
               todayHighlight: true,
           });
           $('#invoice_date').val(formattedToday);
-          $('#schedule_date').datepicker({
-              format : 'yyyy-mm-dd',
-              todayHighlight: true,
-          });
-          $('#schedule_date').val(formattedToday);
 
           var url = "{{ route('orders.getorder','XX') }}";
           var lastvalurl = "XX";

@@ -94,7 +94,7 @@ return [
     "lbl_information" => "Informasi",
     "lbl_id" => "ID",
     "lbl_creditlimit" => "Credit Limit",
-    "lbl_order_list" => "Daftar Pesanan",
+    "lbl_order_list" => "List SKU",
 
     "lbl_filterdata" => "Filter",
     "lbl_branch" => "Branch",
@@ -184,7 +184,7 @@ return [
     "lbl_referral_fee" => "Komisi Penjual",
     "lbl_commision_year" => "Komisi Berdasarkan Tahun",
 
-    "lbl_invoice" => "Faktur Jual",
+    "lbl_invoice" => "Invoice",
     "lbl_invoice_select" => "Pilih Faktur Jual",
     "lbl_invoice_no" => "No. Faktur Jual",
     "invoice_no" => "No. Faktur Jual",

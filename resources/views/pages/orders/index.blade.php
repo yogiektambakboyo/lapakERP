@@ -51,7 +51,7 @@
                         <th scope="row">{{ $order->id }}</th>
                         <td>{{ $order->branch_name }}</td>
                         <td>{{ $order->order_no }}</td>
-                        <td>{{ $order->dated }}</td>
+                        <td>{{ substr(explode(" ",$order->dated)[0],8,2) }}-{{ substr(explode(" ",$order->dated)[0],5,2) }}-{{ substr(explode(" ",$order->dated)[0],0,4) }}</td>
                         <td>{{ $order->customer }}</td>
                         <td>{{ $order->sales_name }}</td>
                         <td>{{ number_format($order->total,0,',','.') }}</td>
