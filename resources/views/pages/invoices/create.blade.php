@@ -695,6 +695,8 @@
                   payment_type : $('#payment_type').val(),
                   payment_nominal : $('#payment_nominal').val(),
                   total_order : order_total,
+                  kurs : $('#kurs').val(),
+                  currency : $('#currency').find(':selected').val(),
                   customer_type : $('#customer_type').val(),
                   ref_no : $('#ref_no').val(),
                   tax : _vat_total,

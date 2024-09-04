@@ -134,6 +134,40 @@
             <div class="row mb-3">
               <div class="col-md-6">
                 <div class="row mb-3">
+                  <label class="form-label col-form-label col-md-3">@lang('sidebar.MataUang')</label>
+                  <div class="col-md-2">
+                    <input type="hidden" name="curr_def" id="curr_def" value="{{ $branchs[0]->currency }}">
+                    <select class="form-select" name="currency" id="currency">
+                        @php
+                        $selected = "";
+                        $curr = "";
+    
+                        for ($i=0; $i < count($currency); $i++) { 
+                           if($currency[$i]->remark == $invoice->currency){
+                             $selected = "selected";
+                           }else{
+                            $selected = "";
+                           }
+                            echo '<option value="'.$currency[$i]->remark.'" '.$selected.'>'.$currency[$i]->remark.'</option>';
+                        }   
+                        @endphp
+                    </select>
+                  </div>
+    
+                  <label class="form-label col-form-label col-md-2 kurs d-none" id="label-kurs">Kurs</label>
+                  <br>
+                  <div class="col-md-3 kurs  d-none">
+                    <input type="number" class="form-control kurs  d-none" id="kurs" value="{{ $invoice->kurs }}" name="kurs">
+                  </div>
+                  <label class="form-label col-form-label col-md-2 kurs d-none">{{ $branchs[0]->currency }}</label>
+                  
+    
+                  @if ($errors->has('currency'))
+                      <span class="text-danger text-left">{{ $errors->first('currency') }}</span>
+                  @endif
+                </div>
+                
+                <div class="row mb-3">
                     <label class="form-label col-form-label col-md-3" id="label-voucher">Voucher</label>
                     <br>
                     <div class="col-md-5">
@@ -179,7 +213,17 @@
 @push('scripts')
     <script type="text/javascript">
       $(function () {
-        $('#lbl_total').text("Total ("+$('#curr_def').val()+")");
+
+        $('#lbl_total').text("Total ("+$('#currency').find(':selected').val()+")");
+
+
+          if($('#currency').find(':selected').val() == $('#curr_def').val()){
+              $('.kurs').addClass('d-none');
+              $('#kurs').val("1");
+            }else{
+              $('.kurs').removeClass('d-none');
+              $('#label-kurs').text("Kurs 1 "+$('#currency').find(':selected').val()+" = ");
+            }
           //$('#app').removeClass('app app-sidebar-fixed app-header-fixed-minified').addClass('app app-sidebar-fixed app-header-fixed-minified app-sidebar-minified');
       });
 </script>

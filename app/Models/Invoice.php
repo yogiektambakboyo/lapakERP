@@ -34,6 +34,8 @@ class Invoice extends Model
         'scheduled_at',
         'branch_room_id',
         'ref_no',
+        'kurs',
+        'currency',
         'customers_name',
         'printed_count',
         'customer_type'
