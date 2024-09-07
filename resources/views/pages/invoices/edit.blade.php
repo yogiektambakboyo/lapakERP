@@ -108,137 +108,9 @@
                 
                 
             </div>
-            <div class="modal fade" id="modal-filter" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-              <div class="modal-dialog">
-              <div class="modal-content">
-                  <div class="modal-header">
-                  <h5 class="modal-title" id="staticBackdropLabel">@lang('general.lbl_assign')</h5>
-                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                  </div>
-                  <div class="modal-body">
-                    <label class="form-label col-form-label col-md-8" id="product_id_selected_lbl">@lang('general.lbl_assignselect') </label>
-                    <input type="hidden" id="product_id_selected" value="">
-                    <div class="col-md-8">
-                      <select class="form-control" 
-                          name="assign_id" id="assign_id" required>
-                          <option value="">@lang('general.lbl_assignselect') </option>
-                          @foreach($users as $user)
-                              <option value="{{ $user->id }}">{{ $user->name }}</option>
-                          @endforeach
-                      </select>
-                    </div>
-                  </div>
-                  <div class="modal-footer">
-                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">@lang('general.lbl_close') </button>
-                  <button type="button" class="btn btn-primary"  data-bs-dismiss="modal" id="btn_assigned">@lang('general.lbl_apply')</button>
-                  </div>
-              </div>
-              </div>
-            </div>
+            
 
-            <div class="modal fade" id="modal-referral" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-              <div class="modal-dialog">
-              <div class="modal-content">
-                  <div class="modal-header">
-                  <h5 class="modal-title" id="staticBackdropLabel">@lang('general.lbl_ref_by') </h5>
-                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                  </div>
-                  <div class="modal-body">
-                    <label class="form-label col-form-label col-md-8" id="referral_selected_lbl">@lang('general.lbl_assignselect')  </label>
-                    <input type="hidden" id="referral_selected" value="">
-                    <div class="col-md-8">
-                      <select class="form-control" 
-                          name="referral_by" id="referral_by">
-                          <option value="">@lang('general.lbl_assignselect') </option>
-                          @foreach($usersall as $userall)
-                              <option value="{{ $userall->id }}">{{ $userall->name }}</option>
-                          @endforeach
-                      </select>
-                    </div>
-                  </div>
-                  <div class="modal-footer">
-                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">@lang('general.lbl_close') </button>
-                  <button type="button" class="btn btn-primary"  data-bs-dismiss="modal" id="btn_referred">@lang('general.lbl_apply')</button>
-                  </div>
-              </div>
-              </div>
-            </div>
-
-            <div class="modal fade" id="modal-scheduled" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-              <div class="modal-dialog modal-lg">
-              <div class="modal-content">
-                  <div class="modal-header">
-                  <h5 class="modal-title" id="staticBackdropLabel">@lang('general.lbl_scheduleselect')  </h5>
-                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                  </div>
-                  <div class="modal-body">
-
-                    <div class="row mb-3">
-                      <div class="col-md-1">
-                        <label class="form-label col-form-label col-md-8">@lang('general.lbl_room')   </label>
-                      </div>
-                      <div class="col-md-2">
-                          <select class="form-control" 
-                              name="room_id" id="room_id" required>
-                              <option value="">@lang('general.lbl_roomselect')   </option>
-                              @foreach($rooms as $room)
-                                  <option value="{{ $room->id }}" {{ ($room->id == $invoice->branch_room_id) 
-                                    ? 'selected'
-                                    : ''}}>{{ $room->remark }}</option>
-                              @endforeach
-                          </select>
-                      </div>
-                      <div class="col-md-1">
-                        <label class="form-label col-form-label col-md-4">@lang('general.lbl_dated')   </label>
-                      </div>
-                      <div class="col-md-2">
-                        <input type="text" 
-                        name="schedule_date"
-                        id="schedule_date"
-                        class="form-control" 
-                        value="{{ old('invoice_date') }}" required/>
-                        @if ($errors->has('invoice_date'))
-                                  <span class="text-danger text-left">{{ $errors->first('join_date') }}</span>
-                              @endif
-                      </div>
-                      <div class="col-md-1">
-                        <label class="form-label col-form-label col-md-8">@lang('general.lbl_time')   </label>
-                      </div>
-                      <div class="col-md-2">
-                        <div class="input-group bootstrap-timepicker timepicker">
-                            <input id="timepicker1" type="text" class="form-control input-small">
-                            <span class="btn btn-indigo input-group-addon"><i class="fas fa-clock"></i></span>
-                        </div>    
-                      </div>
-                    </div>
-                   
-                    <div class="panel-heading bg-teal-600 text-white"><strong>@lang('general.lbl_schedule_list')   </strong></div>
-                    </br>
-      
-                    <div class="col-md-12">
-                      <table class="table table-striped" id="order_time_table" style="width:100%">
-                        <thead>
-                        <tr>
-                            <th>@lang('general.lbl_room')   </th>
-                            <th scope="col" width="25%">@lang('general.lbl_invoice_no')   </th>
-                            <th scope="col" width="15%">@lang('general.lbl_total_customer')</th>
-                            <th scope="col" width="15%">@lang('general.lbl_schedule_at')   </th>
-                            <th scope="col" width="5%">@lang('general.lbl_duration')   </th>
-                            <th scope="col" width="15%">@lang('general.lbl_end_estimation') </th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        </tbody>
-                      </table> 
-                    </div>
-                  </div>
-                  <div class="modal-footer">
-                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">@lang('general.lbl_close') </button>
-                  <button type="button" class="btn btn-primary"  data-bs-dismiss="modal" id="btn_scheduled">@lang('general.lbl_apply')</button>
-                  </div>
-              </div>
-              </div>
-            </div>
+            
 
 
           </div>
@@ -246,8 +118,16 @@
 
 
 
-        <div class="panel-heading bg-teal-600 text-white"><strong>@lang('general.lbl_order_list')</strong></div>
+        <div class=" bg-teal-600 text-white">
+          <div class="row ps-2 pe-2 py-2">
+            <div class="col-md-3 fw-bold pt-2">@lang('general.lbl_order_list')</div>
+            <div class="col-md-9 d-flex justify-content-end">
+              <input type="button" class="btn btn-sm btn-default me-2" id="btn_import" name="btn_import" value="@lang('general.lbl_import_order')">
+            </div>
+          </div>
+        </div>
         <br>
+
 
         <div class="row mb-3">
           <div class="col-md-3">
@@ -378,7 +258,7 @@
                 <div class="col-md-5">
                   <input type="text" class="form-control" id="input-apply-voucher" value="{{ $invoice->voucher_code==null?"":$invoice->voucher_code }}">
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-4">
                   <button type="button" id="apply-voucher-btn" class="btn btn-warning">@lang('general.lbl_apply_voucher')</button>
                 </div>
             </div>
@@ -408,6 +288,34 @@
 
         </div>
 
+        <div class="modal fade" id="modal-order" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+          <div class="modal-dialog">
+          <div class="modal-content">
+              <div class="modal-header">
+              <h5 class="modal-title" id="staticBackdropLabel">@lang('general.lbl_order_list')</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                
+                <div class="container mt-4">
+                        <div class="mb-3">
+                            <div class="col-md-12">
+                              <select class="form-control" name="order_orderno_list" id="order_orderno_list">
+                              </select>
+                            </div>
+                          </div>
+                </div>
+    
+              </div>
+              <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">@lang('general.lbl_close') </button>
+              <button type="button" class="btn btn-primary"  data-bs-dismiss="modal" id="btn_choose_order">@lang('general.lbl_save')</button>
+              </div>
+          </div>
+          </div>
+        </div>
+
+
     </div>
   </div>
 </form>
@@ -425,6 +333,110 @@
 
           if (dd < 10) dd = '0' + dd;
           if (mm < 10) mm = '0' + mm;
+
+          $('#btn_import').on('click', function(){
+        if($('#customer_id').val()==''){
+              $('#customer_id').focus();
+                Swal.fire(
+                  {
+                    position: 'top-end',
+                    icon: 'warning',
+                    text: 'Please choose customer',
+                    showConfirmButton: false,
+                    imageHeight: 30, 
+                    imageWidth: 30,   
+                    timer: 1500
+                  }
+                );
+            }else{
+                const json = JSON.stringify({
+                      customer_id : $('#customer_id').val(),
+                    }
+                );
+
+                const res = axios.post("{{ route('orders.getorderlist') }}", json, {
+                    headers: {
+                      // Overwrite Axios's automatically set Content-Type
+                      'Content-Type': 'application/json'
+                    }
+                  }).then(resp => {
+                        if(resp.data.status=="success"){
+                          $('#order_orderno_list').find('option').remove().end();
+                          list_order_get = resp.data.data;
+                          
+                          if(list_order_get.length>0){
+                            $('#modal-order').modal('show');
+                            for (let index = 0; index < list_order_get.length; index++) {
+                              const element = list_order_get[index];
+                              $('#order_orderno_list').append('<option value="'+element.order_no+'">'+element.order_no+' ('+element.dated+') </option>');
+                              
+                            }
+                            $('#order_orderno_list').val(list_order_get[0].order_no).trigger('change');
+                          }
+
+                        }else{
+                          Swal.fire(
+                            {
+                              position: 'top-end',
+                              icon: 'warning',
+                              text: "@lang('general.lbl_msg_failed')"+resp.data.message,
+                              showConfirmButton: false,
+                              imageHeight: 30, 
+                              imageWidth: 30,   
+                              timer: 1500
+                            }
+                          );
+                        }
+                  });
+            }
+          });
+
+          $('#btn_choose_order').on('click', function(){
+          const json = JSON.stringify({
+                order_no : $('#order_orderno_list').find(':selected').val(),
+          });
+
+          const res = axios.post("{{ route('orders.getorder') }}", json, {
+                headers: {
+                  // Overwrite Axios's automatically set Content-Type
+                  'Content-Type': 'application/json'
+                }
+              }).then(resp => {
+                    if(resp.data.status=="success"){
+                      console.log(resp.data.data);
+                      var list = resp.data.data;
+                      for (let index = 0; index < list.length; index++) {
+                        const element = list[index];
+                        addProduct(
+                          element.product_id,
+                          element.remark,
+                          element.price,
+                          element.discount,
+                          element.qty,
+                          element.uom,
+                          0,
+                          element.total,
+                          "Good"
+                        );
+                        
+                      }
+
+                    }else{
+                      Swal.fire(
+                        {
+                          position: 'top-end',
+                          icon: 'warning',
+                          text: "@lang('general.lbl_msg_failed')"+resp.data.message,
+                          showConfirmButton: false,
+                          imageHeight: 30, 
+                          imageWidth: 30,   
+                          timer: 1500
+                        }
+                      );
+                    }
+              });
+        });
+
 
 
           $('#currency').on('change', function(){
@@ -790,7 +802,7 @@
             if(id==obj["id"]){
               isExist = 1;
               orderList[i]["total"] = (parseInt(orderList[i]["qty"])+1)*parseFloat(orderList[i]["price"]); 
-              orderList[i]["qty"] = parseInt(orderList[i]["qty"])+1;
+              orderList[i]["qty"] = parseInt(orderList[i]["qty"])+qty;
             }
           }
 

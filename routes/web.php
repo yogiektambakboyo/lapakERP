@@ -99,13 +99,15 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
             Route::get('/checkvoucher', 'OrdersController@checkvoucher')->name('orders.checkvoucher');
             Route::post('/create', 'OrdersController@store')->name('orders.store');
             Route::get('/search', 'OrdersController@search')->name('orders.search');
+            Route::post('/getorderlist', 'OrdersController@getorderlist')->name('orders.getorderlist');
+            Route::post('/getorder', 'OrdersController@getorder')->name('orders.getorder');
             Route::get('/{order}/show', 'OrdersController@show')->name('orders.show');
             Route::get('/{order}/edit', 'OrdersController@edit')->name('orders.edit');
             Route::get('/{order}/print', 'OrdersController@print')->name('orders.print');
             Route::get('/{order}/printthermal', 'OrdersController@printthermal')->name('orders.printthermal');
             Route::get('/getproduct', 'OrdersController@getproduct')->name('orders.getproduct');
             Route::get('/gettimetable', 'OrdersController@gettimetable')->name('orders.gettimetable');
-            Route::get('/{order}/getorder', 'OrdersController@getorder')->name('orders.getorder');
+            //Route::get('/{order}/getorder', 'OrdersController@getorder')->name('orders.getorder');
             Route::patch('/{order}/update', 'OrdersController@update')->name('orders.update');
             Route::delete('/{order}/delete', 'OrdersController@destroy')->name('orders.destroy');
             Route::get('/export', 'OrdersController@export')->name('orders.export');

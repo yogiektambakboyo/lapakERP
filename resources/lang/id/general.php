@@ -125,6 +125,8 @@ return [
     "lbl_contact_person_level" => "Level",
     "lbl_tax_id" => "NPWP",
     "lbl_print" => "Cetak",
+    "lbl_import_order" => "Import Order",
+    "lbl_order_list" => "Daftar Order",
     "lbl_printsj" => "Cetak SJ",
     "lbl_delivery_note" => "Surat Jalan",
     "lbl_printspk" => "Cetak SPK",

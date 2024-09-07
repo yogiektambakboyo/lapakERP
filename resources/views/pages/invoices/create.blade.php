@@ -47,20 +47,6 @@
 
           <div class="col-md-9">
             <div class="row mb-3">
-
-              <label class="form-label col-form-label col-md-2 d-none">@lang('general.lbl_spk')</label>
-              <div class="col-md-3 d-none">
-                <select class="form-control" 
-                    name="ref_no" id="ref_no" required>
-                    <option value="">@lang('general.lbl_spkselect')</label>
-                    @foreach($orders as $order)
-                        <option value="{{ $order->order_no }}">{{ $order->order_no }} </option>
-                    @endforeach
-                </select>
-              </div>
-
-
-
               <label class="form-label col-form-label col-md-2">@lang('general.lbl_customer')</label>
               <div class="col-md-3">
                 <select class="form-control" 
@@ -110,7 +96,14 @@
 
 
 
-        <div class="panel-heading bg-teal-600 text-white"><strong>@lang('general.lbl_order_list')</strong></div>
+        <div class="p-1 bg-teal-600 text-white">
+          <div class="row ps-2">
+            <div class="col-md-3 fw-bold pt-2">@lang('general.lbl_order_list')</div>
+            <div class="col-md-9 d-flex justify-content-end">
+              <input type="button" class="btn btn-sm btn-default me-2" id="btn_import" name="btn_import" value="@lang('general.lbl_import_order')">
+            </div>
+          </div>
+        </div>
         <br>
         <div class="row mb-3">
           
@@ -185,8 +178,8 @@
         <table class="table table-striped" id="order_product_table">
           <thead>
           <tr>
-              <th scope="col">No</th>
-              <th scope="col" width="20%">@lang('general.product')</th>
+              <th scope="col" width="5%">No</th>
+              <th scope="col" width="25%">@lang('general.product')</th>
               <th scope="col" width="10%">@lang('general.lbl_uom')</th>
               <th scope="col" width="10%">@lang('general.lbl_price')</th>
               <th scope="col" width="5%">@lang('general.lbl_discount')</th>
@@ -244,7 +237,7 @@
                 <div class="col-md-5">
                   <input type="text" class="form-control" id="input-apply-voucher">
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-4">
                   <button type="button" id="apply-voucher-btn" class="btn btn-warning">@lang('general.lbl_apply_voucher')</button>
                 </div>
             </div>
@@ -349,6 +342,34 @@
         </div>
 
 
+        <div class="modal fade" id="modal-order" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+          <div class="modal-dialog">
+          <div class="modal-content">
+              <div class="modal-header">
+              <h5 class="modal-title" id="staticBackdropLabel">@lang('general.lbl_order_list')</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                
+                <div class="container mt-4">
+                        <div class="mb-3">
+                            <div class="col-md-12">
+                              <select class="form-control" name="order_orderno_list" id="order_orderno_list">
+                              </select>
+                            </div>
+                          </div>
+                </div>
+    
+              </div>
+              <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">@lang('general.lbl_close') </button>
+              <button type="button" class="btn btn-primary"  data-bs-dismiss="modal" id="btn_choose_order">@lang('general.lbl_save')</button>
+              </div>
+          </div>
+          </div>
+        </div>
+
+
 
 
     </div>
@@ -361,6 +382,52 @@
       $(function () {
         $('#customer_id').select2();
         $('#lbl_total').text("Total ("+$('#curr_def').val()+")");
+
+        $('#btn_choose_order').on('click', function(){
+          const json = JSON.stringify({
+                order_no : $('#order_orderno_list').find(':selected').val(),
+          });
+
+          const res = axios.post("{{ route('orders.getorder') }}", json, {
+                headers: {
+                  // Overwrite Axios's automatically set Content-Type
+                  'Content-Type': 'application/json'
+                }
+              }).then(resp => {
+                    if(resp.data.status=="success"){
+                      console.log(resp.data.data);
+                      var list = resp.data.data;
+                      for (let index = 0; index < list.length; index++) {
+                        const element = list[index];
+                        addProduct(
+                          element.product_id,
+                          element.remark,
+                          element.price,
+                          element.discount,
+                          element.qty,
+                          element.uom,
+                          0,
+                          element.total,
+                          "Good"
+                        );
+                        
+                      }
+
+                    }else{
+                      Swal.fire(
+                        {
+                          position: 'top-end',
+                          icon: 'warning',
+                          text: "@lang('general.lbl_msg_failed')"+resp.data.message,
+                          showConfirmButton: false,
+                          imageHeight: 30, 
+                          imageWidth: 30,   
+                          timer: 1500
+                        }
+                      );
+                    }
+              });
+        });
 
         $('#currency').on('change', function(){
             if($('#currency').find(':selected').val() == $('#curr_def').val()){
@@ -467,6 +534,63 @@
           }
       });
 
+      $('#btn_import').on('click', function(){
+        if($('#customer_id').val()==''){
+          $('#customer_id').focus();
+            Swal.fire(
+              {
+                position: 'top-end',
+                icon: 'warning',
+                text: 'Please choose customer',
+                showConfirmButton: false,
+                imageHeight: 30, 
+                imageWidth: 30,   
+                timer: 1500
+              }
+            );
+        }else{
+            const json = JSON.stringify({
+                  customer_id : $('#customer_id').val(),
+                }
+            );
+
+            const res = axios.post("{{ route('orders.getorderlist') }}", json, {
+                headers: {
+                  // Overwrite Axios's automatically set Content-Type
+                  'Content-Type': 'application/json'
+                }
+              }).then(resp => {
+                    if(resp.data.status=="success"){
+                      $('#order_orderno_list').find('option').remove().end();
+                      list_order_get = resp.data.data;
+                      
+                      if(list_order_get.length>0){
+                        $('#modal-order').modal('show');
+                        for (let index = 0; index < list_order_get.length; index++) {
+                          const element = list_order_get[index];
+                          $('#order_orderno_list').append('<option value="'+element.order_no+'">'+element.order_no+' ('+element.dated+') </option>');
+                          
+                        }
+                        $('#order_orderno_list').val(list_order_get[0].order_no).trigger('change');
+                      }
+
+                    }else{
+                      Swal.fire(
+                        {
+                          position: 'top-end',
+                          icon: 'warning',
+                          text: "@lang('general.lbl_msg_failed')"+resp.data.message,
+                          showConfirmButton: false,
+                          imageHeight: 30, 
+                          imageWidth: 30,   
+                          timer: 1500
+                        }
+                      );
+                    }
+              });
+        }
+      });
+
 
 
 
@@ -515,7 +639,7 @@
                       'Content-Type': 'application/json'
                     }
                 }).then(resp => {
-                  table_product.clear().draw(false);
+                      table_product.clear().draw(false);
                       order_total = 0;
 
                       for(var i=0;i<resp.data.length;i++){
@@ -823,7 +947,7 @@
             if(id==obj["id"]){
               isExist = 1;
               orderList[i]["total"] = (parseInt(orderList[i]["qty"])+1)*parseFloat(orderList[i]["price"]); 
-              orderList[i]["qty"] = parseInt(orderList[i]["qty"])+1;
+              orderList[i]["qty"] = parseInt(orderList[i]["qty"])+qty;
             }
           }
 
@@ -1233,7 +1357,7 @@
                     $('#input_product_uom').val(),
                     $('#input_product_vat_total').val(),
                     $('#input_product_total').val(),"Good"
-                  )
+                  );
                 }
               });
 

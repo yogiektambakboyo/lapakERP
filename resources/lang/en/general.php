@@ -18,6 +18,7 @@ return [
     "lbl_return_no" => "Return No",
     "lbl_language" => "EN",
     "lbl_order_no" => "Order No",
+    "lbl_order_list" => "Order List",
 
     "product" => "Product",
     "productselect" => "Select Product",
@@ -118,6 +119,7 @@ return [
     "lbl_address" => "Address",
     "lbl_phoneno" => "Handphone",
     "lbl_drink" => "Drink",
+    "lbl_import_order" => "Import Order",
     "lbl_department" => "Departemen",
     "lbl_department_add" => "Tambah Departemen",
     "lbl_department_edit" => "Edit Departemen",

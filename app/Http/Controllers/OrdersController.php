@@ -571,10 +571,12 @@ class OrdersController extends Controller
      * 
      * @return \Illuminate\Http\Response
      */
-    public function getorder(String $order_no) 
+    public function getorder(Request $request) 
     {
         $data = $this->data;
         $user = Auth::user();
+
+        $order_no = $request->get("order_no");
         $product = DB::select(" select od.vat,od.vat_total,to_char(om.scheduled_at,'mm/dd/YYYY') as scheduled_date,om.customers_id,om.remark as order_remark,to_char(om.dated,'mm/dd/YYYY') as dated,om.payment_type,om.payment_nominal,om.scheduled_at,om.branch_room_id,od.qty,od.product_id,od.discount,od.price,od.total,ps.remark,ps.abbr,um.remark as uom  
         from order_detail od 
         join order_master om on om.order_no = od.order_no
@@ -583,16 +585,36 @@ class OrdersController extends Controller
         join uom um on um.id=uo.uom_id 
         where od.order_no='".$order_no."' ");
         
-        return $product;
-        return Datatables::of($product)
-        ->addColumn('action', function ($product) {
-            return  '<a href="#"  data-toggle="tooltip" data-placement="top" title="Tambah"   id="add_row"  class="btn btn-xs btn-green"><div class="fa-1x"><i class="fas fa-circle-plus fa-fw"></i></div></a>'.
-            '<a href="#"  data-toggle="tooltip" data-placement="top" title="Kurangi"   id="minus_row"  class="btn btn-xs btn-yellow"><div class="fa-1x"><i class="fas fa-circle-minus fa-fw"></i></div></a>'.
-            '<a href="#" data-toggle="tooltip" data-placement="top" title="Hapus"  id="delete_row"  class="btn btn-xs btn-danger"><div class="fa-1x"><i class="fas fa-circle-xmark fa-fw"></i></div></a>'.
-            '<a href="#"  data-toggle="tooltip" data-placement="top" title="Terapis" id="assign_row" class="btn btn-xs btn-gray"><div class="fa-1x"><i class="fas fa-user-tag fa-fw"></i></div></a>'.
-            '<a href="#" data-toggle="tooltip" data-placement="top" title="Dijual Oleh"  id="referral_row" class="btn btn-xs btn-purple"><div class="fa-1x"><i class="fas fa-users fa-fw"></i></div></a>' ;
-        })->make();
+        $result = array_merge(
+            ['status' => 'success'],
+            ['data' => $product],
+            ['message' => 'Save Successfully'],
+        );
+
+        return $result;
     }
+
+    public function getorderlist(Request $request) 
+    {
+        $data = $this->data;
+        $user = Auth::user();
+        $customer_id = $request->get("customer_id");
+        $product = DB::select(" select distinct om.order_no,om.dated 
+        from order_detail od 
+        join order_master om on om.order_no = od.order_no
+        left join invoice_master im on im.ref_no = om.order_no
+        where om.customers_id='".$customer_id."' and im.ref_no is null ");
+
+        $result = array_merge(
+            ['status' => 'success'],
+            ['data' => $product],
+            ['message' => 'Save Successfully'],
+        );
+
+        return $result;
+    }
+
+
 
     /**
      * Update user data
