@@ -9,7 +9,7 @@
       <div class="">
         <a target="_blank" href="{{ route('purchaseorders.print', $purchase->id) }}" class="btn btn-warning">@lang('general.lbl_print') </a>
         <a id="btn_list_rec" target="_blank" href="{{ route('receiveorders.search') }}/?filter_begin_date=2022-01-01&filter_end_date=2035-01-01&filter_branch_id=%25&search={{ $purchase->purchase_no }}&submit=Search" class="btn btn-danger">List @lang('general.lbl_receive') </a>
-        <a id="btn_rec" target="_blank" href="{{ route('receiveorders.createfrompo', $purchase->purchase_no) }}" class="btn btn-primary">@lang('general.lbl_receive') @lang('general.product') </a>
+        <a id="btn_rec" target="_blank" href="{{ route('receiveorders.createfrompo', $purchase->purchase_no) }}" class="btn btn-primary">@lang('general.lbl_receive') </a>
         <a href="{{ route('purchaseorders.index') }}" class="btn btn-default">@lang('general.lbl_back') </a>
       </div>
     </div>

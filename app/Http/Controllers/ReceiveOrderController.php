@@ -21,6 +21,7 @@ use App\Models\Receive;
 use App\Models\SettingsDocumentNumber;
 use App\Models\ReceiveDetail;
 use App\Models\Customer;
+use App\Models\LotNumber;
 use App\Models\Department;
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
@@ -266,6 +267,7 @@ class ReceiveOrderController extends Controller
         $count_no = SettingsDocumentNumber::where('doc_type','=','Receive')->where('branch_id','=',$request->get('branch_id'))->where('period','=','Yearly')->get(['current_value','abbr']);
         $receive_no = $count_no[0]->abbr.'-'.substr(('000'.$request->get('branch_id')),-3).'-'.date("Y").'-'.substr(('00000000'.((int)($count_no[0]->current_value) + 1)),-8);
 
+    
         $res_receive = Receive::create(
             array_merge(
                 ['receive_no' => $receive_no ],
@@ -303,6 +305,40 @@ class ReceiveOrderController extends Controller
 
 
         for ($i=0; $i < count($request->get('product')); $i++) { 
+            $check_lot = DB::select("select distinct lot_no as lot_no from receive_detail where po_no='".$request->get('ref_no')."' and product_id='".$request->get('product')[$i]["id"]."'; ");
+
+            $lot_no = "";
+            if(count($check_lot)>0){
+                $lot_no = $check_lot[0]->lot_no;
+
+                DB::update("update lot_number set updated_at = now(),qty_available = qty_available + ".$request->get('product')[$i]["qty"]." where doc_no='".$lot_no."' and product_id='".$request->get('product')[$i]["id"]."';");
+                DB::update("update lot_number set updated_at = now(),qty_onhand = qty_available-qty_allocated where doc_no='".$lot_no."' and product_id='".$request->get('product')[$i]["id"]."';");
+            }else{
+                $count_no_lot = SettingsDocumentNumber::where('doc_type','=','Lot_Number')->where('branch_id','=',$request->get('branch_id'))->where('period','=','Monthly')->get(['current_value','abbr']);
+                $lot_no = $count_no_lot[0]->abbr.'-'.substr(('000'.$request->get('branch_id')),-3).'-'.date("Ym").'-'.substr(('00000000'.((int)($count_no_lot[0]->current_value) + 1)),-8);
+
+                $res_lot_no = LotNumber::create(
+                    array_merge(
+                        ['doc_no' => $lot_no],
+                        ['product_id' => $request->get('product')[$i]["id"]],
+                        ['qty_available' => $request->get('product')[$i]["qty"]],
+                        ['qty_onhand' => $request->get('product')[$i]["qty"]],
+                        ['qty_allocated' => "0"],
+                        ['price' => $request->get('product')[$i]["price"]],
+                        ['created_by' => $user->id ],
+                        ['currency' => $request->get('currency')],
+                        ['kurs' => $request->get('kurs')],
+                        ['price' => $request->get('product')[$i]["price"]],
+                     )
+                );
+
+                SettingsDocumentNumber::where('doc_type','=','Lot_Number')->where('branch_id','=',$request->get('branch_id'))->where('period','=','Monthly')->update(
+                    array_merge(
+                        ['current_value' => ((int)($count_no_lot[0]->current_value) + 1)]
+                    )
+                );
+            }
+            
             $res_receive_detail = ReceiveDetail::create(
                 array_merge(
                     ['receive_no' => $receive_no],
@@ -310,6 +346,8 @@ class ReceiveOrderController extends Controller
                     ['qty' => $request->get('product')[$i]["qty"]],
                     ['price' => $request->get('product')[$i]["price"]],
                     ['total' => $request->get('product')[$i]["total"]],
+                    ['po_no' => $request->get('ref_no') ],
+                    ['lot_no' => $lot_no ],
                     ['expired_at' => Carbon::parse($request->get('product')[$i]["exp"])->format('Y-m-d') ],
                     ['product_remark' => $request->get('product')[$i]["abbr"]],
                     ['uom' => $request->get('product')[$i]["uom"]],
@@ -318,6 +356,8 @@ class ReceiveOrderController extends Controller
                     ['seq' => $i ],
                  )
             );
+
+            
 
 
             if(!$res_receive_detail){
@@ -329,6 +369,8 @@ class ReceiveOrderController extends Controller
         
                 return $result;
             }
+
+            
 
             PeriodSellPrice::where('branch_id','=',$request->get('branch_id'))->where('product_id','=',$request->get('product')[$i]["id"])->update(array_merge(
                 [ 'value' => $request->get('product')[$i]["price"]],

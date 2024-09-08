@@ -28,6 +28,8 @@ class ReceiveDetail extends Model
         'discount',
         'expired_at',
         'batch_no',
+        'po_no',
+        'lot_no',
         'product_remark',
         'discount',
         'seq',

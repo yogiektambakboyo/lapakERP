@@ -132,6 +132,10 @@ class HomeController extends Controller
                 where ub.user_id = ".$user->id."  and im.dated = now()::date                      
             ");
 
+            $s_reset_daily = DB::select("update setting_document_counter s set updated_at=now(),current_value = 0  where s.period='Daily' and (s.updated_at is null or s.updated_at::date!= now()::date);");
+            $s_reset_monthly = DB::select("update setting_document_counter s set updated_at=now(),current_value = 0 where s.period='Monthly' and (s.updated_at is null or to_char(s.updated_at,'YYYYMM')!= to_char(now(),'YYYYMM'));");
+            $s_reset_yearly = DB::select("update setting_document_counter s set updated_at=now(),current_value = 0 where s.period='Yearly' and (s.updated_at is null or to_char(s.updated_at,'YYYY')!= to_char(now(),'YYYY'));");
+
             $d_data_c = DB::select("
                 select count(distinct im.invoice_no) as count_sales from users_branch ub 
                 join customers c on c.branch_id = ub.branch_id 
@@ -216,7 +220,7 @@ class HomeController extends Controller
                     select id,pd.branch_id,0 as qty,now(),now(),ub.user_id
                     from product_sku
                     join product_distribution pd  on pd.product_id = product_sku.id  and pd.active = '1'
-                    join (select * from users_branch u where u.user_id = '59' order by branch_id desc limit 1 ) ub on ub.branch_id=pd.branch_id 
+                    join (select * from users_branch u where u.user_id = '".$user->id."' order by branch_id desc limit 1 ) ub on ub.branch_id=pd.branch_id 
                     left join product_stock pk on pk.product_id = product_sku.id and pk.branch_id = ub.branch_id
                     where product_sku.active = '1' and product_sku.type_id = '1' and pk.product_id is null;
             ");
