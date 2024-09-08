@@ -139,6 +139,15 @@ class HomeController extends Controller
                 where ub.user_id = ".$user->id."  and im.dated = now()::date                       
             ");
 
+            $insert_doc = DB::select('
+                insert into setting_document_counter(doc_type,abbr,"period",current_value,branch_id)
+                select sdc.doc_type,sdc.abbr,sdc.period,sdc.current_value,b.id 
+                from branch b 
+                join setting_document_counter sdc on sdc.branch_id=1
+                where b.id not in (select distinct branch_id from setting_document_counter)
+                order by b.id;
+            ');
+
             $d_data_p = DB::select("
                 select coalesce(sum(id.total+id.vat_total),0) as total_product  from users_branch ub 
                 join customers c on c.branch_id = ub.branch_id 
