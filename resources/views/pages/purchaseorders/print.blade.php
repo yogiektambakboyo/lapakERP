@@ -106,17 +106,17 @@
           <tr>
             <td style="text-align: left;width:70%;"></td>
             <td style="text-align: right;width:20%;background-color:#FFA726;">Sub Total</td>
-            <td style="text-align: right;width:10%;background-color:#FFA726;">Rp. {{ number_format(($purchase->total-$purchase->total_vat),0,',','.') }}</td>
+            <td style="text-align: right;width:10%;background-color:#FFA726;"> {{ number_format(($purchase->total-$purchase->total_vat),0,',','.') }}</td>
           </tr>
           <tr>
             <td style="text-align: left;width:70%;"></td>
             <td style="text-align: right;width:20%;background-color:#FFA726;">@lang('general.lbl_tax') </th>
-            <td style="text-align: right;width:10%;background-color:#FFA726;">Rp. {{ number_format($purchase->total_vat,0,',','.') }}</th>
+            <td style="text-align: right;width:10%;background-color:#FFA726;"> {{ number_format($purchase->total_vat,0,',','.') }}</th>
           </tr>
           <tr>
             <th style="text-align: left;width:70%;"></th>
-            <th style="text-align: right;width:20%;background-color:#FFA726;">Total</th>
-            <th style="text-align: right;width:10%;background-color:#FFA726;">Rp. {{ number_format($purchase->total,0,',','.') }}</th>
+            <th style="text-align: right;width:20%;background-color:#FFA726;">Total ({{ $purchase->currency }})</th>
+            <th style="text-align: right;width:10%;background-color:#FFA726;"> {{ number_format($purchase->total,0,',','.') }}</th>
           </tr>
         </tbody>
       </table> 

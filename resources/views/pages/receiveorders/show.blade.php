@@ -18,13 +18,13 @@
           <div class="col-md-12">
             <div class="row mb-3">
               <label class="form-label col-form-label col-md-1">@lang('general.lbl_dated_mmddYYYY')</label>
-              <div class="col-md-1">
+              <div class="col-md-2">
                 <input type="text" 
                 name="dated"
                 id="dated"
                 class="form-control" 
-                value="{{ substr(explode(" ",$receive->dated)[0],5,2) }}/{{ substr(explode(" ",$receive->dated)[0],8,2) }}/{{ substr(explode(" ",$receive->dated)[0],0,4) }}"
-                required disabled/>
+                value="{{ substr(explode(" ",$receive->dated)[0],8,2) }}-{{ substr(explode(" ",$receive->dated)[0],5,2) }}-{{ substr(explode(" ",$receive->dated)[0],0,4) }}"
+                required readonly/>
                 @if ($errors->has('receive_date'))
                           <span class="text-danger text-left">{{ $errors->first('receive_date') }}</span>
                       @endif
@@ -33,11 +33,11 @@
               <label class="form-label col-form-label col-md-1">PO</label>
               <div class="col-md-2">
                 <input class="form-control" 
-                    name="ref_no" id="ref_no" value="{{$receive->receive_no}}" disabled>
+                    name="ref_no" id="ref_no" value="{{$receive->ref_no}}" disabled>
               </div>
 
-              <label class="form-label col-form-label col-md-1">Shipto</label>
-              <div class="col-md-1">
+              <label class="form-label col-form-label col-md-1 d-none">Shipto</label>
+              <div class="col-md-1 d-none">
                 <select class="form-control" 
                     name="branch_id" id="branch_id" required disabled>
                     <option value="">@lang('general.lbl_branchselect')</option>
@@ -48,7 +48,7 @@
               </div>
 
               <label class="form-label col-form-label col-md-1">Supplier</label>
-              <div class="col-md-1">
+              <div class="col-md-2">
                 <select class="form-control" 
                     name="supplier_id" id="supplier_id" required disabled>
                     <option value="">Select Suppliers</option>
@@ -59,7 +59,7 @@
               </div>
 
                 <label class="form-label col-form-label col-md-1">@lang('general.lbl_remark')</label>
-                <div class="col-md-1">
+                <div class="col-md-2">
                   <input type="text" 
                   name="remark"
                   id="remark"
@@ -83,7 +83,6 @@
                   <th scope="col" width="5%">@lang('general.lbl_qty')</th>
                   <th scope="col" width="10%">Disc</th>
                   <th scope="col" width="10%">Expired</th>
-                  <th scope="col" width="10%">Batch No</th>
                   <th scope="col" width="10%">Total</th>
               </tr>
               </thead>
@@ -92,20 +91,24 @@
             </table> 
             
             <br>
-            <div class="row mb-3">
-              <label class="form-label col-form-label col-md-9 text-end"><h2>Sub Total </h2></label>
-              <div class="col-md-3">
-                <h3 class="text-end"><label id="sub-total">0</label></h3>
+            <div class="col-md-12">
+              <div class="col-md-12">
+                <div class="col-auto text-end">
+                  <label class="col-md-4">Sub Total</label>
+                  <label class="col-md-4" id="sub-total"> 0</label>
+                </div>
               </div>
-
-              <label class="form-label col-form-label col-md-9 text-end"><h2>@lang('general.lbl_tax') </h2></label>
-              <div class="col-md-3">
-                <h3 class="text-end"><label id="vat-total">0</label></h3>
+              <div class="col-md-12">
+                <div class="col-auto text-end">
+                  <label class="col-md-4">@lang('general.lbl_tax')</label>
+                  <label class="col-md-4" id="vat-total">0</label>
+                </div>
               </div>
-
-              <label class="form-label col-form-label col-md-9 text-end"><h1>Total</h1></label>
-              <div class="col-md-3">
-                <h1 class="display-5 text-end"><label id="result-total">Rp. 0</label></h1>
+              <div class="col-md-12">
+                <div class="col-auto text-end">
+                  <label id="lbl_total" class="col-md-4 h3">Total ({{ $receive->currency }})</label>
+                  <label class="col-md-4  h3" id="result-total">0</label>
+                </div>
               </div>
             </div>
           <div class="col-md-12">
@@ -177,16 +180,15 @@
                     "qty"         : currency(obj["qty"], { separator: ".", decimal: ",", symbol: "", precision: 0 }).format(),
                     "disc"         : currency(obj["disc"], { separator: ".", decimal: ",", symbol: "", precision: 0 }).format(),
                     "exp"         : obj["exp"],
-                    "bno"         : obj["bno"],
                     "total"       : currency(obj["total"], { separator: ".", decimal: ",", symbol: "", precision: 0 }).format(),
                   }).draw(false);
                   sub_total = sub_total + (((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"]))-(parseFloat(orderList[i]["disc"])));
                        
                 }
 
-                $('#result-total').text(currency(total, { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
-                $('#vat-total').text(currency(total_vat, { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
-                $('#sub-total').text(currency(sub_total, { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
+                $('#result-total').text(currency(total, { separator: ".", decimal: ",", symbol: " ", precision: 0 }).format());
+                $('#vat-total').text(currency(total_vat, { separator: ".", decimal: ",", symbol: " ", precision: 0 }).format());
+                $('#sub-total').text(currency(sub_total, { separator: ".", decimal: ",", symbol: " ", precision: 0 }).format());
 
           });
       });
@@ -205,7 +207,6 @@
             { data: 'qty' },
             { data: 'disc' },
             { data: 'exp' },
-            { data: 'bno' },
             { data: 'total' },
         ],
         });

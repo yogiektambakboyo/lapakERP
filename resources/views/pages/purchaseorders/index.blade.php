@@ -34,7 +34,6 @@
         <table class="table table-striped" id="example">
             <thead>
             <tr>
-                <th scope="col" width="10%">@lang('general.lbl_branch')</th>
                 <th>@lang('general.lbl_purchase_no')</th>
                 <th scope="col" width="8%">@lang('general.lbl_dated')</th>
                 <th scope="col" width="15%">Supplier</th>
@@ -49,9 +48,8 @@
 
                 @foreach($purchases as $purchase)
                     <tr>
-                        <td>{{ $purchase->branch_name }}</td>
                         <td>{{ $purchase->purchase_no }}</td>
-                        <td>{{ $purchase->dated }}</td>
+                        <td>{{ substr(explode(" ",$purchase->dated)[0],8,2) }}-{{ substr(explode(" ",$purchase->dated)[0],5,2) }}-{{ substr(explode(" ",$purchase->dated)[0],0,4) }}</td>
                         <td>{{ $purchase->supplier }}</td>
                         <td>{{ $purchase->remark }}</td>
                         <td>{{ number_format($purchase->total,0,',','.') }}</td>

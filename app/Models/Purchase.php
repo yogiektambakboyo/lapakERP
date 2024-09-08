@@ -39,5 +39,7 @@ class Purchase extends Model
         'ref_no',
         'is_receive',
         'ship_to',
+        'currency',
+        'kurs',
     ];
 }

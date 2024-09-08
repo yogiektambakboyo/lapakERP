@@ -837,13 +837,12 @@
                         text: "@lang('general.lbl_msg_success_invoice') "+resp.data.message,
                         title : "@lang('general.lbl_success')",
                         icon: 'success',
-                        showDenyButton: true,
+                        showDenyButton: false,
                         showCancelButton: true,
                         cancelButtonColor: '#d33',
                         denyButtonColor: '#0072b3',
                         cancelButtonText: "@lang('general.lbl_close')",
                         confirmButtonText: "@lang('general.lbl_print')",
-                        denyButtonText: "@lang('general.lbl_printspk')",
                       }).then((result) => {
                         /* Read more about isConfirmed, isDenied below */
                         if (result.isConfirmed) {

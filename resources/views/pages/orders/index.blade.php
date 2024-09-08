@@ -35,7 +35,6 @@
                 <th>@lang('general.lbl_order_no')   </th>
                 <th scope="col" width="8%">@lang('general.lbl_dated')</th>
                 <th scope="col" width="15%">@lang('general.lbl_total_customer')</th>
-                <th scope="col" width="15%">@lang('general.lbl_sales')</th>
                 <th scope="col" width="10%">Total</th>
                 <th scope="col" width="2%">@lang('general.lbl_action')</th>  
                 <th scope="col" width="2%"></th>
@@ -49,7 +48,6 @@
                         <td>{{ $order->order_no }}</td>
                         <td>{{ substr(explode(" ",$order->dated)[0],8,2) }}-{{ substr(explode(" ",$order->dated)[0],5,2) }}-{{ substr(explode(" ",$order->dated)[0],0,4) }}</td>
                         <td>{{ $order->customer }}</td>
-                        <td>{{ $order->sales_name }}</td>
                         <td>{{ number_format($order->total,0,',','.') }}</td>
                         <td><a href="{{ route('orders.show', $order->id) }}" class="btn btn-warning btn-sm  {{ $act_permission->allow_show==1?'':'d-none' }}">@lang('general.lbl_show')</a></td>
                         <td><a href="{{ route('orders.edit', $order->id) }}" class="btn btn-info btn-sm  {{ $act_permission->allow_edit==1?'':'d-none' }} ">@lang('general.lbl_edit')</a></td>

@@ -16,6 +16,7 @@ return [
     "lbl_return_no" => "Nomor Retur",
     "lbl_segment" => "Segment",
     "lbl_language" => "ID",
+    "lbl_note" => "Catatan",
     "lbl_currency_name" => "Nama Mata Uang",
     "lbl_currency_new" => "Mata Uang Baru",
 

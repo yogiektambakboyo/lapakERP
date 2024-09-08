@@ -63,7 +63,7 @@
       <table class="table table-striped" id="order_table" width="100%">
         <thead>
         <tr style="background-color:#FFA726;color:white;">
-            <th>@lang('general.product')</th>
+            <th  width="85%">@lang('general.product')</th>
             <th scope="col" width="10%">@lang('general.lbl_uom')</th>
             <th scope="col" width="5%">@lang('general.lbl_qty')</th>
         </tr>
@@ -92,12 +92,12 @@
         </tbody>
       </table> 
 
-      <table class="table table-striped" id="order_table" width="100%">
+      <table class="table table-striped" width="100%">
         <thead>
         </thead>
         <tbody>
           <tr>
-            <td style="text-align: left;width:70%;">Catatan : </td>
+            <td style="text-align: left;width:70%;">@lang('general.lbl_note') : </td>
           </tr>
           <tr>
             <th style="text-align: left;width:70%;">{{ $invoice->payment_type }} @if($invoice->total_payment>=$invoice->total)  {{ "Lunas" }}   @endif</th>
@@ -110,7 +110,7 @@
           </tr>
         </tbody>
       </table> 
-      <table class="table table-striped" id="order_table" width="100%">
+      <table class="table table-striped" width="100%">
         <thead>
         </thead>
         <tbody>
@@ -143,3 +143,7 @@
       </table>
    </body> 
 </html> 
+
+<script type="text/javascript">
+  window.print();
+</script>

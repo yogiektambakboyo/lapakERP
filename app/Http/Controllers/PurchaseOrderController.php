@@ -12,6 +12,7 @@ use App\Models\JobTitle;
 use App\Models\Order;
 use App\Models\Supplier;
 use App\Models\Settings;
+use App\Models\Currency;
 use App\Models\SettingsDocumentNumber;
 use App\Models\OrderDetail;
 use App\Models\Invoice;
@@ -156,9 +157,9 @@ class PurchaseOrderController extends Controller
             'data' => $data,
             'suppliers' => $suppliers,
             'usersall' => $usersall,
-            'branchs' => Branch::join('users_branch as ub','ub.branch_id', '=', 'branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']),
+            'currency' => Currency::all(),
+            'branchs' => Branch::join('users_branch as ub','ub.branch_id', '=', 'branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark','branch.currency']),
             'payment_type' => $payment_type, 'company' => Company::get()->first(),
-            'rooms' => Room::join('users_branch as ub','ub.branch_id', '=', 'branch_room.branch_id')->where('ub.user_id','=',$user->id)->get(['branch_room.id','branch_room.remark']),
         ]);
     }
 
@@ -231,6 +232,8 @@ class PurchaseOrderController extends Controller
                 ['remark' => $request->get('remark') ],
                 ['total_discount' => $request->get('total_discount') ],
                 ['branch_id' => $request->get('branch_id')],
+                ['currency' => $request->get('currency')],
+                ['kurs' => $request->get('kurs')],
                 ['branch_name' => $request->get('branch_name')],
             )
         );
@@ -311,7 +314,8 @@ class PurchaseOrderController extends Controller
         return view('pages.purchaseorders.show',[
             'data' => $data,
             'suppliers' => $suppliers,
-            'branchs' => Branch::join('users_branch as ub','ub.branch_id', '=', 'branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']),
+            'currency' => Currency::all(),
+            'branchs' => Branch::join('users_branch as ub','ub.branch_id', '=', 'branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark','branch.currency']),
             'users' => $users,
             'purchase' => $purchase,
             'purchaseDetails' => PurchaseDetail::join('purchase_master as om','om.purchase_no','=','purchase_detail.purchase_no')->join('product_sku as ps','ps.id','=','purchase_detail.product_id')->join('product_uom as u','u.product_id','=','purchase_detail.product_id')->join('uom as um','um.id','=','u.uom_id')->where('purchase_detail.purchase_no',$purchase->purchase_no)->get(['um.remark as uom','purchase_detail.qty','purchase_detail.price','purchase_detail.subtotal_vat','purchase_detail.subtotal','ps.id','ps.remark as product_name','purchase_detail.discount']),
@@ -337,19 +341,19 @@ class PurchaseOrderController extends Controller
             'suppliers' => $suppliers,
             'branchs' => Branch::join('users_branch as ub','ub.branch_id', '=', 'branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']),
             'users' => $users,
-            'settings' => Settings::get(),
+            'settings' => Company::get(),
             'purchase' => $purchase,
             'purchaseDetails' => PurchaseDetail::join('purchase_master as om','om.purchase_no','=','purchase_detail.purchase_no')->join('branch as bh','bh.id','=','om.branch_id')->join('product_sku as ps','ps.id','=','purchase_detail.product_id')->join('product_uom as u','u.product_id','=','purchase_detail.product_id')->join('uom as um','um.id','=','u.uom_id')->where('purchase_detail.purchase_no',$purchase->purchase_no)->get(['um.remark as uom','purchase_detail.qty','purchase_detail.price','purchase_detail.subtotal as total','ps.id','ps.remark as product_name','purchase_detail.discount','bh.remark as branch_name','bh.address']),
             'usersReferrals' => User::get(['users.id','users.name']),
             'payment_type' => $payment_type,
         ])->setOptions(['defaultFont' => 'sans-serif'])->setPaper('a4', 'landscape');
-        return $pdf->stream('invoice.pdf');
+        //return $pdf->stream('invoice.pdf');
         return view('pages.purchaseorders.print',[
             'data' => $data,
             'suppliers' => $suppliers,
             'branchs' => Branch::join('users_branch as ub','ub.branch_id', '=', 'branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']),
             'users' => $users,
-            'settings' => Settings::get(),
+            'settings' => Company::get(),
             'purchase' => $purchase,
             'purchaseDetails' => PurchaseDetail::join('purchase_master as om','om.purchase_no','=','purchase_detail.purchase_no')->join('branch as bh','bh.id','=','om.branch_id')->join('product_sku as ps','ps.id','=','purchase_detail.product_id')->join('product_uom as u','u.product_id','=','purchase_detail.product_id')->join('uom as um','um.id','=','u.uom_id')->where('purchase_detail.purchase_no',$purchase->purchase_no)->get(['um.remark as uom','purchase_detail.qty','purchase_detail.price','purchase_detail.subtotal as total','ps.id','ps.remark as product_name','purchase_detail.discount','bh.remark as branch_name','bh.address']),
             'usersReferrals' => User::get(['users.id','users.name']),
@@ -378,7 +382,8 @@ class PurchaseOrderController extends Controller
         return view('pages.purchaseorders.edit',[
             'data' => $data,
             'suppliers' => $suppliers,
-            'branchs' => Branch::join('users_branch as ub','ub.branch_id', '=', 'branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']),
+            'currency' => Currency::all(),
+            'branchs' => Branch::join('users_branch as ub','ub.branch_id', '=', 'branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark','branch.currency']),
             'users' => $users,
             'purchase' => $purchase,
             'purchaseDetails' => PurchaseDetail::join('purchase_master as om','om.purchase_no','=','purchase_detail.purchase_no')->join('product_sku as ps','ps.id','=','purchase_detail.product_id')->join('product_uom as u','u.product_id','=','purchase_detail.product_id')->join('uom as um','um.id','=','u.uom_id')->where('purchase_detail.purchase_no',$purchase->purchase_no)->get(['um.remark as uom','purchase_detail.qty','purchase_detail.price','purchase_detail.subtotal as total','ps.id','ps.remark as product_name','purchase_detail.discount']),
@@ -398,21 +403,18 @@ class PurchaseOrderController extends Controller
     {
         $data = $this->data;
         $user = Auth::user();
-        $product = DB::select(" select od.vat,od.qty,od.product_id,od.discount,od.price,od.subtotal_vat,od.subtotal,ps.remark,ps.abbr,um.remark as uom,om.dated,om.supplier_id,om.branch_id,om.remark as d_remark
+        $product = DB::select(" select sum(coalesce(rd.qty,0)) as qty_rec,om.kurs,om.currency,od.vat,od.qty,od.product_id,od.discount,od.price,od.subtotal_vat,od.subtotal,ps.remark,ps.abbr,um.remark as uom,om.dated,om.supplier_id,om.branch_id,om.remark as d_remark
         from purchase_detail od 
         join purchase_master om on om.purchase_no = od.purchase_no
         join product_sku ps on ps.id=od.product_id
         join product_uom uo on uo.product_id = od.product_id
         join uom um on um.id=uo.uom_id 
-        where od.purchase_no='".$purchase_no."' ");
+        left join receive_master rm on rm.ref_no = om.purchase_no
+        left join receive_detail rd on rd.receive_no = rm.receive_no and rd.product_id = od.product_id
+        where od.purchase_no='".$purchase_no."' 
+        group by om.kurs,om.currency,od.vat,od.qty,od.product_id,od.discount,od.price,od.subtotal_vat,od.subtotal,ps.remark,ps.abbr,um.remark,om.dated,om.supplier_id,om.branch_id,om.remark ");
         
         return $product;
-        return Datatables::of($product)
-        ->addColumn('action', function ($product) {
-            return  '<a href="#"  data-toggle="tooltip" data-placement="top" title="Tambah"   id="add_row"  class="btn btn-xs btn-green"><div class="fa-1x"><i class="fas fa-circle-plus fa-fw"></i></div></a>'.
-            '<a href="#"  data-toggle="tooltip" data-placement="top" title="Kurangi"   id="minus_row"  class="btn btn-xs btn-yellow"><div class="fa-1x"><i class="fas fa-circle-minus fa-fw"></i></div></a>'.
-            '<a href="#" data-toggle="tooltip" data-placement="top" title="Hapus"  id="delete_row"  class="btn btn-xs btn-danger"><div class="fa-1x"><i class="fas fa-circle-xmark fa-fw"></i></div></a>';
-        })->make();
     }
 
     /**

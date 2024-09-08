@@ -202,6 +202,15 @@ class HomeController extends Controller
                 from period_stock ps  where ps.periode=to_char(now()-interval '5 day','YYYYMM')::int;");
             }
 
+            $exist_product_stock = DB::select("
+                    insert into product_stock(product_id,branch_id,qty,updated_at,created_at,created_by) 
+                    select id,pd.branch_id,0 as qty,now(),now(),ub.user_id
+                    from product_sku
+                    join product_distribution pd  on pd.product_id = product_sku.id  and pd.active = '1'
+                    join (select * from users_branch u where u.user_id = '59' order by branch_id desc limit 1 ) ub on ub.branch_id=pd.branch_id 
+                    left join product_stock pk on pk.product_id = product_sku.id and pk.branch_id = ub.branch_id
+                    where product_sku.active = '1' and product_sku.type_id = '1' and pk.product_id is null;
+            ");
 
             $has_shift_counter = DB::select("
                 select users_id from shift_counter where created_at::date=now()::date;

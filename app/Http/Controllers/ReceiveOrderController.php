@@ -102,14 +102,12 @@ class ReceiveOrderController extends Controller
         $user = Auth::user();
         $act_permission = $this->act_permission[0];
         $branchs = Branch::join('users_branch as ub','ub.branch_id', '=', 'branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']);    
-        $receives = Receive::orderBy('id', 'ASC')
-                ->join('suppliers as jt','jt.id','=','receive_master.supplier_id')
-                ->join('branch as b','b.id','=','jt.branch_id')
-                ->join('users_branch as ub', function($join){
-                    $join->on('ub.branch_id', '=', 'b.id')
-                    ->whereColumn('ub.branch_id', 'jt.branch_id');
-                })->where('ub.user_id', $user->id)->where('receive_master.dated','>=',Carbon::now()->subDay(7))    
-              ->paginate(10,['receive_master.id','b.remark as branch_name','receive_master.receive_no','receive_master.dated','jt.name as customer','receive_master.total','receive_master.total_discount','receive_master.total_payment' ]);
+        $receives = DB::select("select rm.id,b.remark as branch_name,rm.receive_no,rm.ref_no,rm.dated,rm.total,total_discount,rm.total_payment,s.name as customer  
+                                from receive_master rm 
+                                join suppliers s on s.id = rm.supplier_id 
+                                join branch b on b.id = s.branch_id 
+                                join users_branch ub on ub.branch_id = b.id and ub.user_id = '".$user->id."'
+                                where rm.dated > now()-interval'7 days'");
         return view('pages.receiveorders.index',['company' => Company::get()->first()], compact('receives','data','keyword','act_permission','branchs'))->with('i', ($request->input('page', 1) - 1) * 5);
     }
 
@@ -133,18 +131,14 @@ class ReceiveOrderController extends Controller
             $strencode = base64_encode($keyword.'#'.$begindate.'#'.$enddate.'#'.$branchx);
             return Excel::download(new ReceivesExport($strencode), 'receiveorder_'.Carbon::now()->format('YmdHis').'.xlsx');
         }else{
-            $receives = Receive::orderBy('id', 'ASC')
-                ->join('suppliers as jt','jt.id','=','receive_master.supplier_id')
-                ->join('branch as b','b.id','=','jt.branch_id')
-                ->join('users_branch as ub', function($join){
-                    $join->on('ub.branch_id', '=', 'b.id')
-                    ->whereColumn('ub.branch_id', 'jt.branch_id');
-                })
-                ->where('ub.user_id', $user->id)
-                ->where('b.id','like','%'.$branchx.'%')  
-                ->where('receive_master.receive_no','like','%'.$keyword.'%')  
-                ->whereBetween('receive_master.dated',$fil) 
-                ->paginate(10,['receive_master.id','b.remark as branch_name','receive_master.receive_no','receive_master.dated','jt.name as customer','receive_master.total','receive_master.total_discount','receive_master.total_payment' ]);
+            $receives = DB::select("select rm.id,b.remark as branch_name,rm.receive_no,rm.ref_no,rm.dated,rm.total,total_discount,rm.total_payment,s.name as customer  
+                                from receive_master rm 
+                                join suppliers s on s.id = rm.supplier_id 
+                                join branch b on b.id = s.branch_id 
+                                join users_branch ub on ub.branch_id = b.id and ub.user_id = '".$user->id."'
+                                where (rm.receive_no like '%".$keyword."%' or rm.ref_no like '%".$keyword."%' ) and b.id::character varying like '%".$branchx."%' and rm.dated between '".$begindate."' and '".$enddate."' ");
+
+            
             return view('pages.receiveorders.index',['company' => Company::get()->first()], compact('branchs','receives','data','keyword','act_permission'))->with('i', ($request->input('page', 1) - 1) * 5);
         }
     }
@@ -176,6 +170,34 @@ class ReceiveOrderController extends Controller
         $suppliers = Supplier::join('users_branch as ub','ub.branch_id', '=', 'suppliers.branch_id')->where('ub.user_id','=',$user->id)->get(['suppliers.id','suppliers.name']);
         $usersall = User::join('users_branch as ub','ub.branch_id', '=', 'users.branch_id')->where('ub.user_id','=',$user->id)->whereIn('users.job_id',[1,2])->get(['users.id','users.name']);
         return view('pages.receiveorders.create',[
+            'customers' => Customer::join('users_branch as ub','ub.branch_id', '=', 'customers.branch_id')->join('branch as b','b.id','=','ub.branch_id')->where('ub.user_id',$user->id)->get(['customers.id','customers.name','b.remark']),
+            'data' => $data,
+            'suppliers' => $suppliers,
+            'usersall' => $usersall,
+            'purchases' => $purchases,
+            'branchs' => Branch::join('users_branch as ub','ub.branch_id', '=', 'branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']),
+            'payment_type' => $payment_type, 'company' => Company::get()->first(),
+            'rooms' => Room::join('users_branch as ub','ub.branch_id', '=', 'branch_room.branch_id')->where('ub.user_id','=',$user->id)->get(['branch_room.id','branch_room.remark']),
+        ]);
+    }
+
+    public function createfrompo(String $po_no) 
+    {
+        $user = Auth::user();
+        $id = $user->roles->first()->id;
+        $this->getpermissions($id);
+
+        $data = $this->data;
+        $user = Auth::user();
+        $payment_type = ['Cash','BCA - Debit','BCA - Kredit','Mandiri - Debit','Mandiri - Kredit','Transfer','QRIS'];
+        $purchases = DB::select("select distinct pm.purchase_no as purchase_no
+                                from purchase_master pm
+                                join (select * from users_branch u where u.user_id = '".$user->id."' order by branch_id desc) ub on ub.branch_id = pm.branch_id 
+                                where pm.purchase_no = '".$po_no."' ");
+        $suppliers = Supplier::join('users_branch as ub','ub.branch_id', '=', 'suppliers.branch_id')->where('ub.user_id','=',$user->id)->get(['suppliers.id','suppliers.name']);
+        $usersall = User::join('users_branch as ub','ub.branch_id', '=', 'users.branch_id')->where('ub.user_id','=',$user->id)->whereIn('users.job_id',[1,2])->get(['users.id','users.name']);
+        //return $purchases;
+        return view('pages.receiveorders.createfrompo',[
             'customers' => Customer::join('users_branch as ub','ub.branch_id', '=', 'customers.branch_id')->join('branch as b','b.id','=','ub.branch_id')->where('ub.user_id',$user->id)->get(['customers.id','customers.name','b.remark']),
             'data' => $data,
             'suppliers' => $suppliers,
@@ -257,7 +279,15 @@ class ReceiveOrderController extends Controller
                 ['remark' => $request->get('remark') ],
                 ['ref_no' => $request->get('ref_no') ],
                 ['branch_id' => $request->get('branch_id')],
+                ['currency' => $request->get('currency')],
+                ['kurs' => $request->get('kurs')],
                 ['branch_name' => $request->get('branch_name')],
+            )
+        );
+
+        SettingsDocumentNumber::where('doc_type','=','Receive')->where('branch_id','=',$request->get('branch_id'))->where('period','=','Yearly')->update(
+            array_merge(
+                ['current_value' => ((int)($count_no[0]->current_value) + 1)]
             )
         );
 
@@ -280,7 +310,6 @@ class ReceiveOrderController extends Controller
                     ['qty' => $request->get('product')[$i]["qty"]],
                     ['price' => $request->get('product')[$i]["price"]],
                     ['total' => $request->get('product')[$i]["total"]],
-                    ['batch_no' => $request->get('product')[$i]["bno"]],
                     ['expired_at' => Carbon::parse($request->get('product')[$i]["exp"])->format('Y-m-d') ],
                     ['product_remark' => $request->get('product')[$i]["abbr"]],
                     ['uom' => $request->get('product')[$i]["uom"]],
@@ -316,12 +345,6 @@ class ReceiveOrderController extends Controller
             ['status' => 'success'],
             ['data' => $receive_no],
             ['message' => 'Save Successfully'],
-        );
-
-        SettingsDocumentNumber::where('doc_type','=','Receive')->where('branch_id','=',$request->get('branch_id'))->where('period','=','Yearly')->update(
-            array_merge(
-                ['current_value' => ((int)($count_no[0]->current_value) + 1)]
-            )
         );
 
         return $result;
@@ -437,7 +460,7 @@ class ReceiveOrderController extends Controller
     {
         $data = $this->data;
         $user = Auth::user();
-        $product = DB::select(" select od.vat,om.total as result_total,om.total_vat,om.receive_no,to_char(od.expired_at,'mm/dd/YYYY') as exp,od.batch_no as bno,od.qty,od.product_id,od.discount,od.price,od.total as subtotal,ps.remark,ps.abbr,um.remark as uom 
+        $product = DB::select(" select od.vat,om.total as result_total,om.total_vat,om.receive_no,to_char(od.expired_at,'dd-mm-YYYY') as exp,od.batch_no as bno,od.qty,od.product_id,od.discount,od.price,od.total as subtotal,ps.remark,ps.abbr,um.remark as uom 
         from receive_detail od 
         join receive_master om on om.receive_no = od.receive_no
         join product_sku ps on ps.id=od.product_id

@@ -21,13 +21,13 @@
               <div class="col-md-2">
                 <input id="purchase_no" name="purchase_no" type="hidden" value="{{ $purchase->purchase_no }}">
                 <input type="text" 
-                name="dated"
-                id="dated"
+                name="doc_dated"
+                id="doc_dated"
                 class="form-control" 
-                value="{{ substr(explode(" ",$purchase->dated)[0],5,2) }}/{{ substr(explode(" ",$purchase->dated)[0],8,2) }}/{{ substr(explode(" ",$purchase->dated)[0],0,4) }}"
+                value="{{ substr(explode(" ",$purchase->dated)[0],8,2) }}-{{ substr(explode(" ",$purchase->dated)[0],5,2) }}-{{ substr(explode(" ",$purchase->dated)[0],0,4) }}"
                 required/>
-                @if ($errors->has('purchase_date'))
-                          <span class="text-danger text-left">{{ $errors->first('purchase_date') }}</span>
+                @if ($errors->has('doc_dated'))
+                          <span class="text-danger text-left">{{ $errors->first('doc_dated') }}</span>
                       @endif
               </div>
 
@@ -48,7 +48,7 @@
                     name="supplier_id" id="supplier_id" required>
                     <option value="">Select Suppliers</option>
                     @foreach($suppliers as $supplier)
-                        <option value="{{ $supplier->id }}" {{ $purchase->supplier_id == $supplier->id ? 'selected' : '' }} >{{ $supplier->id }} - {{ $supplier->name }} </option>
+                        <option value="{{ $supplier->id }}" {{ $purchase->supplier_id == $supplier->id ? 'selected' : '' }} >{{ $supplier->name }} </option>
                     @endforeach
                 </select>
               </div>
@@ -150,21 +150,76 @@
             
             
             <div class="row mb-3">
-              <label class="form-label col-form-label col-md-9 text-end"><h2>Sub Total </h2></label>
-              <div class="col-md-3">
-                <h3 class="text-end"><label id="sub-total">{{ number_format(($purchase->total-$purchase->total_vat),0,',','.') }}</label></h3>
+              <div class="col-md-6">
+                <div class="row mb-3">
+                  <label class="form-label col-form-label col-md-3">@lang('sidebar.MataUang')</label>
+                  <div class="col-md-2">
+                    <input type="hidden" name="curr_def" id="curr_def" value="{{ $branchs[0]->currency }}">
+                    <select class="form-select" name="currency" id="currency">
+                        @php
+                        $selected = "";
+                        $curr = $purchase->currency;
+
+                        for ($i=0; $i < count($currency); $i++) { 
+                          if($currency[$i]->remark == $curr){
+                            $selected = "selected";
+                          }else{
+                            $selected = "";
+                          }
+                            echo '<option value="'.$currency[$i]->remark.'" '.$selected.'>'.$currency[$i]->remark.'</option>';
+                        }   
+                        @endphp
+                    </select>
+                  </div>
+
+                  <label class="form-label col-form-label col-md-2 kurs d-none" id="label-kurs">Kurs</label>
+                  <br>
+                  <div class="col-md-3 kurs  d-none">
+                    <input type="number" class="form-control kurs  d-none" id="kurs" value="1" name="kurs">
+                  </div>
+                  <label class="form-label col-form-label col-md-2 kurs d-none">{{ $branchs[0]->currency }}</label>
+                  
+
+                  @if ($errors->has('currency'))
+                      <span class="text-danger text-left">{{ $errors->first('currency') }}</span>
+                  @endif
+                </div>
+
+                <div class="row mb-3">
+                  <label class="form-label col-form-label col-md-3">@lang('general.lbl_remark')</label>
+                  <div class="col-md-7">
+                    <input type="text" 
+                    name="remark"
+                    id="remark"
+                    class="form-control" 
+                    value="{{ $purchase->remark }}"/>
+                    </div>
+                </div>
               </div>
 
-              <label class="form-label col-form-label col-md-9 text-end"><h2>@lang('general.lbl_tax') </h2></label>
-              <div class="col-md-3">
-                <h3 class="text-end"><label id="vat-total">{{ number_format($purchase->total_vat,0,',','.') }}</label></h3>
+
+              <div class="col-md-6">
+                  <div class="col-md-12">
+                    <div class="col-auto text-end">
+                      <label class="col-md-4">Sub Total</label>
+                      <label class="col-md-4" id="sub-total"> {{ number_format(($purchase->total-$purchase->total_vat),0,',','.') }}</label>
+                    </div>
+                  </div>
+                  <div class="col-md-12">
+                    <div class="col-auto text-end">
+                      <label class="col-md-4">@lang('general.lbl_tax')</label>
+                      <label class="col-md-4" id="vat-total">{{ number_format($purchase->total_vat,0,',','.') }}</label>
+                    </div>
+                  </div>
+                  <div class="col-md-12">
+                    <div class="col-auto text-end">
+                      <label id="lbl_total"  class="col-md-4 h3">Total ({{ $purchase->currency }})</label>
+                      <label class="col-md-4  h3" name="result-total" id="result-total">{{ number_format($purchase->total,0,',','.') }}</label>
+                    </div>
+                  </div>
+                </div>
               </div>
 
-              <label class="form-label col-form-label col-md-9 text-end"><h1>Total</h1></label>
-              <div class="col-md-3">
-                <h1 class="display-5 text-end"><label id="order-total">Rp. 0</label></h1>
-              </div>
-            </div>
           <div class="col-md-12">
           </div>
         </div>
@@ -188,10 +243,21 @@
           if (dd < 10) dd = '0' + dd;
           if (mm < 10) mm = '0' + mm;
 
-          const formattedToday = mm + '/' + dd + '/' + yyyy;
+          const formattedToday = dd + '-' + mm + '-' + yyyy;
+
+          $('#currency').on('change', function(){
+            if($('#currency').find(':selected').val() == $('#curr_def').val()){
+              $('.kurs').addClass('d-none');
+              $('#kurs').val("1");
+            }else{
+              $('.kurs').removeClass('d-none');
+              $('#label-kurs').text("Kurs 1 "+$('#currency').find(':selected').val()+" = ");
+            }
+            $('#lbl_total').text("Total ("+$('#currency').find(':selected').val()+")");
+          });
           
-          $('#invoice_date').datepicker({
-              format : 'yyyy-mm-dd',
+          $('#doc_dated').datepicker({
+              dateFormat : 'dd-mm-yy',
               todayHighlight: true,
           });
 
@@ -351,7 +417,7 @@
                   order_total = order_total + (parseFloat(orderList[i]["total_vat"]));
                 }
 
-                $('#order-total').text(currency(order_total, { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
+                $('#result-total').text(currency(order_total, { separator: ".", decimal: ",", symbol: " ", precision: 0 }).format());
 
           });
       });
@@ -409,6 +475,8 @@
               }
             );
           }else{
+            var _vat_total = 0;
+            var disc_total = 0;
               const json = JSON.stringify({
                 branch_id : $('#branch_id').val(),
                 product : orderList,
@@ -417,7 +485,7 @@
                 branch_name : $('#branch_id option:selected').text(),
                 remark : $('#remark').val(),
                 total_order : order_total,
-                dated : $('#dated').val(),
+                dated : $('#doc_dated').val(),
                 purchase_no : $('#purchase_no').val(),
                 total_vat : _vat_total,
                 total_discount : disc_total
@@ -453,9 +521,9 @@
             targets: -1, 
             data: null, 
             defaultContent: 
-            '  <a href="#"  data-toggle="tooltip" data-placement="top" title="Tambah"   id="add_row"  class="btn btn-green"><div class="fa-1x"><i class="fas fa-circle-plus fa-lg"></i></div></a>'+
-            '  <a href="#"  data-toggle="tooltip" data-placement="top" title="Kurangi"   id="minus_row"  class="btn btn-yellow ml-1"><div class="fa-1x"><i class="fas fa-circle-minus fa-lg"></i></div></a>'+
-            '  <a href="#" data-toggle="tooltip" data-placement="top" title="Hapus"  id="delete_row"  class="btn btn-danger"><div class="fa-1x"><i class="fas fa-circle-xmark fa-lg"></i></div></a>'
+            '  <a href="#"  data-toggle="tooltip" data-placement="top" title="Tambah"   id="add_row"  class="btn btn-sm btn-green"><div class="fa-1x"><i class="fas fa-circle-plus fa-lg"></i></div></a>'+
+            '  <a href="#"  data-toggle="tooltip" data-placement="top" title="Kurangi"   id="minus_row"  class="btn btn-sm btn-yellow ml-1"><div class="fa-1x"><i class="fas fa-circle-minus fa-lg"></i></div></a>'+
+            '  <a href="#" data-toggle="tooltip" data-placement="top" title="Hapus"  id="delete_row"  class="btn btn-sm btn-danger"><div class="fa-1x"><i class="fas fa-circle-xmark fa-lg"></i></div></a>'
           }],
           columns: [
             { data: 'abbr' },
@@ -525,9 +593,9 @@
 
           }
 
-          $('#order-total').text(currency(order_total, { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
-          $('#vat-total').text(currency(_vat_total, { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
-          $('#sub-total').text(currency(sub_total, { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
+          $('#result-total').text(currency(order_total, { separator: ".", decimal: ",", symbol: " ", precision: 0 }).format());
+          $('#vat-total').text(currency(_vat_total, { separator: ".", decimal: ",", symbol: " ", precision: 0 }).format());
+          $('#sub-total').text(currency(sub_total, { separator: ".", decimal: ",", symbol: " ", precision: 0 }).format());
 
         }
 
@@ -589,9 +657,9 @@
 
             }
 
-            $('#sub-total').text(currency(sub_total, { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
-            $('#order-total').text(currency(order_total, { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
-            $('#vat-total').text(currency(_vat_total, { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());
+            $('#sub-total').text(currency(sub_total, { separator: ".", decimal: ",", symbol: " ", precision: 0 }).format());
+            $('#result-total').text(currency(order_total, { separator: ".", decimal: ",", symbol: " ", precision: 0 }).format());
+            $('#vat-total').text(currency(_vat_total, { separator: ".", decimal: ",", symbol: " ", precision: 0 }).format());
         });
 
     </script>

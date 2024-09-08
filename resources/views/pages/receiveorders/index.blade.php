@@ -12,7 +12,9 @@
                 </div>
                 <div class="col-md-8"> 	
                     <form action="{{ route('receiveorders.search') }}" method="GET" class="row row-cols-lg-auto g-3 align-items-center">
-                        <input type="hidden" name="filter_begin_date" value="2022-01-01"><input type="hidden" name="filter_end_date" value="2035-01-01">
+                        <input type="hidden" name="filter_begin_date" value="2022-01-01">
+                        <input type="hidden" name="filter_end_date" value="2035-01-01">
+                        <input type="hidden" name="filter_branch_id" value="%">
                         <div class="col-2"><input type="text" class="form-control  form-control-sm" name="search" placeholder="@lang('general.lbl_search') @lang('general.lbl_receive').." value="{{ $keyword }}"></div>
                         <div class="col-2"><input type="submit" class="btn btn-sm btn-secondary" value="@lang('general.btn_search')" name="submit"></div>   
                         <div class="col-2"><a href="#modal-filter"  data-bs-toggle="modal" data-bs-target="#modal-filter" class="btn btn-sm btn-lime">@lang('general.btn_filter')</a></div>   
@@ -20,7 +22,7 @@
                     </form>
                 </div>
             </div>
-            <div class="col-md-2">
+            <div class="col-md-2 d-none">
                 <a href="{{ route('receiveorders.create') }}" class="btn btn-primary float-right {{ $act_permission->allow_create==1?'':'d-none' }}"><span class="fa fa-plus-circle"></span> @lang('general.btn_create')</a>
             </div>
         </div>
@@ -32,9 +34,8 @@
         <table class="table table-striped" id="example">
             <thead>
             <tr>
-                <th scope="col" width="1%">#</th>
-                <th scope="col" width="10%">@lang('general.lbl_branch')</th>
                 <th>@lang('general.lbl_receive_no')</th>
+                <th>@lang('general.lbl_purchase_no')</th>
                 <th scope="col" width="8%">@lang('general.lbl_dated')</th>
                 <th scope="col" width="15%">Supplier</th>
                 <th scope="col" width="10%">Total</th>
@@ -47,25 +48,21 @@
 
                 @foreach($receives as $receive)
                     <tr>
-                        <th scope="row">{{ $receive->id }}</th>
-                        <td>{{ $receive->branch_name }}</td>
                         <td>{{ $receive->receive_no }}</td>
-                        <td>{{ $receive->dated }}</td>
+                        <td>{{ $receive->ref_no }}</td>
+                        <td>{{ substr(explode(" ",$receive->dated)[0],8,2) }}-{{ substr(explode(" ",$receive->dated)[0],5,2) }}-{{ substr(explode(" ",$receive->dated)[0],0,4) }}</td>
                         <td>{{ $receive->customer }}</td>
                         <td>{{ number_format($receive->total,0,',','.') }}</td>
-                        <td><a href="{{ route('receiveorders.show', $receive->id) }}" class="btn btn-warning btn-sm  {{ $act_permission->allow_show==1?'':'d-none' }}">@lang('general.lbl_show')</a></td>
-                        <td><a href="{{ route('receiveorders.edit', $receive->id) }}" class="btn btn-info btn-sm  {{ $act_permission->allow_edit==1?'':'d-none' }} ">@lang('general.lbl_edit')</a></td>
+                        <td><a href="{{ route('receiveorders.show', $receive->id) }}" class="btn btn-warning btn-sm {{ $act_permission->allow_show==1?'':'d-none' }}">@lang('general.lbl_show')</a></td>
+                        <td><a href="{{ route('receiveorders.edit', $receive->id) }}" class="btn btn-info btn-sm d-none {{ $act_permission->allow_edit==1?'':'d-none' }} ">@lang('general.lbl_edit')</a></td>
                         <td class=" {{ $act_permission->allow_delete==1?'':'d-none' }}">
-                            <a onclick="showConfirm({{ $receive->id }}, '{{ $receive->receive_no }}')" class="btn btn-danger btn-sm  {{ $act_permission->allow_delete==1?'':'d-none' }} ">@lang('general.lbl_delete')</a>
+                            <a onclick="showConfirm({{ $receive->id }}, '{{ $receive->receive_no }}')" class="btn btn-danger d-none btn-sm  {{ $act_permission->allow_delete==1?'':'d-none' }} ">@lang('general.lbl_delete')</a>
                         </td>
                     </tr>
                 @endforeach
             </tbody>
         </table>
 
-        <div class="d-flex">
-            {!! $receives->links() !!}
-        </div>
 
         <!-- Vertically centered modal -->
         <!-- Modal -->

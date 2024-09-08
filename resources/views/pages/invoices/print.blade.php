@@ -103,24 +103,24 @@
         </thead>
         <tbody>
           <tr>
-            <td style="text-align: left;width:70%;">Catatan : </td>
+            <td style="text-align: left;width:70%;">@lang('general.lbl_note') : </td>
             <td style="text-align: right;width:20%;background-color:#FFA726;display: none; ">Sub Total</td>
-            <td style="text-align: right;width:10%;background-color:#FFA726;display: none; ">Rp. {{ number_format(($invoice->total-$invoice->tax),0,',','.') }}</td>
+            <td style="text-align: right;width:10%;background-color:#FFA726;display: none; ">{{ number_format(($invoice->total-$invoice->tax),0,',','.') }}</td>
           </tr>
           <tr>
             <th style="text-align: left;width:70%;">{{ $invoice->payment_type }} @if($invoice->total_payment>=$invoice->total)  {{ "Lunas" }}   @endif</th>
             <td style="text-align: right;width:20%;background-color:#FFA726;display: none; ">@lang('general.lbl_tax') </th>
-            <td style="text-align: right;width:10%;background-color:#FFA726;display: none; ">Rp. {{ number_format($invoice->tax,0,',','.') }}</th>
+            <td style="text-align: right;width:10%;background-color:#FFA726;display: none; ">{{ number_format($invoice->tax,0,',','.') }}</th>
           </tr>
           <tr>
             <th style="text-align: left;width:70%;"></th>
-            <th style="text-align: right;width:20%;background-color:#FFA726;">Total</th>
-            <th style="text-align: right;width:10%;background-color:#FFA726;">Rp. {{ number_format($invoice->total,0,',','.') }}</th>
+            <th style="text-align: right;width:20%;background-color:#FFA726;">Total ({{ $invoice->currency }})</th>
+            <th style="text-align: right;width:10%;background-color:#FFA726;">{{ number_format($invoice->total,0,',','.') }}</th>
           </tr>
           <tr>
             <th style="text-align: left;width:70%;"></th>
-            <th style="text-align: right;width:20%;background-color:#FFA726;">@lang('general.lbl_payment') </th>
-            <th style='text-align: right;width:10%;background-color:#FFA726; @if($invoice->payment_nominal-$invoice->total<0) {{ "color : red;" }} @endif'>Rp. {{ number_format($invoice->total_payment,0,',','.') }}</th>
+            <th style="text-align: right;width:20%;background-color:#FFA726;">@lang('general.lbl_payment')  ({{ $invoice->currency }}) </th>
+            <th style='text-align: right;width:10%;background-color:#FFA726; @if($invoice->payment_nominal-$invoice->total<0) {{ "color : red;" }} @endif'>{{ number_format($invoice->total_payment,0,',','.') }}</th>
           </tr>
         </tbody>
       </table> 
@@ -157,3 +157,7 @@
       </table>
    </body> 
 </html> 
+
+<script type="text/javascript">
+  window.print();
+</script>

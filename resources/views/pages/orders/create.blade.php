@@ -40,7 +40,7 @@
                     name="customer_id" id="customer_id" required>
                     <option value="">@lang('general.lbl_customerselect')</option>
                     @foreach($customers as $customer)
-                        <option value="{{ $customer->id }}">{{ $customer->id }} - {{ $customer->name }} ({{ $customer->remark }})</option>
+                        <option value="{{ $customer->id }}">{{ $customer->id }} - {{ $customer->name }}</option>
                     @endforeach
                 </select>
               </div>

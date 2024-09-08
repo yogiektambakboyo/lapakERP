@@ -228,6 +228,7 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
         Route::group(['prefix' => 'receiveorders'], function() {
             Route::get('/', 'ReceiveOrderController@index')->name('receiveorders.index');
             Route::get('/create', 'ReceiveOrderController@create')->name('receiveorders.create');
+            Route::get('/{po_no}/createfrompo', 'ReceiveOrderController@createfrompo')->name('receiveorders.createfrompo');
             Route::post('/create', 'ReceiveOrderController@store')->name('receiveorders.store');
             Route::get('/search', 'ReceiveOrderController@search')->name('receiveorders.search');
             Route::get('/{receive}/show', 'ReceiveOrderController@show')->name('receiveorders.show');
