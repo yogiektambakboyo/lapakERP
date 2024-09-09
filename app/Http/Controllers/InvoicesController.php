@@ -279,23 +279,60 @@ class InvoicesController extends Controller
 
 
         for ($i=0; $i < count($request->get('product')); $i++) { 
-            $res_invoice_detail = InvoiceDetail::create(
-                array_merge(
-                    ['invoice_no' => $invoice_no],
-                    ['product_id' => $request->get('product')[$i]["id"]],
-                    ['qty' => $request->get('product')[$i]["qty"]],
-                    ['price' => $request->get('product')[$i]["price"]],
-                    ['total' => $request->get('product')[$i]["total"]],
-                    ['discount' => $request->get('product')[$i]["discount"]],
-                    ['seq' => $i ],
-                    ['vat' => $request->get('product')[$i]["vat_total"]],
-                    ['vat_total' => ((((int)$request->get('product')[$i]["qty"]*(int)$request->get('product')[$i]["price"])-(int)$request->get('product')[$i]["discount"])/100)*(int)$request->get('product')[$i]["vat_total"]],
-                    ['product_name' => Product::where('id','=',$request->get('product')[$i]["id"])->get('remark')->first()->remark],
-                    ['uom' => $request->get('product')[$i]["uom"]]
-                )
-            );
+            $res_stock = DB::select("select doc_no,qty_available from lot_number l where l.branch_id = '".$branch->branch_id."' and l.product_id = '".$request->get('product')[$i]["id"]."' and l.qty_available > 0 order by l.qty_available desc; ");
 
+            $qty_order = $request->get('product')[$i]["qty"];
+            $qty_served = 0;
+            $lot_no = "";
+            
+            for ($j=0; $j < count($res_stock); $j++) { 
+                $element = $res_stock[$j];
+                $product_id = $request->get('product')[$i]["id"];
+                $branch_id = $branch->branch_id;
+                $lot_no = $element->doc_no;
+                $doc_no = $invoice_no;
+                $qty_order = $request->get('product')[$i]["qty"];
 
+                if($qty_served == 0 && $element->qty_available >= $qty_order){
+                    DB::insert("INSERT INTO public.stock_allocation(product_id, lot_no, doc_no, qty_order, qty_served, branch_id) values (?, ?, ?, ?, ?, ?)", [$product_id,$lot_no,$doc_no,$qty_order,$qty_order,$branch_id]);
+                    $qty_served = $request->get('product')[$i]["qty"];
+                }else if($qty_served < $qty_order){
+                    if($element->qty_available >= ($qty_order - $qty_served)){
+                        $qty_d = ($qty_order - $qty_served);
+                        DB::insert("INSERT INTO public.stock_allocation(product_id, lot_no, doc_no, qty_order, qty_served, branch_id) values (?, ?, ?, ?, ?, ?)", [$product_id,$lot_no,$doc_no,$qty_order,$qty_d,$branch_id]);
+                        $qty_served = $qty_served + $qty_d;
+                    }else if($element->qty_available < ($qty_order - $qty_served)){
+                        $qty_d = $element->qty_available;
+                        DB::insert("INSERT INTO public.stock_allocation(product_id, lot_no, doc_no, qty_order, qty_served, branch_id) values (?, ?, ?, ?, ?, ?)", [$product_id,$lot_no,$doc_no,$qty_order,$qty_d,$branch_id]);
+                        $qty_served = $qty_served + $element->qty_available;
+                    }
+                }
+            }
+
+            if($qty_served>0){
+                $res_invoice_detail = InvoiceDetail::create(
+                    array_merge(
+                        ['invoice_no' => $invoice_no],
+                        ['product_id' => $request->get('product')[$i]["id"]],
+                        ['qty' => $qty_served],
+                        ['price' => $request->get('product')[$i]["price"]],
+                        ['total' => $request->get('product')[$i]["total"]],
+                        ['discount' => $request->get('product')[$i]["discount"]],
+                        ['seq' => $i ],
+                        ['vat' => $request->get('product')[$i]["vat_total"]],
+                        ['vat_total' => ((((int)$request->get('product')[$i]["qty"]*(int)$request->get('product')[$i]["price"])-(int)$request->get('product')[$i]["discount"])/100)*(int)$request->get('product')[$i]["vat_total"]],
+                        ['product_name' => Product::where('id','=',$request->get('product')[$i]["id"])->get('remark')->first()->remark],
+                        ['uom' => $request->get('product')[$i]["uom"]]
+                    )
+                );
+
+                DB::update("update lot_number set updated_at = now(),qty_onhand = qty_onhand - ".$qty_served." where doc_no='".$lot_no."' and product_id='".$request->get('product')[$i]["id"]."';");
+                DB::update("update lot_number set updated_at = now(),qty_available = qty_onhand-qty_allocated where doc_no='".$lot_no."' and product_id='".$request->get('product')[$i]["id"]."';");
+            }else{
+                DB::insert("INSERT INTO public.stock_allocation(product_id, lot_no, doc_no, qty_order, qty_served, branch_id) values (?, ?, ?, ?, ?, ?)", [$product_id,$lot_no,$doc_no,$qty_order,0,$branch_id]);
+            }
+
+        
             if(!$res_invoice_detail){
                 $result = array_merge(
                     ['status' => 'failed'],

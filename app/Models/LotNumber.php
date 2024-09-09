@@ -27,6 +27,7 @@ class LotNumber extends Model
         'created_at',
         'price',
         'currency',
+        'branch_id',
         'kurs',
         'updated_at',
     ];

@@ -311,8 +311,8 @@ class ReceiveOrderController extends Controller
             if(count($check_lot)>0){
                 $lot_no = $check_lot[0]->lot_no;
 
-                DB::update("update lot_number set updated_at = now(),qty_available = qty_available + ".$request->get('product')[$i]["qty"]." where doc_no='".$lot_no."' and product_id='".$request->get('product')[$i]["id"]."';");
-                DB::update("update lot_number set updated_at = now(),qty_onhand = qty_available-qty_allocated where doc_no='".$lot_no."' and product_id='".$request->get('product')[$i]["id"]."';");
+                DB::update("update lot_number set updated_at = now(),qty_onhand = qty_onhand + ".$request->get('product')[$i]["qty"]." where doc_no='".$lot_no."' and product_id='".$request->get('product')[$i]["id"]."';");
+                DB::update("update lot_number set updated_at = now(),qty_available = qty_onhand-qty_allocated where doc_no='".$lot_no."' and product_id='".$request->get('product')[$i]["id"]."';");
             }else{
                 $count_no_lot = SettingsDocumentNumber::where('doc_type','=','Lot_Number')->where('branch_id','=',$request->get('branch_id'))->where('period','=','Monthly')->get(['current_value','abbr']);
                 $lot_no = $count_no_lot[0]->abbr.'-'.substr(('000'.$request->get('branch_id')),-3).'-'.date("Ym").'-'.substr(('00000000'.((int)($count_no_lot[0]->current_value) + 1)),-8);
@@ -326,6 +326,7 @@ class ReceiveOrderController extends Controller
                         ['qty_allocated' => "0"],
                         ['price' => $request->get('product')[$i]["price"]],
                         ['created_by' => $user->id ],
+                        ['branch_id' => $request->get('branch_id')],
                         ['currency' => $request->get('currency')],
                         ['kurs' => $request->get('kurs')],
                         ['price' => $request->get('product')[$i]["price"]],
