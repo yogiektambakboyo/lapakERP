@@ -78,6 +78,7 @@ return [
     "SalesVisit" => "Sales Visit",
     "TripMap" => "Trip Map",
     "Faktur" => "Invoice",
+    "LotNumber" => "Lot Number",
     "FakturDetailperBarang" => "Invoice Detail",
 
 ];

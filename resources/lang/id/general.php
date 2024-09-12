@@ -69,6 +69,8 @@ return [
     "lbl_shipto" => "Tujuan Pengiriman",
 
     "lbl_show" => "Lihat",
+    "lbl_lotnumber" => "Nomor Lot",
+
     "lbl_type" => "Tipe",
     "lbl_edit" => "Ubah",
     "lbl_back" => "Kembali",

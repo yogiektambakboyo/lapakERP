@@ -18,6 +18,7 @@ return [
     "lbl_return_no" => "Return No",
     "lbl_language" => "EN",
     "lbl_order_no" => "Order No",
+    "lbl_lotnumber" => "Lot Number",
     "lbl_order_list" => "Order List",
 
     "product" => "Product",
