@@ -304,10 +304,8 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
             Route::get('/create', 'LotNumberController@create')->name('lotnumber.create');
             Route::post('/create', 'LotNumberController@store')->name('lotnumber.store');
             Route::get('/search', 'LotNumberController@search')->name('lotnumber.search');
-            Route::get('/{productbrand}/show', 'LotNumberController@show')->name('lotnumber.show');
-            Route::get('/{productbrand}/edit', 'LotNumberController@edit')->name('lotnumber.edit');
-            Route::patch('/{productbrand}/update', 'LotNumberController@update')->name('lotnumber.update');
-            Route::delete('/{productbrand}/delete', 'LotNumberController@destroy')->name('lotnumber.destroy');
+            Route::get('/{lotnumber}/show', 'LotNumberController@show')->name('lotnumber.show');
+            Route::post('/update_lotno', 'LotNumberController@update_lotno')->name('lotnumber.update_lotno');
         });
 
 

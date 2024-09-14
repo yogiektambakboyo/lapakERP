@@ -70,6 +70,17 @@ return [
 
     "lbl_show" => "Lihat",
     "lbl_lotnumber" => "Nomor Lot",
+    "lbl_sync" => "Sinkron", 
+
+
+    "lbl_doc_no" => "No Dokumen",
+    "lbl_qty_available" => "Jml Tersedia",
+    "lbl_qty_on_hand" => "Jml Terhitung",
+    "lbl_qty_allocated" => "Jml Alokasi",
+    "lbl_transaction_in" => "Transaksi Masuk",
+    "lbl_transaction_out" => "Transaksi Keluar",
+    "lbl_served" => "Terpenuhi",
+
 
     "lbl_type" => "Tipe",
     "lbl_edit" => "Ubah",

@@ -34,6 +34,16 @@ return [
     "lbl_return_sell" => "Return Jual",
     "lbl_return_new" => "Return Jual Baru",
 
+    "lbl_doc_no" => "Document No.",
+    "lbl_qty_available" => "Qty Available",
+    "lbl_qty_on_hand" => "Qty On Hand",
+    "lbl_qty_allocated" => "Qty Allocated",
+    "lbl_transaction_in" => "In Transaction",
+    "lbl_transaction_out" => "Out Transaction",
+    "lbl_served" => "Served",
+
+    "lbl_sync" => "Sync", 
+
     "lbl_name" => "Name",
     "lbl_active" => "Active",
     "lbl_employeeid" => "ID Staff",

@@ -215,6 +215,14 @@ class HomeController extends Controller
                 from period_stock ps  where ps.periode=to_char(now()-interval '5 day','YYYYMM')::int;");
             }
 
+            DB::select("insert into period_stock(periode,branch_id,product_id,balance_begin,balance_end,qty_in,qty_out,updated_at ,created_by,created_at)
+                        select to_char(now()::date,'YYYYMM')::int,b.id,ps.id,0,0,0 as qty_in,0 as qty_out,null,1,now()  
+                        from product_sku ps
+                        join branch b on 1=1
+                        left join period_stock pt on pt.branch_id = b.id and pt.product_id = ps.id and pt.periode = to_char(now()::date,'YYYYMM')::int
+                        where pt.branch_id is null
+            ", []);
+
             $exist_product_stock = DB::select("
                     insert into product_stock(product_id,branch_id,qty,updated_at,created_at,created_by) 
                     select id,pd.branch_id,0 as qty,now(),now(),ub.user_id
