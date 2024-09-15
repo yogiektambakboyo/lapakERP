@@ -8,6 +8,8 @@ return [
     "label_search" => "Cari. . .",
     "lbl_search" => "Cari",
     "btn_search" => "Cari",
+    "lbl_search_product" => "Cari Produk Disini. .",
+
     "btn_filter" => "Saring",
     "btn_export" => "Export Excel",
     "btn_create" => "Buat Baru",
@@ -114,8 +116,11 @@ return [
     "lbl_categoryedit" => "Ubah Kategori",
     "lbl_photo" => "Foto",
     "lbl_qty" => "Jumlah",
+    "lbl_add" => "Tambah",
+
     "lbl_information" => "Informasi",
     "lbl_order_list" => "Daftar Pesanan",
+    "lbl_product_list" => "Daftar Produk",
 
     "lbl_filterdata" => "Saring Data",
     "lbl_branch" => "Cabang",

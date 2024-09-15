@@ -6,7 +6,7 @@
     <div class="bg-light p-4 rounded">
         <h1>@lang('general.lbl_invoice')</h1>
         <div class="lead row mb-3">
-            <div class="col-md-10">
+            <div class="col-md-8">
                 <div class="col-md-12">
                     @lang('general.lbl_invoice_title')
                 </div>
@@ -20,7 +20,8 @@
                     </form>
                 </div>
             </div>
-            <div class="col-md-2">
+            <div class="col-md-4">
+                <a href="{{ route('invoices.createpos') }}" class="btn btn-primary float-right {{ $act_permission->allow_create==1?'':'d-none' }}"><span class="fa fa-plus-circle"></span>  @lang('general.btn_create') POS</a>
                 <a href="{{ route('invoices.create') }}" class="btn btn-primary float-right {{ $act_permission->allow_create==1?'':'d-none' }}"><span class="fa fa-plus-circle"></span>  @lang('general.btn_create')</a>
             </div>
         </div>

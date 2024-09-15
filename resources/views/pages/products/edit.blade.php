@@ -86,11 +86,29 @@
                   </select>
             </div>
           </div>
+
+          <div class="row mb-3">
+            <label class="form-label col-form-label col-md-2">@lang('general.lbl_uom')</label>
+            <div class="col-md-8">
+              <select class="form-control" 
+                      name="uom_id" required>
+                      <option value="">@lang('general.lbl_uomselect')</option>
+                      @foreach($productUoms as $productUom)
+                          <option value="{{ $productUom->id }}"  {{ ($product->uom_id == $productUom->id) 
+                            ? 'selected'
+                            : ''}}>{{ $productUom->remark }}</option>
+                      @endforeach
+                  </select>
+            </div>
+          </div>
+
           
           <div class="row mb-3">
               <label class="form-label col-form-label col-md-2">@lang('general.lbl_photo')</label>
               <div class="col-md-8">
-                <a href="/images/user-files/{{ $product->photo }}" target="_blank"><img src="/images/user-files/{{ $product->photo }}" width="100" height="100" class="rounded float-start"></a>
+                <a href="/images/user-files/{{ $product->photo }}" target="_blank"><img id="photo_preview" src="/images/user-files/{{ $product->photo }}" width="100" height="100" class="rounded float-start"></a>
+                <input type="file" name="photo"  id="photo" onchange="previewFile(this);"
+              class="form-control"  />
               </div>
           </div> 
 
@@ -98,3 +116,20 @@
         </div>
     </div>
 @endsection
+@push('scripts')
+<script type="text/javascript">
+    function previewFile(input){
+        var file = $("#photo").get(0).files[0];
+ 
+        if(file){
+            var reader = new FileReader();
+ 
+            reader.onload = function(){
+                $("#photo_preview").attr("src", reader.result);
+            }
+ 
+            reader.readAsDataURL(file);
+        }
+    }
+</script>
+@endpush

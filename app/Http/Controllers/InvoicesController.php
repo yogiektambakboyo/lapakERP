@@ -178,6 +178,38 @@ class InvoicesController extends Controller
         ]);
     }
 
+    /**
+     * Show form for creating user
+     * 
+     * @return \Illuminate\Http\Response
+     */
+    public function createpos() 
+    {
+        $user = Auth::user();
+        $id = $user->roles->first()->id;
+        $this->getpermissions($id);
+
+        $data = $this->data;
+        $user = Auth::user();
+        $payment_type = ['Cash','BCA - Debit','BCA - Kredit','Mandiri - Debit','Mandiri - Kredit','Transfer','QRIS'];
+        $type_customer = ['Sendiri','Berdua','Keluarga','Rombongan'];
+        $users = User::join('users_branch as ub','ub.branch_id', '=', 'users.branch_id')->where('ub.user_id','=',$user->id)->where('users.job_id','=',2)->get(['users.id','users.name']);
+        $usersall = User::join('users_branch as ub','ub.branch_id', '=', 'users.branch_id')->where('ub.user_id','=',$user->id)->whereIn('users.job_id',[1,2])->get(['users.id','users.name']);
+        //return Branch::join('users_branch as ub','ub.branch_id', '=', 'branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark','branch.currency']);
+        
+        return view('pages.invoices.createpos',[
+            'customers' => Customer::join('users_branch as ub','ub.branch_id', '=', 'customers.branch_id')->join('branch as b','b.id','=','ub.branch_id')->where('ub.user_id',$user->id)->orderBy('customers.name')->get(['customers.id','customers.name','b.remark']),
+            'data' => $data,
+            'users' => $users,
+            'usersall' => $usersall,
+            'currency' => Currency::all(),
+            'type_customers' => $type_customer,
+            'orders' => Order::where('is_checkout','0')->get(),
+            'payment_type' => $payment_type, 'company' => Company::get()->first(),
+            'branchs' => Branch::join('users_branch as ub','ub.branch_id', '=', 'branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark','branch.currency']),
+        ]);
+    }
+
     public function getproduct() 
     {
         $user = Auth::user();

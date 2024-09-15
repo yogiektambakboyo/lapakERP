@@ -190,7 +190,7 @@ class OrdersController extends Controller
 
         $data = $this->data;
         $user = Auth::user();
-        $product = DB::select("select m.remark as uom,product_sku.vat as vat_total,product_sku.id,product_sku.remark,product_sku.abbr,pt.remark as type,pc.remark as category_name,pb.remark as brand_name,pp.price+coalesce(pa.value,0) as price,'0' as discount,'0' as qty,'0' as total
+        $product = DB::select("select product_sku.photo,m.remark as uom,product_sku.vat as vat_total,product_sku.id,product_sku.remark,product_sku.abbr,pt.remark as type,pc.remark as category_name,pb.remark as brand_name,pp.price+coalesce(pa.value,0) as price,'0' as discount,'0' as qty,'0' as total
         from product_sku
         join product_distribution pd  on pd.product_id = product_sku.id  and pd.active = '1'
         join product_category pc on pc.id = product_sku.category_id 

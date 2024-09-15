@@ -120,6 +120,7 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
         Route::group(['prefix' => 'invoices'], function() {
             Route::get('/', 'InvoicesController@index')->name('invoices.index');
             Route::get('/create', 'InvoicesController@create')->name('invoices.create');
+            Route::get('/createpos', 'InvoicesController@createpos')->name('invoices.createpos');
             Route::post('/create', 'InvoicesController@store')->name('invoices.store');
             Route::get('/search', 'InvoicesController@search')->name('invoices.search');
             Route::get('/{invoice}/show', 'InvoicesController@show')->name('invoices.show');

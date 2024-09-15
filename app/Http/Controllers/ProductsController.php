@@ -316,13 +316,34 @@ class ProductsController extends Controller
                 ['category_id' => $request->get('category_id') ],
                 ['brand_id' => $request->get('brand_id') ],
                 ['external_code' => $request->get('external_code') ],
-
             )
         );
 
-        ProductUom::where('product_id','=',$request->id)->update(array_merge(
+        ProductUom::where('product_id','=',$product->id)->update(array_merge(
             ['uom_id' => $request->get('uom_id')],
         ));
+
+        if($request->file('photo') == null){
+            Product::where(['id' => $product->id])->update( array_merge(
+                ['photo' => 'goods.png'],
+            ));
+        }else{
+            $file_photo = $request->file('photo');
+            $img_file_photo = $file_photo->getClientOriginalName().'.'.$file_photo->getClientOriginalExtension();
+            $final_fileimg_photo = md5($product->id.'_'.$img_file_photo).'.'.$file_photo->getClientOriginalExtension();
+            
+            // upload file
+            $folder_upload = 'images/user-files';
+            $file_photo->move($folder_upload,$img_file_photo);
+
+            $destinationx = '/images/user-files/'.$img_file_photo;//or any extension such as jpeg,png
+            $newdestinationx =  '/images/user-files/'.$final_fileimg_photo;
+            File::move(public_path($destinationx), public_path($newdestinationx));
+
+            Product::where(['id' => $product->id])->update( array_merge(
+                    ['photo' => $final_fileimg_photo],
+            ));
+        }
 
     
         return redirect()->route('products.index')

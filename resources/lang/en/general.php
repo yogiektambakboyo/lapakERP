@@ -8,6 +8,7 @@ return [
     "lbl_title_transaction" => "Manage your data in here, at default this screen only show data 7 days later. Please use filter and search for get data more",
     "label_search" => "Search. . .",
     "lbl_search" => "Search",
+    "lbl_search_product" => "Search Product Here. .",
     "btn_search" => "Search",
     "btn_filter" => "Filter",
     "btn_export" => "Export Excel",
@@ -114,6 +115,8 @@ return [
     "lbl_id" => "ID",
     "lbl_creditlimit" => "Credit Limit",
     "lbl_order_list" => "SKU List",
+    "lbl_product_list" => "Product List",
+
 
     "lbl_filterdata" => "Filter",
     "lbl_branch" => "Branch",
@@ -133,6 +136,7 @@ return [
     "lbl_address" => "Address",
     "lbl_phoneno" => "Handphone",
     "lbl_drink" => "Drink",
+    "lbl_add" => "Add",
     "lbl_import_order" => "Import Order",
     "lbl_department" => "Departemen",
     "lbl_department_add" => "Tambah Departemen",
