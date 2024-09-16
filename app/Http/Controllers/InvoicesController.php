@@ -218,9 +218,10 @@ class InvoicesController extends Controller
 
         $data = $this->data;
         $user = Auth::user();
-        $product = DB::select("select m.remark as uom,product_sku.id,product_sku.remark,product_sku.abbr,pt.remark as type,pc.remark as category_name,pb.remark as brand_name,pp.price,'0' as discount,'0' as qty,'0' as total
+        $product = DB::select("select product_sku.photo,m.remark as uom,product_sku.id,product_sku.remark,product_sku.abbr,pt.remark as type,pc.remark as category_name,pb.remark as brand_name,pp.price,'0' as discount,'0' as qty,'0' as total
         from product_sku
-        join product_distribution pd  on pd.product_id = product_sku.id  and pd.active = '1'
+        join product_distribution pd on pd.product_id = product_sku.id  and pd.active = '1'
+        join product_stock pts on pts.product_id = pd.product_id and pts.branch_id = pd.branch_id and pts.qty>0
         join product_category pc on pc.id = product_sku.category_id 
         join product_type pt on pt.id = product_sku.type_id 
         join product_brand pb on pb.id = product_sku.brand_id 
@@ -230,10 +231,7 @@ class InvoicesController extends Controller
         join (select * from users_branch u where u.user_id = '".$user->id."' order by branch_id desc limit 1 ) ub on ub.branch_id = pp.branch_id and ub.branch_id=pd.branch_id 
         join product_stock pk on pk.product_id = product_sku.id and pk.branch_id = ub.branch_id
         where product_sku.active = '1' order by product_sku.remark");
-        return Datatables::of($product)
-        ->addColumn('action', function ($product) {
-            return '<a href="#"  onclick="addProduct(\''.$product->id.'\',\''.$product->abbr.'\', \''.$product->price.'\', \'0\', \'1\', \''.$product->uom.'\');" class="btn btn-xs btn-primary"><div class="fa-1x"><i class="fas fa-basket-shopping fa-fw"></i></div></a>';
-        })->make();
+        return $product;
     }
 
     public function gettimetable() 
@@ -309,6 +307,8 @@ class InvoicesController extends Controller
             )
         );
 
+        DB::delete("delete from invoice_payment where invoice_no = ?", [$invoice_no]);
+        DB::insert("INSERT INTO public.invoice_payment(invoice_no, dated, payment_type, nominal, created_by, created_at) VALUES('".$invoice_no."', now()::date, '".$request->get('payment_type')."', ".$request->get('payment_nominal').", ".$user->id.", now());", []);
 
         for ($i=0; $i < count($request->get('product')); $i++) { 
             $res_stock = DB::select("select doc_no,qty_available from lot_number l where l.branch_id = '".$branch->branch_id."' and l.product_id = '".$request->get('product')[$i]["id"]."' and l.qty_available > 0 order by l.qty_available desc; ");
@@ -341,6 +341,8 @@ class InvoicesController extends Controller
                 }
             }
 
+            $res_invoice_detail = true;
+
             if($qty_served>0){
                 $res_invoice_detail = InvoiceDetail::create(
                     array_merge(
@@ -361,6 +363,11 @@ class InvoicesController extends Controller
                 DB::update("update lot_number set updated_at = now(),qty_onhand = qty_onhand - ".$qty_served." where doc_no='".$lot_no."' and product_id='".$request->get('product')[$i]["id"]."';");
                 DB::update("update lot_number set updated_at = now(),qty_available = qty_onhand-qty_allocated where doc_no='".$lot_no."' and product_id='".$request->get('product')[$i]["id"]."';");
             }else{
+                $product_id = $request->get('product')[$i]["id"];
+                $branch_id = $branch->branch_id;
+                $doc_no = $invoice_no;
+                $qty_order = $request->get('product')[$i]["qty"];
+
                 DB::insert("INSERT INTO public.stock_allocation(product_id, lot_no, doc_no, qty_order, qty_served, branch_id) values (?, ?, ?, ?, ?, ?)", [$product_id,$lot_no,$doc_no,$qty_order,0,$branch_id]);
             }
 
@@ -373,12 +380,13 @@ class InvoicesController extends Controller
                 );
         
                 return $result;
+            }else{
+                DB::update("update public.period_stock set qty_out=qty_out+".$request->get('product')[$i]['qty']." ,updated_at = now(), balance_end = balance_end - ".$request->get('product')[$i]['qty']." where branch_id = ".$branch['branch_id']." and product_id = ".$request->get('product')[$i]['id']." and periode = to_char(now(),'YYYYMM')::int;");
+                $this->update_lotno($lot_no, $request->get('product')[$i]["id"],$branch['branch_id']); 
             }
 
             //DB::update("UPDATE product_stock set qty = qty-".$request->get('product')[$i]['qty']." WHERE branch_id = ".$branch['branch_id']." and product_id = ".$request->get('product')[$i]["id"]);
-            DB::update("update public.period_stock set qty_out=qty_out+".$request->get('product')[$i]['qty']." ,updated_at = now(), balance_end = balance_end - ".$request->get('product')[$i]['qty']." where branch_id = ".$branch['branch_id']." and product_id = ".$request->get('product')[$i]['id']." and periode = to_char(now(),'YYYYMM')::int;");
-
-            $this->update_lotno($lot_no, $request->get('product')[$i]["id"],$branch['branch_id']); 
+            
         }
 
 
@@ -411,17 +419,17 @@ class InvoicesController extends Controller
                             where sa.lot_no = ? ) where doc_no = ? ', [ $doc_no, $doc_no ]);
         DB::update('update lot_number set qty_available = (qty_onhand - qty_allocated) where doc_no = ? ', [ $doc_no ]);
 
-        DB::update("update product_stock set updated_at=now(),qty = (select sum(coalesce(qty_available,0)) from lot_number where product_id = ".$product_id." and branch_id = ".$branch_id." ) 
+        DB::update("update product_stock set updated_at=now(),qty = (select coalesce(sum(coalesce(qty_available,0)),0) from lot_number where product_id = ".$product_id." and branch_id = ".$branch_id." ) 
                     where product_id = ".$product_id." and branch_id = ".$branch_id.";", []);
 
-        DB::update("update period_stock set balance_end = (select sum(coalesce(qty_available,0)) from lot_number where product_id = ".$product_id." and branch_id = ".$branch_id." ) where periode = to_char(now()::date,'YYYYMM')::int and product_id = ".$product_id." and branch_id = ".$branch_id.";", []);
+        DB::update("update period_stock set balance_end = (select coalesce(sum(coalesce(qty_available,0)),0) from lot_number where product_id = ".$product_id." and branch_id = ".$branch_id." ) where periode = to_char(now()::date,'YYYYMM')::int and product_id = ".$product_id." and branch_id = ".$branch_id.";", []);
 
-        DB::update("update period_stock set qty_out = (select sum(coalesce(sa.qty_served,0))  from stock_allocation sa 
+        DB::update("update period_stock set qty_out = (select coalesce(sum(coalesce(sa.qty_served,0)),0)  from stock_allocation sa 
                             join invoice_master im on im.invoice_no = sa.doc_no 
                             join customers c on c.id = im.customers_id
                             join invoice_detail id on id.invoice_no = im.invoice_no and id.product_id = sa.product_id  where id.product_id = ".$product_id." and c.branch_id = ".$branch_id." and to_char(im.dated,'YYYYMM')::int=to_char(now()::date,'YYYYMM')::int ) where periode = to_char(now()::date,'YYYYMM')::int and product_id = ".$product_id." and branch_id = ".$branch_id.";", []);
 
-        DB::update("update period_stock set qty_in = (select sum(coalesce(rd.qty,0))  from receive_master rm 
+        DB::update("update period_stock set qty_in = (select coalesce(sum(coalesce(rd.qty,0)),0)  from receive_master rm 
         join receive_detail rd on rd.receive_no = rm.receive_no where rd.product_id = ".$product_id." and rm.branch_id = ".$branch_id." and to_char(rm.dated,'YYYYMM')::int=to_char(now()::date,'YYYYMM')::int ) where periode = to_char(now()::date,'YYYYMM')::int and product_id = ".$product_id." and branch_id = ".$branch_id.";", []);
         
         $result = array_merge(

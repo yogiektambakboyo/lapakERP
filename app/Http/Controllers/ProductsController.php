@@ -324,9 +324,7 @@ class ProductsController extends Controller
         ));
 
         if($request->file('photo') == null){
-            Product::where(['id' => $product->id])->update( array_merge(
-                ['photo' => 'goods.png'],
-            ));
+            
         }else{
             $file_photo = $request->file('photo');
             $img_file_photo = $file_photo->getClientOriginalName().'.'.$file_photo->getClientOriginalExtension();

@@ -72,7 +72,57 @@
             <div class="row" id="content-product"></div>
 
           </div>
-          <div class="col-md-3"></div>
+          <div class="col-md-3">
+            <div class="row mb-2">
+              <div class="p-1 text-teal d-flex justify-content-center">
+                <div class="row">
+                  <p class="fs-5">@lang('general.lbl_order_list')</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="row" id="content-order">
+              
+            </div>
+
+            <div class="dropdown-divider mt-4"></div>
+            <div class="d-grid gap-2 "><input type="button"  href="#modal-add-payment" data-bs-toggle="modal" data-bs-target="#modal-add-payment" value="@lang('general.lbl_payment')" class="btn btn-danger"></div>
+
+            <div class="dropdown-divider mt-1"></div>
+
+            <div class="row">
+              <div class="col-md-12 d-none">
+                <div class="row">
+                  <div class="col-sm-8"><label>Sub Total</label></div>
+                  <div class="col-sm-4 text-end"><label id="sub-total"> 0</label></div>
+                </div>
+              </div>
+
+              
+
+              <div class="col-md-12">
+                <div class="row  text-end">
+                  <div class="col-sm-8"><label id="lbl_total" class="h3">Total</label></div>
+                  <div class="col-sm-4 text-end"><label class="h3" id="result-total"> 0</label></div>
+                </div>
+              </div>
+
+              <div class="col-md-12">
+                <div class="row text-end">
+                  <div class="col-sm-8"><label id="payment-name-total">@lang('general.lbl_payment')</label></div>
+                  <div class="col-sm-4 text-end"><label id="payment-total"> 0</label></div>
+                </div>
+              </div>
+
+              <div class="col-md-12">
+                <div class="row text-end">
+                  <div class="col-sm-8"><label>@lang('general.lbl_charge')</label></div>
+                  <div class="col-sm-4 text-end"><label id="charger-total"> 0</label></div>
+                </div>
+              </div>
+
+            </div>
+          </div>
 
         </div>
         
@@ -128,30 +178,12 @@
           </div>
 
 
-          <div class="col-md-6">
-            <div class="col-md-12">
-              <div class="col-auto text-end">
-                <label class="col-md-4">Sub Total</label>
-                <label class="col-md-4" id="sub-total"> 0</label>
-              </div>
-            </div>
-            <div class="col-md-12">
-              <div class="col-auto text-end">
-                <label class="col-md-4">@lang('general.lbl_tax')</label>
-                <label class="col-md-4" id="vat-total">0</label>
-              </div>
-            </div>
-            <div class="col-md-12">
-              <div class="col-auto text-end">
-                <label id="lbl_total"  class="col-md-4 h3">Total</label>
-                <label class="col-md-4  h3" id="result-total">0</label>
-              </div>
-            </div>
-          </div>
+          
         </div>
 
 
 
+        <!-- Begin Modal Customer -->
         <div class="modal fade" id="modal-add-customer" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
           <div class="modal-dialog">
           <div class="modal-content">
@@ -225,6 +257,72 @@
           </div>
         </div>
 
+      <!-- End Modal Customer -->
+
+      <!-- Begin Modal Payment -->
+      <div class="modal fade" id="modal-add-payment" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+            <h5 class="modal-title" id="staticBackdropLabel">@lang('general.lbl_payment')</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              
+              <div class="container mt-1">
+                      <div class="mb-3">
+                          <label for="payment_cash" class="form-label">@lang('general.lbl_cash')</label>
+                          <input type="number" class="form-control" name="payment_cash" id="payment_cash" value="0" required>
+                          @if ($errors->has('payment_cash'))
+                              <span class="text-danger text-left">{{ $errors->first('payment_cash') }}</span>
+                          @endif
+                      </div>
+
+                      <div class="mb-3">
+                        <label for="payment_debt" class="form-label">@lang('general.lbl_debit')</label>
+                        <input type="number" class="form-control" name="payment_debt" id="payment_debt" value="0" required>
+                        @if ($errors->has('payment_debt'))
+                            <span class="text-danger text-left">{{ $errors->first('payment_debt') }}</span>
+                        @endif
+                      </div>
+
+
+                      <div class="mb-3">
+                        <label for="payment_credit" class="form-label">@lang('general.lbl_credit')</label>
+                        <input type="number" class="form-control" name="payment_credit" id="payment_credit" value="0" required>
+                        @if ($errors->has('payment_credit'))
+                            <span class="text-danger text-left">{{ $errors->first('payment_credit') }}</span>
+                        @endif
+                      </div>
+
+                      <div class="mb-3">
+                        <label for="payment_qris" class="form-label">@lang('general.lbl_qris')</label>
+                        <input type="number" class="form-control" name="payment_qris" id="payment_qris" value="0" required>
+                        @if ($errors->has('payment_qris'))
+                            <span class="text-danger text-left">{{ $errors->first('payment_qris') }}</span>
+                        @endif
+                      </div>
+
+                      <div class="mb-3">
+                        <label for="payment_transfer" class="form-label">@lang('general.lbl_transfer')</label>
+                        <input type="number" class="form-control" name="payment_transfer" id="payment_transfer" value="0" required>
+                        @if ($errors->has('payment_transfer'))
+                            <span class="text-danger text-left">{{ $errors->first('payment_transfer') }}</span>
+                        @endif
+                      </div>
+              </div>
+  
+            </div>
+            <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">@lang('general.lbl_close') </button>
+            <button type="button" class="btn btn-primary"  data-bs-dismiss="modal" id="btn_save_payment">@lang('general.lbl_save')</button>
+            </div>
+        </div>
+        </div>
+      </div>
+
+    <!-- End Modal Payment -->
+
     </div>
   </div>
 </form>
@@ -232,6 +330,17 @@
 
 @push('scripts')
     <script type="text/javascript">
+      var productList = [];
+      var orderList = [];
+      var order_total = 0;
+      var disc_total = 0;
+      var _vat_total = 0;
+      var sub_total = 0;
+      var total = 0;
+      var payment_charge = 0;
+      var payment_nominal = 0;
+      var payment_type = "";
+
       $(function () {
         $('#customer_id').select2();
         $('#lbl_total').text("Total ("+$('#curr_def').val()+")");
@@ -246,6 +355,75 @@
             }
             $('#lbl_total').text("Total ("+$('#currency').find(':selected').val()+")");
           });
+
+        $('#btn_save_payment').on('click', function(){
+          var p_cash = $('#payment_cash').val();
+          var p_debt = $('#payment_debt').val();
+          var p_credit = $('#payment_credit').val();
+          var p_qris = $('#payment_qris').val();
+          var p_transfer = $('#payment_transfer').val();
+
+          var p_type = "";
+
+          if(p_cash == ""){
+            p_cash = "0";
+          }
+
+          if(p_debt == ""){
+            p_debt = "0";
+          }
+
+          if(p_credit == ""){
+            p_credit = "0";
+          }
+
+          if(p_transfer == ""){
+            p_transfer = "0";
+          }
+
+          if(p_qris == ""){
+            p_qris = "0";
+          }
+
+
+          payment_nominal = parseFloat(p_cash) + parseFloat(p_debt) +parseFloat(p_credit) + parseFloat(p_transfer) + parseFloat(p_qris);
+          payment_charge = payment_nominal - total;
+
+          $('#payment-total').text(currency((payment_nominal), { separator: ".", decimal: ",", symbol: "", precision: 0 }).format());
+          
+          if(p_cash>0){
+            p_type = p_type + "CASH,"
+          }
+
+          if(p_debt>0){
+            p_type = p_type + "DEBT CARD,"
+          }
+
+          if(p_credit>0){
+            p_type = p_type + "CREDIT CARD,"
+          }
+
+          if(p_transfer>0){
+            p_type = p_type + "TRANSFER,"
+          }
+
+          if(p_qris>0){
+            p_type = p_type + "QRIS,"
+          }
+
+          if(payment_charge<=0){
+            payment_charge = 0;
+          }
+
+          if(payment_nominal>0){
+            let p_final = p_type.slice(0, -1);
+            $('#payment-name-total').text(p_final);
+            payment_type = p_final;
+          }
+
+          $('#charger-total').text(currency((payment_charge), { separator: ".", decimal: ",", symbol: "", precision: 0 }).format());
+
+        });
 
         $('#btn_save_customer').on('click', function(){
         if($('#cust_name').val()==''){
@@ -361,12 +539,7 @@
 
       });
 
-      var productList = [];
-      var orderList = [];
-      var order_total = 0;
-      var disc_total = 0;
-      var _vat_total = 0;
-      var sub_total = 0;
+     
         
         $('#save-btn').on('click',function(){
           if($('#invoice_date').val()==''){
@@ -395,33 +568,7 @@
                 timer: 1500
               }
             );
-          }else if($('#payment_type').val()==''){
-            $('#payment_type').focus();
-            Swal.fire(
-              {
-                position: 'top-end',
-                icon: 'warning',
-                text: 'Please choose payment type',
-                showConfirmButton: false,
-                imageHeight: 30, 
-                imageWidth: 30,   
-                timer: 1500
-              }
-            );
-          }else if($('#payment_nominal').val()==''){
-            $('#payment_nominal').focus();
-            Swal.fire(
-              {
-                position: 'top-end',
-                icon: 'warning',
-                text: 'Please choose payment nominal',
-                showConfirmButton: false,
-                imageHeight: 30, 
-                imageWidth: 30,   
-                timer: 1500
-              }
-            );
-          }else if(order_total<=0){
+          }else if(total<=0){
             Swal.fire(
               {
                 position: 'top-end',
@@ -436,8 +583,6 @@
           }else{
 
             counterBlank = 0;
-            
-
             if(counterBlank>0){
               Swal.fire(
               {
@@ -456,13 +601,14 @@
                   product : orderList,
                   customer_id : $('#customer_id').val(),
                   remark : $('#remark').val(),
-                  payment_type : $('#payment_type').val(),
-                  payment_nominal : $('#payment_nominal').val(),
-                  total_order : order_total,
+                  payment_type : payment_type,
+                  payment_nominal : payment_nominal,
+                  payment_charge : payment_charge,
+                  total_order : total,
                   kurs : $('#kurs').val(),
                   currency : $('#currency').find(':selected').val(),
-                  customer_type : $('#customer_type').val(),
-                  ref_no : $('#ref_no').val(),
+                  customer_type : "",
+                  ref_no : "",
                   tax : _vat_total,
                 }
               );
@@ -493,17 +639,9 @@
                             burl,
                             '_blank' // <- This is what makes it open in a new window.
                           );
-                          window.location.href = "{{ route('invoices.index') }}"; 
-                        } else if (result.isDenied) {
-                          burl = "{{ route('invoices.printspk', 'WWWW') }}";
-                          burl = burl.replace('WWWW', resp.data.data)
-                          window.open(
-                            burl,
-                            '_blank' // <- This is what makes it open in a new window.
-                          );
-                          window.location.href = "{{ route('invoices.index') }}"; 
-                        }else{
-                          window.location.href = "{{ route('invoices.index') }}"; 
+                          window.location.href = "{{ route('invoices.createpos') }}"; 
+                        } else{
+                          window.location.href = "{{ route('invoices.createpos') }}"; 
                         }
                       })
                     }else{
@@ -523,31 +661,10 @@
             }
           }
         });
-      
+    
 
 
-
-            $("#payment_nominal").on("input", function(){
-              order_total = 0;
-              for (var i = 0; i < orderList.length; i++){
-                  var obj = orderList[i];
-                  order_total = order_total + ((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"])+((((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"]))-(parseFloat(orderList[i]["discount"])))*(parseFloat(orderList[i]["vat_total"])/100)))-(parseFloat(orderList[i]["discount"]));
-
-                  if(($('#payment_nominal').val())>order_total){
-                    $('#order_charge').css('color', 'black');
-                    $('#order_charge').text(currency((($('#payment_nominal').val())-order_total), { separator: ".", decimal: ",", symbol: "", precision: 0 }).format());
-                  }else{
-                    $('#order_charge').text("0");
-                    $('#order_charge').css('color', 'red');
-                    $('#order_charge').text(currency((($('#payment_nominal').val())-order_total), { separator: ".", decimal: ",", symbol: "", precision: 0 }).format());
-                  }
-
-
-                }
-            });
-
-
-            var url = "{{ route('orders.getproduct') }}";
+            var url = "{{ route('invoices.getproduct') }}";
             var lastvalurl = "XX";
             const res = axios.get(url, {
               headers: {
@@ -572,7 +689,7 @@
                     productList.push(product);
 
                     // Generate Product Card
-                    $content = $content + '<div class="border rounded ms-1 mt-1" style="height: 250px;width : 157px;"><img src="../images/user-files/'+resp.data[i]["photo"]+'" style="height: 135px;width : 135px;" class="mt-2" alt="..."><div class="mt-1" style="height:34px;">'+resp.data[i]["remark"]+'</div><div class="fw-bold">'+currency((resp.data[i]["price"]), { separator: ".", decimal: ",", symbol: "", precision: 0 }).format()+'</div><div class="d-grid gap-2 mt-1"><button class="btn btn-primary" id="btn_add_c_'+resp.data[i]["id"]+'" type="button">@lang('general.lbl_add')</button></div></div>';
+                    $content = $content + '<div class="border rounded ms-1 mt-1" style="height: 250px;width : 157px;"><img src="../images/user-files/'+resp.data[i]["photo"]+'" style="height: 135px;width : 135px;" class="mt-2" alt="..."><div class="mt-1" style="height:34px;">'+resp.data[i]["remark"]+'</div><div class="fw-bold">'+currency((resp.data[i]["price"]), { separator: ".", decimal: ",", symbol: "", precision: 0 }).format()+'</div><div class="d-grid gap-2 mt-1"><button class="btn btn-primary" onclick="addOrder('+resp.data[i]["id"]+');" id="btn_add_c_'+resp.data[i]["id"]+'" type="button">@lang('general.lbl_add')</button></div></div>';
                   }
 
                   $('#content-product').html($content);
@@ -588,12 +705,116 @@
             for (let index = 0; index < productList.length; index++) {
               const element = productList[index];
               if(element.remark.toUpperCase().indexOf(keyword) != -1){
-                $content = $content + '<div class="border rounded ms-1 mt-1" style="height: 250px;width : 157px;"><img src="../images/user-files/'+element.photo+'" style="height: 135px;width : 135px;" class="mt-2" alt="..."><div class="mt-1" style="height:34px;">'+element.remark+'</div><div class="fw-bold">'+currency((element.price), { separator: ".", decimal: ",", symbol: "", precision: 0 }).format()+'</div><div class="d-grid gap-2 mt-1"><button class="btn btn-primary" id="btn_add_c_'+element.id+'" type="button">@lang('general.lbl_add')</button></div></div>';
+                $content = $content + '<div class="border rounded ms-1 mt-1" style="height: 250px;width : 157px;"><img src="../images/user-files/'+element.photo+'" style="height: 135px;width : 135px;" class="mt-2" alt="..."><div class="mt-1" style="height:34px;">'+element.remark+'</div><div class="fw-bold">'+currency((element.price), { separator: ".", decimal: ",", symbol: "", precision: 0 }).format()+'</div><div class="d-grid gap-2 mt-1"><button class="btn btn-primary"  onclick="addOrder('+element.id+');"  id="btn_add_c_'+element.id+'" type="button">@lang('general.lbl_add')</button></div></div>';
               }
             }
             
             $('#content-product').html($content);
           });
+
+          function deleteOrder(id){
+            for (let index = 0; index < orderList.length; index++) {
+                const element = orderList[index];
+                if(element.id == id){
+                  orderList.splice(index,1);
+                }
+            }
+
+            $('#content-order').html("");
+            var $content = "";
+            sub_total = 0;
+            total = 0;
+            for (let index = 0; index < orderList.length; index++) {
+                const element = orderList[index];
+                $content = $content + '<div class="row g-0"><div class="col-sm-11"><div class="row g-0"><div class="col-sm-12">'+element.abbr+'</div></div><div class="row g-0"><div class="col-sm-9">'+element.qty+' x '+currency((element.price), { separator: ".", decimal: ",", symbol: "", precision: 0 }).format()+'</div><div class="col-sm-3 d-flex justify-content-end">'+currency((element.total), { separator: ".", decimal: ",", symbol: "", precision: 0 }).format()+'</div></div></div><div class="col-sm-1 d-flex justify-content-center align-items-center"><i class="fa-solid fa-trash-can" onclick="deleteOrder('+element.id+')"></i></div></div>';
+                sub_total = sub_total + parseFloat(element.total);
+            }
+
+            total = sub_total;
+            $('#sub-total').text(currency((sub_total), { separator: ".", decimal: ",", symbol: "", precision: 0 }).format());
+            $('#result-total').text(currency((total), { separator: ".", decimal: ",", symbol: "", precision: 0 }).format());
+
+            $('#content-order').html($content);
+          }
+
+          function addOrder(id){
+            if(orderList.length <= 0){
+              for (let index = 0; index < productList.length; index++) {
+                const element = productList[index];
+
+                if(element.id == id){
+                  var order = {
+                    "id" : element.id,
+                    "abbr" : element.abbr,
+                    "remark" : element.remark,
+                    "price" : element.price,
+                    "uom" : element.uom,
+                    "vat" : "0",
+                    "vat_total" : "0",
+                    "discount" : "0",
+                    "qty" : 1,
+                    "total" : parseFloat(element.price) * 1,
+                    "seq" : Date.now()
+                  }
+
+                  orderList.push(order);
+                }
+                
+              }
+            }else{
+              var isExist = 0;
+              for (let index = 0; index < orderList.length; index++) {
+                const element = orderList[index];
+                if(element.id == id){
+                  orderList[index].qty = orderList[index].qty+1;
+                  orderList[index].total = (orderList[index].qty+1)*parseFloat(orderList[index].price);
+                  isExist = 1;
+                }
+              }
+
+              if(isExist <= 0){
+                for (let index = 0; index < productList.length; index++) {
+                  const element = productList[index];
+
+                  if(element.id == id){
+                    var order = {
+                      "id" : element.id,
+                      "abbr" : element.abbr,
+                      "remark" : element.remark,
+                      "price" : element.price,
+                      "uom" : element.uom,
+                      "qty" : 1,
+                      "total" : parseFloat(element.price) * 1,
+                      "seq" : Date.now()
+                    }
+
+                    orderList.push(order);
+                  }
+                  
+                }
+              }
+
+            }
+
+            $('#content-order').html("");
+            var $content = "";
+            sub_total = 0;
+            total = 0;
+            for (let index = 0; index < orderList.length; index++) {
+                const element = orderList[index];
+                $content = $content + '<div class="row g-0"><div class="col-sm-11"><div class="row g-0"><div class="col-sm-12">'+element.abbr+'</div></div><div class="row g-0"><div class="col-sm-9">'+element.qty+' x '+currency((element.price), { separator: ".", decimal: ",", symbol: "", precision: 0 }).format()+'</div><div class="col-sm-3 d-flex justify-content-end">'+currency((element.total), { separator: ".", decimal: ",", symbol: "", precision: 0 }).format()+'</div></div></div><div class="col-sm-1 d-flex justify-content-center align-items-center"><i class="fa-solid fa-trash-can" onclick="deleteOrder('+element.id+')"></i></div></div>';
+                sub_total = sub_total + parseFloat(element.total);
+              }
+
+
+            total = sub_total;
+            $('#sub-total').text(currency((sub_total), { separator: ".", decimal: ",", symbol: "", precision: 0 }).format());
+            $('#result-total').text(currency((total), { separator: ".", decimal: ",", symbol: "", precision: 0 }).format());
+            
+            
+            $('#content-order').html($content);
+            
+          }
 
 
 
