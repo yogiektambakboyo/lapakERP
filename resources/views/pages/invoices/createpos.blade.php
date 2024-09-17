@@ -63,7 +63,7 @@
             <div class="row mb-2">
               <div class="p-1 bg-teal-600 text-white">
                 <div class="row ps-2">
-                  <div class="col-md-8 fw-bold pt-0">@lang('general.lbl_product_list')</div>
+                  <div class="col-md-8 fw-bold pt-0 mt-2">@lang('general.lbl_product_list')</div>
                   <div class="col-md-4 fw-bold pt-0"><input placeholder="@lang('general.lbl_search_product')" class="form form-control" type="text" name="search_product" id="search_product"></div>
                 </div>
               </div>
@@ -86,19 +86,27 @@
             </div>
 
             <div class="dropdown-divider mt-4"></div>
-            <div class="d-grid gap-2 "><input type="button"  href="#modal-add-payment" data-bs-toggle="modal" data-bs-target="#modal-add-payment" value="@lang('general.lbl_payment')" class="btn btn-danger"></div>
+            <div class="d-grid gap-2 ">
+              <input type="button" id="btn-calc-promo" value="@lang('general.lbl_calcpromo')" class="btn btn-primary d-none">
+              <input type="button" id="btn-payment"  href="#modal-add-payment" data-bs-toggle="modal" data-bs-target="#modal-add-payment" value="@lang('general.lbl_payment')" class="btn btn-danger  d-none">
+            </div>
 
             <div class="dropdown-divider mt-1"></div>
 
             <div class="row">
-              <div class="col-md-12 d-none">
+              <div class="col-md-12">
                 <div class="row">
-                  <div class="col-sm-8"><label>Sub Total</label></div>
+                  <div class="col-sm-8 text-end"><label>Sub Total</label></div>
                   <div class="col-sm-4 text-end"><label id="sub-total"> 0</label></div>
                 </div>
               </div>
 
-              
+              <div class="col-md-12">
+                <div class="row">
+                  <div class="col-sm-8 text-end"><label>@lang('general.lbl_discount')</label></div>
+                  <div class="col-sm-4 text-end"><label id="discount-total">0</label></div>
+                </div>
+              </div>
 
               <div class="col-md-12">
                 <div class="row  text-end">
@@ -336,6 +344,7 @@
       var disc_total = 0;
       var _vat_total = 0;
       var sub_total = 0;
+      var discount_total = 0;
       var total = 0;
       var payment_charge = 0;
       var payment_nominal = 0;
@@ -355,6 +364,109 @@
             }
             $('#lbl_total').text("Total ("+$('#currency').find(':selected').val()+")");
           });
+
+        $('#btn-calc-promo').on('click', function(){
+            if(orderList.length > 0){
+
+              for (let index = 0; index < orderList.length; index++) {
+                  orderList[index].applypromo = "0";
+                  orderList[index].promo_no = "";
+              }
+
+
+              var hitpromo = "0";
+              var hitpromodesc = "";
+              for (let index = 0; index < orderList.length; index++) {
+                const element = orderList[index];
+
+
+                if(element.applypromo == "0"){
+                  for (let index2 = 0; index2 < promo_no_term.length; index2++) {
+                    const element2 = promo_no_term[index2];
+
+                    if(element2.product_id == element.id ){
+                      if(parseFloat(element2.value_nominal)>0){
+                        orderList[index].discount = element2.value_nominal;
+                      }else{
+                        orderList[index].discount = (parseFloat(element2.value_idx)*parseFloat(orderList[index].price))/100;
+                      }
+                      orderList[index].applypromo = "1";
+                      orderList[index].promo_no = element2.id;
+
+                      hitpromo = "1";
+                      hitpromodesc = element2.remark;
+
+                    }
+                  }
+                }
+
+                if(hitpromo == "1"){
+                  Swal.fire(
+                    {
+                      position: 'top-end',
+                      icon: 'success',
+                      text: 'Promo '+hitpromodesc+' applied',
+                      showConfirmButton: false,
+                      imageHeight: 30, 
+                      imageWidth: 30,   
+                      timer: 1500
+                    }
+                  );
+                }else{
+                    Swal.fire(
+                    {
+                      position: 'top-end',
+                      icon: 'warning',
+                      text: 'No promotion',
+                      showConfirmButton: false,
+                      imageHeight: 30, 
+                      imageWidth: 30,   
+                      timer: 1500
+                    }
+                  );
+                }
+
+                
+                
+              }
+
+              $('#content-order').html("");
+              var $content = "";
+              sub_total = 0;
+              discount_total = 0;
+              total = 0;
+              for (let index = 0; index < orderList.length; index++) {
+                  orderList[index].total = (orderList[index].qty)*(parseFloat(orderList[index].price)-parseFloat(orderList[index].discount));
+                  const element = orderList[index];
+                  $content = $content + '<div class="row g-0"><div class="col-sm-11"><div class="row g-0"><div class="col-sm-12">'+element.abbr+'</div></div><div class="row g-0"><div class="col-sm-9">'+element.qty+' x '+currency((element.price), { separator: ".", decimal: ",", symbol: "", precision: 0 }).format()+'</div><div class="col-sm-3 d-flex justify-content-end">'+currency((element.total), { separator: ".", decimal: ",", symbol: "", precision: 0 }).format()+'</div></div></div><div class="col-sm-1 d-flex justify-content-center align-items-center"><i class="fa-solid fa-trash-can" onclick="deleteOrder('+element.id+')"></i></div></div>';
+                  sub_total = sub_total + (orderList[index].qty)*parseFloat(orderList[index].price);
+                  discount_total = discount_total + (parseFloat(orderList[index].discount)*orderList[index].qty);
+                  total = total + parseFloat(orderList[index].total);
+              }
+
+
+              $('#sub-total').text(currency((sub_total), { separator: ".", decimal: ",", symbol: "", precision: 0 }).format());
+              $('#discount-total').text(currency((discount_total), { separator: ".", decimal: ",", symbol: "", precision: 0 }).format());
+
+              $('#result-total').text(currency((total), { separator: ".", decimal: ",", symbol: "", precision: 0 }).format());
+              
+              
+              $('#content-order').html($content);
+              
+            }else{
+              Swal.fire(
+                {
+                  position: 'top-end',
+                  icon: 'warning',
+                  text: 'Please select minimal 1 item first',
+                  showConfirmButton: false,
+                  imageHeight: 30, 
+                  imageWidth: 30,   
+                  timer: 1500
+                }
+              );
+            }
+        });
 
         $('#btn_save_payment').on('click', function(){
           var p_cash = $('#payment_cash').val();
@@ -532,15 +644,33 @@
 
           const formattedToday = dd + '-' + mm + '-' + yyyy;
           $('#invoice_date').datepicker({
-            dateFormat : 'dd-mm-yy',
+              dateFormat : 'dd-mm-yy',
               todayHighlight: true,
           });
           $('#invoice_date').val(formattedToday);
 
+          const json = JSON.stringify({
+                  invoice_date : $('#invoice_date').val(),
+          });
+          const res = axios.post("{{ route('promo.promolist') }}", json, {
+            headers: {
+              // Overwrite Axios's automatically set Content-Type
+              'Content-Type': 'application/json'
+            }
+          }).then(resp => {
+                if(resp.data.status=="success"){
+                  promo_term = resp.data.promo_term;
+                  promo_no_term = resp.data.promo_no_term;
+                  promo_detail = resp.data.promo_detail;
+                }
+          });
+
       });
 
-     
-        
+      var promo_no_term = [];
+      var promo_term = [];
+      var promo_detail = [];
+
         $('#save-btn').on('click',function(){
           if($('#invoice_date').val()==''){
             $('#invoice_date').focus();
@@ -723,21 +853,27 @@
             $('#content-order').html("");
             var $content = "";
             sub_total = 0;
+            discount_total = 0;
             total = 0;
             for (let index = 0; index < orderList.length; index++) {
+                orderList[index].total = (orderList[index].qty)*(parseFloat(orderList[index].price)-parseFloat(orderList[index].discount));
                 const element = orderList[index];
                 $content = $content + '<div class="row g-0"><div class="col-sm-11"><div class="row g-0"><div class="col-sm-12">'+element.abbr+'</div></div><div class="row g-0"><div class="col-sm-9">'+element.qty+' x '+currency((element.price), { separator: ".", decimal: ",", symbol: "", precision: 0 }).format()+'</div><div class="col-sm-3 d-flex justify-content-end">'+currency((element.total), { separator: ".", decimal: ",", symbol: "", precision: 0 }).format()+'</div></div></div><div class="col-sm-1 d-flex justify-content-center align-items-center"><i class="fa-solid fa-trash-can" onclick="deleteOrder('+element.id+')"></i></div></div>';
-                sub_total = sub_total + parseFloat(element.total);
+                total = total + parseFloat(element.total);
+                sub_total = sub_total + (parseFloat(element.price)* parseFloat(element.qty));
+                discount_total = discount_total + (parseFloat(orderList[index].discount)*orderList[index].qty);
             }
 
-            total = sub_total;
             $('#sub-total').text(currency((sub_total), { separator: ".", decimal: ",", symbol: "", precision: 0 }).format());
+            $('#discount-total').text(currency((discount_total), { separator: ".", decimal: ",", symbol: "", precision: 0 }).format());
             $('#result-total').text(currency((total), { separator: ".", decimal: ",", symbol: "", precision: 0 }).format());
 
             $('#content-order').html($content);
           }
 
           function addOrder(id){
+            $('#btn-calc-promo').removeClass('d-none');
+            $('#btn-payment').removeClass('d-none');
             if(orderList.length <= 0){
               for (let index = 0; index < productList.length; index++) {
                 const element = productList[index];
@@ -752,6 +888,8 @@
                     "vat" : "0",
                     "vat_total" : "0",
                     "discount" : "0",
+                    "applypromo" : "0",
+                    "promo_no" : "",
                     "qty" : 1,
                     "total" : parseFloat(element.price) * 1,
                     "seq" : Date.now()
@@ -767,7 +905,7 @@
                 const element = orderList[index];
                 if(element.id == id){
                   orderList[index].qty = orderList[index].qty+1;
-                  orderList[index].total = (orderList[index].qty+1)*parseFloat(orderList[index].price);
+                  orderList[index].total = (orderList[index].qty+1)*(parseFloat(orderList[index].price)-parseFloat(orderList[index].discount));
                   isExist = 1;
                 }
               }
@@ -783,6 +921,11 @@
                       "remark" : element.remark,
                       "price" : element.price,
                       "uom" : element.uom,
+                      "vat" : "0",
+                      "vat_total" : "0",
+                      "discount" : "0",
+                      "applypromo" : "0",
+                      "promo_no" : "",
                       "qty" : 1,
                       "total" : parseFloat(element.price) * 1,
                       "seq" : Date.now()
@@ -799,16 +942,20 @@
             $('#content-order').html("");
             var $content = "";
             sub_total = 0;
+            discount_total = 0;
             total = 0;
             for (let index = 0; index < orderList.length; index++) {
+                orderList[index].total = (orderList[index].qty)*(parseFloat(orderList[index].price)-parseFloat(orderList[index].discount));
                 const element = orderList[index];
                 $content = $content + '<div class="row g-0"><div class="col-sm-11"><div class="row g-0"><div class="col-sm-12">'+element.abbr+'</div></div><div class="row g-0"><div class="col-sm-9">'+element.qty+' x '+currency((element.price), { separator: ".", decimal: ",", symbol: "", precision: 0 }).format()+'</div><div class="col-sm-3 d-flex justify-content-end">'+currency((element.total), { separator: ".", decimal: ",", symbol: "", precision: 0 }).format()+'</div></div></div><div class="col-sm-1 d-flex justify-content-center align-items-center"><i class="fa-solid fa-trash-can" onclick="deleteOrder('+element.id+')"></i></div></div>';
-                sub_total = sub_total + parseFloat(element.total);
+                sub_total = sub_total + (parseFloat(element.price) * parseFloat(element.qty)) ;
+                discount_total = discount_total + (parseFloat(orderList[index].discount)*orderList[index].qty);
+                total = total + parseFloat(element.total);
               }
 
 
-            total = sub_total;
             $('#sub-total').text(currency((sub_total), { separator: ".", decimal: ",", symbol: "", precision: 0 }).format());
+            $('#discount-total').text(currency((discount_total), { separator: ".", decimal: ",", symbol: "", precision: 0 }).format());
             $('#result-total').text(currency((total), { separator: ".", decimal: ",", symbol: "", precision: 0 }).format());
             
             
@@ -868,11 +1015,11 @@
                     });
 
                   }else{
-                    table_product.clear().draw(false);
                     order_total = 0;
                     disc_total = 0;
                     _vat_total = 0;
                     sub_total = 0;
+                    discount_total = 0;
 
                     counterVoucherHit = 0;
 
@@ -896,49 +1043,11 @@
                           voucherNoPID = resp.data[j].product_id;
                         }
                       }
-
-
-                      var obj = orderList[i];
-                      var value = obj["abbr"];
-                      if(obj["type_id"]=="Services"){
-                        
-                        }else{
-                          counterno = counterno + 1;
-                          table_product.row.add( {
-                              "seq" : counterno,
-                              "id"        : obj["id"],
-                                "abbr"      : obj["abbr"],
-                                "uom"       : obj["uom"],
-                                "price"     : obj["price"],
-                                "discount"  : obj["discount"],
-                                "qty"       : obj["qty"],
-                                "total"     : obj["total"],
-                                "assignedto": obj["assignedto"],
-                                "referralby" : obj["referralby"],
-                                "action"    : "",
-                          }).draw(false);
-                        }
-
-
-                        disc_total = disc_total + (parseFloat(orderList[i]["discount"]));
-                        sub_total = sub_total + (((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"]))-(parseFloat(orderList[i]["discount"])));
-                        _vat_total = _vat_total + ((((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"]))-(parseFloat(orderList[i]["discount"])))*(parseFloat(orderList[i]["vat_total"])/100));
-                        order_total = order_total + ((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"])+((((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"]))-(parseFloat(orderList[i]["discount"])))*(parseFloat(orderList[i]["vat_total"])/100)))-(parseFloat(orderList[i]["discount"]));
-
-                        if(($('#payment_nominal').val())>order_total){
-                          $('#order_charge').css('color', 'black');
-                          $('#order_charge').text(currency((($('#payment_nominal').val())-order_total), { separator: ".", decimal: ",", symbol: "", precision: 0 }).format());
-                        }else{
-                          $('#order_charge').text("0");
-                          $('#order_charge').css('color', 'red');
-                          $('#order_charge').text(currency((($('#payment_nominal').val())-order_total), { separator: ".", decimal: ",", symbol: "", precision: 0 }).format());
-                        }
-
-
                     }
 
                     $('#result-total').text(currency(order_total, { separator: ".", decimal: ",", symbol: "", precision: 0 }).format());
                     $('#vat-total').text(currency(_vat_total, { separator: ".", decimal: ",", symbol: "", precision: 0 }).format());
+                    $('#discount-total').text(currency((discount_total), { separator: ".", decimal: ",", symbol: "", precision: 0 }).format());
                     $('#sub-total').text(currency(sub_total, { separator: ".", decimal: ",", symbol: "", precision: 0 }).format());
 
 

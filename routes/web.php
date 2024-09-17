@@ -325,6 +325,22 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
             Route::get('/export', 'ServicesBrandController@export')->name('servicesbrand.export');
         });
 
+         /**
+         * Service Brand
+         */
+        Route::group(['prefix' => 'promo'], function() {
+            Route::get('/', 'PromoController@index')->name('promo.index');
+            Route::get('/create', 'PromoController@create')->name('promo.create');
+            Route::post('/create', 'PromoController@store')->name('promo.store');
+            Route::post('/promolist', 'PromoController@promolist')->name('promo.promolist');
+            Route::get('/search', 'PromoController@search')->name('promo.search');
+            Route::get('/{promo}/show', 'PromoController@show')->name('promo.show');
+            Route::get('/{promo}/edit', 'PromoController@edit')->name('promo.edit');
+            Route::patch('/{promo}/update', 'PromoController@update')->name('promo.update');
+            Route::delete('/{promo}/delete', 'PromoController@destroy')->name('promo.destroy');
+            Route::get('/export', 'PromoController@export')->name('promo.export');
+        });
+
 
         /**
          * Product Price

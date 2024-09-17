@@ -34,6 +34,8 @@ return [
     "KomisiProduk" => "Komisi Produk",
     "PenyesuaianHarga" => "Penyesuaian Harga",
     "LotNumber" => "Nomor Lot",
+    "Promo" => "Promosi",
+
 
     "Order" => "Pesanan",
     "FakturJual" => "Faktur Jual",
