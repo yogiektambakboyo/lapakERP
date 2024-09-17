@@ -384,6 +384,7 @@
 
 
                 if(element.applypromo == "0"){
+                  // Check Promo No Term
                   for (let index2 = 0; index2 < promo_no_term.length; index2++) {
                     const element2 = promo_no_term[index2];
 
@@ -401,6 +402,48 @@
 
                     }
                   }
+
+                  if(hitpromo == "0"){
+                    // Check Promo Term
+                    for (let index3 = 0; index3 < promo_term.length; index3++) {
+                      const element_pt = promo_term[index3];
+
+                      if(element_pt.product_id == element.id && hitpromo == "0" ){
+
+                        // Check Promo Detail
+                        for (let index4 = 0; index4 < promo_detail.length; index4++) {
+                          const element_pd = promo_term[index4];
+
+                          if(element_pd.doc_no == element_pt.doc_no && hitpromo == "0" ){
+                            for (let index5 = 0; index5 < orderList.length; index5++) {
+                              const element_odr = array[index5];
+
+                              if(element_odr.product_id == element_pd.product_id && element_odr.qty >= element_pd.qty ){
+                                if(parseFloat(element_pt.value_nominal)>0){
+                                  orderList[index].discount = element_pt.value_nominal;
+                                }else{
+                                  orderList[index].discount = (parseFloat(element_pt.value_idx)*parseFloat(orderList[index].price))/100;
+                                }
+                                orderList[index].applypromo = "1";
+                                orderList[index].promo_no = element_pt.id;
+
+                                hitpromo = "1";
+                                hitpromodesc = element_pt.remark;
+                              }
+                              
+                            }
+                          }
+
+                        }
+
+                        
+
+                      }
+                    }
+
+
+                  }
+
                 }
 
                 if(hitpromo == "1"){
