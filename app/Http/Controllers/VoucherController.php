@@ -172,6 +172,7 @@ class VoucherController extends Controller
         $voucher->create(
             array_merge(
                 ['value' => $request->get('value') ],
+                ['value_nominal' => $request->get('value_nominal') ],
                 ['dated_start' => Carbon::parse($request->get('dated_start'))->format('Y-m-d') ],
                 ['dated_end' => Carbon::parse($request->get('dated_end'))->format('Y-m-d') ],
                 ['product_id' => $request->get('product_id') ],
@@ -179,6 +180,7 @@ class VoucherController extends Controller
                 ['remark' => $request->get('remark') ],
                 ['voucher_code' => $request->get('voucher_code') ],
                 ['created_by' => $user->id ],
+                
             )
         );
         return redirect()->route('voucher.index')
@@ -262,6 +264,7 @@ class VoucherController extends Controller
                         ->update(
                             array_merge(
                                 ['value' => $request->get('value') ],
+                                ['value_nominal' => $request->get('value_nominal') ],
                             )
                         );
         

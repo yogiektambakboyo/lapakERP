@@ -279,6 +279,9 @@
               
               <div class="container mt-1">
                       <div class="mb-3">
+                        <label id="modal_total" class="form-label h3">Total : </label>
+                      </div>
+                      <div class="mb-3">
                           <label for="payment_cash" class="form-label">@lang('general.lbl_cash')</label>
                           <input type="number" class="form-control" name="payment_cash" id="payment_cash" value="0" required>
                           @if ($errors->has('payment_cash'))
@@ -447,7 +450,7 @@
 
               $('#sub-total').text(currency((sub_total), { separator: ".", decimal: ",", symbol: "", precision: 0 }).format());
               $('#discount-total').text(currency((discount_total), { separator: ".", decimal: ",", symbol: "", precision: 0 }).format());
-
+              $('#modal_total').text("Total : "+currency((total), { separator: ".", decimal: ",", symbol: "", precision: 0 }).format());
               $('#result-total').text(currency((total), { separator: ".", decimal: ",", symbol: "", precision: 0 }).format());
               
               
@@ -866,6 +869,7 @@
 
             $('#sub-total').text(currency((sub_total), { separator: ".", decimal: ",", symbol: "", precision: 0 }).format());
             $('#discount-total').text(currency((discount_total), { separator: ".", decimal: ",", symbol: "", precision: 0 }).format());
+            $('#modal_total').text("Total : "+currency((total), { separator: ".", decimal: ",", symbol: "", precision: 0 }).format());
             $('#result-total').text(currency((total), { separator: ".", decimal: ",", symbol: "", precision: 0 }).format());
 
             $('#content-order').html($content);
@@ -957,6 +961,7 @@
             $('#sub-total').text(currency((sub_total), { separator: ".", decimal: ",", symbol: "", precision: 0 }).format());
             $('#discount-total').text(currency((discount_total), { separator: ".", decimal: ",", symbol: "", precision: 0 }).format());
             $('#result-total').text(currency((total), { separator: ".", decimal: ",", symbol: "", precision: 0 }).format());
+            $('#modal_total').text("Total : "+currency((total), { separator: ".", decimal: ",", symbol: "", precision: 0 }).format());
             
             
             $('#content-order').html($content);
@@ -1024,7 +1029,7 @@
                     counterVoucherHit = 0;
 
                     orderList.sort(function(a, b) {
-                        return parseFloat(a.entry_time) - parseFloat(b.entry_time);
+                        return parseFloat(a.seq) - parseFloat(b.seq);
                     });
 
 
@@ -1033,23 +1038,22 @@
 
                     for (var i = 0; i < orderList.length; i++){
                       for (var j = 0; j < resp.data.length;j++){
-                        if(resp.data[j].product_id == orderList[i]["id"]){
-                          orderList[i]["discount"] = ( ((parseFloat(resp.data[j].value)) * (parseFloat(orderList[i]["price"])) * (parseFloat(orderList[i]["qty"])) )/100 );
-                          orderList[i]["total"] = ((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"])+((((parseInt(orderList[i]["qty"]))*parseFloat(orderList[i]["price"]))-(parseFloat(orderList[i]["discount"])))*(parseFloat(orderList[i]["vat_total"])/100)))-(parseFloat(orderList[i]["discount"]));
-                          $("#remark").val($("#remark").val()+"["+resp.data[j].remark+"]");
-                          counterVoucherHit++;
-                          voucherNo = $("#input-apply-voucher").val();
-                          $("#voucher_code").val(voucherNo);
-                          voucherNoPID = resp.data[j].product_id;
+                        if(resp.data[j].product_id == orderList[i]["id"] && orderList[i]["applypromo"] == "0"){
+                            $("#remark").val($("#remark").val()+"["+resp.data[j].remark+"]");
+                            counterVoucherHit++;
+                            voucherNo = $("#input-apply-voucher").val();
+                            $("#voucher_code").val(voucherNo);
+                            voucherNoPID = resp.data[j].product_id;
+                            orderList[i]["applypromo"] = "1";
+                            orderList[i]["promo_no"] = voucherNo;
+                          if(parseFloat(resp.data[j].value)>0){
+                            orderList[i]["discount"] = (parseFloat(orderList[i]["price"])*parseFloat(resp.data[j].value))/100;
+                          }else{
+                            orderList[i]["discount"] = resp.data[j].value_nominal;
+                          }                      
                         }
                       }
                     }
-
-                    $('#result-total').text(currency(order_total, { separator: ".", decimal: ",", symbol: "", precision: 0 }).format());
-                    $('#vat-total').text(currency(_vat_total, { separator: ".", decimal: ",", symbol: "", precision: 0 }).format());
-                    $('#discount-total').text(currency((discount_total), { separator: ".", decimal: ",", symbol: "", precision: 0 }).format());
-                    $('#sub-total').text(currency(sub_total, { separator: ".", decimal: ",", symbol: "", precision: 0 }).format());
-
 
                     if(counterVoucherHit>0){
                       Swal.fire(
@@ -1062,6 +1066,29 @@
                           imageWidth: 30,   
                           timer: 1500
                       });
+
+                      $('#content-order').html("");
+                      var $content = "";
+                      sub_total = 0;
+                      discount_total = 0;
+                      total = 0;
+                      for (let index = 0; index < orderList.length; index++) {
+                          orderList[index].total = (orderList[index].qty)*(parseFloat(orderList[index].price)-parseFloat(orderList[index].discount));
+                          const element = orderList[index];
+                          $content = $content + '<div class="row g-0"><div class="col-sm-11"><div class="row g-0"><div class="col-sm-12">'+element.abbr+'</div></div><div class="row g-0"><div class="col-sm-9">'+element.qty+' x '+currency((element.price), { separator: ".", decimal: ",", symbol: "", precision: 0 }).format()+'</div><div class="col-sm-3 d-flex justify-content-end">'+currency((element.total), { separator: ".", decimal: ",", symbol: "", precision: 0 }).format()+'</div></div></div><div class="col-sm-1 d-flex justify-content-center align-items-center"><i class="fa-solid fa-trash-can" onclick="deleteOrder('+element.id+')"></i></div></div>';
+                          sub_total = sub_total + (parseFloat(element.price) * parseFloat(element.qty)) ;
+                          discount_total = discount_total + (parseFloat(orderList[index].discount)*orderList[index].qty);
+                          total = total + parseFloat(element.total);
+                        }
+
+
+                      $('#sub-total').text(currency((sub_total), { separator: ".", decimal: ",", symbol: "", precision: 0 }).format());
+                      $('#discount-total').text(currency((discount_total), { separator: ".", decimal: ",", symbol: "", precision: 0 }).format());
+                      $('#result-total').text(currency((total), { separator: ".", decimal: ",", symbol: "", precision: 0 }).format());
+                      $('#modal_total').text("Total : "+currency((total), { separator: ".", decimal: ",", symbol: "", precision: 0 }).format());
+                      
+                      
+                      $('#content-order').html($content);
                     }else{
                       Swal.fire(
                       {

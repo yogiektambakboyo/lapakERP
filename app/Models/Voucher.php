@@ -18,6 +18,7 @@ class Voucher extends Model
         'voucher_code',
         'remark',
         'value',
+        'value_nominal',
         'dated_start',
         'dated_end',
         'created_by',

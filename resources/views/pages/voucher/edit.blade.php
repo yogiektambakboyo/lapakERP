@@ -103,6 +103,14 @@
               <input type="text" class="form-control" name="value" value="{{ $product->value }}"/>
             </div>
           </div>
+
+          <div class="row mb-3">
+            <label class="form-label col-form-label col-md-2">Value Nominal</label>
+            <div class="col-md-8">
+              <input type="text" class="form-control" name="value_nominal" value="{{ $product->value_nominal }}"/>
+            </div>
+          </div>
+
           </div>
         </div>
     </div>
