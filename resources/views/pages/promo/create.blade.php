@@ -3,16 +3,16 @@
 @section('title', 'Promo')
 
 @section('content')
-<form method="POST" action="{{ route('promo.update') }}"  enctype="multipart/form-data">
-  @method('patch')
+<form method="POST" action="{{ route('promo.store') }}"  enctype="multipart/form-data">
   @csrf
     <div class="bg-light p-4 rounded">
         <div class="row">
           <div class="col-md-10">
-            <h1>Show Promo</h1>
+            <h1>Add New Promo</h1>
           </div>
           <div class="col-md-2">
             <div class="mt-4">
+              <button type="submit" class="btn btn-info">@lang('general.lbl_save')</button>
               <a href="{{ route('promo.index') }}" class="btn btn-default">@lang('general.lbl_cancel')</a>
             </div>
           </div>
@@ -27,18 +27,17 @@
               <div class="row mb-3">
                 <label class="form-label col-form-label col-md-2">Promo Name</label>
                 <div class="col-md-8">
-                  <input type="text" class="form-control" name="remark" value="{{ $promo->remark }}" readonly/>
-                  <input type="hidden" class="form-control" name="id" value="{{ $promo->id }}" readonly/>
+                  <input type="text" class="form-control" name="remark" value="{{ old('remark') }}" required/>
                 </div>
              </div>
               <div class="row mb-3">
                 <label class="form-label col-form-label col-md-2">@lang('general.lbl_product_name')</label>
                 <div class="col-md-8">
                   <select class="form-control" 
-                  name="product_id" disabled>
+                  name="product_id">
                   <option value="">@lang('general.lbl_productselect')</option>
                   @foreach($products as $product)
-                      <option value="{{ $product->id }}" @if($product->id == $promo->product_id) {{ 'selected' }} @endif >{{  $product->remark }}</option>
+                      <option value="{{ $product->id }}">{{  $product->remark }}</option>
                   @endforeach
               </select>
                 </div>
@@ -47,10 +46,10 @@
               <label class="form-label col-form-label col-md-2">@lang('general.lbl_branch')</label>
               <div class="col-md-8">
                 <select class="form-control" 
-                    name="branch_id" disabled>
+                    name="branch_id">
                     <option value="">@lang('general.lbl_branchselect')</option>
                     @foreach($branchs as $branch)
-                        <option value="{{ $branch->id }}" @if($branch->id == $promo->branch_id) {{ 'selected' }} @endif>{{  $branch->remark }}</option>
+                        <option value="{{ $branch->id }}">{{  $branch->remark }}</option>
                     @endforeach
                 </select>
               </div>
@@ -63,7 +62,7 @@
                 name="dated_start"
                 id="dated_start"
                 class="form-control" 
-                value="{{ $promo->dated_start }}" readonly/>
+                value="{{ old('dated_start') }}" required/>
                 @if ($errors->has('dated_start'))
                         <span class="text-danger text-left">{{ $errors->first('dated_start') }}</span>
                     @endif
@@ -79,7 +78,7 @@
                   name="dated_end"
                   id="dated_end"
                   class="form-control" 
-                  value="{{ $promo->dated_end }}" readonly/>
+                  value="{{ old('dated_end') }}" required/>
                   @if ($errors->has('dated_end'))
                           <span class="text-danger text-left">{{ $errors->first('dated_end') }}</span>
                       @endif
@@ -89,23 +88,23 @@
             <div class="row mb-3">
               <label class="form-label col-form-label col-md-2">Value (0-100%)</label>
               <div class="col-md-8">
-                <input type="number" class="form-control" name="value_idx" value="{{ $promo->value_idx }}" readonly/>
+                <input type="number" class="form-control" name="value_idx" value="0" required/>
               </div>
             </div>
 
             <div class="row mb-3">
               <label class="form-label col-form-label col-md-2">Value Nominal</label>
               <div class="col-md-8">
-                <input type="number" class="form-control" name="value_nominal" value="{{ $promo->value_nominal }}" readonly/>
+                <input type="number" class="form-control" name="value_nominal" value="0" required/>
               </div>
             </div>
 
             <div class="row mb-3">
               <label class="form-label col-form-label col-md-2">Is Condition</label>
               <div class="col-md-8">
-               <select name="is_term" class="form-control" id="is_term" disabled>
-                <option value="0" @if($promo->is_term == "0") {{ 'selected' }} @endif>Tidak</option>
-                <option value="1" @if($promo->is_term == "1") {{ 'selected' }} @endif>Ya</option>
+               <select name="is_term" class="form-control" id="is_term">
+                <option value="0">Tidak</option>
+                <option value="1">Ya</option>
                </select>
               </div>
             </div>
@@ -115,3 +114,35 @@
         </div>
     </div>
 @endsection
+
+
+@push('scripts')
+    <script type="text/javascript">
+          const today = new Date();
+          const yyyy = today.getFullYear();
+          const yyyy1 = today.getFullYear()+1;
+          let mm = today.getMonth() + 1; // Months start at 0!
+          let dd = today.getDate();
+
+          if (dd < 10) dd = '0' + dd;
+          if (mm < 10) mm = '0' + mm;
+
+          const formattedToday = dd + '-' + mm + '-' + yyyy;
+          const formattedNextYear = dd + '-' + mm + '-' + yyyy1;
+
+          $('#dated_start').datepicker({
+              dateFormat : 'dd-mm-yy',
+              todayHighlight: true,
+          });
+          $('#dated_start').val(formattedToday);
+
+
+          $('#dated_end').datepicker({
+              dateFormat : 'dd-mm-yy',
+              todayHighlight: true,
+          });
+          $('#dated_end').val(formattedNextYear);
+
+       
+    </script>
+@endpush

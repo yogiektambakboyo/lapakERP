@@ -336,7 +336,7 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
             Route::get('/search', 'PromoController@search')->name('promo.search');
             Route::get('/{promo}/show', 'PromoController@show')->name('promo.show');
             Route::get('/{promo}/edit', 'PromoController@edit')->name('promo.edit');
-            Route::patch('/{promo}/update', 'PromoController@update')->name('promo.update');
+            Route::patch('/update', 'PromoController@update')->name('promo.update');
             Route::delete('/{promo}/delete', 'PromoController@destroy')->name('promo.destroy');
             Route::get('/export', 'PromoController@export')->name('promo.export');
         });

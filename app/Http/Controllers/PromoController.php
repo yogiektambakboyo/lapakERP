@@ -7,9 +7,9 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Spatie\Permission\Models\Role;
 use App\Models\Branch;
-use App\Models\Room;
+use App\Models\Product;
 use App\Models\Voucher;
-use App\Models\JobTitle;
+use App\Models\Promo;
 use App\Models\Order;
 use App\Models\LotNumber;
 use App\Models\Customer;
@@ -76,6 +76,114 @@ class PromoController extends Controller
         return view('pages.promo.index',['company' => Company::get()->first()], compact('orders','data','keyword','act_permission','branchs'))->with('i', ($request->input('page', 1) - 1) * 5);
     }
 
+    /**
+     * Show form for creating user
+     * 
+     * @return \Illuminate\Http\Response
+     */
+    public function create() 
+    {
+        $user = Auth::user();
+        $id = $user->roles->first()->id;
+        $this->getpermissions($id);
+
+        $user  = Auth::user();
+        $data = $this->data;
+        return view('pages.promo.create',[
+            'products' => DB::select('select ps.id,ps.remark from product_sku as ps order by ps.remark;'),
+            'data' => $data, 'company' => Company::get()->first(),
+            'branchs' => Branch::join('users_branch as ub','ub.branch_id','=','branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']),
+        ]);
+    }
+
+    /**
+     * Store a newly created user
+     * 
+     * @param Promo $promo
+     * @param Request $request
+     * 
+     * @return \Illuminate\Http\Response
+     */
+    public function store(Promo $promo, Request $request) 
+    {
+        //For demo purposes only. When creating user or inviting a user
+        // you should create a generated random password and email it to the user
+    
+        $doc_no = "DIS-".$request->get('branch_id').'-'.date('YmdHis');
+        $user = Auth::user();
+        $promo->create(
+            array_merge(
+                ['value_idx' => $request->get('value_idx') ],
+                ['value_nominal' => $request->get('value_nominal') ],
+                ['dated_start' => Carbon::parse($request->get('dated_start'))->format('Y-m-d') ],
+                ['dated_end' => Carbon::parse($request->get('dated_end'))->format('Y-m-d') ],
+                ['product_id' => $request->get('product_id') ],
+                ['branch_id' => $request->get('branch_id') ],
+                ['remark' => $request->get('remark') ],
+                ['is_term' => $request->get('is_term') ],
+                ['doc_no' => $doc_no ],
+                ['created_by' => $user->id ],
+                
+            )
+        );
+        return redirect()->route('promo.index')
+            ->withSuccess(__('Promo created successfully.'));
+    }
+
+    /**
+     * Edit user data
+     * 
+     * @param Promo $promo
+     * 
+     * @return \Illuminate\Http\Response
+     */
+    public function edit(Promo $promo) 
+    {
+        $user = Auth::user();
+        $id = $user->roles->first()->id;
+        $this->getpermissions($id);
+
+        $user  = Auth::user();
+        $data = $this->data;
+        $promo = DB::select("select id,remark,product_id,value_nominal,value_idx::int value_idx,to_char(dated_start,'dd-MM-YYYY') dated_start,to_char(dated_end,'dd-MM-YYYY') dated_end,is_term,doc_no,branch_id  from promo_master where id = ?", [$promo->id]);
+        return view('pages.promo.edit', [
+            'branchs' => Branch::join('users_branch as ub','ub.branch_id','=','branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']),
+            'data' => $data,
+            'promo' => $promo[0], 
+            'company' => Company::get()->first(),
+            'products' => Product::get(),
+        ]);
+    }
+
+     /**
+     * Update user data
+     * 
+     * @param Promo $promo
+     * @param Request $request
+     * 
+     * @return \Illuminate\Http\Response
+     */
+    public function update(Request $request) 
+    {
+        $user = Auth::user();
+        Promo::where('id','=',$request->id)
+                        ->update(
+                            array_merge(
+                                ['remark' => $request->get('remark') ],
+                                ['value_idx' => $request->get('value_idx') ],
+                                ['value_nominal' => $request->get('value_nominal') ],
+                                ['dated_start' => Carbon::parse($request->get('dated_start'))->format('Y-m-d') ],
+                                ['dated_end' => Carbon::parse($request->get('dated_end'))->format('Y-m-d') ],
+                                ['product_id' => $request->get('product_id') ],
+                                ['is_term' => $request->get('is_term') ],
+                                ['updated_by' => $user->id ],
+                            )
+                        );
+        
+        return redirect()->route('promo.index')
+            ->withSuccess(__('Promo updated successfully.'));
+    }
+
 
     public function promolist(Request $request) 
     {
@@ -111,41 +219,25 @@ class PromoController extends Controller
     /**
      * Show user data
      * 
-     * @param Order $order
+     * @param Promo $promo
      * 
      * @return \Illuminate\Http\Response
      */
-    public function show(LotNumber $lotnumber) 
+    public function show(Promo $promo) 
     {
         $user = Auth::user();
         $id = $user->roles->first()->id;
         $this->getpermissions($id);
 
-
+        $user  = Auth::user();
         $data = $this->data;
-        $user = Auth::user();
-        $doc_data = DB::select("select l.id,l.doc_no,ps.remark,l.product_id,b.id as branch_id,b.remark as branch_name,l.qty_available,l.qty_onhand,l.qty_allocated
-        from lot_number l
-        join product_sku ps on ps.id = l.product_id 
-        join branch b on b.id  = l.branch_id 
-        join users_branch ub on ub.branch_id = b.id and ub.user_id = ? and l.id = ?;", [ $user->id, $lotnumber->id]);
-
-        $in = DB::select('select rm.dated,rd.receive_no as doc_no,rd.product_remark,rd.qty  from receive_master rm 
-                            join receive_detail rd on rd.receive_no = rm.receive_no where rd.lot_no = ?
-                            order by rm.dated asc; ', [ $lotnumber->doc_no ]);
-        $out = DB::select('select im.dated,id.invoice_no as doc_no,id.product_name,sa.qty_order,sa.qty_served  from stock_allocation sa 
-                            join invoice_master im on im.invoice_no = sa.doc_no 
-                            join invoice_detail id on id.invoice_no = im.invoice_no and id.product_id = sa.product_id 
-                            where sa.lot_no = ?
-                            order by im.dated,im.invoice_no asc; ', [ $lotnumber->doc_no ]);
-
-        return view('pages.promo.show',[
+        $promo = DB::select("select id,remark,product_id,value_nominal,value_idx::int value_idx,to_char(dated_start,'dd-MM-YYYY') dated_start,to_char(dated_end,'dd-MM-YYYY') dated_end,is_term,doc_no,branch_id  from promo_master where id = ?", [$promo->id]);
+        return view('pages.promo.show', [
+            'branchs' => Branch::join('users_branch as ub','ub.branch_id','=','branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']),
             'data' => $data,
-            'order' => $doc_data[0],
-            'in' => $in,
-            'out' => $out,
-            'branchs' => Branch::join('users_branch as ub','ub.branch_id', '=', 'branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark','branch.currency']),
+            'promo' => $promo[0], 
             'company' => Company::get()->first(),
+            'products' => Product::get(),
         ]);
     }
 
