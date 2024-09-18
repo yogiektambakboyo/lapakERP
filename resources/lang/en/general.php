@@ -133,6 +133,7 @@ return [
     "lbl_terapist" => "Terapis",
     "lbl_tax" => "Tax",
     "lbl_print" => "Print",
+    "lbl_addterm" => "Add Term",
     "lbl_printspk" => "Print SPK",
     "lbl_address" => "Address",
     "lbl_phoneno" => "Handphone",

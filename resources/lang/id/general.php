@@ -102,6 +102,8 @@ return [
     "lbl_discountrp" => "Diskon (Rp)",
     "lbl_discount" => "Diskon",
     "lbl_abbr" => "Nama Pendek",
+    "lbl_addterm" => "Tambahkan Syarat",
+
     "lbl_type" => "Tipe",
     "lbl_typeselect" => "Pilih Tipe",
     "lbl_category" => "Kategori",

@@ -145,11 +145,17 @@ class PromoController extends Controller
 
         $user  = Auth::user();
         $data = $this->data;
+        $promo_detail = DB::select("select pd.doc_no,pd.product_id,pd.qty,ps.remark  from promo_detail pd
+                                    join promo_master pm on pm.doc_no = pd.doc_no 
+                                    join product_sku ps on ps.id = pd.product_id 
+                                    where pd.doc_no = ?;", [$promo->doc_no]);
         $promo = DB::select("select id,remark,product_id,value_nominal,value_idx::int value_idx,to_char(dated_start,'dd-MM-YYYY') dated_start,to_char(dated_end,'dd-MM-YYYY') dated_end,is_term,doc_no,branch_id  from promo_master where id = ?", [$promo->id]);
+        
         return view('pages.promo.edit', [
             'branchs' => Branch::join('users_branch as ub','ub.branch_id','=','branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark']),
             'data' => $data,
             'promo' => $promo[0], 
+            'promo_detail' => $promo_detail, 
             'company' => Company::get()->first(),
             'products' => Product::get(),
         ]);
@@ -210,6 +216,41 @@ class PromoController extends Controller
             ['promo_term' =>  $promo_term],
             ['promo_detail' =>  $promo_detail],
             ['message' => ''],
+        );
+
+        return $result;
+    }
+
+    public function destroydetail(Request $request) 
+    {
+        $user = Auth::user();
+        
+        $product_id = $request->get('product_id');
+        $doc_no = $request->get('doc_no');
+        $promo_no_term = DB::select("delete from promo_detail where doc_no=? and product_id=?;", [$doc_no, $product_id]);
+
+        $result = array_merge(
+            ['status' => 'success'],
+            ['data' =>  $doc_no],
+            ['message' => 'Success'],
+        );
+
+        return $result;
+    }
+
+    public function storedetail(Request $request) 
+    {
+        $user = Auth::user();
+        
+        $product_id = $request->get('product_id');
+        $doc_no = $request->get('doc_no');
+        $qty = $request->get('qty');
+        $promo_no_term = DB::select("INSERT INTO public.promo_detail(doc_no, product_id, qty, created_at, created_by) VALUES('".$doc_no."', ".$product_id.", ".$qty.", now(), 1);", []);
+
+        $result = array_merge(
+            ['status' => 'success'],
+            ['data' =>  $doc_no],
+            ['message' => 'Success'],
         );
 
         return $result;

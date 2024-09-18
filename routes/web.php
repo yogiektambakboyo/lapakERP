@@ -333,6 +333,8 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
             Route::get('/create', 'PromoController@create')->name('promo.create');
             Route::post('/create', 'PromoController@store')->name('promo.store');
             Route::post('/promolist', 'PromoController@promolist')->name('promo.promolist');
+            Route::post('/destroydetail', 'PromoController@destroydetail')->name('promo.destroydetail');
+            Route::post('/storedetail', 'PromoController@storedetail')->name('promo.storedetail');
             Route::get('/search', 'PromoController@search')->name('promo.search');
             Route::get('/{promo}/show', 'PromoController@show')->name('promo.show');
             Route::get('/{promo}/edit', 'PromoController@edit')->name('promo.edit');
