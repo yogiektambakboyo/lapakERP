@@ -216,6 +216,11 @@
                   <div class="col-md-12">
                     <input id="input_expired_at_list" class="form-control" name="input_expired_at_list" type="text">
                   </div>
+
+                  <label class="form-label col-form-label col-md-12">@lang('general.lbl_qty')   </label>
+                  <div class="col-md-12">
+                    <input id="input_qty_at_list" class="form-control" name="input_qty_at_list" type="text">
+                  </div>
                 </div>
                 <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">@lang('general.lbl_close') </button>
@@ -550,6 +555,8 @@
             var value = obj["id"];
             if($('#product_id_selected').val()==obj["id"]){
               orderList[i]["exp"] = $('#input_expired_at_list').val();
+              orderList[i]["qty"] = $('#input_qty_at_list').val().replaceAll('.','');
+              orderList[i]["total"] = (parseFloat(obj["price"]) - parseFloat(obj["disc"])) * parseFloat($('#input_qty_at_list').val().replaceAll('.',''));
             }
           }
 
@@ -562,7 +569,7 @@
                 "price"     : currency(obj["price"], { separator: ".", decimal: ",", symbol: "", precision: 0 }).format(),
                 "qty"       : currency(obj["qty"], { separator: ".", decimal: ",", symbol: "", precision: 0 }).format(),
                 "disc"       : currency(obj["disc"], { separator: ".", decimal: ",", symbol: "", precision: 0 }).format(),
-                "exp"       : formattedNextYear,
+                "exp"       : obj["exp"],
                 "total"     : currency(obj["total"], { separator: ".", decimal: ",", symbol: "", precision: 0 }).format(),
                 "action"    : "",
               }).draw(false);
@@ -802,6 +809,7 @@
                 if(data["id"]==obj["id"]){
                   $('#product_id_selected').val(data["id"]);
                   $('#input_expired_at_list').val(data["exp"]);
+                  $('#input_qty_at_list').val(data["qty"].replaceAll('.',''));
                   $('#input_expired_list_at_lbl').text("Product "+data["abbr"]);
                 }
               }

@@ -80,56 +80,105 @@
             
             
             <br>
-            <div class="row mb-3">
-              <div class="col-md-6">
-                <div class="row mb-3">
-                  <label class="form-label col-form-label col-md-3">@lang('sidebar.MataUang')</label>
-                  <div class="col-md-2">
-                    <input type="hidden" name="curr_def" id="curr_def" value="{{ $branchs[0]->currency }}">
-                    <select class="form-select" name="currency" id="currency" disabled>
-                        @php
-                        $selected = "";
-                        $curr = $purchase->currency;
-
-                        for ($i=0; $i < count($currency); $i++) { 
-                          if($currency[$i]->remark == $curr){
-                            $selected = "selected";
-                          }else{
+            <div class="row mb-3  bg-light">
+              <div class="col-md-6 mt-1">
+                
+                <ul class="nav nav-tabs">
+                  <li class="nav-item">
+                    <a href="#default-tab-1" data-bs-toggle="tab" class="nav-link active">Note</a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="#default-tab-2" data-bs-toggle="tab" class="nav-link">@lang('general.lbl_payment')</a>
+                  </li>
+                </ul>
+                <div class="tab-content panel p-3 rounded-0 rounded-bottom">
+                  <div class="tab-pane fade active show" id="default-tab-1">
+                    <div class="row mb-1">
+                      <label class="form-label col-form-label col-md-3">@lang('sidebar.MataUang')</label>
+                      <div class="col-md-2">
+                        <input type="hidden" name="curr_def" id="curr_def" value="{{ $branchs[0]->currency }}">
+                        <select class="form-select" name="currency" id="currency" disabled>
+                            @php
                             $selected = "";
-                          }
-                            echo '<option value="'.$currency[$i]->remark.'" '.$selected.'>'.$currency[$i]->remark.'</option>';
-                        }   
-                        @endphp
-                    </select>
-                  </div>
-
-                  <label class="form-label col-form-label col-md-2 kurs d-none" id="label-kurs">Kurs</label>
-                  <br>
-                  <div class="col-md-3 kurs  d-none">
-                    <input type="number" class="form-control kurs  d-none" id="kurs" value="1" name="kurs" readonly>
-                  </div>
-                  <label class="form-label col-form-label col-md-2 kurs d-none">{{ $branchs[0]->currency }}</label>
-                  
-
-                  @if ($errors->has('currency'))
-                      <span class="text-danger text-left">{{ $errors->first('currency') }}</span>
-                  @endif
-                </div>
-
-                <div class="row mb-3">
-                  <label class="form-label col-form-label col-md-3">@lang('general.lbl_remark')</label>
-                  <div class="col-md-7">
-                    <input type="text" 
-                    name="remark"
-                    id="remark" readonly
-                    class="form-control" 
-                    value="{{ old('remark') }}"/>
+                            $curr = $purchase->currency;
+    
+                            for ($i=0; $i < count($currency); $i++) { 
+                              if($currency[$i]->remark == $curr){
+                                $selected = "selected";
+                              }else{
+                                $selected = "";
+                              }
+                                echo '<option value="'.$currency[$i]->remark.'" '.$selected.'>'.$currency[$i]->remark.'</option>';
+                            }   
+                            @endphp
+                        </select>
+                      </div>
+    
+                      <label class="form-label col-form-label col-md-2 kurs d-none" id="label-kurs">Kurs</label>
+                      <br>
+                      <div class="col-md-3 kurs  d-none">
+                        <input type="number" class="form-control kurs  d-none" id="kurs" value="1" name="kurs" readonly>
+                      </div>
+                      <label class="form-label col-form-label col-md-2 kurs d-none">{{ $branchs[0]->currency }}</label>
+                      
+    
+                      @if ($errors->has('currency'))
+                          <span class="text-danger text-left">{{ $errors->first('currency') }}</span>
+                      @endif
                     </div>
+    
+                    <div class="row mb-3">
+                      <label class="form-label col-form-label col-md-3">@lang('general.lbl_remark')</label>
+                      <div class="col-md-7">
+                        <input type="text" 
+                        name="remark"
+                        id="remark" readonly
+                        class="form-control" 
+                        value="{{ old('remark') }}"/>
+                        </div>
+                    </div>
+                  </div>
+                  <div class="tab-pane fade" id="default-tab-2">
+                    <div class="row">
+                      <div class="col-sm-10"></div>
+                      <div class="col-sm-2"><input type="button" value="Add" class="btn btn-sm btn-primary"></div>
+                    </div>
+                    <div class="row">
+                      <div class="col-sm-12">
+                        <table class="table table-sm">
+                          <thead>
+                            <tr>
+                              <td>Date</td>
+                              <td>Payment</td>
+                              <td>Value</td>
+                              <td>Action</td>
+                            </tr>
+                            
+                          </thead>
+                          <tbody>
+                            @php
+                             for ($i=0; $i < count($po_payment); $i++) { 
+                                echo '<tr>
+                                        <td>'.$po_payment[0]->dated.'</td>
+                                        <td>'.$po_payment[0]->payment_type.'</td>
+                                        <td>'.$po_payment[0]->nominal.'</td>
+                                        <td><input type="button" class="btn btn-sm btn-danger" value="Delete"></td>
+                                      </tr>';
+                             }
+                            @endphp
+                            
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
                 </div>
+
+                
               </div>
 
 
-              <div class="col-md-6">
+              <div class="col-md-6  mt-1">
                 <div class="col-md-12">
                   <div class="col-auto text-end">
                     <label class="col-md-4">Sub Total</label>

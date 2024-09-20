@@ -318,6 +318,7 @@ class PurchaseOrderController extends Controller
             'branchs' => Branch::join('users_branch as ub','ub.branch_id', '=', 'branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark','branch.currency']),
             'users' => $users,
             'purchase' => $purchase,
+            'po_payment' => DB::select("select id,purchase_no,dated,payment_type,nominal  from po_payment pp where purchase_no=?;", [$purchase->purchase_no]),
             'purchaseDetails' => PurchaseDetail::join('purchase_master as om','om.purchase_no','=','purchase_detail.purchase_no')->join('product_sku as ps','ps.id','=','purchase_detail.product_id')->join('product_uom as u','u.product_id','=','purchase_detail.product_id')->join('uom as um','um.id','=','u.uom_id')->where('purchase_detail.purchase_no',$purchase->purchase_no)->get(['um.remark as uom','purchase_detail.qty','purchase_detail.price','purchase_detail.subtotal_vat','purchase_detail.subtotal','ps.id','ps.remark as product_name','purchase_detail.discount']),
             'usersReferrals' => User::get(['users.id','users.name']),
             'payment_type' => $payment_type, 'company' => Company::get()->first(),
