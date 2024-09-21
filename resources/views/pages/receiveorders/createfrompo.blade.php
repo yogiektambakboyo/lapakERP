@@ -460,8 +460,7 @@
           $('#branch_id').trigger('change');
 
       });
-
-      console.log(url);
+      
           $('#ref_no').change(function(){
               orderList = [];
               if($(this).val()==""){

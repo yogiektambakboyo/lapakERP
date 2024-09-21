@@ -21,6 +21,7 @@
             <div class="row mb-3">
               <label class="form-label col-form-label col-md-1">@lang('general.lbl_dated_mmddYYYY')</label>
               <div class="col-md-2">
+                <input type="hidden" name="purchase_no"  id="purchase_no" value="{{ $purchase->purchase_no }}">
                 <input type="text" 
                 name="dated"
                 id="dated"
@@ -140,12 +141,12 @@
                   </div>
                   <div class="tab-pane fade" id="default-tab-2">
                     <div class="row">
-                      <div class="col-sm-10"></div>
-                      <div class="col-sm-2"><input type="button" value="Add" class="btn btn-sm btn-primary"></div>
+                      <div class="col-sm-10"><label id="total_payment"></label> </div>
+                      <div class="col-sm-2"><input type="button" value="Add" class="btn btn-sm btn-primary"   href="#modal-add-payment" data-bs-toggle="modal" data-bs-target="#modal-add-payment" ></div>
                     </div>
                     <div class="row">
                       <div class="col-sm-12">
-                        <table class="table table-sm">
+                        <table class="table table-sm table-striped" id="table_payment">
                           <thead>
                             <tr>
                               <td>Date</td>
@@ -159,10 +160,10 @@
                             @php
                              for ($i=0; $i < count($po_payment); $i++) { 
                                 echo '<tr>
-                                        <td>'.$po_payment[0]->dated.'</td>
-                                        <td>'.$po_payment[0]->payment_type.'</td>
-                                        <td>'.$po_payment[0]->nominal.'</td>
-                                        <td><input type="button" class="btn btn-sm btn-danger" value="Delete"></td>
+                                        <td>'.$po_payment[$i]->dated.'</td>
+                                        <td>'.$po_payment[$i]->payment_type.'</td>
+                                        <td>'.number_format($po_payment[$i]->nominal,0,',','.').'</td>
+                                        <td><input type="button" class="btn btn-sm btn-danger" onclick="deletePayment('.$po_payment[$i]->id.',\''.$po_payment[$i]->dated.'\');" value="Delete"></td>
                                       </tr>';
                              }
                             @endphp
@@ -203,6 +204,59 @@
             
           <div class="col-md-12">
           </div>
+
+          <!-- Begin Modal Add Payment -->
+          <div class="modal fade" id="modal-add-payment" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+            <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">@lang('general.lbl_payment')</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                  
+                  <div class="container mt-1">
+                          <div class="mb-3">
+                              <label for="lbl_dated" class="form-label">@lang('general.lbl_dated')</label>
+                              <input type="text" class="form-control" name="payment_dated" id="payment_dated" required>
+                              @if ($errors->has('payment_dated'))
+                                  <span class="text-danger text-left">{{ $errors->first('payment_dated') }}</span>
+                              @endif
+                          </div>
+                          <div class="mb-3">
+                            <label for="payment_type" class="form-label">@lang('general.lbl_type_payment')</label>
+                            <select name="payment_type" class="form-control" id="payment_type">
+                              <option value="Cash">Cash</option>
+                              <option value="Transfer">Transfer</option>
+                              <option value="Debit Card">Debit Card</option>
+                              <option value="Credit Card">Credit Card</option>
+                            </select>
+                            @if ($errors->has('payment_type'))
+                                <span class="text-danger text-left">{{ $errors->first('payment_type') }}</span>
+                            @endif
+                        </div>
+                          <div class="mb-3">
+                              <label for="payment_nominal" class="form-label">@lang('general.lbl_payment')</label>
+                              <input type="number" class="form-control" name="payment_nominal" id="payment_nominal" value="0" required>
+                              @if ($errors->has('payment_nominal'))
+                                  <span class="text-danger text-left">{{ $errors->first('payment_nominal') }}</span>
+                              @endif
+                          </div>
+
+                         
+                  </div>
+      
+                </div>
+                <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">@lang('general.lbl_close') </button>
+                <button type="button" class="btn btn-primary"  data-bs-dismiss="modal" onclick="addPayment()" id="btn_save_payment">@lang('general.lbl_save')</button>
+                </div>
+            </div>
+            </div>
+          </div>
+
+        <!-- End Modal Add Payment -->
+        
         </div>
     </div>
   </div>
@@ -213,6 +267,126 @@
       var productList = [];
       var orderList = [];
       var order_total = 0;
+
+      function deletePayment(id, data){
+        Swal.fire({
+            title: "@lang('general.lbl_sure')",
+            text: "@lang('general.lbl_sure_title') "+data+" !",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33', cancelButtonText: "@lang('general.lbl_cancel')",
+            confirmButtonText: "@lang('general.lbl_sure_delete')"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                  const json = JSON.stringify({
+                        id : id,
+                      }
+                );
+
+                const res = axios.post("{{ route('purchaseorders.payment_delete') }}", json, {
+                      headers: {
+                        'Content-Type': 'application/json'
+                      }
+                }).then(resp => {
+                          if(resp.data.status=="success"){
+                            refreshTable();
+                          }else{
+                            Swal.fire(
+                              {
+                                position: 'top-end',
+                                icon: 'warning',
+                                text: "@lang('general.lbl_msg_failed')"+resp.data.message,
+                                showConfirmButton: false,
+                                imageHeight: 30, 
+                                imageWidth: 30,   
+                                timer: 1500
+                              }
+                            );
+                          }
+                });
+                    
+                    }
+                })
+
+
+
+        
+      }
+
+      function addPayment(){
+                const json = JSON.stringify({
+                        payment_type : $('#payment_type').find(':selected').val(),
+                        purchase_no : $('#purchase_no').val(),
+                        nominal : $('#payment_nominal').val(),
+                        dated : $('#payment_dated').val(),
+                      }
+                );
+
+                const res = axios.post("{{ route('purchaseorders.payment_store') }}", json, {
+                      headers: {
+                        'Content-Type': 'application/json'
+                      }
+                }).then(resp => {
+                          if(resp.data.status=="success"){
+                            refreshTable();
+                          }else{
+                            Swal.fire(
+                              {
+                                position: 'top-end',
+                                icon: 'warning',
+                                text: "@lang('general.lbl_msg_failed')"+resp.data.message,
+                                showConfirmButton: false,
+                                imageHeight: 30, 
+                                imageWidth: 30,   
+                                timer: 1500
+                              }
+                            );
+                          }
+                });
+      }
+
+      function refreshTable(){
+        const json = JSON.stringify({
+                purchase_no : $('#purchase_no').val(),
+              }
+        );
+
+        const res = axios.post("{{ route('purchaseorders.payment_get') }}", json, {
+              headers: {
+                'Content-Type': 'application/json'
+              }
+        }).then(resp => {
+                  if(resp.data.status=="success"){
+                    var data_doc = resp.data.data;
+                    $('#table_payment tbody').html("");
+                    var total_p = 0;
+                    for (let index = 0; index < data_doc.length; index++) {
+                      const element = data_doc[index];
+
+                      var ct = '<tr><td>'+element.dated+'</td><td>'+element.payment_type+'</td><td>'+currency((element.nominal), { separator: ".", decimal: ",", symbol: "", precision: 0 }).format()+'</td><td><input type="button" class="btn btn-sm btn-danger" onclick="deletePayment('+element.id+',\''+element.dated+'\');" value="Delete"></td></tr>';
+                      $('#table_payment tbody').append(ct);
+                      total_p = total_p + parseFloat(element.nominal);
+                      
+                    } 
+                    $('#total_payment').text("Total : "+currency((total_p), { separator: ".", decimal: ",", symbol: "", precision: 0 }).format());
+                  }else{
+                    Swal.fire(
+                      {
+                        position: 'top-end',
+                        icon: 'warning',
+                        text: "@lang('general.lbl_msg_failed')"+resp.data.message,
+                        showConfirmButton: false,
+                        imageHeight: 30, 
+                        imageWidth: 30,   
+                        timer: 1500
+                      }
+                    );
+                  }
+        });
+
+
+      }
          
       $(function () {
           //$('#app').removeClass('app app-sidebar-fixed app-header-fixed-minified').addClass('app app-sidebar-fixed app-header-fixed-minified app-sidebar-minified');
@@ -238,12 +412,19 @@
           if (dd < 10) dd = '0' + dd;
           if (mm < 10) mm = '0' + mm;
 
-          const formattedToday = mm + '/' + dd + '/' + yyyy;
+          const formattedToday = dd + '-' + mm + '-' + yyyy;
           
           $('#invoice_date').datepicker({
               format : 'yyyy-mm-dd',
               todayHighlight: true,
           });
+
+          $('#payment_dated').datepicker({
+              dateFormat : 'dd-mm-yy',
+              todayHighlight: true,
+          });
+
+          $('#payment_dated').val(formattedToday);
 
         
           var url = "{{ route('purchaseorders.getdocdata',$purchase->purchase_no) }}";
@@ -291,11 +472,9 @@
 
                 if(counter_rec>0){
                   $('#btn_list_rec').removeClass("d-none");
-                  //$('#btn_rec').addClass("d-none");
 
                 }else{
                   $('#btn_list_rec').addClass("d-none");
-                  //$('#btn_rec').removeClass("d-none");
                 }
 
                 $('#order-total').text(currency(order_total, { separator: ".", decimal: ",", symbol: "Rp. ", precision: 0 }).format());

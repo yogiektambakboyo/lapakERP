@@ -193,6 +193,9 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
             Route::get('/create', 'PurchaseOrderController@create')->name('purchaseorders.create');
             Route::post('/create', 'PurchaseOrderController@store')->name('purchaseorders.store');
             Route::post('/search', 'PurchaseOrderController@search')->name('purchaseorders.search');
+            Route::post('/payment_store', 'PurchaseOrderController@payment_store')->name('purchaseorders.payment_store');
+            Route::post('/payment_delete', 'PurchaseOrderController@payment_delete')->name('purchaseorders.payment_delete');
+            Route::post('/payment_get', 'PurchaseOrderController@payment_get')->name('purchaseorders.payment_get');
             Route::get('/{purchase}/show', 'PurchaseOrderController@show')->name('purchaseorders.show');
             Route::get('/{purchase}/print', 'PurchaseOrderController@print')->name('purchaseorders.print');
             Route::get('/{purchase}/edit', 'PurchaseOrderController@edit')->name('purchaseorders.edit');

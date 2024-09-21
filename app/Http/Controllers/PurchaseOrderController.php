@@ -16,6 +16,7 @@ use App\Models\Currency;
 use App\Models\SettingsDocumentNumber;
 use App\Models\OrderDetail;
 use App\Models\Invoice;
+use App\Models\PurchasePayment;
 use App\Models\InvoiceDetail;
 use App\Models\Purchase;
 use App\Models\PurchaseDetail;
@@ -48,17 +49,24 @@ class PurchaseOrderController extends Controller
 
     public function __construct()
     {
-        $this->act_permission = DB::select("
-            select sum(coalesce(allow_create,0)) as allow_create,sum(coalesce(allow_delete,0)) as allow_delete,sum(coalesce(allow_show,0)) as allow_show,sum(coalesce(allow_edit,0)) as allow_edit from (
-                select count(1) as allow_create,0 as allow_delete,0 as allow_show,0 as allow_edit from permissions p join role_has_permissions rp on rp.permission_id = p.id where rp.role_id = 1 and p.name like '%.create' and p.name like '".$this->module.".%'
-                union 
-                select 0 as allow_create,count(1) as allow_delete,0 as allow_show,0 as allow_edit from permissions p  join role_has_permissions rp on rp.permission_id = p.id where rp.role_id = 1 and p.name like '%.delete' and p.name like '".$this->module.".%'
-                union 
-                select 0 as allow_create,0 as allow_delete,count(1) as allow_show,0 as allow_edit from permissions p  join role_has_permissions rp on rp.permission_id = p.id where rp.role_id = 1 and p.name like '%.show' and p.name like '".$this->module.".%'
-                union 
-                select 0 as allow_create,0 as allow_delete,0 as allow_show,count(1) as allow_edit from permissions p  join role_has_permissions rp on rp.permission_id = p.id where rp.role_id = 1 and p.name like '%.edit' and p.name like '".$this->module.".%'
-            ) a
-        ");        
+        $this->middleware(function ($request, $next) {
+            $this->user= Auth::user();
+            $user = Auth::user();
+            $role_id = $user->roles->first()->id;
+
+            $this->act_permission = DB::select("
+                select sum(coalesce(allow_create,0)) as allow_create,sum(coalesce(allow_delete,0)) as allow_delete,sum(coalesce(allow_show,0)) as allow_show,sum(coalesce(allow_edit,0)) as allow_edit from (
+                    select count(1) as allow_create,0 as allow_delete,0 as allow_show,0 as allow_edit from permissions p join role_has_permissions rp on rp.permission_id = p.id where rp.role_id = ".$role_id." and p.name like '%.create' and p.name like '".$this->module.".%'
+                    union 
+                    select 0 as allow_create,count(1) as allow_delete,0 as allow_show,0 as allow_edit from permissions p  join role_has_permissions rp on rp.permission_id = p.id where rp.role_id = ".$role_id." and p.name like '%.delete' and p.name like '".$this->module.".%'
+                    union 
+                    select 0 as allow_create,0 as allow_delete,count(1) as allow_show,0 as allow_edit from permissions p  join role_has_permissions rp on rp.permission_id = p.id where rp.role_id = ".$role_id." and p.name like '%.show' and p.name like '".$this->module.".%'
+                    union 
+                    select 0 as allow_create,0 as allow_delete,0 as allow_show,count(1) as allow_edit from permissions p  join role_has_permissions rp on rp.permission_id = p.id where rp.role_id = ".$role_id." and p.name like '%.edit' and p.name like '".$this->module.".%'
+                ) a
+            ");   
+            return $next($request);
+        });   
     }
 
     public function index(Request $request) 
@@ -318,7 +326,7 @@ class PurchaseOrderController extends Controller
             'branchs' => Branch::join('users_branch as ub','ub.branch_id', '=', 'branch.id')->where('ub.user_id','=',$user->id)->get(['branch.id','branch.remark','branch.currency']),
             'users' => $users,
             'purchase' => $purchase,
-            'po_payment' => DB::select("select id,purchase_no,dated,payment_type,nominal  from po_payment pp where purchase_no=?;", [$purchase->purchase_no]),
+            'po_payment' => DB::select("select id,purchase_no,to_char(dated,'dd-mm-YYYY') as dated,payment_type,nominal  from po_payment pp where purchase_no=?;", [$purchase->purchase_no]),
             'purchaseDetails' => PurchaseDetail::join('purchase_master as om','om.purchase_no','=','purchase_detail.purchase_no')->join('product_sku as ps','ps.id','=','purchase_detail.product_id')->join('product_uom as u','u.product_id','=','purchase_detail.product_id')->join('uom as um','um.id','=','u.uom_id')->where('purchase_detail.purchase_no',$purchase->purchase_no)->get(['um.remark as uom','purchase_detail.qty','purchase_detail.price','purchase_detail.subtotal_vat','purchase_detail.subtotal','ps.id','ps.remark as product_name','purchase_detail.discount']),
             'usersReferrals' => User::get(['users.id','users.name']),
             'payment_type' => $payment_type, 'company' => Company::get()->first(),
@@ -524,6 +532,73 @@ class PurchaseOrderController extends Controller
                 ['message' => 'Delete failed'],
             );   
         }
+        return $result;
+    }
+
+    /**
+     * Delete user data
+     * 
+     * @param Request $request
+     * 
+     * @return \Illuminate\Http\Response
+     */
+    public function payment_delete(Request $request) 
+    {
+        $user = Auth::user();
+        DB::delete('delete from po_payment where id = ?;', [ $request->id ]);
+
+        $result = array_merge(
+            ['status' => 'success'],
+            ['data' => $request->id],
+            ['message' => 'Delete Successfully'],
+        ); 
+        return $result;
+    }
+
+     /**
+     * Delete user data
+     * 
+     * @param Request $request
+     * 
+     * @return \Illuminate\Http\Response
+     */
+    public function payment_store(Request $request) 
+    {
+        $user = Auth::user();
+        $res_purchase = PurchasePayment::create(
+            array_merge(
+                ['purchase_no' => $request->get('purchase_no') ],
+                ['created_by' => $user->id],
+                ['dated' => Carbon::parse($request->get('dated'))->format('Y-m-d') ],
+                ['nominal' => $request->get('nominal') ],
+                ['payment_type' => $request->get('payment_type') ],
+            )
+        );
+
+        $result = array_merge(
+            ['status' => 'success'],
+            ['data' => $request->purchase_no],
+            ['message' => 'Delete Successfully'],
+        ); 
+        return $result;
+    }
+
+    /**
+     * Delete user data
+     * 
+     * @param Request $request
+     * 
+     * @return \Illuminate\Http\Response
+     */
+    public function payment_get(Request $request) 
+    {
+        $data = DB::select("select id,payment_type,nominal,to_char(dated,'dd-mm-YYYY') as dated,purchase_no from po_payment where purchase_no = ?;", [$request->purchase_no]);
+
+        $result = array_merge(
+            ['status' => 'success'],
+            ['data' => $data],
+            ['message' => 'Delete Successfully'],
+        ); 
         return $result;
     }
 
