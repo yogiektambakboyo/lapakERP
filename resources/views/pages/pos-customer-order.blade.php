@@ -13,14 +13,16 @@
 @endpush
 
 @section('content')
+	
 	<!-- BEGIN pos -->
 	<div class="pos pos-customer" id="pos-customer">
+		
 		<!-- BEGIN pos-menu -->
 		<div class="pos-menu">
 			<div class="logo">
-				<a href="index_v3.html">
+				<a href="#">
 					<div class="logo-img"><img src="/assets/img/pos/logo.svg" /></div>
-					<div class="logo-text">Pine & Dine</div>
+					<div class="logo-text">Menu</div>
 				</a>
 			</div>
 			<div class="nav-container">
@@ -69,6 +71,9 @@
 		
 		<!-- BEGIN pos-content -->
 		<div class="pos-content">
+			<div class="row bg-light py-2 px-3">
+				<div class="col-md-12 fs-3 fw-bold">ORDER ONLINE - {{ $branch[0]->remark }}</div>
+			</div>
 			<div class="pos-content-container" data-scrollbar="true" data-height="100%" data-skip-mobile="true">
 				<div class="product-row">
 					<div class="product-container" data-type="meat">

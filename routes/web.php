@@ -36,6 +36,8 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
         Route::get('/activated_acc', 'RegisterController@activated_acc')->name('register.activated_acc');
         Route::post('/register_regis', 'RegisterController@store_regis')->name('register.store_regis');
         Route::get('/policy', 'HomeController@policy')->name('home.policy');
+        Route::get('/order/{abbr}', 'HomeController@order_welcome')->name('home.order_welcome');
+        Route::get('/order_customer', 'HomeController@ordercustomer')->name('home.ordercustomer');
         /**
          * Login Routes
          */

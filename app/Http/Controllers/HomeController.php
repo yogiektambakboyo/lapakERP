@@ -7,6 +7,7 @@ use Spatie\Permission\Models\Permission;
 use Auth;
 use App\Models\Settings;
 use App\Models\Company;
+use Session;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Lang;
 use Illuminate\Support\Facades\Redirect;
@@ -279,6 +280,43 @@ class HomeController extends Controller
     {
             $data = [];
             return view('pages.auth.policy')->with('data',$data)->with('settings',Settings::get()->first())->with('company',Company::get()->first());
+    }
+
+    public function order_welcome(String $abbr)
+    {
+        $branch = DB::select('select id,address,remark from branch where abbr = ? limit 1;', [$abbr]);
+        if(count($branch)>=1){
+            Session::put('ses_company_name', $branch[0]->remark);
+            Session::put('ses_company_addess', $branch[0]->address);
+            Session::put('ses_company_id', $branch[0]->id);
+            return view('pages.auth.order_welcome',
+            [
+                'branch' => $branch,
+                'settings' => Settings::get()->first(),
+                'company' => Company::get()->first()
+            ]);
+        }else{
+            return abort(404);
+        }
+        
+    }
+
+    public function ordercustomer() 
+    {
+        $branch = DB::select('select id,address,remark from branch where id = ? limit 1;', [Session::get('ses_company_id')]);
+        $data = [];
+        if(count($branch)>=1){
+            Session::put('ses_company_name', $branch[0]->remark);
+            Session::put('ses_company_addess', $branch[0]->address);
+            Session::put('ses_company_id', $branch[0]->id);
+            return view('pages.pos-customer-order',[
+                'branch' => $branch,
+                'settings' => Settings::get()->first(),
+                'company' => Company::get()->first()
+            ]);
+        }else{
+            return abort(404);
+        }
     }
 
     public function getpermissions($role_id){
