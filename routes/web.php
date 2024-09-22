@@ -38,6 +38,7 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
         Route::get('/policy', 'HomeController@policy')->name('home.policy');
         Route::get('/order/{abbr}', 'HomeController@order_welcome')->name('home.order_welcome');
         Route::get('/order_customer', 'HomeController@ordercustomer')->name('home.ordercustomer');
+        Route::post('/set_log_sess', 'HomeController@setsession')->name('home.setsession');
         /**
          * Login Routes
          */
@@ -47,6 +48,9 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
         Route::get('/profile', 'LoginController@profile')->name('login.profile');
         Route::get('/eorder', 'LoginController@eorder')->name('login.eorder');
         Route::get('/lapakerp', 'LoginController@lapakerp')->name('login.lapakerp');
+
+        Route::get('/getproduct_public', 'HomeController@getproduct_public')->name('invoices.getproduct_public');
+
 
        
 

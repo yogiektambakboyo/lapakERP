@@ -38,7 +38,7 @@
 		<!-- begin #home -->
 		<div id="home" class="content has-bg home">
 			<!-- begin content-bg -->
-			<div class="content-bg" style="background-image: url(../assets/img/bg/bg-home.jpg);" 
+			<div class="content-bg" style="background-image: url(../assets/img/gallery/gallery-62.jpg);" 
 				data-paroller="true" 
 				data-paroller-type="foreground" 
 				data-paroller-factor="-0.25">
@@ -46,8 +46,8 @@
 			<!-- end content-bg -->
 			<!-- begin container -->
 			<div class="container home-content">
-				<h1 id=""><span class="text-theme">{{ $branch[0]->remark }}</span> Online </h1>
-				<h3>Pesan Online Tanpa Antri dan Ribet!</h3>
+				<h2 id="">@lang('general.lbl_welcome_to') <span class="text-theme"> {{ $branch[0]->remark }}</span></h2>
+				<h4>Pesan Online Tanpa Antri dan Ribet!</h4>
 				<a href="{{ route('home.ordercustomer') }}" class="btn btn-theme btn-primary">Pesan Online Sekarang!!!</a><br />
 				<br />
 			</div>

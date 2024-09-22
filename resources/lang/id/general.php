@@ -11,6 +11,7 @@ return [
     "lbl_search_product" => "Cari Produk Disini. .",
 
     "btn_filter" => "Saring",
+    "lbl_product_desc" => "Deskripsi Produk",
     "btn_export" => "Export Excel",
     "btn_create" => "Buat Baru",
     "lbl_order" => "Pesanan",
@@ -19,6 +20,7 @@ return [
     "lbl_segment" => "Segment",
     "lbl_language" => "ID",
     "lbl_note" => "Catatan",
+    "lbl_confirmation" => "Konfirmasi",
     "lbl_currency_name" => "Nama Mata Uang",
     "lbl_currency_new" => "Mata Uang Baru",
 
@@ -264,6 +266,7 @@ return [
     "lbl_credit" => "Kartu Kredit",
     "lbl_transfer" => "Transfer",
     "lbl_qris" => "QRIS",
+    "lbl_welcome_to" => "Selamat Datang di ",
     "lbl_type_payment" => "Tipe Bayar",
     "lbl_nominal_payment" => "Nominal Pembayaran",
     "lbl_type_paymentselect" => "Pilih Pembayaran",

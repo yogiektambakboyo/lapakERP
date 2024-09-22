@@ -33,6 +33,12 @@
             </div>
           </div>
           <div class="row mb-3">
+            <label class="form-label col-form-label col-md-2">@lang('general.lbl_product_desc')</label>
+            <div class="col-md-8">
+              <input type="text" class="form-control" name="product_desc" value="{{ $product->product_desc }}" readonly />
+            </div>
+          </div>
+          <div class="row mb-3">
             <label class="form-label col-form-label col-md-2">@lang('general.lbl_type')</label>
             <div class="col-md-8">
               <input type="text" class="form-control" value="{{ $product->product_type }}" readonly />

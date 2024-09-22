@@ -7,6 +7,7 @@ use Spatie\Permission\Models\Permission;
 use Auth;
 use App\Models\Settings;
 use App\Models\Company;
+use App\Models\Customer;
 use Session;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Lang;
@@ -284,6 +285,9 @@ class HomeController extends Controller
 
     public function order_welcome(String $abbr)
     {
+        Session::put('ses_customer_id', "");
+        Session::put('ses_customer_name', "");
+
         $branch = DB::select('select id,address,remark from branch where abbr = ? limit 1;', [$abbr]);
         if(count($branch)>=1){
             Session::put('ses_company_name', $branch[0]->remark);
@@ -305,6 +309,17 @@ class HomeController extends Controller
     {
         $branch = DB::select('select id,address,remark from branch where id = ? limit 1;', [Session::get('ses_company_id')]);
         $data = [];
+
+        $customer_id = "";
+        $customer_name = "";
+
+        if(!empty(Session::get('ses_customer_id'))){
+            $customer_id = Session::get('ses_customer_id');
+        }
+        if(!empty(Session::get('ses_customer_name'))){
+            $customer_name = Session::get('ses_customer_name');
+        }
+
         if(count($branch)>=1){
             Session::put('ses_company_name', $branch[0]->remark);
             Session::put('ses_company_addess', $branch[0]->address);
@@ -312,11 +327,118 @@ class HomeController extends Controller
             return view('pages.pos-customer-order',[
                 'branch' => $branch,
                 'settings' => Settings::get()->first(),
-                'company' => Company::get()->first()
+                'company' => Company::get()->first(),
+                'customer_name' => $customer_name,
+                'customer_id' => $customer_id,
             ]);
         }else{
             return abort(404);
         }
+    }
+
+    public function setsession(Request $request) 
+    {
+        $branch = DB::select('select id,address,remark from branch where id = ? limit 1;', [Session::get('ses_company_id')]);
+        $customer_name = $request->get('name');
+        $phone_no = $request->get('phone_no');
+        $branch_id = $request->get('branch_id');
+        $customer_id = "0";
+
+        if(count($branch)>=1){
+            $data = $this->data;
+
+            $check_cust = DB::select('select id,name,address,phone_no,membership_id,abbr,branch_id,city from customers where phone_no = ?', [$phone_no]);
+
+            if(count($check_cust)>0){
+                $customer_id = $check_cust[0]->id;
+                $customer_name = $check_cust[0]->name;
+            }else{
+                Customer::create(
+                    array_merge( 
+                        ['phone_no' => $request->get('phone_no') ],
+                        ['name' => $request->get('name') ],
+                        ['address' => "Online" ],
+                        ['membership_id' => '1' ],
+                        ['abbr' => '1' ],
+                        ['branch_id' => $request->get('branch_id') ],
+                        ['sales_id' => $request->get('sales_id') ],
+                        ['city' => "Online" ],
+                        ['whatsapp_no' => $request->get('phone_no') ],
+                    )
+                );
+
+                $customer_ids = DB::select("select id from customers where branch_id = ? order by id desc limit 1", [ $branch_id]);
+                $customer_id = $customer_ids[0]->id;
+            }
+
+            Session::put('ses_customer_name', $customer_name);
+            Session::put('ses_customer_id', $customer_id);
+            
+            $result = array_merge(
+                ['status' => 'success'],
+                ['data' => $customer_id],
+                ['message' => 'success'],
+            );
+
+        }else{
+            $result = array_merge(
+                ['status' => 'failed'],
+                ['data' => ""],
+                ['message' => 'Save invoice failed'],
+            );
+        }
+        return $result;
+    }
+
+    public function getproduct_public() 
+    {
+        $branch = DB::select('select id,address,remark from branch where id = ? limit 1;', [Session::get('ses_company_id')]);
+
+        if(count($branch)>=1){
+            Session::put('ses_company_name', $branch[0]->remark);
+            Session::put('ses_company_addess', $branch[0]->address);
+            Session::put('ses_company_id', $branch[0]->id);
+            $data = $this->data;
+            $product = DB::select("select pc.id as category_id,product_sku.photo,product_sku.product_desc,m.remark as uom,product_sku.id,product_sku.remark,product_sku.abbr,pt.remark as type,pc.remark as category_name,pb.remark as brand_name,pp.price,'0' as discount,'0' as qty,'0' as total
+            from product_sku
+            join product_distribution pd on pd.product_id = product_sku.id  and pd.active = '1' and pd.branch_id = ?
+            join product_stock pts on pts.product_id = pd.product_id and pts.branch_id = pd.branch_id and pts.qty>0
+            join product_category pc on pc.id = product_sku.category_id 
+            join product_type pt on pt.id = product_sku.type_id 
+            join product_brand pb on pb.id = product_sku.brand_id 
+            join product_price pp on pp.product_id = pd.product_id and pp.branch_id = pd.branch_id
+            join product_uom pu on pu.product_id = product_sku.id
+            join uom m on m.id = pu.uom_id
+            join product_stock pk on pk.product_id = product_sku.id and pk.branch_id = pd.branch_id
+            where product_sku.active = '1' order by product_sku.remark",[$branch[0]->id]);
+
+            $product_cat = DB::select("select  pc.id as category_id,pc.remark as category_name
+            from product_sku
+            join product_distribution pd on pd.product_id = product_sku.id  and pd.active = '1' and pd.branch_id = ?
+            join product_stock pts on pts.product_id = pd.product_id and pts.branch_id = pd.branch_id and pts.qty>0
+            join product_category pc on pc.id = product_sku.category_id 
+            join product_type pt on pt.id = product_sku.type_id 
+            join product_brand pb on pb.id = product_sku.brand_id 
+            join product_price pp on pp.product_id = pd.product_id and pp.branch_id = pd.branch_id
+            join product_uom pu on pu.product_id = product_sku.id
+            join uom m on m.id = pu.uom_id
+            join product_stock pk on pk.product_id = product_sku.id and pk.branch_id = pd.branch_id
+            where product_sku.active = '1' group by  pc.id,pc.remark order by 2",[$branch[0]->id]);
+            $result = array_merge(
+                ['status' => 'success'],
+                ['data' => $product],
+                ['data_category' => $product_cat],
+                ['message' => 'Save invoice failed'],
+            );
+
+        }else{
+            $result = array_merge(
+                ['status' => 'failed'],
+                ['data' => []],
+                ['message' => 'Save invoice failed'],
+            );
+        }
+        return $result;
     }
 
     public function getpermissions($role_id){
