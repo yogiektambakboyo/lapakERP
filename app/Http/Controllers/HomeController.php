@@ -17,6 +17,8 @@ use Illuminate\Support\Facades\DB;
 use App\Models\Currency;
 use App\Http\Controllers\Lang;
 use Illuminate\Support\Facades\Redirect;
+use GuzzleHttp\Exception\GuzzleException;
+use GuzzleHttp\Client;
 
 class HomeController extends Controller
 {
@@ -348,6 +350,8 @@ class HomeController extends Controller
             )
         );
 
+        $c_name = Customer::where('id','=',$request->get('customer_id'))->get(['name'])->first()->name;
+
         SettingsDocumentNumber::where('doc_type','=','Order')->where('branch_id','=',$branch_id)->where('period','=','Yearly')->update(
             array_merge(
                 ['current_value' => ((int)($count_no[0]->current_value) + 1)]
@@ -409,10 +413,37 @@ class HomeController extends Controller
             }
         }
 
+        $client = new Client(); //GuzzleHttp\Client
+        $response = $client->request('POST', 'https://app.midtrans.com/snap/v1/transactions', [
+            'body' => '{ "transaction_details": { "order_id" : "'.$order_no.'" , "gross_amount" : '.$request->get('total_order').'},
+            "customer_details": {
+                    "first_name": "'.$c_name.'",
+                    "last_name": "ONLINE",
+                    "email": "yogiektambakboyo@gmail.com",
+                    "phone": "+6285746879090"
+                }
+            }',
+            'headers' => [
+                'accept' => 'application/json',
+                'authorization' => 'Basic TWlkLXNlcnZlci10eGIyWEN6VmpMbTRRV29sU2drZGdpejY6',
+                'content-type' => 'application/json',
+            ],
+        ]);
+
+        //$res = $response->getBody()->getContents();
+        
+
+        $fin_url = "";
+        if(!empty($response->getBody())){
+            $url = json_decode($response->getBody()->getContents(), true);
+            $fin_url = $url["redirect_url"];
+        }
+
 
         $result = array_merge(
             ['status' => 'success'],
             ['data' => $order_no],
+            ['redirect_url' => $fin_url],
             ['message' => 'Save Successfully'],
         );
 

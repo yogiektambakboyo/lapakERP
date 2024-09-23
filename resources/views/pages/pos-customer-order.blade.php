@@ -381,18 +381,24 @@
 							}).then(resp => {
 									if(resp.data.status=="success"){
 										$order_no = resp.data.data;
-										Swal.fire(
+										
+										
+
+										if(resp.data.redirect_url != ""){
+											window.location.href = resp.data.redirect_url;
+										}else{
+											Swal.fire(
 											{
-											position: 'top-end',
-											icon: 'success',
-											text: "@lang('general.lbl_msg_success_invoice') : "+resp.data.data,
-											showConfirmButton: false,
-											imageHeight: 30, 
-											imageWidth: 30,   
-											timer: 1500
-											}
-										);
-										//window.location.href = "{{ route('home.ordercustomer') }}"; 
+												position: 'top-end',
+												icon: 'success',
+												text: "@lang('general.lbl_msg_success_invoice') : "+resp.data.data,
+												showConfirmButton: false,
+												imageHeight: 30, 
+												imageWidth: 30,   
+												timer: 1500
+												}
+											);
+										}
 
 
 									}else{
