@@ -23,6 +23,8 @@ return [
     "lbl_confirmation" => "Konfirmasi",
     "lbl_currency_name" => "Nama Mata Uang",
     "lbl_currency_new" => "Mata Uang Baru",
+    "lbl_msg_empty" => "Keranjang masih kosong, pilih minimal satu barang dahulu",
+
 
 
     "product" => "Produk",

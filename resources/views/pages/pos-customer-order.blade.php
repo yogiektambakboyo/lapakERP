@@ -74,7 +74,7 @@
 						<a class="nav-link active" href="#" data-bs-toggle="tab" data-bs-target="#newOrderTab"><label id="order_qty"> New Order (0)</label></a>
 					</li>
 					<li class="nav-item">
-						<a class="nav-link" href="#" data-bs-toggle="tab" data-bs-target="#orderHistoryTab">Order History (0)</a>
+						<a class="nav-link" href="#" data-bs-toggle="tab" data-bs-target="#orderHistoryTab" id="history_qty">Order History (0)</a>
 					</li>
 				</ul>
 			</div>
@@ -85,16 +85,8 @@
 					</div>
 				</div>
 				<div class="tab-pane fade h-100" id="orderHistoryTab">
-					<div class="h-100 d-flex align-items-center justify-content-center text-center p-20">
-						<div>
-							<div class="mb-3 mt-n5">
-								<svg width="6em" height="6em" viewBox="0 0 16 16" class="text-gray-300" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-									<path fill-rule="evenodd" d="M14 5H2v9a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V5zM1 4v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V4H1z"/>
-									<path d="M8 1.5A2.5 2.5 0 0 0 5.5 4h-1a3.5 3.5 0 1 1 7 0h-1A2.5 2.5 0 0 0 8 1.5z"/>
-								</svg>
-							</div>
-							<h4>No order history found</h4>
-						</div>
+					<div class="pos-table" id="content_history">
+						
 					</div>
 				</div>
 			</div>
@@ -170,7 +162,7 @@
 					<a href="#" data-bs-dismiss="modal" class="btn-close position-absolute top-0 end-0 m-4"></a>
 					<div class="row mt-1">
 						<div class="col-sm-11">
-							<label class="h3" for="">Masukkan Data</label>
+							<label class="h3" for="">Data Pembeli</label>
 						</div>
 					</div>
 					<div class="row mt-1">
@@ -207,6 +199,7 @@
 			var productCat = [];
 			var productList = [];
 			var orderList = [];
+			var historyList = [];
 			var url = "{{ route('invoices.getproduct_public') }}";
             const res = axios.get(url, {
               headers: {
@@ -266,9 +259,88 @@
 				
           });
 
+		  if($('#customer_id').val()==""){
+
+		  }else{
+				const json = JSON.stringify({
+						customer_id : $('#customer_id').val(),
+						branch_id : $('#branch_ids').val()
+					}
+				);
+				const res = axios.post("{{ route('home.get_order') }}", json, {
+					headers: {
+					// Overwrite Axios's automatically set Content-Type
+					'Content-Type': 'application/json'
+					}
+				}).then(resp => {
+						if(resp.data.status=="success"){
+							$('#content_history').html("");
+							var $content = "";
+							var result = resp.data.data;
+							for (let index = 0; index < result.length; index++) {
+								const element = result[index];
+
+								var history = {
+									"id"      : element.id,
+									"dated"      : element.dated,
+									"order_no"      : element.order_no,
+									"total"      : element.total,
+									"total_payment"      : element.total_payment,
+								}
+
+								var status_p = "UnPaid";
+								var dnone = "";
+								if(parseFloat(element.total)<=parseFloat(element.total_payment)){
+									status_p = "Paid";
+									dnone = "d-none";
+								}
+
+								$content = $content + '<div class="row pos-table-row">'+
+									'<div class="col-9">'+
+											'<div class="title">'+ element.order_no +'</div>'+
+											'<div class="single-price">'+ element.dated +'</div>'+
+									'</div>'+
+									'<div class="col-3">'+
+										'<div>'+ currency((element.total), { separator: ".", decimal: ",", symbol: "", precision: 0 }).format() +'</div>'+
+										'<div>'+ status_p +'</div>'+
+									'</div>'+
+								'</div><div class="col-md-12 d-grid border-bottom p-1"><input type="button" class="btn btn-danger '+dnone+'" onclick="paymentClick('+ element.id +');" value="Bayar"></div>';
+
+
+								historyList.push(history);
+								
+							}
+
+							$('#history_qty').text("History ("+result.length+")");
+            				$('#content_history').html($content);
+						}
+				});
+		  }
+
+		  function paymentClick(id){
+			for (let index = 0; index < historyList.length; index++) {
+				const element = historyList[index];
+				if(element.id == id){
+					alert(element.order_no);
+				}
+			}
+		  }
+
 		  function saveOrder(){
 			var customer_id = $('#customer_id').val();
-			if(customer_id == ""){
+			if(orderList.length<=0){
+				Swal.fire(
+					{
+					position: 'top-end',
+					icon: 'warning',
+					text: "@lang('general.lbl_msg_failed')",
+					showConfirmButton: false,
+					imageHeight: 30, 
+					imageWidth: 30,   
+					timer: 1500
+					}
+				);
+			}else if(customer_id == ""){
 				$('#modalLogin').modal('show');
 			}else{
 				Swal.fire({
@@ -284,6 +356,59 @@
 						}).then((result) => {
 							/* Read more about isConfirmed, isDenied below */
 							if (result.isConfirmed) {
+								const json = JSON.stringify({
+									customer_id : $('#customer_id').val(),
+									remark : "Online",
+									currency : "IDR",
+									kurs : "1",
+									payment_nominal : "0",
+									total_order : total,
+									total_payment : "-",
+									payment_type : "",
+									voucher_code : "",
+									total_discount : "0",
+									total_vat : "0",
+									remark : "Online",
+									branch_id : $('#branch_ids').val(),
+									product : orderList,
+								}
+							);
+							const res = axios.post("{{ route('home.store_order') }}", json, {
+								headers: {
+								// Overwrite Axios's automatically set Content-Type
+								'Content-Type': 'application/json'
+								}
+							}).then(resp => {
+									if(resp.data.status=="success"){
+										$order_no = resp.data.data;
+										Swal.fire(
+											{
+											position: 'top-end',
+											icon: 'success',
+											text: "@lang('general.lbl_msg_success_invoice') : "+resp.data.data,
+											showConfirmButton: false,
+											imageHeight: 30, 
+											imageWidth: 30,   
+											timer: 1500
+											}
+										);
+										//window.location.href = "{{ route('home.ordercustomer') }}"; 
+
+
+									}else{
+										Swal.fire(
+											{
+											position: 'top-end',
+											icon: 'warning',
+											text: "@lang('general.lbl_msg_failed')"+resp.data.message,
+											showConfirmButton: false,
+											imageHeight: 30, 
+											imageWidth: 30,   
+											timer: 1500
+											}
+										);
+									}
+							});
 							
 							} else{
 							
@@ -352,6 +477,61 @@
 							$('#customer_name').text($('#modal_name').val());
 							$('#customer_id').val(resp.data.data);
 							$('#btn_login').addClass('d-none');
+
+							const json = JSON.stringify({
+									customer_id : $('#customer_id').val(),
+									branch_id : $('#branch_ids').val()
+								}
+							);
+							const res = axios.post("{{ route('home.get_order') }}", json, {
+								headers: {
+								// Overwrite Axios's automatically set Content-Type
+								'Content-Type': 'application/json'
+								}
+							}).then(resp => {
+									if(resp.data.status=="success"){
+										$('#content_history').html("");
+										var $content = "";
+										var result = resp.data.data;
+										for (let index = 0; index < result.length; index++) {
+											const element = result[index];
+
+											var history = {
+												"id"      : element.id,
+												"dated"      : element.dated,
+												"order_no"      : element.order_no,
+												"total"      : element.total,
+												"total_payment"      : element.total_payment,
+											}
+
+											var status_p = "UnPaid";
+											var dnone = "";
+											if(parseFloat(element.total)<=parseFloat(element.total_payment)){
+												status_p = "Paid";
+												dnone = "d-none";
+											}
+
+											$content = $content + '<div class="row pos-table-row">'+
+												'<div class="col-9">'+
+														'<div class="title">'+ element.order_no +'</div>'+
+														'<div class="single-price">'+ element.dated +'</div>'+
+												'</div>'+
+												'<div class="col-3">'+
+													'<div>'+ currency((element.total), { separator: ".", decimal: ",", symbol: "", precision: 0 }).format() +'</div>'+
+													'<div>'+ status_p +'</div>'+
+												'</div>'+
+											'</div><div class="col-md-12 d-grid border-bottom p-1"><input type="button" class="btn btn-danger '+dnone+'" onclick="paymentClick('+ element.id +');" value="Bayar"></div>';
+
+
+											historyList.push(history);
+											
+										}
+
+										$('#history_qty').text("History ("+result.length+")");
+										$('#content_history').html($content);
+									}
+							});
+							
 						}else{
 						Swal.fire(
 							{
@@ -402,6 +582,7 @@
 							"photo" : element.photo,
 							"vat" : "0",
 							"vat_total" : "0",
+							"total_vat" : "0",
 							"discount" : "0",
 							"applypromo" : "0",
 							"promo_no" : "",

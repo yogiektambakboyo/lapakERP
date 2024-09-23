@@ -2,14 +2,19 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Spatie\Permission\Models\Permission;
 use Auth;
+use App\Models\Order;
+use App\Models\OrderDetail;
 use App\Models\Settings;
 use App\Models\Company;
+use App\Models\SettingsDocumentNumber;
 use App\Models\Customer;
 use Session;
 use Illuminate\Support\Facades\DB;
+use App\Models\Currency;
 use App\Http\Controllers\Lang;
 use Illuminate\Support\Facades\Redirect;
 
@@ -303,6 +308,136 @@ class HomeController extends Controller
             return abort(404);
         }
         
+    }
+
+    /**
+     * Store a newly created user
+     * 
+     * @param User $user
+     * @param Order $request
+     * 
+     * @return \Illuminate\Http\Response
+     */
+    public function store_order(Request $request) 
+    {
+        $branch_id = $request->get('branch_id') ;
+        $customer_id = $request->get('customer_id') ;
+
+        $count_no = SettingsDocumentNumber::where('doc_type','=','Order')->where('branch_id','=',$branch_id)->where('period','=','Yearly')->get(['current_value','abbr']);
+        $count_no_daily = SettingsDocumentNumber::where('doc_type','=','Order_Queue')->where('branch_id','=',$branch_id)->where('period','=','Daily')->get(['current_value','abbr']);
+        $order_no = $count_no[0]->abbr.'-'.substr(('000'.$branch_id),-3).'-'.date("Y").'-'.substr(('00000000'.((int)($count_no[0]->current_value) + 1)),-8);
+
+        $res_order = Order::create(
+            array_merge(
+                ['order_no' => $order_no ],
+                ['created_by' => 1],
+                ['dated' => date('Y-m-d') ],
+                ['customers_id' => $request->get('customer_id') ],
+                ['total' => $request->get('total_order') ],
+                ['remark' => $request->get('remark') ],
+                ['currency' => $request->get('currency') ],
+                ['kurs' => $request->get('kurs') ],
+                ['payment_nominal' => $request->get('payment_nominal') ],
+                ['payment_type' => $request->get('payment_type') ],
+                ['total_payment' => (int)$request->get('payment_nominal')>=(int)$request->get('total_order')?(int)$request->get('total_order'):$request->get('payment_nominal') ],
+                ['voucher_code' => $request->get('voucher_code')],
+                ['total_discount' => $request->get('total_discount')],
+                ['tax' => $request->get('total_vat')],
+                ['queue_no' => (int)($count_no_daily[0]->current_value+1)],
+                ['customers_name' => Customer::where('id','=',$request->get('customer_id'))->get(['name'])->first()->name ],
+            )
+        );
+
+        SettingsDocumentNumber::where('doc_type','=','Order')->where('branch_id','=',$branch_id)->where('period','=','Yearly')->update(
+            array_merge(
+                ['current_value' => ((int)($count_no[0]->current_value) + 1)]
+            )
+        );
+
+        SettingsDocumentNumber::where('doc_type','=','Order_Queue')->where('branch_id','=',$branch_id)->where('period','=','Daily')->update(
+            array_merge(
+                ['current_value' => ((int)($count_no_daily[0]->current_value) + 1)]
+            )
+        );
+
+        if($request->get('voucher_code')!=""){
+            Voucher::where('voucher.voucher_code','=',$request->get('voucher_code'))
+            ->update(
+                array_merge(
+                    ['is_used' => 1]
+                )
+            );
+        }
+
+
+        if(!$res_order){
+            $result = array_merge(
+                ['status' => 'failed'],
+                ['data' => ''],
+                ['message' => 'Save order failed'],
+            );
+    
+            return $result;
+        }
+
+
+        for ($i=0; $i < count($request->get('product')); $i++) { 
+            $res_order_detail = OrderDetail::create(
+                array_merge(
+                    ['order_no' => $order_no],
+                    ['product_id' => $request->get('product')[$i]["id"]],
+                    ['qty' => $request->get('product')[$i]["qty"]],
+                    ['price' => $request->get('product')[$i]["price"]],
+                    ['product_name' => $request->get('product')[$i]["abbr"]],
+                    ['total' => $request->get('product')[$i]["total"]],
+                    ['discount' => $request->get('product')[$i]["discount"]],
+                    ['uom' => $request->get('product')[$i]["uom"]],
+                    ['vat' => $request->get('product')[$i]["vat_total"]],
+                    ['vat_total' => $request->get('product')[$i]["total_vat"]],
+                    ['seq' => $request->get('product')[$i]["seq"] ]
+                )
+            );
+
+            if(!$res_order_detail){
+                $result = array_merge(
+                    ['status' => 'failed'],
+                    ['data' => ''],
+                    ['message' => 'Save order detail failed'],
+                );
+        
+                return $result;
+            }
+        }
+
+
+        $result = array_merge(
+            ['status' => 'success'],
+            ['data' => $order_no],
+            ['message' => 'Save Successfully'],
+        );
+
+        return $result;
+    }
+
+    public function get_order(Request $request) 
+    {
+        $branch_id = $request->get('branch_id') ;
+        $customer_id = $request->get('customer_id') ;
+
+        $order_list = DB::select("select om.id,om.order_no,to_char(om.dated,'dd-mm-YYYY') as dated,om.total, om.total_payment
+                                    from order_master om 
+                                    join order_detail od on od.order_no = om.order_no 
+                                    where om.customers_id = ?
+                                    group by om.id,om.order_no,to_char(om.dated,'dd-mm-YYYY'),om.total, om.total_payment
+                                    order by dated,order_no desc ", [$customer_id]);
+
+        $result = array_merge(
+            ['status' => 'success'],
+            ['data' => $order_list],
+            ['message' => 'Save Successfully'],
+        );
+
+        return $result;
     }
 
     public function ordercustomer() 

@@ -177,6 +177,7 @@ return [
     "lbl_contactperson" =>"Kontak",
     "lbl_confirmation" => "Confirmation",
     "lbl_ingredient_add" => "Tambah Bahan Baku",
+    "lbl_msg_empty" => "Order empty, Please select one product first",
     "lbl_commision_add" => "Tambah Komisi Baru",
     "lbl_price_adj_add" => "Tambah Penyesuaian Harga Baru",
     "lbl_commision_year_add" => "Tambah Komisi Tahun Baru",
