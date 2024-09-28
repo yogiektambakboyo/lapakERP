@@ -479,6 +479,20 @@ class HomeController extends Controller
         $customer_id = "";
         $customer_name = "";
 
+        $order_id = "";
+        $status_code = "";
+        if(empty($_GET['order_id'])){
+
+        }else{
+            $order_id = $_GET['order_id'];
+        }
+
+        if(empty($_GET['status_code'])){
+
+        }else{
+            $status_code = $_GET['status_code'];
+        }
+
         if(!empty(Session::get('ses_customer_id'))){
             $customer_id = Session::get('ses_customer_id');
         }
@@ -496,9 +510,57 @@ class HomeController extends Controller
                 'company' => Company::get()->first(),
                 'customer_name' => $customer_name,
                 'customer_id' => $customer_id,
+                'order_id' => $order_id,
+                'status_code' => $status_code,
             ]);
         }else{
             return abort(404);
+        }
+    }
+
+    public function payment_notif(Request $request) 
+    {
+        $data = json_decode(file_get_contents('php://input'), true);
+
+        if(!empty($data)){
+            $data_str = json_encode($data);
+            DB::insert("insert into log_payment(remark) values (?);", [$data_str]);
+
+            $transaction_time   = $data['transaction_time'];
+            $transaction_status = $data['transaction_status'];
+            $transaction_id = $data['transaction_id'];
+            $status_message = $data['status_message'];
+            $signature_key  = $data['signature_key'];
+            $payment_type   = $data['payment_type'];
+            $order_id       = $data['order_id'];
+            $merchant_id    = $data['merchant_id'];
+            $gross_amount   = $data['gross_amount'];
+            $fraud_status   = $data['fraud_status'];
+            $currency       = $data['currency'];
+            
+           
+            $sql = "INSERT INTO payment_notif(transaction_time,transaction_status,transaction_id,status_message,signature_key,payment_type,order_id,merchant_id,gross_amount,fraud_status,currency)
+            VALUES (?,?,?,?,?,?,?,?,?,?,?);";
+
+            DB::insert($sql, [$transaction_time,$transaction_status,$transaction_id,$status_message,$signature_key,$payment_type,$order_id,$merchant_id,$gross_amount,$fraud_status,$currency]);
+            
+
+            $result = array_merge(
+                ['status' => 'success'],
+                ['data' => ''],
+                ['message' => 'success'],
+            );
+    
+            return $result;
+
+        }else{
+            $result = array_merge(
+                ['status' => 'success'],
+                ['data' => ''],
+                ['message' => 'alive'],
+            );
+    
+            return $result;
         }
     }
 

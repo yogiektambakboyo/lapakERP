@@ -44,6 +44,8 @@
 			<div class="row bg-light py-2 px-3">
 				<div class="col-md-12 fs-3 fw-bold">ORDER ONLINE - {{ $branch[0]->remark }}</div>
 				<input type="hidden" name="branch_ids" id="branch_ids" value="{{ $branch[0]->id }}">
+				<input type="hidden" name="order_id" id="order_id" value="{{ $order_id }}">
+				<input type="hidden" name="status_code" id="status_code" value="{{ $status_code }}">
 			</div>
 			<div class="pos-content-container" data-scrollbar="true" data-height="100%" data-skip-mobile="true">
 				<div class="product-row" id="content_product">
@@ -200,6 +202,17 @@
 			var productList = [];
 			var orderList = [];
 			var historyList = [];
+
+			var o_id = $('#order_id').val();
+			var s_code = $('#status_code').val();
+			if( o_id != "" && s_code == "200" ){
+				Swal.fire({
+					title: "Payment successfully!",
+					text: "Thank you for payment transaction no "+o_id+" received",
+					icon: "success"
+				});
+			}
+
 			var url = "{{ route('invoices.getproduct_public') }}";
             const res = axios.get(url, {
               headers: {
