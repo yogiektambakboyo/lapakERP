@@ -38,7 +38,7 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
         Route::get('/policy', 'HomeController@policy')->name('home.policy');
         Route::get('/order/{abbr}', 'HomeController@order_welcome')->name('home.order_welcome');
         Route::get('/order_customer', 'HomeController@ordercustomer')->name('home.ordercustomer');
-        Route::get('/payment_notif_241990', 'HomeController@payment_notif')->name('home.payment_notif');
+        Route::post('/payment_notif_241990', 'HomeController@payment_notif')->name('home.payment_notif');
         Route::post('/set_log_sess', 'HomeController@setsession')->name('home.setsession');
         Route::post('/store_order', 'HomeController@store_order')->name('home.store_order');
         Route::post('/get_order', 'HomeController@get_order')->name('home.get_order');
