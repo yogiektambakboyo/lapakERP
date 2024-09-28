@@ -481,6 +481,7 @@ class HomeController extends Controller
 
         $order_id = "";
         $status_code = "";
+        $transaction_status = "";
         if(empty($_GET['order_id'])){
 
         }else{
@@ -491,6 +492,12 @@ class HomeController extends Controller
 
         }else{
             $status_code = $_GET['status_code'];
+        }
+
+        if(empty($_GET['transaction_status'])){
+
+        }else{
+            $transaction_status = $_GET['transaction_status'];
         }
 
         if(!empty(Session::get('ses_customer_id'))){
@@ -512,6 +519,7 @@ class HomeController extends Controller
                 'customer_id' => $customer_id,
                 'order_id' => $order_id,
                 'status_code' => $status_code,
+                'transaction_status' => $transaction_status,
             ]);
         }else{
             return abort(404);

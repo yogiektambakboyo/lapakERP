@@ -46,6 +46,7 @@
 				<input type="hidden" name="branch_ids" id="branch_ids" value="{{ $branch[0]->id }}">
 				<input type="hidden" name="order_id" id="order_id" value="{{ $order_id }}">
 				<input type="hidden" name="status_code" id="status_code" value="{{ $status_code }}">
+				<input type="hidden" name="transaction_status" id="transaction_status" value="{{ $transaction_status }}">
 			</div>
 			<div class="pos-content-container" data-scrollbar="true" data-height="100%" data-skip-mobile="true">
 				<div class="product-row" id="content_product">
@@ -205,7 +206,8 @@
 
 			var o_id = $('#order_id').val();
 			var s_code = $('#status_code').val();
-			if( o_id != "" && s_code == "200" ){
+			var t_status = $('#transaction_status').val();
+			if( o_id != "" && s_code == "200" && (t_status == "settlement" || t_status == "capture")  ){
 				Swal.fire({
 					title: "Payment successfully!",
 					text: "Thank you for payment transaction no "+o_id+" received",
