@@ -39,6 +39,7 @@ class Order extends Model
         'voucher_code',
         'printed_at',
         'printed_count',
+        'payment_url',
         'queue_no'
     ];
 }

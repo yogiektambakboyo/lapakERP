@@ -110,6 +110,8 @@ return [
     "lbl_checkout" => "Checkout",
     "lbl_ischeckout" => "Is Checkout",
     "lbl_sure_chekout_title" => "Are you sure checkout data ",
+    "lbl_sure_payment_title" => "Are you sure proceed payment for order  ",
+    "lbl_sure_payment" => "Yes, Proceed!",
     "lbl_sure_checkout" => "Yes, Chekout!",
     "lbl_qty" => "Qty",
     "lbl_information" => "Informasi",

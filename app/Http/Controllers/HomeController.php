@@ -437,6 +437,8 @@ class HomeController extends Controller
         if(!empty($response->getBody())){
             $url = json_decode($response->getBody()->getContents(), true);
             $fin_url = $url["redirect_url"];
+
+            DB::update("update order_master set payment_url = ? where order_no = ?;", [ $fin_url, $order_no ]);
         }
 
 
@@ -455,11 +457,11 @@ class HomeController extends Controller
         $branch_id = $request->get('branch_id') ;
         $customer_id = $request->get('customer_id') ;
 
-        $order_list = DB::select("select om.id,om.order_no,to_char(om.dated,'dd-mm-YYYY') as dated,om.total, om.total_payment
+        $order_list = DB::select("select om.id,om.order_no,to_char(om.dated,'dd-mm-YYYY') as dated,om.total, om.total_payment, om.payment_url
                                     from order_master om 
                                     join order_detail od on od.order_no = om.order_no 
-                                    where om.customers_id = ?
-                                    group by om.id,om.order_no,to_char(om.dated,'dd-mm-YYYY'),om.total, om.total_payment
+                                    where om.customers_id = ? and (om.total_payment > 0 or om.dated = now()::date )
+                                    group by om.id,om.order_no,to_char(om.dated,'dd-mm-YYYY'),om.total, om.total_payment, om.payment_url
                                     order by dated,order_no desc ", [$customer_id]);
 
         $result = array_merge(

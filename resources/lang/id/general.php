@@ -25,6 +25,9 @@ return [
     "lbl_currency_new" => "Mata Uang Baru",
     "lbl_msg_empty" => "Keranjang masih kosong, pilih minimal satu barang dahulu",
 
+    "lbl_sure_payment_title" => "Apakah anda yakin akan memproses pembayaran untuk pesanan ",
+    "lbl_sure_payment" => "Ya, Proses!",
+
 
 
     "product" => "Produk",

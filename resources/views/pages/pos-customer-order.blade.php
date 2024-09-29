@@ -300,6 +300,7 @@
 									"dated"      : element.dated,
 									"order_no"      : element.order_no,
 									"total"      : element.total,
+									"payment_url"      : element.payment_url,
 									"total_payment"      : element.total_payment,
 								}
 
@@ -336,7 +337,24 @@
 			for (let index = 0; index < historyList.length; index++) {
 				const element = historyList[index];
 				if(element.id == id){
-					alert(element.order_no);
+					var url_pay = element.payment_url;
+
+					Swal.fire({
+							text: "@lang('general.lbl_sure_payment_title') "+element.order_no,
+							title : "@lang('general.lbl_confirmation')",
+							icon: 'question',
+							showDenyButton: false,
+							showCancelButton: true,
+							cancelButtonColor: '#d33',
+							denyButtonColor: '#0072b3',
+							cancelButtonText: "@lang('general.lbl_cancel')",
+							confirmButtonText: "@lang('general.lbl_sure_payment')",
+						}).then((result) => {
+							/* Read more about isConfirmed, isDenied below */
+							if (result.isConfirmed) { 
+								window.location = url_pay;
+							}
+						});
 				}
 			}
 		  }
@@ -396,9 +414,7 @@
 							}).then(resp => {
 									if(resp.data.status=="success"){
 										$order_no = resp.data.data;
-										
-										
-
+									
 										if(resp.data.redirect_url != ""){
 											window.location.href = resp.data.redirect_url;
 										}else{
@@ -522,6 +538,7 @@
 												"dated"      : element.dated,
 												"order_no"      : element.order_no,
 												"total"      : element.total,
+												"payment_url"      : element.payment_url,
 												"total_payment"      : element.total_payment,
 											}
 
