@@ -552,6 +552,21 @@ class HomeController extends Controller
 
             DB::insert($sql, [$transaction_time,$transaction_status,$transaction_id,$status_message,$signature_key,$payment_type,$order_id,$merchant_id,$gross_amount,$fraud_status,$currency]);
             
+            if($payment_type == "credit_card"){
+                $p_type = "Kartu";
+            }else if($payment_type == "gopay"){
+                $p_type = "GoPay";
+            }else if($payment_type == "qris"){
+                $p_type = "QRIS";
+            }else if($payment_type == "shopeepay"){
+                $p_type = "ShoopePay";
+            }else if($payment_type == "bank_transfer"){
+                $p_type = "Bank Transfer";
+            }
+
+            if($transaction_status == "capture" || $transaction_status == "settlement"){
+                DB::update('update order_master set total_payment = ?,payment_type = ? where order_no = ? ', [ $gross_amount, $p_type, $order_id ]);
+            }
 
             $result = array_merge(
                 ['status' => 'success'],
