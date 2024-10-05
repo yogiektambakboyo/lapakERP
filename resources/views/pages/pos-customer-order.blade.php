@@ -161,14 +161,14 @@
 	<div class="modal modal-pos-item fade" id="modalLogin">
 		<div class="modal-dialog modal-sm">
 			<div class="modal-content">
-				<div class="modal-body p-2">
+				<div class="modal-body p-3">
 					<a href="#" data-bs-dismiss="modal" class="btn-close position-absolute top-0 end-0 m-4"></a>
 					<div class="row mt-1">
 						<div class="col-sm-11">
 							<label class="h3" for="">Data Pembeli</label>
 						</div>
 					</div>
-					<div class="row mt-1">
+					<div class="row mt-1 ms-1">
 						<div class="col-sm-11">
 							<label class="modal_name" for="">Nama</label>
 						</div>
@@ -176,7 +176,7 @@
 							<input  class="form form-control"  type="text" name="modal_name" id="modal_name">
 						</div>
 					</div>
-					<div class="row mt-1">
+					<div class="row mt-1 ms-1">
 						<div class="col-sm-11">
 							<label class="modal_handphone" for="">No Handphone</label>
 						</div>
@@ -185,7 +185,7 @@
 						</div>
 					</div>
 
-					<div class="row mt-2 d-flex flex-row-reverse">
+					<div class="row mt-3 me-1 d-flex flex-row-reverse">
 						<div class="col-sm-4">
 							<input type="button" data-bs-dismiss="modal" class="btn btn-sm btn-danger"  name="btn-login" id="btn-login" value="Submit">
 						</div>

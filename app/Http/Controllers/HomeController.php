@@ -467,7 +467,7 @@ class HomeController extends Controller
             }',
             'headers' => [
                 'accept' => 'application/json',
-                'authorization' => 'Basic TWlkLXNlcnZlci10eGIyWEN6VmpMbTRRV29sU2drZGdpejY6',
+                'authorization' => 'Basic TWlkLXNlcnZlci1SbUpId00wSXFJamtuMG5yMDh5dVQ3alk6',
                 'content-type' => 'application/json',
             ],
         ]);
