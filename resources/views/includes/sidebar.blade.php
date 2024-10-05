@@ -109,6 +109,7 @@
 					$hasBadge = (!empty($menu['badge'])) ? '<div class="menu-badge">'. $menu['badge'] .'</div>' : '';
 					
 					$subMenu = '';
+					$displ = (!empty($menu['display'])) ? $menu['display'] : '';
 					
 					if (!empty($menu['sub_menu'])) {
 						$GLOBALS['sub_level'] = 0;
@@ -119,7 +120,7 @@
 					$active = (!empty($menu['route-name']) && (Route::currentRouteName() == $menu['route-name'])) ? 'active' : '';
 					$active = (empty($active) && !empty($GLOBALS['parent_active'])) ? 'active' : $active;
 					echo '
-						<div class="menu-item '. $hasSub .' '. $active .'">
+						<div class="menu-item '.$displ.' '. $hasSub .' '. $active .'">
 							<a href="'. $menu['url'] .'" class="menu-link">
 								'. $hasImg .'
 								'. $hasIcon .'

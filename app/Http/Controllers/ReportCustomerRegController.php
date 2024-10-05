@@ -198,6 +198,7 @@ class ReportCustomerRegController extends Controller
                         'title' => \Lang::get('home.user_management'),
                         'url' => 'javascript:;',
                         'caret' => true,
+                        'display' => '', 
                         'sub_menu' => []
                     ],
                     [
@@ -205,13 +206,15 @@ class ReportCustomerRegController extends Controller
                         'title' => \Lang::get('home.product_management'),
                         'url' => 'javascript:;',
                         'caret' => true,
+                        'display' => '',
                         'sub_menu' => []
                     ],
-		   [
+		            [
                         'icon' => 'fa fa-box',
                         'title' => \Lang::get('home.service_management'),
                         'url' => 'javascript:;',
                         'caret' => true,
+                        'display' => '',
                         'sub_menu' => []
                     ],
                     [
@@ -219,6 +222,7 @@ class ReportCustomerRegController extends Controller
                         'title' => \Lang::get('home.transaction'),
                         'url' => 'javascript:;',
                         'caret' => true,
+                        'display' => '',
                         'sub_menu' => []
                     ],
                     [
@@ -226,6 +230,7 @@ class ReportCustomerRegController extends Controller
                         'title' => \Lang::get('home.reports'),
                         'url' => 'javascript:;',
                         'caret' => true,
+                        'display' => '',
                         'sub_menu' => []
                     ],
                     [
@@ -233,13 +238,22 @@ class ReportCustomerRegController extends Controller
                         'title' => \Lang::get('home.settings'),
                         'url' => 'javascript:;',
                         'caret' => true,
+                        'display' => '',
                         'sub_menu' => []
                     ]  
                 ]      
         ];
 
+        $c_user = 0;
+        $c_product = 0;
+        $c_service = 0;
+        $c_trans = 0;
+        $c_report = 0;
+        $c_setting = 0;
+
         foreach ($permissions as $key => $menu) {
             if($menu['parent']=='Users'){
+                $c_user++;
                 array_push($this->data['menu'][0]['sub_menu'], array(
                     'url' => $menu['url'],
                      'title' => \Lang::get('sidebar.'.str_replace(" ","",$menu['remark'])),
@@ -247,6 +261,7 @@ class ReportCustomerRegController extends Controller
                 ));
             }
             if($menu['parent']=='Products'){
+                $c_product++;
                 array_push($this->data['menu'][1]['sub_menu'], array(
                     'url' => $menu['url'],
                      'title' => \Lang::get('sidebar.'.str_replace(" ","",$menu['remark'])),
@@ -254,6 +269,7 @@ class ReportCustomerRegController extends Controller
                 ));
             }
             if($menu['parent']=='Services'){
+                $c_service++;
                 array_push($this->data['menu'][2]['sub_menu'], array(
                     'url' => $menu['url'],
                      'title' => \Lang::get('sidebar.'.str_replace(" ","",$menu['remark'])),
@@ -261,6 +277,7 @@ class ReportCustomerRegController extends Controller
                 ));
             }
             if($menu['parent']=='Transactions'){
+                $c_trans++;
                 array_push($this->data['menu'][3]['sub_menu'], array(
                     'url' => $menu['url'],
                      'title' => \Lang::get('sidebar.'.str_replace(" ","",$menu['remark'])),
@@ -268,6 +285,7 @@ class ReportCustomerRegController extends Controller
                 ));
             }	
             if($menu['parent']=='Reports'){
+                $c_report++;
                 array_push($this->data['menu'][4]['sub_menu'], array(
                     'url' => $menu['url'],
                      'title' => \Lang::get('sidebar.'.str_replace(" ","",$menu['remark'])),
@@ -275,6 +293,7 @@ class ReportCustomerRegController extends Controller
                 ));
             }
             if($menu['parent']=='Settings'){
+                $c_setting++;
                 array_push($this->data['menu'][5]['sub_menu'], array(
                     'url' => $menu['url'],
                      'title' => \Lang::get('sidebar.'.str_replace(" ","",$menu['remark'])),
@@ -283,6 +302,27 @@ class ReportCustomerRegController extends Controller
             }
         }
 
+        if($c_user == 0){
+            $this->data['menu'][0]['display'] = 'd-none';
+        }
+        if($c_product == 0){
+            $this->data['menu'][1]['display'] = 'd-none';
+        }
 
+        if($c_service == 0){
+            $this->data['menu'][2]['display'] = 'd-none';
+        }
+
+        if($c_trans == 0){
+            $this->data['menu'][3]['display'] = 'd-none';
+        }
+
+        if($c_report == 0){
+            $this->data['menu'][4]['display'] = 'd-none';
+        }
+
+        if($c_setting == 0){
+            $this->data['menu'][5]['display'] = 'd-none';
+        }
     }
 }
