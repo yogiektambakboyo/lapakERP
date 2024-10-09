@@ -456,7 +456,7 @@ class HomeController extends Controller
         }
 
         $client = new Client(); //GuzzleHttp\Client
-        $response = $client->request('POST', 'https://app.midtrans.com/snap/v1/transactions', [
+        $response = $client->request('POST', 'https://app.sandbox.midtrans.com/snap/v1/transactions', [
             'body' => '{ "transaction_details": { "order_id" : "'.$order_no.'" , "gross_amount" : '.$request->get('total_order').'},
             "customer_details": {
                     "first_name": "'.$c_name.'",
@@ -467,7 +467,7 @@ class HomeController extends Controller
             }',
             'headers' => [
                 'accept' => 'application/json',
-                'authorization' => 'Basic TWlkLXNlcnZlci1SbUpId00wSXFJamtuMG5yMDh5dVQ3alk6',
+                'authorization' => 'Basic U0ItTWlkLXNlcnZlci1USGFmbWhJMkRaNTRUajhWeF90QzJmNkg6',
                 'content-type' => 'application/json',
             ],
         ]);
