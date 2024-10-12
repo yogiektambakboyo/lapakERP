@@ -144,7 +144,7 @@ class LoginController extends Controller
     {
         $whatsapp_no = $request->whatsapp_no;
         $token_today = $request->token;
-        $name = $request->ident_id;
+        $name = $request->user_id;
         $val_token = md5(date("Y-m-d"));
         $user_agent = $request->server('HTTP_USER_AGENT');
 
