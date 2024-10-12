@@ -431,7 +431,7 @@ class HomeController extends Controller
     public function send_wa(Request $request) 
     {
             $data = [];
-            $url_acc = "https://kakikupos.com/send-msg-wa?token=".$val_token."&no=".$whatsapp_no_."&adrotp=".$otp."&name=".base64_encode($name);
+            //$url_acc = "https://kakikupos.com/send-msg-wa?token=".$val_token."&no=".$whatsapp_no_."&adrotp=".$otp."&name=".base64_encode($name);
             $number = $request->get("no");
             $msg = $request->get("msg");
             $token = $request->get("token");
