@@ -796,10 +796,10 @@ class LoginController extends Controller
         select b.id,name  from reg_provinces b ) a order by name; ");
 
         $data_regencies = DB::select(" select * from (
-        select '0' as id,'-- Pilih Kota --' as name from branch b 
+        select '0' as id,'0' as province_id,'-- Pilih Kota --' as name from branch b 
         where b.id=1
         UNION
-        select b.id,name  from reg_regencies b ) a order by name;");
+        select b.id,b.province_id,name  from reg_regencies b ) a order by name;");
 
         if(count($data)>0 && $val_token==$token_today && $user_agent=="Malaikat_Ridwan"){
             $result = array_merge(
