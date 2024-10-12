@@ -773,6 +773,56 @@ class LoginController extends Controller
         
     }
 
+    public function api_branch_list_with_prov(Request $request)
+    {
+        $token_today = $request->token;
+        $val_token = md5(date("Y-m-d"));
+        $user_agent = $request->server('HTTP_USER_AGENT');
+        $whatsapp_no = $request->whatsapp_no;
+        $data = DB::select("
+        select * from (
+        select 0 as id,'-- Pilih Cabang --' as branch_name,'0' as branch_address,'0' as longitude,'0' as latitude from branch b 
+        where b.id=1
+        UNION
+        select b.id,remark as branch_name,b.address as branch_address,b.longitude, b.latitude from branch b 
+        where b.id>1 and b.active = 1) a order by branch_name; ");
+
+
+        $data_province = DB::select("
+        select * from (
+        select '0' as id,'-- Pilih Provinsi --' as name from branch b 
+        where b.id=1
+        UNION
+        select b.id,name  from reg_provinces b ) a order by name; ");
+
+        $data_regencies = DB::select(" select * from (
+        select '0' as id,'-- Pilih Kota --' as name from branch b 
+        where b.id=1
+        UNION
+        select b.id,name  from reg_regencies b ) a order by name;");
+
+        if(count($data)>0 && $val_token==$token_today && $user_agent=="Malaikat_Ridwan"){
+            $result = array_merge(
+                ['status' => 'success'],
+                ['data_province' => $data_province],
+                ['data_regencies' => $data_regencies],
+                ['data' => $data],
+                ['message' => 'Success'],
+            );    
+        }else{
+            $data = array();
+            $result = array_merge(
+                ['status' => 'failed'],
+                ['data_province' => $data_province],
+                ['data_regencies' => $data_regencies],
+                ['data' => $data ],
+                ['message' => 'get Branch failed'],
+            );   
+        }
+        return $result;
+        
+    }
+
     public function api_voucher_list(Request $request)
     {
         $token_today = $request->token;
