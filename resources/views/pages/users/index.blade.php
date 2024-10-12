@@ -39,6 +39,7 @@
                 <th scope="col" width="7%">Aktif</th>
                 <th scope="col" width="13%">Cabang</th>
                 <th scope="col" width="13%">NIK</th>
+                <th scope="col" width="13%">No Handphone</th>
                 <th scope="col" width="9%">Tahun Kerja</th>
                 <th scope="col" width="2%" class="nex">@lang('user.lbl_action')</th>   
                 <th scope="col" width="2%" class="nex"></th>
@@ -59,6 +60,7 @@
                             {{ $user->branch_name }}
                         </td>
                         <td>{{ $user->netizen_id }}</td>
+                        <td>{{ $user->phone_no }}</td>
                         <td>{{ $user->work_year }}</td>
                         <td class="nex"><a href="{{ route('users.show', $user->id) }}" class="btn btn-warning btn-sm {{ $act_permission->allow_show==1?'':'d-none' }}">@lang('user.lbl_show')</a></td>
                         <td class="nex"><a href="{{ route('users.edit', $user->id) }}" class="btn btn-info btn-sm {{ $act_permission->allow_edit==1?'':'d-none' }}">@lang('user.lbl_edit')</a></td>
