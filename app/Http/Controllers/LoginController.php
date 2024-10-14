@@ -111,6 +111,8 @@ class LoginController extends Controller
         where u.phone_no is not null and u.phone_no = '".$whatsapp_no."'
         ) a limit 1");
 
+        
+
         $data_notif = DB::select("select whatsapp_no from notif_log where whatsapp_no ='".$whatsapp_no."'; ");
 
         $whatsapp_no_ = $whatsapp_no;
@@ -118,6 +120,8 @@ class LoginController extends Controller
         if(substr($whatsapp_no,0,2)=="08"){
             $whatsapp_no_ = "628".substr($whatsapp_no,2,strlen($whatsapp_no));
         }
+
+        $del_queue_old = DB::select("delete from wa_queue where whatsapp_no = '".$whatsapp_no_."' and is_send = 0;");
 
         if(count($data)>0 && count($data_notif)<=0 && $val_token==$token_today && $user_agent=="Malaikat_Ridwan" && strlen($data[0]->name)>2){
             $random_numb = mt_rand(1111,9999);
