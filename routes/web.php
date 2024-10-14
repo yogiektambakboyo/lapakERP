@@ -55,6 +55,7 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
 
         Route::post('/api_profile_emp', 'LoginController@api_profile_emp')->name('login.api_profile_emp');
         Route::post('/api_register', 'LoginController@api_register')->name('login.api_register');
+        Route::post('/insert_log_wablas', 'LoginController@insert_log_wablas')->name('login.insert_log_wablas');
         Route::post('/api_get_work_today', 'LoginController@api_get_work_today')->name('login.api_get_work_today');
         Route::post('/api_get_work', 'LoginController@api_get_work')->name('login.api_get_work');
         Route::post('/api_register_otp', 'LoginController@api_register_otp')->name('login.api_register_otp');

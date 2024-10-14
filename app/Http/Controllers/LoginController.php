@@ -68,6 +68,33 @@ class LoginController extends Controller
         return $user_data;
     }
 
+    public function insert_log_wablas(Request $request) 
+    {
+        /**
+        * all data POST sent from  https://jogja.wablas.com
+        * you must create URL what can receive POST data
+        * we will sent data like this:
+        * id = message ID - string
+        * phone = whatsapp number of customer
+        * status = status of message - string
+        * note = information - string
+        * deviceId = device ID - string
+        */
+
+        $content = json_decode(file_get_contents('php://input'), true);
+
+        $doc_id = $content['id'];
+        $status_send = $content['status'];
+        $phone = $content['phone'];
+        $note = $content['note'];
+        $sender = $content['sender'];
+        $deviceId = $content['deviceId'];
+
+        DB::insert('INSERT INTO public.log_notif(doc_id, status_send, phone, sender, note) VALUES(?,?,?,?,?);', [$doc_id, $status_send, $phone, $sender, $note]);
+        return "1";
+
+    }
+
     public function api_login(Request $request)
     {
         $whatsapp_no = $request->whatsapp_no;

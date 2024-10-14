@@ -450,6 +450,61 @@ class HomeController extends Controller
                 DB::select("INSERT INTO public.wa_queue(whatsapp_no, is_send, created_at, msg) values('".$number."', 0, now(), '".$msg."');");
                 $curl = curl_init();
 
+                
+
+                curl_setopt_array($curl, array(
+                    CURLOPT_URL => 'https://jogja.wablas.com/api/send-message',
+                    CURLOPT_RETURNTRANSFER => true,
+                    CURLOPT_ENCODING => '',
+                    CURLOPT_MAXREDIRS => 10,
+                    CURLOPT_TIMEOUT => 0,
+                    CURLOPT_FOLLOWLOCATION => true,
+                    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                    CURLOPT_CUSTOMREQUEST => 'POST',
+                    CURLOPT_POSTFIELDS => array('phone' => $number,'message' => $msg),
+                    CURLOPT_HTTPHEADER => array(
+                        'Authorization: jN4RKgUChWBoIHNydOEhmutRuCARXviy5un8NELpG7e3wHmOCGnJA6xLB0HPAo5m'
+                    ),
+                ));
+
+                $response = curl_exec($curl);
+                $err = curl_error($curl);
+
+                curl_close($curl);
+
+                if ($err) {
+                    $resp = "Error ". $err;
+                } else {
+                    DB::select("UPDATE wa_queue set is_send=1,updated_at=now() where whatsapp_no='".$number."';");
+                    $resp = $response;
+                }
+            }
+
+            return $resp;
+    }
+
+    public function send_wa_old(Request $request) 
+    {
+            $data = [];
+            //$url_acc = "https://kakikupos.com/send-msg-wa?token=".$val_token."&no=".$whatsapp_no_."&adrotp=".$otp."&name=".base64_encode($name);
+            $number = $request->get("no");
+            $msg = $request->get("msg");
+            $token = $request->get("token");
+            $fromapp = $request->get("fromapp");
+            $name = $request->get("name");
+            $name = base64_decode($name);
+            $otp = $request->get("adrotp");
+            $msg = "*OTP Notifikasi* \r\n\r\nHai ".$name.", silahkan masukkan kode OTP *".$otp."* untuk login aplikasi ".$fromapp.".\r\n\r\n_Abaikan pesan ini jika anda tidak merasa login ke aplikasi_";
+            $str="number=".$number."&message=".$msg;
+
+            $resp = "Token Not Valid";
+
+            $validate = md5(date("Y-m-d"));
+
+            if($token == $validate && !empty($otp) && strlen($name)>2 && !empty($name)  && !empty($fromapp)  && !empty($token)  && !empty($number)){
+                DB::select("INSERT INTO public.wa_queue(whatsapp_no, is_send, created_at, msg) values('".$number."', 0, now(), '".$msg."');");
+                $curl = curl_init();
+
                 curl_setopt_array($curl, [
                     CURLOPT_PORT => "8000",
                     CURLOPT_URL => "http://localhost:8000/send-message",
@@ -499,8 +554,8 @@ class HomeController extends Controller
                 $curl = curl_init();
 
                 curl_setopt_array($curl, [
-                    CURLOPT_PORT => "8001",
-                    CURLOPT_URL => "http://localhost:8001/send-message",
+                    CURLOPT_PORT => "8000",
+                    CURLOPT_URL => "http://localhost:8000/send-message",
                     CURLOPT_RETURNTRANSFER => true,
                     CURLOPT_ENCODING => "",
                     CURLOPT_MAXREDIRS => 10,
