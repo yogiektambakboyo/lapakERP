@@ -9,6 +9,9 @@ use App\Services\Login\RememberMeExpiration;
 use App\Models\Settings;
 use App\Models\Company;
 use App\Http\Controllers\Lang;
+use GuzzleHttp\Exception\GuzzleException;
+use GuzzleHttp\Client;
+use App\Models\User;
 
 class LoginController extends Controller
 {
@@ -21,7 +24,7 @@ class LoginController extends Controller
      */
     public function show()
     {
-        return view('pages.auth.login',[
+        return view('pages.auth.login_v3',[
             'settings' => Settings::get()->first(),'company' => Company::get()->first()
         ]);
     }
@@ -50,22 +53,54 @@ class LoginController extends Controller
      */
     public function login(LoginRequest $request)
     {
-        $credentials = $request->getCredentials();
+        //connect to ctc hr 
+        $client = new Client(); //GuzzleHttp\Client
+        $token_val = md5(date("Y-m-d"));
+    
+        $response = $client->request('POST', 'https://ctc-cmc.org/api/check_login_external.php', [
+            'form_params' => [
+                'email' => $request->get("username"),
+                'token_val' => $token_val,
+                'password' => $request->get("password"),
+            ]
+        ]);
 
-        if(!Auth::validate($credentials)):
-            return redirect()->to('login')
+        if(!empty($response->getBody())){
+            $resp = json_decode($response->getBody()->getContents(), true);
+            $rec_id = "";
+            if($resp["status"] == "failed"){
+                return redirect()->to('login')
                 ->withErrors(trans('auth.failed'));
-        endif;
+            }else{
+                $recid = $resp["data"];
 
-        $user = Auth::getProvider()->retrieveByCredentials($credentials);
+                User::where('employee_id',$recid)->update(
+                    array_merge(
+                        [ "email" => $request->get("username")],
+                        ["password" => $request->get("password")]
+                    )
+                );
 
-        Auth::login($user, $request->get('remember'));
+                $credentials = $request->getCredentials();
 
-        if($request->get('remember')):
-            $this->setRememberMeExpiration($user);
-        endif;
+                if(!Auth::validate($credentials)):
+                    return redirect()->to('login')
+                        ->withErrors(trans('auth.failed'));
+                endif;
 
-        return $this->authenticated($request, $user);
+                $user = Auth::getProvider()->retrieveByCredentials($credentials);
+
+                Auth::login($user, $request->get('remember'));
+
+                if($request->get('remember')):
+                    $this->setRememberMeExpiration($user);
+                endif;
+
+                return $this->authenticated($request, $user);
+            }
+        }
+
+        
     }
 
     /**

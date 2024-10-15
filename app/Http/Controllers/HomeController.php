@@ -322,7 +322,7 @@ class HomeController extends Controller
         }else{
             $data = [];
             //return redirect()->route('login.profile', []);
-            return view('pages.auth.login')->with('data',$data)->with('settings',Settings::get()->first())->with('company',Company::get()->first());
+            return view('pages.auth.login_v3')->with('data',$data)->with('settings',Settings::get()->first())->with('company',Company::get()->first());
         }
     }
 
