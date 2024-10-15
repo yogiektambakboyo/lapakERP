@@ -32,9 +32,9 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
         /**
          * Register Routes
          */
-        Route::get('/register', 'RegisterController@show')->name('register.show');
-        Route::get('/activated_acc', 'RegisterController@activated_acc')->name('register.activated_acc');
-        Route::post('/register_regis', 'RegisterController@store_regis')->name('register.store_regis');
+        //Route::get('/register', 'RegisterController@show')->name('register.show');
+        //Route::get('/activated_acc', 'RegisterController@activated_acc')->name('register.activated_acc');
+        //Route::post('/register_regis', 'RegisterController@store_regis')->name('register.store_regis');
         Route::get('/policy', 'HomeController@policy')->name('home.policy');
         Route::get('/order/{abbr}', 'HomeController@order_welcome')->name('home.order_welcome');
         Route::get('/order_customer', 'HomeController@ordercustomer')->name('home.ordercustomer');
@@ -48,9 +48,9 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
         Route::get('/login', 'LoginController@show')->name('login.show');
         Route::post('/login', 'LoginController@login')->name('login.perform');
 
-        Route::get('/profile', 'LoginController@profile')->name('login.profile');
-        Route::get('/eorder', 'LoginController@eorder')->name('login.eorder');
-        Route::get('/lapakerp', 'LoginController@lapakerp')->name('login.lapakerp');
+        //Route::get('/profile', 'LoginController@profile')->name('login.profile');
+        //Route::get('/eorder', 'LoginController@eorder')->name('login.eorder');
+        //Route::get('/lapakerp', 'LoginController@lapakerp')->name('login.lapakerp');
 
         Route::get('/getproduct_public', 'HomeController@getproduct_public')->name('invoices.getproduct_public');
 

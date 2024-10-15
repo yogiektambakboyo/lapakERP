@@ -321,8 +321,8 @@ class HomeController extends Controller
             ])->with('data',$data)->with('company',Company::get()->first());
         }else{
             $data = [];
-            return redirect()->route('login.profile', []);
-            //return view('pages.auth.login')->with('data',$data)->with('settings',Settings::get()->first())->with('company',Company::get()->first());
+            //return redirect()->route('login.profile', []);
+            return view('pages.auth.login')->with('data',$data)->with('settings',Settings::get()->first())->with('company',Company::get()->first());
         }
     }
 
