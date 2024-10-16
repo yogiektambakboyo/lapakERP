@@ -252,12 +252,6 @@ class UsersController extends Controller
                     ['branch_id' => (int)$arr[$i] ],
             ));
 
-            UserMutation::create(array_merge(
-                ['user_id' => User::orderBy('id', 'desc')->first()->id ],
-                ['job_id' => $request->get('job_id') ],
-                ['branch_id' => (int)$arr[$i]],
-                ['department_id' => $request->get('department_id') ],
-            ));
         }
 
         return redirect()->route('users.index')

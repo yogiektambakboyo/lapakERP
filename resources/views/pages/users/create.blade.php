@@ -30,40 +30,10 @@
             <div class="row mb-3">
                 <label class="form-label col-form-label col-md-2">Employee ID</label>
                 <div class="col-md-8">
-                  <input type="text" name="employee_id" class="form-control" value="{{ old('employee_id') }}"   required />
+                  <input type="text" name="employee_id"  class="form-control" value="{{ old('employee_id') }}"   required />
                 </div>
             </div>
             
-            <div class="row mb-3">
-              <label class="form-label col-form-label col-md-2">@lang('general.lbl_jobtitleselect')</label>
-              <div class="col-md-8">
-                <select class="form-control" 
-                    name="job_id" required>
-                    <option value="">Select Job Title</option>
-                    @foreach($jobTitles as $jobTitle)
-                        <option value="{{ $jobTitle->id }}" {{ ($jobTitle->id==old('job_id') ) 
-                          ? 'selected'
-                          : '' }}>{{ $jobTitle->remark }}</option>
-                    @endforeach
-                </select>
-              </div>
-            </div>
-
-            <div class="row mb-3">
-              <label class="form-label col-form-label col-md-2">Employee Status</label>
-              <div class="col-md-8">
-                <select class="form-control" 
-                    name="employee_status" required>
-                    <option value="">Select Employee Status</option>
-                    @foreach($employeestatusx as $employee_status)
-                        <option value="{{ $employee_status }}" {{ ($employee_status==old('employee_status') ) 
-                          ? 'selected'
-                          : '' }}>{{ $employee_status }}</option>
-                    @endforeach
-                </select>
-              </div>
-            </div>
-
             <div class="row mb-3">
               <label class="form-label col-form-label col-md-2">@lang('general.lbl_branch')</label>
               <div class="col-md-8">
@@ -76,170 +46,21 @@
                   </select>
               </div>
             </div>
-          <div class="row mb-3">
-            <label class="form-label col-form-label col-md-2">Department</label>
-            <div class="col-md-8">
-              <select class="form-control" 
-                    name="department_id" required>
-                    <option value="">Select Department</option>
-                    @foreach($departments as $department)
-                        <option value="{{ $department->id }}" {{ ($department->id==old('department_id') ) 
-                          ? 'selected'
-                          : '' }}>{{  $department->remark }}</option>
-                    @endforeach
-                </select>
-            </div>
-          </div>
-          <div class="row mb-3">
-            <label class="form-label col-form-label col-md-2">Join @lang('general.lbl_dated_mmddYYYY')</label>
-            <div class="col-md-8">
-              <input type="text" 
-              name="join_date"
-              id="datepicker"
-              class="form-control" 
-              value="{{ old('join_date') }}" required/>
-              @if ($errors->has('join_date'))
-                        <span class="text-danger text-left">{{ $errors->first('join_date') }}</span>
-                    @endif
-            </div>
-          </div>
-          </div>
-        </div>
-
-        <div class="panel text-white">
-          <div class="panel-heading bg-teal-600"><h4>Personal Info</h4></div>
-          <div class="panel-body bg-white text-black">
 
             <div class="row mb-3">
-              <label class="form-label col-form-label col-md-2">Photo</label>
+              <label class="form-label col-form-label col-md-2">Email</label>
               <div class="col-md-8">
-                <a href="/images/user-files/user.png" target="_blank"><img  id="photo_preview" src="/images/user-files/user.png" width="100" height="100" class="rounded float-start" alt="..."></a>
-                <input type="file" 
-                name="photo"  id="photo" onchange="previewFile(this);"
-                class="form-control"  />
-                <span></span>
+                <input type="text" 
+                name="email" required
+                class="form-control" 
+                value="{{ old('email') }}"  />
+                @if ($errors->has('email'))
+                  <span class="text-danger text-left">{{ $errors->first('email') }}</span>
+                @endif
               </div>
             </div>
           
-            <div class="row mb-3">
-              <label class="form-label col-form-label col-md-2">Netizen ID</label>
-              <div class="col-md-8">
-                <input type="text" 
-                name="netizen_id"
-                class="form-control" 
-                value="{{ old('netizen_id') }}"    required/>
-                </div>
-            </div>
-            <div class="row mb-3">
-                <label class="form-label col-form-label col-md-2">Netizen ID Photo</label>
-                <div class="col-md-8">
-                  <a href="/images/user-files/draft_netizen.jpg" target="_blank"><img  id="photo_netizen_preview" src="/images/user-files/draft_netizen.jpg" width="200" height="100" class="rounded float-start" alt="..."></a>
-                  <input type="file"  onchange="previewFileNetizen(this);"
-                  name="photo_netizen_ids" id="photo_netizen_ids"
-                  class="form-control"  />
-                  <span></span>
-                </div>
-            </div>  
-            <div class="row mb-3">
-              <label class="form-label col-form-label col-md-2">Gender</label>
-              <div class="col-md-8">
-                <select class="form-control" 
-                    name="gender" required>
-                    <option value="">Select Gender</option>
-                    @foreach($gender as $value)
-                        <option value="{{ $value }}" {{ ($value==old('gender') ) 
-                          ? 'selected'
-                          : '' }}>{{ $value }}</option>
-                    @endforeach
-                </select>
-              </div>
-            </div>
-            <div class="row mb-3">
-              <label class="form-label col-form-label col-md-2">Birth Place</label>
-              <div class="col-md-8">
-                <input type="text" 
-                name="birth_place"
-                class="form-control" 
-                value="{{ old('birth_place') }}"    required/>
-              </div>
-            </div>
-            <div class="row mb-3">
-              <label class="form-label col-form-label col-md-2">Birth Date  (mm/dd/yyyy)</label>
-              <div class="col-md-8">
-                <div class="col-md-8">
-                  <input type="text" 
-                    name="birth_date"
-                    id="datepicker_2"
-                    class="form-control" 
-                    value="{{ old('birth_date') }}"  required/>
-                    @if ($errors->has('birth_date'))
-                        <span class="text-danger text-left">{{ $errors->first('birth_date') }}</span>
-                    @endif
-                </div>
-              </div>
-            </div>    
-          </div>
-        </div>
-
-        <div class="panel text-white">
-          <div class="panel-heading bg-teal-600"><h4>Contact</h4></div>
-          <div class="panel-body bg-white text-black">
-            <div class="row mb-3">
-              <label class="form-label col-form-label col-md-2">@lang('general.lbl_address')</label>
-              <div class="col-md-8">
-                <input type="text" 
-                name="address" required
-                class="form-control" 
-                value="{{ old('address') }}"  />
-                @if ($errors->has('address'))
-                <span class="text-danger text-left">{{ $errors->first('address') }}</span>
-              @endif
-              </div>
-          </div>
-          <div class="row mb-3">
-            <label class="form-label col-form-label col-md-2">@lang('general.lbl_city')</label>
-            <div class="col-md-8">
-              <input type="text" 
-              name="city"
-              class="form-control" 
-              value="{{ old('city') }}"  required/>
-            </div>
-          </div>
-          <div class="row mb-3">
-            <label class="form-label col-form-label col-md-2">@lang('general.lbl_phoneno')</label>
-            <div class="col-md-8">
-              <input type="text" 
-              name="phone_no"
-              class="form-control" 
-              value="{{ old('phone_no') }}"  />
-            </div>
-          </div>
-          <div class="row mb-3">
-            <label class="form-label col-form-label col-md-2">Email</label>
-            <div class="col-md-8">
-              <input type="text" 
-              name="email" required
-              class="form-control" 
-              value="{{ old('email') }}"  />
-              @if ($errors->has('email'))
-                <span class="text-danger text-left">{{ $errors->first('email') }}</span>
-              @endif
-            </div>
-          </div>
-            <div class="row mb-3">
-              <label class="form-label col-form-label col-md-2">Referral ID</label>
-              <div class="col-md-8">
-                <select class="form-control" 
-                      name="referral_id">
-                      <option value="">Select Referral</option>
-                      @foreach($usersReferrals as $usersreferral)
-                          <option value="{{ $usersreferral->id }}" {{ ($usersreferral->id==old('referral_id') ) 
-                            ? 'selected'
-                            : '' }} >{{  $usersreferral->name }}</option>
-                      @endforeach
-                  </select>
-              </div>
-            </div>
+          
           </div>
         </div>
 
