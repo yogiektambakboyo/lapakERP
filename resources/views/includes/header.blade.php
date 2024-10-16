@@ -16,7 +16,7 @@
 			<span class="icon-bar"></span>
 		</button>
 		@endif
-		<a href="/" class="navbar-brand"><span class="navbar-logo"></span> <b>Lapak</b> ERP</a>
+		<a href="/" class="navbar-brand"><span class="navbar-logo"></span> <b>CTC </b> Point of Sales</a>
 		@if ($appHeaderMegaMenu && !$appSidebarTwo)
 		<button type="button" class="navbar-mobile-toggler" data-bs-toggle="collapse" data-bs-target="#top-navbar">
 			<span class="fa-stack fa-lg">
