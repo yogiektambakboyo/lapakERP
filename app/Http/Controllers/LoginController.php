@@ -12,6 +12,7 @@ use App\Http\Controllers\Lang;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Client;
 use App\Models\User;
+use Spatie\Permission\Models\Role;
 
 class LoginController extends Controller
 {
@@ -68,7 +69,7 @@ class LoginController extends Controller
         if(!empty($response->getBody())){
             $resp = json_decode($response->getBody()->getContents(), true);
             $rec_id = "";
-            if($resp["status"] == "failed"){
+            if($resp["status"] == "xfailed"){
                 return redirect()->to('login')
                 ->withErrors(trans('auth.failed'));
             }else{
@@ -77,7 +78,7 @@ class LoginController extends Controller
                 User::where('employee_id',$recid)->update(
                     array_merge(
                         [ "email" => $request->get("username")],
-                        ["password" => $request->get("password")]
+                        ["password" => bcrypt($request->get("password"))]
                     )
                 );
 
