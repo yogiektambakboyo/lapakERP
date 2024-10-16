@@ -2,7 +2,7 @@
 	$appSidebarClass = (!empty($appSidebarTransparent)) ? 'app-sidebar-transparent' : '';
 @endphp
 <!-- BEGIN #sidebar -->
-<div id="sidebar" class="app-sidebar {{ $appSidebarClass }}">
+<div id="sidebar" class="app-sidebar {{ $appSidebarClass }} app-sidebar-grid" data-bs-theme="light">
 	<!-- BEGIN scrollbar -->
 	<div class="app-sidebar-content" data-scrollbar="true" data-height="100%">
 		<div class="menu">

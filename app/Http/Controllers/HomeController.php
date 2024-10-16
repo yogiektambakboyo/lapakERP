@@ -494,6 +494,40 @@ class HomeController extends Controller
         return $result;
     }
 
+    public function list_user(Request $request)
+    {
+        //connect to ctc hr 
+        $token_val = $request->get("token_val");
+
+        $client = new Client(); //GuzzleHttp\Client        
+        $response = $client->request('POST', 'https://ctc-cmc.org/api/get_list_active_user.php', [
+            'form_params' => [
+                'token_val' => $token_val
+            ]
+        ]);
+
+        $result = array_merge(
+            ['status' => 'failed'],
+            ['data' => []],
+            ['message' => 'failed get data'],
+        );
+
+        if(!empty($response->getBody())){
+            $resp = json_decode($response->getBody()->getContents(), true);
+            if($resp["status"] == "success"){            
+                $result = array_merge(
+                    ['status' => 'success'],
+                    ['data' => $resp["data"]],
+                    ['message' => 'Success get data'],
+                );
+        
+            }
+        }
+
+        return $result;
+
+    }
+
     public function get_order(Request $request) 
     {
         $branch_id = $request->get('branch_id') ;

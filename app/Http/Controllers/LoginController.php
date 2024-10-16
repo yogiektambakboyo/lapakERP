@@ -55,53 +55,79 @@ class LoginController extends Controller
     public function login(LoginRequest $request)
     {
         //connect to ctc hr 
-        $client = new Client(); //GuzzleHttp\Client
-        $token_val = md5(date("Y-m-d"));
-    
-        $response = $client->request('POST', 'https://ctc-cmc.org/api/check_login_external.php', [
-            'form_params' => [
-                'email' => $request->get("username"),
-                'token_val' => $token_val,
-                'password' => $request->get("password"),
-            ]
-        ]);
+        $user_name = $request->get("username");
 
-        if(!empty($response->getBody())){
-            $resp = json_decode($response->getBody()->getContents(), true);
-            $rec_id = "";
-            if($resp["status"] == "failed"){
-                return redirect()->to('login')
-                ->withErrors(trans('auth.failed'));
-            }else{
-                $recid = $resp["data"];
-
-                User::where('employee_id',$recid)->update(
-                    array_merge(
-                        [ "email" => $request->get("username")],
-                        ["password" => bcrypt($request->get("password"))]
-                    )
-                );
-
-                $credentials = $request->getCredentials();
-
-                if(!Auth::validate($credentials)):
-                    return redirect()->to('login')
-                        ->withErrors(trans('auth.failed'));
-                endif;
-
-                $user = Auth::getProvider()->retrieveByCredentials($credentials);
-
-                Auth::login($user, $request->get('remember'));
-
-                if($request->get('remember')):
-                    $this->setRememberMeExpiration($user);
-                endif;
-
-                return $this->authenticated($request, $user);
-            }
-        }
-
+        if($user_name != "admin"){
+            $client = new Client(); //GuzzleHttp\Client
+            $token_val = md5(date("Y-m-d"));
         
+            $response = $client->request('POST', 'https://ctc-cmc.org/api/check_login_external.php', [
+                'form_params' => [
+                    'email' => $request->get("username"),
+                    'token_val' => $token_val,
+                    'password' => $request->get("password"),
+                ]
+            ]);
+
+            if(!empty($response->getBody())){
+                    $rec_id = "------";
+                
+                    $resp = json_decode($response->getBody()->getContents(), true);
+                    
+                    if($resp["status"] == "failed"){
+                        return redirect()->to('login')
+                        ->withErrors(trans('auth.failed'));
+                    }else{
+                        $recid = $resp["data"];
+        
+                        User::where('employee_id',$recid)->update(
+                            array_merge(
+                                [ "email" => $request->get("username")],
+                                ["password" => bcrypt($request->get("password"))]
+                            )
+                        );
+        
+                        $credentials = $request->getCredentials();
+        
+                        if(!Auth::validate($credentials)):
+                            return redirect()->to('login')
+                                ->withErrors(trans('auth.failed'));
+                        endif;
+        
+                        $user = Auth::getProvider()->retrieveByCredentials($credentials);
+        
+                        Auth::login($user, $request->get('remember'));
+        
+                        if($request->get('remember')):
+                            $this->setRememberMeExpiration($user);
+                        endif;
+        
+                        return $this->authenticated($request, $user);
+                    }
+                
+                
+            }else{
+                return redirect()->to('login')
+                        ->withErrors(trans('auth.failed'));
+            }
+        }else{
+            $credentials = $request->getCredentials();
+
+            if(!Auth::validate($credentials)):
+                return redirect()->to('login')
+                    ->withErrors(trans('auth.failed'));
+            endif;
+
+            $user = Auth::getProvider()->retrieveByCredentials($credentials);
+
+            Auth::login($user, $request->get('remember'));
+
+            if($request->get('remember')):
+                $this->setRememberMeExpiration($user);
+            endif;
+
+            return $this->authenticated($request, $user);
+        }
     }
 
     /**

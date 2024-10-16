@@ -28,6 +28,8 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
         return redirect()->back();
     })->name('setting.lang');
 
+    Route::post('/list_user', 'HomeController@list_user')->name('home.list_user');
+
     Route::group(['middleware' => ['guest']], function() {
         /**
          * Register Routes
@@ -45,6 +47,8 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
         /**
          * Login Routes
          */
+        
+
         Route::get('/login', 'LoginController@show')->name('login.show');
         Route::post('/login', 'LoginController@login')->name('login.perform');
 
