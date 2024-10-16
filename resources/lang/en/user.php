@@ -1,7 +1,7 @@
 <?php
 return [
-    "title" => "Pengguna",
-    "label" => "Kelola pengguna anda disini",
+    "title" => "Users",
+    "label" => "Manage your data in here",
     "label_search" => "Find User. . .",
     "lbl_add_new_user" => "Add New User",
 

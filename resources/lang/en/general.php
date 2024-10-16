@@ -47,6 +47,7 @@ return [
     "lbl_sync" => "Sync", 
 
     "lbl_name" => "Name",
+    "lbl_product" => "Product",
     "lbl_active" => "Active",
     "lbl_employeeid" => "ID Staff",
     "lbl_jobtitle" => "Job Position",
