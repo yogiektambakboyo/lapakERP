@@ -69,7 +69,7 @@ class LoginController extends Controller
         if(!empty($response->getBody())){
             $resp = json_decode($response->getBody()->getContents(), true);
             $rec_id = "";
-            if($resp["status"] == "xfailed"){
+            if($resp["status"] == "failed"){
                 return redirect()->to('login')
                 ->withErrors(trans('auth.failed'));
             }else{
