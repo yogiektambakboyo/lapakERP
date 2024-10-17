@@ -28,7 +28,7 @@
             </div>
             <div class="col-md-11">
                 <label class="col-md-8"><span class="badge bg-primary">{{ $user->employee_id }}</span></label>
-                <label class="col-md-8"><h1 class="display-4">{{ $user->name }}</h1></label>
+                <label class="col-md-8"><h1 class="display-5">{{ $user->name }}</h1></label>
             </div>
           </div>
             
