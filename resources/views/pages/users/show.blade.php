@@ -33,25 +33,10 @@
 
         <ul class="nav nav-tabs">
           <li class="nav-item">
-            <a href="#tab_employee_info" data-bs-toggle="tab" class="nav-link active"><span class="fas fa-user-tie"></span> Employee Info</a>
+            <a href="#tab_employee_info" data-bs-toggle="tab" class="nav-link active"><span class="fas fa-user-tie"></span>@lang('user.lbl_employee_info')</a>
           </li>
           <li class="nav-item">
-            <a href="#tab_personal_info" data-bs-toggle="tab" class="nav-link"><span class="fas fa-user"></span> Personal Info</a>
-          </li>
-          <li class="nav-item">
-            <a href="#tab_contact" data-bs-toggle="tab" class="nav-link"><span class="fas fa-id-card"></span> Contact</a>
-          </li>
-          <li class="nav-item">
-            <a href="#tab_account" data-bs-toggle="tab" class="nav-link"><span class="fas fa-lock"></span> Account</a>
-          </li>
-          <li class="nav-item">
-            <a href="#tab_training" data-bs-toggle="tab" class="nav-link"><span class="fas fa-clock-rotate-left"></span> Training & Skill</a>
-          </li>
-          <li class="nav-item">
-            <a href="#tab_history" data-bs-toggle="tab" class="nav-link"><span class="fas fa-clock-rotate-left"></span> Work History</a>
-          </li>
-          <li class="nav-item">
-            <a href="#tab_experience" data-bs-toggle="tab" class="nav-link"><span class="fas fa-user-clock"></span> Work Experience</a>
+            <a href="#tab_account" data-bs-toggle="tab" class="nav-link"><span class="fas fa-lock"></span> @lang('user.lbl_account')</a>
           </li>
           
         </ul>
@@ -67,103 +52,9 @@
                   </div>
               </div>
               <div class="row mb-3">
-                <label class="form-label col-form-label col-md-2">Employee Status</label>
-                <div class="col-md-8">
-                  <select class="form-control" 
-                      name="employee_status" disabled>
-                      <option value="">Select Employee Status</option>
-                      @foreach($employeestatusx as $employee_status)
-                          <option value="{{ $employee_status }}" {{ ($employee_status==$users->employee_status ) 
-                            ? 'selected'
-                            : '' }}>{{ $employee_status }}</option>
-                      @endforeach
-                  </select>
-                </div>
-              </div>
-              <div class="row mb-3">
                 <label class="form-label col-form-label col-md-2">@lang('general.lbl_branch')</label>
                 <div class="col-md-8">
                   <input type="text" class="form-control" value="{{ $users->branch_name }}" readonly />
-                </div>
-              </div>
-              <div class="row mb-3">
-                <label class="form-label col-form-label col-md-2">Department</label>
-                <div class="col-md-8">
-                  <input type="text" class="form-control" value="{{ $users->department }}" readonly />
-                </div>
-              </div>
-              <div class="row mb-3">
-                <label class="form-label col-form-label col-md-2">Join Date  (mm/dd/YYYY)</label>
-                <div class="col-md-8">
-                  <input type="text" class="form-control" value="{{ \Carbon\Carbon::parse($users->join_date)->format('Y-m-d') }}" readonly />
-                </div>
-              </div>
-              <div class="row mb-3">
-                <label class="form-label col-form-label col-md-2">Join @lang('general.lbl_years')</label>
-                <div class="col-md-8">
-                  <input type="text" class="form-control" value="{{ $users->join_years }}" readonly />
-                </div>
-              </div>
-              </div>
-            </div>
-          </div>
-          <div class="tab-pane fade" id="tab_personal_info">
-            <div class="panel text-white">
-              <div class="panel-heading bg-teal-600"><h4>Personal Info</h4></div>
-              <div class="panel-body bg-white text-black">
-                <div class="row mb-3">
-                  <label class="form-label col-form-label col-md-2">Netizen ID</label>
-                  <div class="col-md-8">
-                    <input type="text" class="form-control" value="{{ $users->netizen_id }}" readonly />
-                    </div>
-                </div>
-                <div class="row mb-3">
-                    <label class="form-label col-form-label col-md-2">Netizen ID Photo</label>
-                    <div class="col-md-8">
-                      <a href="/images/user-files/{{ $users->photo_netizen_id }}" target="_blank"><img src="/images/user-files/{{ $users->photo_netizen_id }}" width="200" height="100" class="rounded float-start"></a>
-                    </div>
-                </div>  
-                <div class="row mb-3">
-                  <label class="form-label col-form-label col-md-2">Gender</label>
-                  <div class="col-md-8">
-                    <input type="text" class="form-control" value="{{ $users->gender }}" readonly />
-                  </div>
-                </div>
-                <div class="row mb-3">
-                  <label class="form-label col-form-label col-md-2">Birth Place</label>
-                  <div class="col-md-8">
-                    <input type="text" class="form-control" value="{{ $users->birth_place }}" readonly />
-                  </div>
-                </div>
-                <div class="row mb-3">
-                  <label class="form-label col-form-label col-md-2">Birth @lang('general.lbl_dated')   </label>
-                  <div class="col-md-8">
-                    <input type="text" class="form-control" value="{{ $users->birth_date }}" readonly />
-                  </div>
-                </div>    
-              </div>
-            </div>
-          </div>
-          <div class="tab-pane fade" id="tab_contact">
-            <div class="panel text-white">
-              <div class="panel-heading bg-teal-600"><h4>Contact</h4></div>
-              <div class="panel-body bg-white text-black">
-                <div class="row mb-3">
-                  <label class="form-label col-form-label col-md-2">@lang('general.lbl_address')</label>
-                  <div class="col-md-8">
-                    <input type="text" class="form-control" value="{{ $users->address }}" readonly />
-                  </div>
-              </div>
-              <div class="row mb-3">
-                <label class="form-label col-form-label col-md-2">@lang('general.lbl_city')</label>
-                <div class="col-md-8">
-                  <input type="text" class="form-control" value="{{ $users->city }}" readonly />
-                </div>
-              </div>
-              <div class="row mb-3">
-                <label class="form-label col-form-label col-md-2">@lang('general.lbl_phoneno')</label>
-                <div class="col-md-8">
-                  <input type="text" class="form-control" value="{{ $users->phone_no }}" readonly />
                 </div>
               </div>
               <div class="row mb-3">
@@ -172,23 +63,11 @@
                   <input type="text" class="form-control" value="{{ $users->email }}" readonly />
                 </div>
               </div>
-                <div class="row mb-3">
-                  <label class="form-label col-form-label col-md-2">Referral ID</label>
-                  <div class="col-md-8">
-                      <select class="form-control" 
-                            name="referral_id" readonly>
-                            <option value="">Select Referral</option>
-                            @foreach($usersReferrals as $usersreferral)
-                                <option value="{{ $usersreferral->id }}" {{ ($user->referral_id==$usersreferral->id) 
-                                  ? 'selected'
-                                  : '' }} >{{  $usersreferral->name }}</option>
-                            @endforeach
-                        </select>
-                  </div>
-                </div>
+
               </div>
             </div>
           </div>
+         
           <div class="tab-pane fade" id="tab_account">
             <div class="panel text-white">
               <div class="panel-heading bg-teal-600"><h4>Account</h4></div>
@@ -250,167 +129,10 @@
             </div>
           </div>
 
-          <div class="tab-pane fade" id="tab_training">
-            <div class="panel text-white">
-              <div class="panel-heading bg-teal-600"><h4>Training & Skill</h4></div>
-              <div class="panel-body bg-white text-black">
-                <div class="row mb-3">
-                  <div class="col-md-2">
-                    <label class="form-label col-form-label">@lang('general.lbl_dated_mmddYYYY')</label>
-                    <input type="text" 
-                    name="input_date"
-                    id="input_date"
-                    class="form-control" 
-                    value="{{ old('input_date') }}" required/>
-                    @if ($errors->has('input_date'))
-                              <span class="text-danger text-left">{{ $errors->first('input_date') }}</span>
-                          @endif
-                  </div>
-
-                  <div class="col-md-2">
-                    <label class="form-label col-form-label">Module</label>
-                    <select class="form-control" 
-                          name="input_module" id="input_module" required>
-                          <option value="">Select Module</option>
-                          @foreach($products as $product)
-                              <option value="{{ $product->id }}">{{ $product->remark }}</option>
-                          @endforeach
-                      </select>
-                  </div>
-                  
-                  <div class="col-md-2">
-                    <label class="form-label col-form-label">Trainer</label>
-                    <select class="form-control" 
-                          name="input_trainer" id="input_trainer" required>
-                          <option value="">Select Trainer</option>
-                          @foreach($userTrainers as $userTrainer)
-                              <option value="{{ $userTrainer->id }}">{{ $userTrainer->name }}</option>
-                          @endforeach
-                      </select>
-                  </div>
-
-                  <div class="col-md-2">
-                    <label class="form-label col-form-label">Status</label>
-                    <select class="form-control" 
-                          name="input_status" id="input_status" required>
-                          <option value="">Select Status</option>
-                          @foreach($status as $stat)
-                              <option value="{{ $stat }}">{{ $stat }}</option>
-                          @endforeach
-                      </select>
-                  </div>
-
-                  <div class="col-md-2">
-                    <div class="col-md-12"><label class="form-label col-form-label">_</label></div>
-                    <input id="input_user_id" value="{{ $user->id }}" type="hidden">
-                    <a href="#" id="input_submit" class="btn btn-green"><div class="fa-1x"><i class="fas fa-plus fa-fw"></i>Add Training</div></a>
-                  </div>
+          
 
 
-
-                  <div class="col-md-12">
-                    <table class="table table-striped" id="example">
-                        <thead>
-                        <tr>
-                            <th scope="col" width="10%">Training Date</th>
-                            <th scope="col">Title</th>
-                            <th scope="col" width="10%">Trainer</th>
-                            <th scope="col" width="15%">Status</th> 
-                        </tr>
-                        </thead>
-                        <tbody>            
-                          @foreach($userSkills as $userSkill)
-                            <tr>
-                                <th scope="row">{{ $userSkill->dated }}</th>
-                                <td>{{ $userSkill->remark }}</td>
-                                <td>{{ $userSkill->name }}</td>
-                                <td>{{ $userSkill->status }}</td>
-                                <td><a href="#" onclick="deleteTraining('{{ $userSkill->dated }}',{{ $user->id}},{{ $userSkill->product_id }},'{{ $userSkill->status }}');" class="btn btn-danger btn-sm">@lang('general.lbl_delete')</a></td>
-                            </tr>
-                        @endforeach
-                        </tbody>
-                    </table>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-
-          <div class="tab-pane fade" id="tab_experience">
-            <div class="panel text-white">
-              <div class="panel-heading bg-teal-600"><h4>Work Experience</h4></div>
-              <div class="panel-body bg-white text-black">
-                <div class="row mb-3">
-                  <div class="col-md-2">
-                    <label class="form-label col-form-label">Job Positions</label>
-                    <input type="text" 
-                    name="input_exp_job"
-                    id="input_exp_job"
-                    class="form-control" 
-                    value="{{ old('input_exp_job') }}" required/>
-                    @if ($errors->has('input_exp_job'))
-                              <span class="text-danger text-left">{{ $errors->first('input_exp_job') }}</span>
-                          @endif
-                  </div>
-
-                  <div class="col-md-2">
-                    <label class="form-label col-form-label">Company</label>
-                    <input type="text" 
-                    name="input_exp_company"
-                    id="input_exp_company"
-                    class="form-control" 
-                    value="{{ old('input_exp_company') }}" required/>
-                    @if ($errors->has('input_exp_company'))
-                              <span class="text-danger text-left">{{ $errors->first('input_exp_company') }}</span>
-                          @endif
-                  </div>
-
-                  <div class="col-md-2">
-                    <label class="form-label col-form-label">@lang('general.lbl_years')</label>
-                    <input type="text" 
-                    name="input_exp_years"
-                    id="input_exp_years"
-                    class="form-control" 
-                    value="{{ old('input_exp_years') }}" required/>
-                    @if ($errors->has('input_exp_years'))
-                              <span class="text-danger text-left">{{ $errors->first('input_exp_years') }}</span>
-                          @endif
-                  </div>
-
-                  <div class="col-md-2">
-                    <div class="col-md-12"><label class="form-label col-form-label">_</label></div>
-                    <a href="#" id="input_exp_submit" class="btn btn-green"><div class="fa-1x"><i class="fas fa-plus fa-fw"></i>Add Experience</div></a>
-                  </div>
-
-
-
-                  <div class="col-md-12">
-                    <table class="table table-striped" id="example">
-                        <thead>
-                        <tr>
-                            <th scope="col" width="10%">Job Position</th>
-                            <th scope="col">Company</th>
-                            <th scope="col" width="10%">Years</th>
-                            <th scope="col" width="10%">Action</th>
-                        </tr>
-                        </thead>
-                        <tbody>            
-                          @foreach($userExperiences as $userExperience)
-                            <tr>
-                                <th scope="row">{{ $userExperience->job_position }}</th>
-                                <td>{{ $userExperience->company }}</td>
-                                <td>{{ $userExperience->years }}</td>
-                                <td><a href="#" onclick="deleteExperience({{ $userExperience->id }});" class="btn btn-danger btn-sm">@lang('general.lbl_delete')</a></td>
-                            </tr>
-                        @endforeach
-                        </tbody>
-                    </table>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+          
 
 
     </div>

@@ -46,10 +46,10 @@ return [
     "HakAkses" => "User Access",
     "Shift" => "Shift",
     "Voucher" => "Voucher",
-    "Cabang" => "Branch",
+    "Cabang" => "Outlet",
     "ShiftStaff" => "Shift Staff",
     "ProfilPerusahaan" => "Company",
-    "ShiftCabang" => "Shift Branch",
+    "ShiftCabang" => "Shift Outlet",
     "Ruangan" => "Room",
     "Departemen" => "Departement",
 

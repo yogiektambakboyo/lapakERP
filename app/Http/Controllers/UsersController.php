@@ -503,21 +503,13 @@ class UsersController extends Controller
      * 
      * @return \Illuminate\Http\Response
      */
-    public function update(User $user, UpdateUserRequest $request) 
+    public function update(User $user, Request $request) 
     {
         DB::table('users_branch')->where('user_id', $user->id)->delete();
 
         $arr = $request->get('branch_id');
 
         for ($i=0; $i < count($arr); $i++) { 
-            if(($user->department_id!=$request->get('department_id'))||($user->job_id!=$request->get('job_id'))||((int)$arr[$i]!=$user->branch_id)){
-                UserMutation::create(array_merge(
-                    ['user_id' => $user->id ],
-                    ['job_id' => $request->get('job_id') ],
-                    ['branch_id' => (int)$arr[$i]],
-                    ['department_id' => $request->get('department_id') ],
-                ));
-            }
 
             UserBranch::create(
                 array_merge(
@@ -531,23 +523,10 @@ class UsersController extends Controller
             ));
         }
 
-        $user->update($request->validated());
         $user->syncRoles($request->get('role'));
         $user->update( array_merge(
-            $request->validated(), 
-            ['phone_no' => $request->get('phone_no') ],
-            ['join_date' => Carbon::parse($request->get('join_date'))->format('Y-m-d') ],
-            ['gender' => $request->get('gender') ],
-            ['netizen_id' => $request->get('netizen_id') ],
-            ['city' => $request->get('city') ],
-            ['employee_id' => $request->get('employee_id') ],
-            ['job_id' => $request->get('job_id') ],
-            ['department_id' => $request->get('department_id') ],
-            ['address' => $request->get('address') ],
-            ['referral_id' => $request->get('referral_id') ],
-            ['birth_place' => $request->get('birth_place') ],
-            ['employee_status' => $request->get('employee_status') ],
-            ['birth_date' => Carbon::parse($request->get('birth_date'))->format('Y-m-d')  ]
+            ['name' => $request->get('name') ],
+            ['username' => $request->get('username') ],
         ));
 
         if($request->file('photo_netizen_ids') == null){
