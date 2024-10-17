@@ -45,9 +45,10 @@
                   <input type="text" name="name" class="form-control" value="{{ $user->name }}"  />
                 </div>
             </div>
-            
+          
+
             <div class="row mb-3">
-              <label class="form-label col-form-label col-md-2">@lang('general.lbl_branch')</label>
+              <label class="form-label col-form-label col-md-2">@lang('general.lbl_branch') *</label>
               <div class="col-md-8">
                 <input type="hidden" id="hide_val" class="form-control" value="{{ $user->branch_name }}"  />
                 <select class="form-control" id="branch_id" 
