@@ -42,15 +42,6 @@
         </ul>
         <div class="tab-content panel p-3 rounded-0 rounded-bottom">
           <div class="tab-pane fade active show" id="tab_employee_info">
-            <div class="panel text-white">
-              <div class="panel-heading bg-teal-600"><h4>Employee Info</h4></div>
-              <div class="panel-body bg-white text-black">
-                <div class="row mb-3">
-                  <label class="form-label col-form-label col-md-2">@lang('general.lbl_jobtitleselect')</label>
-                  <div class="col-md-8">
-                    <input type="text" class="form-control" value="{{ $users->job_title }}" readonly />
-                  </div>
-              </div>
               <div class="row mb-3">
                 <label class="form-label col-form-label col-md-2">@lang('general.lbl_branch')</label>
                 <div class="col-md-8">
