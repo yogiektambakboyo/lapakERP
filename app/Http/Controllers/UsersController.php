@@ -468,13 +468,11 @@ class UsersController extends Controller
         $data = $this->data;
         $gender = ['Male','Female'];
         $active = [1,0];
-        $users = DB::select("select u.employee_status,dt.remark as department,u.id,u.employee_id,u.name,jt.remark as job_title,string_agg(b.id::character varying,',') as branch_name,u.join_date,u.phone_no,u.email,u.username,u.address,u.netizen_id,u.photo_netizen_id,u.photo,u.join_years,u.active,u.referral_id,u.city,u.gender,u.birth_place,u.birth_date 
+        $users = DB::select("select u.employee_status,u.id,u.employee_id,u.name,string_agg(b.id::character varying,',') as branch_name,u.join_date,u.phone_no,u.email,u.username,u.address,u.netizen_id,u.photo_netizen_id,u.photo,u.join_years,u.active,u.referral_id,u.city,u.gender,u.birth_place,u.birth_date 
                              from users u 
                              join users_branch ub on ub.user_id=u.id
                              join branch b on b.id = ub.branch_id
-                             join departments dt on dt.id=u.department_id
-                             join job_title jt on jt.id=u.job_id
-                             where u.id = ? and u.name!='Admin' group by dt.remark,u.id,u.employee_id,u.name,jt.remark,u.join_date,u.phone_no,u.email,u.username,u.address,u.netizen_id,u.photo_netizen_id,u.photo,u.join_years,u.active,u.referral_id,u.city,u.gender,u.birth_place,u.birth_date  ; "
+                             where u.id = ? and u.name!='Admin' group by u.id,u.employee_id,u.name,u.join_date,u.phone_no,u.email,u.username,u.address,u.netizen_id,u.photo_netizen_id,u.photo,u.join_years,u.active,u.referral_id,u.city,u.gender,u.birth_place,u.birth_date  ; "
                              , [$user->id]);
         $usersReferral = User::where('users.id','!=',$user->id)->get(['users.id','users.name']);
         return view('pages.users.edit', [
