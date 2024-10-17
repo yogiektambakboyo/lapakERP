@@ -443,6 +443,11 @@ class UsersController extends Controller
             'status' => ['Failed','In Training','Pass'],
             'userTrainers' => User::where('job_id','=','7')->get(['id','name']),
             'userSkills' => $user_skill,
+            'branchs' => Branch::join('users_branch as ub','ub.branch_id', '=', 'branch.id')->where('ub.user_id','=',$userx->id)->get(['branch.id','branch.remark']),
+            'userBranchs' => Branch::join('users_branch as ub','ub.branch_id','=','branch.id')->where('ub.user_id','=',$user->id)->get()->pluck('remark')->toArray(),
+            'roles' => Role::latest()->get(),
+            'userRole' => $user->roles->pluck('name')->toArray(),
+            
             'userExperiences' => UserExperience::get(),
             'employeestatusx' => ['On Job Training','Permanent','Outsourcing','Contract','Probation'],
             'usersReferrals' => $usersReferral,'company' => Company::get()->first(),
