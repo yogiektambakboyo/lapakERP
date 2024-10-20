@@ -232,27 +232,55 @@ class HomeController extends Controller
                 where ub.user_id = ".$user->id."  and im.dated = now()::date                     
             ");
 
-            $d_data_r_p = DB::select("
-                select ps.remark  as product_name,sum(id.qty)  as counter
+            $d_data_order = DB::select("
+                 select om.order_no,om.dated,c.name,im.invoice_no, b.remark as branch_name  
                 from users_branch ub 
+               	join branch b on b.id = ub.branch_id 
                 join customers c on c.branch_id = ub.branch_id 
-                join invoice_master im on im.customers_id = c.id
-                join invoice_detail id on id.invoice_no = im.invoice_no
-                join product_sku ps on ps.id = id.product_id and ps.type_id = 1
-                where ub.user_id = ".$user->id."  and im.dated = now()::date  
-                group by ps.remark  order by 2 desc
+                join order_master om on om.customers_id = c.id
+                join invoice_master im on im.ref_no = om.order_no 
+                where ub.user_id = ".$user->id."  --and om.dated = now()::date  
+                order by om.dated asc
             ");
 
-            $d_data_r_s = DB::select("
-                select ps.remark  as product_name,sum(id.qty)  as counter
+            $d_data_order_overdue = DB::select("
+                 select om.order_no,om.dated,c.name,im.invoice_no, b.remark as branch_name  
                 from users_branch ub 
+               	join branch b on b.id = ub.branch_id 
                 join customers c on c.branch_id = ub.branch_id 
-                join invoice_master im on im.customers_id = c.id
-                join invoice_detail id on id.invoice_no = im.invoice_no
-                join product_sku ps on ps.id = id.product_id and ps.type_id = 2
-                where ub.user_id = ".$user->id."  and im.dated = now()::date  
-                group by ps.remark  order by 2 desc
+                join order_master om on om.customers_id = c.id
+                left join invoice_master im on im.ref_no = om.order_no 
+                where ub.user_id = ".$user->id." and im.invoice_no is null
+                order by om.dated asc
             ");
+
+            $d_data_invoice_overdue = DB::select("
+                select im.invoice_no,im.dated,c.name, b.remark as branch_name, im.total  
+                from users_branch ub 
+               	join branch b on b.id = ub.branch_id 
+                join customers c on c.branch_id = ub.branch_id 
+                join invoice_master im on im.customers_id = c.id 
+                where ub.user_id = ".$user->id." and im.total_payment+im.total_discount < im.total 
+                order by im.dated asc
+            ");
+
+            $d_data_stock = DB::select("select b.remark as branch_name,ps.remark as product_name,c.qty 
+                from users_branch ub 
+               	join branch b on b.id = ub.branch_id 
+                join product_stock c on c.branch_id = ub.branch_id 
+                join product_sku ps on ps.id = c.product_id 
+                where ub.user_id = ".$user->id." and c.qty > 0 
+                order by b.remark ");
+
+
+            $d_data_branch_acv = DB::select(" select b.remark as branch_name, bt.value as value_target,sum(coalesce(im.total,0)) value_actual
+                from users_branch ub 
+               	join branch b on b.id = ub.branch_id 
+               	left join branch_target bt on bt.branch_id = b.id and bt.periode = to_char(now(),'YYYYMM')::int
+               	left join customers c on c.branch_id = b.id 
+               	left join invoice_master im on im.customers_id = c.id 
+                where ub.user_id = '".$user->id."'
+                group by b.remark,bt.value order by 1 ");
 
 
 
@@ -316,8 +344,11 @@ class HomeController extends Controller
                 'd_data_p' => $d_data_p,
                 'd_data_s' => $d_data_s,
                 'd_data_t' => $d_data_t,
-                'd_data_r_p' => $d_data_r_p,
-                'd_data_r_s' => $d_data_r_s,
+                'd_data_branch_acv' => $d_data_branch_acv,
+                'd_data_order' => $d_data_order,
+                'd_data_stock' => $d_data_stock,
+                'd_data_invoice_overdue' => $d_data_invoice_overdue,
+                'd_data_order_overdue' => $d_data_order_overdue,
             ])->with('data',$data)->with('company',Company::get()->first());
         }else{
             $data = [];

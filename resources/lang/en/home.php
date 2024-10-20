@@ -18,4 +18,17 @@ return [
     "transaction" => "Transaction",
     "reports" => "Reports",
     "settings" => "Settings",
+    "lbl_dated" => "Date",
+    "lbl_name" => "Name",
+    "lbl_sales" => "Sales",
+    "lbl_invoice_no" => "#Invoice No",
+    "lbl_branch_name" => "Outlet Name",
+
+    "lbl_order_book" => "Order Book",
+    "lbl_product_name" => "Product Name",
+    "lbl_qty" => "Qty",
+    "lbl_acv" => "Achievement",
+    "lbl_due_date_invoice" => "Due Date Invoice",
+    "lbl_due_date_order" => "Due Date Quotation",
+    "lbl_inventory_balance" => "Inventory Balance",
 ];

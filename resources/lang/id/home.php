@@ -22,4 +22,19 @@ return [
     "transaction" => "Transaksi",
     "reports" => "Laporan",
     "settings" => "Pengaturan",
+    "lbl_dated" => "Tgl",
+    "lbl_name" => "Nama",
+    "lbl_sales" => "Penjualan",
+    "lbl_invoice_no" => "Nomor Faktur",
+    "lbl_branch_name" => "Nama Outlet",
+
+    "lbl_product_name" => "Nama Product",
+    "lbl_qty" => "Jumlah",
+
+    "lbl_order_book" => "Pesanan",
+    "lbl_acv" => "Pencapaian",
+    "lbl_due_date_invoice" => "Faktur Jatuh Tempo",
+    "lbl_due_date_order" => "Quotation Jatuh Tempo",
+    "lbl_inventory_balance" => "Saldo Inventori",
+
 ];
